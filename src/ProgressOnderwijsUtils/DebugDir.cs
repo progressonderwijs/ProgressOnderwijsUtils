@@ -23,12 +23,12 @@ namespace ProgressOnderwijsUtils
 		/// schrijf de string naar de debugfile 
 		/// </summary>
 		/// <param name="tekst"></param>
-		public void schrijf( string tekst) 
+		public static void schrijf( string tekst) 
 		{
 			schrijf(_debugdir,tekst);	
 		}
 
-		public void schrijf(string debugdir, string tekst) 
+		public static void schrijf(string debugdir, string tekst) 
 		{
 			StreamWriter sw = null;
 			DateTime dt = DateTime.Now;		
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils
 			}
 		} //end schrijf
 
-		public  void schrijfevent(string source, string entry) 
+		public  static void schrijfevent(string source, string entry) 
 		{
 			String log = "Application";
 			if ( !EventLog.SourceExists(source) ) 
