@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
 
 		public  static void schrijfevent(string source, string entry) 
 		{
-			String log = "Application";
+/*			String log = "Application";
 			if ( !EventLog.SourceExists(source) ) 
 			{
 				EventLog.CreateEventSource(source,log);
@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtils
 			//Maximum lengte van entry = 16384
 			// wij maken daar MAX_LENGTH_LOGENTRY van
 			String limitedentry = entry.Substring(0,Math.Min(entry.Length,MAX_LENGTH_LOGENTRY));
-			aLog.WriteEntry(limitedentry ,EventLogEntryType.Error);
+			aLog.WriteEntry(limitedentry ,EventLogEntryType.Error);*/
 		}
 	} //end class
 }
