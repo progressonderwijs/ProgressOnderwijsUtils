@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace ProgressOnderwijsUtils 
 {
-	public class debugdir 
+	public class DebugDir 
 	{
 		
 		private const string DEBUGFILE = "debug.txt";
@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 
 		private const int MAX_LENGTH_LOGENTRY = 16000;
 
-		public debugdir(string debugdir) 
+		public DebugDir(string debugdir) 
 		{
 			_debugdir=debugdir;			 
 		}
