@@ -7,7 +7,9 @@ namespace ProgressOnderwijsUtils
 {
 	public class DebugDir 
 	{
-		
+		public const string PROGRESSDEBUGDIR="c:\\progress\\debug";
+		public const string PROGRESSERRORDIR="c:\\progress\\error";
+
 		private const string DEBUGFILE = "debug.txt";
 
 		private static string _debugdir="c:\\windows\\system32\\debug";
