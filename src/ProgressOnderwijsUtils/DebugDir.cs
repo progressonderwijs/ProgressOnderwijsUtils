@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
 
 		public DebugDir(string debugdir) 
 		{
-			debugdir = debugdir;			 
+			//this.debugdir = debugdir;			 
 		}
 		
 		/// <summary>
