@@ -7,18 +7,18 @@ namespace ProgressOnderwijsUtils
 {
 	public class DebugDir 
 	{
-		public const string PROGRESSDEBUGDIR="c:\\progress\\debug";
-		public const string PROGRESSERRORDIR="c:\\progress\\error";
+		public const string PROGRESSDEBUGDIR = "c:\\progress\\debug";
+		public const string PROGRESSERRORDIR = "c:\\progress\\error";
 
-		private const string DEBUGFILE = "debug.txt";
+		const string DEBUGFILE = "debug.txt";
 
-		private static string _debugdir="c:\\windows\\system32\\debug";
+		static string debugdir = PROGRESSDEBUGDIR;
 
-		private const int MAX_LENGTH_LOGENTRY = 16000;
+		const int MAX_LENGTH_LOGENTRY = 16000;
 
 		public DebugDir(string debugdir) 
 		{
-			_debugdir=debugdir;			 
+			debugdir = debugdir;			 
 		}
 		
 		/// <summary>
@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="tekst"></param>
 		public static void schrijf( string tekst) 
 		{
-			schrijf(_debugdir,tekst);	
+			schrijf(debugdir,tekst);	
 		}
 
 		public static void schrijf(string debugdir, string tekst) 
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils
 
 		public  static void schrijfevent(string source, string entry) 
 		{
-/*			String log = "Application";
+			String log = "Application";
 			if ( !EventLog.SourceExists(source) ) 
 			{
 				EventLog.CreateEventSource(source,log);
@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils
 			//Maximum lengte van entry = 16384
 			// wij maken daar MAX_LENGTH_LOGENTRY van
 			String limitedentry = entry.Substring(0,Math.Min(entry.Length,MAX_LENGTH_LOGENTRY));
-			aLog.WriteEntry(limitedentry ,EventLogEntryType.Error);*/
+			aLog.WriteEntry(limitedentry ,EventLogEntryType.Error);
 		}
 	} //end class
 }
