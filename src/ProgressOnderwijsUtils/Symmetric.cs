@@ -12,7 +12,7 @@ using System.Security.Cryptography;
 ///Thanks!
 ///
 
-namespace progress.tools 
+namespace ProgressOnderwijsUtils 
 {
 	public class Symmetric 
 	{

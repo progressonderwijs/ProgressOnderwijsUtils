@@ -3,7 +3,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 
-namespace progress.tools 
+namespace ProgressOnderwijsUtils 
 {
 	public class debugdir 
 	{

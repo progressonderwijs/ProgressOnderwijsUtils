@@ -1,6 +1,6 @@
 using System;
 
-namespace progress.tools
+namespace ProgressOnderwijsUtils
 {
 	/// <summary>
 	/// Summary description for formatstring.
