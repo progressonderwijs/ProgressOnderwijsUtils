@@ -6,8 +6,10 @@ namespace ProgressOnderwijsUtils.Functional {
 	public delegate TAcc Combiner<TInput,TAcc>(TInput val, TAcc acc);
 
 	/// <summary>
-	/// This code is an implementation of the common (in functional languages) functions Map, Filter and FoldL.  It also contains some other functional experiments.  It's was used
-	/// as a possible way to simplify DataTable filtering, but currently I'm (Eamon) not using it because it seems complex and unusual in C# code.  Since the implementation is
+	/// This code is an implementation of the common (in functional languages) functions Map, Filter and FoldL.  
+	/// It also contains some other functional experiments.  It's was used
+	/// as a possible way to simplify DataTable filtering, but currently I'm (Eamon) not using it because 
+	/// it seems complex and unusual in C# code. Since the implementation is
 	/// so simple though and I'm not sure if it'll be useful I haven't trashed it yet.
 	/// </summary>
 	public class F {
