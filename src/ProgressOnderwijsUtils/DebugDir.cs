@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
 			
 		}
 
-		public static void schrijf(string debugdir, string tekst) 
+		static void schrijf(string debugdir, string tekst) 
 		{
 			StreamWriter sw = null;
 			DateTime dt = DateTime.Now;		
