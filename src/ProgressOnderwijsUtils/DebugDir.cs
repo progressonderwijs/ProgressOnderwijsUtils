@@ -27,7 +27,10 @@ namespace ProgressOnderwijsUtils
 		/// <param name="tekst"></param>
 		public static void schrijf( string tekst) 
 		{
-			schrijf(debugdir,tekst);	
+#if DEBUG
+			schrijf(debugdir, tekst);	
+#endif
+			
 		}
 
 		public static void schrijf(string debugdir, string tekst) 
