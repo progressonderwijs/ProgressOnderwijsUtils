@@ -1,0 +1,81 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ProgressOnderwijsUtils
+{
+	public class OlapSlicer
+	{
+		int organisatie;
+		int startjaar;
+		int stopjaar;
+		string rijen;
+		bool showopleidingen;
+
+		public bool ShowOpleidingen
+		{
+			get { return showopleidingen; }
+			set { showopleidingen = value; }
+		}
+
+		public int Organisatie
+		{
+			get { return organisatie; }
+			set { organisatie = value; }
+		}
+
+		public int StartJaar
+		{
+			get { return startjaar; }
+			set { startjaar = value; }
+		}
+
+		public int StopJaar
+		{
+			get { return stopjaar; }
+			set { stopjaar = value; }
+		}
+
+		public string Rijen
+		{
+			get { return rijen; }
+			set { rijen = value; }
+		}
+
+		//public rijdimensies RijDimensie
+		//{
+		//    get { return rijdimensie; }
+		//    set { rijdimensie = value;  }
+		//}
+
+		//public enum rijdimensies
+		//{
+		//    OPLEIDINGEN = 0,
+		//    ORGANISATIES = 1
+		//}
+
+		public OlapSlicer(int organisatie, int startjaar, string rijen, bool showopleidingen)
+		{
+			this.organisatie = organisatie;
+			this.startjaar = startjaar;
+			this.rijen = rijen;
+			this.showopleidingen = showopleidingen;
+		}
+
+		public OlapSlicer(int organisatie, int startjaar, int stopjaar)
+		{
+			this.organisatie = organisatie;
+			this.startjaar = startjaar;
+			this.stopjaar = stopjaar;
+		}
+
+		public OlapSlicer(int organisatie, int startjaar, int stopjaar, string rijen, bool showopleidingen)
+		{
+			this.organisatie = organisatie;
+			this.startjaar = startjaar;
+			this.stopjaar = stopjaar;
+			this.rijen = rijen;
+			this.showopleidingen = showopleidingen;
+		}
+	}
+}
