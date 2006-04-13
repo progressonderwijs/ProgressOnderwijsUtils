@@ -11,6 +11,21 @@ namespace ProgressOnderwijsUtils
 		int stopjaar;
 		string rijen;
 		bool showopleidingen;
+		int examentype;
+
+		public int ExamenType
+		{
+			get { return examentype; }
+			set { examentype = value; }
+		}
+
+		int opleiding;
+
+		public int Opleiding
+		{
+			get { return opleiding; }
+			set { opleiding = value; }
+		}
 
 		public bool ShowOpleidingen
 		{
@@ -67,6 +82,14 @@ namespace ProgressOnderwijsUtils
 			this.organisatie = organisatie;
 			this.startjaar = startjaar;
 			this.stopjaar = stopjaar;
+		}
+
+		public OlapSlicer(int organisatie, int startjaar, int stopjaar, int examentype)
+		{
+			this.organisatie = organisatie;
+			this.startjaar = startjaar;
+			this.stopjaar = stopjaar;
+			this.examentype = examentype;
 		}
 
 		public OlapSlicer(int organisatie, int startjaar, int stopjaar, string rijen, bool showopleidingen)
