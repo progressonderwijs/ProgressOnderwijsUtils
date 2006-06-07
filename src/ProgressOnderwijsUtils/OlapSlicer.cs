@@ -12,6 +12,13 @@ namespace ProgressOnderwijsUtils
 		string rijen;
 		bool showopleidingen;
 		int examentype;
+		bool zuivercohort = true;
+
+		public bool ZuiverCohort
+		{
+			get { return zuivercohort; }
+			set { zuivercohort = value; }
+		}
 
 		public int ExamenType
 		{
