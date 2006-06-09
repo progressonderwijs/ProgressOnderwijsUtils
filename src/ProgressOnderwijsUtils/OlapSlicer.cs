@@ -13,6 +13,18 @@ namespace ProgressOnderwijsUtils
 		bool showopleidingen;
 		int examentype;
 		bool zuivercohort = true;
+		bool cohort = true;
+
+		/// <summary>
+		/// als true, 1 cohortjaar
+		/// als flase meerdere cohorten
+		/// default true
+		/// </summary>
+		public bool Cohort
+		{
+			get { return cohort; }
+			set { cohort = value; }
+		}
 
 		public bool ZuiverCohort
 		{
