@@ -10,14 +10,14 @@ namespace ProgressOnderwijsUtils
 		int startjaar;
 		int stopjaar;
 		string rijen;
-		bool showopleidingen;
+		bool showopleidingen=true;
 		int examentype;
 		bool zuivercohort = true;
 		bool cohort = true;
 
 		/// <summary>
 		/// als true, 1 cohortjaar
-		/// als flase meerdere cohorten
+		/// als false meerdere cohorten
 		/// default true
 		/// </summary>
 		public bool Cohort
