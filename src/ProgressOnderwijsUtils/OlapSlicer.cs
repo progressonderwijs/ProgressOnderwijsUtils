@@ -14,6 +14,13 @@ namespace ProgressOnderwijsUtils
 		int examentype;
 		bool zuivercohort = true;
 		bool cohort = true;
+		bool samenvatting = true;
+
+		public bool Samenvatting
+		{
+			get { return samenvatting; }
+			set { samenvatting = value; }
+		}
 
 		/// <summary>
 		/// als true, 1 cohortjaar
