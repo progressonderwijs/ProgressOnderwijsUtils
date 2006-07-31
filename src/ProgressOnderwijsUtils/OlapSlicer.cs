@@ -77,6 +77,12 @@ namespace ProgressOnderwijsUtils
 			set { stopjaar = value; }
 		}
 
+		public int ExamenJaar
+		{
+			get { return startjaar; }
+			set { startjaar = value; }
+		}
+
 		public string Rijen
 		{
 			get { return rijen; }
