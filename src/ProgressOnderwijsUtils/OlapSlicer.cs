@@ -6,6 +6,14 @@ namespace ProgressOnderwijsUtils
 {
 	public class OlapSlicer
 	{
+
+		public enum StudieStaakType
+		{
+			zonderstudiestakers = 1,
+			alleenstudiestakers = 2,
+			metstudiestakers = 3
+		}
+
 		int organisatie;
 		int startjaar;
 		int stopjaar;
@@ -15,11 +23,28 @@ namespace ProgressOnderwijsUtils
 		bool zuivercohort = true;
 		bool cohort = true;
 		bool samenvatting = true;
+		bool langelijst = false;
+
+		StudieStaakType studiestaak = StudieStaakType.metstudiestakers;
+
+		public StudieStaakType StudieStaak
+		{
+			get { return studiestaak; }
+			set { studiestaak = value; }
+		}
 
 		public bool Samenvatting
 		{
 			get { return samenvatting; }
 			set { samenvatting = value; }
+		}
+
+
+
+		public bool LangeLijst
+		{
+			get { return langelijst; }
+			set { langelijst = value; }
 		}
 
 		/// <summary>
