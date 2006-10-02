@@ -24,6 +24,13 @@ namespace ProgressOnderwijsUtils
 		bool cohort = true;
 		bool samenvatting = true;
 		bool langelijst = false;
+		bool rendement = false;
+
+		public bool Rendement
+		{
+			get { return rendement; }
+			set { rendement = value; }
+		}
 
 		StudieStaakType studiestaak = StudieStaakType.metstudiestakers;
 
