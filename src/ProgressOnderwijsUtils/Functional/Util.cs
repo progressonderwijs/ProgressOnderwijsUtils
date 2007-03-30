@@ -13,5 +13,7 @@ namespace ProgressOnderwijsUtils.Functional {
 		public static string ToString<T1>(T1 obj) { return obj.ToString(); }
 		public static string ToStringOrNull<T1>(T1 obj) { if (obj == null) return null;else return obj.ToString(); }
 		public static string ToStringOrEmpty<T1>(T1 obj) { if (obj == null) return ""; else return obj.ToString(); }
+
+
 	}
 }
