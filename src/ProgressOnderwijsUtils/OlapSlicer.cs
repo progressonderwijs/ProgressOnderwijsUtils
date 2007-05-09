@@ -17,6 +17,9 @@ namespace ProgressOnderwijsUtils
 		int organisatie;
 		int startjaar;
 		int stopjaar;
+		int maanden;
+
+		public int Maanden { get { return maanden; } set { maanden = value; } }
 		string rijen;
 		bool showopleidingen=true;
 		int examentype;
