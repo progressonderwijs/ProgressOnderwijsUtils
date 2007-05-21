@@ -6,6 +6,11 @@ namespace ProgressOnderwijsUtils
 {
 	public class OlapSlicer
 	{
+		public const int BACHELOR = 5;
+		public const int DOCTORAAL = 8;
+		public const int MASTER = 11;
+		public const int PROPEDEUTISCH = 2;
+		public const int PROPEDEUTISCHBACHELOR = 3;
 
 		public enum StudieStaakType
 		{
