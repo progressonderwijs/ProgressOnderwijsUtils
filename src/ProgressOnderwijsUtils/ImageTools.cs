@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using System.Drawing.Imaging;//this is not recommended?? downsides are unclear though some suggest it might be slow.
 using System.IO;
 namespace ProgressOnderwijsUtils
 {
+	// Uses tips from http://www.glennjones.net/Post/799/Highqualitydynamicallyresizedimageswithnet.htm
+	/// <summary>
+	/// Provides a number of wrappers around idiotically designed core framework functionality.  Nothing fancy, just sets flags to high-quality, finds a jpeg encoder etc.
+	/// </summary>
 	public static class ImageTools
 	{
 		/// <summary>
@@ -107,6 +110,22 @@ namespace ProgressOnderwijsUtils
 			int clipX = (oldWidth - clipWidth) / 2;
 			int clipY = (oldHeight - clipHeight) / 2;
 			return new Rectangle(clipX, clipY, clipWidth, clipHeight);
+		}
+
+		public static void SaveImageAsJpeg(Image image, Stream stream, int quality)
+		{
+			ImageCodecInfo[] Info = ImageCodecInfo.GetImageEncoders();
+			ImageCodecInfo jpgInfo = Array.Find(Info, delegate(ImageCodecInfo i) { return i.MimeType == "image/jpeg"; });
+			using (EncoderParameters encParams = new EncoderParameters(1))
+			{
+				encParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)quality);
+				image.Save(stream, jpgInfo, encParams);
+			}
+		}
+
+		public static void SaveImageAsJpeg(Image image, Stream stream)
+		{
+			SaveImageAsJpeg(image, stream, 90);
 		}
 	}
 }
