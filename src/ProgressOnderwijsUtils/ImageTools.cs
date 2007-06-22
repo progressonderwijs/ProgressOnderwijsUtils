@@ -8,6 +8,10 @@ namespace ProgressOnderwijsUtils
 	// Uses tips from http://www.glennjones.net/Post/799/Highqualitydynamicallyresizedimageswithnet.htm
 	/// <summary>
 	/// Provides a number of wrappers around idiotically designed core framework functionality.  Nothing fancy, just sets flags to high-quality, finds a jpeg encoder etc.
+	/// Be aware that Images (and Bitmaps) are IDisposable and it's strongly suggested you dispose them when done.  Because exceptions can cause unexpected code flow, you should do so by
+	/// using(Image myImage = ImageTools.Resize(...)) { [...use new image...] }
+	/// The caller is responsible for disposing images!  (BAH memory allocation... bah...)
+	/// Finally, MSDN suggests that the entirety of imaging may be slow in ASP.NET... well, there's no alternative, so here's to hoping that's no longer true.
 	/// </summary>
 	public static class ImageTools
 	{
