@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
+	public delegate T Factory<T>();
 	public class Utils
 	{
 		public static string UitgebreideFout(Exception e, string tekst)
