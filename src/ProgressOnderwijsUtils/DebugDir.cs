@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace ProgressOnderwijsUtils 
 {
-	public class DebugDir 
+	public static class DebugDir 
 	{
 		public const string PROGRESSDEBUGDIR = "c:\\progress\\debug";
 		public const string PROGRESSERRORDIR = "c:\\progress\\error";
@@ -16,24 +16,19 @@ namespace ProgressOnderwijsUtils
 
 		const int MAX_LENGTH_LOGENTRY = 16000;
 
-		public DebugDir(string debugdir) 
-		{
-			//this.debugdir = debugdir;			 
-		}
 		
 		/// <summary>
-		/// schrijf de string naar de debugfile 
+		/// Schrijf de string naar de debugfile 
 		/// </summary>
 		/// <param name="tekst"></param>
-		public static void schrijf( string tekst) 
+		public static void Schrijf( string tekst) 
 		{
 #if DEBUG
-			schrijf(debugdir, tekst);	
+			Schrijf(debugdir, tekst);	
 #endif
-			
 		}
 
-		static void schrijf(string debugdir, string tekst) 
+		static void Schrijf(string debugdir, string tekst) 
 		{
 			StreamWriter sw = null;
 			DateTime dt = DateTime.Now;		
@@ -50,9 +45,9 @@ namespace ProgressOnderwijsUtils
 			catch (Exception e) 
 			{
 				//fout wegschrijven naar eventlog
-				schrijfevent("debugdir.schrijf ",e.Message +" bestand :"  +filepath);				
+				schrijfevent("debugdir.Schrijf ",e.Message +" bestand :"  +filepath);				
 			}
-		} //end schrijf
+		} //end Schrijf
 
 		public  static void schrijfevent(string source, string entry) 
 		{
