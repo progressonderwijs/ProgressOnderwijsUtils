@@ -6,12 +6,12 @@ namespace ProgressOnderwijsUtils
 {
 	public class ApplicatieFout
 	{
-		bool opgelost;
-		DateTime datum;
-		string email;
+//		bool opgelost;
+//		DateTime datum;
+//		string email;
 		string message;
 		string versie;
-		string beschrijving;
+		//string beschrijving;
 		string stacktrace;
 		
 		public string Versie { get { return versie; } set { versie = value; }}
