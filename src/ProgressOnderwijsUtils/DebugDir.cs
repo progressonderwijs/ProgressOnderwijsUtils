@@ -12,7 +12,6 @@ namespace ProgressOnderwijsUtils
 
 		const string DEBUGFILE = "debug.txt";
 
-		static string debugdir = PROGRESSDEBUGDIR;
 
 		const int MAX_LENGTH_LOGENTRY = 16000;
 
@@ -24,7 +23,7 @@ namespace ProgressOnderwijsUtils
 		public static void Schrijf( string tekst) 
 		{
 #if DEBUG
-			Schrijf(debugdir, tekst);	
+			Schrijf(PROGRESSDEBUGDIR, tekst);	
 #endif
 		}
 
@@ -37,10 +36,8 @@ namespace ProgressOnderwijsUtils
 			try 
 			{
 				//Maak directory aan 								
-				Directory.CreateDirectory(debugdir);				
-				sw = new StreamWriter(File.Open(filepath,FileMode.Append));
-				sw.WriteLine(dt.ToString("dd'-'MM'-'yyyy' 'HH:mm:ss:ffff") + " : "  + tekst);
-				sw.Close();
+				Directory.CreateDirectory(debugdir);
+				File.AppendAllText(filepath, dt.ToString("dd'-'MM'-'yyyy' 'HH:mm:ss:ffff") + " : " + tekst + "\n");
 			}
 			catch (Exception e) 
 			{
