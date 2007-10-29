@@ -29,7 +29,6 @@ namespace ProgressOnderwijsUtils
 
 		static void Schrijf(string debugdir, string tekst) 
 		{
-			StreamWriter sw = null;
 			DateTime dt = DateTime.Now;		
 			string monthyear=((dt.Month)).ToString() + "-" + dt.Year.ToString(); 
 			string filepath = debugdir +"\\"  + monthyear +DEBUGFILE  ;
