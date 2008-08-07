@@ -31,5 +31,13 @@ namespace ProgressOnderwijsUtils
 		{
 			throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
 		}
+
+		public static bool ElfProef(int getal)
+		{
+			int res = 0;
+			for (int i = 1; getal != 0; getal /= 10, ++i)
+				res += i * (getal % 10);
+			return res % 11 == 0;
+		}
 	}
 }
