@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
 			int res = 0;
 			for (int i = 1; getal != 0; getal /= 10, ++i)
 				res += i * (getal % 10);
-			return res % 11 == 0;
+			return res != 0 && res % 11 == 0;
 		}
 	}
 }
