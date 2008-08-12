@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 		public BooleanComparer Comparer { get { return comparer; } set { comparer = value; } }
 		public object Waarde { get { return waarde; } set { waarde = value; } }
 
-		public static BooleanComparer[] StringComparers { get { return new BooleanComparer[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull }; } }
+		public static BooleanComparer[] StringComparers { get { return new BooleanComparer[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull }; } }
 		public static BooleanComparer[] NumericComparers { get { return new BooleanComparer[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull }; } }
 
 		public Criterium(string kolomnaam, BooleanComparer comparer, object waarde)
