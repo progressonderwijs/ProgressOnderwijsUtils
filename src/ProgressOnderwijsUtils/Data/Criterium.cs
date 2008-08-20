@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
+	[Serializable]
 	public class Criterium
 	{
 		string kolomnaam;

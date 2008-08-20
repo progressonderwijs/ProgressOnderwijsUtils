@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtils
 	/// <summary>
 	/// Bevat gestuctureerde orderinginformatie
 	/// </summary>
-	public class SortOrder : List<SortColumn>
+	[Serializable]public class SortOrder : List<SortColumn>
 	{
 		public SortOrder() { }
 
@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 	}
-	public struct SortColumn : IEquatable<SortColumn>
+	[Serializable] public struct SortColumn : IEquatable<SortColumn>
 	{
 		string column;
 		SortDirection direction;
