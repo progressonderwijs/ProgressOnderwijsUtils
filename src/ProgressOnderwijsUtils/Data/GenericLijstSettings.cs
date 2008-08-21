@@ -12,6 +12,5 @@ namespace ProgressOnderwijsUtils.Data
 	{
 	 public SortedList SelectedKey =null;
 	 public int CurrentPage=1;
-	 public DataSourceSettings DataSourceSettings = new DataSourceSettings();
 	}
 }
