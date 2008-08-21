@@ -11,6 +11,6 @@ namespace ProgressOnderwijsUtils.Data
 	[Serializable]
 	public class DataSourceSettings
 	{
-		public SortOrder SortOrder = new SortOrder();
+		public SortOrder SortOrder = null;//meaning; use default.
 	}
 }
