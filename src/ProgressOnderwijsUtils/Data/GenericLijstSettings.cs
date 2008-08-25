@@ -8,9 +8,9 @@ namespace ProgressOnderwijsUtils.Data
 	/// <summary>
 	/// Slaat de selectedkey, de currentpage en de datasource settings van een genericlijst op.
 	/// </summary>
- [Serializable] public	class GenericLijstSettings
+	[Serializable] public class GenericLijstSettings
 	{
-	 public SortedList SelectedKey =null;
-	 public int CurrentPage=1;
+		public SortedList SelectedKey = null;
+		public int CurrentPage=1;
 	}
 }
