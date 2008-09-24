@@ -9,7 +9,12 @@ namespace ProgressOnderwijsUtils
 	/// </summary>
 	[Serializable]public class SortOrder : List<SortColumn>
 	{
-		public SortOrder() { }
+		SortColumn basesortorder = null;
+		public SortColumn BaseSortOrder { set { basesortorder = value; } get { return basesortorder; } }
+		
+		public SortOrder()
+		{
+		}
 
 		public int OrderingIndex(string column, SortDirection direction)
 		{
@@ -51,7 +56,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 	}
-	[Serializable] public struct SortColumn : IEquatable<SortColumn>
+	[Serializable] public class SortColumn : IEquatable<SortColumn>
 	{
 		string column;
 		SortDirection direction;
