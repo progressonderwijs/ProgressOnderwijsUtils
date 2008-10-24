@@ -21,41 +21,59 @@ namespace ProgressOnderwijsUtils
 			return this.IndexOf(new SortColumn(column, direction));
 		}
 
-		public void AddReverseRemove(string kolomnaam)
+		public void AddReverse(string kolomnaam)
 		{
-			/*			if (this.Contains(new SortColumn(kolomnaam, SortDirection.desc)))
-							this.Remove(new SortColumn(kolomnaam, SortDirection.desc));
-						else
-						{
-							if (this.Contains(new SortColumn(kolomnaam, SortDirection.asc)))
-							{
-								this.Remove(new SortColumn(kolomnaam, SortDirection.asc));
-								this.Insert(0, new SortColumn(kolomnaam, SortDirection.desc));
-							}
-							else
-								this.Insert(0, new SortColumn(kolomnaam, SortDirection.asc));
-						}*/
-
-			//even eenvoudig, alleen een kolom tegelijk, anders snapt niemand er meer iets van
-			if (this.Contains(new SortColumn(kolomnaam, SortDirection.Asc)))
+			if (this.Contains(new SortColumn(kolomnaam, SortDirection.Desc)))
 			{
-				this.Clear();
-				this.Add(new SortColumn(kolomnaam, SortDirection.Desc));
+				this.Remove(new SortColumn(kolomnaam, SortDirection.Desc));
+				this.Insert(0, new SortColumn(kolomnaam, SortDirection.Asc));
+			}
+			else if (this.Contains(new SortColumn(kolomnaam, SortDirection.Asc)))
+			{
+				this.Remove(new SortColumn(kolomnaam, SortDirection.Asc));
+				this.Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
 			}
 			else
-			{
-				if (this.Contains(new SortColumn(kolomnaam, SortDirection.Desc)))
-				{
-					this.Clear();
-				}
-				else
-				{
-					this.Clear();
-					this.Add(new SortColumn(kolomnaam, SortDirection.Asc));
-				}
-			}
+				this.Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
+			//Oude strategie
+			/*			if (this.Contains(new SortColumn(kolomnaam, SortDirection.Desc)))
+							this.Remove(new SortColumn(kolomnaam, SortDirection.Desc));
+						else
+						{
+							if (this.Contains(new SortColumn(kolomnaam, SortDirection.Asc)))
+							{
+								this.Remove(new SortColumn(kolomnaam, SortDirection.Asc));
+								this.Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
+							}
+							else
+								this.Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
+						}*/
+			//Eenvoudige strategie
+			/*			if (this.Contains(new SortColumn(kolomnaam, SortDirection.Asc)))
+						{
+							this.Clear();
+							this.Add(new SortColumn(kolomnaam, SortDirection.Desc));
+						}
+						else
+						{
+							if (this.Contains(new SortColumn(kolomnaam, SortDirection.Desc)))
+							{
+								this.Clear();
+							}
+							else
+							{
+								this.Clear();
+								this.Add(new SortColumn(kolomnaam, SortDirection.Asc));
+							}
+						}*/
 		}
+
+		/*public void RemoveAll()
+		{
+			this.Clear();
+		}*/
 	}
+
 	[Serializable] public class SortColumn : IEquatable<SortColumn>
 	{
 		string column;
