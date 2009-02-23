@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 
-namespace Progress.Extensions
+namespace ProgressOnderwijsUtils
 {
 	/// <summary>
 	/// Extensions for DataRow
