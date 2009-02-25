@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils
 	public static class StringExtensions
 	{
 		/// <summary>
-		/// Check either string is null or contains whitespace only)
+		/// Check either string is null or contains whitespace only
 		/// </summary>
 		/// <param name="s">String to check</param>
 		/// <returns>True if string is empty. False otherwise.</returns>
