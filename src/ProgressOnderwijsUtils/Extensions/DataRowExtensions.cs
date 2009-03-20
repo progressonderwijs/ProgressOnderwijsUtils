@@ -22,7 +22,8 @@ namespace ProgressOnderwijsUtils
 		{
 			try
 			{
-				return (row[fieldname] == DBNull.Value || (T)row[fieldname] == null) ? default(T) : (T)row[fieldname];
+				object val = row[fieldname];
+				return val == DBNull.Value ? default(T) : (T)val;
 			}
 			catch
 			{
@@ -42,7 +43,8 @@ namespace ProgressOnderwijsUtils
 		{
 			try
 			{
-				return (row[fieldname] == DBNull.Value || (T)row[fieldname] == null) ? defaultvalue : (T)row[fieldname];
+				object val = row[fieldname];
+				return val == DBNull.Value ? defaultvalue : (T)val;
 			}
 			catch
 			{
