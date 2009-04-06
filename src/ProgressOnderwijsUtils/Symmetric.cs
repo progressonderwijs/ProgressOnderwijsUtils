@@ -651,7 +651,7 @@ namespace ProgressOnderwijsUtils
 			return plainText;
 		}
 
-		private void InitPromptstruct(ref CRYPTPROTECT_PROMPTSTRUCT ps) 
+		private static void InitPromptstruct(ref CRYPTPROTECT_PROMPTSTRUCT ps) 
 		{
 			ps.cbSize = Marshal.SizeOf(typeof(CRYPTPROTECT_PROMPTSTRUCT));
 			ps.dwPromptFlags = 0;

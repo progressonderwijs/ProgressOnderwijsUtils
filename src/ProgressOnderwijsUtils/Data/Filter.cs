@@ -41,11 +41,6 @@ namespace ProgressOnderwijsUtils
 			else
 				AddHelper(f);
 		}
-		public void Add(BooleanOperator andor, Filter f)
-		{
-			//Kan dit wel?
-			throw new Exception("Kan dit?");
-		}
 		void AddHelper(Filter f)
 		{
 			f.Parent = this;
