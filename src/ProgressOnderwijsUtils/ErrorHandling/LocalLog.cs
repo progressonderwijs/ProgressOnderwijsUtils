@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils.ErrorHandling
 	{
 #if DEBUG
 		const string logdirectory = @"C:\xmllog\";//even IIS may make root directories!
-		const string txtlog = "currentHttpApplication.log";
+		const string txtlog = "currentHttpApplication.log";  //
 
 		static readonly string txtlogPath = Path.Combine(logdirectory, txtlog);
 
@@ -21,14 +21,16 @@ namespace ProgressOnderwijsUtils.ErrorHandling
 			System.IO.Directory.CreateDirectory(logdirectory);
 			try
 			{
-				using (var stream = File.Open(txtlogPath, FileMode.Create, FileAccess.Write))
-					stream.Flush();//bla, no-op.
+				lock (txtlogPath) //crude synchronization to avoid file-locking issues
+					using (var stream = File.Open(txtlogPath, FileMode.Create, FileAccess.Write))
+						stream.Flush();//bla, no-op.
 			}
-			catch { }
+			catch { }//logging should not cause an error
 		}
 #endif
 
-		public static void SaveXmlLog(XElement document, string filename) {
+		public static void SaveXmlLog(XElement document, string filename)
+		{
 #if DEBUG
 			document.Save(Path.Combine(logdirectory, Path.GetFileName(filename)));
 #endif
@@ -49,7 +51,7 @@ namespace ProgressOnderwijsUtils.ErrorHandling
 				{
 					fullmsg.Append("app[" + c.ApplicationInstance.GetHashCode() + "] ");
 				}
-				catch
+				catch //generic catch-all exception handling used to permit logging as much as possible.
 				{
 					fullmsg.Append("<noApp> ");
 				}
@@ -63,7 +65,7 @@ namespace ProgressOnderwijsUtils.ErrorHandling
 					if (c.Request != null)
 						fullmsg.Append((c.Request.RawUrl ?? "<nullURL>") + " ");
 				}
-				catch
+				catch //generic catch-all exception handling used to permit logging as much as possible.
 				{
 					fullmsg.Append("<noRequest> ");
 				}
@@ -73,10 +75,10 @@ namespace ProgressOnderwijsUtils.ErrorHandling
 			try
 			{
 				//don't use Debug.Write or Trace.Write because trace listener may be Finalized before the last message is pumped.
-				lock (txtlogPath)
+				lock (txtlogPath)//crude synchronization to avoid file-locking issues
 					File.AppendAllText(txtlogPath, fullmsg.ToString());
 			}
-			catch { }
+			catch { }//generic catch-all exception handling used to permit logging as much as possible.
 #endif
 		}
 	}
