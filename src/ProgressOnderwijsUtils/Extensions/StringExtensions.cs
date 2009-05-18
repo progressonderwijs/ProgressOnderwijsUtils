@@ -46,15 +46,5 @@ namespace ProgressOnderwijsUtils
 				return s;
 			}
 		}
-
-		/// <summary>
-		/// Returns string in uppercase if string is not null
-		/// </summary>
-		/// <param name="s">string</param>
-		/// <returns>string</returns>
-		public static string SaveToUpper(this string s)
-		{
-			return s != null ? s.ToUpper() : s;
-		}
 	}
 }
