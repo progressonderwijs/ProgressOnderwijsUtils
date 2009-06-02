@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Globalization;
 using System.Text;
 
 namespace ProgressOnderwijsUtils
@@ -45,6 +43,24 @@ namespace ProgressOnderwijsUtils
 			{
 				return s;
 			}
+		}
+
+		/// <summary>
+		/// Removes all 'diakriet' from the string.
+		/// </summary>
+		/// <param name="s">the string to change</param>
+		/// <returns>the changed string</returns>
+		public static string WithoutDiakriet(this string s)
+		{
+			StringBuilder result = new StringBuilder();
+			foreach (char c in s.ToString().Normalize(NormalizationForm.FormD))
+			{
+				if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+				{
+					result.Append(c);
+				}
+			}
+			return result.ToString().Normalize(NormalizationForm.FormC);
 		}
 	}
 }
