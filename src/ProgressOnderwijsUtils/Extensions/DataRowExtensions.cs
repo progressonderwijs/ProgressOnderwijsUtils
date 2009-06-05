@@ -37,5 +37,15 @@ namespace ProgressOnderwijsUtils
 			object val = row[fieldname];
 			return val == DBNull.Value ? defaultvalue : (T)val;
 		}
+
+		public static T Get<T>(this DataRowView row, string fieldname)
+		{
+			return row.Row.Get<T>(fieldname);
+		}
+
+		public static T Get<T>(this DataRowView row, string fieldname, T defaultvalue)
+		{
+			return row.Row.Get<T>(fieldname, defaultvalue);
+		}
 	}
 }
