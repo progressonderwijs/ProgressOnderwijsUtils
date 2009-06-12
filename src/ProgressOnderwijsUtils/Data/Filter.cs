@@ -10,11 +10,11 @@ namespace ProgressOnderwijsUtils
 		List<Filter> filterLijst;
 		Criterium criterium;
 
-		public List<Filter> FilterLijst { get { return filterLijst; } }
+		public List<Filter> FilterLijst { get { return filterLijst; } set { filterLijst = value; } }
 		public BooleanOperator AndOr { get { return andor; } }
-		public Criterium Criterium { get { return criterium; } }
-		public Filter Parent { get; set; }
-		public int Position { get; set; }
+		public Criterium Criterium { get { return criterium; } set { criterium = value; } }
+		public Filter Parent { get; private set; }
+		public int Position { get; private set; }
 
 		public Filter(Criterium criterium)
 		{
@@ -70,6 +70,10 @@ namespace ProgressOnderwijsUtils
 					criterium = f.criterium;
 					andor = f.andor;
 					filterLijst = f.filterLijst;
+					if (filterLijst != null)
+						foreach (Filter fl in f.filterLijst)
+							fl.Parent = this;
+
 					return false;
 				}
 				return true;		//Zou niet voor moeten kunnen komen, maar retourneer dan maar een leeg filter
