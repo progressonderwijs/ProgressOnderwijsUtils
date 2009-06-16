@@ -73,7 +73,6 @@ namespace ProgressOnderwijsUtils
 					if (filterLijst != null)
 						foreach (Filter fl in f.filterLijst)
 							fl.Parent = this;
-
 					return false;
 				}
 				return true;		//Zou niet voor moeten kunnen komen, maar retourneer dan maar een leeg filter
@@ -100,5 +99,4 @@ namespace ProgressOnderwijsUtils
 			return string.Format(s, parsarray);
 		}
 	}
-
 }

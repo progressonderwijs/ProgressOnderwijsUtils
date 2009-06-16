@@ -15,8 +15,8 @@ namespace ProgressOnderwijsUtils
 		public BooleanComparer Comparer { get { return comparer; } set { comparer = value; } }
 		public object Waarde { get { return waarde; } set { waarde = value; } }
 
-		public static BooleanComparer[] StringComparers { get { return new BooleanComparer[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull }; } }
-		public static BooleanComparer[] NumericComparers { get { return new BooleanComparer[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull }; } }
+		public static BooleanComparer[] StringComparers { get { return new BooleanComparer[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull,/* BooleanComparer.In*/ }; } }
+		public static BooleanComparer[] NumericComparers { get { return new BooleanComparer[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull/*, BooleanComparer.In*/ }; } }
 
 		public Criterium(string kolomnaam, BooleanComparer comparer, object waarde)
 		{
@@ -46,6 +46,13 @@ namespace ProgressOnderwijsUtils
 				case BooleanComparer.NotEqual:
 					pars.Add(waarde);
 					return kolomnaam + "!=" + "{" + (pars.Count - 1).ToString() + "}";
+/*				case BooleanComparer.In:
+					//pars.Add(waarde);
+					string[] nrs = waarde.ToString().Split(new string[] { " ", "\r\n", "," }, StringSplitOptions.RemoveEmptyEntries);
+					string n = "";
+					foreach (string s in nrs)
+						n += s.ToString();
+					return kolomnaam + " in (" + n + ")";*/
 				case BooleanComparer.StartsWith:
 					pars.Add(waarde.ToString() + "%");
 					return kolomnaam + " like " + "{" + (pars.Count - 1).ToString() + "}";
