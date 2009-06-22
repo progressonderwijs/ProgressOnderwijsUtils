@@ -12,8 +12,8 @@ namespace ProgressOnderwijsUtils.WebSupport
 		T cachedItem;
 		bool isItemUpToDate = false;
 		FileSystemWatcher watcher;
-		DirectoryInfo dirToWatch;
-		string filter;
+		protected readonly DirectoryInfo dirToWatch;
+		protected readonly string filter;
 		DateTime lastWrite;
 		protected AbstractCachedData(DirectoryInfo dirToWatch, string filter, bool enableWatcher)
 		{
@@ -36,9 +36,11 @@ namespace ProgressOnderwijsUtils.WebSupport
 
 		public void InvalidateData() { isItemUpToDate = false; cachedItem = default(T); }
 
-		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value; isItemUpToDate = true; lastWrite = dirToWatch.DescendantFiles(filter).Select(fileInfo => fileInfo.LastWriteTimeUtc).Max(); } }
+		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value; isItemUpToDate = true; lastWrite = WatchedFiles.Select(fileInfo => fileInfo.LastWriteTimeUtc).Max(); } }
 
-		public DateTime LastWriteTime { get { return lastWrite; } }
+		protected IEnumerable<FileInfo> WatchedFiles { get { return dirToWatch.DescendantFiles(filter); } }
+
+		public DateTime LastWriteTime { get { if (!isItemUpToDate) Reload(); return lastWrite; } }
 
 		//we need to dispose the connection.  Use the design pattern in
 		//http://msdn.microsoft.com/en-us/library/b1yfkh5e.aspx
