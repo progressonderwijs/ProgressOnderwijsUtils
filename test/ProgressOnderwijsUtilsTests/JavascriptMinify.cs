@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtilsTests
 	[TestFixture]
 	public class JavascriptMinify
 	{
-		const string inputStr = 
+		const string input = 
 @"// is.js
 
 // (c) 2001 Douglas Crockford
@@ -44,17 +44,15 @@ if (is.ua.indexOf('gecko') >= 0) {
     is.gecko = true;
 }
 ";
-		const string outputStr = @"
+		const string outputIdeal = @"
 var is={ie:navigator.appName=='Microsoft Internet Explorer',java:navigator.javaEnabled(),ns:navigator.appName=='Netscape',ua:navigator.userAgent.toLowerCase(),version:parseFloat(navigator.appVersion.substr(21))||parseFloat(navigator.appVersion),win:navigator.platform=='Win32'}
 is.mac=is.ua.indexOf('mac')>=0;if(is.ua.indexOf('opera')>=0){is.ie=is.ns=false;is.opera=true;}
 if(is.ua.indexOf('gecko')>=0){is.ie=is.ns=false;is.gecko=true;}";
 		[Test]
 		public void Minify()
 		{
-			StringReader input = new StringReader(inputStr);
-			StringWriter output = new StringWriter();
-			ProgressOnderwijsUtils.WebSupport.JavascriptMinify.Minify(input,output);
-			Assert.That(output.ToString(), Is.EqualTo(outputStr.Replace("\r\n","\n")));
+			string output = ProgressOnderwijsUtils.WebSupport.JavascriptMinify.Minify(input);
+			Assert.That(output.ToString(), Is.EqualTo(outputIdeal.Replace("\r\n","\n")));
 		}
 	}
 }

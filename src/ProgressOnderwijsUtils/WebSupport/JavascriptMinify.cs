@@ -52,7 +52,14 @@ namespace ProgressOnderwijsUtils.WebSupport
 			this.output = outputParam;
 		}
 
-		public static void Minify(TextReader input, TextWriter output) { new JavascriptMinify(input, output).jsmin(); }
+		public static string Minify(string originalJS)
+		{
+			using (var output = new StringWriter())
+			{
+				new JavascriptMinify(new StringReader(originalJS), output).jsmin();
+				return output.ToString();
+			}
+		}
 
 		/// <summary>
 		/// Copy the input to the output, deleting the characters which are
