@@ -36,7 +36,7 @@ SOFTWARE.
 
 namespace ProgressOnderwijsUtils.WebSupport
 {
-	public class JavaScriptMinifier
+	public class JavascriptMinify
 	{
 		const int EOF = -1;
 
@@ -46,13 +46,13 @@ namespace ProgressOnderwijsUtils.WebSupport
 		int theB;
 		int theLookahead = EOF;
 
-		JavaScriptMinifier(TextReader inputParam, TextWriter outputParam)
+		JavascriptMinify(TextReader inputParam, TextWriter outputParam)
 		{
 			this.input = inputParam;
 			this.output = outputParam;
 		}
 
-		public static void Minify(TextReader input, TextWriter output) { new JavaScriptMinifier(input, output).jsmin(); }
+		public static void Minify(TextReader input, TextWriter output) { new JavascriptMinify(input, output).jsmin(); }
 
 		/// <summary>
 		/// Copy the input to the output, deleting the characters which are
