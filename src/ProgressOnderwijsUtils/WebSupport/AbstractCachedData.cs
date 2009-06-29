@@ -33,7 +33,6 @@ namespace ProgressOnderwijsUtils.WebSupport
 
 		protected virtual void filesystemUpdated(object sender, FileSystemEventArgs e) { InvalidateData(); }
 
-
 		public void InvalidateData() { isItemUpToDate = false; cachedItem = default(T); }
 
 		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value; isItemUpToDate = true; lastWrite = WatchedFiles.Select(fileInfo => fileInfo.LastWriteTimeUtc).Max(); } }
