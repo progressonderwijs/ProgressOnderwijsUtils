@@ -4,12 +4,15 @@ using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
-	public class NoRowsFoundException : ApplicationException { }
-	public class GeenRechtException : ApplicationException 
+	public class NoRowsFoundException : ProgressNetException
+	{
+		public NoRowsFoundException() { }
+	}
+	public class GeenRechtException : ProgressNetException
 	{
 		public GeenRechtException(string msg) : base(msg) { }
 	}
-	public class QueryException : ApplicationException
+	public class QueryException : ProgressNetException
 	{
 		public QueryException(string msg) : base(msg) { }
 		public QueryException() { }
