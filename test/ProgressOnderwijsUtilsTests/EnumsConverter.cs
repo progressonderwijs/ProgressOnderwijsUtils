@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Enums.Interal;
+using ProgressOnderwijsUtils.Enums.Support;
 using ProgressOnderwijsUtils;
 using NUnit.Framework.Constraints;
 
@@ -20,13 +20,13 @@ namespace ProgressOnderwijsUtilsTests
 			public static string FromEnum<TEnum>(TEnum enumV)
 				where TEnum : struct
 			{
-				return EnumConverterHelper.LabelFromEnum<TEnum, string, EnumStringLabelAttribute>(enumV);
+				return EnumConverter.LabelFromEnum<TEnum, string, EnumStringLabelAttribute>(enumV);
 			}
 
 			public static TEnum ToEnum<TEnum>(string val)
 				where TEnum : struct
 			{
-				return EnumConverterHelper.EnumFromLabel<TEnum, string, EnumStringLabelAttribute>(val);
+				return EnumConverter.EnumFromLabel<TEnum, string, EnumStringLabelAttribute>(val);
 			}
 		}
 
@@ -37,13 +37,13 @@ namespace ProgressOnderwijsUtilsTests
 			public static int FromEnum<TEnum>(TEnum enumV)
 				where TEnum : struct
 			{
-				return EnumConverterHelper.LabelFromEnum<TEnum, int, EnumIntLabelAttribute>(enumV);
+				return EnumConverter.LabelFromEnum<TEnum, int, EnumIntLabelAttribute>(enumV);
 			}
 
 			public static TEnum ToEnum<TEnum>(int val)
 				where TEnum : struct
 			{
-				return EnumConverterHelper.EnumFromLabel<TEnum, int, EnumIntLabelAttribute>(val);
+				return EnumConverter.EnumFromLabel<TEnum, int, EnumIntLabelAttribute>(val);
 			}
 
 
@@ -59,25 +59,25 @@ namespace ProgressOnderwijsUtilsTests
 			public static int IntFromEnum<TEnum>(TEnum enumV)
 	where TEnum : struct
 			{
-				return EnumConverterHelper.LabelFromEnum<TEnum, int, EnumStrIntLabelAttribute>(enumV);
+				return EnumConverter.LabelFromEnum<TEnum, int, EnumStrIntLabelAttribute>(enumV);
 			}
 
 			public static TEnum IntToEnum<TEnum>(int val)
 				where TEnum : struct
 			{
-				return EnumConverterHelper.EnumFromLabel<TEnum, int, EnumStrIntLabelAttribute>(val);
+				return EnumConverter.EnumFromLabel<TEnum, int, EnumStrIntLabelAttribute>(val);
 			}
 			
 			public static string StrFromEnum<TEnum>(TEnum enumV)
 	where TEnum : struct
 			{
-				return EnumConverterHelper.LabelFromEnum<TEnum, string, EnumStrIntLabelAttribute>(enumV);
+				return EnumConverter.LabelFromEnum<TEnum, string, EnumStrIntLabelAttribute>(enumV);
 			}
 
 			public static TEnum StrToEnum<TEnum>(string val)
 				where TEnum : struct
 			{
-				return EnumConverterHelper.EnumFromLabel<TEnum, string, EnumStrIntLabelAttribute>(val);
+				return EnumConverter.EnumFromLabel<TEnum, string, EnumStrIntLabelAttribute>(val);
 			}
 
 		}
