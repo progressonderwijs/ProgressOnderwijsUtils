@@ -8,7 +8,7 @@ using System.Xml.Linq;
 
 namespace ProgressOnderwijsUtils.ErrorHandling
 {
-	public static class LocalLog
+	public static class LocalLog //TODO:Log: this should be replaced by some logging framework
 	{
 #if DEBUG
 		const string logdirectory = @"C:\xmllog\";//even IIS may make root directories!

@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace ProgressOnderwijsUtils 
 {
-	public static class DebugDir 
+	public static class DebugDir //TODO:Log: this should be replaced by some logging framework
 	{
 		public const string PROGRESSDEBUGDIR = "c:\\progress\\debug";
 		public const string PROGRESSERRORDIR = "c:\\progress\\error";
@@ -20,14 +20,14 @@ namespace ProgressOnderwijsUtils
 		/// Schrijf de string naar de debugfile 
 		/// </summary>
 		/// <param name="tekst"></param>
-		public static void Schrijf( string tekst) 
+		public static void Schrijf( string tekst) //TODO:Log: this should be replaced by some logging framework
 		{
 #if DEBUG
 			Schrijf(PROGRESSDEBUGDIR, tekst);	
 #endif
 		}
 
-		static void Schrijf(string debugdir, string tekst) 
+		static void Schrijf(string debugdir, string tekst) //TODO:Log: this should be replaced by some logging framework
 		{
 			DateTime dt = DateTime.Now;		
 			string monthyear=((dt.Month)).ToString() + "-" + dt.Year.ToString(); 
@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils
 			}
 		} //end Schrijf
 
-		public  static void schrijfevent(string source, string entry) 
+		public static void schrijfevent(string source, string entry) //TODO:Log: this should be replaced by some logging framework
 		{
 			String log = "Application";
 			if ( !EventLog.SourceExists(source) ) 
