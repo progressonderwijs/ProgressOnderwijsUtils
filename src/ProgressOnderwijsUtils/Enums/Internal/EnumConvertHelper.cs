@@ -4,9 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Reflection;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils.Enums.Interal
 {
-	internal interface IHasLabel<TLabel> { TLabel Label { get; } }
+	//to use these enum-labelling tools, you will need to:
+	// - declare an attribute class (inheriting from IHasLabel<YourLabel'sType> and Attribute)
+	// - make two static helper functions to wrap 
+	//     EnumConverterHelper.LabelFromEnum<TEnum, TLabel, TAttr> and 
+	//     EnumConverterHelper.EnumFromLabel<TEnum, TLabel, TAttr>
+
+	public interface IHasLabel<TLabel> { TLabel Label { get; } }
 	internal interface IConverter<TFrom, TTo> { TTo Convert(TFrom val);	}
 	internal interface IEnumLabeller<TEnum, TLabel>
 	{
@@ -78,16 +84,31 @@ namespace ProgressOnderwijsUtils
 		public TEnum EnumFromLabel(TLabel label) { return enumValueLookup[label]; }
 	}
 
-	internal static class EnumConverterHelper<EnumT, LabelT, AttrT>
-		where EnumT : struct
-		where AttrT : Attribute, IHasLabel<LabelT>
+	internal static class EnumConverterHelper<TEnum, TLabel, TAttr>
+		where TEnum : struct
+		where TAttr : Attribute, IHasLabel<TLabel>
 	{
-		internal class ConverterImpl : IConverter<AttrT, LabelT>
+		internal class ConverterImpl : IConverter<TAttr, TLabel>
 		{
-			public LabelT Convert(AttrT val) { return val.Label; }
+			public TLabel Convert(TAttr val) { return val.Label; }
 		}
 
-		internal static EnumConverterImplementation<EnumT, LabelT, AttrT, ConverterImpl> Converter { get { return EnumConverterImplementation<EnumT, LabelT, AttrT, ConverterImpl>.Converter; } }
+		internal static EnumConverterImplementation<TEnum, TLabel, TAttr, ConverterImpl> Converter { get { return EnumConverterImplementation<TEnum, TLabel, TAttr, ConverterImpl>.Converter; } }
 	}
 
+	public static class EnumConverterHelper
+	{
+		public static TLabel LabelFromEnum<TEnum, TLabel, TAttr>(TEnum val)
+			where TEnum : struct
+			where TAttr : Attribute, IHasLabel<TLabel>
+		{
+			return EnumConverterHelper<TEnum, TLabel, TAttr>.Converter.LabelFromEnum(val);
+		}
+		public static TEnum EnumFromLabel<TEnum, TLabel, TAttr>(TLabel label)
+			where TEnum : struct
+			where TAttr : Attribute, IHasLabel<TLabel>
+		{
+			return EnumConverterHelper<TEnum, TLabel, TAttr>.Converter.EnumFromLabel(label);
+		}
+	}
 }
