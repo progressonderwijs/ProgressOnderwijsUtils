@@ -21,8 +21,8 @@ namespace ProgressOnderwijsUtils
 		public static T Get<T>(this DataRow row, string fieldname)
 		{
 			object val = row[fieldname];
-//			return (T)(val == DBNull.Value ? null : val); //throws exception if (T) is a value type and the value is DBNull.Value
-			return val == DBNull.Value ? default(T) : (T)val;
+			return (T)(val == DBNull.Value ? null : val); //throws exception if (T) is a value type and the value is DBNull.Value
+//			return val == DBNull.Value ? default(T) : (T)val; //this is the old style code (before 2009-07-13) which interprets DBNull.Value as default(T)
 		}
 
 		/// <summary>
