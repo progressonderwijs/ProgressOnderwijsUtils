@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
 	public static class DataRowExtensions
 	{
 		/// <summary>
-		/// Returns content of an attribute or default type initialization (no need to check for DBNull or null)
+		/// Returns content of an attribute replacing DBNull.Value with null.  Throws an exception for value types
 		/// </summary>
 		/// <typeparam name="T">Type</typeparam>
 		/// <param name="row">DataRow</param>
@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		/// <summary>
-		/// Returns content of an attribute or default value (no need to check for DBNull or null)
+		/// Returns content of an attribute, replacing DBNull.Value with the specified default value.
 		/// </summary>
 		/// <typeparam name="T">Type</typeparam>
 		/// <param name="row">DataRow</param>
