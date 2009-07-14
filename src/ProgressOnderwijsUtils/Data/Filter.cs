@@ -78,16 +78,17 @@ namespace ProgressOnderwijsUtils
 				return true;		//Zou niet voor moeten kunnen komen, maar retourneer dan maar een leeg filter
 			}
 		}
-		public string ToString(List<object> pars)
+		public string ToString(List<object> parameterSink)
 		{
 			if (criterium == null)
 			{
 				string retval = "";
 				for (int i = 0; i < filterLijst.Count; ++i)
-					retval += filterLijst[i].ToString(pars) + (i < filterLijst.Count - 1 ? " " + andor.ToString() + " " : "");
+					retval += filterLijst[i].ToString(parameterSink) + (i < filterLijst.Count - 1 ? " " + andor.ToString() + " " : "");
 				return "(" + retval + ")";
 			}
-			return criterium.ToString(pars);
+			else
+				return criterium.ToString(parameterSink);
 		}
 		public override string ToString()
 		{
