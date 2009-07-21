@@ -15,20 +15,22 @@ namespace ProgressOnderwijsUtils
 
 	public struct Tuple<A, B>
 	{
-		public A a;
-		public B b;
+		public readonly A a;
+		public readonly B b;
 		public Tuple(A a, B b)
 		{
 			this.a = a;
 			this.b = b;
 		}
+		public static implicit operator Tuple<A, object>(Tuple<A, B> t) { return new Tuple<A, object>(t.a, t.b); }
+		public static implicit operator Tuple<object, B>(Tuple<A, B> t) { return new Tuple<object, B>(t.a, t.b); }
 	}
 
 	public struct Tuple<A, B, C>
 	{
-		public A a;
-		public B b;
-		public C c;
+		public readonly A a;
+		public readonly B b;
+		public readonly C c;
 		public Tuple(A a, B b, C c)
 		{
 			this.a = a;
@@ -39,10 +41,10 @@ namespace ProgressOnderwijsUtils
 
 	public struct Tuple<A, B, C, D>
 	{
-		public A a;
-		public B b;
-		public C c;
-		public D d;
+		public readonly A a;
+		public readonly B b;
+		public readonly C c;
+		public readonly D d;
 		public Tuple(A a, B b, C c, D d)
 		{
 			this.a = a;
@@ -54,11 +56,11 @@ namespace ProgressOnderwijsUtils
 
 	public struct Tuple<A, B, C, D, E>
 	{
-		public A a;
-		public B b;
-		public C c;
-		public D d;
-		public E e;
+		public readonly A a;
+		public readonly B b;
+		public readonly C c;
+		public readonly D d;
+		public readonly E e;
 		public Tuple(A a, B b, C c, D d, E e)
 		{
 			this.a = a;
@@ -70,12 +72,12 @@ namespace ProgressOnderwijsUtils
 	}
 	public struct Tuple<A, B, C, D, E, F>
 	{
-		public A a;
-		public B b;
-		public C c;
-		public D d;
-		public E e;
-		public F f;
+		public readonly A a;
+		public readonly B b;
+		public readonly C c;
+		public readonly D d;
+		public readonly E e;
+		public readonly F f;
 		public Tuple(A a, B b, C c, D d, E e, F f)
 		{
 			this.a = a;
