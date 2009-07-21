@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
 			this.a = a;
 			this.b = b;
 		}
-		public static implicit operator Tuple<A, object>(Tuple<A, B> t) { return new Tuple<A, object>(t.a, t.b); }
+		public static implicit operator Tuple<A, object>(Tuple<A, B> t) { return new Tuple<A, object>(t.a, t.b); } //in C# 4.0, this won't be necessary, we'll just mark A+B as covariant, i.e. as "out" types.
 		public static implicit operator Tuple<object, B>(Tuple<A, B> t) { return new Tuple<object, B>(t.a, t.b); }
 	}
 
