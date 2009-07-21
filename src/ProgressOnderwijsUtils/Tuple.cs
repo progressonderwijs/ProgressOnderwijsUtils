@@ -4,6 +4,15 @@ using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
+	public static class TupleF
+	{
+		public static Tuple<A, B, C, D, E, F> Create<A, B, C, D, E, F>(A a, B b, C c, D d, E e, F f) { return new Tuple<A, B, C, D, E, F>(a, b, c, d, e, f); }
+		public static Tuple<A, B, C, D, E> Create<A, B, C, D, E>(A a, B b, C c, D d, E e) { return new Tuple<A, B, C, D, E>(a, b, c, d, e); }
+		public static Tuple<A, B, C, D> Create<A, B, C, D>(A a, B b, C c, D d) { return new Tuple<A, B, C, D>(a, b, c, d); }
+		public static Tuple<A, B, C> Create<A, B, C>(A a, B b, C c) { return new Tuple<A, B, C>(a, b, c); }
+		public static Tuple<A, B> Create<A, B>(A a, B b) { return new Tuple<A, B>(a, b); }
+	}
+
 	public struct Tuple<A, B>
 	{
 		public A a;
@@ -27,7 +36,7 @@ namespace ProgressOnderwijsUtils
 			this.c = c;
 		}
 	}
-	
+
 	public struct Tuple<A, B, C, D>
 	{
 		public A a;
@@ -75,102 +84,6 @@ namespace ProgressOnderwijsUtils
 			this.d = d;
 			this.e = e;
 			this.f = f;
-		}
-	}
-
-	public struct Tuple<A, B, C, D, E, F, G>
-	{
-		public A a;
-		public B b;
-		public C c;
-		public D d;
-		public E e;
-		public F f;
-		public G g;
-		public Tuple(A a, B b, C c, D d, E e, F f, G g)
-		{
-			this.a = a;
-			this.b = b;
-			this.c = c;
-			this.d = d;
-			this.e = e;
-			this.f = f;
-			this.g = g;
-		}
-	}
-
-	public struct Tuple<A, B, C, D, E, F, G, H>
-	{
-		public A a;
-		public B b;
-		public C c;
-		public D d;
-		public E e;
-		public F f;
-		public G g;
-		public H h;
-		public Tuple(A a, B b, C c, D d, E e, F f, G g, H h)
-		{
-			this.a = a;
-			this.b = b;
-			this.c = c;
-			this.d = d;
-			this.e = e;
-			this.f = f;
-			this.g = g;
-			this.h = h;
-		}
-	}
-
-	
-	public struct Tuple<A, B, C, D, E, F, G, H, I>
-	{
-		public A a;
-		public B b;
-		public C c;
-		public D d;
-		public E e;
-		public F f;
-		public G g;
-		public H h;
-		public I i;
-		public Tuple(A a, B b, C c, D d, E e, F f, G g, H h, I i)
-		{
-			this.a = a;
-			this.b = b;
-			this.c = c;
-			this.d = d;
-			this.e = e;
-			this.f = f;
-			this.g = g;
-			this.h = h;
-			this.i = i;
-		}
-	}
-
-	public struct Tuple<A, B, C, D, E, F,G,H,I,J>
-	{
-		public A a;
-		public B b;
-		public C c;
-		public D d;
-		public E e;
-		public F f;
-		public G g;
-		public H h;
-		public I i;
-		public J j;
-		public Tuple(A a, B b, C c, D d, E e, F f,G g,H h,I i,J j) {
-			this.a = a;
-			this.b = b;
-			this.c = c;
-			this.d = d;
-			this.e = e;
-			this.f = f;
-			this.g = g;
-			this.h = h;
-			this.i = i;
-			this.j = j;
 		}
 	}
 }
