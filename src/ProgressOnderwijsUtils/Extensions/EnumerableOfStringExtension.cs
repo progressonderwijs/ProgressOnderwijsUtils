@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 				sb.Append(s);
 			return sb.ToString();
 		}
-		public static string Join(this IEnumerable<string> strings, string separator)
+		public static string JoinStrings(this IEnumerable<string> strings, string separator)
 		{
 			StringBuilder sb = new StringBuilder();
 			bool addsep = false;
