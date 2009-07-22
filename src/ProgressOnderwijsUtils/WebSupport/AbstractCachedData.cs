@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using ProgressOnderwijsUtils.Extensions;
+using System.IO.Compression;
 
 namespace ProgressOnderwijsUtils.WebSupport
 {
@@ -14,6 +15,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 		FileSystemWatcher watcher;
 		protected readonly DirectoryInfo dirToWatch;
 		protected readonly string filter;
+
 		DateTime lastWrite;
 		protected AbstractCachedData(DirectoryInfo dirToWatch, string filter, bool enableWatcher)
 		{
@@ -35,11 +37,12 @@ namespace ProgressOnderwijsUtils.WebSupport
 
 		public void InvalidateData() { isItemUpToDate = false; cachedItem = default(T); }
 
-		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value; isItemUpToDate = true; lastWrite = WatchedFiles.Select(fileInfo => fileInfo.LastWriteTimeUtc).Max(); } }
+		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value;  isItemUpToDate = true; lastWrite = WatchedFiles.Select(fileInfo => fileInfo.LastWriteTimeUtc).Max(); } }
 
 		protected IEnumerable<FileInfo> WatchedFiles { get { return dirToWatch.DescendantFiles(filter); } }
 
 		public DateTime LastWriteTime { get { if (!isItemUpToDate) Reload(); return lastWrite; } }
+
 
 		//we need to dispose the connection.  Use the design pattern in
 		//http://msdn.microsoft.com/en-us/library/b1yfkh5e.aspx
@@ -62,4 +65,46 @@ namespace ProgressOnderwijsUtils.WebSupport
 		//no finalizer since no unmanaged state.
 
 	}
+
+
+	public class CompressedUtf8String
+	{
+		static byte[] ReadFully(Stream stream) //from:http://www.yoda.arachsys.com/csharp/readbinary.html
+		{
+			byte[] buffer = new byte[32768];
+			using (MemoryStream ms = new MemoryStream())
+			{
+				while (true)
+				{
+					int read = stream.Read(buffer, 0, buffer.Length);
+					if (read <= 0)
+						return ms.ToArray();
+					ms.Write(buffer, 0, read);
+				}
+			}
+		}
+
+		public string StringData
+		{
+			get
+			{
+				using (var gzipStream = new GZipStream(new MemoryStream(GzippedData), CompressionMode.Decompress, false))
+					return Encoding.UTF8.GetString(ReadFully(gzipStream));
+			}
+		}
+		public readonly byte[] GzippedData;
+		public CompressedUtf8String(string stringData)
+		{
+			using (MemoryStream compressedData = new MemoryStream())
+			{
+				var encodedData = Encoding.UTF8.GetBytes(stringData);
+				using (var gzipStream = new GZipStream(compressedData, CompressionMode.Compress))
+					gzipStream.Write(encodedData,0,encodedData.Length);
+
+				GzippedData = compressedData.ToArray();
+			}
+
+		}
+	}
+
 }
