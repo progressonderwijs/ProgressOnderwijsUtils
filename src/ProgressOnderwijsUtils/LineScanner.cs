@@ -10,12 +10,12 @@ namespace ProgressOnderwijsUtils
 	public class LineScanner
 	{
 		private string[] lines;
-		int position = 0;
+		int position;
 
 		public LineScanner(Stream stream)
 		{
-			StreamReader streamreader = new StreamReader(stream);
-			lines = Regex.Split(streamreader.ReadToEnd(), "\r\n|\n");
+			using (StreamReader streamreader = new StreamReader(stream))
+				lines = Regex.Split(streamreader.ReadToEnd(), "\r\n|\n");
 		}
 
 		public LineScanner(string s)

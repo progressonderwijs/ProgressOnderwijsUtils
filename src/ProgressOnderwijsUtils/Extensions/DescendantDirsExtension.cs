@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ProgressOnderwijsUtils.Functional;
 using System.IO;
 
 namespace ProgressOnderwijsUtils.Extensions
@@ -13,12 +12,10 @@ namespace ProgressOnderwijsUtils.Extensions
 	/// </summary>
 	public static class DescendantDirsExtension
 	{
-		public static IEnumerable<DirectoryInfo> TryGetDirectories(this DirectoryInfo dir)
-		{
-			return F.Swallow(() => dir.GetDirectories(), () => new DirectoryInfo[] { });
-		}
-		public static IEnumerable<FileInfo> TryGetFiles(this DirectoryInfo dir) { return F.Swallow(() => dir.GetFiles(), () => new FileInfo[] { }); }
-		public static IEnumerable<FileInfo> TryGetFiles(this DirectoryInfo dir,string filter) { return F.Swallow(() => dir.GetFiles(filter), () => new FileInfo[] { }); }
+		public static IEnumerable<DirectoryInfo> TryGetDirectories(this DirectoryInfo dir) { try { return dir.GetDirectories(); } catch (UnauthorizedAccessException) { return new DirectoryInfo[] { }; } }
+		public static IEnumerable<FileInfo> TryGetFiles(this DirectoryInfo dir) { try { return dir.GetFiles(); } catch (UnauthorizedAccessException) { return new FileInfo[] { }; } }
+		public static IEnumerable<FileInfo> TryGetFiles(this DirectoryInfo dir, string filter) { try { return dir.GetFiles(filter); } catch (UnauthorizedAccessException) { return new FileInfo[] { }; } }
+		public static string Test() { return string.Join("\n", new DirectoryInfo(@"C:\").DescendantDirs().ToArray().Select(d=>d.FullName).ToArray()); }
 		public static IEnumerable<DirectoryInfo> DescendantDirs(this DirectoryInfo dir)
 		{
 			return Enumerable.Repeat(dir, 1).Concat(

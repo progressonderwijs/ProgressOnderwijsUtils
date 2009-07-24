@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils.Enums.Support;
 
 namespace ProgressOnderwijsUtils.Enums
 {
-	public class XsltCodeAttribute : Attribute, IHasLabel<string>
+	public sealed class XsltCodeAttribute : Attribute, IHasLabel<string>
 	{
 		public XsltCodeAttribute(string code) { Label = code; }
 		public string Label { get; private set; }

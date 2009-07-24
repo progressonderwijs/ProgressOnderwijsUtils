@@ -350,7 +350,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 		/// </summary>
 		/// <param name="c">the character to test</param>
 		/// <returns>whether it's an alphanumeric character.</returns>
-		bool isAlphanum(int c)
+		static bool isAlphanum(int c)
 		{
 			return ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') ||
 				(c >= 'A' && c <= 'Z') || c == '_' || c == '$' || c == '\\' ||

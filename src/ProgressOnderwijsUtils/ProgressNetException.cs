@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 
 namespace ProgressOnderwijsUtils
 {
+	[Serializable]
 	public class ProgressNetException : Exception
 	{ //TODO: this exception type might provide for TextDef integration such that throwing code can indicate the text-based error to show users.
 		public ProgressNetException() : base() { }

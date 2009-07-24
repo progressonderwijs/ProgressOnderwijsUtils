@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 			}
 		}
 
-		protected virtual void filesystemUpdated(object sender, FileSystemEventArgs e) { InvalidateData(); }
+		void filesystemUpdated(object sender, FileSystemEventArgs e) { InvalidateData(); }
 
 		public void InvalidateData() { isItemUpToDate = false; cachedItem = default(T); }
 

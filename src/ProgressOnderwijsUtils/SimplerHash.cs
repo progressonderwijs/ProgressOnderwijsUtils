@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 
 namespace ProgressOnderwijsUtils
 {
-	public class SimplerHash
+	public static class SimplerHash
 	{
 		public static bool MD5VerifyHash(string plainText, string hashString)
 		{

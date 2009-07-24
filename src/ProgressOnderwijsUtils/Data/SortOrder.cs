@@ -7,14 +7,12 @@ namespace ProgressOnderwijsUtils
 	/// <summary>
 	/// Bevat gestuctureerde orderinginformatie
 	/// </summary>
-	[Serializable]public class SortOrder : List<SortColumn>
+	[Serializable]
+	public class SortOrder : List<SortColumn>
 	{
-		SortColumn basesortorder = null;
-		public SortColumn BaseSortOrder { set { basesortorder = value; } get { return basesortorder; } }
-		
-		public SortOrder()
-		{
-		}
+		public SortColumn BaseSortOrder { set;get;}
+
+		public SortOrder() { }
 
 		public int OrderingIndex(string column, SortDirection direction)
 		{
@@ -74,7 +72,8 @@ namespace ProgressOnderwijsUtils
 		}*/
 	}
 
-	[Serializable] public class SortColumn : IEquatable<SortColumn>
+	[Serializable]
+	public class SortColumn : IEquatable<SortColumn>
 	{
 		string column;
 		SortDirection direction;
