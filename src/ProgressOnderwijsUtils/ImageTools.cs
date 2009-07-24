@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;//this is not recommended?? downsides are unclear though some suggest it might be slow.
@@ -19,7 +20,8 @@ namespace ProgressOnderwijsUtils
 		/// Sets a graphics object to use high quality primitives (mostly for various scaling/blending operations)
 		/// </summary>
 		/// <param name="g"></param>
-		public static void setHQ(Graphics g) {
+		public static void setHQ(Graphics g)
+		{
 			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
 			g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
 			g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
@@ -28,7 +30,7 @@ namespace ProgressOnderwijsUtils
 
 		public static Bitmap Resize(Image oldImage, int newWidth, int newHeight)
 		{
-			Bitmap bitmap=null;
+			Bitmap bitmap = null;
 			try
 			{
 				bitmap = new Bitmap(newWidth, newHeight);
@@ -40,7 +42,7 @@ namespace ProgressOnderwijsUtils
 			}
 			catch
 			{
-				if (bitmap!=null) bitmap.Dispose();
+				if (bitmap != null) bitmap.Dispose();
 				throw;
 			}
 			return bitmap;
@@ -64,18 +66,18 @@ namespace ProgressOnderwijsUtils
 			Rectangle clipRectangle = ImageTools.ClipRectangle(oldWidth, oldHeight, newWidth, newHeight);
 			if (clipRectangle.Width * clipRectangle.Height < newWidth * newHeight)
 			{
-				newWidth=clipRectangle.Width;
-				newHeight=clipRectangle.Height;
+				newWidth = clipRectangle.Width;
+				newHeight = clipRectangle.Height;
 			}
 
 			try
 			{
-				bitmap = new Bitmap(newWidth,newHeight);
+				bitmap = new Bitmap(newWidth, newHeight);
 				using (Graphics g = Graphics.FromImage(bitmap))
 				{
 					setHQ(g);
 					g.DrawImage(oldImage,
-						new Rectangle(0,0,newWidth,newHeight),
+						new Rectangle(0, 0, newWidth, newHeight),
 						clipRectangle, GraphicsUnit.Pixel);
 				}//done with drawing on "g"
 			}
@@ -109,21 +111,20 @@ namespace ProgressOnderwijsUtils
 			//is the input image too wide or too tall?
 			bool tooWide = oldWidth * aspectHeight > aspectWidth * oldHeight;
 
-			int clipWidth = tooWide ? (oldHeight * aspectWidth+aspectHeight/2) / aspectHeight : oldWidth;
-			int clipHeight = tooWide ? oldHeight : (oldWidth * aspectHeight + aspectWidth/2) / aspectWidth;
+			int clipWidth = tooWide ? (oldHeight * aspectWidth + aspectHeight / 2) / aspectHeight : oldWidth;
+			int clipHeight = tooWide ? oldHeight : (oldWidth * aspectHeight + aspectWidth / 2) / aspectWidth;
 			int clipX = (oldWidth - clipWidth) / 2;
 			int clipY = (oldHeight - clipHeight) / 2;
 			return new Rectangle(clipX, clipY, clipWidth, clipHeight);
 		}
 
-		public static void SaveImageAsJpeg(Image image, Stream stream, int quality)
+		public static void SaveImageAsJpeg(Image image, Stream outputStream, int quality)
 		{
-			ImageCodecInfo[] Info = ImageCodecInfo.GetImageEncoders();
-			ImageCodecInfo jpgInfo = Array.Find(Info, delegate(ImageCodecInfo i) { return i.MimeType == "image/jpeg"; });
+			ImageCodecInfo jpgInfo = ImageCodecInfo.GetImageEncoders().Where(codecInfo => codecInfo.MimeType == "image/jpeg").First();
 			using (EncoderParameters encParams = new EncoderParameters(1))
 			{
-				encParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)quality);
-				image.Save(stream, jpgInfo, encParams);
+				encParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)quality);//quality should be in the range [0..100]
+				image.Save(outputStream, jpgInfo, encParams);
 			}
 		}
 
