@@ -4,6 +4,7 @@ using System.IO;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Threading;
 
 namespace ProgressOnderwijsUtils
 {
@@ -11,6 +12,26 @@ namespace ProgressOnderwijsUtils
 	{
 		public const string PROGRESSDEBUGDIR = "c:\\progress\\debug";
 		public const string PROGRESSERRORDIR = "c:\\progress\\error";
+		public const string ProgressRadiusUnrecoverable = @"C:\progress\radius.unrecoverable";
+
+		public static void ClaimRadiusUnrecoverable()
+		{
+			File.WriteAllText(ProgressRadiusUnrecoverable, "Unrecoverable Radius Error Occurred at " + DateTime.Now + ", please reboot IIS.\n");
+		}
+
+		public static void WatchForRadiusFailure(TimeSpan pollingTime, Action whenFailureDetected)
+		{
+			while (true)
+			{
+				if (File.Exists(ProgressRadiusUnrecoverable))
+				{
+					File.Delete(ProgressRadiusUnrecoverable);
+					whenFailureDetected();
+				}
+				Thread.Sleep(pollingTime);
+			}
+		}
+
 
 		const string DEBUGFILE = "debug.txt";
 
