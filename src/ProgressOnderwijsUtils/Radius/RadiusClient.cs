@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.Radius
 
 		const int UDP_TTL = 20;
 		const int pRadiusPort = 1812;
-		const int pUDPTimeout = 5;
+		const int udpTimeoutMs = 500;
 
 		//see http://tools.ietf.org/html/rfc2138
 
@@ -94,8 +94,8 @@ namespace ProgressOnderwijsUtils.Radius
 				byte[] response;
 				using (UdpClient udpClient = new UdpClient())
 				{
-					udpClient.Client.SendTimeout = pUDPTimeout;
-					udpClient.Client.ReceiveTimeout = pUDPTimeout;
+					udpClient.Client.SendTimeout = udpTimeoutMs;
+					udpClient.Client.ReceiveTimeout = udpTimeoutMs;
 					udpClient.Ttl = UDP_TTL;
 					IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
