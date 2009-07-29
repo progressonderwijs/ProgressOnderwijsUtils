@@ -16,6 +16,7 @@ namespace ProgressOnderwijsUtils
 
 		public static void ClaimRadiusUnrecoverable()
 		{
+			Directory.CreateDirectory(Path.GetDirectoryName(ProgressRadiusUnrecoverable));
 			File.WriteAllText(ProgressRadiusUnrecoverable, "Unrecoverable Radius Error Occurred at " + DateTime.Now + ", please reboot IIS.\n");
 		}
 
