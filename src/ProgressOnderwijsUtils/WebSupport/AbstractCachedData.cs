@@ -37,9 +37,19 @@ namespace ProgressOnderwijsUtils.WebSupport
 
 		public void InvalidateData() { isItemUpToDate = false; cachedItem = default(T); }
 
-		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value;  isItemUpToDate = true; lastWrite = WatchedFiles.Select(fileInfo => fileInfo.LastWriteTimeUtc).Max(); } }
+		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value; isItemUpToDate = true; lastWrite = WatchedFiles.Select(fileInfo => fileInfo.LastWriteTimeUtc).Max(); } }
 
-		protected IEnumerable<FileInfo> WatchedFiles { get { return dirToWatch.DescendantFiles(filter); } }
+		public IEnumerable<FileInfo> WatchedFiles { get { return dirToWatch.DescendantFiles(filter); } }
+		public DirectoryInfo WatchedDirectory { get { return dirToWatch; } }
+		public IEnumerable<Uri> WatchedFilesAsRelativeUris(DirectoryInfo baseDirectory)
+		{
+			string path = baseDirectory.FullName;
+			if(!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+				path = path+Path.DirectorySeparatorChar;
+			Uri baseUri = new Uri(path, UriKind.Absolute); 
+			return WatchedFiles.Select(fi => baseUri.MakeRelativeUri(new Uri(fi.FullName, UriKind.Absolute)));
+		}
+
 
 		public DateTime LastWriteTime { get { if (!isItemUpToDate) Reload(); return lastWrite; } }
 
@@ -99,7 +109,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 			{
 				var encodedData = Encoding.UTF8.GetBytes(stringData);
 				using (var gzipStream = new GZipStream(compressedData, CompressionMode.Compress))
-					gzipStream.Write(encodedData,0,encodedData.Length);
+					gzipStream.Write(encodedData, 0, encodedData.Length);
 
 				GzippedData = compressedData.ToArray();
 			}
