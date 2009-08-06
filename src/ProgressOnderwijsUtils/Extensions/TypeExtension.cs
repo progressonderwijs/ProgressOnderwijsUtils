@@ -16,5 +16,10 @@ namespace ProgressOnderwijsUtils
 				? type.GetGenericArguments()[0] 
 				: null;
 		}
+
+		public static bool CanBeNull(this Type type)
+		{
+			return !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+		}
 	}
 }
