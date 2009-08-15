@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
 		///	 => de string [jantje] is na deze operatie:
 		///	 => "Jantje zag eens pruimen hangen.<br />O, als eieren!"
 		/// </example>
-		/// <seealso>Tool.Utils.ReOpts</seealso>
+		/// <seealso>Tool.Utils.ReOpts en overload hieronder</seealso>
 		/// <canblame>Renzo Kooi</canblame>
 		/// <datelast value="2009/08/15"/>
 		/// <returns>gemodificeerde string</returns>
@@ -116,6 +116,35 @@ namespace ProgressOnderwijsUtils
 				}			
 			}
 			return initial;
+		}
+		/// <remarks>
+		/// MultiReplace overload, waarbij de gemodificeerde string
+		/// naar 'n out wordt teruggezet. Zo kun je dus (zie voorbeeld
+		/// hierboven) [jantje] ook als volgt modificeren:
+		/// jantje.MultiReplace(
+		///		new string[] {@"pruimen","pruimen hangen",
+		///					  @"(hangen)","$1.<br />O, als eieren!"},
+		///		"m", 
+		///		out jantje);
+		/// </remarks>
+		public static void MultiReplace(this string initial, string[] searchreplace, string opts, out string outstr)
+		{
+			if (searchreplace.Length % 2 == 0)
+			{
+				string regex = searchreplace[0], replacewith = searchreplace[1];
+				RegexOptions ro = ProgressOnderwijsUtils.Utils.ReOpts(opts);
+				initial = Regex.Replace(initial, regex, replacewith, ro);
+
+				if (searchreplace.Length > 2)
+				{
+					for (int i = 2; i < searchreplace.Length; i += 2)
+					{
+						string[] s_ = new string[2] { searchreplace[i], searchreplace[i + 1] };
+						initial.MultiReplace(s_, opts, out initial);
+					}
+				}
+			}
+			outstr = initial;
 		}
 	}
 }
