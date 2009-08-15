@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
 {
@@ -62,5 +63,60 @@ namespace ProgressOnderwijsUtils
 			}
 			return result.ToString().Normalize(NormalizationForm.FormC);
 		}
+
+		///<summary>
+		/// Vervang 1 of meer substrings in de (huidige) string
+		/// door een andere string. Zoek en vervang is een array van strings
+		/// [searchreplace], waarin 1 of meer paren van 'n reguliere expressie 
+		/// of substring (zoek) en een vervangstring zitten.
+		/// In de 3e parameter de opties, in de vorm van een string met 
+		/// optie-letters gescheiden door een komma, die via ReOpts (zie 
+		/// Tools.Utils.ReOpts) naar een RegexOptions type worden omgezet. 
+		/// Mag ook een lege string zijn (geen opties).
+		/// </summary>
+		/// <param name="this initialstr">de string waarop de method wordt toegepast</param>
+		/// <param name="searchreplace">(array) paren van zoek- (substring/regex) en vervangstring</param>
+		/// <param name="opts">(string) opties voor vervanging</param>
+		/// <example>
+		/// <c>
+		///  string jantje = "Jantje zag eens pruimen";
+		///  jantje = 
+		///   jantje.MultiReplace(
+		///		new string[] {@"pruimen","pruimen hangen",
+		///					  @"(hangen)","$1.<br />O, als eieren!"},
+		///		"m");
+		///	 </c>	
+		///	 => de string [jantje] is na deze operatie:
+		///	 => "Jantje zag eens pruimen hangen.<br />O, als eieren!"
+		/// </example>
+		/// <seealso>Tool.Utils.ReOpts</seealso>
+		/// <canblame>Renzo Kooi</canblame>
+		/// <datelast value="2009/08/15"/>
+		/// <returns>gemodificeerde string</returns>
+		/// <remarks>
+		/// door verplaatsing naar StringExtensions kan method chaining
+		/// worden toegepast.
+		/// TODO: tweede parameter zou efficiënter kunnen?
+		/// </remarks>
+		public static string MultiReplace(this string initial, string[] searchreplace, string opts)
+		{
+			if (searchreplace.Length % 2 == 0)
+			{
+				string regex = searchreplace[0], replacewith = searchreplace[1];
+				RegexOptions ro = ProgressOnderwijsUtils.Utils.ReOpts(opts);
+				initial = Regex.Replace(initial, regex, replacewith, ro);
+
+				if (searchreplace.Length > 2)
+				{
+					for (int i = 2; i < searchreplace.Length; i += 2)
+					{
+						string[] s_ = new string[2] { searchreplace[i], searchreplace[i + 1] };
+						initial = initial.MultiReplace(s_, opts);
+					}
+				}			
+			}
+			return initial;
+		}
 	}
 }
+
