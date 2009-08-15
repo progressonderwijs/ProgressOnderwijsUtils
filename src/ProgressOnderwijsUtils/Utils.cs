@@ -49,10 +49,14 @@ namespace ProgressOnderwijsUtils
 		/// <c>
 		/// RegexOptions ro = ReOpts("i,m,c");
 		/// </c>
-		/// => makes a regex operation case insensitive,
+		/// => maakt een regex operatie case insensitive,
 		///    multiline and culture invariant
-		/// </example>   
-		/// <canblame name="Renzo Kooi"/>
+		/// </example>
+		/// <param name="x">(string) komma gescheiden letters of lege string
+		/// bv "i,m" of "", waarbij
+		/// i=ignorecase, m=multiline, s=singleline, r=righttoleft,
+		/// e=explicitcapture en c=cultureinvariant</param>
+		/// <canblame name="Renzo Kooi" value="but gently please"/>
 		/// <datelast value="2009/08/15"/>
 		/// <returns>RegexOptions enumerator</returns>
 		public static RegexOptions ReOpts(string x)
@@ -85,14 +89,14 @@ namespace ProgressOnderwijsUtils
 		/// door een andere string. Zoek en vervang is een array van strings
 		/// [searchreplace], waarin 1 of meer paren van 'n reguliere expressie 
 		/// of substring (zoek) en een vervangstring zitten.
-		/// De 3e parameter zijn de opties, in de vorm van een string met 
+		/// In de 3e parameter de opties, in de vorm van een string met 
 		/// optie-letters gescheiden door een komma, die via ReOpts (zie 
 		/// Tools.Utils.ReOpts) naar een RegexOptions type worden omgezet. 
 		/// Mag ook een lege string zijn (geen opties).
 		/// </summary>
 		/// <param name="initialstr">de string waarin substring(s) vervangen moeten worden</param>
-		/// <param name="searchreplace">paren van zoek- (substring/regex) en vervangstring</param>
-		/// <param name="opts">opties voor vervanging</param>
+		/// <param name="searchreplace">(array) paren van zoek- (substring/regex) en vervangstring</param>
+		/// <param name="opts">(string) opties voor vervanging</param>
 		/// <example>
 		/// <c>
 		///  string jantje = "Jantje zag eens pruimen";
@@ -110,7 +114,7 @@ namespace ProgressOnderwijsUtils
 		/// <canblame>Renzo Kooi</canblame>
 		/// <datelast value="2009/08/15"/>
 		/// <returns>gemodificeerde string</returns>
-		/// <TODO>tweede parameter zou efficiënter kunnen</TODO>
+		/// <remarks>TODO: tweede parameter zou efficiënter kunnen</remarks>
 		public static string MultiReplace(string initialstr, string[] searchreplace, string opts)
 		{
 			string retval = initialstr;
@@ -124,7 +128,6 @@ namespace ProgressOnderwijsUtils
 				*/
 				return initialstr;
 			}
-
 			string regex = searchreplace[0], replacewith = searchreplace[1];
 			RegexOptions ro = ReOpts(opts);
 			retval = Regex.Replace(retval, regex, replacewith, ro);
