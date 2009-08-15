@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
 {
@@ -38,6 +39,69 @@ namespace ProgressOnderwijsUtils
 			for (int i = 1; getal != 0; getal /= 10, ++i)
 				res += i * (getal % 10);
 			return res != 0 && res % 11 == 0;
+		}
+
+		/*
+		 * initialiseert opties voor een reguliere expressie
+		 * zie switch-case voor mogelijke opties.
+		 * RK20090815
+		 */
+		public static RegexOptions ReOpts(string x)
+		{
+			RegexOptions opts = new RegexOptions();
+
+			if (x == "" || x == "none")
+				return opts = RegexOptions.None;
+
+			string[] s = x.Split(',');
+
+			for (int i = s.Length - 1; i >= 0; i--)
+			{
+				switch (s[i])
+				{
+					case "i": opts |= RegexOptions.IgnoreCase; break;
+					case "m": opts |= RegexOptions.Multiline; break;
+					case "s": opts |= RegexOptions.Singleline; break;
+					case "r": opts |= RegexOptions.RightToLeft; break;
+					case "e": opts |= RegexOptions.ExplicitCapture; break;
+					case "c": opts |= RegexOptions.CultureInvariant; break;
+					default: opts = RegexOptions.None; break;
+				}
+			}
+			return opts;
+		}
+		/*
+		 * MultiReplace: vervang 1 of meer substrings in [initialstring]
+		 * door een andere string. Zoek en vervang is een array van strings
+		 * [searchreplace], waarin 1 of meer paren van 'n reguliere expressie 
+		 * (zoek) en een vervangstring zitten.
+		 * De 3e parameter zijn de opties, in de vorm van een string met 
+		 * optie-letters gescheiden door een komma, die via ReOpts (zie hierboven)
+		 * naar een RegexOptions type worden omgezet. Mag ook een lege string
+		 * zijn (geen opties).
+		 * RK20090815
+		 */
+		public static string MultiReplace(string initialstr, string[] searchreplace, string opts)
+		{
+			string retval = initialstr;
+			if (searchreplace.Length % 2 != 0)
+			{
+				return initialstr;
+			}
+
+			string regex = searchreplace[0], replacewith = searchreplace[1];
+			RegexOptions ro = ReOpts(opts);
+			retval = Regex.Replace(retval, regex, replacewith, ro);
+
+			if (searchreplace.Length > 2)
+			{
+				for (int i = 0; i < searchreplace.Length; i += 2)
+				{
+					string[] s_ = new string[2] { searchreplace[i], searchreplace[i + 1] };
+					retval = MultiReplace(retval,s_,opts);
+				}
+			}
+			return retval;
 		}
 	}
 }
