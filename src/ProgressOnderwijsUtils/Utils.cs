@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
 {
-	public delegate T Factory<T>();
 	public static class Utils
 	{
 		public static string UitgebreideFout(Exception e, string tekst)
