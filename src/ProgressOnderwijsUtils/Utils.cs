@@ -43,7 +43,6 @@ namespace ProgressOnderwijsUtils
 
 		///<summary>
 		/// initialiseert opties voor een reguliere expressie
-		/// zie switch-case voor mogelijke opties.
 		/// </summary>
 		/// <example>
 		/// <c>
@@ -83,20 +82,5 @@ namespace ProgressOnderwijsUtils
 			}
 			return opts;
 		}
-
-		/// <summary>
-		/// zie StringExtensions voor details.
-		/// </summary>
-		/// <seealso cref="Tools.StringExtensions"/>
-		/// <param name="initialstr">string waarin vervangen moet worden</param>
-		/// <param name="searchreplace">(array) paren van zoek- (substring/regex) en vervangstring</param>
-		/// <param name="opts">(string) opties voor vervanging</param>
-		/// <returns>string (gemodificeerd)</returns>
-		/// <remarks></remarks>
-		public static string MultiReplace(string initialstr, string[] searchreplace, string opts)
-		{
-			return initialstr.MultiReplace(searchreplace, opts);
-		}
-		
 	}
 }

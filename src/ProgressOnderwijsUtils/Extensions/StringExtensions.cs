@@ -76,66 +76,35 @@ namespace ProgressOnderwijsUtils
 		/// Tools.Utils.ReOpts) naar een RegexOptions type worden omgezet. 
 		/// Mag ook een lege string zijn (geen opties).
 		/// </summary>
-		/// <param name="this initialstr">de string waarop de method wordt toegepast</param>
-		/// <param name="searchreplace">(array) paren van zoek- (substring/regex) en vervangstring</param>
-		/// <param name="opts">(string) opties voor vervanging</param>
+		/// <param name="searchreplace">new Tuple([Zoek], [Vervang])</param>
 		/// <example>
-		/// <c>
+		/// <code>
 		///  string jantje = "Jantje zag eens pruimen";
 		///  jantje = 
 		///   jantje.MultiReplace(
 		///		new string[] {@"pruimen","pruimen hangen",
 		///					  @"(hangen)","$1.<br />O, als eieren!"},
 		///		"m");
-		///	 </c>	
+		///	 </code>	
 		///	 => de string [jantje] is na deze operatie:
 		///	 => "Jantje zag eens pruimen hangen.<br />O, als eieren!"
 		/// </example>
-		/// <seealso>Tool.Utils.ReOpts en overload hieronder</seealso>
 		/// <canblame>Renzo Kooi</canblame>
 		/// <datelast value="2009/08/15"/>
 		/// <returns>gemodificeerde string</returns>
 		/// <remarks>
-		/// door verplaatsing naar StringExtensions kan method chaining
-		/// worden toegepast.
-		/// TODO: tweede parameter zou efficiënter kunnen?
+		/// door verplaatsing naar StringExtensions en er dus een
+		/// extension method van te maken, kan method chaining
+		/// worden gebruikt: als in
+		/// [string].MultiReplace([params]).MultiReplace([params])...
 		/// </remarks>
-		public static string MultiReplace(this string initial, string[] searchreplace, string opts)
+		public static string MultiReplace(this string initial, RegexOptions opts, params Tuple<string,string>[] searchreplace)
 		{
-			if (searchreplace.Length % 2 == 0)
-			{
-				string regex = searchreplace[0], replacewith = searchreplace[1];
-				RegexOptions ro = ProgressOnderwijsUtils.Utils.ReOpts(opts);
-				initial = Regex.Replace(initial, regex, replacewith, ro);
-
-				if (searchreplace.Length > 2)
-				{
-					for (int i = 2; i < searchreplace.Length; i += 2)
-					{
-						string[] s_ = new string[2] { searchreplace[i], searchreplace[i + 1] };
-						initial = initial.MultiReplace(s_, opts);
-					}
-				}			
+			foreach(var replaceTuple in searchreplace) {
+				string regex = replaceTuple.a, replacewith = replaceTuple.b;
+				initial = Regex.Replace(initial, regex, replacewith, opts);
 			}
 			return initial;
-		}
-		/// <remarks>
-		/// MultiReplace overload, waarbij de gemodificeerde string
-		/// naar 'n outputvariable wordt teruggezet. Zo kun je dus (zie voorbeeld
-		/// hierboven) [jantje] ook als volgt modificeren:
-		/// jantje.MultiReplace(
-		///		new string[] {@"pruimen","pruimen hangen",
-		///					  @"(hangen)","$1.<br />O, als eieren!"},
-		///		"m", 
-		///		out jantje); <==
-		/// </remarks>
-		public static void MultiReplace(this string initial, string[] searchreplace, string opts, out string outstr)
-		{
-			outstr = initial;
-			if (searchreplace.Length % 2 == 0)
-			{
-				outstr = initial.MultiReplace(searchreplace, opts);
-			}	
 		}
 	}
 }
