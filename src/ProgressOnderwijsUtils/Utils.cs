@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
 {
+
 	public static class Utils
 	{
 		public static string UitgebreideFout(Exception e, string tekst)
@@ -29,7 +30,8 @@ namespace ProgressOnderwijsUtils
 
 		public static void TestErrorNormalException()
 		{
-			throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
+			throw new ApplicationException("This is a test exception intended to test fault-tolerance.  " +
+				                           "User's shouldn't see it, of course!");
 		}
 
 		public static bool ElfProef(int getal)
@@ -38,48 +40,6 @@ namespace ProgressOnderwijsUtils
 			for (int i = 1; getal != 0; getal /= 10, ++i)
 				res += i * (getal % 10);
 			return res != 0 && res % 11 == 0;
-		}
-
-		///<summary>
-		/// initialiseert opties voor een reguliere expressie
-		/// </summary>
-		/// <example>
-		/// <c>
-		/// RegexOptions ro = ReOpts("i,m,c");
-		/// </c>
-		/// => maakt een regex operatie case insensitive,
-		///    multiline and culture invariant
-		/// </example>
-		/// <param name="x">(string) komma gescheiden letters of lege string
-		/// bv "i,m" of "", waarbij
-		/// i=ignorecase, m=multiline, s=singleline, r=righttoleft,
-		/// e=explicitcapture en c=cultureinvariant</param>
-		/// <canblame name="Renzo Kooi" value="but gently please"/>
-		/// <datelast value="2009/08/15"/>
-		/// <returns>RegexOptions enumerator</returns>
-		public static RegexOptions ReOpts(string x)
-		{
-			RegexOptions opts = new RegexOptions();
-
-			if (x == "" || x == "none")
-				return opts = RegexOptions.None;
-
-			string[] s = x.Split(',');
-
-			for (int i = s.Length - 1; i >= 0; i--)
-			{
-				switch (s[i])
-				{
-					case "i": opts |= RegexOptions.IgnoreCase; break;
-					case "m": opts |= RegexOptions.Multiline; break;
-					case "s": opts |= RegexOptions.Singleline; break;
-					case "r": opts |= RegexOptions.RightToLeft; break;
-					case "e": opts |= RegexOptions.ExplicitCapture; break;
-					case "c": opts |= RegexOptions.CultureInvariant; break;
-					default: opts = RegexOptions.None; break;
-				}
-			}
-			return opts;
 		}
 	}
 }

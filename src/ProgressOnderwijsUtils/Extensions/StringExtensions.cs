@@ -82,9 +82,10 @@ namespace ProgressOnderwijsUtils
 		///  string jantje = "Jantje zag eens pruimen";
 		///  jantje = 
 		///   jantje.MultiReplace(
-		///		new string[] {@"pruimen","pruimen hangen",
-		///					  @"(hangen)","$1.<br />O, als eieren!"},
-		///		"m");
+		///     RegexOptions.IgnoreCase,
+		///		new Tuple<string,string>[] 
+		///		              {@"pruimen","pruimen hangen",
+		///					   @"(hangen)","$1.<br />O, als eieren!"});
 		///	 </code>	
 		///	 => de string [jantje] is na deze operatie:
 		///	 => "Jantje zag eens pruimen hangen.<br />O, als eieren!"
@@ -102,7 +103,7 @@ namespace ProgressOnderwijsUtils
 		{
 			foreach(var replaceTuple in searchreplace) {
 				string regex = replaceTuple.a, replacewith = replaceTuple.b;
-				initial = Regex.Replace(initial, regex, replacewith, opts);
+				initial = Regex.Replace(initial, regex, replacewith, RegexOptions.Compiled| opts);
 			}
 			return initial;
 		}
