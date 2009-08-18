@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
@@ -40,6 +41,44 @@ namespace ProgressOnderwijsUtils
 			for (int i = 1; getal != 0; getal /= 10, ++i)
 				res += i * (getal % 10);
 			return res != 0 && res % 11 == 0;
+		}
+
+		///<summary>
+		/// Utility om van een serie strings een serie
+		/// Tuples van strings te maken (paren, om precies
+		/// te zijn). 
+		/// Te gebruiken bij Tools.StringExtensions.MultiReplace,
+		/// om de tweede parameter wat gemakkelijker samen te stellen
+		/// </summary>
+		/// <param name="p">[stringa,stringb,stringc,stringd, ... , stringxyz]</param>
+		/// <example>
+		/// Om twee paren van Regex-string en vervangstring te maken bv:
+		/// <code>
+		/// Tuple<string,string>[] tupz = 
+		///				Tools.Utils.ToTuples(@"\r\n" ," \n" ,
+		///									 @"\email","e-mail");
+		/// </code>
+		///	 of direct in de MultiReplace-extension van 'n string:
+		/// <code>
+		///	 [string].MultiReplace(
+		///						RegexOptions.Multiline | RegexOptions.IgnoreCase,
+		///						==> Tools.Utils.ToTuples(@"\r\n", "\n") <==
+		///					  );
+		/// </code>	
+		/// </example>
+		/// <canblame>Renzo Kooi</canblame>
+		/// <datelast value="2009/08/18"/>
+		/// <returns>Array van Tuples van twee strings</returns>
+		public static Tuple<string, string>[] ToTuples(params string[] p)
+		{
+			int i = 0, plen = p.Length;
+			plen = (plen % 2 != 0) ? plen-- : plen;
+			Tuple<string, string>[] tupz = new Tuple<string, string>[p.Length / 2];
+			do
+			{
+				tupz[i / 2] = TupleF.Create<string, string>(p[i], p[i + 1]);
+			} while ((i += 2) < plen);
+			return tupz;
 		}
 	}
 }

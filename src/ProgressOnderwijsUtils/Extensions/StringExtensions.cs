@@ -90,14 +90,17 @@ namespace ProgressOnderwijsUtils
 		///	 => de string [jantje] is na deze operatie:
 		///	 => "Jantje zag eens pruimen hangen.<br />O, als eieren!"
 		/// </example>
+		/// <seealso cref="Tools.Utils.ToTuples"/>
 		/// <canblame>Renzo Kooi</canblame>
 		/// <datelast value="2009/08/15"/>
 		/// <returns>gemodificeerde string</returns>
 		/// <remarks>
-		/// door verplaatsing naar StringExtensions en er dus een
+		/// *door verplaatsing naar StringExtensions en er dus een
 		/// extension method van te maken, kan method chaining
 		/// worden gebruikt: als in
 		/// [string].MultiReplace([params]).MultiReplace([params])...
+		/// *voor het produceren van een reeks Tuples kun je 
+		/// de utility functie ToTuples gebruiken
 		/// </remarks>
 		public static string MultiReplace(this string initial, RegexOptions opts, params Tuple<string,string>[] searchreplace)
 		{
@@ -107,6 +110,7 @@ namespace ProgressOnderwijsUtils
 			}
 			return initial;
 		}
+
 	}
 }
 
