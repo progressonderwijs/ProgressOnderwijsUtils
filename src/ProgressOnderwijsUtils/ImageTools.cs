@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;//this is not recommended?? downsides are unclear though some suggest it might be slow.
 using System.IO;
+using System.Drawing.Drawing2D;
 namespace ProgressOnderwijsUtils
 {
 	// Uses tips from http://www.glennjones.net/Post/799/Highqualitydynamicallyresizedimageswithnet.htm
@@ -22,10 +23,10 @@ namespace ProgressOnderwijsUtils
 		/// <param name="g"></param>
 		public static void setHQ(Graphics g)
 		{
-			g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-			g.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
-			g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-			g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+			g.SmoothingMode = SmoothingMode.HighQuality;
+			g.PixelOffsetMode = PixelOffsetMode.HighQuality;
+			g.CompositingQuality = CompositingQuality.HighQuality;
+			g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 		}
 
 		public static Bitmap Resize(Image oldImage, int newWidth, int newHeight)
