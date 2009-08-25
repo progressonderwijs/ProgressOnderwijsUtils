@@ -98,11 +98,11 @@ namespace ProgressOnderwijsUtils.WebSupport
 		{
 			get
 			{
-				using (var gzipStream = new GZipStream(new MemoryStream(GzippedData), CompressionMode.Decompress, false))
+				using (var gzipStream = new GZipStream(new MemoryStream(GzippedUtf8String), CompressionMode.Decompress, false))
 					return Encoding.UTF8.GetString(ReadFully(gzipStream));
 			}
 		}
-		public readonly byte[] GzippedData;
+		public readonly byte[] GzippedUtf8String;
 		public CompressedUtf8String(string stringData)
 		{
 			using (MemoryStream compressedData = new MemoryStream())
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 				using (var gzipStream = new GZipStream(compressedData, CompressionMode.Compress))
 					gzipStream.Write(encodedData, 0, encodedData.Length);
 
-				GzippedData = compressedData.ToArray();
+				GzippedUtf8String = compressedData.ToArray();
 			}
 
 		}
