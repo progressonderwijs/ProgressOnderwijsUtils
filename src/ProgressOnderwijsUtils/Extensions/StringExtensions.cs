@@ -66,42 +66,34 @@ namespace ProgressOnderwijsUtils
 			return result.ToString().Normalize(NormalizationForm.FormC);
 		}
 
-		///<summary>
-		/// Vervang 1 of meer substrings in de (huidige) string
-		/// door een andere string. Zoek en vervang is een array van strings
-		/// [searchreplace], waarin 1 of meer paren van 'n reguliere expressie 
-		/// of substring (zoek) en een vervangstring zitten.
-		/// In de 3e parameter de opties, in de vorm van een string met 
-		/// optie-letters gescheiden door een komma, die via ReOpts (zie 
-		/// Tools.Utils.ReOpts) naar een RegexOptions type worden omgezet. 
-		/// Mag ook een lege string zijn (geen opties).
-		/// </summary>
-		/// <param name="searchreplace">new Tuple([Zoek], [Vervang])</param>
-		/// <example>
-		/// <code>
-		///  string jantje = "Jantje zag eens pruimen";
-		///  jantje = 
-		///   jantje.MultiReplace(
-		///     RegexOptions.IgnoreCase,
-		///		new Tuple<string,string>[] 
-		///		              {@"pruimen","pruimen hangen",
-		///					   @"(hangen)","$1.<br />O, als eieren!"});
-		///	 </code>	
-		///	 => de string [jantje] is na deze operatie:
-		///	 => "Jantje zag eens pruimen hangen.<br />O, als eieren!"
-		/// </example>
-		/// <seealso cref="Tools.Utils.ToTuples"/>
-		/// <canblame>Renzo Kooi</canblame>
-		/// <datelast value="2009/08/15"/>
-		/// <returns>gemodificeerde string</returns>
-		/// <remarks>
-		/// *door verplaatsing naar StringExtensions en er dus een
-		/// extension method van te maken, kan method chaining
-		/// worden gebruikt: als in
-		/// [string].MultiReplace([params]).MultiReplace([params])...
-		/// *voor het produceren van een reeks Tuples kun je 
-		/// de utility functie ToTuples gebruiken
-		/// </remarks>
+		/** 
+		 *  <summary>
+		 *  Vervang 1 of meer substrings in de (huidige) string
+		 *  door een andere string. Zoek en vervang is een array van strings
+		 *  [searchreplace], waarin 1 of meer paren van 'n reguliere expressie 
+		 *  of substring (zoek) en een vervangstring zitten.
+		 *  In de 3e parameter de opties, in de vorm van een string met 
+		 *  optie-letters gescheiden door een komma, die via ReOpts (zie 
+		 *  Tools.Utils.ReOpts) naar een RegexOptions type worden omgezet. 
+		 *  Mag ook een lege string zijn (geen opties).
+		 *  </summary>
+		 *  <param name="opts">RegexOptions enum waarden</param>
+		 *  <param name="searchreplace">Tuple(s)&lt;string,string&gt; met zoek/vervangstring 
+		 *  (zoek = Regex literal)</param>
+		 *  <seealso cref="ProgressOnderwijsUtils.Utils"/>
+		 *  <returns>gemodificeerde string</returns>
+		 *  <remarks>
+		 *  <para>Door verplaatsing naar StringExtensions en er dus een
+		 *  extension method van te maken, kan method chaining
+		 *  worden gebruikt: als in</para>
+		 *  <para>==&gt;[string].MultiReplace([params]).MultiReplace([params]);</para>
+		 *  <para>Voor het produceren van een reeks Tuples kun je ProgressOnderwijsUtils.Utils.ToTuples 
+		 *  gebruiken</para>
+		 *  <para>Let op: de string waarop deze extension method wordt toegepast wordt dus gewijzigd. De
+		 *  return value is alleen omdat dat in sommige gevallen handig is.</para>
+		 *  </remarks>
+		 *  <codefrom value="Renzo Kooi" date="2009/08/15"/>
+		 */
 		public static string MultiReplace(this string initial, RegexOptions opts, params Tuple<string,string>[] searchreplace)
 		{
 			foreach(var replaceTuple in searchreplace) {

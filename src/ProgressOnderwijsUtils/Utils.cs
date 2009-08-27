@@ -42,33 +42,35 @@ namespace ProgressOnderwijsUtils
 				res += i * (getal % 10);
 			return res != 0 && res % 11 == 0;
 		}
-
-		///<summary>
-		/// Utility om van een serie strings een serie
-		/// Tuples van strings te maken (paren, om precies
-		/// te zijn). 
-		/// Te gebruiken bij Tools.StringExtensions.MultiReplace,
-		/// om de tweede parameter wat gemakkelijker samen te stellen
-		/// </summary>
-		/// <param name="p">[stringa,stringb,stringc,stringd, ... , stringxyz]</param>
-		/// <example>
-		/// Om twee paren van Regex-string en vervangstring te maken bv:
-		/// <code>
-		/// Tuple<string,string>[] tupz = 
-		///				Tools.Utils.ToTuples(@"\r\n" ," \n" ,
-		///									 @"\email","e-mail");
-		/// </code>
-		///	 of direct in de MultiReplace-extension van 'n string:
-		/// <code>
-		///	 [string].MultiReplace(
-		///						RegexOptions.Multiline | RegexOptions.IgnoreCase,
-		///						==> Tools.Utils.ToTuples(@"\r\n", "\n") <==
-		///					  );
-		/// </code>	
-		/// </example>
-		/// <canblame>Renzo Kooi</canblame>
-		/// <datelast value="2009/08/18"/>
-		/// <returns>Array van Tuples van twee strings</returns>
+		/**
+		 * <summary>
+		 *  Utility om van een serie strings een serie
+		 *  Tuples van strings te maken (paren, om precies
+		 *  te zijn). 
+		 *  Te gebruiken bij Tools.StringExtensions.MultiReplace,
+		 *  om de tweede parameter wat gemakkelijker samen te stellen
+		 *  </summary>
+		 *  <param name="p">[stringa,stringb,stringc,stringd, ... , stringxyz]</param>
+		 *  <example>
+		 *  Om twee paren van Regex-string en vervangstring te maken bv:
+		 * 
+		 *  Tuple&lt;string,string&gt;[] tupz = 
+		 * 				Tools.Utils.ToTuples(@"\r\n" ," \n" ,
+		 * 									 @"\email","e-mail");
+		 *  of direct in de MultiReplace-extension van 'n string:
+		 * 	 [string].MultiReplace(
+		 * 						RegexOptions.Multiline | RegexOptions.IgnoreCase,
+		 * 						==&gt; Tools.Utils.ToTuples(@"\r\n", "\n") &lt;==
+		 * 					  );
+		 *  
+		 *  </example>
+		 *  <returns>Array van Tuples van twee strings</returns>
+		 *  <remarks>
+		 *  Bij oneven aantal parameter strings wordt de laatste parameter
+		 *  niet gebruikt (de facto verwijderd uit de parameter array).
+		 *  </remarks>
+		 *  <codefrom value="Renzo Kooi" date="2009/08/18"/>
+		 */
 		public static Tuple<string, string>[] ToTuples(params string[] p)
 		{
 			int i = 0, plen = p.Length;
