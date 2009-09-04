@@ -98,7 +98,7 @@ namespace ProgressOnderwijsUtils
 		{
 			foreach(var replaceTuple in searchreplace) {
 				string regex = replaceTuple.a, replacewith = replaceTuple.b;
-				initial = Regex.Replace(initial, regex, replacewith, RegexOptions.Compiled| opts);
+				initial = Regex.Replace(initial, regex, replacewith, RegexOptions.Compiled|opts);
 			}
 			return initial;
 		}
