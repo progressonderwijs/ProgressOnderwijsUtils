@@ -5,7 +5,6 @@ using System.Text;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using ProgressOnderwijsUtils.Extensions;
-using EFTIDYLib;
 
 namespace ProgressOnderwijsUtils
 {
