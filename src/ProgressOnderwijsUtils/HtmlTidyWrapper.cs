@@ -43,7 +43,16 @@ namespace ProgressOnderwijsUtils
 			//can't parse; give up and return the best we can.
 			return str;
 		}
-
+		/// <summary>
+		/// Overload, mbv waarvan toegestane html-tags kunnen worden gebruikt.
+		/// Tentatief, kan natuurlijk veeeeeel beter en handiger enzovoort
+		/// </summary>
+		/// <param name="str">string, kan ook null zijn</param>
+		/// <param name="allowedHtml">
+		/// string die als regex kan worden gebruikt, als allowedHTML
+		/// de waarde "ProgressAllowed" heeft wordt een default-regex met
+		/// voorgedefinieerde tags gebruikt
+		/// <returns>HtmlToTextParser geparste string</returns>
 		public static string HtmlToTextParser(string str, string allowedHtml)
 		{
 			string htmlTagsAllowed = allowedHtml == "ProgressAllowed" 
