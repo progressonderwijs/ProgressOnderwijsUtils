@@ -35,7 +35,6 @@ namespace ProgressOnderwijsUtils
 			// we'll manually strip something that looks like tags
 			str = xmlStripRegex.Replace(str, ""); //strip everything looking like tags
 			str = symbolRegex.Replace(str, match => new XText(match.Value).ToString()); 
-			
 			//and then replace odd symbols by their encoded representations.
 			try	{ return XElement.Parse("<x>" + str + "</x>").Value; }
 			catch (System.Xml.XmlException) { ; } 
