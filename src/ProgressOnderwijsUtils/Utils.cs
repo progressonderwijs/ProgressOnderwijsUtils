@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using ProgressOnderwijsUtils;
+using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
@@ -81,6 +82,43 @@ namespace ProgressOnderwijsUtils
 				tupz[i / 2] = TupleF.Create<string, string>(p[i], p[i + 1]);
 			} while ((i += 2) < plen);
 			return tupz;
+		}
+
+		/// <summary>
+		/// Swap two objects.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="one"></param>
+		/// <param name="other"></param>
+		public static void Swap<T>(ref T one, ref T other)
+		{
+			T tmp = one;
+			one = other;
+			other = tmp;
+		}
+	}
+
+	[TestFixture]
+	public class UtilsTest
+	{
+		[Test]
+		public void SwapValue()
+		{
+			int one = 1;
+			int other = 2;
+			Utils.Swap(ref one, ref other);
+			Assert.That(one, Is.EqualTo(2));
+			Assert.That(other, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void SwapReference()
+		{
+			string one = "1";
+			string other = "2";
+			Utils.Swap(ref one, ref other);
+			Assert.That(one, Is.EqualTo("2"));
+			Assert.That(other, Is.EqualTo("1"));
 		}
 	}
 }

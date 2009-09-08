@@ -49,8 +49,9 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// </summary>
 		/// <param name="one"></param>
 		/// <param name="other"></param>
+		/// <param name="data">Extra data object passed to the MakeUnique method.</param>
 		/// <returns>The chosen record.</returns>
-		public delegate DataRow Comparator(DataRow one, DataRow other);
+		public delegate DataRow Comparator(DataRow one, DataRow other, object data);
 
 		/// <summary>
 		/// Delete all duplicate records from this table that have the same key.
@@ -58,7 +59,8 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// <param name="table"></param>
 		/// <param name="key">The primary key of the tabel is set to this then unique key.</param>
 		/// <param name="comparator">Optional delegate to choose the records to delete.</param>
-		public static void MakeUnique(this DataTable table, DataColumn[] key, Comparator comparator)
+		/// <param name="data">Optional object passed transparently to the comparator when called.</param>
+		public static void MakeUnique(this DataTable table, DataColumn[] key, Comparator comparator, object data)
 		{
 			var duplicates = 
 				from row in table.Rows.Cast<DataRow>()
@@ -76,7 +78,7 @@ namespace ProgressOnderwijsUtils.Extensions
 					}
 					else if (comparator != null)
 					{
-						DataRow tmp = comparator(final, candidate);
+						DataRow tmp = comparator(final, candidate, data);
 						if (object.ReferenceEquals(tmp, final))
 						{
 							candidate.Delete();
@@ -148,7 +150,7 @@ namespace ProgressOnderwijsUtils.Extensions
 		public void MakeUnique(int count, int[][] rows)
 		{
 			SetUpRows(rows);
-			sut.MakeUnique(new DataColumn[] { col1, col2 }, null);
+			sut.MakeUnique(new DataColumn[] { col1, col2 }, null, null);
 			Assert.That(sut.Rows.Count, Is.EqualTo(count));
 		}
 
@@ -156,7 +158,10 @@ namespace ProgressOnderwijsUtils.Extensions
 		public void MakeUniqueCompareOne()
 		{
 			SetUpRows(new int[][] { new int[] { 1, 1 }, new int[] { 1, 2 } });
-			sut.MakeUnique(new DataColumn[] { col1 }, delegate(DataRow one, DataRow other) { return one; });
+			sut.MakeUnique(new DataColumn[] { col1 }, delegate(DataRow one, DataRow other, object data) {
+				Assert.That(data, Is.Null);
+				return one;
+			}, null);
 			Assert.That(sut.Rows[0][1], Is.EqualTo(1));
 		}
 
@@ -164,7 +169,10 @@ namespace ProgressOnderwijsUtils.Extensions
 		public void MakeUniqueCompareOther()
 		{
 			SetUpRows(new int[][] { new int[] { 1, 1 }, new int[] { 1, 2 } });
-			sut.MakeUnique(new DataColumn[] { col1 }, delegate(DataRow one, DataRow other) { return other; });
+			sut.MakeUnique(new DataColumn[] { col1 }, delegate(DataRow one, DataRow other, object data) {
+				Assert.That((int)data == 1);
+				return other;
+			}, 1);
 			Assert.That(sut.Rows[0][1], Is.EqualTo(2));
 		}
 	}
