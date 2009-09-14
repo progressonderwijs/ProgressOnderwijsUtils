@@ -98,6 +98,24 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
+	/// <summary>
+	/// Equality comparer that will compare on reference equality.
+	/// </summary>
+	/// <remarks>This might be handy to have collections on reference equality while the elements are value comparable.</remarks>
+	/// <typeparam name="T"></typeparam>
+	public class ReferenceEqualityComparer<T> : IEqualityComparer<T>
+	{
+		public bool Equals(T one, T other)
+		{
+			return object.ReferenceEquals(one, other);
+		}
+
+		public int GetHashCode(T obj)
+		{
+			return obj.GetHashCode();
+		}
+	}
+
 	[TestFixture]
 	public class UtilsTest
 	{
@@ -119,6 +137,39 @@ namespace ProgressOnderwijsUtils
 			Utils.Swap(ref one, ref other);
 			Assert.That(one, Is.EqualTo("2"));
 			Assert.That(other, Is.EqualTo("1"));
+		}
+	}
+
+	[TestFixture]
+	public class ReferenceEqualityComparerTest
+	{
+		private struct TestType
+		{
+			private int value;
+
+			public TestType(int value)
+			{
+				this.value = value;
+			}
+		}
+
+		private static readonly TestType t1 = new TestType(1);
+		private static readonly TestType t2 = new TestType(1);
+
+		[Test]
+		public void TestValue()
+		{
+			HashSet<TestType> sut = new HashSet<TestType>();
+			Assert.That(sut.Add(t1));
+			Assert.That(!sut.Add(t2));
+		}
+
+		[Test]
+		public void TestReference()
+		{
+			HashSet<TestType> sut = new HashSet<TestType>(new ReferenceEqualityComparer<TestType>());
+			Assert.That(sut.Add(t1));
+			Assert.That(sut.Add(t2));
 		}
 	}
 }
