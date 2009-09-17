@@ -12,30 +12,8 @@ namespace ProgressOnderwijsUtils
 	{
 		public const string PROGRESSDEBUGDIR = "c:\\progress\\debug";
 		public const string PROGRESSERRORDIR = "c:\\progress\\error";
-		public const string ProgressRadiusUnrecoverable = @"C:\progress\radius.unrecoverable";
-
-		public static void ClaimRadiusUnrecoverable()
-		{
-			Directory.CreateDirectory(Path.GetDirectoryName(ProgressRadiusUnrecoverable));
-			File.WriteAllText(ProgressRadiusUnrecoverable, "Unrecoverable Radius Error Occurred at " + DateTime.Now + ", please reboot IIS.\n");
-		}
-
-		public static void WatchForRadiusFailure(TimeSpan pollingTime, Action whenFailureDetected)
-		{
-			while (true)
-			{
-				if (File.Exists(ProgressRadiusUnrecoverable))
-				{
-					File.Delete(ProgressRadiusUnrecoverable);
-					whenFailureDetected();
-				}
-				Thread.Sleep(pollingTime);
-			}
-		}
-
 
 		const string DEBUGFILE = "debug.txt";
-
 
 		const int MAX_LENGTH_LOGENTRY = 16000;
 

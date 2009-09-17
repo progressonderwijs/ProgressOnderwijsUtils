@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.Radius
 
 		const int UDP_TTL = 20;
 		const int pRadiusPort = 1812;
-		const int udpTimeoutMs = 500;
+		const int udpTimeoutMs = 1000;
 
 		//see http://tools.ietf.org/html/rfc2138
 
@@ -92,20 +92,27 @@ namespace ProgressOnderwijsUtils.Radius
 				request[3] = (byte)(request.Length);
 
 				byte[] response;
-				using (UdpClient udpClient = new UdpClient())
-				{
-					udpClient.Client.SendTimeout = udpTimeoutMs;
-					udpClient.Client.ReceiveTimeout = udpTimeoutMs;
-					udpClient.Ttl = UDP_TTL;
-					IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
-
-					udpClient.Connect(serverHostname, pRadiusPort);
-					udpClient.Send(request, request.Length);
-					response = udpClient.Receive(ref RemoteIpEndPoint); //TODO: parallelization issue!!!
-
-					udpClient.Close();//probably redundant; docs (as usual) just don't say.
-				}
+				try { response = AuthNetworkHelper(serverHostname, request); }
+				catch (SocketException) { response = AuthNetworkHelper(serverHostname, request); }//one retry.
 				return ProcessServerResponse(response, requestIdentifier, requestAuthenticator, sharedSecret);
+			}
+		}
+
+		static byte[] AuthNetworkHelper(string serverHostname, byte[] request)
+		{
+			using (UdpClient udpClient = new UdpClient())
+			{
+				udpClient.Client.SendTimeout = udpTimeoutMs;
+				udpClient.Client.ReceiveTimeout = udpTimeoutMs;
+				udpClient.Ttl = UDP_TTL;
+				IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+
+				udpClient.Connect(serverHostname, pRadiusPort);
+				udpClient.Send(request, request.Length);
+				byte[] response = udpClient.Receive(ref RemoteIpEndPoint); //TODO: parallelization issue!!!
+
+				udpClient.Close();//probably redundant; docs (as usual) just don't say.
+				return response;
 			}
 		}
 
