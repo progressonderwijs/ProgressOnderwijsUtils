@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
@@ -102,7 +103,18 @@ namespace ProgressOnderwijsUtils
 			}
 			return initial;
 		}
+	}
 
+	[TestFixture]
+	public class StringExtensionsTest
+	{
+		[TestCase("é", "e")]
+		[TestCase("Ü", "U")]
+		[TestCase("ß", "ß")]
+		public void WithoutDiakriet(string from, string to)
+		{
+			Assert.That(from.WithoutDiakriet(), Is.EqualTo(to));
+		}
 	}
 }
 
