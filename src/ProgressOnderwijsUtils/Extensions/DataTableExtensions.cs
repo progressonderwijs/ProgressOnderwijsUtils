@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Extensions
 				bool result = true;
 				foreach (DataColumn column in columns)
 				{
-					result |= this.row[column].Equals(other.row[column]);
+					result &= this.row[column].Equals(other.row[column]);
 				}
 				return result;
 			}
