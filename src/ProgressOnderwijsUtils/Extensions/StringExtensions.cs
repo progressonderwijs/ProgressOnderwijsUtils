@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils
 		public static string WithoutDiakriet(this string s)
 		{
 			StringBuilder result = new StringBuilder();
-			foreach (char c in s.ToString().Normalize(NormalizationForm.FormD))
+			foreach (char c in s.Normalize(NormalizationForm.FormD))
 			{
 				if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
 				{
@@ -65,6 +65,23 @@ namespace ProgressOnderwijsUtils
 				}
 			}
 			return result.ToString().Normalize(NormalizationForm.FormC);
+		}
+
+		public static string ReplaceRingelS(this string str, bool upper)
+		{
+			StringBuilder result = new StringBuilder();
+			foreach (char c in str)
+			{
+				if (c == 'ß')
+				{
+					result.Append(upper ? "SS" : "ss");
+				}
+				else
+				{
+					result.Append(c);
+				}
+			}
+			return result.ToString();
 		}
 
 		/** 
@@ -114,6 +131,13 @@ namespace ProgressOnderwijsUtils
 		public void WithoutDiakriet(string from, string to)
 		{
 			Assert.That(from.WithoutDiakriet(), Is.EqualTo(to));
+		}
+
+		[Test]
+		public void ReplaceRingelS()
+		{
+			Assert.That("ß".ReplaceRingelS(false), Is.EqualTo("ss"));
+			Assert.That("ß".ReplaceRingelS(true), Is.EqualTo("SS"));
 		}
 	}
 }
