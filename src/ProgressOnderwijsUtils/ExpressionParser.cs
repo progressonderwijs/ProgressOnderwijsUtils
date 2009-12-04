@@ -8,23 +8,23 @@ namespace ProgressOnderwijsUtils
 {
 	public static class ExpressionParser
 	{
-		public delegate double ParserDelegate(string variable);
+		public delegate decimal ParserDelegate(string variable);
 		private static event ParserDelegate parserdelegate;
 
-		static Stack<double> Variable;
+		static Stack<decimal> Variable;
 		static int current;
 		static List<Token> tokens;
 
-		public static double Parse(string expression, ParserDelegate pd)
+		public static decimal Parse(string expression, ParserDelegate pd)
 		{
 			parserdelegate = pd;
-			Variable = new Stack<double>();
+			Variable = new Stack<decimal>();
 			tokens = new Scanner().Scan(expression);
 			current = 0;
 
 			Expression();
 
-			return Variable.Count > 0 ? Variable.Pop() : (double)0;
+			return Variable.Count > 0 ? Variable.Pop() : (decimal)0;
 		}
 
 		private static void Expression()
@@ -107,7 +107,7 @@ namespace ProgressOnderwijsUtils
 			switch (tokens[current].Type)
 			{
 				case TokenType.NumericConstant:
-					Variable.Push(Double.Parse(tokens[current].Value, CultureInfo.InvariantCulture.NumberFormat));
+					Variable.Push(Decimal.Parse(tokens[current].Value, CultureInfo.InvariantCulture.NumberFormat));
 					break;
 				case TokenType.Variable:
 					if (parserdelegate == null)
@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtils
 		{
 			if (Variable.Count == 0)
 				throw new NietZoErgeException(op + " misplaced");
-			double left = Variable.Pop();
+			decimal left = Variable.Pop();
 			Variable.Push(op == "-" ? -1 * left : left);
 		}
 
@@ -130,8 +130,8 @@ namespace ProgressOnderwijsUtils
 			if (Variable.Count < 2)
 				throw new NietZoErgeException(op + " misplaced");
 
-			double right = Variable.Pop();
-			double left = Variable.Pop();
+			decimal right = Variable.Pop();
+			decimal left = Variable.Pop();
 
 			switch (op)
 			{
@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
 					Variable.Push(left % right);
 					break;
 				case "^":
-					Variable.Push(Math.Pow(left, right));
+					Variable.Push((decimal)Math.Pow((double)left, (double)right));
 					break;
 			}
 		}

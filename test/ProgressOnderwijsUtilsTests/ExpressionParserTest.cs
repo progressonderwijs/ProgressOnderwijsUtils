@@ -14,27 +14,27 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 
 		[TestCaseSource("Expressions")]
-		public double TestExpression(string expressie)
+		public decimal TestExpression(string expressie)
 		{
 			return ExpressionParser.Parse(expressie, Variabelen);
 		}
 
-		public double Variabelen(string variabele)
+		public decimal Variabelen(string variabele)
 		{
 			switch (variabele)
 			{
 				default:
-					return (double)0;
+					return (decimal)0;
 				case "A":
-					return (double)1;
+					return (decimal)1;
 				case "B":
-					return (double)2;
+					return (decimal)2;
 				case "C":
-					return (double)8;
+					return (decimal)8;
 				case "D":
-					return (double)10;
+					return (decimal)10;
 				case "E":
-					return (double)12;
+					return (decimal)12;
 			}
 		}
 
