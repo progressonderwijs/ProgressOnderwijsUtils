@@ -52,9 +52,9 @@ namespace ProgressOnderwijsUtils
 					for (int i = 0; i < nrs.Length; i++)
 					{
 						pars.Add(nrs[i]);
-						n += "{" + (pars.Count - 1).ToString() + "},";
+						n += "{" + (pars.Count - 1).ToString() + "}, ";
 					}
-					return n.Substring(0, n.Length-1) + ")";
+					return n.Substring(0, n.Length-2) + ")";
 				case BooleanComparer.StartsWith:
 					pars.Add(waarde.ToString() + "%");
 					return kolomnaam + " like " + "{" + (pars.Count - 1).ToString() + "}";
