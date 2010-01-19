@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using ProgressOnderwijsUtils;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using NUnit.Framework;
+using System.Reflection;
 
 namespace ProgressOnderwijsUtils
 {
@@ -95,6 +98,51 @@ namespace ProgressOnderwijsUtils
 			T tmp = one;
 			one = other;
 			other = tmp;
+		}
+
+		
+		//afkomstig van http://www.b-virtual.be/post/Generic-Cloning-Method-in-c.aspx
+		//nog niet nuttig voor het clonen van genericcollection, omdat daarvoor geen (de)serialize is geimplementeerd
+		/// <summary>
+		/// Creates a cloned decoupled object from a serializable source object
+		/// </summary>
+		/// <typeparam name="T">The type of the object to clone</typeparam>
+		/// <param name="objectToClone">The object to clone</param>
+		/// <returns>A decoupled copy of the source object</returns>
+		public static T Clone<T>(T objectToClone)
+		{
+			// Initialize to default null
+			T clone = default(T);
+			MemoryStream memoryStream = null;
+			try
+			{
+				BinaryFormatter bf = new BinaryFormatter();
+				memoryStream = new MemoryStream();
+
+				// Serialize the object in memory
+				bf.Serialize(memoryStream, objectToClone);
+
+				// Make sure all is loaded in the stream
+				memoryStream.Flush();
+
+				// Reset the position
+				memoryStream.Position = 0;
+				// Decoupled copy of the original object
+				clone = ((T)bf.Deserialize(memoryStream));
+			}
+			catch// (Exception err)
+			{
+				throw;
+			}
+			finally
+			{
+				if (memoryStream != null)
+				{
+					memoryStream.Close();
+					memoryStream.Dispose();
+				}
+			}
+			return clone;
 		}
 	}
 
