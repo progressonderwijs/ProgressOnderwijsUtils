@@ -111,38 +111,19 @@ namespace ProgressOnderwijsUtils
 		/// <returns>A decoupled copy of the source object</returns>
 		public static T Clone<T>(T objectToClone)
 		{
-			// Initialize to default null
-			T clone = default(T);
-			MemoryStream memoryStream = null;
-			try
+			using(var memoryStream = new MemoryStream())
 			{
 				BinaryFormatter bf = new BinaryFormatter();
-				memoryStream = new MemoryStream();
-
+	
 				// Serialize the object in memory
 				bf.Serialize(memoryStream, objectToClone);
 
-				// Make sure all is loaded in the stream
-				memoryStream.Flush();
-
 				// Reset the position
 				memoryStream.Position = 0;
+
 				// Decoupled copy of the original object
-				clone = ((T)bf.Deserialize(memoryStream));
+				return (T)bf.Deserialize(memoryStream);
 			}
-			catch// (Exception err)
-			{
-				throw;
-			}
-			finally
-			{
-				if (memoryStream != null)
-				{
-					memoryStream.Close();
-					memoryStream.Dispose();
-				}
-			}
-			return clone;
 		}
 	}
 
