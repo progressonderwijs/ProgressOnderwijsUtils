@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 		public void Dispose()
 		{
 			Dispose(true);
-			GC.SuppressFinalize(this);
+			GC.SuppressFinalize(this); //not really necessary since no finalizer.
 		}
 		bool disposed = false;
 		protected virtual void Dispose(bool disposing)
