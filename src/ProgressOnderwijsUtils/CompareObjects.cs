@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using System.Collections;
+using System.Linq;
 
 
 #region License
@@ -186,13 +187,22 @@ namespace ProgressOnderwijsUtils
         /// Check the Differences or DifferencesString Properties for the differences.
         /// Default MaxDifferences is 1
         /// </remarks>
-        /// <param name="object1"></param>
-        /// <param name="object2"></param>
-        /// <returns>True if they are equal</returns>
-        public bool Compare(object object1, object object2)
+        public bool Compare(object object1, object object2) 
         {
             string defaultBreadCrumb = string.Empty;
 
+			//bool isEqual =
+			//    object.Equals(object1, object2)
+			//        || (
+			//            object1 is IEnumerable &&
+			//            object2 is IEnumerable &&
+			//            Enumerable.SequenceEqual(
+			//                ((IEnumerable)object1).Cast<object>(),
+			//                ((IEnumerable)object2).Cast<object>()
+			//            )
+			//        );
+
+			
             Differences.Clear();
             Compare(object1, object2, defaultBreadCrumb);
 
@@ -206,8 +216,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compare two objects
         /// </summary>
-        /// <param name="object1"></param>
-        /// <param name="object2"></param>
         /// <param name="breadCrumb">Where we are in the object hiearchy</param>
         private void Compare(object object1, object object2, string breadCrumb)
         {
@@ -270,7 +278,6 @@ namespace ProgressOnderwijsUtils
             {
                 throw new NotImplementedException("Cannot compare object of type " + t1.Name);
             }
-
         }
 
         private bool IsTimespan(Type t)
@@ -341,9 +348,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compare a timespan struct
         /// </summary>
-        /// <param name="object1"></param>
-        /// <param name="object2"></param>
-        /// <param name="breadCrumb"></param>
         private void CompareTimespan(object object1, object object2, string breadCrumb)
         {
             if (((TimeSpan)object1).Ticks != ((TimeSpan)object2).Ticks)
@@ -355,9 +359,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compare an enumeration
         /// </summary>
-        /// <param name="object1"></param>
-        /// <param name="object2"></param>
-        /// <param name="breadCrumb"></param>
         private void CompareEnum(object object1, object object2, string breadCrumb)
         {
             if (object1.ToString() != object2.ToString())
@@ -370,9 +371,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compare a simple type
         /// </summary>
-        /// <param name="object1"></param>
-        /// <param name="object2"></param>
-        /// <param name="breadCrumb"></param>
         private void CompareSimpleType(object object1, object object2, string breadCrumb)
         {
             if (object2 == null) //This should never happen, null check happens one level up
@@ -394,9 +392,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compare a struct
         /// </summary>
-        /// <param name="object1"></param>
-        /// <param name="object2"></param>
-        /// <param name="breadCrumb"></param>
         private void CompareStruct(object object1, object object2, string breadCrumb)
         {
             string currentCrumb;
