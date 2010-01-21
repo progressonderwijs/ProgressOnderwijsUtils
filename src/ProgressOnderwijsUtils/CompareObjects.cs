@@ -160,13 +160,13 @@ namespace ProgressOnderwijsUtils
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder(4096);
+				StringBuilder sb = new StringBuilder();
 
-				sb.Append("\r\nBegin Differences:\r\n");
+				sb.Append("Begin Differences:\n");
 
 				foreach (string item in Differences)
 				{
-					sb.AppendFormat("{0}\r\n", item);
+					sb.AppendFormat("{0}\n", item);
 				}
 
 				sb.AppendFormat("End Differences (Maximum of {0} differences shown).", MaxDifferences);
