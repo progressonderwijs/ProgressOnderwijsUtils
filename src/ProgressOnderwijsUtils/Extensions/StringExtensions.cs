@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
 		/// Check either string is null or contains whitespace only
 		/// </summary>
 		/// <param name="s">String to check</param>
-		/// <returns>True if string is empty. False otherwise.</returns>
+		/// <returns>true if string is empty or is null, false otherwise</returns>
 		public static bool IsNullOrEmpty(this string s)
 		{
 			return s == null || s.Trim().Length == 0;

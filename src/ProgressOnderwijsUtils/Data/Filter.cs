@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
 		/// 
 		/// </summary>
 		/// <param name="pos"></param>
-		/// <returns>True als er een leeg filter overblijft, False indien er een gevuld filter overblijft</returns>
+		/// <returns>true als er een leeg filter overblijft, False indien er een gevuld filter overblijft</returns>
 		public bool RemoveFilterElement(int pos)
 		{
 			if (criterium != null)	//Filter bestaat uitsluitend uit criterium, blijft dus leeg filter over
