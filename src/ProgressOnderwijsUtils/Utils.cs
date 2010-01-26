@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils
 			Tuple<string, string>[] tupz = new Tuple<string, string>[p.Length / 2];
 			do
 			{
-				tupz[i / 2] = TupleF.Create<string, string>(p[i], p[i + 1]);
+				tupz[i / 2] = Tuple.Create<string, string>(p[i], p[i + 1]);
 			} while ((i += 2) < plen);
 			return tupz;
 		}
