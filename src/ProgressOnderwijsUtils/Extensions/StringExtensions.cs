@@ -54,9 +54,9 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <param name="s">the string to change</param>
 		/// <returns>the changed string</returns>
-		public static string WithoutDiakriet(this string s)
+		public static string VerwijderDiakrieten(this string s)
 		{
-			StringBuilder result = new StringBuilder();
+			StringBuilder result = new StringBuilder(s.Length);
 			foreach (char c in s.Normalize(NormalizationForm.FormD))
 			{
 				if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
@@ -67,56 +67,44 @@ namespace ProgressOnderwijsUtils
 			return result.ToString().Normalize(NormalizationForm.FormC);
 		}
 
-		public static string ReplaceRingelS(this string str, bool upper)
+		public static string VervangRingelS(this string str, bool upper)
 		{
-			StringBuilder result = new StringBuilder();
-			foreach (char c in str)
-			{
-				if (c == 'ß')
-				{
-					result.Append(upper ? "SS" : "ss");
-				}
-				else
-				{
-					result.Append(c);
-				}
-			}
-			return result.ToString();
+			return str.Replace("ß", upper ? "SS" : "ss");
 		}
 
-		/** 
-		 *  <summary>
-		 *  Vervang 1 of meer substrings in de (huidige) string
-		 *  door een andere string. Zoek en vervang is een array van strings
-		 *  [searchreplace], waarin 1 of meer paren van 'n reguliere expressie 
-		 *  of substring (zoek) en een vervangstring zitten.
-		 *  In de 3e parameter de opties, in de vorm van een string met 
-		 *  optie-letters gescheiden door een komma, die via ReOpts (zie 
-		 *  Tools.Utils.ReOpts) naar een RegexOptions type worden omgezet. 
-		 *  Mag ook een lege string zijn (geen opties).
-		 *  </summary>
-		 *  <param name="opts">RegexOptions enum waarden</param>
-		 *  <param name="searchreplace">Tuple(s)&lt;string,string&gt; met zoek/vervangstring 
-		 *  (zoek = Regex literal)</param>
-		 *  <seealso cref="ProgressOnderwijsUtils.Utils"/>
-		 *  <returns>gemodificeerde string</returns>
-		 *  <remarks>
-		 *  <para>Door verplaatsing naar StringExtensions en er dus een
-		 *  extension method van te maken, kan method chaining
-		 *  worden gebruikt: als in</para>
-		 *  <para>==&gt;[string].MultiReplace([params]).MultiReplace([params]);</para>
-		 *  <para>Voor het produceren van een reeks Tuples kun je ProgressOnderwijsUtils.Utils.ToTuples 
-		 *  gebruiken</para>
-		 *  <para>Let op: de string waarop deze extension method wordt toegepast wordt dus gewijzigd. De
-		 *  return value is alleen omdat dat in sommige gevallen handig is.</para>
-		 *  </remarks>
-		 *  <codefrom value="Renzo Kooi" date="2009/08/15"/>
-		 */
-		public static string MultiReplace(this string initial, RegexOptions opts, params Tuple<string,string>[] searchreplace)
+
+		/// <summary>
+		/// Vervang 1 of meer substrings in de (huidige) string
+		/// door een andere string. Zoek en vervang is een array van strings
+		/// [searchreplace], waarin 1 of meer paren van 'n reguliere expressie 
+		/// of substring (zoek) en een vervangstring zitten.
+		/// In de 3e parameter de opties, in de vorm van een string met 
+		/// optie-letters gescheiden door een komma, die via ReOpts (zie 
+		/// Tools.Utils.ReOpts) naar een RegexOptions type worden omgezet. 
+		/// Mag ook een lege string zijn (geen opties).
+		/// </summary>
+		/// <param name="opts">RegexOptions enum waarden</param>
+		/// <param name="searchreplace">Tuple(s)&lt;string,string&gt; met zoek/vervangstring 
+		/// (zoek = Regex literal)</param>
+		/// <seealso cref="ProgressOnderwijsUtils.Utils"/>
+		/// <returns>gemodificeerde string</returns>
+		/// <remarks>
+		/// <para>Door verplaatsing naar StringExtensions en er dus een
+		/// extension method van te maken, kan method chaining
+		/// worden gebruikt: als in</para>
+		/// <para>==&gt;[string].MultiReplace([params]).MultiReplace([params]);</para>
+		/// <para>Voor het produceren van een reeks Tuples kun je ProgressOnderwijsUtils.Utils.ToTuples 
+		/// gebruiken</para>
+		/// <para>Let op: de string waarop deze extension method wordt toegepast wordt dus gewijzigd. De
+		/// return value is alleen omdat dat in sommige gevallen handig is.</para>
+		/// </remarks>
+		/// <codefrom value="Renzo Kooi" date="2009/08/15"/>
+		public static string MultiReplace(this string initial, RegexOptions opts, params Tuple<string, string>[] searchreplace)
 		{
-			foreach(var replaceTuple in searchreplace) {
+			foreach (var replaceTuple in searchreplace)
+			{
 				string regex = replaceTuple.Item1, replacewith = replaceTuple.Item2;
-				initial = Regex.Replace(initial, regex, replacewith, RegexOptions.Compiled|opts);
+				initial = Regex.Replace(initial, regex, replacewith, RegexOptions.Compiled | opts);
 			}
 			return initial;
 		}
@@ -130,14 +118,17 @@ namespace ProgressOnderwijsUtils
 		[TestCase("ß", "ß")]
 		public void WithoutDiakriet(string from, string to)
 		{
-			Assert.That(from.WithoutDiakriet(), Is.EqualTo(to));
+			Assert.That(from.VerwijderDiakrieten(), Is.EqualTo(to));
 		}
 
 		[Test]
 		public void ReplaceRingelS()
 		{
-			Assert.That("ß".ReplaceRingelS(false), Is.EqualTo("ss"));
-			Assert.That("ß".ReplaceRingelS(true), Is.EqualTo("SS"));
+			Assert.That("ß".VervangRingelS(false), Is.EqualTo("ss"));
+			Assert.That("ß".VervangRingelS(true), Is.EqualTo("SS"));
+			Assert.That("aßb".VervangRingelS(false), Is.EqualTo("assb"));
+			Assert.That("ßsß".VervangRingelS(true), Is.EqualTo("SSsSS"));
+			Assert.That("".VervangRingelS(false), Is.EqualTo(""));
 		}
 	}
 }
