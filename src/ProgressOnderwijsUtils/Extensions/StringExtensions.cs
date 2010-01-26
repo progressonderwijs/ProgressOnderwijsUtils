@@ -115,7 +115,7 @@ namespace ProgressOnderwijsUtils
 		public static string MultiReplace(this string initial, RegexOptions opts, params Tuple<string,string>[] searchreplace)
 		{
 			foreach(var replaceTuple in searchreplace) {
-				string regex = replaceTuple.a, replacewith = replaceTuple.b;
+				string regex = replaceTuple.Item1, replacewith = replaceTuple.Item2;
 				initial = Regex.Replace(initial, regex, replacewith, RegexOptions.Compiled|opts);
 			}
 			return initial;
