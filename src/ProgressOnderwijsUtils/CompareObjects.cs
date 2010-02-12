@@ -189,6 +189,10 @@ namespace ProgressOnderwijsUtils
 		/// </remarks>
 		public bool Compare(object object1, object object2)
 		{
+			if (object1 == null && object2 == null) return true; //gelijk
+			if (object1 == null && object2 != null) return false; //niet gelijk
+			if (object1 != null && object2 == null) return false; //niet gelijk
+			
 			string defaultBreadCrumb = string.Empty;
 
 			//bool isEqual =
