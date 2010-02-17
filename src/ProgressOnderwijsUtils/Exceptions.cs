@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace ProgressOnderwijsUtils
 {
@@ -18,4 +19,13 @@ namespace ProgressOnderwijsUtils
 		public QueryException() { }
 		public QueryException(string msg, Exception inner) : base(msg, inner) { }
 	}
+	[Serializable]
+	public class GenericMetaDataException : ProgressNetException
+	{ //TODO: this exception should provide for naming the table and the type of metadata where the error occured.
+		public GenericMetaDataException() : base() { }
+		public GenericMetaDataException(string debugMessage) : base(debugMessage) { }
+		public GenericMetaDataException(string debugMessage, Exception innerException) : base(debugMessage, innerException) { }
+		protected GenericMetaDataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+	}
+
 }
