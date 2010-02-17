@@ -19,17 +19,27 @@ namespace ProgressOnderwijsUtils.WebSupport
 		DateTime lastWrite;
 		protected AbstractCachedData(DirectoryInfo dirToWatch, string filter, bool enableWatcher)
 		{
-			this.dirToWatch = dirToWatch;
-			this.filter = filter;
-			if (enableWatcher)
+			bool completedOK = false;
+			try
 			{
-				watcher = new FileSystemWatcher(dirToWatch.FullName, filter);
-				watcher.IncludeSubdirectories = true;
-				watcher.Changed += filesystemUpdated;
-				watcher.Created += filesystemUpdated;
-				watcher.Renamed += filesystemUpdated;
-				watcher.Deleted += filesystemUpdated;
-				watcher.EnableRaisingEvents = true;
+				this.dirToWatch = dirToWatch;
+				this.filter = filter;
+				if (enableWatcher)
+				{
+					watcher = new FileSystemWatcher(dirToWatch.FullName, filter);
+					watcher.IncludeSubdirectories = true;
+					watcher.Changed += filesystemUpdated;
+					watcher.Created += filesystemUpdated;
+					watcher.Renamed += filesystemUpdated;
+					watcher.Deleted += filesystemUpdated;
+					watcher.EnableRaisingEvents = true;
+				}
+				completedOK = true;
+			}
+			finally
+			{
+				if (!completedOK)
+					Dispose(true);
 			}
 		}
 
@@ -44,15 +54,14 @@ namespace ProgressOnderwijsUtils.WebSupport
 		public IEnumerable<Uri> WatchedFilesAsRelativeUris(DirectoryInfo baseDirectory)
 		{
 			string path = baseDirectory.FullName;
-			if(!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
-				path = path+Path.DirectorySeparatorChar;
-			Uri baseUri = new Uri(path, UriKind.Absolute); 
+			if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+				path = path + Path.DirectorySeparatorChar;
+			Uri baseUri = new Uri(path, UriKind.Absolute);
 			return WatchedFiles.Select(fi => baseUri.MakeRelativeUri(new Uri(fi.FullName, UriKind.Absolute)));
 		}
 
 
 		public DateTime LastWriteTime { get { if (!isItemUpToDate) Reload(); return lastWrite; } }
-
 
 		//we need to dispose the connection.  Use the design pattern in
 		//http://msdn.microsoft.com/en-us/library/b1yfkh5e.aspx
@@ -69,7 +78,8 @@ namespace ProgressOnderwijsUtils.WebSupport
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing && !disposed)
-				watcher.Dispose();// Free other state (managed objects).
+				if (watcher != null)
+					watcher.Dispose();// Free other state (managed objects).
 			disposed = true;
 		}
 		//no finalizer since no unmanaged state.
@@ -77,7 +87,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 	}
 
 
-	public class CompressedUtf8String
+	public sealed class CompressedUtf8String
 	{
 		static byte[] ReadFully(Stream stream) //from:http://www.yoda.arachsys.com/csharp/readbinary.html
 		{
