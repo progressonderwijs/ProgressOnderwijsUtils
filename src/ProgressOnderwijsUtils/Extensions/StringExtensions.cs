@@ -108,6 +108,19 @@ namespace ProgressOnderwijsUtils
 			}
 			return initial;
 		}
+
+        private static readonly Regex CONVERT_WHITESPACE = new Regex(@"\s", RegexOptions.Compiled);
+        private static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s{2,}", RegexOptions.Compiled);
+
+        /// <summary>
+        /// HTML-alike whitespace collapsing of this string.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string CollapseWhitespace(this string str)
+        {
+            return COLLAPSE_WHITESPACE.Replace(CONVERT_WHITESPACE.Replace(str, " "), " ").Trim();
+        }
 	}
 
 	[TestFixture]
@@ -130,6 +143,24 @@ namespace ProgressOnderwijsUtils
 			Assert.That("ßsß".VervangRingelS(true), Is.EqualTo("SSsSS"));
 			Assert.That("".VervangRingelS(false), Is.EqualTo(""));
 		}
+
+        [Test]
+        [TestCase("", Result = "")]
+        [TestCase("test", Result = "test")]
+        [TestCase(" test ", Result = "test")]
+        [TestCase("\ttest\t", Result = "test")]
+        [TestCase("\ntest\n", Result = "test")]
+        [TestCase(" \t\ntest\n\t ", Result = "test")]
+        [TestCase("een test", Result = "een test")]
+        [TestCase("een  test", Result = "een test")]
+        [TestCase("een\ttest", Result = "een test")]
+        [TestCase("een\t\ttest", Result = "een test")]
+        [TestCase("een\ntest", Result = "een test")]
+        [TestCase("een\n\ntest", Result = "een test")]
+        public string CollapseWhitespace(string str)
+        {
+            return str.CollapseWhitespace();
+        }
 	}
 }
 
