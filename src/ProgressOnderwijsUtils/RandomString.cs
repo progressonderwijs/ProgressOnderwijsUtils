@@ -5,6 +5,7 @@ using System.Text;
 using System.Security.Cryptography;
 using MoreLinq;
 using NUnit.Framework;
+using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
 {
@@ -70,7 +71,7 @@ namespace ProgressOnderwijsUtils
 		class RndTest
 		{
 			[TestCase]
-			public void checkRandomBasic()
+			public void CheckRandomBasic()
 			{
 				HashSet<uint> numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
 				Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => GetUInt32()).Take(10000).Where(num => num > int.MaxValue).Any());
@@ -78,6 +79,7 @@ namespace ProgressOnderwijsUtils
 				Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => GetUInt64()).Take(10000).Where(num => num > Int64.MaxValue).Any());
 				Assert.IsTrue(numTo37.SetEquals(MoreEnumerable.GenerateByIndex(i => GetUInt32(37)).Take(10000))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
 			}
+
 			[TestCase]
 			public void CheckString()
 			{
@@ -89,6 +91,17 @@ namespace ProgressOnderwijsUtils
 					Assert.IsFalse(str.AsEnumerable().Any(c => c < 'a' || c > 'z'));
 				}
 			}
+
+			[TestCase]
+			public void CheckStrings()
+			{
+				Assert.That(RandomHelper.GetStringOfNumbers(10), Is.StringMatching("[0-9]{10}"));
+				Assert.That(RandomHelper.GetStringCapitalized(10), Is.StringMatching("[A-Z][a-z]{9}"));
+				Assert.That(RandomHelper.GetStringOfLatinLower(7) , Is.StringMatching("[a-z]{7}"));
+				//Assert.That(RandomHelper. (10), Is.StringMatching("[0-9]{10}"));
+			}
+
+
 
 		}
 	}
