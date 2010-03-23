@@ -23,7 +23,6 @@ namespace ProgressOnderwijsUtils
 				collegejaar--;
 			return collegejaar;
 		}
-
 		
 	}
 }
