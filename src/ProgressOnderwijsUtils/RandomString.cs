@@ -22,9 +22,13 @@ namespace ProgressOnderwijsUtils
 		public static byte GetByte() { return GetBytes(1)[0]; }
 		public static Int32 GetInt32() { return BitConverter.ToInt32(GetBytes(sizeof(Int32)), 0); }
 		public static Int64 GetInt64() { return BitConverter.ToInt64(GetBytes(sizeof(Int64)), 0); }
+		[CLSCompliant(false)]
 		public static UInt32 GetUInt32() { return BitConverter.ToUInt32(GetBytes(sizeof(UInt32)), 0); }
+		[CLSCompliant(false)]
 		public static UInt64 GetUInt64() { return BitConverter.ToUInt64(GetBytes(sizeof(UInt64)), 0); }
 
+
+		[CLSCompliant(false)]
 		public static UInt32 GetUInt32(UInt32 bound)
 		{
 			UInt32 modErr = (UInt32.MaxValue % bound + 1) % bound;
@@ -39,6 +43,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 
+		[CLSCompliant(false)]
 		public static UInt64 GetUInt64(UInt64 bound)
 		{
 			UInt64 modErr = (UInt64.MaxValue % bound + 1) % bound;
@@ -100,10 +105,6 @@ namespace ProgressOnderwijsUtils
 				Assert.That(RandomHelper.GetStringOfLatinLower(7) , Is.StringMatching("[a-z]{7}"));
 				//Assert.That(RandomHelper. (10), Is.StringMatching("[0-9]{10}"));
 			}
-
-
-
 		}
 	}
-
 }
