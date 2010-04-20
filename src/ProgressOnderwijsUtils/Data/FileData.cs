@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
 		public string ContentType { get; set; }
 		public string FileName { get; set; }
 
-		public bool ContainsFile { get { return Content != null && FileName!=null && (FileName.Length>0 || Content.Length >0); } }
+		public bool ContainsFile { get { return Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0); } }
 		public override string ToString()
 		{
 			return string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m);
@@ -30,35 +30,23 @@ namespace ProgressOnderwijsUtils
 			unchecked
 			{
 				int result = (Content != null ? Content.GetHashCode() : 0);
-				result = (result*397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
-				result = (result*397) ^ (FileName != null ? FileName.GetHashCode() : 0);
+				result = (result * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
+				result = (result * 397) ^ (FileName != null ? FileName.GetHashCode() : 0);
 				return result;
 			}
 		}
 
 		public bool Equals(FileData other)
 		{
-			return ContentEqual(other) &&
-				   Equals(other.ContentType, ContentType) && 
-				   Equals(other.FileName, FileName);
+			return
+				   Equals(other.ContentType, ContentType) &&
+				   Equals(other.FileName, FileName)
+				   && ContentEqual(other);
 		}
 
 		private bool ContentEqual(FileData other)
 		{
-			bool result;
-			if (Content == null && other.Content == null)
-			{
-				result = true;
-			}
-			else if (Content != null && other.Content != null)
-			{
-				result = Content.SequenceEqual(other.Content);
-			}
-			else
-			{
-				result = false;
-			}
-			return result;
+			return Content == other.Content || (Content != null && other.Content != null && Content.SequenceEqual(other.Content));
 		}
 
 		public static bool operator ==(FileData left, FileData right)
