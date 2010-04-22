@@ -26,19 +26,17 @@ namespace ProgressOnderwijsUtils
 	public class TemplateException : Exception
 	{
 		public int Line { get; set; }
-		public int Start { get; set; }
-		public int Length { get; set; }
+		public int Position { get; set; }
 
 		public TemplateException()
 		{ }
 
-		public TemplateException(int Line, int PositionStart, int PositionEnd, string message)
+		public TemplateException(int Line, int Positiont, string message)
 			:
 				base(message)
 		{
 			this.Line = Line;
-			this.Start = PositionStart;
-			this.Length = PositionEnd - PositionStart;
+			this.Position = Position;
 		}
 
 		public TemplateException(string message)
