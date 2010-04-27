@@ -5,6 +5,7 @@ using System.Text;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using ProgressOnderwijsUtils.Extensions;
+using System.Xml;
 
 namespace ProgressOnderwijsUtils
 {
@@ -43,6 +44,9 @@ namespace ProgressOnderwijsUtils
 		{
 			try { return XElement.Parse("<x>" + str + "</x>"); }
 			catch (System.Xml.XmlException) { ; }
+			str = str.Replace("&nbsp;", "&#160;");
+			try { return XElement.Parse("<x>" + str + "</x>"); }
+			catch (System.Xml.XmlException) { ; }
 
 			// decoding failed; the string is invalid.  To get at least something readable, 
 			// we'll manually strip something that looks like tags
@@ -56,6 +60,46 @@ namespace ProgressOnderwijsUtils
 			return new XElement("x", str);
 		}
 
+		public static XElement LimitLength(XElement input, int length)
+		{
+
+			XElement output = new XElement(input);
+			XNode current = output;
+			int currentMax = length;
+			while (true)
+			{
+				var stringRep = current.ToString(SaveOptions.DisableFormatting);
+				int currentLength = stringRep.Length;
+
+				if (currentLength < currentMax) return output;
+				else if (current is XComment
+					|| current is XElement && ((XElement)current).IsEmpty
+					|| current is XDocumentType
+					|| current is XProcessingInstruction)
+				{
+					current.Remove();
+					return output;
+				}
+				else if (current is XText)
+				{
+					XText text = current as XText;
+					text.Value = text.Value.Substring(0, currentMax);
+					return output;
+				}
+				XElement currentEl = (XElement)current;
+
+				int lastKidLen = currentEl.LastNode.ToString(SaveOptions.DisableFormatting).Length;
+				if (currentLength - lastKidLen > currentMax)
+					currentEl.LastNode.Remove();
+				else
+				{
+					int restLen = currentLength - lastKidLen;
+					int lastKidMax = currentMax - restLen;
+					current = currentEl.LastNode;
+					currentMax = lastKidMax;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Stips xml tags from the string for readability.  The resulting string still needs to be encoded (i.e. it is not disable-output escaping safe.)
@@ -183,11 +227,11 @@ namespace ProgressOnderwijsUtils
 			return HtmlSanitizer(parsed, safeElements, defaultSafeAttr, defaultBannedElements);
 		}
 
-		
+
 		//door http://www.w3schools.com/tags/ en redelijke selectie gekozen.
 		//om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan.  Om geen form-problemen te hebben mogen form elementen niet.
 		static HashSet<string> defaultSafeElements = new HashSet<string>(
-			"b i big small em strong hr br p span div center font table thead col colgroup tbody tfoot caption tr td th h1 h2 h3 h4 h5 h6 a cite dfn code samp var dl dt dd ins del sub sup tt ul ol li pre q abbr acronym blockquote fieldset legend img".Split(new[]{' '},StringSplitOptions.RemoveEmptyEntries));
+			"b i big small em strong hr br p span div center font table thead col colgroup tbody tfoot caption tr td th h1 h2 h3 h4 h5 h6 a cite dfn code samp var dl dt dd ins del sub sup tt ul ol li pre q abbr acronym blockquote fieldset legend img".Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 		//id's en names zijn niet toegestaan zodat er geen conflict kan onstaan met onze code.  style is niet secuur en kan tevens tracing info bevatten.
 		static HashSet<string> defaultSafeAttr = new HashSet<string>(new[]{
 			"lang", "title", "href", "dir", "color", "border", "face", "size", "align", "alt", 
