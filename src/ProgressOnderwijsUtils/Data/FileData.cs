@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
@@ -10,10 +11,10 @@ namespace ProgressOnderwijsUtils
 		public string FileName { get; set; }
 
 		public bool ContainsFile { get { return Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0); } }
-		public override string ToString()
-		{
-			return string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m);
-		}
+		public override string ToString() { return ReadableString; }
+
+		public string ReadableString { get { return string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m); } }
+
 
 		public override bool Equals(object other)
 		{
