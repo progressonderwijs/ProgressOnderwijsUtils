@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils
 	public static class TypeExtension
 	{
 		/// <summary>
-		/// If type is Nullable<T>, returns typeof(T).  For non-Nullable<> types, returns null;
+		/// If type is Nullable&lt;T&gt;, returns typeof(T).  For non-Nullable&lt;&gt; types, returns null;
 		/// </summary>
 		public static Type GetNullableBaseType(this Type type)
 		{
