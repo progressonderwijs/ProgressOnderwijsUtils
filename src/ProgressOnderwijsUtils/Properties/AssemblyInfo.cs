@@ -21,7 +21,7 @@ using System;
 [assembly: ComVisible(false)]
 
 //we make no particular guarantees about cross-language suitability.
-[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(false)]
 
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM

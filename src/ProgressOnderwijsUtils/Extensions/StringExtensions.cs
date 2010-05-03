@@ -78,11 +78,6 @@ namespace ProgressOnderwijsUtils
 			return Regex.Replace(input, pattern, replacement, options);
 		}
 
-		public static string RegexReplace(this string input, string pattern, MatchEvaluator evaluator, RegexOptions options = RegexOptions.None)
-		{
-			return Regex.Replace(input, pattern, evaluator, options);
-		}
-
         private static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled);
 
         /// <summary>
