@@ -135,15 +135,6 @@ namespace ProgressOnderwijsUtils
 				return Enumerable.Empty<XNode>();//don't copy comments, processing instructions, etc.
 		}
 
-		//            string htmlTagsAllowed = allowedHtml == "ProgressAllowed"
-		//                                      ? @"(<)(br|hr|p|\/p|table|\/table|tr|\/tr|thead|\/thead|
-		//										tbody|\/tbody|td|\/td|th|\/th|span|\/span|input|div|\/div)[^<]*>"
-		//                                      : allowedHtml;
-		//if (str != null)
-		//    str = str.MultiReplace(RegexOptions.IgnoreCase,
-		//            Utils.ToTuples(htmlTagsAllowed, "@~#$2#~@"));
-
-
 		/// <summary>This function sanitizes an html tree.
 		///  - Any html that isn't recognized as html is considered content (e.g. a lone ampersand)
 		///  - Any html that can't be parsed (say, an unclosed element) is stripped.

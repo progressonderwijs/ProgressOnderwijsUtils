@@ -73,54 +73,26 @@ namespace ProgressOnderwijsUtils
 			return str.Replace("ß", upper ? "SS" : "ss");
 		}
 
-
-		/// <summary>
-		/// Vervang 1 of meer substrings in de (huidige) string
-		/// door een andere string. Zoek en vervang is een array van strings
-		/// [searchreplace], waarin 1 of meer paren van 'n reguliere expressie 
-		/// of substring (zoek) en een vervangstring zitten.
-		/// In de 3e parameter de opties, in de vorm van een string met 
-		/// optie-letters gescheiden door een komma, die via ReOpts (zie 
-		/// Tools.Utils.ReOpts) naar een RegexOptions type worden omgezet. 
-		/// Mag ook een lege string zijn (geen opties).
-		/// </summary>
-		/// <param name="opts">RegexOptions enum waarden</param>
-		/// <param name="searchreplace">Tuple(s)&lt;string,string&gt; met zoek/vervangstring 
-		/// (zoek = Regex literal)</param>
-		/// <seealso cref="ProgressOnderwijsUtils.Utils"/>
-		/// <returns>gemodificeerde string</returns>
-		/// <remarks>
-		/// <para>Door verplaatsing naar StringExtensions en er dus een
-		/// extension method van te maken, kan method chaining
-		/// worden gebruikt: als in</para>
-		/// <para>==&gt;[string].MultiReplace([params]).MultiReplace([params]);</para>
-		/// <para>Voor het produceren van een reeks Tuples kun je ProgressOnderwijsUtils.Utils.ToTuples 
-		/// gebruiken</para>
-		/// <para>Let op: de string waarop deze extension method wordt toegepast wordt dus gewijzigd. De
-		/// return value is alleen omdat dat in sommige gevallen handig is.</para>
-		/// </remarks>
-		/// <codefrom value="Renzo Kooi" date="2009/08/15"/>
-		public static string MultiReplace(this string initial, RegexOptions opts, params Tuple<string, string>[] searchreplace)
+		public static string RegexReplace(this string input, string pattern, string replacement, RegexOptions options = RegexOptions.None)
 		{
-			foreach (var replaceTuple in searchreplace)
-			{
-				string regex = replaceTuple.Item1, replacewith = replaceTuple.Item2;
-				initial = Regex.Replace(initial, regex, replacewith, RegexOptions.Compiled | opts);
-			}
-			return initial;
+			return Regex.Replace(input, pattern, replacement, options);
 		}
 
-        private static readonly Regex CONVERT_WHITESPACE = new Regex(@"\s", RegexOptions.Compiled);
-        private static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s{2,}", RegexOptions.Compiled);
+		public static string RegexReplace(this string input, string pattern, MatchEvaluator evaluator, RegexOptions options = RegexOptions.None)
+		{
+			return Regex.Replace(input, pattern, evaluator, options);
+		}
+
+        private static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled);
 
         /// <summary>
-        /// HTML-alike whitespace collapsing of this string.
+        /// HTML-alike whitespace collapsing of this string; however, this method also trims.
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
         public static string CollapseWhitespace(this string str)
         {
-            return COLLAPSE_WHITESPACE.Replace(CONVERT_WHITESPACE.Replace(str, " "), " ").Trim();
+            return COLLAPSE_WHITESPACE.Replace(str," ").Trim();
         }
 	}
 
