@@ -33,10 +33,12 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Attempts to parse an html fragment as xml.  This works because our html is generally well formed xml.
 		/// When parsing fails, the method returns a best-guess string representation (which tries to at least decode entities into unicode.
-		///
+		/// To fit the result into an element, it is wrapped in a top level "x" element.
+		/// 
 		/// This method should eventually be replaced by a real call to Tidy.NET.
 		/// 
 		/// This is not a security check; the output of this function can still contain dangerous tags!
+		/// 
 		/// </summary>
 		/// <returns>The html fragment wrapped in a top-level "x" element - this toplevel element just
 		/// serves to permit a sequence of html nodes to be returned.  This function always returns a non-null single element named "x".</returns> 
@@ -60,6 +62,13 @@ namespace ProgressOnderwijsUtils
 			return new XElement("x", str);
 		}
 
+		/// <summary>
+		/// Takes an xml element and truncates its contents such that the unindented string-representation fits in the 
+		/// given length
+		/// </summary>
+		/// <param name="input">The Xml to truncate</param>
+		/// <param name="length">The maximum length</param>
+		/// <returns>an xml segment that, if serialized without extra spacing, fits in the given length.</returns>
 		public static XElement LimitLength(XElement input, int length)
 		{
 
@@ -103,7 +112,7 @@ namespace ProgressOnderwijsUtils
 
 		/// <summary>
 		/// Stips xml tags from the string for readability.  The resulting string still needs to be encoded (i.e. it is not disable-output escaping safe.)
-		/// This function also decodes entities into readable characters.
+		/// This function also decodes xml entities and &nbsp; into readable characters.
 		/// </summary>
 		public static string HtmlToTextParser(string str) { return XHtmlParser(str).Value; }
 
@@ -157,7 +166,7 @@ namespace ProgressOnderwijsUtils
 				);
 		}
 
-		/// <summary>This function sanitizes an html tree.
+		/// <summary>This function sanitizes an html tree fragment and returns it wrapped in a single toplevel "x" element.
 		///  - Any element that is banned is removed along with all its attributes and descendants.
 		///  - Any element that is in the safe set is retained, and its attributes and descendants are recursively verified in the same way.
 		///    If a "safe" element contains an unsafe element, the unsafe element is thus removed.
@@ -165,7 +174,7 @@ namespace ProgressOnderwijsUtils
 		///  - text nodes are considered safe.
 		///  - Only attributes that are in the safe set and themselves are defined on the safe set are copied to the output.
 		/// </summary>
-		/// <param name="sourceHtml">The xhtml to sanitize.  The root element is ignored.</param>
+		/// <param name="sourceHtml">The xhtml to sanitize.</param>
 		/// <param name="bannedElements">Elements and their descendents with a name in this list are removed completely.  All names
 		/// in this list must be lowercase.  Matching occurs case insensitively.</param>
 		/// <param name="safeElements">Elements with a case-sensitive name in this list are retained in the output.  
@@ -186,7 +195,7 @@ namespace ProgressOnderwijsUtils
 				attr => safeAttributes.Contains(attr.Name.LocalName));
 		}
 
-		/// <summary>This function parses and sanitizes an html tree.  
+		/// <summary>This function parses and sanitizes an html tree  and returns it wrapped in a single toplevel "x" element.
 		///  - Any html that isn't recognized as html is considered content (e.g. a lone ampersand)
 		///  - Any html that can't be parsed (say, an unclosed element) is stripped.
 		///  - Any html that can be parsed is processed according the above overloads.
@@ -201,7 +210,7 @@ namespace ProgressOnderwijsUtils
 			XElement parsed = XHtmlParser(sourceString);
 			return HtmlSanitizer(parsed, defaultSafeElements, defaultSafeAttr, defaultBannedElements);
 		}
-		/// <summary>This function parses and sanitizes an html tree.  
+		/// <summary>This function parses and sanitizes an html tree and returns it wrapped in a single toplevel "x" element.  
 		///  - Any html that isn't recognized as html is considered content (e.g. a lone ampersand)
 		///  - Any html that can't be parsed (say, an unclosed element) is stripped.
 		///  - Any html that can be parsed is processed according the above overloads.
@@ -228,7 +237,7 @@ namespace ProgressOnderwijsUtils
 			"lang", "title", "href", "dir", "color", "border", "face", "size", "align", "alt", 
 			"bgcolor", "cellspacing", "cellpadding", "char", "charoff", "cite", "height", "width"
 		});
-		//de inhoud van deze elemented is volledig oninteressant.
+		//de inhoud van deze elementen is volledig oninteressant.
 		static HashSet<string> defaultBannedElements = new HashSet<string>(new[]{
 			"script","style"
 		});
