@@ -16,6 +16,7 @@ namespace ProgressOnderwijsUtils
 		}
 		public static string JoinStrings(this IEnumerable<string> strings, string separator)
 		{
+			//string.Join(separator, strings.ToArray())
 			StringBuilder sb = new StringBuilder();
 			bool addsep = false;
 			foreach (string s in strings)
