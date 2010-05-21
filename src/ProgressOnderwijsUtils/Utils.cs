@@ -14,6 +14,14 @@ namespace ProgressOnderwijsUtils
 
 	public static class Utils
 	{
+		/// <summary>
+		/// Checks if any object is null or DbNull
+		/// </summary>
+		/// <editinfo date="2010/05/20" editedby="RK"/>
+		/// <param name="anyObject"></param>
+		/// <returns></returns>
+		public static bool IsNull(object anyObject) { return anyObject == null || anyObject == DBNull.Value ? true : false; }
+
 		public static string UitgebreideFout(Exception e, string tekst)
 		{
 			return tekst + e.Message + "  " + e.TargetSite.Name + " " + e.StackTrace;
