@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
 			Stopwatch timer = Stopwatch.StartNew();
 			var bigJoin = Enumerable.Range(0, 20000).Select(i => i.ToString()).Join();
 			timer.Stop();
-			Assert.That(timer.ElapsedMilliseconds, Is.LessThan(100.0)); //string concatenatie moet niet in lussen gebruikt worden.
+			Assert.That(timer.ElapsedMilliseconds, Is.LessThan(10.0)); //string concatenatie moet niet in lussen gebruikt worden.
 		}
 
 		[Test]

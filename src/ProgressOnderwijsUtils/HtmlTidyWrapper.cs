@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using System.Text.RegularExpressions;
 using ProgressOnderwijsUtils.Extensions;
 using System.Xml;
+using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
@@ -80,7 +81,7 @@ namespace ProgressOnderwijsUtils
 				var stringRep = current.ToString(SaveOptions.DisableFormatting);
 				int currentLength = stringRep.Length;
 
-				if (currentLength < currentMax) return output;
+				if (currentLength <= currentMax) return output;
 				else if (current is XComment
 					|| current is XElement && ((XElement)current).IsEmpty
 					|| current is XDocumentType
@@ -111,11 +112,35 @@ namespace ProgressOnderwijsUtils
 		}
 
 		/// <summary>
+		/// Takes an insecure html fragment and tidies and truncates its contents such that the result fits in the 
+		/// given length and is safe to display.
+		/// </summary>
+		public static string TidyHtmlStringAndLimitLength(string input, int length)
+		{
+			return XWrappedToString(LimitLength(HtmlSanitizer(input), length + "<x></x>".Length));
+		}
+
+		/// <summary>
+		/// Takes an insecure html fragment and cleans it up.
+		/// </summary>
+		public static string TidyHtmlString(string input) { return XWrappedToString(HtmlSanitizer(input)); }
+
+
+		/// <summary>
 		/// Stips xml tags from the string for readability.  The resulting string still needs to be encoded (i.e. it is not disable-output escaping safe.)
-		/// This function also decodes xml entities and &nbsp; into readable characters.
+		/// This function also decodes xml entities and &amp;nbsp; into readable characters.
 		/// </summary>
 		public static string HtmlToTextParser(string str) { return XHtmlParser(str).Value; }
 
+		/// <summary>
+		/// Serializes a document fragment as passed by Progress.NET - i.e. all children of a meaningless "&lt;x&gt;" root node.
+		/// </summary>
+		public static string XWrappedToString(XElement xRootEl)
+		{
+			return xRootEl.Name == "x"
+				? xRootEl.Nodes().Select(node => node.ToString(SaveOptions.DisableFormatting)).Join()
+				: xRootEl.ToString(SaveOptions.DisableFormatting);
+		}
 
 		private static IEnumerable<XNode> FilterElem(XNode node, Func<XElement, TagSafety> elemFilter, Func<XAttribute, bool> attrFilter)
 		{
@@ -246,5 +271,29 @@ namespace ProgressOnderwijsUtils
 		public static IEnumerable<string> DefaultSafeAttributes { get { return defaultSafeAttr.AsEnumerable(); } }
 		public static IEnumerable<string> DefaultBannedElements { get { return defaultBannedElements.AsEnumerable(); } }
 
+		[TestFixture]
+		public class HtmlTidyWrapperTest
+		{
+			public const  string sample = @"<p><b>HTML sanitization</b> is the process of examining an HTML document and producing a new HTML document that preserves only whatever tags are designated ""safe"". HTML sanitization can be used to protect against <a href=""/wiki/Cross-site_scripting"" title=""Cross-site scripting"">cross-site scripting</a> attacks by sanitizing any HTML code submitted by a user.</p> 
+<p><br /></p> ";
+
+			[Test]
+			public void TextLimitWorks()
+			{
+				var tidiedSample = TidyHtmlString(sample);
+				Assert.That(sample.LevenshteinDistanceScaled(tidiedSample), Is.LessThan(0.05));
+				int lastLength = tidiedSample.Length;
+				for (int i = tidiedSample.Length+10; i >= 0; i--)
+				{
+					var limitedVer= TidyHtmlStringAndLimitLength(sample, i);
+					Assert.That(limitedVer.Length, Is.LessThanOrEqualTo(i));
+					if (limitedVer.Length < i) // if more than "needed" trimmed then:
+						Assert.That(lastLength == i + 1 || lastLength == limitedVer.Length);//either the string was already this short or it was just trimmed due to real need - but it wasn't unnecessarily trimmed!
+					lastLength = limitedVer.Length;
+				}
+			}
+		}
 	}
+
+
 }
