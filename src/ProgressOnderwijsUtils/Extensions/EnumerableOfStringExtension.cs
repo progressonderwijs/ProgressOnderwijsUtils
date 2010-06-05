@@ -110,6 +110,12 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test]
+		public void testBiggerJoinStrings()
+		{
+			Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings("123"), Is.EqualTo("een123twee123drie"));
+		}
+
+		[Test]
 		public void testEmptyJoinStrings()
 		{
 			Assert.That(() => new string[] { }.JoinStrings("!"), Is.EqualTo(""));
