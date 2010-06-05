@@ -44,10 +44,11 @@ namespace ProgressOnderwijsUtils
 		/// </remarks>
 		public static string Join(this IEnumerable<string> strings)
 		{
-			//if (strings.Count<string>() < 1) { return ""; } //dit is veel trager - dit is een hele extra enumeration!
-			return strings.Aggregate(new StringBuilder(), (builder, str) => builder.Append(str)).ToString();
+			
+			return strings.Aggregate(new StringBuilder(), (builder, str) => builder.Append( str )).ToString();
 
 			//Let wel, het is maar de vraag of dit 't meest leesbare alternatief is, andere mogelijkheden zijn (ruwweg even snel)
+			//tja, dan doen we die toch
 			
 			//StringBuilder sb = new StringBuilder();
 			//foreach (var str in strings) sb.Append(str);
@@ -65,9 +66,9 @@ namespace ProgressOnderwijsUtils
 		/// <remarks>rewritten using linq RK 2010/05/25</remarks>
 		public static string JoinStrings(this IEnumerable<string> strings, string joiner)
 		{
-			if (strings.Count<string>() < 1) { return ""; }
-			StringBuilder s = new StringBuilder();
-			return strings.Aggregate(s, (a, b) => s.Append(b.Insert(0,joiner))).ToString().Substring(1);
+			var ret = strings.Aggregate(new StringBuilder(), (a, b) => a.Append(b.Insert(0, joiner)))
+					  .ToString();
+			return ret.Length>joiner.Length ? ret.Substring(joiner.Length) : "";
 		}
 	}
 

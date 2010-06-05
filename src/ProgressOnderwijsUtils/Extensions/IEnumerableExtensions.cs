@@ -6,11 +6,19 @@ using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
+	// <summary>
+	/// returns the (first) index of an element in a collection
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <name="elem">the element searched</param>
+	/// <returns>an int</returns>
+	/// <remarks>If you just want to test existance the native "Contains" would be sufficient</remarks>
 	public static class IEnumerableExtensions
 	{
-		/*
 		public static int IndexOf<T>(this IEnumerable<T> list, T elem)
 		{
+			//ok, had al eerder bedacht dat aggregate hier niet zo geschikt voor is.
+			//deze ifs, zijn die echt nodig?
 			if (list == null) throw new ArgumentNullException("list");
 			if (elem == null) throw new ArgumentNullException("elem");
 			int retval=0;
@@ -21,41 +29,11 @@ namespace ProgressOnderwijsUtils
 				retval++;
 			}
 			return -1;
-		}*/
-
-		/// <summary>
-		/// returns the (first) index of an element in a collection
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <name="elem">the element searched</param>
-		/// <returns>an int</returns>
-		/// <codefrom value="Renzo Kooi" date="2010/05/25" dateLast="2010/05/25"/>
-		/// <remarks>If you just want to test existance the native "Contains" would be sufficient</remarks>
-		public static int IndexOf<T>(this IEnumerable<T> list, T elem)
-		{
-			int i = -1;
-			return list.Aggregate(i, (a, b) => { a = b.Equals(elem) && a < 1 ? i + 1 : a; i++; return a; });
 		}
-
-		/// <summary>
-		/// Joins elements in a collection, using a joiner string
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="src">any collection</param>
-		/// <param name="joiner">string between elems</param>
-		/// <returns>a string</returns>
-		/// <codefrom value="Renzo Kooi" date="2010/05/25" dateLast="2010/05/25"/>
-		// TODO: remove; deze functie is gewoon equivalent aan enum.Select(e=>e.ToString()).Join(joiner) - maar .ToString 
-		// wil je op willekeurige types vermijden ivm culture-sensitivity - dat moet via converteer.
-		//public static string Join<T>(this IEnumerable<T> src, string joiner)
-		//{
-		//    return src.Aggregate("", (a, b) => a += a.Length < 1 ? b.ToString() : joiner + b.ToString());
-		//}
-
 	}
 
 	[TestFixture]
-	public class IEnumberableExtensionTest
+	public class IEnumerableExtensionTest
 	{
 		[Test]
 		public void testIndexOf()
