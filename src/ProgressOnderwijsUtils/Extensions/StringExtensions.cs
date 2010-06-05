@@ -167,9 +167,9 @@ namespace ProgressOnderwijsUtils
 
 		[Test]
 		[TestCase("", "", Result = 0)]
-		[TestCase("test","tset", Result = 1)]
+		[TestCase("test","tset", Result = 2)]
 		[TestCase(" test ","\ttest\t", Result =2)]
-		[TestCase("Ziggy Stardust","ziggy stradust", Result = 3)]
+		[TestCase("Ziggy Stardust","ziggy stradust", Result = 4)]
 		public int TestLevenshtein(string str1, string str2) { return str1.LevenshteinDistance(str2); }
 
 	}
