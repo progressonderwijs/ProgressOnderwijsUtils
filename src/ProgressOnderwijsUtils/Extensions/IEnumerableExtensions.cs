@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
 		public static int IndexOf<T>(this IEnumerable<T> list, T elem)
 		{
 			int i = -1;
-			return list.Aggregate(i, (a, b) => { a = b.Equals(elem) && a < 1 ? i+1 : a; i++; return a; });
+			return list.Aggregate(i, (a, b) => { a = b.Equals(elem) && a < 1 ? i + 1 : a; i++; return a; });
 		}
 
 		/// <summary>
@@ -45,10 +45,13 @@ namespace ProgressOnderwijsUtils
 		/// <param name="joiner">string between elems</param>
 		/// <returns>a string</returns>
 		/// <codefrom value="Renzo Kooi" date="2010/05/25" dateLast="2010/05/25"/>
-		public static string Join<T>(this IEnumerable<T> src, string joiner)
-		{
-			return src.Aggregate("",(a, b) => a += a.Length < 1 ? b.ToString() : joiner + b.ToString());
-		}
+		// TODO: remove; deze functie is gewoon equivalent aan enum.Select(e=>e.ToString()).Join(joiner) - maar .ToString 
+		// wil je op willekeurige types vermijden ivm culture-sensitivity - dat moet via converteer.
+		//public static string Join<T>(this IEnumerable<T> src, string joiner)
+		//{
+		//    return src.Aggregate("", (a, b) => a += a.Length < 1 ? b.ToString() : joiner + b.ToString());
+		//}
+
 	}
 
 	[TestFixture]
@@ -64,12 +67,20 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test]
-		public void testJoin()
+		public void testFirstIndexOfDups()
 		{
-			List<int> lst = new List<int>{1,2,3,4,5};
-			List<string> strlst = new List<string> { "een", "twee", "drie" };
-			Assert.That(lst.Join("!"), Is.EqualTo("1!2!3!4!5"));
-			Assert.That(strlst.Join(" plus "), Is.EqualTo("een plus twee plus drie"));
+			Assert.That(() => new[] { 0, 0, 1, 1, 2, 2 }.IndexOf(0), Is.EqualTo(0));
+			Assert.That(() => new[] { 0, 0, 1, 1, 2, 2 }.IndexOf(1), Is.EqualTo(2));
+			Assert.That(() => new[] { 0, 0, 1, 1, 2, 2 }.IndexOf(2), Is.EqualTo(4));
 		}
+
+		//[Test]
+		//public void testJoin()
+		//{
+		//    List<int> lst = new List<int> { 1, 2, 3, 4, 5 };
+		//    List<string> strlst = new List<string> { "een", "twee", "drie" };
+		//    Assert.That(lst.Join("!"), Is.EqualTo("1!2!3!4!5"));
+		//    Assert.That(strlst.Join(" plus "), Is.EqualTo("een plus twee plus drie"));
+		//}
 	}
 }
