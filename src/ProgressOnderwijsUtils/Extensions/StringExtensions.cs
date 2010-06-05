@@ -91,8 +91,9 @@ namespace ProgressOnderwijsUtils
 		}
 
 		//modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
-		public static int LevenshteinDistance(this string s, string t)
+		public static int LevenshteinDistance(this string s, string t, int? substitutionCost=null)
 		{
+			int subsCost = substitutionCost ?? 1;
 			int n = s.Length; //length of s
 			int m = t.Length; //length of t
 			int[,] d = new int[n + 1, m + 1]; // matrix
@@ -110,7 +111,7 @@ namespace ProgressOnderwijsUtils
 				for (int j = 0; j < m; j++)
 				{
 					// Step 5
-					cost = (t[j] == s[i] ? 0 : 2);//substitution will be cost 2.
+					cost = (t[j] == s[i] ? 0 : subsCost);
 					// Step 6
 					d[i + 1, j + 1] = System.Math.Min(System.Math.Min(d[i, j + 1] + 1, d[i + 1, j] + 1), d[i, j] + cost);
 				}
