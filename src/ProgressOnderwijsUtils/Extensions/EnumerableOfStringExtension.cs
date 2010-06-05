@@ -44,9 +44,16 @@ namespace ProgressOnderwijsUtils
 		/// </remarks>
 		public static string Join(this IEnumerable<string> strings)
 		{
-			if (strings.Count<string>() < 1) { return ""; }
-			StringBuilder s = new StringBuilder();
-			return strings.Aggregate(s,(a, b) => s.Append(b)).ToString(); //a & b zijn al strings: ToString onwenselijk.
+			//if (strings.Count<string>() < 1) { return ""; } //dit is veel trager - dit is een hele extra enumeration!
+			return strings.Aggregate(new StringBuilder(), (builder, str) => builder.Append(str)).ToString();
+
+			//Let wel, het is maar de vraag of dit 't meest leesbare alternatief is, andere mogelijkheden zijn (ruwweg even snel)
+			
+			//StringBuilder sb = new StringBuilder();
+			//foreach (var str in strings) sb.Append(str);
+			//return sb.ToString();
+
+			//return string.Join("", strings.ToArray());
 		}
 
 		/// <summary>
@@ -88,14 +95,12 @@ namespace ProgressOnderwijsUtils
 		[Test]
 		public void FastJoin()
 		{
-			var bigJoin = Enumerable.Range(0, 20000).Select(i => i.ToString());
-
+			var ints = Enumerable.Range(0, 20000).Select(i => i.ToString()).ToArray();
 			//dan ook alleen de join timen natuurlijk (bigjoin inst is 10ms)
-			Stopwatch timer = Stopwatch.StartNew();
-			string bigjoined = bigJoin.Join(); //15ms
-			timer.Stop();
+			//- om dit te doen moet je  .ToArray moeten gebruiken om em te instantieren.
+			var time = BenchTimer.MinimumTime(() => ints.Join());
 
-			Assert.That(timer.ElapsedMilliseconds, Is.LessThan(50.0));
+			Assert.That(time.TotalMilliseconds, Is.LessThan(5.0));
 		}
 
 		[Test]
