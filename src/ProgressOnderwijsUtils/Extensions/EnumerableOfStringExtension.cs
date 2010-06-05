@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using System.Diagnostics;
 
 namespace ProgressOnderwijsUtils
 {
@@ -43,7 +44,7 @@ namespace ProgressOnderwijsUtils
 		/// </remarks>
 		public static string Join(this IEnumerable<string> strings)
 		{
-			return strings.Aggregate((a, b) => a + b.ToString());
+			return strings.Aggregate((a, b) => a + b.ToString()); //a & b zijn al strings: ToString onwenselijk.
 		}
 
 		/// <summary>
@@ -55,7 +56,7 @@ namespace ProgressOnderwijsUtils
 		/// <remarks>rewritten using linq RK 2010/05/25</remarks>
 		public static string JoinStrings(this IEnumerable<string> strings, string joiner)
 		{
-			return strings.Aggregate((a, b) => a += a.Length < 1 ? b.ToString() : joiner + b.ToString());
+			return strings.Aggregate((a, b) => a += a.Length < 1 ? b.ToString() : joiner + b.ToString()); //a & b zijn al strings: ToString onwenselijk.
 		}
 
 	}
@@ -63,18 +64,43 @@ namespace ProgressOnderwijsUtils
 	[TestFixture]
 	public class IEnumberableOFStringExtensionTest
 	{
-		
+
 		[Test]
 		public void testJoin()
 		{
-			List<string> lst = new List<string> { "een", "twee", "drie" };
-			Assert.That(lst.Join(), Is.EqualTo("eentweedrie"));
+			Assert.That(() => new[] { "een", "twee", "drie" }.Join(), Is.EqualTo("eentweedrie"));
 		}
 
 		[Test]
-		public void testJoinStrings() {
-			List<string> lst = new List<string> { "een", "twee", "drie" };
-			Assert.That(lst.JoinStrings("!"), Is.EqualTo("een!twee!drie"));
+		public void EmptyJoin()
+		{
+			Assert.That(() => new string[] { }.Join(), Is.EqualTo(string.Empty));
+		}
+
+		[Test]
+		public void FastJoin()
+		{
+			Stopwatch timer = Stopwatch.StartNew();
+			var bigJoin = Enumerable.Range(0, 20000).Select(i => i.ToString()).Join();
+			timer.Stop();
+			Assert.That(timer.ElapsedMilliseconds, Is.LessThan(100.0)); //string concatenatie moet niet in lussen gebruikt worden.
+		}
+
+		[Test]
+		public void testJoinStrings()
+		{
+			Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings("!"), Is.EqualTo("een!twee!drie"));
+		}
+
+		[Test]
+		public void testEmptyJoinStrings()
+		{
+			Assert.That(() => new string[] { }.JoinStrings("!"), Is.EqualTo(""));
+		}
+		[Test]
+		public void testJoinShortStrings()
+		{
+			Assert.That(() => new [] {"","0","1","2" }.JoinStrings(","), Is.EqualTo(",0,1,2"));
 		}
 	}
 }
