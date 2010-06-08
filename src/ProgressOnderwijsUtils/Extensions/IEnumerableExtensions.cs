@@ -17,8 +17,6 @@ namespace ProgressOnderwijsUtils
 	{
 		public static int IndexOf<T>(this IEnumerable<T> list, T elem)
 		{
-			//ok, had al eerder bedacht dat aggregate hier niet zo geschikt voor is.
-			//deze ifs, zijn die echt nodig?
 			if (list == null) throw new ArgumentNullException("list");
 			if (elem == null) throw new ArgumentNullException("elem");
 			int retval=0;

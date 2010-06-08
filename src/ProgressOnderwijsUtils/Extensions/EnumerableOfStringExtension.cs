@@ -44,18 +44,10 @@ namespace ProgressOnderwijsUtils
 		/// </remarks>
 		public static string Join(this IEnumerable<string> strings)
 		{
-			
 			return strings.Aggregate(new StringBuilder(), (builder, str) => builder.Append( str )).ToString();
-
-			//Let wel, het is maar de vraag of dit 't meest leesbare alternatief is, andere mogelijkheden zijn (ruwweg even snel)
-			//tja, dan doen we die toch
-			
-			//StringBuilder sb = new StringBuilder();
-			//foreach (var str in strings) sb.Append(str);
-			//return sb.ToString();
-
-			//return string.Join("", strings.ToArray());
 		}
+
+
 
 		/// <summary>
 		/// Join a collection of strings using a joiner string
@@ -66,7 +58,8 @@ namespace ProgressOnderwijsUtils
 		/// <remarks>rewritten using linq RK 2010/05/25</remarks>
 		public static string JoinStrings(this IEnumerable<string> strings, string joiner)
 		{
-			var ret = strings.Aggregate(new StringBuilder(), (a, b) => a.Append(b.Insert(0, joiner)))
+			Func<StringBuilder,string,StringBuilder> combine = (builder, str) => builder.Append(joiner).Append(str);
+			var ret = strings.Aggregate(new StringBuilder(), combine)
 					  .ToString();
 			return ret.Length>joiner.Length ? ret.Substring(joiner.Length) : "";
 		}
@@ -97,10 +90,7 @@ namespace ProgressOnderwijsUtils
 		public void FastJoin()
 		{
 			var ints = Enumerable.Range(0, 20000).Select(i => i.ToString()).ToArray();
-			//dan ook alleen de join timen natuurlijk (bigjoin inst is 10ms)
-			//- om dit te doen moet je  .ToArray moeten gebruiken om em te instantieren.
 			var time = BenchTimer.MinimumTime(() => ints.Join());
-
 			Assert.That(time.TotalMilliseconds, Is.LessThan(5.0));
 		}
 
