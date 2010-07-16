@@ -117,7 +117,12 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static string TidyHtmlStringAndLimitLength(string input, int length)
 		{
-			return XWrappedToString(LimitLength(HtmlSanitizer(input), length + "<x></x>".Length));
+			int wrapperLength = "<x></x>".Length;
+			XElement sanitizedWrappedInput = HtmlSanitizer(input);
+			XElement trimmedVersion = int.MaxValue - wrapperLength > length
+				? LimitLength(sanitizedWrappedInput, length + wrapperLength)
+				: sanitizedWrappedInput;
+			return XWrappedToString(trimmedVersion);
 		}
 
 		/// <summary>
@@ -274,7 +279,7 @@ namespace ProgressOnderwijsUtils
 		[TestFixture]
 		public class HtmlTidyWrapperTest
 		{
-			public const  string sample = @"<p><b>HTML sanitization</b> is the process of examining an HTML document and producing a new HTML document that preserves only whatever tags are designated ""safe"". HTML sanitization can be used to protect against <a href=""/wiki/Cross-site_scripting"" title=""Cross-site scripting"">cross-site scripting</a> attacks by sanitizing any HTML code submitted by a user.</p> 
+			public const string sample = @"<p><b>HTML sanitization</b> is the process of examining an HTML document and producing a new HTML document that preserves only whatever tags are designated ""safe"". HTML sanitization can be used to protect against <a href=""/wiki/Cross-site_scripting"" title=""Cross-site scripting"">cross-site scripting</a> attacks by sanitizing any HTML code submitted by a user.</p> 
 <p><br /></p> ";
 
 			[Test]
@@ -283,9 +288,9 @@ namespace ProgressOnderwijsUtils
 				var tidiedSample = TidyHtmlString(sample);
 				Assert.That(sample.LevenshteinDistanceScaled(tidiedSample), Is.LessThan(0.05));
 				int lastLength = tidiedSample.Length;
-				for (int i = tidiedSample.Length+10; i >= 0; i--)
+				for (int i = tidiedSample.Length + 10; i >= 0; i--)
 				{
-					var limitedVer= TidyHtmlStringAndLimitLength(sample, i);
+					var limitedVer = TidyHtmlStringAndLimitLength(sample, i);
 					Assert.That(limitedVer.Length, Is.LessThanOrEqualTo(i));
 					if (limitedVer.Length < i) // if more than "needed" trimmed then:
 						Assert.That(lastLength == i + 1 || lastLength == limitedVer.Length);//either the string was already this short or it was just trimmed due to real need - but it wasn't unnecessarily trimmed!
