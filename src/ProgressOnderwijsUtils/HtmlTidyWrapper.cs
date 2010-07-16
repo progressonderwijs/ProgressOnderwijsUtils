@@ -143,7 +143,7 @@ namespace ProgressOnderwijsUtils
 		public static string XWrappedToString(XElement xRootEl)
 		{
 			return xRootEl.Name == "x"
-				? xRootEl.Nodes().Select(node => node.ToString(SaveOptions.DisableFormatting)).Join()
+				? xRootEl.Nodes().Select(node => node.ToString(SaveOptions.DisableFormatting)).JoinStrings()
 				: xRootEl.ToString(SaveOptions.DisableFormatting);
 		}
 
