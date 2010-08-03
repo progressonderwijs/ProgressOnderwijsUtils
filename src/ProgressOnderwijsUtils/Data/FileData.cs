@@ -15,13 +15,10 @@ namespace ProgressOnderwijsUtils
 			string result = "";
 			if (ContainsFile)
 			{
-				result = ReadableString;
+				result = string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m);
 			}
 			return result;
 		}
-
-		public string ReadableString { get { return string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m); } }
-
 
 		public override bool Equals(object other)
 		{
