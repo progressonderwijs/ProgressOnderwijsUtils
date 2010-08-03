@@ -21,6 +21,13 @@ namespace ProgressOnderwijsUtils
 		/// <param name="anyObject"></param>
 		/// <returns></returns>
 		public static bool IsNull(object anyObject) { return anyObject == null || anyObject == DBNull.Value ? true : false; }
+		/// <summary>
+		/// Checks object is neither null nor DBNull
+		/// </summary>
+		/// <editinfo date="2010/08/03" editedby="AvdP"/>
+		/// <param name="anyObject"></param>
+		/// <returns></returns>
+		public static bool IsNotNull(object anyObject) { return !IsNull(anyObject); }
 
 		public static string UitgebreideFout(Exception e, string tekst)
 		{
