@@ -11,7 +11,6 @@ namespace ProgressOnderwijsUtils
 	public static class ParseHelper
 	{
 
-
 		//Om gebruikersinvoer te controleren, daarna kan parse plaatsvinden
 		public static string TryParse(string s, Type t, CultureInfo culture)
 		{
@@ -64,11 +63,6 @@ namespace ProgressOnderwijsUtils
 			if (t == typeof(string)) return "";
 			throw new Exception("TryParse nog niet geimplementeerd voor " + t.ToString());
 		}
-
-		//public static ParseResult<T> TryParseAs<T>(this string s)
-		//{
-			
-		//}
 
 		//Deze functie gebruiken om gebruikersinvoer in vrije textvelden te converteren naar de juiste types, eerste TryParse uitvoeren!
 		public static object Parse(string s, Type t, CultureInfo culture)
