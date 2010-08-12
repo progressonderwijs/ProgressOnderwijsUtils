@@ -20,8 +20,7 @@ namespace ProgressOnderwijsUtils
 		/// <returns>Content of field or default type initialization</returns>
 		public static T Get<T>(this DataRow row, string fieldname)
 		{
-			object val = row[fieldname];
-			return (T)(val == DBNull.Value ? null : val); 
+			return row.Field<T>(fieldname);
 		}
 
 		/// <summary>
@@ -32,20 +31,35 @@ namespace ProgressOnderwijsUtils
 		/// <param name="fieldname">Name of attribute</param>
 		/// <param name="defaultvalue">Value to return in case attribute is DBNull or null</param>
 		/// <returns>Content of field or default value</returns>
-		public static T Get<T>(this DataRow row, string fieldname, T defaultvalue)
+		public static T FieldDefault<T>(this DataRow row, string fieldname, T defaultvalue)
 		{
 			object val = row[fieldname];
 			return val == DBNull.Value ? defaultvalue : (T)val;
 		}
+		public static T Get<T>(this DataRow row, string fieldname, T defaultvalue)
+		{
+			return row.FieldDefault(fieldname, defaultvalue);
+		}
+
+
+		public static T Field<T>(this DataRowView row, string fieldname)
+		{
+			return row.Row.Field<T>(fieldname);
+		}
 
 		public static T Get<T>(this DataRowView row, string fieldname)
 		{
-			return row.Row.Get<T>(fieldname);
+			return row.Field<T>(fieldname);
 		}
 
+
+		public static T FieldDefault<T>(this DataRowView row, string fieldname, T defaultvalue)
+		{
+			return row.Row.FieldDefault<T>(fieldname, defaultvalue);
+		}
 		public static T Get<T>(this DataRowView row, string fieldname, T defaultvalue)
 		{
-			return row.Row.Get<T>(fieldname, defaultvalue);
+			return row.FieldDefault<T>(fieldname, defaultvalue);
 		}
 	}
 }
