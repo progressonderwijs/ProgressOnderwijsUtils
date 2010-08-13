@@ -30,11 +30,5 @@ namespace ProgressOnderwijsUtils
 		{
 			return row.Row.Field<T>(fieldname);
 		}
-
-		[Obsolete("Ipv DataRowView.Get kun je tegenwoordig DataRowView.Field gebruiken e.g.: dr.Field<int?>(\"kolomnaam\") ?? defaultwaarde")]
-		public static T Get<T>(this DataRowView row, string fieldname, T defaultvalue)
-		{
-			return row.Row.Get<T>(fieldname, defaultvalue);
-		}
 	}
 }
