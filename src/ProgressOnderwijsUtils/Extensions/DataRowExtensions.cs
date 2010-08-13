@@ -19,7 +19,8 @@ namespace ProgressOnderwijsUtils
 		/// <param name="fieldname">Name of attribute</param>
 		/// <param name="defaultvalue">Value to return in case attribute is DBNull or null</param>
 		/// <returns>Content of field or default value</returns>
-		public static T FieldOrDefault<T>(this DataRow row, string fieldname, T defaultvalue)
+		[Obsolete("Ipv DataRow.Get kun je tegenwoordig DataRow.Field gebruiken e.g.: dr.Field<int?>(\"kolomnaam\") ?? defaultwaarde")]
+		public static T Get<T>(this DataRow row, string fieldname, T defaultvalue)
 		{
 			object val = row[fieldname];
 			return val == DBNull.Value ? defaultvalue : (T)val;
@@ -30,9 +31,10 @@ namespace ProgressOnderwijsUtils
 			return row.Row.Field<T>(fieldname);
 		}
 
-		public static T FieldOrDefault<T>(this DataRowView row, string fieldname, T defaultvalue)
+		[Obsolete("Ipv DataRowView.Get kun je tegenwoordig DataRowView.Field gebruiken e.g.: dr.Field<int?>(\"kolomnaam\") ?? defaultwaarde")]
+		public static T Get<T>(this DataRowView row, string fieldname, T defaultvalue)
 		{
-			return row.Row.FieldOrDefault<T>(fieldname, defaultvalue);
+			return row.Row.Get<T>(fieldname, defaultvalue);
 		}
 	}
 }
