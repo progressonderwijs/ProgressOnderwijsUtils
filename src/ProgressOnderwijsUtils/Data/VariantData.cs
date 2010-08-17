@@ -13,11 +13,17 @@ namespace ProgressOnderwijsUtils
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
-			//TODO: this is null-unsafe; however existing code doesn't pass in whether it can be null or not.
+			//TODO: this is null-unsafe; however existing code doesn't pass in whether it can be null or not. (i.e. int? is passed as int)
 			//if (value == null && !type.CanBeNull())
 			//    throw new ArgumentNullException("value", "Type " + type + " does not permit null values");
-			if (value != null && !type.IsInstanceOfType(value))
-				throw new ArgumentException("An object of type " + value.GetType() + " may not be placed in a variant data of type " + type);
+
+			if (value != null)
+			{
+				Type valueType = value.GetType();
+				if (!type.IsAssignableFrom(valueType) && !(valueType.IsEnum && type.IsAssignableFrom(valueType.GetEnumUnderlyingType())) ) // !type.IsInstanceOfType(value))
+					throw new ArgumentException("An object of type " + value.GetType() + " may not be placed in a variant data of type " + type);
+
+			}
 			this.type = type;
 			this.value = value;
 		}
