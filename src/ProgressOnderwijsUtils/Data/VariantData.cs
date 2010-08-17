@@ -37,20 +37,12 @@ namespace ProgressOnderwijsUtils
 
 		public override bool Equals(object obj)
 		{
-			bool result = false;
-			if (obj != null && obj.GetType() == typeof(VariantData))
-			{
-				result = Equals((VariantData)obj);
-			}
-			return result;
+			return obj is VariantData && Equals((VariantData)obj);
 		}
 
 		public override int GetHashCode()
 		{
-			unchecked
-			{
-				return ((Type != null ? Type.GetHashCode() : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0);
-			}
+			return ((Type != null ? Type.GetHashCode() : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0);
 		}
 
 		public static bool operator ==(VariantData left, VariantData right)
