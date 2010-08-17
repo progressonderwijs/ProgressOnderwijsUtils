@@ -5,8 +5,25 @@ namespace ProgressOnderwijsUtils
 {
 	public struct VariantData : IEquatable<VariantData>
 	{
-		public string Type { get; set; }
-		public object Value { get; set; }
+		public static VariantData Create<T>(T value)
+		{
+			return new VariantData(typeof(T), value);
+		}
+		public VariantData(Type type, object value)
+		{
+			if (type == null)
+				throw new ArgumentNullException("type");
+			if (value == null && !type.CanBeNull())
+				throw new ArgumentNullException("value", "Type " + type + " does not permit null values");
+			if (value != null && !type.IsInstanceOfType(value))
+				throw new ArgumentException("An object of type " + value.GetType() + " may not be placed in a variant data of type " + type);
+			this.type = type;
+			this.value = value;
+		}
+		readonly Type type;
+		readonly object value;
+		public Type Type { get { return type; } }
+		public object Value { get { return value; } }
 
 		public override string ToString()
 		{
