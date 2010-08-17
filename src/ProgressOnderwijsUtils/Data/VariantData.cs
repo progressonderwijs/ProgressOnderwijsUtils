@@ -13,8 +13,9 @@ namespace ProgressOnderwijsUtils
 		{
 			if (type == null)
 				throw new ArgumentNullException("type");
-			if (value == null && !type.CanBeNull())
-				throw new ArgumentNullException("value", "Type " + type + " does not permit null values");
+			//TODO: this is null-unsafe; however existing code doesn't pass in whether it can be null or not.
+			//if (value == null && !type.CanBeNull())
+			//    throw new ArgumentNullException("value", "Type " + type + " does not permit null values");
 			if (value != null && !type.IsInstanceOfType(value))
 				throw new ArgumentException("An object of type " + value.GetType() + " may not be placed in a variant data of type " + type);
 			this.type = type;
