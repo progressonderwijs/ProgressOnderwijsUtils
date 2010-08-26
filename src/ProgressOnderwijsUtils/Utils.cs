@@ -1,17 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using ProgressOnderwijsUtils;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using NUnit.Framework;
-using System.Reflection;
 
 namespace ProgressOnderwijsUtils
 {
-
 	public static class Utils
 	{
 		/// <summary>
@@ -21,6 +18,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="anyObject"></param>
 		/// <returns></returns>
 		public static bool IsNull(object anyObject) { return anyObject == null || anyObject == DBNull.Value ? true : false; }
+
 		/// <summary>
 		/// Checks object is neither null nor DBNull
 		/// </summary>
@@ -62,6 +60,7 @@ namespace ProgressOnderwijsUtils
 				res += i * (getal % 10);
 			return res != 0 && res % 11 == 0;
 		}
+
 		/**
 		 * <summary>
 		 *  Utility om van een serie strings een serie
@@ -116,7 +115,6 @@ namespace ProgressOnderwijsUtils
 			other = tmp;
 		}
 
-		
 		//idee van http://www.b-virtual.be/post/Generic-Cloning-Method-in-c.aspx
 		//nog niet nuttig voor het clonen van genericcollection, omdat daarvoor geen (de)serialize is geimplementeerd
 		/// <summary>
@@ -132,6 +130,26 @@ namespace ProgressOnderwijsUtils
 				return (T)serializer.Deserialize(memoryStream);
 			}
 		}
+
+		public static string InClause(IEnumerable values)
+		{
+			StringBuilder sb = new StringBuilder();
+			foreach (object value in values)
+			{
+				if (sb.Length > 0)
+				{
+					sb.Append(", ");
+				}
+				sb.Append(value);
+			}
+            if (sb.Length == 0)
+            {
+            	sb.Append("null");
+            }
+			sb.Insert(0, "(");
+			sb.Append(")");
+			return sb.ToString();
+		}
 	}
 
 	/// <summary>
@@ -143,7 +161,7 @@ namespace ProgressOnderwijsUtils
 	{
 		public bool Equals(T one, T other)
 		{
-			return object.ReferenceEquals(one, other);
+			return ReferenceEquals(one, other);
 		}
 
 		public int GetHashCode(T obj)
@@ -183,6 +201,19 @@ namespace ProgressOnderwijsUtils
 			Utils.Swap(ref one, ref other);
 			Assert.That(one, Is.EqualTo("2"));
 			Assert.That(other, Is.EqualTo("1"));
+		}
+
+		private IEnumerable<TestCaseData> InClauseData()
+		{
+			yield return new TestCaseData(new List<int>()).Returns("(null)");
+			yield return new TestCaseData(new List<int> { 0 }).Returns("(0)");
+			yield return new TestCaseData(new List<int> { 0, 1 }).Returns("(0, 1)");
+		}
+
+		[Test, TestCaseSource("InClauseData")]
+		public string InClause(IEnumerable values)
+		{
+			return Utils.InClause(values);
 		}
 	}
 
