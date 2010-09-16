@@ -131,16 +131,16 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public static string InClause(IEnumerable values)
+		public static string InClause<T>(IEnumerable<T> values)
 		{
 			StringBuilder sb = new StringBuilder();
-			foreach (object value in values)
+			foreach (T value in values)
 			{
 				if (sb.Length > 0)
 				{
 					sb.Append(", ");
 				}
-				sb.Append(value);
+				sb.Append((T)value);
 			}
             if (sb.Length == 0)
             {
@@ -211,7 +211,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test, TestCaseSource("InClauseData")]
-		public string InClause(IEnumerable values)
+		public string InClause(IEnumerable<int> values)
 		{
 			return Utils.InClause(values);
 		}
