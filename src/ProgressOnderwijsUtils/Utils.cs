@@ -90,16 +90,22 @@ namespace ProgressOnderwijsUtils
 			other = tmp;
 		}
 
-		public static string InClause(IEnumerable<int> values)
+		/// <summary>
+		/// This function needs to be generic in order to cope with 
+		/// Cast<int>() LINQ functions for enumerations!
+		/// </summary>
+		/// <param name="values"></param>
+		/// <returns></returns>
+		public static string InClause<T>(IEnumerable<T> values)
 		{
 			StringBuilder sb = new StringBuilder();
-			foreach (int value in values)
+			foreach (T value in values)
 			{
 				if (sb.Length > 0)
 				{
 					sb.Append(", ");
 				}
-				sb.Append(value.ToStringInvariant());
+				sb.Append((T)value);
 			}
 			if (sb.Length == 0)
 			{
@@ -110,8 +116,6 @@ namespace ProgressOnderwijsUtils
 			return sb.ToString();
 		}
 	}
-
-
 
 	/// <summary>
 	/// Equality comparer that will compare on reference equality.
