@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtils
 		public static void TestErrorOutOfMemory()
 		{
 			List<byte[]> memorySlurper = new List<byte[]>();
-			for (long i = 0; i < long.MaxValue;i++ ) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
+			for (long i = 0; i < long.MaxValue; i++) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
 			{
 				memorySlurper.Add(Encoding.UTF8.GetBytes(@"This is a simply string which is repeatedly put in memory to test the Out Of Memory condition.  It's encoded to make sure the program really touches the data and that therefore the OS really needs to allocate the memory, and can't just 'pretend'."));
 			}
@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils
 		public static void TestErrorNormalException()
 		{
 			throw new ApplicationException("This is a test exception intended to test fault-tolerance.  " +
-				                           "User's shouldn't see it, of course!");
+										   "User's shouldn't see it, of course!");
 		}
 
 		public static bool ElfProef(int getal)
@@ -68,35 +68,50 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static T Clone<T>(T objectToClone)
 		{
-			using(var memoryStream = new MemoryStream())
+			using (var memoryStream = new MemoryStream())
 			{
-				var serializer	= new BinaryFormatter();
+				var serializer = new BinaryFormatter();
 				serializer.Serialize(memoryStream, objectToClone);
 				memoryStream.Position = 0;
 				return (T)serializer.Deserialize(memoryStream);
 			}
 		}
 
-		public static string InClause<T>(IEnumerable<T> values)
+		/// <summary>
+		/// Swap two objects.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="one"></param>
+		/// <param name="other"></param>
+		public static void Swap<T>(ref T one, ref T other)
+		{
+			T tmp = one;
+			one = other;
+			other = tmp;
+		}
+
+		public static string InClause(IEnumerable<int> values)
 		{
 			StringBuilder sb = new StringBuilder();
-			foreach (T value in values)
+			foreach (int value in values)
 			{
 				if (sb.Length > 0)
 				{
 					sb.Append(", ");
 				}
-				sb.Append((T)value);
+				sb.Append(value.ToStringInvariant());
 			}
-            if (sb.Length == 0)
-            {
-            	sb.Append("null");
-            }
+			if (sb.Length == 0)
+			{
+				sb.Append("null");
+			}
 			sb.Insert(0, "(");
 			sb.Append(")");
 			return sb.ToString();
 		}
 	}
+
+
 
 	/// <summary>
 	/// Equality comparer that will compare on reference equality.
@@ -129,6 +144,26 @@ namespace ProgressOnderwijsUtils
 	[TestFixture]
 	public class UtilsTest
 	{
+		[Test]
+		public void SwapValue()
+		{
+			int one = 1;
+			int other = 2;
+			Utils.Swap(ref one, ref other);
+			Assert.That(one, Is.EqualTo(2));
+			Assert.That(other, Is.EqualTo(1));
+		}
+
+		[Test]
+		public void SwapReference()
+		{
+			string one = "1";
+			string other = "2";
+			Utils.Swap(ref one, ref other);
+			Assert.That(one, Is.EqualTo("2"));
+			Assert.That(other, Is.EqualTo("1"));
+		}
+
 		private IEnumerable<TestCaseData> InClauseData()
 		{
 			yield return new TestCaseData(new List<int>()).Returns("(null)");
