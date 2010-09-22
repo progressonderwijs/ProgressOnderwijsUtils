@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using NUnit.Framework;
+using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
@@ -80,9 +81,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Swap two objects.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="one"></param>
-		/// <param name="other"></param>
 		public static void Swap<T>(ref T one, ref T other)
 		{
 			T tmp = one;
@@ -91,30 +89,24 @@ namespace ProgressOnderwijsUtils
 		}
 
 		/// <summary>
-		/// This function needs to be generic in order to cope with 
-		/// Cast<int>() LINQ functions for enumerations!
+		/// Joins a set of values into SQL syntax; e.g. test, ab'c, xyz turn into "('test', 'ab''c', 'xyz')" and the empty set turns into "(null)".
+		/// Single quotes are doubled; however, this is not rigorously safe and as such beware of SQL-injection.
+		/// No user-supplied strings should be used with this function!
 		/// </summary>
-		/// <param name="values"></param>
-		/// <returns></returns>
-		public static string InClause<T>(IEnumerable<T> values)
+		public static string SqlInClause(IEnumerable<string> values) { return SqlInClauseHelper(values.Select(EscapeSqlString)); }
+
+		/// <summary>
+		/// Joins a set of values into SQL syntax; e.g. 1,2,3 turn into "(1,2,3)" and the empty set turns into "(null)"
+		/// </summary>
+		public static string SqlInClause(IEnumerable<int> values) { return SqlInClauseHelper(values.Select(val => val.ToStringInvariant())); }
+
+		static string EscapeSqlString(string val) { return '\'' + val.Replace("'", "''") + '\''; }
+		static string SqlInClauseHelper(IEnumerable<string> values)
 		{
-			StringBuilder sb = new StringBuilder();
-			foreach (T value in values)
-			{
-				if (sb.Length > 0)
-				{
-					sb.Append(", ");
-				}
-				sb.Append((T)value);
-			}
-			if (sb.Length == 0)
-			{
-				sb.Append("null");
-			}
-			sb.Insert(0, "(");
-			sb.Append(")");
-			return sb.ToString();
+			string joined = values.JoinStrings(", ");
+			return joined.Length == 0 ? "(null)" : "(" + joined + ")";
 		}
+
 	}
 
 	/// <summary>
@@ -178,7 +170,7 @@ namespace ProgressOnderwijsUtils
 		[Test, TestCaseSource("InClauseData")]
 		public string InClause(IEnumerable<int> values)
 		{
-			return Utils.InClause(values);
+			return Utils.SqlInClause(values);
 		}
 	}
 
