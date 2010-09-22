@@ -106,7 +106,6 @@ namespace ProgressOnderwijsUtils
 			string joined = values.JoinStrings(", ");
 			return joined.Length == 0 ? "(null)" : "(" + joined + ")";
 		}
-
 	}
 
 	/// <summary>
@@ -160,11 +159,19 @@ namespace ProgressOnderwijsUtils
 			Assert.That(other, Is.EqualTo("1"));
 		}
 
+		enum SampleEnum { ValueA, ValueB };
+
 		private IEnumerable<TestCaseData> InClauseData()
 		{
-			yield return new TestCaseData(new List<int>()).Returns("(null)");
-			yield return new TestCaseData(new List<int> { 0 }).Returns("(0)");
-			yield return new TestCaseData(new List<int> { 0, 1 }).Returns("(0, 1)");
+			yield return new TestCaseData(new int[] { }).Returns("(null)");
+			yield return new TestCaseData(new[] { 0 }).Returns("(0)");
+			yield return new TestCaseData(new[] { 0, 1 }).Returns("(0, 1)");
+			yield return new TestCaseData(new[] { SampleEnum.ValueA, SampleEnum.ValueB }).Returns("(0, 1)");
+		}
+
+		private IEnumerable<TestCaseData> InClauseStringData()
+		{
+			yield return new TestCaseData( new[] { "test", "ab'c", "xyz" }.ToList()).Returns("('test', 'ab''c', 'xyz')");
 		}
 
 		[Test, TestCaseSource("InClauseData")]
@@ -172,6 +179,12 @@ namespace ProgressOnderwijsUtils
 		{
 			return Utils.SqlInClause(values);
 		}
+		[Test, TestCaseSource("InClauseStringData")]
+		public string InClauseStrings(IEnumerable<string> values)
+		{
+			return Utils.SqlInClause(values);
+		}
+
 	}
 
 	[TestFixture]
