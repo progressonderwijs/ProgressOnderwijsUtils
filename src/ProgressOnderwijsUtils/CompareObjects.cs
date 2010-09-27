@@ -43,139 +43,21 @@ using System.Linq;
 namespace ProgressOnderwijsUtils
 {
 	/// <summary>
-	/// Class that allows comparison of two objects of the same type to each other.  Supports classes, lists, arrays, dictionaries, child comparison and more. 
+	/// Class that allows comparison of two objects of the same type to each other.
+	/// Supports classes, lists, arrays, dictionaries, child comparison and more. 
 	/// HdG: Schijnt dat het (nog) niet werkt voor datatables, iemand meldt een oneindige lus
 	/// http://comparenetobjects.codeplex.com/
 	/// </summary>
-	public class CompareObjects
+	public class CompareObjects //TODO:emn:FIX!
 	{
 		#region Class Variables
-		private List<String> _differences = new List<String>();
+		private List<String> Differences = new List<String>();
 		private List<object> _parents = new List<object>();
-		private List<string> _elementsToIgnore = new List<string>();
-		private bool _comparePrivateProperties = false;
-		private bool _comparePrivateFields = false;
-		private bool _compareChildren = true;
-		private bool _compareReadOnly = true;
-		private bool _compareFields = true;
-		private bool _compareProperties = true;
-		private int _maxDifferences = 1;
+
+
+		private int MaxDifferences = 1;
 		#endregion
 
-		#region Properties
-
-		/// <summary>
-		/// Ignore classes, properties, or fields by name during the comparison.
-		/// Case sensitive.
-		/// </summary>
-		public List<string> ElementsToIgnore
-		{
-			get { return _elementsToIgnore; }
-			set { _elementsToIgnore = value; }
-		}
-
-		/// <summary>
-		/// If true, private properties will be compared. The default is false.
-		/// </summary>
-		public bool ComparePrivateProperties
-		{
-			get { return _comparePrivateProperties; }
-			set { _comparePrivateProperties = value; }
-		}
-
-		/// <summary>
-		/// If true, private fields will be compared. The default is false.
-		/// </summary>
-		public bool ComparePrivateFields
-		{
-			get { return _comparePrivateFields; }
-			set { _comparePrivateFields = value; }
-		}
-
-		/// <summary>
-		/// If true, child objects will be compared. The default is true. 
-		/// If false, and a list or array is compared list items will be compared but not their children.
-		/// </summary>
-		public bool CompareChildren
-		{
-			get { return _compareChildren; }
-			set { _compareChildren = value; }
-		}
-
-		/// <summary>
-		/// If true, compare read only properties (only the getter is implemented).
-		/// The default is true.
-		/// </summary>
-		public bool CompareReadOnly
-		{
-			get { return _compareReadOnly; }
-			set { _compareReadOnly = value; }
-		}
-
-		/// <summary>
-		/// If true, compare fields of a class (see also CompareProperties).
-		/// The default is true.
-		/// </summary>
-		public bool CompareFields
-		{
-			get { return _compareFields; }
-			set { _compareFields = value; }
-		}
-
-		/// <summary>
-		/// If true, compare properties of a class (see also CompareFields).
-		/// The default is true.
-		/// </summary>
-		public bool CompareProperties
-		{
-			get { return _compareProperties; }
-			set { _compareProperties = value; }
-		}
-
-		/// <summary>
-		/// The maximum number of differences to detect
-		/// </summary>
-		/// <remarks>
-		/// Default is 1 for performance reasons.
-		/// </remarks>
-		public int MaxDifferences
-		{
-			get { return _maxDifferences; }
-			set { _maxDifferences = value; }
-		}
-
-		/// <summary>
-		/// The differences found during the compare
-		/// </summary>
-		public List<String> Differences
-		{
-			get { return _differences; }
-			set { _differences = value; }
-		}
-
-		/// <summary>
-		/// The differences found in a string suitable for a textbox
-		/// </summary>
-		public string DifferencesString
-		{
-			get
-			{
-				StringBuilder sb = new StringBuilder();
-
-				sb.Append("Begin Differences:\n");
-
-				foreach (string item in Differences)
-				{
-					sb.AppendFormat("{0}\n", item);
-				}
-
-				sb.AppendFormat("End Differences (Maximum of {0} differences shown).", MaxDifferences);
-
-				return sb.ToString();
-			}
-		}
-
-		#endregion
 
 
 
@@ -192,7 +74,7 @@ namespace ProgressOnderwijsUtils
 			if (object1 == null && object2 == null) return true; //gelijk
 			if (object1 == null && object2 != null) return false; //niet gelijk
 			if (object1 != null && object2 == null) return false; //niet gelijk
-			
+
 			string defaultBreadCrumb = string.Empty;
 
 			//bool isEqual =
@@ -436,17 +318,9 @@ namespace ProgressOnderwijsUtils
 				_parents.Add(object2);
 				Type t1 = object1.GetType();
 
-				//We ignore the class name
-				if (ElementsToIgnore.Contains(t1.Name))
-					return;
+				PerformCompareProperties(t1, object1, object2, breadCrumb);
 
-				//Compare the properties
-				if (CompareProperties)
-					PerformCompareProperties(t1, object1, object2, breadCrumb);
-
-				//Compare the fields
-				if (CompareFields)
-					PerformCompareFields(t1, object1, object2, breadCrumb);
+				PerformCompareFields(t1, object1, object2, breadCrumb);
 			}
 			finally
 			{
@@ -458,10 +332,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Compare the fields of a class
 		/// </summary>
-		/// <param name="t1"></param>
-		/// <param name="object1"></param>
-		/// <param name="object2"></param>
-		/// <param name="breadCrumb"></param>
 		private void PerformCompareFields(Type t1,
 			object object1,
 			object object2,
@@ -473,20 +343,11 @@ namespace ProgressOnderwijsUtils
 
 			FieldInfo[] currentFields;
 
-			if (ComparePrivateFields)
-				currentFields = t1.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			else
-				currentFields = t1.GetFields(); //Default is public instance
+			currentFields = t1.GetFields(); //Default is public instance
 
 			foreach (FieldInfo item in currentFields)
 			{
-				//Skip if this is a shallow compare
-				if (!CompareChildren && IsChildType(item.FieldType))
-					continue;
 
-				//If we should ignore it, skip it
-				if (ElementsToIgnore.Contains(item.Name))
-					continue;
 
 				objectValue1 = item.GetValue(object1);
 				objectValue2 = item.GetValue(object2);
@@ -514,10 +375,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Compare the properties of a class
 		/// </summary>
-		/// <param name="t1"></param>
-		/// <param name="object1"></param>
-		/// <param name="object2"></param>
-		/// <param name="breadCrumb"></param>
 		private void PerformCompareProperties(Type t1,
 			object object1,
 			object object2,
@@ -529,27 +386,12 @@ namespace ProgressOnderwijsUtils
 
 			PropertyInfo[] currentProperties;
 
-			if (ComparePrivateProperties)
-				currentProperties = t1.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			else
-				currentProperties = t1.GetProperties(); //Default is public instance            
+			currentProperties = t1.GetProperties();
 
 			foreach (PropertyInfo info in currentProperties)
 			{
 				//If we can't read it, skip it
 				if (info.CanRead == false)
-					continue;
-
-				//Skip if this is a shallow compare
-				if (!CompareChildren && IsChildType(info.PropertyType))
-					continue;
-
-				//If we should ignore it, skip it
-				if (ElementsToIgnore.Contains(info.Name))
-					continue;
-
-				//If we should ignore read only, skip it
-				if (!CompareReadOnly && info.CanWrite == false)
 					continue;
 
 				objectValue1 = info.GetValue(object1, null);
