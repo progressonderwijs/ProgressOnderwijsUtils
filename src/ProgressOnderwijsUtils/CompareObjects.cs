@@ -71,11 +71,9 @@ namespace ProgressOnderwijsUtils
 		/// </remarks>
 		public bool Compare(object object1, object object2)
 		{
-			if (object1 == null && object2 == null) return true; //gelijk
-			if (object1 == null && object2 != null) return false; //niet gelijk
-			if (object1 != null && object2 == null) return false; //niet gelijk
+			if (object.ReferenceEquals(object1, object2)) return true; //gelijk
+			else if (object1 == null || object2 == null) return false; //niet gelijk
 
-			string defaultBreadCrumb = string.Empty;
 
 			//bool isEqual =
 			//    object.Equals(object1, object2)
@@ -90,7 +88,7 @@ namespace ProgressOnderwijsUtils
 
 
 			Differences.Clear();
-			Compare(object1, object2, defaultBreadCrumb);
+			Compare(object1, object2, string.Empty);
 
 			return Differences.Count == 0;
 		}
@@ -307,9 +305,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Compare the properties, fields of a class
 		/// </summary>
-		/// <param name="object1"></param>
-		/// <param name="object2"></param>
-		/// <param name="breadCrumb"></param>
 		private void CompareClass(object object1, object object2, string breadCrumb)
 		{
 			try
@@ -332,10 +327,7 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Compare the fields of a class
 		/// </summary>
-		private void PerformCompareFields(Type t1,
-			object object1,
-			object object2,
-			string breadCrumb)
+		void PerformCompareFields(Type t1, object object1, object object2, string breadCrumb)
 		{
 			object objectValue1;
 			object objectValue2;
@@ -347,13 +339,11 @@ namespace ProgressOnderwijsUtils
 
 			foreach (FieldInfo item in currentFields)
 			{
-
-
 				objectValue1 = item.GetValue(object1);
 				objectValue2 = item.GetValue(object2);
 
-				bool object1IsParent = objectValue1 != null && (objectValue1 == object1 || _parents.Contains(objectValue1));
-				bool object2IsParent = objectValue2 != null && (objectValue2 == object2 || _parents.Contains(objectValue2));
+				bool object1IsParent = objectValue1 == object1 || _parents.Contains(objectValue1);
+				bool object2IsParent = objectValue2 == object2 || _parents.Contains(objectValue2);
 
 				//Skip fields that point to the parent
 				if (IsClass(item.FieldType)
@@ -401,11 +391,8 @@ namespace ProgressOnderwijsUtils
 				bool object2IsParent = objectValue2 != null && (objectValue2 == object2 || _parents.Contains(objectValue2));
 
 				//Skip properties where both point to the corresponding parent
-				if (IsClass(info.PropertyType)
-					&& (object1IsParent && object2IsParent))
-				{
+				if (IsClass(info.PropertyType) && object1IsParent && object2IsParent)
 					continue;
-				}
 
 				currentCrumb = AddBreadCrumb(breadCrumb, info.Name, string.Empty, -1);
 
