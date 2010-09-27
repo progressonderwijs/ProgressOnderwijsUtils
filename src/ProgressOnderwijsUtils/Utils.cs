@@ -108,23 +108,6 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
-	/// <summary>
-	/// Equality comparer that will compare on reference equality.
-	/// </summary>
-	/// <remarks>This might be handy to have collections on reference equality while the elements are value comparable.</remarks>
-	/// <typeparam name="T"></typeparam>
-	public class ReferenceEqualityComparer<T> : IEqualityComparer<T>
-	{
-		public bool Equals(T one, T other)
-		{
-			return ReferenceEquals(one, other);
-		}
-
-		public int GetHashCode(T obj)
-		{
-			return RuntimeHelpers.GetHashCode(obj);
-		}
-	}
 
 	public abstract class AnInnerClass<T>
 	{
