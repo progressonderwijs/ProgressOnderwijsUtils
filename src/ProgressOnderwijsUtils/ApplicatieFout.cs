@@ -9,6 +9,5 @@ namespace ProgressOnderwijsUtils
 		public string Versie { get; set; }
 		public string Message { get; set; }
 		public string Stacktrace { get;set;}
-
 	}
 }
