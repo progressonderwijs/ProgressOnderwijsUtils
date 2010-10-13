@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Data
 	/// </summary>
 	[Serializable] public class GenericLijstSettings
 	{
-		public SortedList SelectedKey = null;
-		public int CurrentPage=1;
+		public SortedList SelectedKey;
+		public int CurrentPage;
 	}
 }
