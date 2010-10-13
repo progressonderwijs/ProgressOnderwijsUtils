@@ -28,11 +28,6 @@ namespace ProgressOnderwijsUtils
 		/// <returns></returns>
 		public static bool IsNotNull(object anyObject) { return !IsNull(anyObject); }
 
-		public static string UitgebreideFout(Exception e, string tekst)
-		{
-			return tekst + e.Message + "  " + e.TargetSite.Name + " " + e.StackTrace;
-		}
-
 		public static string TestErrorStackOverflow(int rounds)
 		{
 			//This is intended for testing error-handling in case of dramatic errors.
@@ -50,8 +45,7 @@ namespace ProgressOnderwijsUtils
 
 		public static void TestErrorNormalException()
 		{
-			throw new ApplicationException("This is a test exception intended to test fault-tolerance.  " +
-										   "User's shouldn't see it, of course!");
+			throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
 		}
 
 		public static bool ElfProef(int getal)
