@@ -10,91 +10,44 @@ namespace ProgressOnderwijsUtils
 	[Serializable]
 	public class SortOrder : List<SortColumn>
 	{
-		public SortColumn BaseSortOrder { set;get;}
-
-		public SortOrder() { }
+		public SortColumn BaseSortOrder { set; get; }
 
 		public int OrderingIndex(string column, SortDirection direction)
 		{
-			return this.IndexOf(new SortColumn(column, direction));
+			return IndexOf(new SortColumn(column, direction));
 		}
 
 		public void AddReverse(string kolomnaam)
 		{
-			if (this.Contains(new SortColumn(kolomnaam, SortDirection.Desc)))
+			if (Contains(new SortColumn(kolomnaam, SortDirection.Desc)))
 			{
-				this.Remove(new SortColumn(kolomnaam, SortDirection.Desc));
-				this.Insert(0, new SortColumn(kolomnaam, SortDirection.Asc));
+				Remove(new SortColumn(kolomnaam, SortDirection.Desc));
+				Insert(0, new SortColumn(kolomnaam, SortDirection.Asc));
 			}
-			else if (this.Contains(new SortColumn(kolomnaam, SortDirection.Asc)))
+			else if (Contains(new SortColumn(kolomnaam, SortDirection.Asc)))
 			{
-				this.Remove(new SortColumn(kolomnaam, SortDirection.Asc));
-				this.Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
+				Remove(new SortColumn(kolomnaam, SortDirection.Asc));
+				Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
 			}
 			else
-				this.Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
-			//Oude strategie
-			/*			if (this.Contains(new SortColumn(kolomnaam, SortDirection.Desc)))
-							this.Remove(new SortColumn(kolomnaam, SortDirection.Desc));
-						else
-						{
-							if (this.Contains(new SortColumn(kolomnaam, SortDirection.Asc)))
-							{
-								this.Remove(new SortColumn(kolomnaam, SortDirection.Asc));
-								this.Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
-							}
-							else
-								this.Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
-						}*/
-			//Eenvoudige strategie
-			/*			if (this.Contains(new SortColumn(kolomnaam, SortDirection.Asc)))
-						{
-							this.Clear();
-							this.Add(new SortColumn(kolomnaam, SortDirection.Desc));
-						}
-						else
-						{
-							if (this.Contains(new SortColumn(kolomnaam, SortDirection.Desc)))
-							{
-								this.Clear();
-							}
-							else
-							{
-								this.Clear();
-								this.Add(new SortColumn(kolomnaam, SortDirection.Asc));
-							}
-						}*/
+				Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
 		}
 
-		/*public void RemoveAll()
-		{
-			this.Clear();
-		}*/
 	}
 
 	[Serializable]
 	public class SortColumn : IEquatable<SortColumn>
 	{
-		string column;
-		SortDirection direction;
+		readonly string column;
+		readonly SortDirection direction;
 
 		public string Column { get { return column; } }
 		public SortDirection Direction { get { return direction; } }
 
-		public SortColumn(string column, SortDirection direction)
-		{
-			this.column = column;
-			this.direction = direction;
-		}
+		public SortColumn(string column, SortDirection direction) { this.column = column; this.direction = direction; }
 
-		/*		public int CompareTo(SortColumn other)
-				{
-					return Column.CompareTo(other.Column);
-				}*/
-
-		public bool Equals(SortColumn other)
-		{
-			return this.Column == other.Column && this.Direction == other.Direction;
-		}
+		public bool Equals(SortColumn other) { return Column == other.Column && Direction == other.Direction; }
+		public override bool Equals(object obj) { return obj is SortColumn && Equals((SortColumn)obj); }
+		public override int GetHashCode() { return column.GetHashCode() + 51 * direction.GetHashCode(); }
 	}
 }
