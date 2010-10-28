@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MoreLinq;
+using System.Linq;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,20 +21,23 @@ namespace ProgressOnderwijsUtils
 
 		public void AddReverse(string kolomnaam)
 		{
-			if (Contains(new SortColumn(kolomnaam, SortDirection.Desc)))
-			{
-				Remove(new SortColumn(kolomnaam, SortDirection.Desc));
+			if (Remove(new SortColumn(kolomnaam, SortDirection.Desc)))
 				Insert(0, new SortColumn(kolomnaam, SortDirection.Asc));
-			}
-			else if (Contains(new SortColumn(kolomnaam, SortDirection.Asc)))
+			else
 			{
 				Remove(new SortColumn(kolomnaam, SortDirection.Asc));
 				Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
 			}
-			else
-				Insert(0, new SortColumn(kolomnaam, SortDirection.Desc));
 		}
 
+		public IEnumerable<SortColumn> CompleteSortOrder
+		{
+			get
+			{
+				foreach (var sc in this) yield return sc;
+				if (BaseSortOrder != null) yield return BaseSortOrder;
+			}
+		}
 	}
 
 	[Serializable]
@@ -43,6 +48,7 @@ namespace ProgressOnderwijsUtils
 
 		public string Column { get { return column; } }
 		public SortDirection Direction { get { return direction; } }
+		public string SqlSortString { get { return column + " " + direction; } }
 
 		public SortColumn(string column, SortDirection direction) { this.column = column; this.direction = direction; }
 
