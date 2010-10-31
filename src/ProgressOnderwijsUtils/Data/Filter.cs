@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 
@@ -10,37 +11,28 @@ namespace ProgressOnderwijsUtils
 		List<Filter> filterLijst;
 		Criterium criterium;
 
-		public List<Filter> FilterLijst { get { return filterLijst; } set { filterLijst = value; } }
+		public List<Filter> FilterLijst { get { return filterLijst; } }
 		public BooleanOperator AndOr { get { return andor; } }
 		public Criterium Criterium { get { return criterium; } set { criterium = value; } }
 		public Filter Parent { get; private set; }
 		public int Position { get; private set; }
 
-		public Filter(Criterium criterium)
-		{
-			this.criterium = criterium;
-		}
+		public Filter(Criterium criterium) { this.criterium = criterium; }
 		public Filter(BooleanOperator andor, params Filter[] condities)
 		{
 			this.andor = andor;
 			filterLijst = new List<Filter>();
-			for (int i = 0; i < condities.Length; ++i)
-				AddHelper(condities[i]);
+			foreach (Filter t in condities)
+				AddHelper(t);
 		}
-		public Filter(BooleanOperator andor, List<Filter> condities)
-		{
-			this.andor = andor;
-			filterLijst = new List<Filter>();
-			for (int i = 0; i < condities.Count; ++i)
-				AddHelper(condities[i]);
-		}
-		public void Add(Filter f)
-		{
-			if (criterium != null)
-				throw new Exception("Toevoegen filter zonder BooleanOperator kan als Filter lijstje van filters is");
-			else
-				AddHelper(f);
-		}
+		public Filter(BooleanOperator andor, List<Filter> condities) : this(andor, condities.ToArray()) { }
+		//public void Add(Filter f)
+		//{
+		//    if (criterium != null)
+		//        throw new Exception("Toevoegen filter zonder BooleanOperator kan als Filter lijstje van filters is");
+		//    else
+		//        AddHelper(f);
+		//}
 		void AddHelper(Filter f)
 		{
 			f.Parent = this;
@@ -78,18 +70,15 @@ namespace ProgressOnderwijsUtils
 				return true;		//Zou niet voor moeten kunnen komen, maar retourneer dan maar een leeg filter
 			}
 		}
+
 		public string ToString(List<object> parameterSink)
 		{
 			if (criterium == null)
-			{
-				string retval = "";
-				for (int i = 0; i < filterLijst.Count; ++i)
-					retval += filterLijst[i].ToString(parameterSink) + (i < filterLijst.Count - 1 ? " " + andor.ToString() + " " : "");
-				return "(" + retval + ")";
-			}
+				return "(" + filterLijst.Select(f => f.ToString(parameterSink)).JoinStrings(" " + andor + " ") + ")";
 			else
 				return criterium.ToString(parameterSink);
 		}
+
 		public override string ToString()
 		{
 			List<object> pars = new List<object>();
