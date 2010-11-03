@@ -51,6 +51,7 @@ namespace ProgressOnderwijsUtils
 
 			Assert.AreNotEqual(null,new SortColumn("abc", SortDirection.Asc));
 		}
+
 		[Test]
 		public void OperatorsOk()
 		{
