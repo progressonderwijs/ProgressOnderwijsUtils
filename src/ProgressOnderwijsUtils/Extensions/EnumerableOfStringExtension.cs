@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
 		/// Join a collection of strings using a joiner string
 		/// </summary>
 		/// <param name="strings">string collection</param>
-		/// <param name="joiner">joiner string</param>
+		/// <param name="separator">separator string</param>
 		/// <returns>a string</returns>
 		public static string JoinStrings(this IEnumerable<string> strings, string separator)
 		{
