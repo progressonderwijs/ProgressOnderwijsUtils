@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils
 		public static bool operator ==(OrderByColumns a, OrderByColumns b) { return a.Equals(b); }
 		public static bool operator !=(OrderByColumns a, OrderByColumns b) { return !a.Equals(b); }
 		public override bool Equals(object obj) { return obj is OrderByColumns && Equals((OrderByColumns)obj); }
-		public override int GetHashCode() { return (int)(DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Aggregate(12345l, (a, b) => a + b)); }
+		public override int GetHashCode() { return (int)(DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Aggregate(12345L, (a, b) => a + b)); }
 
 		public override string ToString() { return "{" + DirectAcessColumns.Select(col => col.ToString()).JoinStrings() + "}"; }
 	}
