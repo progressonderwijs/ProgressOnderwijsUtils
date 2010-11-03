@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
+using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -63,5 +65,27 @@ namespace ProgressOnderwijsUtils
 		public static bool operator !=(ColumnSortOrder a, ColumnSortOrder b) { return !a.Equals(b); }
 		public override bool Equals(object obj) { return obj is ColumnSortOrder && Equals((ColumnSortOrder)obj); }
 		public override int GetHashCode() { return 12345 + DirectSortColumns.Select((sc, i) => (2 * i + 1) * sc.GetHashCode()).Sum(); }
+	}
+
+	[TestFixture]
+	public class SortOrderTest
+	{
+
+
+		[Test]
+		public void CheckEquals()
+		{
+			var ziggyA = new SortColumn("ziggy", SortDirection.Asc);
+			var ziggyD = new SortColumn("ziggy", SortDirection.Desc);
+			var abcA = new SortColumn("abc", SortDirection.Asc);
+			var abcD = new SortColumn("abc", SortDirection.Desc);
+			var monsterA = new SortColumn("monster", SortDirection.Asc);
+			var monsterD = new SortColumn("monster", SortDirection.Desc);
+			var acolA = new SortColumn("acol", SortDirection.Asc);
+			var acolD = new SortColumn("acol", SortDirection.Desc);
+
+			Assert.That(new ColumnSortOrder(new[] { ziggyA, abcA, acolD }).SortColumns, Is.EquivalentTo(new[] { ziggyA, abcA, acolD }));
+		}
+
 	}
 }
