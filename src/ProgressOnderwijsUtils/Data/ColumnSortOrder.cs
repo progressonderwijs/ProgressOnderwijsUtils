@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
 		static IEnumerable<SortColumn> PrependFiltered(SortColumn head, IEnumerable<SortColumn> tail) { return head.Concat(tail.Where(sc => sc.Column != head.Column)); }
 
 		public ColumnSortOrder FirstSortBy(SortColumn firstby) { return firstby == null ? this : new ColumnSortOrder(PrependFiltered(firstby, DirectSortColumns)); }
-		public ColumnSortOrder ThenSortBy(SortColumn thenby) { return thenby == null || DirectSortColumns.Any(sc => sc.Column == thenby.Column) ? this : new ColumnSortOrder(DirectSortColumns.Prepend(thenby)); }
+		public ColumnSortOrder ThenSortBy(SortColumn thenby) { return thenby == null || DirectSortColumns.Any(sc => sc.Column == thenby.Column) ? this : new ColumnSortOrder(DirectSortColumns.Concat(thenby)); }
 		public ColumnSortOrder ThenSortBy(ColumnSortOrder thenby)
 		{
 			var mySet = new HashSet<string>(DirectSortColumns.Select(sc => sc.Column));
