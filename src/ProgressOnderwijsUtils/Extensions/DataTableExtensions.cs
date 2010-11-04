@@ -14,8 +14,8 @@ namespace ProgressOnderwijsUtils.Extensions
 	{
 		private class Key : IEquatable<Key>
 		{
-			private DataColumn[] columns;
-			private DataRow row;
+			private readonly DataColumn[] columns;
+			private readonly DataRow row;
 
 			public Key(DataColumn[] columns, DataRow row)
 			{
@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Extensions
 				bool result = true;
 				foreach (DataColumn column in columns)
 				{
-					result &= this.row[column].Equals(other.row[column]);
+					result &= row[column].Equals(other.row[column]);
 				}
 				return result;
 			}
@@ -60,7 +60,8 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// <param name="key">The primary key of the tabel is set to this then unique key.</param>
 		/// <param name="comparator">Optional delegate to choose the records to delete.</param>
 		/// <param name="data">Optional object passed transparently to the comparator when called.</param>
-		public static void MakeUnique(this DataTable table, DataColumn[] key, Comparator comparator, object data)
+		/// <param name="primary">Optional flag denoting whether to set the primary key to the key specified or not.</param>
+		public static void MakeUnique(this DataTable table, DataColumn[] key, Comparator comparator, object data = null, bool primary = true)
 		{
 			var duplicates = 
 				from row in table.Rows.Cast<DataRow>()
@@ -79,7 +80,7 @@ namespace ProgressOnderwijsUtils.Extensions
 					else if (comparator != null)
 					{
 						DataRow tmp = comparator(final, candidate, data);
-						if (object.ReferenceEquals(tmp, final))
+						if (ReferenceEquals(tmp, final))
 						{
 							candidate.Delete();
 						}
@@ -96,7 +97,10 @@ namespace ProgressOnderwijsUtils.Extensions
 				}
 			}
 			table.AcceptChanges();
-			table.PrimaryKey = key;
+			if (primary)
+			{
+				table.PrimaryKey = key;
+			}
 		}
 	}
 
@@ -117,7 +121,7 @@ namespace ProgressOnderwijsUtils.Extensions
 			sut.Columns.Add(col2);
 		}
 
-		private void SetUpRows(int[][] rows)
+		private void SetUpRows(IEnumerable<int[]> rows)
 		{
 			foreach (int[] data in rows)
 			{
@@ -130,19 +134,22 @@ namespace ProgressOnderwijsUtils.Extensions
 			}
 		}
 
-		private IEnumerable<object[]> MakeUnique_data()
+		private IEnumerable<object[]> MakeUniqueData()
 		{
 			yield return new object[] { 0, new int[][] { } };
-			yield return new object[] { 1, new int[][] { 
-				new int[] { 1, 1 },
+			yield return new object[] { 1, new[]
+			{ 
+				new[] { 1, 1 },
 			} };
-			yield return new object[] { 2, new int[][] { 
-				new int[] { 1, 1 },
-				new int[] { 2, 2 },
+			yield return new object[] { 2, new[]
+			{ 
+				new[] { 1, 1 },
+				new[] { 2, 2 },
 			} };
-			yield return new object[] { 1, new int[][] { 
-				new int[] { 1, 2 },
-				new int[] { 1, 2 },
+			yield return new object[] { 1, new[]
+			{ 
+				new[] { 1, 2 },
+				new[] { 1, 2 },
 			} };
 		}
 
@@ -150,26 +157,26 @@ namespace ProgressOnderwijsUtils.Extensions
 		public void MakeUnique(int count, int[][] rows)
 		{
 			SetUpRows(rows);
-			sut.MakeUnique(new DataColumn[] { col1, col2 }, null, null);
+			sut.MakeUnique(new[] { col1, col2 }, null);
 			Assert.That(sut.Rows.Count, Is.EqualTo(count));
 		}
 
 		[Test]
 		public void MakeUniqueCompareOne()
 		{
-			SetUpRows(new int[][] { new int[] { 1, 1 }, new int[] { 1, 2 } });
-			sut.MakeUnique(new DataColumn[] { col1 }, delegate(DataRow one, DataRow other, object data) {
+			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } });
+			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data) {
 				Assert.That(data, Is.Null);
 				return one;
-			}, null);
+			});
 			Assert.That(sut.Rows[0][1], Is.EqualTo(1));
 		}
 
 		[Test]
 		public void MakeUniqueCompareOther()
 		{
-			SetUpRows(new int[][] { new int[] { 1, 1 }, new int[] { 1, 2 } });
-			sut.MakeUnique(new DataColumn[] { col1 }, delegate(DataRow one, DataRow other, object data) {
+			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } });
+			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data) {
 				Assert.That((int)data == 1);
 				return other;
 			}, 1);
