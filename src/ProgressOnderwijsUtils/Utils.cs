@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using NUnit.Framework;
 using System.Linq;
 
@@ -100,6 +102,13 @@ namespace ProgressOnderwijsUtils
 			string joined = values.JoinStrings(", ");
 			return joined.Length == 0 ? "(null)" : "(" + joined + ")";
 		}
+
+		private static readonly Regex NUNIT_PROCESS = new Regex("^nunit(-console)?(-x86)?$", RegexOptions.Compiled);
+
+		public static bool NUnitSession()
+		{
+			return NUNIT_PROCESS.IsMatch(Process.GetCurrentProcess().ProcessName);
+		}
 	}
 
 
@@ -156,12 +165,18 @@ namespace ProgressOnderwijsUtils
 		{
 			return Utils.SqlInClause(values);
 		}
+
 		[Test, TestCaseSource("InClauseStringData")]
 		public string InClauseStrings(IEnumerable<string> values)
 		{
 			return Utils.SqlInClause(values);
 		}
 
+		[Test]
+		public void NUnitSession()
+		{
+			Assert.That(Utils.NUnitSession());
+		}
 	}
 
 	[TestFixture]
