@@ -109,6 +109,17 @@ namespace ProgressOnderwijsUtils
 		{
 			return NUNIT_PROCESS.IsMatch(Process.GetCurrentProcess().ProcessName);
 		}
+
+		/// <summary>
+		/// Geeft het verschil in maanden tussen twee datums
+		/// </summary>
+		/// <param name="d1"></param>
+		/// <param name="d2"></param>
+		/// <returns></returns>
+		public  static int MaandSpan(DateTime d1, DateTime d2)
+		{
+			return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month);
+		}
 	}
 
 
@@ -177,6 +188,25 @@ namespace ProgressOnderwijsUtils
 		{
 			Assert.That(Utils.NUnitSession());
 		}
+
+		private IEnumerable<TestCaseData> MaandSpan()
+		{
+			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)).Returns(0);
+			yield return new TestCaseData(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)).Returns(4);
+			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2001, 1, 1)).Returns(12);
+			yield return new TestCaseData(new DateTime(2001, 1, 1), new DateTime(2000, 1, 1)).Returns(12);
+			yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 2, 1)).Returns(5);
+			yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 4, 1)).Returns(7);
+			yield return new TestCaseData(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)).Returns(9);
+			yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
+		}
+		[Test, TestCaseSource("MaandSpan")]
+		public int MaandSpanTest(DateTime d1, DateTime d2)
+		{
+			return Utils.MaandSpan(d1, d2);
+		}
+
+
 	}
 
 	[TestFixture]
