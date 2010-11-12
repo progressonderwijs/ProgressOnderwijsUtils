@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[TestFixture]
-	public class IEnumberableOFStringExtensionTest
+	public class IEnumerableOfStringExtensionTest
 	{
 
 		[Test]
