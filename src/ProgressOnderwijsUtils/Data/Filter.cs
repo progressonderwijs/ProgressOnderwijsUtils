@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
 	public class Filter
 	{
 		BooleanOperator andor;
-		List<Filter> filterLijst;
+		readonly List<Filter> filterLijst = new List<Filter>();
 		Criterium criterium;
 		public ReadOnlyCollection<Filter> FilterLijst { get { return new ReadOnlyCollection<Filter>(filterLijst); } }
 		public void AddFilter(Filter newFilter) { filterLijst.Add(newFilter); }
@@ -20,10 +20,9 @@ namespace ProgressOnderwijsUtils
 
 		public Filter(Criterium criterium) { this.criterium = criterium; }
 		public Filter(BooleanOperator andor, params Filter[] condities) : this(andor, condities.AsEnumerable()) { }
-		public Filter(BooleanOperator andor, IEnumerable<Filter> condities)
-		{
+		public Filter(BooleanOperator andor, IEnumerable<Filter> condities) {
 			this.andor = andor;
-			filterLijst = new List<Filter>();
+			//filterLijst = new List<Filter>();
 			foreach (Filter t in condities)
 				AddHelper(t);
 		}
@@ -33,10 +32,7 @@ namespace ProgressOnderwijsUtils
 			f.Position = filterLijst.Count;
 			filterLijst.Add(f);
 		}
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="pos"></param>
+
 		/// <returns>true als er een leeg filter overblijft, false indien er een gevuld filter overblijft</returns>
 		public bool RemoveFilterElement(int pos)
 		{
@@ -52,13 +48,13 @@ namespace ProgressOnderwijsUtils
 				if (filterLijst.Count == 2)	//Filter bestaat uit 2 subfilters, juiste verwijderen en unboxen
 				{
 					filterLijst.RemoveAt(pos);
-					Filter f = filterLijst[0];
-					criterium = f.criterium;
-					andor = f.andor;
-					filterLijst = f.filterLijst;
-					if (filterLijst != null)
-						foreach (Filter fl in f.filterLijst)
-							fl.Parent = this;
+					Filter onlyFilter = filterLijst.Single();
+					criterium = onlyFilter.criterium;
+					andor = onlyFilter.andor;
+					filterLijst.Clear();
+					foreach (Filter fl in onlyFilter.filterLijst)
+						AddHelper(fl);
+					
 					return false;
 				}
 				return true;		//Zou niet voor moeten kunnen komen, maar retourneer dan maar een leeg filter
