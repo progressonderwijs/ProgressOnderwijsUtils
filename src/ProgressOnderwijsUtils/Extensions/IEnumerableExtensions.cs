@@ -28,6 +28,19 @@ namespace ProgressOnderwijsUtils
 			}
 			return -1;
 		}
+		public static int IndexOf<T>(this IEnumerable<T> list, Func<T,bool> matcher)
+		{
+			if (list == null) throw new ArgumentNullException("list");
+			if (matcher == null) throw new ArgumentNullException("elem");
+			int retval = 0;
+			foreach (T item in list)
+			{
+				if (matcher(item))
+					return retval;
+				retval++;
+			}
+			return -1;
+		}
 	}
 
 	[TestFixture]
