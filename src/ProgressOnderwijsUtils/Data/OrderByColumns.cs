@@ -76,6 +76,17 @@ namespace ProgressOnderwijsUtils
 		public override int GetHashCode() { return (int)(DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Aggregate(12345L, (a, b) => a + b)); }
 
 		public override string ToString() { return "{" + DirectAcessColumns.Select(col => col.ToString()).JoinStrings() + "}"; }
+
+		public OrderByColumns AssumeThenBy(OrderByColumns BaseSortOrder)
+		{
+			if (!BaseSortOrder.DirectAcessColumns.Any()) return this;
+			var possibleMatchingTail = DirectAcessColumns.SkipWhile(colsort => colsort != BaseSortOrder.DirectAcessColumns.First());
+			var baseTailOfSameLength = BaseSortOrder.DirectAcessColumns.Take(possibleMatchingTail.Count());
+			if (possibleMatchingTail.SequenceEqual(baseTailOfSameLength)) //equal!
+				return new OrderByColumns(DirectAcessColumns.TakeWhile(colsort => colsort != BaseSortOrder.DirectAcessColumns.First()));
+			else
+				return this;
+		}
 	}
 
 	[TestFixture]
@@ -200,6 +211,17 @@ namespace ProgressOnderwijsUtils
 			Assert.AreEqual(colSort.GetHashCode(), colSort.FirstSortBy(ziggyD).ToggleSortDirection("ziggy").GetHashCode());
 
 			Assert.That(new OrderByColumns(new ColumnSort[] { }).GetHashCode(), Is.EqualTo(default(OrderByColumns).GetHashCode()));
+		}
+
+		[Test]
+		public void AssumeThenByOk()
+		{
+			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD })), new OrderByColumns(new[] { ziggyA, abcA, }));
+			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA,acolD })), new OrderByColumns(new[] { ziggyA,  }));
+			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] {ziggyA, abcA, acolD })),  OrderByColumns.Empty);
+			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD, ziggyA, abcA, })), new OrderByColumns(new[] { ziggyA, abcA, }));
+			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA, ziggyA, acolD, })), new OrderByColumns(new[] { ziggyA, abcA, acolD }));
+			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { ziggyA, abcA, acolA })), new OrderByColumns(new[] { ziggyA, abcA, acolD }));
 		}
 	}
 }
