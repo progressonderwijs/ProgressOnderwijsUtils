@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using System.Collections.ObjectModel;
 
 namespace ProgressOnderwijsUtils
 {
@@ -19,7 +20,7 @@ namespace ProgressOnderwijsUtils
 		{
 			if (list == null) throw new ArgumentNullException("list");
 			if (elem == null) throw new ArgumentNullException("elem");
-			int retval=0;
+			int retval = 0;
 			foreach (T item in list)
 			{
 				if (elem.Equals(item))
@@ -28,7 +29,7 @@ namespace ProgressOnderwijsUtils
 			}
 			return -1;
 		}
-		public static int IndexOf<T>(this IEnumerable<T> list, Func<T,bool> matcher)
+		public static int IndexOf<T>(this IEnumerable<T> list, Func<T, bool> matcher)
 		{
 			if (list == null) throw new ArgumentNullException("list");
 			if (matcher == null) throw new ArgumentNullException("elem");
@@ -41,6 +42,8 @@ namespace ProgressOnderwijsUtils
 			}
 			return -1;
 		}
+		public static ReadOnlyCollection<T> AsReadOnlyCopy<T>(this IEnumerable<T> list) { return new ReadOnlyCollection<T>(list.ToArray()); }
+		public static ReadOnlyCollection<T> AsReadOnlyView<T>(this IList<T> list) { return list as ReadOnlyCollection<T> ?? new ReadOnlyCollection<T>(list); }
 	}
 
 	[TestFixture]
