@@ -21,53 +21,40 @@ namespace ProgressOnderwijsUtils
 
 		public Criterium(string kolomnaam, BooleanComparer comparer, object waarde) { _KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde; }
 
-		public string ToSqlString(List<object> pars)
+		public QueryBuilder ToSqlString(Func<string, string> colRename)
 		{
+			string kolomNaamMapped = colRename(KolomNaam);
 			switch (Comparer)
 			{
 				case BooleanComparer.LessThan:
-					pars.Add(Waarde);
-					return KolomNaam + "<" + "{" + (pars.Count - 1) + "}";
+					return kolomNaamMapped + "<" + QueryBuilder.Param(Waarde);
 				case BooleanComparer.LessThanOrEqual:
-					pars.Add(Waarde);
-					return KolomNaam + "<=" + "{" + (pars.Count - 1) + "}";
+					return kolomNaamMapped + "<=" + QueryBuilder.Param(Waarde);
 				case BooleanComparer.Equal:
-					pars.Add(Waarde);
-					return KolomNaam + "=" + "{" + (pars.Count - 1) + "}";
+					return kolomNaamMapped + "=" + QueryBuilder.Param(Waarde);
 				case BooleanComparer.GreaterThanOrEqual:
-					pars.Add(Waarde);
-					return KolomNaam + ">=" + "{" + (pars.Count - 1) + "}";
+					return kolomNaamMapped + ">=" + QueryBuilder.Param(Waarde);
 				case BooleanComparer.GreaterThan:
-					pars.Add(Waarde);
-					return KolomNaam + ">" + "{" + (pars.Count - 1) + "}";
+					return kolomNaamMapped + ">" + QueryBuilder.Param(Waarde);
 				case BooleanComparer.NotEqual:
-					pars.Add(Waarde);
-					return KolomNaam + "!=" + "{" + (pars.Count - 1) + "}";
+					return kolomNaamMapped + "!=" + QueryBuilder.Param(Waarde);
 				case BooleanComparer.In:
 					string[] nrs = Waarde.ToString().Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-					string clause = KolomNaam + " in (" + Enumerable.Range(pars.Count, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
-					pars.AddRange(nrs);
-					return clause;
+					string clause = kolomNaamMapped + " in (" + Enumerable.Range(0, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
+					return QueryBuilder.Create(clause, nrs.Cast<object>().ToArray());
 				case BooleanComparer.StartsWith:
-					pars.Add(Waarde + "%");
-					return KolomNaam + " like " + "{" + (pars.Count - 1) + "}";
+					return kolomNaamMapped + " like " + QueryBuilder.Param(Waarde + "%");
 				case BooleanComparer.Contains:
-					pars.Add("%" + Waarde + "%");
-					return KolomNaam + " like " + "{" + (pars.Count - 1) + "}";
+					return kolomNaamMapped + " like " + QueryBuilder.Param("%" + Waarde + "%");
 				case BooleanComparer.IsNull:
-					return KolomNaam + " is null";
+					return QueryBuilder.Create(kolomNaamMapped + " is null");
 				case BooleanComparer.IsNotNull:
-					return KolomNaam + " is not null";
+					return QueryBuilder.Create(kolomNaamMapped + " is not null");
 				default:
 					throw new Exception("Geen geldige operator");
 			}
 		}
 
-		public override string ToString()
-		{
-			List<object> pars = new List<object>();
-			string s = ToSqlString(pars);
-			return string.Format(s, pars.ToArray());
-		}
+		public override string ToString() { return ToSqlString(x => x).DebugText(); }
 	}
 }

@@ -61,22 +61,29 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public string ToSqlString(List<object> parameterSink)
+
+		public QueryBuilder ToSqlString(Dictionary<string, string> computedcolumns)
 		{
+			if (computedcolumns == null) return ToSqlString(x => x);
+			return ToSqlString(col =>
+			{
+				string outcol;
+				if (computedcolumns.TryGetValue(col, out outcol)) return outcol; else return col;
+			});
+		}
+
+		public QueryBuilder ToSqlString(Func<string, string> colRename)
+		{
+			QueryBuilder andorQ = QueryBuilder.Create(" " + andor + " ");
 			if (criterium == null)
-				return "(" + filterLijst.Select(f => f.ToSqlString(parameterSink)).JoinStrings(" " + andor + " ") + ")";
+				return "(" + filterLijst.Aggregate(default(QueryBuilder), (q, f) => q == null ? f.ToSqlString(colRename) : q + andorQ + f.ToSqlString(colRename)) + ")";
 			else
-				return criterium.ToSqlString(parameterSink);
+				return criterium.ToSqlString(colRename);
 		}
 
 		public override string ToString()
 		{
-			List<object> pars = new List<object>();
-			string s = ToSqlString(pars);
-			object[] parsarray = new object[pars.Count];
-			for (int i = 0; i < pars.Count; ++i)
-				parsarray[i] = pars[i];
-			return string.Format(s, parsarray);
+			return ToSqlString(x=>x).DebugText();
 		}
 	}
 }
