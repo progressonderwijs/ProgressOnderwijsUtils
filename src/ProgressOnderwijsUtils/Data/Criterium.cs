@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
 
 		public Criterium(string kolomnaam, BooleanComparer comparer, object waarde) { _KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde; }
 
-		public string ToString(List<object> pars)
+		public string ToSqlString(List<object> pars)
 		{
 			switch (Comparer)
 			{
@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
 		public override string ToString()
 		{
 			List<object> pars = new List<object>();
-			string s = ToString(pars);
+			string s = ToSqlString(pars);
 			return string.Format(s, pars.ToArray());
 		}
 	}

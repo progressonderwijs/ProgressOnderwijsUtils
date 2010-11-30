@@ -61,18 +61,18 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public string ToString(List<object> parameterSink)
+		public string ToSqlString(List<object> parameterSink)
 		{
 			if (criterium == null)
-				return "(" + filterLijst.Select(f => f.ToString(parameterSink)).JoinStrings(" " + andor + " ") + ")";
+				return "(" + filterLijst.Select(f => f.ToSqlString(parameterSink)).JoinStrings(" " + andor + " ") + ")";
 			else
-				return criterium.ToString(parameterSink);
+				return criterium.ToSqlString(parameterSink);
 		}
 
 		public override string ToString()
 		{
 			List<object> pars = new List<object>();
-			string s = ToString(pars);
+			string s = ToSqlString(pars);
 			object[] parsarray = new object[pars.Count];
 			for (int i = 0; i < pars.Count; ++i)
 				parsarray[i] = pars[i];
