@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections;
@@ -124,7 +125,42 @@ namespace ProgressOnderwijsUtils
 			return LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length));
 		}
 
+		/// <summary>
+		/// Vervang in een [naam]string beginletters door hoofdletters,
+		/// rekening houdend met tussenvoegsels en interpunctie
+		/// </summary>
+		/// <remarks>
+		/// tussenvoegsels zouden ook uit database kunnen worden gehaald:
+		/// [SELECT voorvoegsels FROM student group by voorvoegsels]
+		/// </remarks>
+		/// <param name="inp"></param>
+		/// <returns></returns>
+		public static string Name2UpperCasedName(this string inp)
+		{
+			//string wat opschonen
+			inp = Regex.Replace(inp, @"\s+", " ");
+			inp = Regex.Replace(inp, @"\-+", "-").Trim();
+			const string expression = @"d'|o' 
+										| op 't | op ten 
+										| van het | van der | van de | van den | van ter
+										| auf dem | auf der | von der | von den
+										| in het | in 't | in de
+										| uit de | uit den | uit het 
+										| voor de | voor 't 
+										| aan het | aan 't | aan de | aan den | bij de | de la 
+										| del | van | von | het | de 
+										| der | den | des | di | dos | do | du | el | le | la
+										| lo | los |  op | te | ten | ter | uit 
+										| vd | v.d. | v\/d
+										| au | aux | a | à | à la | a la 
+										|\s|\s+|\-+";
+			string[] newstr = Regex.Split(inp, Regex.Replace(expression, @"\s+", " "));
+			return newstr.Aggregate(inp, (current, t) => Regex.Replace(current, t, t.Substring(0, 1).ToUpper() + t.Substring(1)));
+		}
+
 	}
+
+
 
 	[TestFixture]
 	public class StringExtensionsTest
@@ -172,6 +208,17 @@ namespace ProgressOnderwijsUtils
 		[TestCase("Ziggy Stardust","ziggy stradust", Result = 4)]
 		public int TestLevenshtein(string str1, string str2) { return str1.LevenshteinDistance(str2); }
 
+		[Test]
+		[TestCase("joepje jofel",Result = "Joepje Jofel")]
+		[TestCase("carolien Kaasteen",Result = "Carolien Kaasteen")]
+		[TestCase("maarten middelmaat--meloen", Result = "Maarten Middelmaat-Meloen")]
+		[TestCase("carolien    Kaasteen", Result = "Carolien Kaasteen")]
+		[TestCase("miep boezeroen-jansen van der sloot op 't gootje v.d. geest de la terrine du soupe au beurre à demi v/d zo-is-het-wel-genoeg ja"
+					, Result = "Miep Boezeroen-Jansen van der Sloot op 't Gootje v.d. Geest de la Terrine du Soupe au Beurre à Demi v/d Zo-Is-Het-Wel-Genoeg Ja")]
+		public string testNaam2Upper(string inp)
+		{
+			return inp.Name2UpperCasedName();
+		}
 	}
 }
 
