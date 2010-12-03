@@ -92,7 +92,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		//modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
-		public static int LevenshteinDistance(this string s, string t, int? substitutionCost=null)
+		public static int LevenshteinDistance(this string s, string t, int? substitutionCost = null)
 		{
 			int subsCost = substitutionCost ?? 1;
 			int n = s.Length; //length of s
@@ -139,9 +139,11 @@ namespace ProgressOnderwijsUtils
 		{
 			//string wat opschonen
 			inp = Regex.Replace(inp, @"\s+", " ");
-			inp = Regex.Replace(inp, @"\-+", "-").Trim();
-			const string expression = @"d'|o' 
-										| op 't | op ten 
+			inp = Regex.Replace(inp, @"\-+", "-");
+			inp = Regex.Replace(inp, @"('s)([a-zA-Z]+)", "$1 $2"); //'sgravenhage bv
+			inp = Regex.Replace(inp, @"^\-+|\-+$", "").Trim();
+			const string expression = @"d'|o'
+										| 's | 's-|'s| op 't | op ten 
 										| van het | van der | van de | van den | van ter
 										| auf dem | auf der | von der | von den
 										| in het | in 't | in de
@@ -153,13 +155,13 @@ namespace ProgressOnderwijsUtils
 										| lo | los |  op | te | ten | ter | uit 
 										| vd | v.d. | v\/d
 										| au | aux | a | à | à la | a la 
-										|\s|\s+|\-+";
+										| \- |\s|\s+|\-+";
 			string[] newstr = Regex.Split(inp, Regex.Replace(expression, @"\s+", " "));
-			return newstr.Aggregate(inp, (current, t) => Regex.Replace(current, t, t.Substring(0, 1).ToUpper() + t.Substring(1)));
+			return newstr.Aggregate(inp, (current, t) =>
+										 Regex.Replace(current, t, t.Length > 0 ? t.Substring(0, 1).ToUpper() + t.Substring(1) : t)
+								   );
 		}
-
 	}
-
 
 
 	[TestFixture]
@@ -215,6 +217,8 @@ namespace ProgressOnderwijsUtils
 		[TestCase("carolien    Kaasteen", Result = "Carolien Kaasteen")]
 		[TestCase("miep boezeroen-jansen van der sloot op 't gootje v.d. geest de la terrine du soupe au beurre à demi v/d zo-is-het-wel-genoeg ja"
 					, Result = "Miep Boezeroen-Jansen van der Sloot op 't Gootje v.d. Geest de la Terrine du Soupe au Beurre à Demi v/d Zo-Is-Het-Wel-Genoeg Ja")]
+		[TestCase("'s-gravenhage", Result = "'s-Gravenhage")]
+		[TestCase("'s gravenhage", Result = "'s Gravenhage")]
 		public string testNaam2Upper(string inp)
 		{
 			return inp.Name2UpperCasedName();
