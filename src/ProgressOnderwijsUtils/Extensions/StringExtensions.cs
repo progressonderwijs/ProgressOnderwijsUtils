@@ -143,7 +143,7 @@ namespace ProgressOnderwijsUtils
 			inp = Regex.Replace(inp, @"('s)([a-zA-Z]+)", "$1 $2"); //'sgravenhage bv
 			inp = Regex.Replace(inp, @"^\-+|\-+$", "").Trim();
 			const string expression = @"d'|o'
-										| 's | 's-|'s| op 't | op ten 
+										| 's | 's-|'s| op 't | op ten | op de
 										| van het | van der | van de | van den | van ter
 										| auf dem | auf der | von der | von den
 										| in het | in 't | in de
@@ -152,7 +152,7 @@ namespace ProgressOnderwijsUtils
 										| aan het | aan 't | aan de | aan den | bij de | de la 
 										| del | van | von | het | de 
 										| der | den | des | di | dos | do | du | el | le | la
-										| lo | los |  op | te | ten | ter | uit 
+										| lo | los | op | te | ten | ter | uit 
 										| vd | v.d. | v\/d
 										| au | aux | a | à | à la | a la 
 										| \- |\s|\s+|\-+";
@@ -219,6 +219,8 @@ namespace ProgressOnderwijsUtils
 					, Result = "Miep Boezeroen-Jansen van der Sloot op 't Gootje v.d. Geest de la Terrine du Soupe au Beurre à Demi v/d Zo-Is-Het-Wel-Genoeg Ja")]
 		[TestCase("'s-gravenhage", Result = "'s-Gravenhage")]
 		[TestCase("'s gravenhage", Result = "'s Gravenhage")]
+		[TestCase("'sgravenhage", Result = "'s Gravenhage")]
+		[TestCase("sieb op de kast", Result = "Sieb op de Kast")]
 		public string testNaam2Upper(string inp)
 		{
 			return inp.Name2UpperCasedName();
