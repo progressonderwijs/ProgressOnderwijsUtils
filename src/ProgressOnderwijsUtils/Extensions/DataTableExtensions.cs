@@ -12,10 +12,10 @@ namespace ProgressOnderwijsUtils.Extensions
 	/// </summary>
 	public static class DataTableExtensions
 	{
-		private class Key : IEquatable<Key>
+		class Key : IEquatable<Key>
 		{
-			private readonly DataColumn[] columns;
-			private readonly DataRow row;
+			readonly DataColumn[] columns;
+			readonly DataRow row;
 
 			public Key(DataColumn[] columns, DataRow row)
 			{
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// <param name="primary">Optional flag denoting whether to set the primary key to the key specified or not.</param>
 		public static void MakeUnique(this DataTable table, DataColumn[] key, Comparator comparator, object data = null, bool primary = true)
 		{
-			var duplicates = 
+			var duplicates =
 				from row in table.Rows.Cast<DataRow>()
 				group row by new Key(key, row) into grp
 				where grp.Count() > 1
@@ -107,9 +107,9 @@ namespace ProgressOnderwijsUtils.Extensions
 	[TestFixture]
 	public class DataTableExtensionsTest
 	{
-		private DataTable sut;
-		private DataColumn col1;
-		private DataColumn col2;
+		DataTable sut;
+		DataColumn col1;
+		DataColumn col2;
 
 		[SetUp]
 		public void SetUp()
@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtils.Extensions
 			sut.Columns.Add(col2);
 		}
 
-		private void SetUpRows(IEnumerable<int[]> rows)
+		void SetUpRows(IEnumerable<int[]> rows)
 		{
 			foreach (int[] data in rows)
 			{
@@ -134,7 +134,7 @@ namespace ProgressOnderwijsUtils.Extensions
 			}
 		}
 
-		private IEnumerable<object[]> MakeUniqueData()
+		IEnumerable<object[]> MakeUniqueData()
 		{
 			yield return new object[] { 0, new int[][] { } };
 			yield return new object[] { 1, new[]
@@ -153,7 +153,7 @@ namespace ProgressOnderwijsUtils.Extensions
 			} };
 		}
 
-		[Test, TestCaseSource("MakeUnique_data")]
+		[Test, TestCaseSource("MakeUniqueData")]
 		public void MakeUnique(int count, int[][] rows)
 		{
 			SetUpRows(rows);
@@ -165,7 +165,8 @@ namespace ProgressOnderwijsUtils.Extensions
 		public void MakeUniqueCompareOne()
 		{
 			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } });
-			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data) {
+			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data)
+			{
 				Assert.That(data, Is.Null);
 				return one;
 			});
@@ -176,7 +177,8 @@ namespace ProgressOnderwijsUtils.Extensions
 		public void MakeUniqueCompareOther()
 		{
 			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } });
-			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data) {
+			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data)
+			{
 				Assert.That((int)data == 1);
 				return other;
 			}, 1);
