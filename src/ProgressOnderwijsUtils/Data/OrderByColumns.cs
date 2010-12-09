@@ -4,6 +4,7 @@ using System.Linq;
 using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -30,6 +31,7 @@ namespace ProgressOnderwijsUtils
 			HashSet<string> usedCols = new HashSet<string>();
 			sortColumns = order.Where(col => usedCols.Add(col.ColumnName)).ToArray();
 		}
+
 		OrderByColumns(ColumnSort[] order) { sortColumns = order; }
 		public OrderByColumns(string column, SortDirection dir) { sortColumns = new[] { new ColumnSort(column, dir) }; }
 
@@ -90,7 +92,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[TestFixture]
-	public class SortOrderTest
+	public class OrderByColumnsTest
 	{
 		readonly static ColumnSort ziggyA = new ColumnSort("ziggy", SortDirection.Asc);
 		readonly static ColumnSort ziggyD = new ColumnSort("ziggy", SortDirection.Desc);
@@ -107,7 +109,7 @@ namespace ProgressOnderwijsUtils
 		public void BasicOrderingOk()
 		{
 			//check that order works as exepcted:
-			Assert.That(colSort.Columns, Is.EquivalentTo(someOrder));
+			PAssert.That(() => colSort.Columns.SequenceEqual(someOrder));
 		}
 
 		[Test]
@@ -116,112 +118,114 @@ namespace ProgressOnderwijsUtils
 			foreach (var col in colSort.Columns)
 				colSort.ToggleSortDirection(col.ColumnName); //doesn't do anything!
 
-			Assert.That(colSort.Columns, Is.EquivalentTo(new[] { ziggyA, abcA, acolD }));
+			PAssert.That(() => colSort.Columns.SequenceEqual(new[] { ziggyA, abcA, acolD }));
+			PAssert.That(() => Equals(colSort, new OrderByColumns((new[] { ziggyA, abcA, acolD }))));
 		}
 
 		[Test]
-		public void NotEqualsOk()
+		public void EqualsFailsOk()
 		{
 			//check that equality can fail too...
-			Assert.That(colSort, Is.Not.EqualTo(new OrderByColumns(new[] { ziggyA, abcA, acolA })));
-			Assert.That(colSort, Is.Not.EqualTo(new OrderByColumns(new[] { ziggyA, monsterA, acolD })));
+			PAssert.That(() => !Equals(colSort, new OrderByColumns(new[] { ziggyA, abcA, acolA })));
+			PAssert.That(() => !Equals(colSort, new OrderByColumns(new[] { ziggyA, monsterA, acolD })));
 		}
+
 		[Test]
 		public void DefaultIsEmpty()
 		{
 			//check that default order is the empty order:
-			Assert.That(new OrderByColumns(new ColumnSort[] { }), Is.EqualTo(default(OrderByColumns)));
+			PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default(OrderByColumns));
 		}
 
 		[Test]
 		public void ToggleOk()
 		{
 			//verify that toggling adds if not present:
-			Assert.That(colSort.ToggleSortDirection("monster").Columns, Is.EquivalentTo(new[] { monsterD, ziggyA, abcA, acolD }));
+			PAssert.That(() => colSort.ToggleSortDirection("monster").Columns.SequenceEqual(new[] { monsterD, ziggyA, abcA, acolD }));
 			//verify that toggling moves to front and flips direction if present:
-			Assert.That(colSort.ToggleSortDirection("acol").Columns, Is.EquivalentTo(new[] { acolA, ziggyA, abcA, }));
+			PAssert.That(() => colSort.ToggleSortDirection("acol").Columns.SequenceEqual(new[] { acolA, ziggyA, abcA, }));
 		}
 
 		[Test]
 		public void DuplicatesIgnored()
 		{
 			//verify that duplicate columns are ignored:
-			Assert.That(new OrderByColumns(new[] { ziggyA, abcA, acolD, ziggyD, }), Is.EqualTo(colSort));
+			PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD, ziggyD, }) == colSort);
 		}
 
 		[Test]
 		public void DoubleToggleNoOp()
 		{
 			//verify that toggling all columns twice in reverse order is a no-op:
-			Assert.That(
+			PAssert.That(() =>
 				colSort.Columns.Concat(colSort.Columns).Reverse()
-				.Aggregate(colSort, (sortorder, col) => sortorder.ToggleSortDirection(col.ColumnName)),
-				Is.EqualTo(colSort));
+				.Aggregate(colSort, (sortorder, col) => sortorder.ToggleSortDirection(col.ColumnName))
+				== colSort);
 		}
 
 		[Test]
 		public void OperatorsOk()
 		{
-			Assert.That(colSort != new OrderByColumns(new[] { ziggyA, abcA, acolA }));
-			Assert.That(colSort != new OrderByColumns(new[] { ziggyA, monsterA, acolD }));
-			Assert.That(colSort == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
-			Assert.IsFalse(colSort == new OrderByColumns(new[] { ziggyA, abcA, acolA }));
-			Assert.IsFalse(colSort == new OrderByColumns(new[] { ziggyA, monsterA, acolD }));
-			Assert.IsFalse(colSort != new OrderByColumns(new[] { ziggyA, abcA, acolD }));
+			PAssert.That(() => colSort != new OrderByColumns(new[] { ziggyA, abcA, acolA }));
+			PAssert.That(() => colSort != new OrderByColumns(new[] { ziggyA, monsterA, acolD }));
+			PAssert.That(() => colSort == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
+			PAssert.That(() => !(colSort == new OrderByColumns(new[] { ziggyA, abcA, acolA })));
+			PAssert.That(() => !(colSort == new OrderByColumns(new[] { ziggyA, monsterA, acolD })));
+			PAssert.That(() => !(colSort != new OrderByColumns(new[] { ziggyA, abcA, acolD })));
 		}
 
 		[Test]
 		public void ThenByOk()
 		{
 			//check ThenBy for new column
-			Assert.AreEqual(colSort, new OrderByColumns(new[] { ziggyA, abcA }).ThenSortBy(acolD));
+			PAssert.That(() => colSort == new OrderByColumns(new[] { ziggyA, abcA }).ThenSortBy(acolD));
 			//check ThenBy for existing column
-			Assert.AreEqual(colSort, colSort.ThenSortBy(acolA));
-			Assert.AreEqual(colSort, colSort.ThenSortBy(ziggyD));
+			PAssert.That(() => colSort == colSort.ThenSortBy(acolA));
+			PAssert.That(() => colSort == colSort.ThenSortBy(ziggyD));
 			//check ThenBy for null
-			Assert.AreEqual(colSort, colSort.ThenSortBy(null));
+			PAssert.That(() => colSort == colSort.ThenSortBy(null));
 		}
 
 		[Test]
 		public void ThenByColumnsOk()
 		{
-			Assert.AreEqual(new OrderByColumns(new[] { ziggyD, abcD }).ThenSortBy(colSort.FirstSortBy(monsterA)), new OrderByColumns(new[] { ziggyD, abcD, monsterA, acolD }));
+			PAssert.That(() => new OrderByColumns(new[] { ziggyD, abcD }).ThenSortBy(colSort.FirstSortBy(monsterA)) == new OrderByColumns(new[] { ziggyD, abcD, monsterA, acolD }));
 		}
 
 		[Test]
 		public void FirstByOk()
 		{
 			//check firstby with toggle
-			Assert.AreEqual(colSort.ToggleSortDirection("ziggy"), colSort.FirstSortBy(ziggyD));
+			PAssert.That(() => colSort.ToggleSortDirection("ziggy") == colSort.FirstSortBy(ziggyD));
 		}
 
 		[Test]
 		public void ComplexFromScratch()
 		{
 			//check complex construction from scratch
-			Assert.AreEqual(colSort, default(OrderByColumns).ToggleSortDirection("acol").FirstSortBy(abcA).ToggleSortDirection("ziggy").ToggleSortDirection("ziggy"));
+			PAssert.That(() => colSort == default(OrderByColumns).ToggleSortDirection("acol").FirstSortBy(abcA).ToggleSortDirection("ziggy").ToggleSortDirection("ziggy"));
 		}
 
 		[Test]
 		public void GetHashcodeOk()
 		{
-			Assert.AreNotEqual(colSort.GetHashCode(), new OrderByColumns(new[] { ziggyA, abcA, acolA }).GetHashCode());
-			Assert.AreNotEqual(colSort.GetHashCode(), new OrderByColumns(new[] { ziggyA, monsterA, acolD }).GetHashCode());
-			Assert.AreEqual(colSort.GetHashCode(), new OrderByColumns(new[] { ziggyA, abcA, acolD }).GetHashCode());
-			Assert.AreEqual(colSort.GetHashCode(), colSort.FirstSortBy(ziggyD).ToggleSortDirection("ziggy").GetHashCode());
+			PAssert.That(() => colSort.GetHashCode() != new OrderByColumns(new[] { ziggyA, abcA, acolA }).GetHashCode());
+			PAssert.That(() => colSort.GetHashCode() != new OrderByColumns(new[] { ziggyA, monsterA, acolD }).GetHashCode());
+			PAssert.That(() => colSort.GetHashCode() == new OrderByColumns(new[] { ziggyA, abcA, acolD }).GetHashCode());
+			PAssert.That(() => colSort.GetHashCode() == colSort.FirstSortBy(ziggyD).ToggleSortDirection("ziggy").GetHashCode());
 
-			Assert.That(new OrderByColumns(new ColumnSort[] { }).GetHashCode(), Is.EqualTo(default(OrderByColumns).GetHashCode()));
+			PAssert.That(() => new OrderByColumns(new ColumnSort[] { }).GetHashCode() == default(OrderByColumns).GetHashCode());
 		}
 
 		[Test]
 		public void AssumeThenByOk()
 		{
-			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD })), new OrderByColumns(new[] { ziggyA, abcA, }));
-			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA,acolD })), new OrderByColumns(new[] { ziggyA,  }));
-			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] {ziggyA, abcA, acolD })),  OrderByColumns.Empty);
-			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD, ziggyA, abcA, })), new OrderByColumns(new[] { ziggyA, abcA, }));
-			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA, ziggyA, acolD, })), new OrderByColumns(new[] { ziggyA, abcA, acolD }));
-			Assert.AreEqual(new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { ziggyA, abcA, acolA })), new OrderByColumns(new[] { ziggyA, abcA, acolD }));
+			PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD })) == new OrderByColumns(new[] { ziggyA, abcA, }));
+			PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA, acolD })) == new OrderByColumns(new[] { ziggyA, }));
+			PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { ziggyA, abcA, acolD })) == OrderByColumns.Empty);
+			PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { acolD, ziggyA, abcA, })) == new OrderByColumns(new[] { ziggyA, abcA, }));
+			PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { abcA, ziggyA, acolD, })) == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
+			PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(new OrderByColumns(new[] { ziggyA, abcA, acolA })) == new OrderByColumns(new[] { ziggyA, abcA, acolD }));
 		}
 	}
 }
