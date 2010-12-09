@@ -158,7 +158,7 @@ namespace ProgressOnderwijsUtils
 										| \- |\s|\s+|\-+";
 			string[] newstr = Regex.Split(inp, Regex.Replace(expression, @"\s+", " "));
 			return newstr.Aggregate(inp, (current, t) =>
-										 Regex.Replace(current, t, t.Length > 0 ? t.Substring(0, 1).ToUpper() + t.Substring(1) : t)
+										 Regex.Replace(current, t, t.Length > 0 ? t.Substring(0, 1).ToUpper() + t.Substring(1).ToLower() : t)
 								   );
 		}
 	}
