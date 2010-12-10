@@ -103,11 +103,11 @@ namespace ProgressOnderwijsUtils
 			return joined.Length == 0 ? "(null)" : "(" + joined + ")";
 		}
 
-		private static readonly Regex NUNIT_PROCESS = new Regex("^nunit(-console)?(-x86)?$", RegexOptions.Compiled);
 
 		public static bool NUnitSession()
 		{
-			return NUNIT_PROCESS.IsMatch(Process.GetCurrentProcess().ProcessName);
+			string procname = Process.GetCurrentProcess().ProcessName;
+			return procname.StartsWith("nunit") || procname.StartsWith("pnunit");//also supports nunit-agent, nunit-console, nunit-x86, etc.
 		}
 
 		/// <summary>
