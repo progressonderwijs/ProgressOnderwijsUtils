@@ -25,8 +25,6 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// <summary>
 		/// Utility method to retrieve a value with a default from a dictionary.
 		/// </summary>
-		/// <typeparam name="TKey"></typeparam>
-		/// <typeparam name="TValue"></typeparam>
 		/// <param name="dict"></param>
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="value">The default value of the key.</param>
@@ -35,9 +33,7 @@ namespace ProgressOnderwijsUtils.Extensions
 		{
 			TValue result;
 			if (!dict.TryGetValue(key, out result))
-			{
 				result = value;
-			}
 			return result;
 		}
 
@@ -53,9 +49,7 @@ namespace ProgressOnderwijsUtils.Extensions
 		public static TValue SetDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
 		{
 			if (!dict.ContainsKey(key))
-			{
 				dict.Add(key, value);
-			}
 			return dict[key];
 		}
 	}
