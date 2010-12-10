@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using System.Collections.ObjectModel;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -19,11 +20,10 @@ namespace ProgressOnderwijsUtils
 		public static int IndexOf<T>(this IEnumerable<T> list, T elem)
 		{
 			if (list == null) throw new ArgumentNullException("list");
-			if (elem == null) throw new ArgumentNullException("elem");
 			int retval = 0;
 			foreach (T item in list)
 			{
-				if (elem.Equals(item))
+				if (Equals(elem, item))
 					return retval;
 				retval++;
 			}
@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils
 		public static int IndexOf<T>(this IEnumerable<T> list, Func<T, bool> matcher)
 		{
 			if (list == null) throw new ArgumentNullException("list");
-			if (matcher == null) throw new ArgumentNullException("elem");
+			if (matcher == null) throw new ArgumentNullException("matcher");
 			int retval = 0;
 			foreach (T item in list)
 			{
@@ -44,6 +44,7 @@ namespace ProgressOnderwijsUtils
 		}
 		public static ReadOnlyCollection<T> AsReadOnlyCopy<T>(this IEnumerable<T> list) { return new ReadOnlyCollection<T>(list.ToArray()); }
 		public static ReadOnlyCollection<T> AsReadOnlyView<T>(this IList<T> list) { return list as ReadOnlyCollection<T> ?? new ReadOnlyCollection<T>(list); }
+		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> list) { return list ?? Enumerable.Empty<T>(); }
 	}
 
 	[TestFixture]
@@ -66,13 +67,15 @@ namespace ProgressOnderwijsUtils
 			Assert.That(() => new[] { 0, 0, 1, 1, 2, 2 }.IndexOf(2), Is.EqualTo(4));
 		}
 
-		//[Test]
-		//public void testJoin()
-		//{
-		//    List<int> lst = new List<int> { 1, 2, 3, 4, 5 };
-		//    List<string> strlst = new List<string> { "een", "twee", "drie" };
-		//    Assert.That(lst.Join("!"), Is.EqualTo("1!2!3!4!5"));
-		//    Assert.That(strlst.Join(" plus "), Is.EqualTo("een plus twee plus drie"));
-		//}
+		[Test]
+		public void EmptyIfNullOk()
+		{
+			PAssert.That(() => new[] { 0, 1, 2, }.EmptyIfNull().SequenceEqual(new[] { 0, 1, 2, }));
+			PAssert.That(() => default(int[]).EmptyIfNull().SequenceEqual(new int[] { }));
+			PAssert.That(() => default(int[]) == null);
+			PAssert.That(() => default(int[]) != default(int[]).EmptyIfNull());
+			var arr = new[] { 0, 1, 2, };
+			PAssert.That(() => arr.EmptyIfNull() == arr);
+		}
 	}
 }
