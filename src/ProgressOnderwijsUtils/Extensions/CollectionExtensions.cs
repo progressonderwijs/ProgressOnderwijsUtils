@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using System.Collections.Concurrent;
 
 namespace ProgressOnderwijsUtils.Extensions
 {
@@ -29,7 +30,7 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="value">The default value of the key.</param>
 		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-		public static TValue GetDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
 		{
 			TValue result;
 			if (!dict.TryGetValue(key, out result))
@@ -38,7 +39,7 @@ namespace ProgressOnderwijsUtils.Extensions
 		}
 
 		/// <summary>
-		/// Utility method to retrieve the value of a dictionary with setting it to a default if the key does not yet exist.
+		/// Retrieves the value of a dictionary with setting it to a default if the key does not yet exist.
 		/// </summary>
 		/// <typeparam name="TKey"></typeparam>
 		/// <typeparam name="TValue"></typeparam>
@@ -46,7 +47,7 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="value">The default value to set if the key does not yet exists.</param>
 		/// <returns>The the key existed in the dictionary, its associated value. If not, insert key with th edefault value and return this default.</returns>
-		public static TValue SetDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+		public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
 		{
 			if (!dict.ContainsKey(key))
 				dict.Add(key, value);
@@ -68,8 +69,8 @@ namespace ProgressOnderwijsUtils.Extensions
 		public void GetDefault()
 		{
 			IDictionary<int, int> sut = new Dictionary<int, int>() { { 0, 0 } };
-			Assert.That(sut.GetDefault(0, 1), Is.EqualTo(0));
-			Assert.That(sut.GetDefault(1, 2), Is.EqualTo(2));
+			Assert.That(sut.GetOrDefault(0, 1), Is.EqualTo(0));
+			Assert.That(sut.GetOrDefault(1, 2), Is.EqualTo(2));
 			Assert.That(!sut.ContainsKey(1));
 		}
 
@@ -77,8 +78,8 @@ namespace ProgressOnderwijsUtils.Extensions
 		public void SetDefault()
 		{
 			IDictionary<int, int> sut = new Dictionary<int, int>() { { 0, 0 } };
-			Assert.That(sut.SetDefault(0, 1), Is.EqualTo(0));
-			Assert.That(sut.SetDefault(1, 2), Is.EqualTo(2));
+			Assert.That(sut.GetOrAdd(0, 1), Is.EqualTo(0));
+			Assert.That(sut.GetOrAdd(1, 2), Is.EqualTo(2));
 			Assert.That(sut.ContainsKey(1));
 		}
 	}
