@@ -2,11 +2,12 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
 	[Serializable]
-	public class Criterium
+	public class CriteriumFilter : FilterBase
 	{
 		readonly string _KolomNaam;
 		readonly BooleanComparer _Comparer;
@@ -19,9 +20,9 @@ namespace ProgressOnderwijsUtils
 		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In }; } }
 		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In }; } }
 
-		public Criterium(string kolomnaam, BooleanComparer comparer, object waarde) { _KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde; }
+		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde) { _KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde; }
 
-		public QueryBuilder ToSqlString(Func<string, string> colRename)
+		protected internal override QueryBuilder ToSqlStringImpl(Func<string, string> colRename)
 		{
 			string kolomNaamMapped = colRename(KolomNaam);
 			switch (Comparer)
@@ -55,6 +56,13 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public override string ToString() { return ToSqlString(x => x).DebugText(); }
+		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, CriteriumFilter replaceWith) { return this == toReplace ? replaceWith : this; }
+
+		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, CriteriumFilter c)
+		{
+			return filterInEditMode == this
+				? Filter.CreateCombined(booleanOperator, this, c)
+				: this;
+		}
 	}
 }

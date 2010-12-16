@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
 
 		static readonly Regex paramsRegex = new Regex(@"\{(?<paramRef>\d+)\}|(?<queryText>((?!\{\d+\}).)+)", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
 
-		public static QueryBuilder CreateFromFilter(Filter filter, Dictionary<string, string> computedcolumns)
+		public static QueryBuilder CreateFromFilter(FilterBase filter, Dictionary<string, string> computedcolumns)
 		{
 			return "and " + filter.ToSqlString(computedcolumns) + " ";
 		}
