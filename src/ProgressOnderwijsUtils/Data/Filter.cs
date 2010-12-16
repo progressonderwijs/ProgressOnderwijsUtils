@@ -76,5 +76,40 @@ namespace ProgressOnderwijsUtils
 						yield return Tuple.Create(f1.KolomNaam, f1.Waarde);
 			}
 		}
+
+		public static bool CanReferenceColumn(this BooleanComparer comparer)
+		{
+			return comparer.In(BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual);
+		}
+		public static string NiceString(this BooleanComparer comparer)
+		{
+			switch (comparer)
+			{
+				case BooleanComparer.LessThan:
+					return "<";
+				case BooleanComparer.LessThanOrEqual:
+					return "<=";
+				case BooleanComparer.Equal:
+					return "=";
+				case BooleanComparer.GreaterThanOrEqual:
+					return ">=";
+				case BooleanComparer.GreaterThan:
+					return ">";
+				case BooleanComparer.NotEqual:
+					return "!=";
+				case BooleanComparer.In:
+					return "in";
+				case BooleanComparer.StartsWith:
+					return "starts with";
+				case BooleanComparer.Contains:
+					return "contains";
+				case BooleanComparer.IsNull:
+					return "is null";
+				case BooleanComparer.IsNotNull:
+					return "is not null";
+				default:
+					throw new Exception("Geen geldige operator");
+			}
+		}
 	}
 }

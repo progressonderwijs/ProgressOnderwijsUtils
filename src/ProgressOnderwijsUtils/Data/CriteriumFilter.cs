@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using ProgressOnderwijsUtils.Data;
+using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
 {
@@ -28,17 +29,17 @@ namespace ProgressOnderwijsUtils
 			switch (Comparer)
 			{
 				case BooleanComparer.LessThan:
-					return kolomNaamMapped + "<" + QueryBuilder.Param(Waarde);
+					return kolomNaamMapped + "<" + BuildParam(colRename);
 				case BooleanComparer.LessThanOrEqual:
-					return kolomNaamMapped + "<=" + QueryBuilder.Param(Waarde);
+					return kolomNaamMapped + "<=" + BuildParam(colRename);
 				case BooleanComparer.Equal:
-					return kolomNaamMapped + "=" + QueryBuilder.Param(Waarde);
+					return kolomNaamMapped + "=" + BuildParam(colRename);
 				case BooleanComparer.GreaterThanOrEqual:
-					return kolomNaamMapped + ">=" + QueryBuilder.Param(Waarde);
+					return kolomNaamMapped + ">=" + BuildParam(colRename);
 				case BooleanComparer.GreaterThan:
-					return kolomNaamMapped + ">" + QueryBuilder.Param(Waarde);
+					return kolomNaamMapped + ">" + BuildParam(colRename);
 				case BooleanComparer.NotEqual:
-					return kolomNaamMapped + "!=" + QueryBuilder.Param(Waarde);
+					return kolomNaamMapped + "!=" + BuildParam(colRename);
 				case BooleanComparer.In:
 					string[] nrs = Waarde.ToString().Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 					string clause = kolomNaamMapped + " in (" + Enumerable.Range(0, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
@@ -56,6 +57,16 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
+		QueryBuilder BuildParam(Func<string, string> colRename)
+		{
+			if (Waarde is ColumnReference)
+				return QueryBuilder.Create(colRename(((ColumnReference)Waarde).ColumnName));
+			else
+				return QueryBuilder.Param(Waarde);
+		}
+
+
+
 		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, CriteriumFilter replaceWith) { return this == toReplace ? replaceWith : this; }
 
 		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, CriteriumFilter c)
@@ -63,6 +74,20 @@ namespace ProgressOnderwijsUtils
 			return filterInEditMode == this
 				? Filter.CreateCombined(booleanOperator, this, c)
 				: this;
+		}
+	}
+
+	[Serializable]
+	public class ColumnReference
+	{
+		static readonly Regex okname = new Regex(@"^\w+$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+		public readonly string ColumnName;
+
+		public ColumnReference(string colname)
+		{
+			if (colname == null) throw new ArgumentNullException("colname");
+			else if (!okname.IsMatch(colname)) throw new ArgumentException("Geen valide kolomnaam " + colname, "colname");
+			ColumnName = colname;
 		}
 	}
 }
