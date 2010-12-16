@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
-
+	[Serializable]
 	public sealed class CombinedFilter : FilterBase
 	{
 		readonly BooleanOperator andor;

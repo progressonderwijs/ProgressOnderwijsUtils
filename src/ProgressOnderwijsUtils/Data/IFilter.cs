@@ -5,6 +5,7 @@ using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
+	[Serializable]
 	public abstract class FilterBase
 	{
 		protected internal abstract QueryBuilder ToSqlStringImpl(Func<string, string> colRename);

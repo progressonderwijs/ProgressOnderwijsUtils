@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils.Data;
 namespace ProgressOnderwijsUtils
 {
 	[Serializable]
-	public class CriteriumFilter : FilterBase
+	public sealed class CriteriumFilter : FilterBase
 	{
 		readonly string _KolomNaam;
 		readonly BooleanComparer _Comparer;
