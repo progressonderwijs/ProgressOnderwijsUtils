@@ -1,9 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
-namespace ProgressOnderwijsUtils.Extensions
+namespace ProgressOnderwijsUtils
 {
-	public static class GenericExtentions
+	public static class GenericExtensions
 	{
 		/// <summary>
 		/// Pseudo 'in' operation (someObj.In([values])
@@ -13,15 +14,21 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// <returns>true/false</returns>
 		/// <remarks>
 		/// **voorbeelden
-		/// 1.In(1,2,3,4); // false
+		/// 1.In(1,2,3,4); // true
 		/// "cando".In("nocando","cando") //true
 		/// Enum Vandaag = weekdays.monday;
 		/// Vandaag.In(weekdays.thursday,weekdays.friday); //false
 		/// </remarks>
-		public static bool In<T>(this T obj, params T[] values)
+		public static bool In<T>(this T obj, params T[] values) where T:struct
 		{
 			return values.Contains(obj);
 		}
+
+		public static bool In<T>(this T? obj, params T?[] values) where T:struct
+		{
+			return values.Contains(obj);
+		}
+
 
 		/// <summary>
 		/// Pseudo 'in' operation (someObj.In(List of [values])
@@ -33,6 +40,5 @@ namespace ProgressOnderwijsUtils.Extensions
 		{
 			return valueList.Contains(obj);
 		}
-
 	}
 }
