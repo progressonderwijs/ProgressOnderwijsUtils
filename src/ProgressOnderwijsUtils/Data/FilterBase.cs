@@ -11,6 +11,8 @@ namespace ProgressOnderwijsUtils
 		protected internal abstract QueryBuilder ToSqlStringImpl(Func<string, string> colRename);
 		protected internal abstract FilterBase ReplaceImpl(FilterBase toReplace, CriteriumFilter replaceWith);
 		protected internal abstract FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, CriteriumFilter c);
+		protected internal abstract IEnumerable<FilterBase> Children { get; }
+		protected internal abstract IEnumerable<string> ColumnsReferenced { get; }
 		public override string ToString() { return ToSqlStringImpl(x => x).DebugText(); }
 	}
 }

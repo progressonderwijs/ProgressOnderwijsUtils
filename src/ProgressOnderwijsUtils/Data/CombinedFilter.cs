@@ -21,6 +21,7 @@ namespace ProgressOnderwijsUtils
 			filterLijst = condities;
 		}
 
+		protected internal override IEnumerable<string> ColumnsReferenced { get { return FilterLijst.SelectMany(f => f.ColumnsReferenced); } }
 		protected internal override QueryBuilder ToSqlStringImpl(Func<string, string> colRename)
 		{
 			QueryBuilder andorQ = QueryBuilder.Create(" " + andor + " ");
@@ -31,7 +32,7 @@ namespace ProgressOnderwijsUtils
 		{
 			return this == toReplace ? replaceWith : Filter.CreateCombined(AndOr, filterLijst.Select(child => child.ReplaceImpl(toReplace, replaceWith)));
 		}
-
+		protected internal override IEnumerable<FilterBase> Children { get { return FilterLijst; } }
 		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, CriteriumFilter c)
 		{
 			return filterInEditMode == this

@@ -13,15 +13,15 @@ namespace ProgressOnderwijsUtils
 		}
 		public static FilterBase Replace(this FilterBase filter, FilterBase toReplace, CriteriumFilter replaceWith)
 		{
-			return filter == null ? (toReplace==null?replaceWith:null)
-				: filter.ReplaceImpl(toReplace,replaceWith);
+			return filter == null ? (toReplace == null ? replaceWith : null)
+				: filter.ReplaceImpl(toReplace, replaceWith);
 
 		}
 		public static FilterBase AddTo(this FilterBase filter, FilterBase filterInEditMode, BooleanOperator booleanOperator, CriteriumFilter c)
 		{
 			return filter == null
-				? (filterInEditMode ==null ? c : null)
-				: filter.AddToImpl(filterInEditMode, booleanOperator,c);
+				? (filterInEditMode == null ? c : null)
+				: filter.AddToImpl(filterInEditMode, booleanOperator, c);
 		}
 
 		public static QueryBuilder ToSqlString(this FilterBase filter, Dictionary<string, string> computedcolumns)
@@ -111,5 +111,10 @@ namespace ProgressOnderwijsUtils
 					throw new Exception("Geen geldige operator");
 			}
 		}
+		public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, bool> isColValid)
+		{
+			return filter == null || !filter.ColumnsReferenced.All(isColValid) ? null : filter;
+		}
+
 	}
 }
