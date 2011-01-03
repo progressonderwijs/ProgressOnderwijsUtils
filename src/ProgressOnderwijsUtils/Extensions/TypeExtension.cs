@@ -31,5 +31,14 @@ namespace ProgressOnderwijsUtils
 				baseType = baseType.BaseType;
 			}
 		}
+
+		public static string GetNonGenericName(this Type type)
+		{
+			var typename = type.FullName;
+			// ReSharper disable PossibleNullReferenceException
+			int backtickIdx = typename.IndexOf('`');
+			// ReSharper restore PossibleNullReferenceException
+			return backtickIdx == -1 ? typename : typename.Substring(0, backtickIdx);
+		}
 	}
 }
