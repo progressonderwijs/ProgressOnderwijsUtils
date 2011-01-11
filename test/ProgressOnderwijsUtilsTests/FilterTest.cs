@@ -41,10 +41,11 @@ namespace ProgressOnderwijsUtilsTests
 
 
 		[Test]
-		public void NiceString()
+		public void BooleanComparers()
 		{
 			var comparers = Enum.GetValues(typeof(BooleanComparer)).Cast<BooleanComparer>();
-			PAssert.That(() => comparers.Count() == comparers.Select(c => c.NiceString()).Distinct().Count());
+			PAssert.That(() => comparers.Count() == comparers.Select(c => c.NiceString()).Distinct().Count());//all nicestrings don't throw and are distinct
+			PAssert.That(() => comparers.OrderBy(x => x).SequenceEqual(CriteriumFilter.NumericComparers.Concat(CriteriumFilter.StringComparers).Distinct().OrderBy(x => x)));//all comparers either numeric or string or both.
 		}
 
 		[Test]
@@ -84,6 +85,9 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => combFilter.ToSqlString(s => s) == QueryBuilder.Create("(test<{0} And test2<{1})", 3, 3)); // side-effect free
 			PAssert.That(() => Filter.CreateCombined(BooleanOperator.And, combFilter, null, modFilter).ToSqlString(s => s) == QueryBuilder.Create("(test<{0} And test2<{1} And ziggy<{2} And test2<{3} And stardust>{4})", 3, 3,3,3,37)); // no unnecessary brackets!
 
+			PAssert.That(() => combFilter.Remove(test2Filter)==testFilter && combFilter.Remove(testFilter) == test2Filter ); // no unnecessary brackets!
+
+
 			PAssert.That(() =>
 				combFilter.AddTo(testFilter, BooleanOperator.Or, Filter.CreateCriterium("abc", BooleanComparer.GreaterThan, 42)).ToSqlString(s=>s)
 				== QueryBuilder.Create("((test<{0} Or abc>{1}) And test2<{2})", 3, 42, 3)); //does include nested brackets!
@@ -98,8 +102,5 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That (() => !BooleanComparer.In.CanReferenceColumn());
 			PAssert.That(() => BooleanComparer.Equal.CanReferenceColumn());
 		}
-
-
-
 	}
 }
