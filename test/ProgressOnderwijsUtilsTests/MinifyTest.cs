@@ -5,11 +5,12 @@ using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using System.IO;
+using ProgressOnderwijsUtils.Test;
 using ProgressOnderwijsUtils.WebSupport;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
+	[TestFixture,NightlyOnly]
 	public class MinifyTest
 	{
 		const string inputJS =

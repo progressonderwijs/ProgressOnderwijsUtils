@@ -3,11 +3,12 @@ using System.IO;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Extensions;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
-	public class FileInfoExtensions
+	[TestFixture, NightlyOnly]
+	public class FileInfoExtensionTest
 	{
 		private FileInfo sut;
 		private FileInfo other;

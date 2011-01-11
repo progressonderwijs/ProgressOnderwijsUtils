@@ -5,10 +5,11 @@ using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
+	[TestFixture, NightlyOnly]
 	public class EnumerableExtensions
 	{
 		[Test]

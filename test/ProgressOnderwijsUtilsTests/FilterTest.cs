@@ -6,10 +6,11 @@ using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Data;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
+	[TestFixture, NightlyOnly]
 	public class FilterTest
 	{
 		[Test]

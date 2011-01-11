@@ -9,7 +9,7 @@ using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
+	[TestFixture, NightlyOnly]
 	public class OrderByColumnsTest
 	{
 		readonly static ColumnSort ziggyA = new ColumnSort("ziggy", SortDirection.Asc);

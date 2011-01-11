@@ -9,10 +9,11 @@ using Progress.Business.Organisatie.Financieel.Betaling;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Data;
 using Progress.Business.GenericLijst;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
+	[TestFixture, NightlyOnly]
 	public class TypeExtensionTest
 	{
 		[Test]
