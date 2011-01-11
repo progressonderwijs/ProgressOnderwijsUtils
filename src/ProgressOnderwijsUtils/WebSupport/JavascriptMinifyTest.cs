@@ -8,7 +8,7 @@ using System.IO;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
-	public class JavascriptMinify
+	public class JavascriptMinifyTest
 	{
 		const string input = 
 @"// is.js
