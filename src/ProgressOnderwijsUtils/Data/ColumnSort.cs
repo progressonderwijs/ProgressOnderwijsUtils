@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
 		public SortDirection SortDirection { get { return direction; } }
 		public string SqlSortString { get { return column + " " + direction; } }
 
-		public override string ToString() { return "{" + column + " " + direction + "}"; }
+		public override string ToString() { return "[" + column + " " + direction + "]"; }
 
 		public ColumnSort(string column, SortDirection direction) { this.column = column; this.direction = direction; }
 
