@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => difftype.GetHashCode() != basic.GetHashCode());
 	
 			PAssert.That(() => diffname != basic && diffname != empty);
-			PAssert.That(() => diffname.GetHashCode() != basic.GetHashCode());
+			PAssert.That(() => diffname.GetHashCode() != basic.GetHashCode());//TODO: case-sensitivity?
 		}
 	}
 }

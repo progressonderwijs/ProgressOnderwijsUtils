@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace ProgressOnderwijsUtils
 {
@@ -34,7 +35,9 @@ namespace ProgressOnderwijsUtils
 		{
 			unchecked
 			{
-				int result = (Content != null ? Content.GetHashCode() : 0);
+
+				int result = Content == null || Content.Length < 1 ? 0
+					: Content[0] + (Content[Content.Length / 3] << 8) + (Content[Content.Length * 2 / 3] << 16) + (Content[Content.Length - 1] << 24) + Content.Length;
 				result = (result * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
 				result = (result * 397) ^ (FileName != null ? FileName.GetHashCode() : 0);
 				return result;
