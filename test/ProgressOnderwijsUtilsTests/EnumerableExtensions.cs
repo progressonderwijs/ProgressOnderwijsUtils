@@ -36,7 +36,8 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => nums.SequenceEqual(copy) && nums.SequenceEqual(view));
 			Array.Sort(nums);
 			PAssert.That(() => nums.SequenceEqual(view) && !nums.SequenceEqual(copy));
-			PAssert.That(() => copy.SequenceEqual(Enumerable.Range(1,5)));
+			PAssert.That(() => copy.SequenceEqual(Enumerable.Range(1,5).Reverse() ));
+			PAssert.That(() => view.SequenceEqual(Enumerable.Range(1, 5)));
 		}
 
 		[Test]
