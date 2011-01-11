@@ -3,8 +3,8 @@ using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils.Test
 {
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public class NightlyOnlyAttribute : CategoryAttribute
+	[AttributeUsage(AttributeTargets.All, AllowMultiple = false)]
+	public class ExcludeFromNCoverAttribute : CategoryAttribute
 	{
 	}
 }
