@@ -5,6 +5,9 @@ using System.Reflection;
 using System.Collections;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using ExpressionToCodeLib;
+using System.Globalization;
+using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
@@ -17,13 +20,12 @@ namespace ProgressOnderwijsUtils
 
 		static bool Compare(HashSet<ReferencePair> assumeEquals, object object1, object object2)
 		{
-			if (object.ReferenceEquals(object1, object2)) return true;
+			if (ReferenceEquals(object1, object2)) return true;
 			else if (object1 == null || object2 == null) return false; //not equal if one of the two is null
 
 			ReferencePair pair = new ReferencePair(object1, object2);
 			if (assumeEquals.Contains(pair)) return true;
 			else assumeEquals.Add(pair);
-
 
 			Type type = object1.GetType();
 
@@ -34,13 +36,13 @@ namespace ProgressOnderwijsUtils
 
 			if (type == object2.GetType())
 			{
-
 				MethodInfo builtin = TypeBuiltinEquals(type);
-				if (builtin != null) return CompareWithBuiltinEquals(builtin, object1, object2);
-
-				return CompareAccessibleMembers(assumeEquals, type, object1, object2);
+				if(builtin != null)
+					return CompareWithBuiltinEquals(builtin, object1, object2);
 			}
-			else return object1 is IEnumerable && object2 is IEnumerable && CompareEnumerables(assumeEquals, (IEnumerable)object1, (IEnumerable)object2);
+
+			return  CompareAsEnumerableOrAccessibleMembers(assumeEquals, type, object1, object2);
+			
 		}
 
 		public class ReferencePair : IEquatable<ReferencePair>
@@ -61,7 +63,7 @@ namespace ProgressOnderwijsUtils
 			}
 			public static bool operator ==(ReferencePair a, ReferencePair b)
 			{
-				return object.ReferenceEquals(a, b) || !object.ReferenceEquals(a, null) && a.Equals(b);
+				return ReferenceEquals(a, b) || !object.ReferenceEquals(a, null) && a.Equals(b);
 			}
 			public static bool operator !=(ReferencePair a, ReferencePair b)
 			{
@@ -69,21 +71,26 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public struct AccessibleMember
+		struct AccessibleMember
 		{
 			public Type DeclaredType;
 			public Func<object, object> Getter;
 		}
 
-		static AccessibleMember[] GetGetters(Type type)
+		static IEnumerable<AccessibleMember> GetGetters(Type type)
 		{
 			var propertyMembers = type.GetProperties().Where(pi => pi.CanRead && pi.GetIndexParameters().Length == 0).Select(pi => new AccessibleMember { DeclaredType = pi.PropertyType, Getter = obj => pi.GetValue(obj, null), });
-			var fieldMembers = type.GetFields().Select(fi => new AccessibleMember { DeclaredType = fi.FieldType, Getter = obj => fi.GetValue(obj), });
+			var fieldMembers = type.GetFields().Select(fi => new AccessibleMember { DeclaredType = fi.FieldType, Getter = fi.GetValue, });
 			return fieldMembers.Concat(propertyMembers).ToArray();
 		}
 
-		static bool CompareAccessibleMembers(HashSet<ReferencePair> assumeEqual, Type type, object o1_nonnull, object o2_nonnull)
+		static bool CompareAsEnumerableOrAccessibleMembers(HashSet<ReferencePair> assumeEqual, Type type, object o1_nonnull, object o2_nonnull)
 		{
+			if (o1_nonnull is IEnumerable && o2_nonnull is IEnumerable)
+				return CompareEnumerables(assumeEqual, (IEnumerable)o1_nonnull, (IEnumerable)o2_nonnull);
+			else if (o2_nonnull.GetType() != type)
+				return false;
+
 			foreach (var member in GetGetters(type))
 			{
 				object v1 = member.Getter(o1_nonnull), v2 = member.Getter(o2_nonnull);
@@ -113,4 +120,64 @@ namespace ProgressOnderwijsUtils
 			return ilist1.Cast<object>().Zip(ilist2.Cast<object>(), (el1, el2) => Compare(assumeEqual, el1, el2)).All(b => b);
 		}
 	}
+
+	[TestFixture]
+	public class DeepEqualsTest
+	{
+		[Test]
+		public void AnonTypes()
+		{
+			PAssert.That(() => DeepEquals.AreEqual(new { XYZ = "123", BC = 3m }, new { XYZ = 123m.ToString(CultureInfo.InvariantCulture), BC = 3m }));
+			PAssert.That(() =>!DeepEquals.AreEqual(new { XYZ = "123", BC = 3m }, new { XYZ = 123, BC = 3m }));
+			PAssert.That(() =>!DeepEquals.AreEqual(new { XYZ = Enumerable.Range(3,3), BC = 3m }, new { XYZ = new[]{3,4,5}, BC = 3m }));//members must be of same type
+			PAssert.That(() => DeepEquals.AreEqual(new { XYZ = Enumerable.Range(3, 3).AsEnumerable(), BC = 3m }, new { XYZ = new[] { 3, 4, 5 }.AsEnumerable(), BC = 3m }));//OK, members are of same type
+		}
+		[Test]
+		public void Sequences()
+		{
+			var q1 = 
+					from i in Enumerable.Range(3, 3)
+					from j in Enumerable.Range(13, 7)
+					where j % i != 0
+					orderby i descending,j
+					select new { I = i, J = j };
+
+			var q3 = 
+					 from j in Enumerable.Range(13, 7)
+					 from i in Enumerable.Range(3, 3).Where(i=> j % i != 0)
+					 orderby i descending, j
+					 select new { I = i, J = j };
+
+
+			PAssert.That(() => DeepEquals.AreEqual(Enumerable.Range(3, 3).ToArray(), new[] { 3, 4, 5 }));
+			PAssert.That(() => !Enumerable.Range(3, 3).ToArray().Equals(new[] { 3, 4, 5 }));//plain arrays are comparable
+			PAssert.That(() => DeepEquals.AreEqual(Enumerable.Range(3, 3), new[] { 3, 4, 5 }));//sequences must be of same type.
+
+			PAssert.That(() => DeepEquals.AreEqual(q1,q3));
+			PAssert.That(() => !DeepEquals.AreEqual(q1.Reverse(), q3));//order matters;
+
+		}
+		[Test]
+		public void Dictionaries()
+		{
+			var q1 =
+					from i in Enumerable.Range(3, 3)
+					from j in Enumerable.Range(13, 2)
+					where j % i != 0
+					orderby i 
+					select new { I = i, J = j };
+
+			var q3 =
+					 from j in Enumerable.Range(13, 2)
+					 from i in Enumerable.Range(3, 3).Where(i => j % i != 0)
+					 orderby i descending
+					 select new { I = i, J = j };
+
+			PAssert.That(() => !DeepEquals.AreEqual(q1, q3));//sequences aren't equal
+			PAssert.That(() => DeepEquals.AreEqual(q1.ToDictionary(x => x.I * x.J), q3.ToDictionary(x => x.I * x.J)));//but dictionaries are...
+			PAssert.That(() => !DeepEquals.AreEqual(q1.ToDictionary(x => x.I * x.J).ToArray(), q3.ToDictionary(x => x.I * x.J).ToArray()));//..and not because they sort.
+		}
+
+	}
+
 }
