@@ -58,8 +58,10 @@ namespace ProgressOnderwijsUtils.Data
 					return "null";
 				else if (paramval is string)
 					return "'" + (paramval as string).Replace("'", "''") + "'";
-				else if (paramval is int || paramval is decimal)
-					return paramval.ToString();
+				else if (paramval is int)
+					return ((int)paramval).ToStringInvariant();
+				else if (paramval is decimal)
+					return ((decimal)paramval).ToStringInvariant();
 				else if (paramval is DateTime)
 					return ((DateTime)paramval).ToString(@"\'yyyy-MM-dd HH:mm:ss.fffffff\'");
 				else

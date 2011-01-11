@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils
 		/// <returns>the changed string</returns>
 		public static string VerwijderDiakrieten(this string input)
 		{
-			return 
+			return
 				new string(
 					input
 					.Normalize(NormalizationForm.FormD)
@@ -59,26 +59,18 @@ namespace ProgressOnderwijsUtils
 			int n = s.Length; //length of s
 			int m = t.Length; //length of t
 			int[,] d = new int[n + 1, m + 1]; // matrix
-			int cost; // cost
-			// Step 1
 			if (n == 0) return m;
 			if (m == 0) return n;
-			// Step 2
-			for (int i = 0; i <= n; d[i, 0] = i++) ;
-			for (int j = 0; j <= m; d[0, j] = j++) ;
-			// Step 3
+			for (int i = 0; i <= n; i++)
+				d[i, 0] = i;
+			for (int j = 0; j <= m; j++)
+				d[0, j] = j;
 			for (int i = 0; i < n; i++)
-			{
-				//Step 4
 				for (int j = 0; j < m; j++)
 				{
-					// Step 5
-					cost = (t[j] == s[i] ? 0 : subsCost);
-					// Step 6
+					int cost = (t[j] == s[i] ? 0 : subsCost); // cost
 					d[i + 1, j + 1] = Math.Min(Math.Min(d[i, j + 1] + 1, d[i + 1, j] + 1), d[i, j] + cost);
 				}
-			}
-			// Step 7
 			return d[n, m];
 		}
 		public static double LevenshteinDistanceScaled(this string s, string t)
@@ -125,67 +117,5 @@ namespace ProgressOnderwijsUtils
 	}
 
 
-	[TestFixture]
-	public class StringExtensionsTest
-	{
-		[TestCase("é", "e")]
-		[TestCase("Ü", "U")]
-		[TestCase("ß", "ß")]
-		public void WithoutDiakriet(string from, string to)
-		{
-			Assert.That(from.VerwijderDiakrieten(), Is.EqualTo(to));
-		}
-
-		[Test]
-		public void ReplaceRingelS()
-		{
-			Assert.That("ß".VervangRingelS(false), Is.EqualTo("ss"));
-			Assert.That("ß".VervangRingelS(true), Is.EqualTo("SS"));
-			Assert.That("aßb".VervangRingelS(false), Is.EqualTo("assb"));
-			Assert.That("ßsß".VervangRingelS(true), Is.EqualTo("SSsSS"));
-			Assert.That("".VervangRingelS(false), Is.EqualTo(""));
-		}
-
-		[Test]
-		[TestCase("", Result = "")]
-		[TestCase("test", Result = "test")]
-		[TestCase(" test ", Result = "test")]
-		[TestCase("\ttest\t", Result = "test")]
-		[TestCase("\ntest\n", Result = "test")]
-		[TestCase(" \t\ntest\n\t ", Result = "test")]
-		[TestCase("een test", Result = "een test")]
-		[TestCase("een  test", Result = "een test")]
-		[TestCase("een\ttest", Result = "een test")]
-		[TestCase("een\t\ttest", Result = "een test")]
-		[TestCase("een\ntest", Result = "een test")]
-		[TestCase("een\n\ntest", Result = "een test")]
-		public string CollapseWhitespace(string str)
-		{
-			return str.CollapseWhitespace();
-		}
-
-		[Test]
-		[TestCase("", "", Result = 0)]
-		[TestCase("test","tset", Result = 2)]
-		[TestCase(" test ","\ttest\t", Result =2)]
-		[TestCase("Ziggy Stardust","ziggy stradust", Result = 4)]
-		public int TestLevenshtein(string str1, string str2) { return str1.LevenshteinDistance(str2); }
-
-		[Test]
-		[TestCase("joepje jofel",Result = "Joepje Jofel")]
-		[TestCase("carolien Kaasteen",Result = "Carolien Kaasteen")]
-		[TestCase("maarten middelmaat--meloen", Result = "Maarten Middelmaat-Meloen")]
-		[TestCase("carolien    Kaasteen", Result = "Carolien Kaasteen")]
-		[TestCase("miep boezeroen-jansen van der sloot op 't gootje v.d. geest de la terrine du soupe au beurre à demi v/d zo-is-het-wel-genoeg ja"
-					, Result = "Miep Boezeroen-Jansen van der Sloot op 't Gootje v.d. Geest de la Terrine du Soupe au Beurre à Demi v/d Zo-Is-Het-Wel-Genoeg Ja")]
-		[TestCase("'s-gravenhage", Result = "'s-Gravenhage")]
-		[TestCase("'s gravenhage", Result = "'s Gravenhage")]
-		[TestCase("'sgravenhage", Result = "'s Gravenhage")]
-		[TestCase("sieb op de kast", Result = "Sieb op de Kast")]
-		public string testNaam2Upper(string inp)
-		{
-			return inp.Name2UpperCasedName();
-		}
-	}
 }
 
