@@ -8,7 +8,7 @@ using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
-	public class QueryBuilder
+	public class QueryBuilder:IEquatable<QueryBuilder>
 	{
 		readonly IQueryComponent value;
 		readonly QueryBuilder nestedNode;
@@ -205,16 +205,21 @@ namespace ProgressOnderwijsUtils
 
 
 
+		public override bool Equals(object obj) { return Equals(obj as QueryBuilder);}
+
 		public static bool operator ==(QueryBuilder a, QueryBuilder b)
 		{
-			return ReferenceEquals(a, b) ||
-				!ReferenceEquals(a, null) && !ReferenceEquals(b, null) && a.CanonicalReverseComponents.SequenceEqual(b.CanonicalReverseComponents);
+			return ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b);
+		}
+
+		public bool Equals(QueryBuilder other)
+		{
+			return !ReferenceEquals(other, null) && CanonicalReverseComponents.SequenceEqual(other.CanonicalReverseComponents);
 		}
 
 		public static bool operator !=(QueryBuilder a, QueryBuilder b) { return !(a == b); }
-
-		public override bool Equals(object obj) { return obj is QueryBuilder && this == (QueryBuilder)obj; }
-		public override int GetHashCode() { return HashCodeHelper.ComputeHash(ComponentsInReverseOrder.ToArray()) + 123; }
+		public override int GetHashCode() { return HashCodeHelper.ComputeHash(CanonicalReverseComponents.ToArray()) + 123; }
 		public override string ToString() { return DebugText(); }
+
 	}
 }
