@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
 		protected internal override QueryBuilder ToSqlStringImpl(Func<string, string> colRename)
 		{
 			QueryBuilder andorQ = QueryBuilder.Create(" " + andor + " ");
-			return "(" + filterLijst.Aggregate(default(QueryBuilder), (q, f) => q == null ? f.ToSqlString(colRename) : q + andorQ + f.ToSqlString(colRename)) + ")";
+			return "(" + filterLijst.Aggregate(default(QueryBuilder), (q, f) => null == q ? f.ToSqlString(colRename) : q + andorQ + f.ToSqlString(colRename)) + ")";
 		}
 
 		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, CriteriumFilter replaceWith)

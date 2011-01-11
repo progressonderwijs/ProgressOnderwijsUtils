@@ -16,11 +16,11 @@ namespace ProgressOnderwijsUtils.Data
 
 	static class QueryComponent
 	{
-		class StringComponent : IQueryComponent
+		public class StringComponent : IQueryComponent
 		{
-			readonly string val;
+			public readonly string val;
 			public string ToSqlString(QueryParamNumberer qnum) { return val; }
-			public StringComponent(string val)
+			internal StringComponent(string val)
 			{
 				if (val == null) throw new ArgumentNullException("val");
 				this.val = val;
@@ -33,10 +33,10 @@ namespace ProgressOnderwijsUtils.Data
 			public override int GetHashCode() { return val.GetHashCode() + 31; }
 		}
 
-		class ParamComponent : IQueryComponent, IQueryParameter
+		public class ParamComponent : IQueryComponent, IQueryParameter
 		{
-			private readonly object paramval;
-			public ParamComponent(object o) { paramval = o ?? DBNull.Value; }
+			readonly object paramval;
+			internal ParamComponent(object o) { paramval = o ?? DBNull.Value; }
 
 			public string ToSqlString(QueryParamNumberer qnum) { return "@par" + qnum.GetNumberForParam(this); }
 

@@ -15,29 +15,29 @@ namespace ProgressOnderwijsUtils
 		readonly QueryBuilder prev;
 		QueryBuilder(IQueryComponent then)
 		{
-			if (then == null) throw new ArgumentNullException("then");
+			if (null == then) throw new ArgumentNullException("then");
 			prev = null;
 			value = then;
 		}
 		QueryBuilder(QueryBuilder prefix, IQueryComponent then)
 		{
-			if (prefix == null) throw new ArgumentNullException("prefix");
-			if (then == null) throw new ArgumentNullException("then");
+			if (null == prefix) throw new ArgumentNullException("prefix");
+			if (null == then) throw new ArgumentNullException("then");
 			prev = prefix.IsEmpty ? null : prefix;
 			value = then;
 		}
 		QueryBuilder(QueryBuilder prefix, QueryBuilder then)
 		{
-			if (prefix == null) throw new ArgumentNullException("prefix");
-			if (then == null) throw new ArgumentNullException("then");
+			if (null == prefix) throw new ArgumentNullException("prefix");
+			if (null == then) throw new ArgumentNullException("then");
 			prev = prefix;
 			nestedNode = then;
 		}
 		QueryBuilder() { }
 		public static readonly QueryBuilder Empty = new QueryBuilder();
 
-		public bool IsEmpty { get { return value == null && nestedNode == null; } }
-		public bool IsSingleElement { get { return prev == null && value != null; } }
+		public bool IsEmpty { get { return null == value && null == nestedNode; } }
+		public bool IsSingleElement { get { return null == prev && null != value; } }
 
 
 		//INVARIANT:
@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
 
 		static QueryBuilder Concat(QueryBuilder query, IQueryComponent part)
 		{
-			return part == null ? query : new QueryBuilder(query, part);
+			return null == part ? query : new QueryBuilder(query, part);
 		}
 
 		static QueryBuilder Concat(QueryBuilder first, QueryBuilder second)
@@ -175,10 +175,40 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
+		IEnumerable<IQueryComponent> CanonicalReverseComponents
+		{
+			get
+			{
+				var cached = new List<QueryComponent.StringComponent>();
+				foreach (var comp in ComponentsInReverseOrder)
+				{
+					if (comp is QueryComponent.StringComponent)
+						cached.Add((QueryComponent.StringComponent)comp);
+					else
+					{
+						if (cached.Count > 0)
+						{
+							cached.Reverse();
+							yield return QueryComponent.CreateString(cached.Select(c => c.val).JoinStrings());
+							cached.Clear();
+						}
+						yield return comp;
+					}
+				}
+				if (cached.Count > 0)
+				{
+					cached.Reverse();
+					yield return QueryComponent.CreateString(cached.Select(c => c.val).JoinStrings());
+				}
+			}
+		}
+
+
+
 		public static bool operator ==(QueryBuilder a, QueryBuilder b)
 		{
 			return ReferenceEquals(a, b) ||
-				!ReferenceEquals(a, null) && !ReferenceEquals(b, null) && a.ComponentsInReverseOrder.SequenceEqual(b.ComponentsInReverseOrder);
+				!ReferenceEquals(a, null) && !ReferenceEquals(b, null) && a.CanonicalReverseComponents.SequenceEqual(b.CanonicalReverseComponents);
 		}
 
 		public static bool operator !=(QueryBuilder a, QueryBuilder b) { return !(a == b); }
