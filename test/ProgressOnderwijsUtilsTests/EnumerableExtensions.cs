@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void testIndexOf()
 		{
 			List<string> lst = new List<string> { "een", "twee", "drie" };
-			int[] ints = { 1, 2, 3, 4, 5 };
+			//int[] ints = { 1, 2, 3, 4, 5 };
 			Assert.That(lst.IndexOf("twee"), Is.EqualTo(1));
 			Assert.That(lst.IndexOf("tweeeneenhalf"), Is.EqualTo(-1));
 		}

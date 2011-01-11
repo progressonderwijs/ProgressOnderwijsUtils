@@ -113,6 +113,12 @@ namespace ProgressOnderwijsUtils.WebSupport
 			}
 		}
 		public readonly byte[] GzippedUtf8String;
+
+		public CompressedUtf8String(byte[] compressedData)
+		{
+			GzippedUtf8String = compressedData;
+		}
+
 		public CompressedUtf8String(string stringData)
 		{
 			using (MemoryStream compressedData = new MemoryStream())
@@ -123,7 +129,6 @@ namespace ProgressOnderwijsUtils.WebSupport
 
 				GzippedUtf8String = compressedData.ToArray();
 			}
-
 		}
 	}
 
