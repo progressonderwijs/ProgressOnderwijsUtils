@@ -2,6 +2,7 @@
 using System.IO;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Extensions;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -54,27 +55,39 @@ namespace ProgressOnderwijsUtilsTests
 		public void SameContentsFilled()
 		{
 			using (FileStream fs1 = sut.OpenWrite())
+				fs1.WriteByte(0);
+			using (FileStream fs2 = other.OpenWrite())
+				fs2.WriteByte(0);
+			Assert.That(sut.SameContents(other));
+		}
+
+		[Test]
+		public void DifferentLength()
+		{
+			using (FileStream fs1 = sut.OpenWrite())
 			{
+				fs1.WriteByte(0);
 				fs1.WriteByte(0);
 			}
 			using (FileStream fs2 = other.OpenWrite())
-			{
 				fs2.WriteByte(0);
-			}
-			Assert.That(sut.SameContents(other));
+			PAssert.That(()=> !sut.SameContents(other));
+		}
+
+		[Test]
+		public void ReadToEnd()
+		{
+			File.WriteAllText(sut.FullName, @"Hello World!");
+			PAssert.That(() => sut.ReadToEnd() == @"Hello World!");
 		}
 
 		[Test]
 		public void DifferentContents()
 		{
 			using (FileStream fs1 = sut.OpenWrite())
-			{
 				fs1.WriteByte(0);
-			}
 			using (FileStream fs2 = other.OpenWrite())
-			{
 				fs2.WriteByte(1);
-			}
 			Assert.That(!sut.SameContents(other));
 		}
 	}
