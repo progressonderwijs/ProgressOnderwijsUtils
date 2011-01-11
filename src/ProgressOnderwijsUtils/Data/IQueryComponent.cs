@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils.Data
 {
@@ -59,7 +61,7 @@ namespace ProgressOnderwijsUtils.Data
 				else if (paramval is int || paramval is decimal)
 					return paramval.ToString();
 				else if (paramval is DateTime)
-					return ((DateTime)paramval).ToString("'yyyy-MM-dd HH:mm:ss.fffffff'");
+					return ((DateTime)paramval).ToString(@"\'yyyy-MM-dd HH:mm:ss.fffffff\'");
 				else
 					return "{!" + paramval + "!}";
 			}
@@ -67,10 +69,38 @@ namespace ProgressOnderwijsUtils.Data
 
 			public bool Equals(IQueryComponent other) { return (other is ParamComponent) && Equals(paramval, ((ParamComponent)other).paramval); }
 			public override bool Equals(object obj) { return (obj is ParamComponent) && Equals((ParamComponent)obj); }
-			public override int GetHashCode() { return paramval == null ? -1 : paramval.GetHashCode() + 37; }
+			public override int GetHashCode() { return paramval.GetHashCode() + 37; }//paramval never null!
 		}
 
 		public static IQueryComponent CreateString(string val) { return new StringComponent(val); }
 		public static IQueryComponent CreateParam(object o) { return new ParamComponent(o); }
+	}
+
+	[TestFixture]
+	public class TestQueryComponent
+	{
+		[Test]
+		public void ValidatesArgumentsOK()
+		{
+			Assert.Throws<ArgumentNullException>(()=>QueryComponent.CreateString(null));
+			Assert.DoesNotThrow(() => QueryComponent.CreateString("bla"));
+
+			PAssert.That(() => QueryComponent.CreateString("bla"+0).GetHashCode() == QueryComponent.CreateString("bla0").GetHashCode());
+			PAssert.That(() => QueryComponent.CreateString("bla" + 0).GetHashCode() != QueryComponent.CreateString("bla").GetHashCode());
+			PAssert.That(() => QueryComponent.CreateString("bla" + 0).Equals(QueryComponent.CreateString("bla0")));
+
+			PAssert.That(() => QueryComponent.CreateParam("bla" + 0).GetHashCode() == QueryComponent.CreateParam("bla0").GetHashCode());
+			PAssert.That(() => QueryComponent.CreateParam("bla" + 0).GetHashCode() != QueryComponent.CreateParam("bla").GetHashCode());
+			PAssert.That(() => QueryComponent.CreateParam("bla" + 0).Equals(QueryComponent.CreateParam("bla0")));
+
+			var someday = new DateTime(2012,3,4);
+			PAssert.That(() => QueryComponent.CreateParam(someday).ToDebugText() == "'2012-03-04 00:00:00.0000000'");
+			PAssert.That(() => QueryComponent.CreateParam(null).ToDebugText() == "null");
+			PAssert.That(() => QueryComponent.CreateParam("abc").ToDebugText() == "'abc'");
+			PAssert.That(() => QueryComponent.CreateParam("ab'c").ToDebugText() == "'ab''c'");
+			PAssert.That(() => QueryComponent.CreateParam(12345).ToDebugText() == "12345");
+			PAssert.That(() => QueryComponent.CreateParam(12345.6m).ToDebugText() == "12345.6");
+			PAssert.That(() => QueryComponent.CreateParam(new object()).ToDebugText() == "{!System.Object!}");
+		}
 	}
 }

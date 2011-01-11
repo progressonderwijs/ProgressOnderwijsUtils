@@ -5,6 +5,7 @@ using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -17,6 +18,7 @@ namespace ProgressOnderwijsUtilsTests
 #pragma warning disable 1720
 			PAssert.That(() => default(FilterBase).ToSqlString(default(Dictionary<string, string>)) == QueryBuilder.Create("1=1"));//shouldn't throw and should be equal
 #pragma warning restore 1720
+			
 
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).ToSqlString(s => s) == QueryBuilder.Create("test<{0}", 3));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThanOrEqual, 3).ToSqlString(s => s) == QueryBuilder.Create("test<={0}", 3));
