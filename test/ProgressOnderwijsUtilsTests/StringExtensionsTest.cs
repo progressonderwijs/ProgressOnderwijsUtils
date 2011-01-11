@@ -47,23 +47,15 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[TestCase("","", Result = 0)]
+		[TestCase("", "", Result = 0)]
+		[TestCase("test", "tset", Result = 2)]
+		[TestCase(" test ", "\ttest\t", Result = 2)]
+		[TestCase("Ziggy Stardust", "ziggy stradust", Result = 4)]
 		[TestCase("a", "b", Result = 1)]
 		[TestCase("aba", "aa", Result = 1)]
 		[TestCase("simple", "Simpler", Result = 2)]
 		[TestCase("hmmm", "yummy", Result = 3)]
 		[TestCase("World-wide", "wordy", Result = 7)]//"W"=>"w",drop "l", replace "-wide"
-		public int LevenshteinDistance(string a, string b)
-		{
-			return a.LevenshteinDistance(b);
-		}
-
-
-		[Test]
-		[TestCase("", "", Result = 0)]
-		[TestCase("test", "tset", Result = 2)]
-		[TestCase(" test ", "\ttest\t", Result = 2)]
-		[TestCase("Ziggy Stardust", "ziggy stradust", Result = 4)]
 		public int TestLevenshtein(string str1, string str2) { return str1.LevenshteinDistance(str2); }
 
 		[Test]
