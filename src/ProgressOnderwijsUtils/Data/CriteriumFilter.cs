@@ -68,9 +68,9 @@ namespace ProgressOnderwijsUtils
 		protected internal override IEnumerable<FilterBase> Children { get { yield break; } }
 		protected internal override IEnumerable<string> ColumnsReferenced { get { yield return KolomNaam; if (Waarde is ColumnReference) yield return ((ColumnReference)Waarde).ColumnName; } }
 
-		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, CriteriumFilter replaceWith) { return this == toReplace ? replaceWith : this; }
+		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return this == toReplace ? replaceWith : this; }
 
-		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, CriteriumFilter c)
+		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
 		{
 			return filterInEditMode == this
 				? Filter.CreateCombined(booleanOperator, this, c)

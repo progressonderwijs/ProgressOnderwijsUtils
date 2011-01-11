@@ -11,13 +11,13 @@ namespace ProgressOnderwijsUtils
 		{
 			return filter == null ? QueryBuilder.Create("1=1") : filter.ToSqlStringImpl(colRename);
 		}
-		public static FilterBase Replace(this FilterBase filter, FilterBase toReplace, CriteriumFilter replaceWith)
+		public static FilterBase Replace(this FilterBase filter, FilterBase toReplace, FilterBase replaceWith)
 		{
 			return filter == null ? (toReplace == null ? replaceWith : null)
 				: filter.ReplaceImpl(toReplace, replaceWith);
 
 		}
-		public static FilterBase AddTo(this FilterBase filter, FilterBase filterInEditMode, BooleanOperator booleanOperator, CriteriumFilter c)
+		public static FilterBase AddTo(this FilterBase filter, FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
 		{
 			return filter == null
 				? (filterInEditMode == null ? c : null)
@@ -53,10 +53,14 @@ namespace ProgressOnderwijsUtils
 				return null;
 			else if (conditiesArr.Length == 1)
 				return conditiesArr[0];
-			else if (conditiesArr[0] is CombinedFilter && ((CombinedFilter)conditiesArr[0]).AndOr == andor)
-				return new CombinedFilter(andor, ((CombinedFilter)conditiesArr[0]).FilterLijst.Concat(conditiesArr.Skip(1)).ToArray());
 			else
-				return new CombinedFilter(andor, conditiesArr);
+				return new CombinedFilter(andor, 
+					conditiesArr.SelectMany(conditie=>
+						conditie is CombinedFilter && ((CombinedFilter) conditie).AndOr == andor
+						? ((CombinedFilter) conditie).FilterLijst
+						: new[]{conditie}
+						).ToArray()
+					);
 		}
 
 

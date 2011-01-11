@@ -28,12 +28,12 @@ namespace ProgressOnderwijsUtils
 			return "(" + filterLijst.Aggregate(default(QueryBuilder), (q, f) => null == q ? f.ToSqlString(colRename) : q + andorQ + f.ToSqlString(colRename)) + ")";
 		}
 
-		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, CriteriumFilter replaceWith)
+		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith)
 		{
 			return this == toReplace ? replaceWith : Filter.CreateCombined(AndOr, filterLijst.Select(child => child.ReplaceImpl(toReplace, replaceWith)));
 		}
 		protected internal override IEnumerable<FilterBase> Children { get { return FilterLijst; } }
-		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, CriteriumFilter c)
+		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
 		{
 			return filterInEditMode == this
 				? Filter.CreateCombined(booleanOperator, this, c)
