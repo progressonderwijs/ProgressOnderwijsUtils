@@ -116,6 +116,13 @@ namespace ProgressOnderwijsUtils
 				return 11 + CommandText.GetHashCode() - Params.Length +
 					Params.Select((p, i) => p.Value.GetHashCode() * (i * 2 + 1)).Aggregate(0, (a, b) => a + b); //don't use Sum because sum does overflow checking.
 			}
+
+			public static bool operator ==(SerializedQuery a, SerializedQuery b) { return ReferenceEquals(a, b) || null != a && null != b && a.Equals(b); } //watch out: a!=null would create infinite recursion.
+			public static bool operator !=(SerializedQuery a, SerializedQuery b) { return !(a == b); }
+			public override string ToString()
+			{
+				return "{ CommandText = \"" + CommandText + "\", Params = {" + Params.Select(p => p.Value == DBNull.Value ? "NULL" : p.Value.ToString()).JoinStrings(", ") + "} }";
+			}
 		}
 
 		public SerializedQuery Serialize()
@@ -178,5 +185,6 @@ namespace ProgressOnderwijsUtils
 
 		public override bool Equals(object obj) { return obj is QueryBuilder && this == (QueryBuilder)obj; }
 		public override int GetHashCode() { return HashCodeHelper.ComputeHash(ComponentsInReverseOrder.ToArray()) + 123; }
+		public override string ToString() { return DebugText(); }
 	}
 }

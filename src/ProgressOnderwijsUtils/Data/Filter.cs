@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
 	{
 		public static QueryBuilder ToSqlString(this FilterBase filter, Func<string, string> colRename)
 		{
-			return filter == null ? QueryBuilder.Create("(1=1)") : filter.ToSqlStringImpl(colRename);
+			return filter == null ? QueryBuilder.Create("1=1") : filter.ToSqlStringImpl(colRename);
 		}
 		public static FilterBase Replace(this FilterBase filter, FilterBase toReplace, CriteriumFilter replaceWith)
 		{

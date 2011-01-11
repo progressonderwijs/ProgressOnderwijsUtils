@@ -114,7 +114,7 @@ namespace ProgressOnderwijsUtils
 					// Step 5
 					cost = (t[j] == s[i] ? 0 : subsCost);
 					// Step 6
-					d[i + 1, j + 1] = System.Math.Min(System.Math.Min(d[i, j + 1] + 1, d[i + 1, j] + 1), d[i, j] + cost);
+					d[i + 1, j + 1] = Math.Min(Math.Min(d[i, j + 1] + 1, d[i + 1, j] + 1), d[i, j] + cost);
 				}
 			}
 			// Step 7
