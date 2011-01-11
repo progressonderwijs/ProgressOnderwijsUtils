@@ -52,6 +52,7 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase(" test ", "\ttest\t", Result = 2)]
 		[TestCase("Ziggy Stardust", "ziggy stradust", Result = 4)]
 		[TestCase("a", "b", Result = 1)]
+		[TestCase("a", "", Result = 1)]
 		[TestCase("aba", "aa", Result = 1)]
 		[TestCase("simple", "Simpler", Result = 2)]
 		[TestCase("hmmm", "yummy", Result = 3)]
