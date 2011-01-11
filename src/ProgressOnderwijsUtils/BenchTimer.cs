@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Diagnostics;
+using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
@@ -20,6 +21,15 @@ namespace ProgressOnderwijsUtils
 				bestTime = timer.Elapsed < bestTime ? timer.Elapsed : bestTime;
 			}
 			return bestTime;
+		}
+	}
+	[TestFixture]
+	public class BTTester
+	{
+		[Test]
+		public void ArgVerify()
+		{
+			Assert.Throws<ArgumentException>(() => BenchTimer.MinimumTime(() => { }, 0));
 		}
 	}
 }

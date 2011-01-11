@@ -46,38 +46,4 @@ namespace ProgressOnderwijsUtils
 		public static ReadOnlyCollection<T> AsReadOnlyView<T>(this IList<T> list) { return list as ReadOnlyCollection<T> ?? new ReadOnlyCollection<T>(list); }
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> list) { return list ?? Enumerable.Empty<T>(); }
 	}
-
-	[TestFixture]
-	public class IEnumerableExtensionTest
-	{
-		[Test]
-		public void testIndexOf()
-		{
-			List<string> lst = new List<string> { "een", "twee", "drie" };
-			int[] ints = { 1, 2, 3, 4, 5 };
-			Assert.That(lst.IndexOf("twee"), Is.EqualTo(1));
-			Assert.That(lst.IndexOf("tweeeneenhalf"), Is.EqualTo(-1));
-		}
-
-		[Test]
-		public void testFirstIndexOfDups()
-		{
-			Assert.That(() => new[] { 0, 0, 1, 1, 2, 2 }.IndexOf(0), Is.EqualTo(0));
-			Assert.That(() => new[] { 0, 0, 1, 1, 2, 2 }.IndexOf(1), Is.EqualTo(2));
-			Assert.That(() => new[] { 0, 0, 1, 1, 2, 2 }.IndexOf(2), Is.EqualTo(4));
-		}
-
-		[Test]
-		public void EmptyIfNullOk()
-		{
-#pragma warning disable 1720
-			PAssert.That(() => new[] { 0, 1, 2, }.EmptyIfNull().SequenceEqual(new[] { 0, 1, 2, }));
-			PAssert.That(() => default(int[]).EmptyIfNull().SequenceEqual(new int[] { }));
-			PAssert.That(() => default(int[]) == null);
-			PAssert.That(() => default(int[]) != default(int[]).EmptyIfNull());
-			var arr = new[] { 0, 1, 2, };
-			PAssert.That(() => arr.EmptyIfNull() == arr);
-#pragma warning restore 1720
-		}
-	}
 }

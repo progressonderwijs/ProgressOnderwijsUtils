@@ -1,4 +1,7 @@
 ﻿using System.IO;
+using System.Linq;
+using NUnit.Framework;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils.Extensions
 {
@@ -15,16 +18,29 @@ namespace ProgressOnderwijsUtils.Extensions
 		{
 			byte[] result = new byte[size];
 			int offset = 0;
-			int count = result.Length;
-			while (count > 0)
+			while (offset < result.Length)
 			{
-				int n = stream.Read(result, offset, count);
-				if (n == 0)
-					throw new EndOfStreamException();
+				int n = stream.Read(result, offset, result.Length - offset);
+				if (n == 0) throw new EndOfStreamException();
 				offset += n;
-				count -= n;
 			}
 			return result;
 		}
+
 	}
+	[TestFixture]
+	public class StreamExtensionsTestClass
+	{
+		[Test]
+		public void ChecksEOF()
+		{
+			using (var stream = new MemoryStream(Enumerable.Range(0, 256).Select(i=>(byte)i).ToArray()))
+			{
+				Assert.Throws<EndOfStreamException>(() => stream.ReadUntil(257));
+				stream.Seek(0, SeekOrigin.Begin);
+				PAssert.That(() => stream.ReadUntil(256).SequenceEqual(Enumerable.Range(0, 256).Select(i => (byte)i)));
+			}
+		}
+	}
+
 }
