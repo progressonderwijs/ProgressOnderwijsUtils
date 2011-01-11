@@ -40,6 +40,12 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 
+		[Test]
+		public void NiceString()
+		{
+			var comparers = Enum.GetValues(typeof(BooleanComparer)).Cast<BooleanComparer>();
+			PAssert.That(() => comparers.Count() == comparers.Select(c => c.NiceString()).Distinct().Count());
+		}
 
 		[Test]
 		public void CreateCombinedWithNulls()
@@ -76,6 +82,7 @@ namespace ProgressOnderwijsUtilsTests
 
 			PAssert.That(() => modFilter.ToSqlString(s => s) == QueryBuilder.Create("(ziggy<{0} And test2<{1} And stardust>{2})", 3, 3,37)); //note no nested brackets!
 			PAssert.That(() => combFilter.ToSqlString(s => s) == QueryBuilder.Create("(test<{0} And test2<{1})", 3, 3)); // side-effect free
+			PAssert.That(() => Filter.CreateCombined(BooleanOperator.And, combFilter, null, modFilter).ToSqlString(s => s) == QueryBuilder.Create("(test<{0} And test2<{1} And ziggy<{2} And test2<{3} And stardust>{4})", 3, 3,3,3,37)); // no unnecessary brackets!
 
 			PAssert.That(() =>
 				combFilter.AddTo(testFilter, BooleanOperator.Or, Filter.CreateCriterium("abc", BooleanComparer.GreaterThan, 42)).ToSqlString(s=>s)
@@ -84,6 +91,14 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s != "stardust") == null);
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s != "stardst") == modFilter);
 		}
+
+		[Test]
+		public void ColRef()
+		{
+			PAssert.That (() => !BooleanComparer.In.CanReferenceColumn());
+			PAssert.That(() => BooleanComparer.Equal.CanReferenceColumn());
+		}
+
 
 
 	}
