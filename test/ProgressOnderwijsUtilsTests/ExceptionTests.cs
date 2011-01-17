@@ -28,6 +28,10 @@ namespace ProgressOnderwijsUtilsTests
 
 			var texc = Assert.Throws<TemplateException>(() => { throw new TemplateException(37, 42, "bla"); });
 			PAssert.That(() => texc.Line == 37 && texc.Position == 42);
+
+			Assert.AreEqual("bla", Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla"); }).Message);
+			Assert.AreEqual("bla2", Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
+			Assert.AreEqual("bla2", SerializationCloner.Clone(Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla", new ProgressNetException("bla2")); })).InnerException.Message);
 		}
 	}
 }
