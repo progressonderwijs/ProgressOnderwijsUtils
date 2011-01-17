@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtilsTests
 #pragma warning disable 1720
 			PAssert.That(() => default(FilterBase).ToSqlString(default(Dictionary<string, string>)) == QueryBuilder.Create("1=1"));//shouldn't throw and should be equal
 #pragma warning restore 1720
-			
+
 
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).ToSqlString(s => s) == QueryBuilder.Create("test<{0}", 3));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThanOrEqual, 3).ToSqlString(s => s) == QueryBuilder.Create("test<={0}", 3));
@@ -56,7 +56,7 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var blaFilter = Filter.CreateCombined(BooleanOperator.And, Filter.CreateCriterium("test", BooleanComparer.LessThan, 3), Filter.CreateCriterium("test2", BooleanComparer.LessThan, 3));
 
-			PAssert.That(() => Filter.CreateCombined(BooleanOperator.And, null,null) ==null);
+			PAssert.That(() => Filter.CreateCombined(BooleanOperator.And, null, null) == null);
 			PAssert.That(() => Filter.CreateCombined(BooleanOperator.And, blaFilter, null) == blaFilter);
 		}
 
@@ -82,17 +82,17 @@ namespace ProgressOnderwijsUtilsTests
 			var modFilter =
 					combFilter
 					.Replace(testFilter, Filter.CreateCriterium("ziggy", BooleanComparer.LessThan, 3))
-					.AddTo(test2Filter, BooleanOperator.And, Filter.CreateCriterium("stardust",BooleanComparer.GreaterThan,37));
+					.AddTo(test2Filter, BooleanOperator.And, Filter.CreateCriterium("stardust", BooleanComparer.GreaterThan, 37));
 
-			PAssert.That(() => modFilter.ToSqlString(s => s) == QueryBuilder.Create("(ziggy<{0} And test2<{1} And stardust>{2})", 3, 3,37)); //note no nested brackets!
+			PAssert.That(() => modFilter.ToSqlString(s => s) == QueryBuilder.Create("(ziggy<{0} And test2<{1} And stardust>{2})", 3, 3, 37)); //note no nested brackets!
 			PAssert.That(() => combFilter.ToSqlString(s => s) == QueryBuilder.Create("(test<{0} And test2<{1})", 3, 3)); // side-effect free
-			PAssert.That(() => Filter.CreateCombined(BooleanOperator.And, combFilter, null, modFilter).ToSqlString(s => s) == QueryBuilder.Create("(test<{0} And test2<{1} And ziggy<{2} And test2<{3} And stardust>{4})", 3, 3,3,3,37)); // no unnecessary brackets!
+			PAssert.That(() => Filter.CreateCombined(BooleanOperator.And, combFilter, null, modFilter).ToSqlString(s => s) == QueryBuilder.Create("(test<{0} And test2<{1} And ziggy<{2} And test2<{3} And stardust>{4})", 3, 3, 3, 3, 37)); // no unnecessary brackets!
 
-			PAssert.That(() => combFilter.Remove(test2Filter)==testFilter && combFilter.Remove(testFilter) == test2Filter ); // no unnecessary brackets!
+			PAssert.That(() => combFilter.Remove(test2Filter) == testFilter && combFilter.Remove(testFilter) == test2Filter); // no unnecessary brackets!
 
 
 			PAssert.That(() =>
-				combFilter.AddTo(testFilter, BooleanOperator.Or, Filter.CreateCriterium("abc", BooleanComparer.GreaterThan, 42)).ToSqlString(s=>s)
+				combFilter.AddTo(testFilter, BooleanOperator.Or, Filter.CreateCriterium("abc", BooleanComparer.GreaterThan, 42)).ToSqlString(s => s)
 				== QueryBuilder.Create("((test<{0} Or abc>{1}) And test2<{2})", 3, 42, 3)); //does include nested brackets!
 
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s != "stardust") == null);
@@ -102,8 +102,58 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void ColRef()
 		{
-			PAssert.That (() => !BooleanComparer.In.CanReferenceColumn());
+			PAssert.That(() => !BooleanComparer.In.CanReferenceColumn());
 			PAssert.That(() => BooleanComparer.Equal.CanReferenceColumn());
+		}
+
+		[Test]
+		public void QueryBuilderSerializesOk()
+		{
+			var testFilter = Filter.CreateCriterium("test", BooleanComparer.LessThan, 3);
+			var test2Filter = Filter.CreateCriterium("test2", BooleanComparer.LessThan, 3);
+			var combFilter = Filter.CreateCombined(BooleanOperator.And, testFilter, test2Filter);
+
+			var q = combFilter.ToSqlString(s => s);
+			var qAlt = QueryBuilder.Create("(test<{0} And test2<{1})", 3, 3);
+			var qAltWrong = QueryBuilder.Create("(test<{0} And test2<{1})", 3, 3.0);
+
+			PAssert.That(() => q.Serialize() == qAlt.Serialize());
+			PAssert.That(() => q.Serialize().GetHashCode() == qAlt.Serialize().GetHashCode());
+
+			PAssert.That(() => q.Equals(qAlt));
+			PAssert.That(() => q == qAlt);
+			PAssert.That(() => q.GetHashCode() == qAlt.GetHashCode());
+			PAssert.That(() => q.ToString() == qAlt.ToString());
+			PAssert.That(() => q.Serialize().CommandText == qAlt.Serialize().CommandText);
+
+			PAssert.That(() => qAlt.Serialize() != qAltWrong.Serialize());
+			PAssert.That(() => qAlt.Serialize().GetHashCode() != qAltWrong.Serialize().GetHashCode());
+			PAssert.That(() => !qAlt.Equals(qAltWrong));
+			PAssert.That(() => qAlt != qAltWrong);
+			PAssert.That(() => qAlt.GetHashCode() != qAltWrong.GetHashCode());
+			PAssert.That(() => qAlt.ToString() != qAltWrong.ToString());
+			PAssert.That(() => qAlt.Serialize().CommandText != qAltWrong.Serialize().CommandText);
+		}
+
+		[Test]
+		public void EmptyQueryBuilders()
+		{
+			var q = QueryBuilder.Empty;
+			var qZeroWidth = QueryBuilder.Create("");
+			var qZeroWidthArg = QueryBuilder.Create("", 42);
+			var qZeroWidth2 = QueryBuilder.Create(42.ToStringInvariant().Substring(42.ToStringInvariant().Length));
+			PAssert.That(() => !ReferenceEquals(qZeroWidth2.CommandText(), qZeroWidth.CommandText()));
+			//TODO
+		}
+
+		[Test]
+		public void QueryBuilderValidation()
+		{
+			Assert.Throws<ArgumentNullException>(() => QueryBuilder.Create(null));
+			Assert.Throws<ArgumentNullException>(() => QueryBuilder.Create(null));
+			var abc = (QueryBuilder)"abc";
+			Assert.Throws<ArgumentNullException>(() => { var _ = abc + default(string); });
+			Assert.Throws<ArgumentNullException>(() => { var _ = default(QueryBuilder) + "abc"; });
 		}
 	}
 }
