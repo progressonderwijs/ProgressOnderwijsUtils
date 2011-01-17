@@ -97,6 +97,9 @@ namespace ProgressOnderwijsUtilsTests
 
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s != "stardust") == null);
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s != "stardst") == modFilter);
+			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevant") == null);
+			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevan") != null);
+			
 		}
 
 		[Test]
@@ -104,6 +107,9 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			PAssert.That(() => !BooleanComparer.In.CanReferenceColumn());
 			PAssert.That(() => BooleanComparer.Equal.CanReferenceColumn());
+			Assert.Throws<ArgumentNullException>(() => new ColumnReference(null));
+			Assert.Throws<ArgumentException>(() => new ColumnReference("a b"));
+			Assert.Throws<ArgumentException>(() => new ColumnReference("a.b"));
 		}
 
 		[Test]
@@ -168,6 +174,13 @@ namespace ProgressOnderwijsUtilsTests
 			var abc = (QueryBuilder)"abc";
 			Assert.Throws<ArgumentNullException>(() => { var _ = abc + default(string); });
 			Assert.Throws<ArgumentNullException>(() => { var _ = default(QueryBuilder) + "abc"; });
+		}
+
+		[Test]
+		public void FilterValidation()
+		{
+			Assert.Throws<InvalidOperationException>(() => Filter.CreateCriterium("test", (BooleanComparer)12345, 3).ToSqlString(s=>s));
+
 		}
 	}
 }

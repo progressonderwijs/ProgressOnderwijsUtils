@@ -54,15 +54,14 @@ namespace ProgressOnderwijsUtils
 			else if (conditiesArr.Length == 1)
 				return conditiesArr[0];
 			else
-				return new CombinedFilter(andor, 
-					conditiesArr.SelectMany(conditie=>
-						conditie is CombinedFilter && ((CombinedFilter) conditie).AndOr == andor
-						? ((CombinedFilter) conditie).FilterLijst
-						: new[]{conditie}
+				return new CombinedFilter(andor,
+					conditiesArr.SelectMany(conditie =>
+						conditie is CombinedFilter && ((CombinedFilter)conditie).AndOr == andor
+						? ((CombinedFilter)conditie).FilterLijst
+						: new[] { conditie }
 						).ToArray()
 					);
 		}
-
 
 		public static IEnumerable<Tuple<string, object>> ExtractInsertWaarden(this FilterBase filter)
 		{
@@ -85,6 +84,7 @@ namespace ProgressOnderwijsUtils
 		{
 			return comparer.In(BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual);
 		}
+
 		public static string NiceString(this BooleanComparer comparer)
 		{
 			switch (comparer)
@@ -115,10 +115,10 @@ namespace ProgressOnderwijsUtils
 					throw new Exception("Geen geldige operator");
 			}
 		}
+
 		public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, bool> isColValid)
 		{
 			return filter == null || !filter.ColumnsReferenced.All(isColValid) ? null : filter;
 		}
-
 	}
 }

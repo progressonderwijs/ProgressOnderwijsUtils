@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils
 				case BooleanComparer.IsNotNull:
 					return QueryBuilder.Create(kolomNaamMapped + " is not null");
 				default:
-					throw new Exception("Geen geldige operator");
+					throw new InvalidOperationException ("Geen geldige operator");
 			}
 		}
 
