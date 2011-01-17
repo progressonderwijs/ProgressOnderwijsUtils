@@ -8,7 +8,8 @@ namespace ProgressOnderwijsUtils
 {
 	public static class DateTimeShortAgeTag
 	{
-		static readonly char[] trimchars = new[] { '=', 'A' };
+		static readonly char[] trimStart = new[] { 'A' };
+		static readonly char[] trimEnd = new[] { '=' };
 		/// <summary>
 		/// The purpose of an AgeTag is to provide an unlikely-to-collide unique token based on modification time.
 		/// A tick is 10^-7 seconds; so Ticks>>23 ~ 0.84 seconds
@@ -19,7 +20,7 @@ namespace ProgressOnderwijsUtils
 		{
 			uint granularTicks = (uint)(datetime.Ticks >> 23) & 0xffffff;
 			byte[] bytes = BitConverter.GetBytes(granularTicks).Reverse().ToArray();//reverse so most significant first.
-			return Convert.ToBase64String(bytes).Trim(trimchars); //we trim off unneded "zero" ('A') and padding chars ('=')
+			return Convert.ToBase64String(bytes).TrimStart(trimStart).TrimEnd(trimEnd); //we trim off unneeded preceding "zero" ('A') and trailing padding chars ('=')
 		}
 		/// <summary>
 		/// The purpose of an AgeTag is to provide an unlikely-to-collide unique token based on modification time.
