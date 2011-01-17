@@ -9,7 +9,7 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
-	class ServerContextTest
+	public class ServerContextTest
 	{
 		[Test]
 		public void CheckBasics()
