@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
 {
 	public class LineScanner
 	{
-		private string[] lines;
+		readonly string[] lines;
 		int position;
 
 		public LineScanner(Stream stream)

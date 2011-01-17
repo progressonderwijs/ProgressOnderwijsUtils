@@ -11,6 +11,8 @@ namespace ProgressOnderwijsUtils
 		int NodeId { get; }
 		IEnumerable<ITreeStructure> Children { get; }
 	}
+
+#if false
 	public class MinimalTreeStructure : ITreeStructure
 	{
 		readonly string naam;
@@ -27,6 +29,8 @@ namespace ProgressOnderwijsUtils
 		public int NodeId { get { return nodeid; } }
 		public IEnumerable<ITreeStructure> Children { get { return children; } }
 	}
+#endif
+
 	public static class TreeStructureExtensions
 	{
 		public static IEnumerable<ITreeStructure> DescendantsAndSelf(this ITreeStructure tree) { return Enumerable.Repeat(tree, 1).Concat(tree.Children.SelectMany(child => child.DescendantsAndSelf())); }
