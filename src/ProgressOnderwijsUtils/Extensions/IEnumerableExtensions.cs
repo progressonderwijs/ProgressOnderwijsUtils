@@ -45,5 +45,11 @@ namespace ProgressOnderwijsUtils
 		public static ReadOnlyCollection<T> AsReadOnlyCopy<T>(this IEnumerable<T> list) { return new ReadOnlyCollection<T>(list.ToArray()); }
 		public static ReadOnlyCollection<T> AsReadOnlyView<T>(this IList<T> list) { return list as ReadOnlyCollection<T> ?? new ReadOnlyCollection<T>(list); }
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> list) { return list ?? Enumerable.Empty<T>(); }
+
+		public static bool ContainsDuplicates<T>(this IEnumerable<T> list)
+		{
+			var set = new HashSet<T>();
+			return !list.All(set.Add);
+		}
 	}
 }
