@@ -5,16 +5,13 @@ using System.Runtime.Serialization;
 
 namespace ProgressOnderwijsUtils
 {
-	public class NoRowsFoundException : ProgressNetException
-	{
-		public NoRowsFoundException() { }
-	}
-	
+	public class NoRowsFoundException : ProgressNetException { }
+
 	public class GeenRechtException : ProgressNetException
 	{
 		public GeenRechtException(string msg) : base(msg) { }
 	}
-	
+
 	public class QueryException : ProgressNetException
 	{
 		public QueryException(string msg) : base(msg) { }
@@ -25,40 +22,25 @@ namespace ProgressOnderwijsUtils
 	[Serializable]
 	public class TemplateException : Exception
 	{
-		public int Line { get; set; }
-		public int Position { get; set; }
+		public int Line { get; private set; }
+		public int Position { get; private set; }
 
-		public TemplateException()
-		{ }
-
-		public TemplateException(int Line, int Positiont, string message)
-			:
-				base(message)
+		public TemplateException(int _Line, int _Position, string message)
+			: base(message)
 		{
-			this.Line = Line;
-			this.Position = Position;
+			Line = _Line;
+			Position = _Position;
 		}
 
-		public TemplateException(string message)
-			:
-				base(message)
-		{ }
-
-		public TemplateException(string message, Exception innerexception)
-			:
-				base(message, innerexception)
-		{ }
-
-		protected TemplateException(SerializationInfo serializationinfo, StreamingContext streamingcontext)
-			:
-			base(serializationinfo, streamingcontext)
-		{ }
+		public TemplateException() { }
+		public TemplateException(string message) : base(message) { }
+		public TemplateException(string message, Exception innerexception) : base(message, innerexception) { }
+		protected TemplateException(SerializationInfo serializationinfo, StreamingContext streamingcontext) : base(serializationinfo, streamingcontext) { }
 	}
 
 	[Serializable]
 	public class GenericMetaDataException : ProgressNetException
 	{ //TODO: this exception should provide for naming the table and the type of metadata where the error occured.
-		public GenericMetaDataException() : base() { }
 		public GenericMetaDataException(string debugMessage) : base(debugMessage) { }
 		public GenericMetaDataException(string debugMessage, Exception innerException) : base(debugMessage, innerException) { }
 		protected GenericMetaDataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
