@@ -134,16 +134,30 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => qAlt.ToString() != qAltWrong.ToString());
 			PAssert.That(() => qAlt.Serialize().CommandText != qAltWrong.Serialize().CommandText);
 		}
-
+		
 		[Test]
 		public void EmptyQueryBuilders()
 		{
-			var q = QueryBuilder.Empty;
+			var qEmpty = QueryBuilder.Empty;
 			var qZeroWidth = QueryBuilder.Create("");
 			var qZeroWidthArg = QueryBuilder.Create("", 42);
 			var qZeroWidth2 = QueryBuilder.Create(42.ToStringInvariant().Substring(42.ToStringInvariant().Length));
 			PAssert.That(() => !ReferenceEquals(qZeroWidth2.CommandText(), qZeroWidth.CommandText()));
-			//TODO
+			PAssert.That(() => qEmpty != default(QueryBuilder));
+			PAssert.That(() => default(QueryBuilder)!=qEmpty);
+			PAssert.That(() => !(default(QueryBuilder) == qZeroWidth));
+			PAssert.That(() => qEmpty != qZeroWidth);
+			PAssert.That(() => qEmpty.GetHashCode() != qZeroWidth.GetHashCode());
+			PAssert.That(() => qZeroWidth == qZeroWidth2);
+			PAssert.That(() => qZeroWidth.GetHashCode() == qZeroWidth2.GetHashCode());
+			PAssert.That(() => qZeroWidthArg != qZeroWidth);
+			PAssert.That(() => qZeroWidthArg.GetHashCode() != qZeroWidth.GetHashCode());
+			
+			PAssert.That(() => QueryBuilder.Create("abc") + qZeroWidth == (QueryBuilder)"abc");
+			PAssert.That(() => QueryBuilder.Create("abc") + qZeroWidthArg == QueryBuilder.Create("abc",42));
+			PAssert.That(() => (QueryBuilder.Create("abc") + qZeroWidth).GetHashCode() == ((QueryBuilder)"abc").GetHashCode());
+			PAssert.That(() => (QueryBuilder.Create("abc") + qZeroWidthArg).GetHashCode() == QueryBuilder.Create("abc", 42).GetHashCode());
+
 		}
 
 		[Test]
