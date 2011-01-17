@@ -4,173 +4,38 @@ using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
-	public class OlapSlicer
+	public sealed class OlapSlicer
 	{
 		public const int BACHELOR = 5;
 		public const int DOCTORAAL = 8;
 		public const int MASTER = 11;
 		public const int PROPEDEUTISCH = 2;
 		public const int PROPEDEUTISCHBACHELOR = 3;
-
-		public enum StudieStaakType
-		{
-			zonderstudiestakers = 1,
-			alleenstudiestakers = 2,
-			metstudiestakers = 3
-		}
-
-		int organisatie;
-		int startjaar;
-		int stopjaar;
-		int maanden;
-
-		public int Maanden { get { return maanden; } set { maanden = value; } }
-		string rijen;
-		bool showopleidingen=true;
-		int examentype;
-		bool zuivercohort = true;
-		bool cohort = true;
-		bool samenvatting = true;
-		bool langelijst = false;
-		bool rendement = false;
-
-		public bool Rendement
-		{
-			get { return rendement; }
-			set { rendement = value; }
-		}
-
-		StudieStaakType studiestaak = StudieStaakType.metstudiestakers;
-
-		public StudieStaakType StudieStaak
-		{
-			get { return studiestaak; }
-			set { studiestaak = value; }
-		}
-
-		public bool Samenvatting
-		{
-			get { return samenvatting; }
-			set { samenvatting = value; }
-		}
-
-
-
-		public bool LangeLijst
-		{
-			get { return langelijst; }
-			set { langelijst = value; }
-		}
-
-		/// <summary>
-		/// als true, 1 cohortjaar
-		/// als false meerdere cohorten
-		/// default true
-		/// </summary>
-		public bool Cohort
-		{
-			get { return cohort; }
-			set { cohort = value; }
-		}
-
-		public bool ZuiverCohort
-		{
-			get { return zuivercohort; }
-			set { zuivercohort = value; }
-		}
-
-		public int ExamenType
-		{
-			get { return examentype; }
-			set { examentype = value; }
-		}
-
-		int opleiding;
-
-		public int Opleiding
-		{
-			get { return opleiding; }
-			set { opleiding = value; }
-		}
-
-		public bool ShowOpleidingen
-		{
-			get { return showopleidingen; }
-			set { showopleidingen = value; }
-		}
-
-		public int Organisatie
-		{
-			get { return organisatie; }
-			set { organisatie = value; }
-		}
-
-		public int StartJaar
-		{
-			get { return startjaar; }
-			set { startjaar = value; }
-		}
-
-		public int StopJaar
-		{
-			get { return stopjaar; }
-			set { stopjaar = value; }
-		}
-
-		public int ExamenJaar
-		{
-			get { return startjaar; }
-			set { startjaar = value; }
-		}
-
-		public string Rijen
-		{
-			get { return rijen; }
-			set { rijen = value; }
-		}
-
-		//public rijdimensies RijDimensie
-		//{
-		//    get { return rijdimensie; }
-		//    set { rijdimensie = value;  }
-		//}
-
-		//public enum rijdimensies
-		//{
-		//    OPLEIDINGEN = 0,
-		//    ORGANISATIES = 1
-		//}
-
-		public OlapSlicer(int organisatie, int startjaar, string rijen, bool showopleidingen)
-		{
-			this.organisatie = organisatie;
-			this.startjaar = startjaar;
-			this.rijen = rijen;
-			this.showopleidingen = showopleidingen;
-		}
-
-		public OlapSlicer(int organisatie, int startjaar, int stopjaar)
-		{
-			this.organisatie = organisatie;
-			this.startjaar = startjaar;
-			this.stopjaar = stopjaar;
-		}
-
+		public enum StudieStaakType { zonderstudiestakers = 1, alleenstudiestakers = 2, metstudiestakers = 3 }
+		public bool Rendement { get; set; }
+		public StudieStaakType StudieStaak { get; private set; }
+		public bool Samenvatting { get; set; }
+		public bool LangeLijst { get; set; }
+		public bool PreciesEenCohort { get; set; }
+		public bool ZuiverCohort { get; set; }
+		public int ExamenType { get; set; }
+		public int Opleiding { get; set; }
+		public bool ShowOpleidingen { get; private set; }
+		public int Organisatie { get; private set; }
+		public int StartJaar { get; private set; }
+		public int StopJaar { get; private set; }
+		public string Rijen { get; set; }
 		public OlapSlicer(int organisatie, int startjaar, int stopjaar, int examentype)
 		{
-			this.organisatie = organisatie;
-			this.startjaar = startjaar;
-			this.stopjaar = stopjaar;
-			this.examentype = examentype;
-		}
-
-		public OlapSlicer(int organisatie, int startjaar, int stopjaar, string rijen, bool showopleidingen)
-		{
-			this.organisatie = organisatie;
-			this.startjaar = startjaar;
-			this.stopjaar = stopjaar;
-			this.rijen = rijen;
-			this.showopleidingen = showopleidingen;
+			ShowOpleidingen = true;
+			ZuiverCohort = true;
+			PreciesEenCohort = true;
+			Samenvatting = true;
+			StudieStaak = StudieStaakType.metstudiestakers;
+			Organisatie = organisatie;
+			StartJaar = startjaar;
+			StopJaar = stopjaar;
+			ExamenType = examentype;
 		}
 	}
 }
