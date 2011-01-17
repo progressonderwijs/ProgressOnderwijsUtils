@@ -12,6 +12,7 @@ namespace ProgressOnderwijsUtilsTests
 	[TestFixture, NightlyOnly]
 	public class EnumerableExtensions
 	{
+#pragma warning disable 1720
 		[Test]
 		public void IndexOfCheck()
 		{
