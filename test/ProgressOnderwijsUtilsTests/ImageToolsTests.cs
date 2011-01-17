@@ -38,5 +38,47 @@ namespace ProgressOnderwijsUtilsTests
 				}
 			}
 		}
+
+		[Test]
+		public void CanResizeImage()
+		{
+			var resImage = Resources.rainbow;
+			using (var down_W = ImageTools.Resize(resImage, 100, resImage.Height))
+			using (var down_H = ImageTools.Resize(resImage, resImage.Width, 100))
+			using (var down_W_H = ImageTools.Resize(down_W, 50, 50))
+			using (var down_H_W = ImageTools.Resize(down_H, 50, 50))
+			using (var down_WH = ImageTools.Resize(resImage, 50, 50))
+			{
+				PAssert.That(() =>
+					!(from y in Enumerable.Range(0,50)
+					  from x in Enumerable.Range(0, 50)
+					  select new { x, y }).Where(p => down_W_H.GetPixel(p.x, p.y).Distance(down_WH.GetPixel(p.x, p.y)) > 0.02).Any());
+				PAssert.That(() =>
+					!(from y in Enumerable.Range(0, 50)
+					  from x in Enumerable.Range(0, 50)
+					  select new { x, y }).Where(p => down_H_W.GetPixel(p.x, p.y).Distance(down_WH.GetPixel(p.x, p.y)) > 0.02).Any());
+				PAssert.That(() =>
+					!(from y in Enumerable.Range(0, 50)
+					  from x in Enumerable.Range(0, 50)
+					  select new { x, y }).Where(p => down_H_W.GetPixel(p.x, p.y).Distance(down_W_H.GetPixel(p.x, p.y)) > 0.02).Any());
+			}
+		}
+
+		[Test]
+		public void CanDownscaleImage()
+		{
+			var resImage = Resources.rainbow;
+			using (var down_W = ImageTools.DownscaleAndClip(resImage, 100, 50))
+			using (var down_H = ImageTools.DownscaleAndClip(resImage, 200, 100))
+			using (var down_W_H = ImageTools.DownscaleAndClip(down_W, 50, 50))
+			using (var down_H_W = ImageTools.DownscaleAndClip(down_H, 50, 50))
+			{
+				PAssert.That(() =>
+					!(from y in Enumerable.Range(0, 50)
+					  from x in Enumerable.Range(0, 50)
+					  select new { x, y }).Where(p => down_H_W.GetPixel(p.x, p.y).Distance(down_W_H.GetPixel(p.x, p.y)) > 0.05).Any());
+			}
+		}
+
 	}
 }

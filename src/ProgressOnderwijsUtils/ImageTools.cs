@@ -119,19 +119,14 @@ namespace ProgressOnderwijsUtils
 			return new Rectangle(clipX, clipY, clipWidth, clipHeight);
 		}
 
-		public static void SaveImageAsJpeg(Image image, Stream outputStream, int quality)
+		public static void SaveImageAsJpeg(Image image, Stream outputStream, int? quality = null)
 		{
 			ImageCodecInfo jpgInfo = ImageCodecInfo.GetImageEncoders().Where(codecInfo => codecInfo.MimeType == "image/jpeg").First();
 			using (EncoderParameters encParams = new EncoderParameters(1))
 			{
-				encParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)quality);//quality should be in the range [0..100]
+				encParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)(quality??90));//quality should be in the range [0..100]
 				image.Save(outputStream, jpgInfo, encParams);
 			}
-		}
-
-		public static void SaveImageAsJpeg(Image image, Stream stream)
-		{
-			SaveImageAsJpeg(image, stream, 90);
 		}
 	}
 }
