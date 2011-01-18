@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
 			using (var ms = new MemoryStream())
 			{
 				bf.Serialize(ms, obj);
-				ms.Seek(0, SeekOrigin.Begin);
+				ms.Position = 0;
 				return (T)bf.Deserialize(ms);
 			}
 		}
