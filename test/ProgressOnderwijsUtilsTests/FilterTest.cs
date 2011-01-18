@@ -67,6 +67,7 @@ namespace ProgressOnderwijsUtilsTests
 			var blaFilter2 = Filter.CreateCombined(BooleanOperator.Or, Filter.CreateCriterium("test", BooleanComparer.Equal, 3), Filter.CreateCriterium("test2", BooleanComparer.Equal, 37));
 
 			PAssert.That(() => blaFilter.ExtractInsertWaarden().SequenceEqual(new[] { Tuple.Create("test", (object)3), Tuple.Create("test2", (object)37) }));
+			PAssert.That(() => Filter.CreateCriterium("test2", BooleanComparer.Equal, 37).ExtractInsertWaarden().SequenceEqual(new[] { Tuple.Create("test2", (object)37) }));
 			PAssert.That(() => !blaFilter2.ExtractInsertWaarden().Any());
 		}
 
@@ -97,10 +98,9 @@ namespace ProgressOnderwijsUtilsTests
 
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s != "stardust") == null);
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s != "stardst") == modFilter);
-			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevant") == null);
-			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevan") != null);
-			
 		}
+
+
 
 		[Test]
 		public void ColRef()
@@ -110,6 +110,10 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.Throws<ArgumentNullException>(() => new ColumnReference(null));
 			Assert.Throws<ArgumentException>(() => new ColumnReference("a b"));
 			Assert.Throws<ArgumentException>(() => new ColumnReference("a.b"));
+
+			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevant") == null);
+			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevan") != null);
+			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ToSqlString(s=>s) == QueryBuilder.Create("blabla<relevant"));
 		}
 
 		[Test]
@@ -140,7 +144,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => qAlt.ToString() != qAltWrong.ToString());
 			PAssert.That(() => qAlt.Serialize().CommandText != qAltWrong.Serialize().CommandText);
 		}
-		
+
 		[Test]
 		public void EmptyQueryBuilders()
 		{
@@ -150,7 +154,7 @@ namespace ProgressOnderwijsUtilsTests
 			var qZeroWidth2 = QueryBuilder.Create(42.ToStringInvariant().Substring(42.ToStringInvariant().Length));
 			PAssert.That(() => !ReferenceEquals(qZeroWidth2.CommandText(), qZeroWidth.CommandText()));
 			PAssert.That(() => qEmpty != default(QueryBuilder));
-			PAssert.That(() => default(QueryBuilder)!=qEmpty);
+			PAssert.That(() => default(QueryBuilder) != qEmpty);
 			PAssert.That(() => !(default(QueryBuilder) == qZeroWidth));
 			PAssert.That(() => qEmpty != qZeroWidth);
 			PAssert.That(() => qEmpty.GetHashCode() != qZeroWidth.GetHashCode());
@@ -158,9 +162,9 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => qZeroWidth.GetHashCode() == qZeroWidth2.GetHashCode());
 			PAssert.That(() => qZeroWidthArg != qZeroWidth);
 			PAssert.That(() => qZeroWidthArg.GetHashCode() != qZeroWidth.GetHashCode());
-			
+
 			PAssert.That(() => QueryBuilder.Create("abc") + qZeroWidth == (QueryBuilder)"abc");
-			PAssert.That(() => QueryBuilder.Create("abc") + qZeroWidthArg == QueryBuilder.Create("abc",42));
+			PAssert.That(() => QueryBuilder.Create("abc") + qZeroWidthArg == QueryBuilder.Create("abc", 42));
 			PAssert.That(() => (QueryBuilder.Create("abc") + qZeroWidth).GetHashCode() == ((QueryBuilder)"abc").GetHashCode());
 			PAssert.That(() => (QueryBuilder.Create("abc") + qZeroWidthArg).GetHashCode() == QueryBuilder.Create("abc", 42).GetHashCode());
 
@@ -179,8 +183,8 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void FilterValidation()
 		{
-			Assert.Throws<InvalidOperationException>(() => Filter.CreateCriterium("test", (BooleanComparer)12345, 3).ToSqlString(s=>s));
-
+			Assert.Throws<InvalidOperationException>(() => Filter.CreateCriterium("test", (BooleanComparer)12345, 3).ToSqlString(s => s));
+			Assert.Throws<InvalidOperationException>(() => ((BooleanComparer)12345).NiceString());
 		}
 	}
 }
