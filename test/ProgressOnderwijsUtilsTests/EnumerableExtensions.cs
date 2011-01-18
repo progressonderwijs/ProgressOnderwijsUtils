@@ -27,7 +27,8 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x =>x<3) == 0);
 			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x=>x%2==1 && x>1) == 2);
 			PAssert.That(() => new[] { 1, 2, 3, 1, 2, 3 }.IndexOf(x => x % 2 == 1 && x > 1) == 2);
-			Assert.Throws<ArgumentNullException>(() => default(int[]).IndexOf(2));
+			Assert.Throws<ArgumentNullException>(() => default(int[]).IndexOf(x => x == 2));
+			Assert.Throws<ArgumentNullException>(() => default(int[]).IndexOf(null));
 		}
 		[Test]
 		public void AsReadOnlyTest()

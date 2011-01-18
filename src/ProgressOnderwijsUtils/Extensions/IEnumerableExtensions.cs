@@ -8,15 +8,16 @@ using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
-	// <summary>
-	/// returns the (first) index of an element in a collection
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	/// <name="elem">the element searched</param>
-	/// <returns>an int</returns>
-	/// <remarks>If you just want to test existance the native "Contains" would be sufficient</remarks>
 	public static class IEnumerableExtensions
 	{
+		/// <summary>
+		/// returns the (first) index of an element in a collection
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list">the enumerable to search in</param>
+		/// <param name="elem">the element searched</param>
+		/// <returns>an int</returns>
+		/// <remarks>If you just want to test existance the native "Contains" would be sufficient</remarks>
 		public static int IndexOf<T>(this IEnumerable<T> list, T elem)
 		{
 			if (list == null) throw new ArgumentNullException("list");
