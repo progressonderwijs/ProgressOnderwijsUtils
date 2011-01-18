@@ -113,7 +113,7 @@ namespace ProgressOnderwijsUtilsTests
 
 			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevant") == null);
 			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevan") != null);
-			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ToSqlString(s=>s) == QueryBuilder.Create("blabla<relevant"));
+			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ToSqlString(s => s) == QueryBuilder.Create("blabla<relevant"));
 		}
 
 		[Test]
@@ -131,6 +131,10 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => q.Serialize().GetHashCode() == qAlt.Serialize().GetHashCode());
 
 			PAssert.That(() => q.Equals(qAlt));
+			PAssert.That(() => q.Equals((object)qAlt));
+			PAssert.That(() => !q.Equals((object)null));
+			PAssert.That(() => !Equals(q, null) && !Equals(null, qAlt) && Equals(q, qAlt));
+
 			PAssert.That(() => q == qAlt);
 			PAssert.That(() => q.GetHashCode() == qAlt.GetHashCode());
 			PAssert.That(() => q.ToString() == qAlt.ToString());
