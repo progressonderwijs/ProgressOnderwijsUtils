@@ -28,17 +28,5 @@ namespace ProgressOnderwijsUtils
 		{
 			return values.Contains(obj);
 		}
-
-
-		/// <summary>
-		/// Pseudo 'in' operation (someObj.In(List of [values])
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="valueList"></param>
-		/// <returns>true/false</returns>
-		public static bool In<T>(this T obj, List<T> valueList)
-		{
-			return valueList.Contains(obj);
-		}
 	}
 }
