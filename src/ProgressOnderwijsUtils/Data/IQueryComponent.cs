@@ -15,7 +15,6 @@ namespace ProgressOnderwijsUtils.Data
 		string ToDebugText();
 	}
 
-
 	static class QueryComponent
 	{
 		public class StringComponent : IQueryComponent

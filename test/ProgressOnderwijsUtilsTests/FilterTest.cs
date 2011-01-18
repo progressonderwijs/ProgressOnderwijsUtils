@@ -185,6 +185,15 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
+		public void QueryBuilding()
+		{
+			PAssert.That(() => QueryBuilder.Empty + QueryBuilder.Create("abc") == (QueryBuilder)"abc");
+			Assert.Throws<ArgumentNullException>(() => { var _ = default(QueryBuilder) + QueryBuilder.Create("abc") == (QueryBuilder)"abc"; });
+			Assert.Throws<ArgumentNullException>(() => { var _ = default(QueryBuilder) + "abc" == (QueryBuilder)"abc"; });
+			Assert.Throws<ArgumentNullException>(() => { var _ = "abc"+default(QueryBuilder) == (QueryBuilder)"abc"; });
+		}
+
+		[Test]
 		public void FilterValidation()
 		{
 			Assert.Throws<InvalidOperationException>(() => Filter.CreateCriterium("test", (BooleanComparer)12345, 3).ToSqlString(s => s));

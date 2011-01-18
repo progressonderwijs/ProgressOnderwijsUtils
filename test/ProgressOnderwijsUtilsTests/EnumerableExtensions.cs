@@ -20,12 +20,12 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(4) == -1);
 			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(1) == 0);
 			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(3) == 2);
-			PAssert.That(() => new[] { 1, 2, 3,1,2,3 }.IndexOf(3) == 2);
+			PAssert.That(() => new[] { 1, 2, 3, 1, 2, 3 }.IndexOf(3) == 2);
 			Assert.Throws<ArgumentNullException>(() => default(int[]).IndexOf(2));
-			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x=>x==2) == 1);
-			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x => x %7==0) == -1);
-			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x =>x<3) == 0);
-			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x=>x%2==1 && x>1) == 2);
+			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x => x == 2) == 1);
+			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x => x % 7 == 0) == -1);
+			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x => x < 3) == 0);
+			PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x => x % 2 == 1 && x > 1) == 2);
 			PAssert.That(() => new[] { 1, 2, 3, 1, 2, 3 }.IndexOf(x => x % 2 == 1 && x > 1) == 2);
 			Assert.Throws<ArgumentNullException>(() => default(int[]).IndexOf(x => x == 2));
 			Assert.Throws<ArgumentNullException>(() => default(int[]).IndexOf(null));
@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => nums.SequenceEqual(copy) && nums.SequenceEqual(view));
 			Array.Sort(nums);
 			PAssert.That(() => nums.SequenceEqual(view) && !nums.SequenceEqual(copy));
-			PAssert.That(() => copy.SequenceEqual(Enumerable.Range(1,5).Reverse() ));
+			PAssert.That(() => copy.SequenceEqual(Enumerable.Range(1, 5).Reverse()));
 			PAssert.That(() => view.SequenceEqual(Enumerable.Range(1, 5)));
 		}
 

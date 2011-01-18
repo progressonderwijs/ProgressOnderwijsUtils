@@ -5,24 +5,26 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using ProgressOnderwijsUtils.Data;
+using System.Diagnostics;
 
 namespace ProgressOnderwijsUtils
 {
-	public class QueryBuilder:IEquatable<QueryBuilder>
+	public class QueryBuilder : IEquatable<QueryBuilder>
 	{
 		readonly IQueryComponent value;
 		readonly QueryBuilder nestedNode;
 		readonly QueryBuilder prev;
 		QueryBuilder(IQueryComponent then)
 		{
-			if (null == then) throw new ArgumentNullException("then");
+			Debug.Assert(then != null);
 			prev = null;
 			value = then;
 		}
 		QueryBuilder(QueryBuilder prefix, IQueryComponent then)
 		{
 			if (null == prefix) throw new ArgumentNullException("prefix");
-			if (null == then) throw new ArgumentNullException("then");
+			Debug.Assert(then != null);
+			//if (null == then) throw new ArgumentNullException("then");
 			prev = prefix.IsEmpty ? null : prefix;
 			value = then;
 		}
@@ -56,12 +58,11 @@ namespace ProgressOnderwijsUtils
 
 		static QueryBuilder Concat(QueryBuilder first, QueryBuilder second)
 		{
-			if (first.IsEmpty)
-				return second;
-			else if (second.IsEmpty)
-				return first;
-			else if (second.IsSingleElement)
-				return new QueryBuilder(first, second.value);
+			if (null == first) throw new ArgumentNullException("first");
+			else if (null == second) throw new ArgumentNullException("second");
+			else if (first.IsEmpty) return second;
+			else if (second.IsEmpty) return first;
+			else if (second.IsSingleElement) return new QueryBuilder(first, second.value);
 			else return new QueryBuilder(first, second);
 		}
 
@@ -79,10 +80,11 @@ namespace ProgressOnderwijsUtils
 			{
 				if (paramRefMatch.Groups["paramRef"].Success)
 					query = Concat(query, parValues[int.Parse(paramRefMatch.Groups["paramRef"].Value)]);
-				else if (paramRefMatch.Groups["queryText"].Success)
+				else
+				{
+					Debug.Assert(paramRefMatch.Groups["queryText"].Success);
 					query = Concat(query, QueryComponent.CreateString(paramRefMatch.Groups["queryText"].Value));
-				else if (paramRefMatch.Success)
-					throw new ProgressNetException("Impossible: regex must have a matching group if matching.");
+				}
 			}
 			return query;
 		}
@@ -205,7 +207,7 @@ namespace ProgressOnderwijsUtils
 
 
 
-		public override bool Equals(object obj) { return Equals(obj as QueryBuilder);}
+		public override bool Equals(object obj) { return Equals(obj as QueryBuilder); }
 
 		public static bool operator ==(QueryBuilder a, QueryBuilder b)
 		{
