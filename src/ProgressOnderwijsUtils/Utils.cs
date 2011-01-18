@@ -58,22 +58,6 @@ namespace ProgressOnderwijsUtils
 			return res != 0 && res % 11 == 0;
 		}
 
-		//idee van http://www.b-virtual.be/post/Generic-Cloning-Method-in-c.aspx
-		//nog niet nuttig voor het clonen van genericcollection, omdat daarvoor geen (de)serialize is geimplementeerd
-		/// <summary>
-		/// Deep-clone's a serializable object by serializing it and deserializing the result.  This method won't be very fast; don't use it in an tight loop.
-		/// </summary>
-		public static T Clone<T>(T objectToClone)
-		{
-			using (var memoryStream = new MemoryStream())
-			{
-				var serializer = new BinaryFormatter();
-				serializer.Serialize(memoryStream, objectToClone);
-				memoryStream.Position = 0;
-				return (T)serializer.Deserialize(memoryStream);
-			}
-		}
-
 		/// <summary>
 		/// Swap two objects.
 		/// </summary>
