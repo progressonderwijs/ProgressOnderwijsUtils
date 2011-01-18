@@ -9,34 +9,28 @@ using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using System.Linq;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
 	public static class Utils
 	{
-		/// <summary>
-		/// Checks if any object is null or DbNull
-		/// </summary>
-		/// <editinfo date="2010/05/20" editedby="RK"/>
-		/// <param name="anyObject"></param>
-		/// <returns></returns>
-		public static bool IsNull(object anyObject) { return anyObject == null || anyObject == DBNull.Value; }
-
+		[ExcludeFromNCover]
 		public static string TestErrorStackOverflow(int rounds)
 		{
 			//This is intended for testing error-handling in case of dramatic errors.
 			return TestErrorStackOverflow(rounds + 1);
 		}
 
+		[ExcludeFromNCover]
 		public static void TestErrorOutOfMemory()
 		{
 			List<byte[]> memorySlurper = new List<byte[]>();
 			for (long i = 0; i < long.MaxValue; i++) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
-			{
 				memorySlurper.Add(Encoding.UTF8.GetBytes(@"This is a simply string which is repeatedly put in memory to test the Out Of Memory condition.  It's encoded to make sure the program really touches the data and that therefore the OS really needs to allocate the memory, and can't just 'pretend'."));
-			}
 		}
 
+		[ExcludeFromNCover]
 		public static void TestErrorNormalException()
 		{
 			throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
@@ -92,7 +86,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="d1"></param>
 		/// <param name="d2"></param>
 		/// <returns></returns>
-		public  static int MaandSpan(DateTime d1, DateTime d2)
+		public static int MaandSpan(DateTime d1, DateTime d2)
 		{
 			return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month);
 		}
@@ -133,7 +127,7 @@ namespace ProgressOnderwijsUtils
 
 		private IEnumerable<TestCaseData> InClauseStringData()
 		{
-			yield return new TestCaseData( new[] { "test", "ab'c", "xyz" }.ToList()).Returns("('test', 'ab''c', 'xyz')");
+			yield return new TestCaseData(new[] { "test", "ab'c", "xyz" }.ToList()).Returns("('test', 'ab''c', 'xyz')");
 		}
 
 		[Test, TestCaseSource("InClauseData")]
