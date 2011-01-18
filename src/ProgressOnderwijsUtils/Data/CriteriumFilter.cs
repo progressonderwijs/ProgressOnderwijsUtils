@@ -65,7 +65,6 @@ namespace ProgressOnderwijsUtils
 				return QueryBuilder.Param(Waarde);
 		}
 
-		protected internal override IEnumerable<FilterBase> Children { get { yield break; } }
 		protected internal override IEnumerable<string> ColumnsReferenced { get { yield return KolomNaam; if (Waarde is ColumnReference) yield return ((ColumnReference)Waarde).ColumnName; } }
 
 		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return this == toReplace ? replaceWith : this; }

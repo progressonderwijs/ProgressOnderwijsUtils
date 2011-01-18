@@ -32,7 +32,6 @@ namespace ProgressOnderwijsUtils
 		{
 			return this == toReplace ? replaceWith : Filter.CreateCombined(AndOr, filterLijst.Select(child => child.ReplaceImpl(toReplace, replaceWith)));
 		}
-		protected internal override IEnumerable<FilterBase> Children { get { return FilterLijst; } }
 		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
 		{
 			return filterInEditMode == this
