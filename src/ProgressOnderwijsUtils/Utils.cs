@@ -22,14 +22,6 @@ namespace ProgressOnderwijsUtils
 		/// <returns></returns>
 		public static bool IsNull(object anyObject) { return anyObject == null || anyObject == DBNull.Value; }
 
-		/// <summary>
-		/// Checks object is neither null nor DBNull
-		/// </summary>
-		/// <editinfo date="2010/08/03" editedby="AvdP"/>
-		/// <param name="anyObject"></param>
-		/// <returns></returns>
-		public static bool IsNotNull(object anyObject) { return !IsNull(anyObject); }
-
 		public static string TestErrorStackOverflow(int rounds)
 		{
 			//This is intended for testing error-handling in case of dramatic errors.
