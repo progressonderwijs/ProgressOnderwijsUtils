@@ -122,17 +122,6 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
-
-	public abstract class AnInnerClass<T>
-	{
-		protected T Outer { get; private set; }
-
-		protected AnInnerClass(T outer)
-		{
-			Outer = outer;
-		}
-	}
-
 	[TestFixture]
 	public class UtilsTest
 	{
