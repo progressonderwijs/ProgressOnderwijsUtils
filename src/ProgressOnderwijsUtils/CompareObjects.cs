@@ -154,6 +154,8 @@ namespace ProgressOnderwijsUtils
 
 		class XT
 		{
+// ReSharper disable UnaccessedField.Local
+#pragma warning disable 649
 			public decimal BC;
 			public string XYZ { get; set; }
 		}
