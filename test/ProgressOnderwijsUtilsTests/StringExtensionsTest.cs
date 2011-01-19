@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using System.Globalization;
+using System.Threading;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -73,6 +76,35 @@ namespace ProgressOnderwijsUtilsTests
 		public string testNaam2Upper(string inp)
 		{
 			return inp.Name2UpperCasedName();
+		}
+
+		[Test]
+		public void ToStringInvariantTest()
+		{
+			var oldCulture = Thread.CurrentThread.CurrentCulture;
+			try
+			{
+				var culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
+				culture.NumberFormat = new NumberFormatInfo { NegativeSign = "X", };
+				Thread.CurrentThread.CurrentCulture = culture;
+				PAssert.That(() => (-3000).ToString() == "X3000");
+				PAssert.That(() => (-3000m).ToString() == "X3000");
+				PAssert.That(() => (-3000).ToStringInvariant() == "-3000");
+				PAssert.That(() => (3000U).ToStringInvariant() == "3000");
+				PAssert.That(() => (-3000m).ToStringInvariant() == "-3000");
+				PAssert.That(() => (-3000.0).ToStringInvariant() == "-3000");
+				PAssert.That(() => (-3000.0f).ToStringInvariant() == "-3000");
+				PAssert.That(() => (-3000L).ToStringInvariant() == "-3000");
+				PAssert.That(() => (3000UL).ToStringInvariant() == "3000");
+				PAssert.That(() => ((short)-3000).ToStringInvariant() == "-3000");
+				PAssert.That(() => ((ushort)3000).ToStringInvariant() == "3000");
+				PAssert.That(() => true.ToStringInvariant() == "True");
+				PAssert.That(() => new DateTime(2000, 1, 2).ToStringInvariant() == "01/02/2000 00:00:00");
+			}
+			finally
+			{
+				Thread.CurrentThread.CurrentCulture = oldCulture;
+			}
 		}
 	}
 }
