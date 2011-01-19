@@ -9,10 +9,10 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
-	public class FileDataTest
+	public class FileAndVariantDataTest
 	{
 		[Test]
-		public void EqualityMakesSense()
+		public void FileDataTest()
 		{
 			FileData empty = default(FileData),
 				basic = new FileData { Content = new byte[] { 1, 2, 3 }, ContentType = "ab", FileName = "xyz" },
@@ -36,6 +36,45 @@ namespace ProgressOnderwijsUtilsTests
 	
 			PAssert.That(() => diffname != basic && diffname != empty);
 			PAssert.That(() => diffname.GetHashCode() != basic.GetHashCode());//TODO: case-sensitivity?
+		}
+
+		[Test]
+		public void VariantDataTest()
+		{
+			Assert.Throws<ArgumentNullException>(() => new VariantData(null, "abc"));
+			Assert.Throws<ArgumentException>(()=> new VariantData(typeof(string), 1));
+
+			VariantData empty = default(VariantData),
+				nullint = new VariantData(typeof(int),null), //this is OK because we ignore nullability.
+				int1 = new VariantData(typeof(int), 1),
+				int1b = new VariantData(typeof(int), 1),
+				
+				str1 = new VariantData(typeof(string), "1"),
+				str2 = new VariantData(typeof(string), "2"),
+				str2b = new VariantData(typeof(string), "2"),
+				strnull = new VariantData(typeof(string), null)
+				;
+
+			PAssert.That(() => int1 == int1b && int1b == int1);
+			PAssert.That(() => int1.GetHashCode() == int1b.GetHashCode());
+
+			PAssert.That(() => str2 == str2b && str2b == str2);
+			PAssert.That(() => str2.GetHashCode() == str2b.GetHashCode());
+
+
+			PAssert.That(() => empty != int1 && int1 != empty);
+			PAssert.That(() => empty.GetHashCode() != int1.GetHashCode());
+
+			PAssert.That(() => str2b != int1 && int1 != str1);
+			PAssert.That(() => str1.GetHashCode() != int1.GetHashCode());
+
+			PAssert.That(() => nullint != strnull && nullint.GetHashCode() != strnull.GetHashCode());
+			PAssert.That(() => !Equals(nullint,strnull) && Equals(int1,int1b));
+
+			//enums are tricky:
+			PAssert.That(() => new VariantData(typeof(int), DatabaseVersion.Undefined) != new VariantData(typeof(int), 0) &&
+				new VariantData(typeof(int), DatabaseVersion.Undefined).GetHashCode() == new VariantData(typeof(int), 0).GetHashCode());
+
 		}
 	}
 }
