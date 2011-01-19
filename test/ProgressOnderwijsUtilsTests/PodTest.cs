@@ -84,5 +84,40 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 
+		[Test]
+		public void OlapSlicerTest()
+		{
+			ComparePod(new OlapSlicer(1, 2, 3, 4)
+			{
+				LangeLijst = true,
+				Opleiding = 6,
+				PreciesEenCohort = false,
+				Rendement = true,
+				Rijen = "abc",
+				Samenvatting = false,
+				ZuiverCohort = true,
+			},
+			new 
+			{
+				ExamenType = 4,
+				LangeLijst = true,
+				Opleiding = 6,
+				PreciesEenCohort = false,
+				Rendement = true,
+				Rijen = "abc",
+				Samenvatting = false,
+				ZuiverCohort = true,
+
+				Organisatie = 1,
+				StartJaar = 2,
+				StopJaar=3,
+				StudieStaak =  OlapSlicer.StudieStaakType.metstudiestakers,
+				ShowOpleidingen = true,
+			});
+						  
+
+		}
+		//StudieStaak =  OlapSlicer.StudieStaakType.metstudiestakers,
+		//ShowOpleidingen = true,
 	}
 }
