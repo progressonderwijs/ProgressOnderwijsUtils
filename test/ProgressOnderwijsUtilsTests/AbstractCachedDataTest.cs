@@ -12,7 +12,9 @@ namespace ProgressOnderwijsUtilsTests
 	class TempTextFileTest : AbstractCachedData<string>
 	{
 		public readonly FileInfo file;
-		TempTextFileTest(FileInfo tempfile):base(tempfile.Directory,tempfile.Name,true) {
+		public TempTextFileTest(FileInfo tempfile)
+			: base(tempfile.Directory, tempfile.Name, true)
+		{
 			file = tempfile;
 		}
 
@@ -27,7 +29,7 @@ namespace ProgressOnderwijsUtilsTests
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
-			file.Delete();
+			if(file!=null) file.Delete();
 		}
 	}
 
@@ -42,7 +44,7 @@ namespace ProgressOnderwijsUtilsTests
 			using (var t = new TempTextFileTest())
 			{
 				oldfile = t.file;
-				PAssert.That(() => oldfile.Exists && t.Data=="");
+				PAssert.That(() => oldfile.Exists && t.Data == "");
 
 				PAssert.That(() => t.WatchedFilesAsRelativeUris(oldfile.Directory.Parent).Single().ToString()
 					.StartsWith(oldfile.Directory.Name + "/"));
@@ -51,6 +53,17 @@ namespace ProgressOnderwijsUtilsTests
 			}
 			oldfile.Refresh();
 			PAssert.That(() => !oldfile.Exists);
+		}
+
+		[Test]
+		public void NeedsRealDir()
+		{
+			Assert.Throws<ArgumentException>(()=> {
+				using (var t = new TempTextFileTest(new FileInfo(@"A:\b\c\d\e")))
+				{
+				}
+			});
+
 		}
 
 		[Test]
