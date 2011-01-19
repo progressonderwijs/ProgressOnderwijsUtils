@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtilsTests
 					OlapCommon.RijDimensieType.Cohorten, OlapCommon.CelSomType.AbsenPercPerRij, 9,
 					OlapCommon.StudieStaakType.AlleenstudiestakersOpl)
 					{
-					EcGrenswaarde = 42	
+						EcGrenswaarde = 42
 					},
 				new
 				{
@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtilsTests
 				Samenvatting = false,
 				ZuiverCohort = true,
 			},
-			new 
+			new
 			{
 				ExamenType = 4,
 				LangeLijst = true,
@@ -110,12 +110,17 @@ namespace ProgressOnderwijsUtilsTests
 
 				Organisatie = 1,
 				StartJaar = 2,
-				StopJaar=3,
-				StudieStaak =  OlapSlicer.StudieStaakType.metstudiestakers,
+				StopJaar = 3,
+				StudieStaak = OlapSlicer.StudieStaakType.metstudiestakers,
 				ShowOpleidingen = true,
 			});
-						  
+		}
 
+		[Test]
+		public void RegioTest()
+		{
+			PAssert.That(() => new Regio("wonderland", new[] { "abc", "def", "ghi" }).Member ==
+			 "member [Provincie].[provincie].[wonderland] as Sum({ [Provincie].[provincie].[abc],[Provincie].[provincie].[def],[Provincie].[provincie].[ghi]}) ");
 		}
 		//StudieStaak =  OlapSlicer.StudieStaakType.metstudiestakers,
 		//ShowOpleidingen = true,

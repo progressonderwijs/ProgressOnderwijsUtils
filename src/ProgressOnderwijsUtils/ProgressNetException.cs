@@ -26,6 +26,4 @@ namespace ProgressOnderwijsUtils
 		public PNAssertException(string debugMessage, Exception innerException) : base(debugMessage, innerException) { }
 		protected PNAssertException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 	}
-
-
 }

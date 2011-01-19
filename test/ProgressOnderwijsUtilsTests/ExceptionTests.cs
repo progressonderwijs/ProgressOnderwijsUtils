@@ -32,6 +32,13 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.AreEqual("bla", Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla"); }).Message);
 			Assert.AreEqual("bla2", Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
 			Assert.AreEqual("bla2", SerializationCloner.Clone(Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla", new ProgressNetException("bla2")); })).InnerException.Message);
+
+
+			Assert.Throws<PNAssertException>(() => { throw new PNAssertException(); });
+			Assert.AreEqual("bla", Assert.Throws<PNAssertException>(() => { throw new PNAssertException("bla"); }).Message);
+			Assert.AreEqual("bla2", Assert.Throws<PNAssertException>(() => { throw new PNAssertException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
+			Assert.AreEqual("bla2", SerializationCloner.Clone(Assert.Throws<PNAssertException>(() => { throw new PNAssertException("bla", new ProgressNetException("bla2")); })).InnerException.Message);
+
 		}
 	}
 }
