@@ -12,12 +12,6 @@ namespace ProgressOnderwijsUtils
 		readonly string[] lines;
 		int position;
 
-		public LineScanner(Stream stream)
-		{
-			using (StreamReader streamreader = new StreamReader(stream))
-				lines = Regex.Split(streamreader.ReadToEnd(), "\r\n|\n");
-		}
-
 		public LineScanner(string s)
 		{
 			lines = Regex.Split(s, "\r\n|\n");
@@ -39,4 +33,5 @@ namespace ProgressOnderwijsUtils
 			return position == lines.Length;
 		}
 	}
+
 }
