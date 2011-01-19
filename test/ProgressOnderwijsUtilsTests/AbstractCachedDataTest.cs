@@ -44,6 +44,10 @@ namespace ProgressOnderwijsUtilsTests
 				oldfile = t.file;
 				PAssert.That(() => oldfile.Exists && t.Data=="");
 
+				PAssert.That(() => t.WatchedFilesAsRelativeUris(oldfile.Directory.Parent).Single().ToString()
+					.StartsWith(oldfile.Directory.Name + "/"));
+
+				PAssert.That(() => t.LastWriteTimeUtc <= DateTime.UtcNow && t.LastWriteTimeUtc >= DateTime.UtcNow - TimeSpan.FromMinutes(1.0));
 			}
 			oldfile.Refresh();
 			PAssert.That(() => !oldfile.Exists);
@@ -77,6 +81,5 @@ namespace ProgressOnderwijsUtilsTests
 				PAssert.That(() => t.file.Exists && t.Data == "1, 2, 3, 4");
 			}
 		}
-
 	}
 }

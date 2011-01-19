@@ -11,10 +11,10 @@ namespace ProgressOnderwijsUtils.WebSupport
 	public abstract class AbstractCachedData<T> : IDisposable
 	{
 		T cachedItem;
-		bool isItemUpToDate = false;
-		FileSystemWatcher watcher;
-		protected readonly DirectoryInfo dirToWatch;
-		protected readonly string filter;
+		bool isItemUpToDate;
+		readonly FileSystemWatcher watcher;
+		readonly DirectoryInfo dirToWatch;
+		readonly string filter;
 
 		DateTime lastWrite;
 		protected AbstractCachedData(DirectoryInfo dirToWatch, string filter, bool enableWatcher)
@@ -26,7 +26,9 @@ namespace ProgressOnderwijsUtils.WebSupport
 				this.filter = filter;
 				if (enableWatcher)
 				{
+// ReSharper disable UseObjectOrCollectionInitializer
 					watcher = new FileSystemWatcher(dirToWatch.FullName, filter);
+// ReSharper restore UseObjectOrCollectionInitializer
 					watcher.IncludeSubdirectories = true;
 					watcher.Changed += filesystemUpdated;
 					watcher.Created += filesystemUpdated;
@@ -39,7 +41,9 @@ namespace ProgressOnderwijsUtils.WebSupport
 			finally
 			{
 				if (!completedOK)
+// ReSharper disable DoNotCallOverridableMethodsInConstructor
 					Dispose(true);
+// ReSharper restore DoNotCallOverridableMethodsInConstructor
 			}
 		}
 
@@ -50,7 +54,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value; isItemUpToDate = true; lastWrite = WatchedFiles.Select(fileInfo => fileInfo.LastWriteTimeUtc).Concat(new[]{DateTime.MinValue}).Max(); } }
 
 		public IEnumerable<FileInfo> WatchedFiles { get { return dirToWatch.DescendantFiles(filter); } }
-		public DirectoryInfo WatchedDirectory { get { return dirToWatch; } }
+		//public DirectoryInfo WatchedDirectory { get { return dirToWatch; } }
 		public IEnumerable<Uri> WatchedFilesAsRelativeUris(DirectoryInfo baseDirectory)
 		{
 			string path = baseDirectory.FullName;
@@ -61,7 +65,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 		}
 
 
-		public DateTime LastWriteTime { get { if (!isItemUpToDate) Reload(); return lastWrite; } }
+		public DateTime LastWriteTimeUtc { get { if (!isItemUpToDate) Reload(); return lastWrite; } }
 
 		//we need to dispose the connection.  Use the design pattern in
 		//http://msdn.microsoft.com/en-us/library/b1yfkh5e.aspx
@@ -74,7 +78,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 			Dispose(true);
 			GC.SuppressFinalize(this); //not really necessary since no finalizer.
 		}
-		bool disposed = false;
+		bool disposed;
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing && !disposed)
