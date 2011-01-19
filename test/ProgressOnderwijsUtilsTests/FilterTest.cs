@@ -139,8 +139,12 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => q.GetHashCode() == qAlt.GetHashCode());
 			PAssert.That(() => q.ToString() == qAlt.ToString());
 			PAssert.That(() => q.Serialize().CommandText == qAlt.Serialize().CommandText);
+			PAssert.That(() => q.Serialize().ToString() == qAlt.Serialize().ToString());
+			PAssert.That(() => Equals(q.Serialize(), qAlt.Serialize()));
 
 			PAssert.That(() => qAlt.Serialize() != qAltWrong.Serialize());
+			PAssert.That(() => !Equals(qAlt.Serialize(), qAltWrong.Serialize()));
+			PAssert.That(() => qAlt.Serialize().ToString() != qAltWrong.Serialize().ToString());
 			PAssert.That(() => qAlt.Serialize().GetHashCode() != qAltWrong.Serialize().GetHashCode());
 			PAssert.That(() => !qAlt.Equals(qAltWrong));
 			PAssert.That(() => qAlt != qAltWrong);
@@ -180,6 +184,7 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.Throws<ArgumentNullException>(() => QueryBuilder.Create(null));
 			Assert.Throws<ArgumentNullException>(() => QueryBuilder.Create(null));
 			var abc = (QueryBuilder)"abc";
+#pragma warning disable 168
 			Assert.Throws<ArgumentNullException>(() => { var _ = abc + default(string); });
 			Assert.Throws<ArgumentNullException>(() => { var _ = default(QueryBuilder) + "abc"; });
 		}
