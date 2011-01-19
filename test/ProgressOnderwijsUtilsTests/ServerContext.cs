@@ -15,14 +15,14 @@ namespace ProgressOnderwijsUtilsTests
 		public void CheckBasics()
 		{
 #pragma warning disable 612,618
-			PAssert.That(() => ServerContext.ConstructExplicitly(ServerLocation.MachineInDMZ, DatabaseVersion.Test2DB) != ServerContext.ConstructExplicitly(ServerLocation.MachineInDMZ, DatabaseVersion.TestDB));
-			Assert.Throws<ArgumentException>(() => ServerContext.ConstructExplicitly(default(ServerLocation), DatabaseVersion.Test2DB));
+			PAssert.That(() => ServerContext.ConstructExplicitly(ServerLocation.MachineInDMZ, DatabaseVersion.DevTestDB) != ServerContext.ConstructExplicitly(ServerLocation.MachineInDMZ, DatabaseVersion.TestDB));
+			Assert.Throws<ArgumentException>(() => ServerContext.ConstructExplicitly(default(ServerLocation), DatabaseVersion.DevTestDB));
 			Assert.Throws<ArgumentException>(() => ServerContext.ConstructExplicitly(ServerLocation.MachineInDMZ, default(DatabaseVersion)));
 			Assert.Throws<ArgumentException>(() => ServerContext.ConstructExplicitly(ServerLocation.MachineInDMZ, default(DatabaseVersion)));
 
 			Assert.Throws<ArgumentException>(() => default(DatabaseVersion).ToIdentifier() );
 			
-			PAssert.That(() => ServerContext.ConstructExplicitly(ServerLocation.MachineInDMZ, DatabaseVersion.Test2DB).ToString() == "MachineInDMZ/Test2DB");
+			PAssert.That(() => ServerContext.ConstructExplicitly(ServerLocation.MachineInDMZ, DatabaseVersion.DevTestDB).ToString() == "MachineInDMZ/DevTestDB");
 
 			var versions=Enum.GetValues(typeof(DatabaseVersion)).Cast<DatabaseVersion>().Where(dbver=>dbver!=DatabaseVersion.Undefined);
 			PAssert.That(() => versions.All(dbVer => dbVer == DatabaseVersionIdentifiers.DatabaseVersionFromIdentifier(dbVer.ToIdentifier())));
