@@ -12,6 +12,12 @@ namespace ProgressOnderwijsUtilsTests
 	public class ExceptionTests
 	{
 		[Test]
+		public void ClonerTest()
+		{
+			Assert.Throws<ArgumentException>(() => SerializationCloner.Clone(ServerContext.ConstructWithAutomaticLocation(DatabaseVersion.DevTestDB)));
+		}
+
+		[Test]
 		public void Exceptions()
 		{
 			Assert.AreEqual("bla", Assert.Throws<GeenRechtException>(() => { throw new GeenRechtException("bla"); }).Message);
