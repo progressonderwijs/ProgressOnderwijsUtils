@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtilsTests
 			}
 		}
 
-		const string sample2 = @"<p><script>lalala<b>innerlala</b></script>test this! <div class=""lalala"" style=""lalala"">hmm</div> <unknown>include this though</unknown></p>";
+		const string sample2 = @"<p><script>lalala<b>innerlala</b></script>test this! <!--lalala<p>--> <div class=""lalala"" style=""lalala"">hmm</div> <unknown>include this though</unknown></p>";
 
 		[Test]
 		public void CleanerWorks()
@@ -50,6 +50,7 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			PAssert.That(() => HtmlTidyWrapper.TidyHtmlString(sample3) == "<p>\u00A0whee</p>");
 			PAssert.That(() => HtmlTidyWrapper.TidyHtmlString(sample4) == new XText(@"1 < 2 && 3 > 0").ToString());
+			PAssert.That(() => HtmlTidyWrapper.HtmlToTextParser(sample4) == @"1 < 2 && 3 > 0");
 		}
 
 	}

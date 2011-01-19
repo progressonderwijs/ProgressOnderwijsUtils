@@ -245,14 +245,14 @@ namespace ProgressOnderwijsUtils
 		//om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan.  Om geen form-problemen te hebben mogen form elementen niet.
 		static readonly HashSet<string> defaultSafeElements = new HashSet<string>(
 			"b i big small em strong hr br p span div center font table thead col colgroup tbody tfoot caption tr td th h1 h2 h3 h4 h5 h6 a cite dfn code samp var dl dt dd ins del sub sup tt ul ol li pre q abbr acronym blockquote fieldset legend img".Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
-		public static IEnumerable<string> DefaultSafeElements { get { return defaultSafeElements; } }
+		//public static IEnumerable<string> DefaultSafeElements { get { return defaultSafeElements; } }
 		//id's en names zijn niet toegestaan zodat er geen conflict kan onstaan met onze code.  style is niet secuur en kan tevens tracing info bevatten.
 		static readonly HashSet<string> defaultSafeAttr = new HashSet<string>(new[]{"lang", "title", "href", "dir", "color", "border", "face", "size", "align", "alt", "bgcolor", "cellspacing", "cellpadding", "char", "charoff", "cite", "height", "width"});
 		public static IEnumerable<string> DefaultSafeAttributes { get { return defaultSafeAttr; } }
 
 		//de inhoud van deze elementen is volledig oninteressant.
 		static readonly HashSet<string> defaultBannedElements = new HashSet<string>(new[]{"script","style"});
-		public static IEnumerable<string> DefaultBannedElements { get { return defaultBannedElements; } }
+		//public static IEnumerable<string> DefaultBannedElements { get { return defaultBannedElements; } }
 	}
 
 
