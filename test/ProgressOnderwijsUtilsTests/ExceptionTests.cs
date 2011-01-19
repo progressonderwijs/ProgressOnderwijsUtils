@@ -39,6 +39,11 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.AreEqual("bla2", Assert.Throws<PNAssertException>(() => { throw new PNAssertException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
 			Assert.AreEqual("bla2", SerializationCloner.Clone(Assert.Throws<PNAssertException>(() => { throw new PNAssertException("bla", new ProgressNetException("bla2")); })).InnerException.Message);
 
+			Assert.Throws<ConverteerException>(() => { throw new ConverteerException(); });
+			Assert.AreEqual("bla", Assert.Throws<ConverteerException>(() => { throw new ConverteerException("bla"); }).Message);
+			Assert.AreEqual("bla2", Assert.Throws<ConverteerException>(() => { throw new ConverteerException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
+			Assert.AreEqual("bla2", SerializationCloner.Clone(Assert.Throws<ConverteerException>(() => { throw new ConverteerException("bla", new ProgressNetException("bla2")); })).InnerException.Message);
+
 		}
 	}
 }
