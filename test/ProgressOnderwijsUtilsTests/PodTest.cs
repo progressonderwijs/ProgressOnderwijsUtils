@@ -122,6 +122,53 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => new Regio("wonderland", new[] { "abc", "def", "ghi" }).Member ==
 			 "member [Provincie].[provincie].[wonderland] as Sum({ [Provincie].[provincie].[abc],[Provincie].[provincie].[def],[Provincie].[provincie].[ghi]}) ");
 		}
+
+		[Test]
+		public void SLBerichtSamenvattingTest()
+		{
+			var a = new SLBerichtSamenvatting
+			{
+				Berichttype = "abc",
+				FormNaam = "def",
+				Ontvanger = "qwerty",
+				Organisatie = 1,
+				Student = 2,
+				Studielinkberichtid = 3,
+				StudielinkNummer = 4,
+				Tekst = "asdfg",
+				Zender = "zxcvb",
+			};
+			var b = new SLBerichtSamenvatting
+			{
+				Berichttype = "abc",
+				FormNaam = "def",
+				Ontvanger = "qwerty",
+				Organisatie = 1,
+				Student = 2,
+				Studielinkberichtid = 3,
+				StudielinkNummer = 4,
+				Tekst = "asdfg",
+				Zender = "zxcvb",
+			};
+			var c =
+				new
+				{
+					Berichttype = "abc",
+					FormNaam = "def",
+					Ontvanger = "qwerty",
+					Organisatie = 1,
+					Student = 2,
+					Studielinkberichtid = 3,
+					StudielinkNummer = 4,
+					Tekst = "asdfg",
+					Zender = "zxcvb",
+				};
+			ComparePod(a, b);
+			ComparePod(a, c);
+			PAssert.That(() => !ReferenceEquals(a, b) && Equals(a, b) && a.GetHashCode()==b.GetHashCode() && a.GetHashCode()!=c.GetHashCode() && !Equals(a,c));
+			
+
+		}
 		//StudieStaak =  OlapSlicer.StudieStaakType.metstudiestakers,
 		//ShowOpleidingen = true,
 	}
