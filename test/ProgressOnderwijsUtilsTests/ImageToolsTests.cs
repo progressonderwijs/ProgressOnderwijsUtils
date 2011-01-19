@@ -61,6 +61,9 @@ namespace ProgressOnderwijsUtilsTests
 					!(from y in Enumerable.Range(0, 50)
 					  from x in Enumerable.Range(0, 50)
 					  select new { x, y }).Where(p => down_H_W.GetPixel(p.x, p.y).Distance(down_W_H.GetPixel(p.x, p.y)) > 0.02).Any());
+
+				Assert.Throws<ArgumentException>(() => ImageTools.Resize(resImage, 100, 0));
+
 			}
 		}
 
@@ -69,7 +72,7 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var resImage = Resources.rainbow;
 			using (var down_W = ImageTools.DownscaleAndClip(resImage, 100, 50))
-			using (var down_H = ImageTools.DownscaleAndClip(resImage, 200, 100))
+			using (var down_H = ImageTools.DownscaleAndClip(resImage, 2000, 1000))
 			using (var down_W_H = ImageTools.DownscaleAndClip(down_W, 50, 50))
 			using (var down_H_W = ImageTools.DownscaleAndClip(down_H, 50, 50))
 			{
@@ -78,6 +81,7 @@ namespace ProgressOnderwijsUtilsTests
 					  from x in Enumerable.Range(0, 50)
 					  select new { x, y }).Where(p => down_H_W.GetPixel(p.x, p.y).Distance(down_W_H.GetPixel(p.x, p.y)) > 0.05).Any());
 			}
+			Assert.Throws<ArgumentException>(() => ImageTools.Resize(resImage, 100, 0));
 		}
 
 	}
