@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
 	//invalid html.
 	public static class HtmlTidyWrapper
 	{
-		static readonly Regex xmlStripRegex = new Regex(@"(<[^<]*>)",
+		static readonly Regex xmlStripRegex = new Regex(@"(<\/?[A-Za-z_][^<]*>)",
 						RegexOptions.Singleline |
 						RegexOptions.ExplicitCapture |
 						RegexOptions.Compiled);
@@ -128,7 +128,7 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Takes an insecure html fragment and cleans it up.
 		/// </summary>
-		static string TidyHtmlString(string input) { return XWrappedToString(HtmlSanitizer(input)); }
+		public static string TidyHtmlString(string input) { return XWrappedToString(HtmlSanitizer(input)); }
 
 
 		/// <summary>
@@ -253,29 +253,6 @@ namespace ProgressOnderwijsUtils
 		//de inhoud van deze elementen is volledig oninteressant.
 		static readonly HashSet<string> defaultBannedElements = new HashSet<string>(new[]{"script","style"});
 		public static IEnumerable<string> DefaultBannedElements { get { return defaultBannedElements; } }
-
-		[TestFixture]
-		public class HtmlTidyWrapperTest
-		{
-			const string sample = @"<p><b>HTML sanitization</b> is the process of examining an HTML document and producing a new HTML document that preserves only whatever tags are designated ""safe"". HTML sanitization can be used to protect against <a href=""/wiki/Cross-site_scripting"" title=""Cross-site scripting"">cross-site scripting</a> attacks by sanitizing any HTML code submitted by a user.</p> 
-<p><br /></p> ";
-
-			[Test]
-			public void TextLimitWorks()
-			{
-				var tidiedSample = TidyHtmlString(sample);
-				Assert.That(sample.LevenshteinDistanceScaled(tidiedSample), Is.LessThan(0.05));
-				int lastLength = tidiedSample.Length;
-				for (int i = tidiedSample.Length + 10; i >= 0; i--)
-				{
-					var limitedVer = TidyHtmlStringAndLimitLength(sample, i);
-					Assert.That(limitedVer.Length, Is.LessThanOrEqualTo(i));
-					if (limitedVer.Length < i) // if more than "needed" trimmed then:
-						Assert.That(lastLength == i + 1 || lastLength == limitedVer.Length);//either the string was already this short or it was just trimmed due to real need - but it wasn't unnecessarily trimmed!
-					lastLength = limitedVer.Length;
-				}
-			}
-		}
 	}
 
 
