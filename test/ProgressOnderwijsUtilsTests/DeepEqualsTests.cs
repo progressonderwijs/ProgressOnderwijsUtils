@@ -9,7 +9,6 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-
 	[TestFixture]
 	public class DeepEqualsTest
 	{

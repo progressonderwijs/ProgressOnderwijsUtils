@@ -5,6 +5,7 @@ using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using TheJoyOfCode.QualityTools;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -27,6 +28,14 @@ namespace ProgressOnderwijsUtilsTests
 					  where !Equals(aProp.GetValue(a, empty), bProp.GetValue(b, empty))
 					  select aProp.Name).Any());
 		}
+
+		public static void AutomaticClassTest<T>(T sample) {
+			PropertyTester ptester = new PropertyTester(sample);
+			ptester.TestProperties();
+			ConstructorTester ctester = new ConstructorTester(typeof(T));
+			ctester.TestConstructors(true);
+		}
+
 		[Test]
 		public void SanityCheck()
 		{
@@ -41,19 +50,22 @@ namespace ProgressOnderwijsUtilsTests
 			ComparePod(new LabelCode("abc", false), new { Waarde = "abc", Vrijveld = false });
 			ComparePod(new LabelCode(null, true), new { Waarde = default(string), Vrijveld = true });
 			ComparePod(new LabelCode("", true), new { Waarde = "", Vrijveld = true });
+			AutomaticClassTest(new LabelCode("ha", false));
 		}
 
 		[Test]
 		public void OlapCommonTest()
 		{
-			ComparePod(
-				new OlapCommon(2, 3, 4, 5, false, OlapCommon.VoltijdType.Deeltijd, OlapCommon.EoiType.Eoi, OlapCommon.NrOplType.MeerOpl,
+			var olapcommon_sample = new OlapCommon(2, 3, 4, 5, false, OlapCommon.VoltijdType.Deeltijd, OlapCommon.EoiType.Eoi, OlapCommon.NrOplType.MeerOpl,
 					OlapCommon.Per1OktType.Alle, OlapCommon.VooroplType.NonVwo, OlapCommon.HerinschrijverType.HerinschrOpl,
 					OlapCommon.RijDimensieType.Cohorten, OlapCommon.CelSomType.AbsenPercPerRij, 9,
 					OlapCommon.StudieStaakType.AlleenstudiestakersOpl)
 					{
 						EcGrenswaarde = 42
-					},
+					};
+			ComparePod(
+				olapcommon_sample
+				,
 				new
 				{
 					ExtraRijdimensie = "",
@@ -81,13 +93,15 @@ namespace ProgressOnderwijsUtilsTests
 					EcGrenswaarde = 42
 				}
 				);
+
+			AutomaticClassTest(olapcommon_sample);
 		}
 
 
 		[Test]
 		public void OlapSlicerTest()
 		{
-			ComparePod(new OlapSlicer(1, 2, 3, 4)
+			var olapslicer_sample = new OlapSlicer(1, 2, 3, 4)
 			{
 				LangeLijst = true,
 				Opleiding = 6,
@@ -96,7 +110,8 @@ namespace ProgressOnderwijsUtilsTests
 				Rijen = "abc",
 				Samenvatting = false,
 				ZuiverCohort = true,
-			},
+			};
+			ComparePod(olapslicer_sample,
 			new
 			{
 				ExamenType = 4,
@@ -114,6 +129,7 @@ namespace ProgressOnderwijsUtilsTests
 				StudieStaak = OlapSlicer.StudieStaakType.metstudiestakers,
 				ShowOpleidingen = true,
 			});
+			AutomaticClassTest(olapslicer_sample);
 		}
 
 		[Test]
@@ -166,10 +182,15 @@ namespace ProgressOnderwijsUtilsTests
 			ComparePod(a, b);
 			ComparePod(a, c);
 			PAssert.That(() => !ReferenceEquals(a, b) && Equals(a, b) && a.GetHashCode()==b.GetHashCode() && a.GetHashCode()!=c.GetHashCode() && !Equals(a,c));
-			
 
+			AutomaticClassTest(a);
 		}
-		//StudieStaak =  OlapSlicer.StudieStaakType.metstudiestakers,
-		//ShowOpleidingen = true,
+
+		[Test]
+		public void ServiceTest()
+		{
+			AutomaticClassTest(new ServiceOnderwijs());
+			AutomaticClassTest(new ServiceOrganisatie());
+		}
 	}
 }
