@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 using ProgressOnderwijsUtils.WebSupport;
 using System.IO;
 
@@ -34,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
 	}
 
 
-	[TestFixture]
+	[TestFixture, NightlyOnly]
 	public class AbstractCachedDataTest
 	{
 		[Test]
