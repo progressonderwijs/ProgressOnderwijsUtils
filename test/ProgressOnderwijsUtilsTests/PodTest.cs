@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
@@ -15,21 +16,28 @@ namespace ProgressOnderwijsUtilsTests
 		public static void ComparePod(object a, object b)
 		{
 
-			Type aType = a.GetType();
-			Type bType = b.GetType();
-			PAssert.That(() => aType.GetProperties().Select(pi => pi.Name).OrderBy(s => s).SequenceEqual(bType.GetProperties().Select(pi => pi.Name).OrderBy(s => s)));
-
 			object[] empty = new object[0];
+			var flags = BindingFlags.Public | BindingFlags.Instance;
+			Func<object, IEnumerable<Tuple<string,object>>> getAccessors =
+				o => o.GetType().GetProperties(flags).Select(pi => Tuple.Create(pi.Name, pi.GetValue(o, empty)))
+				        	.Concat(
+								o.GetType().GetFields(flags).Select(fi => Tuple.Create(fi.Name, fi.GetValue(o)))
+				        	);
+
+			var aProps = getAccessors(a);
+			var bProps = getAccessors(b);
+			PAssert.That(() => aProps.Select(p => p.Item1).OrderBy(s => s).SequenceEqual(bProps.Select(p => p.Item1).OrderBy(s => s)));
 
 			PAssert.That(
 				() =>
-					!(from aProp in aType.GetProperties()
-					  join bProp in bType.GetProperties() on aProp.Name equals bProp.Name
-					  where !Equals(aProp.GetValue(a, empty), bProp.GetValue(b, empty))
-					  select aProp.Name).Any());
+					!(from aProp in aProps
+					  join bProp in bProps on aProp.Item1 equals bProp.Item1
+					  where !Equals(aProp.Item2, bProp.Item2)
+					  select aProp.Item1).Any());
 		}
 
-		public static void AutomaticClassTest<T>(T sample) {
+		public static void AutomaticClassTest<T>(T sample)
+		{
 			PropertyTester ptester = new PropertyTester(sample);
 			ptester.TestProperties();
 			ConstructorTester ctester = new ConstructorTester(typeof(T));
@@ -181,7 +189,7 @@ namespace ProgressOnderwijsUtilsTests
 				};
 			ComparePod(a, b);
 			ComparePod(a, c);
-			PAssert.That(() => !ReferenceEquals(a, b) && Equals(a, b) && a.GetHashCode()==b.GetHashCode() && a.GetHashCode()!=c.GetHashCode() && !Equals(a,c));
+			PAssert.That(() => !ReferenceEquals(a, b) && Equals(a, b) && a.GetHashCode() == b.GetHashCode() && a.GetHashCode() != c.GetHashCode() && !Equals(a, c));
 
 			AutomaticClassTest(a);
 		}
@@ -191,6 +199,15 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			AutomaticClassTest(new ServiceOnderwijs());
 			AutomaticClassTest(new ServiceOrganisatie());
+			AutomaticClassTest(new ServiceVakInformatie());
+			AutomaticClassTest(new VakPeriode());
+			AutomaticClassTest(new EntreeVoorwaarde());
+			AutomaticClassTest(new ToetsVorm());
+			AutomaticClassTest(new OnderwijsVorm());
+			AutomaticClassTest(new OnderwijsNiveau());
+			AutomaticClassTest(new Literatuur());
+			AutomaticClassTest(new BSADossierData());
+			ComparePod(new School("abc", "def"), new { Brincode = "abc", Volgnummer = "def" });
 		}
 	}
 }
