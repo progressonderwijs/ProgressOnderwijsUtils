@@ -5,7 +5,11 @@ using System.Runtime.Serialization;
 
 namespace ProgressOnderwijsUtils
 {
-	public class NoRowsFoundException : ProgressNetException { }
+	public class NoRowsFoundException : ProgressNetException {
+		public NoRowsFoundException(string msg) : base(msg) { }
+		public NoRowsFoundException() { }
+		public NoRowsFoundException(string msg, Exception inner) : base(msg, inner) { }
+	}
 
 	public class GeenRechtException : ProgressNetException
 	{
