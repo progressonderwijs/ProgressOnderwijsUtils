@@ -49,5 +49,4 @@ namespace ProgressOnderwijsUtils
 		public GenericMetaDataException(string debugMessage, Exception innerException) : base(debugMessage, innerException) { }
 		protected GenericMetaDataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 	}
-
 }
