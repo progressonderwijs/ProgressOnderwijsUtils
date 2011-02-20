@@ -9,6 +9,7 @@ namespace ProgressOnderwijsUtils
 	{
 		string Naam { get; }
 		int NodeId { get; }
+		bool Selectable { get; }
 		IEnumerable<ITreeStructure> Children { get; }
 	}
 
@@ -17,16 +18,19 @@ namespace ProgressOnderwijsUtils
 	{
 		readonly string naam;
 		readonly int nodeid;
+		readonly bool selectable;
 		readonly MinimalTreeStructure[] children;
 		public MinimalTreeStructure(ITreeStructure source)
 		{
 			naam = source.Naam;
 			nodeid = source.NodeId;
+			selectable = source.Selectable;
 			children = source.Children.Select(child => new MinimalTreeStructure(child)).ToArray();
 		}
 
 		public string Naam { get { return naam; } }
 		public int NodeId { get { return nodeid; } }
+		public bool Selectable { get { return selectable; } }
 		public IEnumerable<ITreeStructure> Children { get { return children; } }
 	}
 #endif

@@ -42,6 +42,11 @@ namespace ProgressOnderwijsUtils
 			return str.Replace("ß", upper ? "SS" : "ss");
 		}
 
+		public static string VerwijderCarriageReturn(this string s)
+		{
+			return s.Replace("\n", " ").Replace("\t", " ");
+		}
+
 		private static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled);
 
 		/// <summary>
