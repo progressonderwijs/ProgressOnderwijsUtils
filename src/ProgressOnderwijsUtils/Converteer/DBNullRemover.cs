@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils.Converteer
 {
@@ -9,7 +10,18 @@ namespace ProgressOnderwijsUtils.Converteer
 	{
 		public static T Cast<T>(object fromdatabase)
 		{
-			return FieldHelperClass<T>.Extractor(fromdatabase);
+			try
+			{
+				return FieldHelperClass<T>.Extractor(fromdatabase);
+			}
+			catch (Exception e)
+			{
+				string valStr =
+					fromdatabase == null ? "<null>" :
+					fromdatabase == DBNull.Value ? "<dbnull>"
+					: fromdatabase.GetType().FullName + " value";
+				throw new InvalidCastException("Cannot cast " + valStr + " to type " + typeof(T).FullName, e);
+			}
 		}
 
 		/// <summary>
