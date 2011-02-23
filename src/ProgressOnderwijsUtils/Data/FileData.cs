@@ -11,24 +11,15 @@ namespace ProgressOnderwijsUtils
 		public string FileName { get; set; }
 
 		public bool ContainsFile { get { return Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0); } }
-		public override string ToString()
+		public override string ToString() { return ToUiString(); }
+		public string ToUiString()
 		{
-			string result = "";
-			if (ContainsFile)
-			{
-				result = string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m);
-			}
-			return result;
+			return ContainsFile ? string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m) : "";
 		}
 
 		public override bool Equals(object other)
 		{
-			bool result = false;
-			if (other != null && other.GetType() == typeof(FileData))
-			{
-				result = Equals((FileData)other);
-			}
-			return result;
+			return other is FileData && Equals((FileData)other);
 		}
 
 		public override int GetHashCode()
