@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils.Extensions
@@ -22,17 +23,30 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// <summary>
 		/// Utility method to retrieve a value with a default from a dictionary.
 		/// </summary>
-		/// <param name="dict"></param>
+		/// <param name="dict">The dictionary to extract  from</param>
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="value">The default value of the key.</param>
 		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
 		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
 		{
 			TValue result;
-			if (!dict.TryGetValue(key, out result))
-				result = value;
-			return result;
+			return dict.TryGetValue(key, out result) ? result : value;
 		}
+
+		/// <summary>
+		/// Utility method to retrieve a value with a default from a dictionary.
+		/// </summary>
+		/// <param name="dict">The dictionary to extract from</param>
+		/// <param name="key">The key whose value to get.</param>
+		/// <param name="defaultFactory">The factory method to call to create a default value if not found.</param>
+		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
+		public static TValue GetOrCreateDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> defaultFactory)
+		{
+			TValue result;
+			return dict.TryGetValue(key, out result) ? result : defaultFactory();
+		}
+
+
 
 		/// <summary>
 		/// Retrieves the value of a dictionary with setting it to a default if the key does not yet exist.
