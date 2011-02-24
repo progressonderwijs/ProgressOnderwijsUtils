@@ -30,10 +30,9 @@ namespace ProgressOnderwijsUtils.Converteer
 			}
 		}
 		public static double MeasureWpf(string str) { return str.Sum(c => char_to_width[c]); }
-
-		public static string LimitTextLengthWpf(string s, int maxWidth) { return ElideIfNecessary(s, maxWidth * ems_per_char); }
-
-		static string ElideIfNecessary(string s, double ems) { return MeasureWpf(s) < ems ? s : TrimToEms(s, ems - ellipsis_ems) + ellipsis; }
+		public static string LimitTextLengthWpf(string s, int maxWidth) { return LimitTextLength(s, maxWidth).Item1; }
+		public static Tuple<string, bool> LimitTextLength(string s, int maxWidth) { return ElideIfNecessary(s, maxWidth * ems_per_char); }
+		static Tuple<string, bool> ElideIfNecessary(string s, double ems) { return MeasureWpf(s) < ems ? Tuple.Create(s, false) : Tuple.Create(TrimToEms(s, ems - ellipsis_ems) + ellipsis, true); }
 		static string TrimToEms(string s, double ems) { return s.Substring(0, CanFitChars(s, ems)); }
 
 		const double ems_per_char = 0.638;
