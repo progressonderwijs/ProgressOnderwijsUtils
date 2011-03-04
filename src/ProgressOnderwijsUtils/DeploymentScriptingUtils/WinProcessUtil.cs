@@ -35,9 +35,9 @@ namespace ProgressOnderwijsUtils
 				if (input != null)
 					proc.StandardInput.Write(input);
 				proc.StandardInput.Close();
-				proc.WaitForExit();
 				var outval = proc.StandardOutput.ReadToEnd();
 				var errval = proc.StandardError.ReadToEnd();
+				proc.WaitForExit();
 				return new ExecutionResult { StandardOutputContents = outval, StandardErrorContents = errval, ExitCode = proc.ExitCode };
 			}
 		}
