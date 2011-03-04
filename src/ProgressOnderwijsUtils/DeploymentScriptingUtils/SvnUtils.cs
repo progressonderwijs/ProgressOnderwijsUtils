@@ -42,6 +42,13 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
+		[XmlRoot("info")]
+		public sealed class SvnInfo : XmlSerializableBase<SvnInfo>
+		{
+			public SvnInfoEntry entry;
+		}
+
+		[XmlRoot("entry")]
 		public sealed class SvnInfoEntry : XmlSerializableBase<SvnInfoEntry>
 		{
 			[XmlAttribute]
@@ -51,7 +58,7 @@ namespace ProgressOnderwijsUtils
 			[XmlAttribute]
 			public int revision;
 
-			public Uri url;
+			public string url;
 
 			public SvnCommitInfo commit;
 		}
@@ -60,19 +67,15 @@ namespace ProgressOnderwijsUtils
 		{
 			[XmlAttribute]
 			public int revision;
-			[XmlAttribute]
 			public string author;
-			[XmlAttribute]
 			public DateTime date;
 		}
 
 		public static SvnInfoEntry Info(string path)
 		{
-
 			var svninfoExecResult = WinProcessUtil.ExecuteProcessSynchronously("svn.exe", "info --xml \"" + path + "\"", null);
 			XDocument svninfoOutput = XDocument.Parse(svninfoExecResult.StandardOutputContents);
-			var entryElement = svninfoOutput.Element("info").Element("entry");
-			return SvnInfoEntry.Deserialize(entryElement);
+			return SvnInfo.Deserialize(svninfoOutput).entry;
 		}
 	}
 }
