@@ -46,8 +46,6 @@ namespace ProgressOnderwijsUtils.Extensions
 			return dict.TryGetValue(key, out result) ? result : defaultFactory();
 		}
 
-
-
 		/// <summary>
 		/// Retrieves the value of a dictionary with setting it to a default if the key does not yet exist.
 		/// </summary>
