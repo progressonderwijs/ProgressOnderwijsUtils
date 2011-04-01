@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
 {
 	public static class RandomHelper
 	{
-		static RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();//threadsafe
+		static readonly RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();//threadsafe
 		private static byte[] GetBytes(int numBytes)
 		{
 			var bytes = new byte[numBytes];
@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils
 		[TestFixture]
 		class RndTest
 		{
-			[TestCase]
+			[Test]
 			public void CheckRandomBasic()
 			{
 				HashSet<uint> numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
@@ -85,7 +85,7 @@ namespace ProgressOnderwijsUtils
 				Assert.IsTrue(numTo37.SetEquals(MoreEnumerable.GenerateByIndex(i => GetUInt32(37)).Take(10000))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
 			}
 
-			[TestCase]
+			[Test]
 			public void CheckString()
 			{
 				for (int i = 0; i < 50; i++)
@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils
 				}
 			}
 
-			[TestCase]
+			[Test]
 			public void CheckStrings()
 			{
 				Assert.That(RandomHelper.GetStringOfNumbers(10), Is.StringMatching("[0-9]{10}"));
