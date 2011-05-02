@@ -12,8 +12,6 @@ namespace ProgressOnderwijsUtils.Extensions
 		/// <summary>
 		/// Derived query to test whether a collection is empty or not.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="collection"></param>
 		/// <returns>true when Count == 0, false otherwise</returns>
 		public static bool Empty<T>(this ICollection<T> collection)
 		{
@@ -21,16 +19,16 @@ namespace ProgressOnderwijsUtils.Extensions
 		}
 
 		/// <summary>
-		/// Utility method to retrieve a value with a default from a dictionary.
+		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
 		/// </summary>
 		/// <param name="dict">The dictionary to extract  from</param>
 		/// <param name="key">The key whose value to get.</param>
-		/// <param name="value">The default value of the key.</param>
+		/// <param name="defaultValue">The default value of the key.</param>
 		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
+		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue defaultValue)
 		{
 			TValue result;
-			return dict.TryGetValue(key, out result) ? result : value;
+			return dict.TryGetValue(key, out result) ? result : defaultValue;
 		}
 
 		/// <summary>
