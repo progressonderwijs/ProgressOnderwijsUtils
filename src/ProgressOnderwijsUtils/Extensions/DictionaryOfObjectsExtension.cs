@@ -11,6 +11,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
 		/// </summary>
-		public static T Field<T>(this Dictionary<string, object> dict, string key) { return DBNullRemover.Cast<T>(dict[key]); }
+		public static T Field<T>(this IDictionary<string, object> dict, string key) { return DBNullRemover.Cast<T>(dict[key]); }
 	}
 }
