@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtilsTests
 			var olapcommon_sample = new OlapCommon(2, 3, 4, 5, false, OlapCommon.VoltijdType.Deeltijd, OlapCommon.EoiType.Eoi, OlapCommon.NrOplType.MeerOpl,
 					OlapCommon.Per1OktType.Alle, OlapCommon.VooroplType.NonVwo, OlapCommon.HerinschrijverType.HerinschrOpl,
 					OlapCommon.RijDimensieType.Cohorten, OlapCommon.CelSomType.AbsenPercPerRij, 9,
-					OlapCommon.StudieStaakType.AlleenstudiestakersOpl,"InstroomMenu")
+					OlapCommon.StudieStaakType.AlleenstudiestakersOpl)
 					{
 						EcGrenswaarde = 42
 					};
