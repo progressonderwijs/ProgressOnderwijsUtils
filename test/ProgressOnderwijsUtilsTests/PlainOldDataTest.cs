@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtilsTests
 	/// e.g. ComparePod(Tuple.Create(1,"z"), new {Item1 = 1, Item2 = "z"}) zou goed moeten gaan.
 	/// </summary>
 	[TestFixture]
-	public class PodTest
+	public class PlainOldDataTest
 	{
 		static Func<T, S> MakeFunc<T, S>(Func<T, S> f) { return f; }
 
