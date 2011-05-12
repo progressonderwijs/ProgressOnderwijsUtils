@@ -10,30 +10,37 @@ using TheJoyOfCode.QualityTools;
 
 namespace ProgressOnderwijsUtilsTests
 {
+
+	/// <summary>
+	/// Deze test is voor "Plain Old Data" objecten.  hij checked of waardes in de constructor goed gezet worden en geen velden over het hoofd gezien worden.
+	/// Om eentje toe te voegen, maak een nieuwe test en roep ComparePod(A,B) aan, waarbij A en B propery-voor-property vergeleken worden.
+	/// e.g. ComparePod(Tuple.Create(1,"z"), new {Item1 = 1, Item2 = "z"}) zou goed moeten gaan.
+	/// </summary>
 	[TestFixture]
 	public class PodTest
 	{
+		static Func<T, S> MakeFunc<T, S>(Func<T, S> f) { return f; }
+
 		public static void ComparePod(object a, object b)
 		{
-
 			object[] empty = new object[0];
-			var flags = BindingFlags.Public | BindingFlags.Instance;
-			Func<object, IEnumerable<Tuple<string,object>>> getAccessors =
-				o => o.GetType().GetProperties(flags).Select(pi => Tuple.Create(pi.Name, pi.GetValue(o, empty)))
-				        	.Concat(
-								o.GetType().GetFields(flags).Select(fi => Tuple.Create(fi.Name, fi.GetValue(o)))
-				        	);
+			const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+			var getProperties =
+				MakeFunc( (object o) => 
+					o.GetType().GetProperties(flags)
+						.Select(pi =>
+							new { pi.Name, Value = pi.GetValue(o, empty) })
+						.Concat(
+							o.GetType().GetFields(flags).Select(fi =>
+								new { fi.Name, Value = fi.GetValue(o) }))
+						.OrderBy( prop=>prop.Name)
+					);
 
-			var aProps = getAccessors(a);
-			var bProps = getAccessors(b);
-			PAssert.That(() => aProps.Select(p => p.Item1).OrderBy(s => s).SequenceEqual(bProps.Select(p => p.Item1).OrderBy(s => s)));
-
-			PAssert.That(
-				() =>
-					!(from aProp in aProps
-					  join bProp in bProps on aProp.Item1 equals bProp.Item1
-					  where !Equals(aProp.Item2, bProp.Item2)
-					  select aProp.Item1).Any());
+			var aProps = getProperties(a);
+			var bProps = getProperties(b);
+			var differingPropertiesOfA = aProps.Except(bProps).ToArray();
+			var differingPropertiesOfB = bProps.Except(aProps).ToArray();
+			PAssert.That(() => ! differingPropertiesOfA.Any() && ! differingPropertiesOfB.Any());
 		}
 
 		public static void AutomaticClassTest<T>(T sample)
@@ -67,7 +74,7 @@ namespace ProgressOnderwijsUtilsTests
 			var olapcommon_sample = new OlapCommon(2, 3, 4, 5, false, OlapCommon.VoltijdType.Deeltijd, OlapCommon.EoiType.Eoi, OlapCommon.NrOplType.MeerOpl,
 					OlapCommon.Per1OktType.Alle, OlapCommon.VooroplType.NonVwo, OlapCommon.HerinschrijverType.HerinschrOpl,
 					OlapCommon.RijDimensieType.Cohorten, OlapCommon.CelSomType.AbsenPercPerRij, 9,
-					OlapCommon.StudieStaakType.AlleenstudiestakersOpl)
+					OlapCommon.StudieStaakType.AlleenstudiestakersOpl,"BlaBlaTestMenu")
 					{
 						EcGrenswaarde = 42
 					};
@@ -98,7 +105,8 @@ namespace ProgressOnderwijsUtilsTests
 					isStudiestaker = OlapCommon.StudieStaakType.AlleenstudiestakersOpl,
 					EerstejrNietdef = DateTime.Now.CollegeJaar(),//blech
 					ShowTijdsverloop = false,
-                    EcGrenswaarde = 42
+                    EcGrenswaarde = 42,
+					ParentMenuName = "BlaBlaTestMenu"
 				}
 				);
 
