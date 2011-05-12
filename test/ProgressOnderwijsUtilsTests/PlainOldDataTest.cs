@@ -26,21 +26,21 @@ namespace ProgressOnderwijsUtilsTests
 			object[] empty = new object[0];
 			const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 			var getProperties =
-				MakeFunc( (object o) => 
+				MakeFunc((object o) =>
 					o.GetType().GetProperties(flags)
 						.Select(pi =>
 							new { pi.Name, Value = pi.GetValue(o, empty) })
 						.Concat(
 							o.GetType().GetFields(flags).Select(fi =>
 								new { fi.Name, Value = fi.GetValue(o) }))
-						.OrderBy( prop=>prop.Name)
+						.OrderBy(prop => prop.Name)
 					);
 
 			var aProps = getProperties(a);
 			var bProps = getProperties(b);
 			var differingPropertiesOfA = aProps.Except(bProps).ToArray();
 			var differingPropertiesOfB = bProps.Except(aProps).ToArray();
-			PAssert.That(() => ! differingPropertiesOfA.Any() && ! differingPropertiesOfB.Any());
+			PAssert.That(() => !differingPropertiesOfA.Any() && !differingPropertiesOfB.Any());
 		}
 
 		public static void AutomaticClassTest<T>(T sample)
@@ -74,7 +74,7 @@ namespace ProgressOnderwijsUtilsTests
 			var olapcommon_sample = new OlapCommon(2, 3, 4, 5, false, OlapCommon.VoltijdType.Deeltijd, OlapCommon.EoiType.Eoi, OlapCommon.NrOplType.MeerOpl,
 					OlapCommon.Per1OktType.Alle, OlapCommon.VooroplType.NonVwo, OlapCommon.HerinschrijverType.HerinschrOpl,
 					OlapCommon.RijDimensieType.Cohorten, OlapCommon.CelSomType.AbsenPercPerRij, 9,
-					OlapCommon.StudieStaakType.AlleenstudiestakersOpl,"BlaBlaTestMenu")
+					OlapCommon.StudieStaakType.AlleenstudiestakersOpl, "BlaBlaTestMenu")
 					{
 						EcGrenswaarde = 42
 					};
@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtilsTests
 					isStudiestaker = OlapCommon.StudieStaakType.AlleenstudiestakersOpl,
 					EerstejrNietdef = DateTime.Now.CollegeJaar(),//blech
 					ShowTijdsverloop = false,
-                    EcGrenswaarde = 42,
+					EcGrenswaarde = 42,
 					ParentMenuName = "BlaBlaTestMenu"
 				}
 				);
