@@ -1,6 +1,9 @@
-﻿using System;
+﻿
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using ExpressionToCodeLib;
 
@@ -8,6 +11,12 @@ namespace ProgressOnderwijsUtils.Converteer
 {
 	public static class DBNullRemover
 	{
+		/// <summary>
+		/// This method works just like a normal C# cast, with the following changed:
+		///  - it treats DBNull.Value as if it were null
+		///  - it doesn't support custom casts, just built-in casts
+		///  - it supports casting from boxed int to nullable enum.
+		/// </summary>
 		public static T Cast<T>(object fromdatabase)
 		{
 			try
@@ -48,7 +57,7 @@ namespace ProgressOnderwijsUtils.Converteer
 					else
 					{
 						Extractor = (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>),
-							typeof(FieldEnumHelperClass).GetMethod("ExtractNullableEnum").MakeGenericMethod(nullableBase));
+							typeof(DBNullRemover).GetMethod("ExtractNullableEnum",BindingFlags.Static|BindingFlags.NonPublic).MakeGenericMethod(nullableBase));
 					}
 				}
 				else
@@ -57,15 +66,13 @@ namespace ProgressOnderwijsUtils.Converteer
 			}
 			static T ExtractClassOrNullableField(object obj) { return obj == DBNull.Value ? default(T) : (T)obj; }
 			static T ExtractValueField(object obj) { return (T)obj; }
-			static class FieldEnumHelperClass
-			{
-				// ReSharper disable UnusedMember.Local
-				public static TEnum? ExtractNullableEnum<TEnum>(object obj) where TEnum : struct
-				// ReSharper restore UnusedMember.Local
-				{
-					return obj == DBNull.Value || obj == null ? default(TEnum?) : (TEnum)obj;
-				}
-			}
+		}
+
+		// ReSharper disable UnusedMember.Local
+		static TEnum? ExtractNullableEnum<TEnum>(object obj) where TEnum : struct
+		// ReSharper restore UnusedMember.Local
+		{
+			return obj == DBNull.Value || obj == null ? default(TEnum?) : (TEnum)obj;
 		}
 	}
 }
