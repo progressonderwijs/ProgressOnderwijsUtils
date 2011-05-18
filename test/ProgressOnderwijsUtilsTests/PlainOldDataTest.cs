@@ -106,7 +106,8 @@ namespace ProgressOnderwijsUtilsTests
 					EerstejrNietdef = DateTime.Now.CollegeJaar(),//blech
 					ShowTijdsverloop = false,
 					EcGrenswaarde = 42,
-					ParentMenuName = "BlaBlaTestMenu"
+					ParentMenuName = "BlaBlaTestMenu",
+					aanmeldstatus = default(OlapCommon.AanmstatusType),
 				}
 				);
 
