@@ -108,6 +108,7 @@ namespace ProgressOnderwijsUtilsTests
 					EcGrenswaarde = 42,
 					ParentMenuName = "BlaBlaTestMenu",
 					aanmeldstatus = default(OlapCommon.AanmstatusType),
+                    alleeneerstejr = OlapCommon.AlleenEerstejaarType.Alle,
 				}
 				);
 
