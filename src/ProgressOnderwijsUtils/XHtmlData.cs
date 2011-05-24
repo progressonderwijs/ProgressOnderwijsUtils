@@ -10,6 +10,14 @@ namespace ProgressOnderwijsUtils
 	{
 		public XNode[] nodes;
 
+		public static XHtmlData Create(params object[] contents)
+		{
+			return new XHtmlData
+			{
+				nodes = new XElement("x", contents).Nodes().ToArray()
+			};
+		}
+
 		public static XHtmlData Parse(string s)
 		{
 			return new XHtmlData
