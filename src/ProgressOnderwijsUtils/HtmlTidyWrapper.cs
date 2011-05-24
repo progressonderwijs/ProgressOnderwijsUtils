@@ -45,11 +45,8 @@ namespace ProgressOnderwijsUtils
 		/// serves to permit a sequence of html nodes to be returned.  This function always returns a non-null single element named "x".</returns> 
 		static XElement XHtmlParser(string str)
 		{
-			try { return XElement.Parse("<x>" + str + "</x>"); }
-			catch (XmlException) { }
-			str = str.Replace("&nbsp;", "&#160;");
-			try { return XElement.Parse("<x>" + str + "</x>"); }
-			catch (XmlException) { }
+			XElement result = TryParse(str);
+			if (result != null) return result;
 
 			// decoding failed; the string is invalid.  To get at least something readable, 
 			// we'll manually strip something that looks like tags
@@ -61,6 +58,26 @@ namespace ProgressOnderwijsUtils
 
 			//can't parse; give up and return the best we can.
 			return new XElement("x", str);
+		}
+
+		public static XElement TryParse(string str)
+		{
+			try
+			{
+				return XElement.Parse("<x>" + str + "</x>");
+			}
+			catch (XmlException)
+			{
+			}
+			str = str.Replace("&nbsp;", "&#160;");
+			try
+			{
+				return XElement.Parse("<x>" + str + "</x>");
+			}
+			catch (XmlException)
+			{
+				return null;
+			}
 		}
 
 		/// <summary>
