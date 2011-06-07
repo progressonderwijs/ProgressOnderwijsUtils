@@ -38,6 +38,9 @@ namespace ProgressOnderwijsUtils
 			return filter.ReplaceImpl(filterToRemove, null);
 		}
 
+		/// <summary>
+		/// Maakt een filter definitie aan.  Om twee kolommen onderling te vergelijken, moet de waarde van type ColumnReference zijn.
+		/// </summary>
 		public static FilterBase CreateCriterium(string kolomnaam, BooleanComparer comparer, object waarde)
 		{
 			return new CriteriumFilter(kolomnaam, comparer, waarde);
