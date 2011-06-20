@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Converteer;
 
-namespace ProgressOnderwijsUtils.Extensions
+namespace ProgressOnderwijsUtils
 {
-	/// <summary>
-	/// Extension methods for generic collections.
-	/// </summary>
-	public static class CollectionExtensions
+	public static class DictionaryExtensions
 	{
 		/// <summary>
-		/// Derived query to test whether a collection is empty or not.
+		/// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
 		/// </summary>
-		/// <returns>true when Count == 0, false otherwise</returns>
-		public static bool Empty<T>(this ICollection<T> collection)
-		{
-			return collection.Count == 0;
-		}
+		public static T Field<T>(this IDictionary<string, object> dict, string key) { return DBNullRemover.Cast<T>(dict[key]); }
 
 		/// <summary>
 		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
@@ -62,19 +58,12 @@ namespace ProgressOnderwijsUtils.Extensions
 	}
 
 	[TestFixture]
-	public class CollectionExtensionsTests
+	public class DictionaryExtensionsTests
 	{
-		[Test]
-		public void Empty()
-		{
-			Assert.That(new List<int>().Empty());
-			Assert.That(!new Dictionary<int, int>() { { 0, 0 } }.Empty());
-		}
-
 		[Test]
 		public void GetDefault()
 		{
-			IDictionary<int, int> sut = new Dictionary<int, int>() { { 0, 0 } };
+			IDictionary<int, int> sut = new Dictionary<int, int> { { 0, 0 } };
 			Assert.That(sut.GetOrDefault(0, 1), Is.EqualTo(0));
 			Assert.That(sut.GetOrDefault(1, 2), Is.EqualTo(2));
 			Assert.That(!sut.ContainsKey(1));
@@ -83,7 +72,7 @@ namespace ProgressOnderwijsUtils.Extensions
 		[Test]
 		public void SetDefault()
 		{
-			IDictionary<int, int> sut = new Dictionary<int, int>() { { 0, 0 } };
+			IDictionary<int, int> sut = new Dictionary<int, int> { { 0, 0 } };
 			Assert.That(sut.GetOrAdd(0, 1), Is.EqualTo(0));
 			Assert.That(sut.GetOrAdd(1, 2), Is.EqualTo(2));
 			Assert.That(sut.ContainsKey(1));
