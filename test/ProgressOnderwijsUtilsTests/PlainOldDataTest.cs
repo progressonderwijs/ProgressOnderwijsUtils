@@ -88,6 +88,7 @@ namespace ProgressOnderwijsUtilsTests
 					Samenvatting = true,
 					LangeLijst = false,
 					TopZoveel = false,
+                    SpecificMember = false,
 					Organisatie = 2,
 					StartJaar = 3,
 					//StopJaar = stopjaar,//niet gebruikt
