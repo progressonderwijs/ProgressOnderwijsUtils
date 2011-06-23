@@ -90,6 +90,36 @@ namespace ProgressOnderwijsUtils
 			return bitmap;
 		}
 
+		/// <summary>Converts any image format to a known aspect ratio, saving as Jpeg; returns the bytes of the new 
+		/// jpeg file or NULL if the source image is corrupt of too large (i.e. has a dimension greater than MAX_IMAGE_DIMENSION)
+		/// It does this by chosing the largest possible centered rectangle in the old image
+		/// that has the same aspect ratio as the output dimensions.  This rectangle
+		/// is then resized to the new dimensions, unless it's smaller, then only
+		/// clipping occurs.
+		/// </summary>
+		/// <param name="origImageData">The bytes of the image to resize</param>
+		/// <param name="targetWidth">The target width</param>
+		/// <param name="targetHeight">The target height</param>
+		/// <returns>The bytes of the resulting JPEG, or NULL if the original is corrupt or too large.</returns>
+		public static byte[] Downscale_Clip_ConvertToJpeg(byte[] origImageData, int targetWidth, int targetHeight)
+		{
+			using (Image uploadedImage = ImageTools.ToImage(origImageData))
+			{
+				int oldHeight = uploadedImage.Height;
+				int oldWidth = uploadedImage.Width;
+
+				if (oldHeight > MAX_IMAGE_DIMENSION || oldWidth > MAX_IMAGE_DIMENSION || oldHeight < 1 || oldWidth < 1)
+					return null;
+				using (Bitmap thumbnail = ImageTools.DownscaleAndClip(uploadedImage, targetWidth, targetHeight))
+				using (MemoryStream ms = new MemoryStream())
+				{
+					ImageTools.SaveImageAsJpeg(thumbnail, ms);
+					return ms.ToArray();
+				}
+			}
+		}
+		public const int MAX_IMAGE_DIMENSION = 10000;//10 000 by 10 000 is quite insane ;-)
+
 
 
 		public static Image ToImage(byte[] arr) { return ToImage(new MemoryStream(arr)); }
