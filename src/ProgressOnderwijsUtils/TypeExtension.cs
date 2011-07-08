@@ -21,6 +21,18 @@ namespace ProgressOnderwijsUtils
 		{
 			return !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 		}
+
+
+		/// <summary>
+		/// If type is non-Nullable value type T, returns typeof(Nullable&lt;T&gt;).  For Nullable&lt;&gt; or reference types, returns null;
+		/// </summary>
+		public static Type MakeNullableType(this Type type)
+		{
+			return !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)
+				? null
+				: typeof(Nullable<>).MakeGenericType(type);
+		}
+
 		public static IEnumerable<Type> BaseTypes(this Type type)
 		{
 			if (null == type) yield break;
