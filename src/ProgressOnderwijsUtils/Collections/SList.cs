@@ -36,5 +36,6 @@ namespace ProgressOnderwijsUtils.Collections
 				yield return current.Head;
 		}
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return ((IEnumerable<T>)this).GetEnumerator(); }
+
 	}
 }
