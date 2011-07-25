@@ -20,9 +20,10 @@ namespace ProgressOnderwijsUtils
 			if (value != null)
 			{
 				Type valueType = value.GetType();
-				if (!type.IsAssignableFrom(valueType) && !(valueType.IsEnum && type.IsAssignableFrom(valueType.GetEnumUnderlyingType()))) // !type.IsInstanceOfType(value))
+				if (!type.IsAssignableFrom(valueType) && 
+					!(valueType.IsEnum && type.IsAssignableFrom(valueType.GetEnumUnderlyingType())) &&
+					!(type.IsEnum && valueType.IsAssignableFrom(type.GetEnumUnderlyingType())))
 					throw new ArgumentException("An object of type " + value.GetType() + " may not be placed in a variant data of type " + type);
-
 			}
 			this.type = type;
 			this.value = value;
