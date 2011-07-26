@@ -40,9 +40,16 @@ namespace ProgressOnderwijsUtils
 				case BooleanComparer.NotEqual:
 					return kolomNaamMapped + "!=" + BuildParam(colRename);
 				case BooleanComparer.In:
-					string[] nrs = Waarde.ToString().Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-					string clause = kolomNaamMapped + " in (" + Enumerable.Range(0, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
-					return QueryBuilder.Create(clause, nrs.Cast<object>().ToArray());
+					if (Waarde is GroupReference)
+					{
+						return kolomNaamMapped + " in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
+					}
+					else
+					{
+						string[] nrs = Waarde.ToString().Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+						string clause = kolomNaamMapped + " in (" + Enumerable.Range(0, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
+						return QueryBuilder.Create(clause, nrs.Cast<object>().ToArray());
+					}
 				case BooleanComparer.StartsWith:
 					return kolomNaamMapped + " like " + QueryBuilder.Param(Waarde + "%");
 				case BooleanComparer.Contains:
@@ -73,6 +80,14 @@ namespace ProgressOnderwijsUtils
 			return filterInEditMode == this
 				? Filter.CreateCombined(booleanOperator, this, c)
 				: this;
+		}
+
+		public override string ToString()
+		{
+			if (Waarde is GroupReference && Comparer == BooleanComparer.In)
+				return string.Format("{0} in {1}", KolomNaam, (Waarde as GroupReference).Name);
+			else
+				return base.ToString();
 		}
 	}
 }
