@@ -55,6 +55,13 @@ namespace ProgressOnderwijsUtils
 				dict.Add(key, value);
 			return dict[key];
 		}
+
+		public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> factory)
+		{
+			if (!dict.ContainsKey(key))
+				dict.Add(key, factory());
+			return dict[key];
+		}
 	}
 
 	[TestFixture]
