@@ -11,7 +11,8 @@ namespace ProgressOnderwijsUtils.WebSupport
 	public abstract class AbstractCachedData<T> : IDisposable
 	{
 		T cachedItem;
-		bool isItemUpToDate;
+		bool isItemUpToDate, isFileListUpToDate;
+		string[] files;
 		readonly FileSystemWatcher watcher;
 		readonly DirectoryInfo dirToWatch;
 		readonly string filter;
@@ -49,11 +50,18 @@ namespace ProgressOnderwijsUtils.WebSupport
 
 		void filesystemUpdated(object sender, FileSystemEventArgs e) { InvalidateData(); }
 
-		public void InvalidateData() { isItemUpToDate = false; cachedItem = default(T); }
+		public void InvalidateData() { isItemUpToDate = false; isFileListUpToDate = false; cachedItem = default(T); }
 
-		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value; isItemUpToDate = true; lastWrite = WatchedFiles.Select(fileInfo => fileInfo.LastWriteTimeUtc).Concat(new[]{DateTime.MinValue}).Max(); } }
+		public T Data { get { if (!isItemUpToDate) Reload(); return cachedItem; } protected set { cachedItem = value; isItemUpToDate = true; lastWrite = WatchedFiles.Select(filePath => new FileInfo(filePath).LastWriteTimeUtc).Concat(new[]{DateTime.MinValue}).Max(); } }
 
-		public IEnumerable<FileInfo> WatchedFiles { get { return dirToWatch.DescendantFiles(filter); } }
+		public IEnumerable<string> WatchedFiles { get
+		{
+			if (isFileListUpToDate) return files;
+			files = Directory.GetFiles(dirToWatch.FullName, filter, SearchOption.AllDirectories);
+			isFileListUpToDate = true;
+			return files;
+		} }
+
 		//public DirectoryInfo WatchedDirectory { get { return dirToWatch; } }
 		public IEnumerable<Uri> WatchedFilesAsRelativeUris(DirectoryInfo baseDirectory)
 		{
@@ -61,7 +69,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 			if (!path.EndsWith(Path.DirectorySeparatorChar.ToString()))
 				path = path + Path.DirectorySeparatorChar;
 			Uri baseUri = new Uri(path, UriKind.Absolute);
-			return WatchedFiles.Select(fi => baseUri.MakeRelativeUri(new Uri(fi.FullName, UriKind.Absolute)));
+			return WatchedFiles.Select(fi => baseUri.MakeRelativeUri(new Uri(fi, UriKind.Absolute)));
 		}
 
 
