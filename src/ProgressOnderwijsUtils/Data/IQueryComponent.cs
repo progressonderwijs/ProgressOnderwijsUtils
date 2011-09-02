@@ -68,9 +68,11 @@ namespace ProgressOnderwijsUtils.Data
 			}
 
 
-			public bool Equals(IQueryComponent other) { return (other is ParamComponent) && Equals(paramval, ((ParamComponent)other).paramval); }
+			public bool Equals(IQueryComponent other) { return ReferenceEquals(this, other) || (other is ParamComponent) && paramval != DBNull.Value && !(paramval is int) && Equals(paramval, ((ParamComponent)other).paramval); }
 			public override bool Equals(object obj) { return (obj is ParamComponent) && Equals((ParamComponent)obj); }
-			public override int GetHashCode() { return paramval.GetHashCode() + 37; }//paramval never null!
+			public override int GetHashCode() { return paramval.GetHashCode() +  (paramval == DBNull.Value || paramval is int ? base.GetHashCode() : 37); }//paramval never null!
+			//public bool Equals(IQueryComponent other) { return (other is ParamComponent) && ReferenceEquals(this, other); }
+
 		}
 
 		public static IQueryComponent CreateString(string val) { return new StringComponent(val); }
@@ -83,10 +85,10 @@ namespace ProgressOnderwijsUtils.Data
 		[Test]
 		public void ValidatesArgumentsOK()
 		{
-			Assert.Throws<ArgumentNullException>(()=>QueryComponent.CreateString(null));
+			Assert.Throws<ArgumentNullException>(() => QueryComponent.CreateString(null));
 			Assert.DoesNotThrow(() => QueryComponent.CreateString("bla"));
 
-			PAssert.That(() => QueryComponent.CreateString("bla"+0).GetHashCode() == QueryComponent.CreateString("bla0").GetHashCode());
+			PAssert.That(() => QueryComponent.CreateString("bla" + 0).GetHashCode() == QueryComponent.CreateString("bla0").GetHashCode());
 			PAssert.That(() => QueryComponent.CreateString("bla" + 0).GetHashCode() != QueryComponent.CreateString("bla").GetHashCode());
 			PAssert.That(() => QueryComponent.CreateString("bla" + 0).Equals(QueryComponent.CreateString("bla0")));
 
@@ -94,7 +96,7 @@ namespace ProgressOnderwijsUtils.Data
 			PAssert.That(() => QueryComponent.CreateParam("bla" + 0).GetHashCode() != QueryComponent.CreateParam("bla").GetHashCode());
 			PAssert.That(() => QueryComponent.CreateParam("bla" + 0).Equals(QueryComponent.CreateParam("bla0")));
 
-			var someday = new DateTime(2012,3,4);
+			var someday = new DateTime(2012, 3, 4);
 			PAssert.That(() => QueryComponent.CreateParam(someday).ToDebugText() == "'2012-03-04 00:00:00.0000000'");
 			PAssert.That(() => QueryComponent.CreateParam(null).ToDebugText() == "null");
 			PAssert.That(() => QueryComponent.CreateParam("abc").ToDebugText() == "'abc'");
