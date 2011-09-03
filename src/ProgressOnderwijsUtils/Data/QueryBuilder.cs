@@ -222,6 +222,5 @@ namespace ProgressOnderwijsUtils
 		public static bool operator !=(QueryBuilder a, QueryBuilder b) { return !(a == b); }
 		public override int GetHashCode() { return HashCodeHelper.ComputeHash(CanonicalReverseComponents.ToArray()) + 123; }
 		public override string ToString() { return DebugText(); }
-
 	}
 }

@@ -9,12 +9,17 @@ namespace ProgressOnderwijsUtils.Data
 	public interface IQueryParameter
 	{
 		SqlParameter ToParameter(QueryParamNumberer qnum);
+		bool QueryEquals(IQueryParameter other);
+		int QueryHashCode();
+
 	}
+
 	public class QueryParamNumberer
 	{
 		readonly List<IQueryParameter> parms = new List<IQueryParameter>();
+		
 
-		readonly Dictionary<IQueryParameter, int> lookup = new Dictionary<IQueryParameter, int>();
+		readonly Dictionary<IQueryParameter, int> lookup = new Dictionary<IQueryParameter, int>(QueryComponent.QueryParamEquality.Instance);
 		public int GetNumberForParam(IQueryParameter o)
 		{
 			int retval;

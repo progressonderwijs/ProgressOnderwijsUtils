@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils.Data
 
 	static class QueryComponent
 	{
-		public class StringComponent : IQueryComponent
+		public sealed class StringComponent : IQueryComponent
 		{
 			public readonly string val;
 			public string ToSqlString(QueryParamNumberer qnum) { return val; }
@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils.Data
 			public override int GetHashCode() { return val.GetHashCode() + 31; }
 		}
 
-		public class ParamComponent : IQueryComponent, IQueryParameter
+		sealed class ParamComponent : IQueryComponent, IQueryParameter
 		{
 			readonly object paramval;
 			internal ParamComponent(object o) { paramval = o ?? DBNull.Value; }
@@ -68,12 +68,23 @@ namespace ProgressOnderwijsUtils.Data
 			}
 
 
-			public bool Equals(IQueryComponent other) { return ReferenceEquals(this, other) || (other is ParamComponent) && paramval != DBNull.Value && !(paramval is int) && Equals(paramval, ((ParamComponent)other).paramval); }
-			public override bool Equals(object obj) { return (obj is ParamComponent) && Equals((ParamComponent)obj); }
-			public override int GetHashCode() { return paramval.GetHashCode() +  (paramval == DBNull.Value || paramval is int ? base.GetHashCode() : 37); }//paramval never null!
-			//public bool Equals(IQueryComponent other) { return (other is ParamComponent) && ReferenceEquals(this, other); }
+			public bool QueryEquals(IQueryParameter other) { return ReferenceEquals(this, other) || (other is ParamComponent) && paramval != DBNull.Value && !(paramval is int) && Equals(paramval, ((ParamComponent)other).paramval); }
+			public int QueryHashCode() { return paramval.GetHashCode() + (paramval == DBNull.Value || paramval is int ? base.GetHashCode() : 37); }//paramval never null!
 
+			public bool Equals(IQueryComponent other) { return (other is ParamComponent) && Equals(paramval, ((ParamComponent)other).paramval); }
+			public override bool Equals(object obj) { return (obj is ParamComponent) && Equals((ParamComponent)obj); }
+			public override int GetHashCode() { return paramval.GetHashCode() + 37; }//paramval never null!
 		}
+
+		public sealed class QueryParamEquality : IEqualityComparer<IQueryParameter>
+		{
+			public bool Equals(IQueryParameter x, IQueryParameter y) { return x.QueryEquals(y); }
+			public int GetHashCode(IQueryParameter obj) { return obj.QueryHashCode(); }
+			public static readonly QueryParamEquality Instance = new QueryParamEquality();
+			QueryParamEquality() { }
+		}
+
+
 
 		public static IQueryComponent CreateString(string val) { return new StringComponent(val); }
 		public static IQueryComponent CreateParam(object o) { return new ParamComponent(o); }

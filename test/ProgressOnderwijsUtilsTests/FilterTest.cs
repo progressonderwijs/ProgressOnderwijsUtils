@@ -144,13 +144,13 @@ namespace ProgressOnderwijsUtilsTests
 
 			PAssert.That(() => qAlt.Serialize() != qAltWrong.Serialize());
 			PAssert.That(() => !Equals(qAlt.Serialize(), qAltWrong.Serialize()));
-			PAssert.That(() => qAlt.Serialize().ToString() != qAltWrong.Serialize().ToString());
+			PAssert.That(() => qAlt.Serialize().ToString() == qAltWrong.Serialize().ToString());
 			PAssert.That(() => qAlt.Serialize().GetHashCode() != qAltWrong.Serialize().GetHashCode());
 			PAssert.That(() => !qAlt.Equals(qAltWrong));
 			PAssert.That(() => qAlt != qAltWrong);
 			PAssert.That(() => qAlt.GetHashCode() != qAltWrong.GetHashCode());
 			PAssert.That(() => qAlt.ToString() != qAltWrong.ToString());
-			PAssert.That(() => qAlt.Serialize().CommandText != qAltWrong.Serialize().CommandText);
+			PAssert.That(() => qAlt.Serialize().CommandText == qAltWrong.Serialize().CommandText);
 		}
 
 		[Test]
