@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils.Data
 
 
 		public static IQueryComponent CreateString(string val) { return new StringComponent(val); }
-		public static IQueryComponent CreateParam(object o) { return new ParamComponent(o); }
+		public static IQueryComponent CreateParam(object o) { return o is LiteralSqlInt ? new StringComponent(((LiteralSqlInt)o).Value.ToStringInvariant()) : (IQueryComponent)new ParamComponent(o); }
 	}
 
 	[TestFixture]

@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace ProgressOnderwijsUtils
 {
 	[Serializable]
-	public class ColumnReference : IEquatable<ColumnReference>
+	public sealed class ColumnReference : IEquatable<ColumnReference>
 	{
 		static readonly Regex okname = new Regex(@"^\w+$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 		public readonly string ColumnName;
@@ -22,4 +22,22 @@ namespace ProgressOnderwijsUtils
 		public static bool operator ==(ColumnReference a, ColumnReference b) { return ReferenceEquals(a, b) || a != null && b != null && a.Equals(b); }
 		public static bool operator !=(ColumnReference a, ColumnReference b) { return !ReferenceEquals(a, b) && (a == null || b == null || !a.Equals(b)); }
 	}
+
+	[Serializable]
+	public sealed class LiteralSqlInt : IEquatable<LiteralSqlInt>
+	{
+		public readonly int Value;
+
+		public LiteralSqlInt(int val)
+		{
+			Value = val;
+		}
+
+		public bool Equals(LiteralSqlInt other) { return Value == other.Value; }
+		public override bool Equals(object obj) { return obj is LiteralSqlInt && Equals((LiteralSqlInt)obj); }
+		public override int GetHashCode() { return 27 + Value.GetHashCode(); }
+		public static bool operator ==(LiteralSqlInt a, LiteralSqlInt b) { return ReferenceEquals(a, b) || a != null && b != null && a.Equals(b); }
+		public static bool operator !=(LiteralSqlInt a, LiteralSqlInt b) { return !ReferenceEquals(a, b) && (a == null || b == null || !a.Equals(b)); }
+	}
+
 }
