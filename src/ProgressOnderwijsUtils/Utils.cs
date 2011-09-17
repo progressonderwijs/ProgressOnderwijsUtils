@@ -90,6 +90,18 @@ namespace ProgressOnderwijsUtils
 		{
 			return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month);
 		}
+
+		public static DateTime? DateMax(DateTime? d1, DateTime? d2)
+		{
+			if (d1 == null)
+				return d2;
+
+			if (d2 == null)
+				return d1;
+
+			return d2 > d1 ? d2 : d1;
+		}
+
 	}
 
 	[TestFixture]
@@ -159,11 +171,61 @@ namespace ProgressOnderwijsUtils
 			yield return new TestCaseData(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)).Returns(9);
 			yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
 		}
-		[Test, TestCaseSource("MaandSpan")]
+		[Test]
 		public int MaandSpanTest(DateTime d1, DateTime d2)
 		{
 			return Utils.MaandSpan(d1, d2);
 		}
+
+		private IEnumerable<TestCaseData> DateMax()
+		{
+			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)).Returns(0);
+			yield return new TestCaseData(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)).Returns(4);
+			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2001, 1, 1)).Returns(12);
+			yield return new TestCaseData(new DateTime(2001, 1, 1), new DateTime(2000, 1, 1)).Returns(12);
+			yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 2, 1)).Returns(5);
+			yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 4, 1)).Returns(7);
+			yield return new TestCaseData(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)).Returns(9);
+			yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
+		}
+
+		[Test]
+		public void DateMaxTest()
+		{
+			DateTime? d1 = null;
+			DateTime? d2 = null;
+
+			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(null));
+
+			d1 = DateTime.Today;
+			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d1));
+
+			d1 = null;
+			d2 = DateTime.Today;
+			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
+
+			d1 = DateTime.Today;
+			d2 = DateTime.Today;
+			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d1));
+
+			d1 = DateTime.Today.AddDays(-1);
+			d2 = DateTime.Today;
+			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
+
+			d1 = DateTime.Today.AddDays(1);
+			d2 = DateTime.Today;
+			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d1));
+
+			d1 = DateTime.Today;
+			d2 = DateTime.Today.AddDays(-1);
+			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d1));
+
+			d1 = DateTime.Today;
+			d2 = DateTime.Today.AddDays(1);
+			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
+
+		}
+
 
 
 	}
