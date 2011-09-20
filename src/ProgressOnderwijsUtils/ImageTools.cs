@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtils
 			int oldWidth = oldImage.Width;
 			int oldHeight = oldImage.Height;
 			Bitmap bitmap = null;
-			Rectangle clipRectangle = ImageTools.ClipRectangle(oldWidth, oldHeight, newWidth, newHeight);
+			Rectangle clipRectangle = ClipRectangle(oldWidth, oldHeight, newWidth, newHeight);
 			if (clipRectangle.Width * clipRectangle.Height < newWidth * newHeight)
 			{
 				newWidth = clipRectangle.Width;
@@ -103,17 +103,17 @@ namespace ProgressOnderwijsUtils
 		/// <returns>The bytes of the resulting JPEG, or NULL if the original is corrupt or too large.</returns>
 		public static byte[] Downscale_Clip_ConvertToJpeg(byte[] origImageData, int targetWidth, int targetHeight)
 		{
-			using (Image uploadedImage = ImageTools.ToImage(origImageData))
+			using (Image uploadedImage = ToImage(origImageData))
 			{
 				int oldHeight = uploadedImage.Height;
 				int oldWidth = uploadedImage.Width;
 
 				if (oldHeight > MAX_IMAGE_DIMENSION || oldWidth > MAX_IMAGE_DIMENSION || oldHeight < 1 || oldWidth < 1)
 					return null;
-				using (Bitmap thumbnail = ImageTools.DownscaleAndClip(uploadedImage, targetWidth, targetHeight))
+				using (Bitmap thumbnail = DownscaleAndClip(uploadedImage, targetWidth, targetHeight))
 				using (MemoryStream ms = new MemoryStream())
 				{
-					ImageTools.SaveImageAsJpeg(thumbnail, ms);
+					SaveImageAsJpeg(thumbnail, ms);
 					return ms.ToArray();
 				}
 			}
@@ -157,6 +157,16 @@ namespace ProgressOnderwijsUtils
 				encParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)(quality??90));//quality should be in the range [0..100]
 				image.Save(outputStream, jpgInfo, encParams);
 			}
+		}
+
+		public static void SaveResizedImage(byte[] pasfoto, int targetWidth, int targetHeight, Stream outputStream)
+		{
+			using (Image fromDatabase = ToImage(pasfoto))
+				if (fromDatabase.Height == targetHeight)
+					outputStream.Write(pasfoto, 0, pasfoto.Length);
+				else
+					using (Image smallImage = Resize(fromDatabase, targetWidth, targetHeight))
+						SaveImageAsJpeg(smallImage, outputStream);
 		}
 	}
 }

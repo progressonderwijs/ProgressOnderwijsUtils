@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Test.CodeStyle;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.WebSupport;
+using Progress.WebFramework.Internal;
 
 namespace ProgressOnderwijsUtilsTests
 {
