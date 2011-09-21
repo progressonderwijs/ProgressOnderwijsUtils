@@ -85,7 +85,7 @@ namespace ProgressOnderwijsUtils
 
 		public static bool CanReferenceColumn(this BooleanComparer comparer)
 		{
-			return comparer.In(BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual);
+			return comparer.In(BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual);
 		}
 
 		public static string NiceString(this BooleanComparer comparer)
