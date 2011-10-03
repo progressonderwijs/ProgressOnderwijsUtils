@@ -101,7 +101,6 @@ namespace ProgressOnderwijsUtils
 
 			return d2 > d1 ? d2 : d1;
 		}
-
 	}
 
 	[TestFixture]
