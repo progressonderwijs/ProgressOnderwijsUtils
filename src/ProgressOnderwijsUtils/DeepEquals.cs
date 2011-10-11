@@ -79,7 +79,7 @@ namespace ProgressOnderwijsUtils
 
 		static IEnumerable<AccessibleMember> GetGetters(Type type)
 		{
-			var propertyMembers = type.GetProperties().Where(pi => pi.CanRead && pi.GetIndexParameters().Length == 0).Select(pi => new AccessibleMember { DeclaredType = pi.PropertyType, Getter = obj => pi.GetValue(obj, null), });
+			var propertyMembers = type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(pi => pi.CanRead && pi.GetIndexParameters().Length == 0).Select(pi => new AccessibleMember { DeclaredType = pi.PropertyType, Getter = obj => pi.GetValue(obj, null), });
 			var fieldMembers = type.GetFields().Select(fi => new AccessibleMember { DeclaredType = fi.FieldType, Getter = fi.GetValue, });
 			return fieldMembers.Concat(propertyMembers).ToArray();
 		}
@@ -104,7 +104,7 @@ namespace ProgressOnderwijsUtils
 
 		static MethodInfo TypeBuiltinEquals(Type type)
 		{
-			return type.GetMethod("Equals", BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.ExactBinding, null, new[] { type }, null);
+			return type.IsValueType ? type.GetMethod("Equals", BindingFlags.Instance | BindingFlags.Public | BindingFlags.ExactBinding, null, new[] { type }, null) : type.GetMethod("Equals", BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.ExactBinding, null, new[] { type }, null);
 		}
 
 		static bool CompareWithBuiltinEquals(MethodInfo builtinEquals, object o1_nonnull, object o2) { return (bool)builtinEquals.Invoke(o1_nonnull, new[] { o2 }); }
@@ -154,7 +154,7 @@ namespace ProgressOnderwijsUtils
 
 		class XT
 		{
-// ReSharper disable UnaccessedField.Local
+			// ReSharper disable UnaccessedField.Local
 #pragma warning disable 649
 			public decimal BC;
 			public string XYZ { get; set; }
