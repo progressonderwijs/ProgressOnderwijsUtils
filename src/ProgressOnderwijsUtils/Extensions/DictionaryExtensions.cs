@@ -59,9 +59,12 @@ namespace ProgressOnderwijsUtils
 
 		public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> factory)
 		{
-			if (!dict.ContainsKey(key))
-				dict.Add(key, factory());
-			return dict[key];
+			TValue val;
+			if (dict.TryGetValue(key, out val))
+				return val;
+			val = factory();
+			dict.Add(key,val);
+			return val;
 		}
 		public static TValue GetOrAdd<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dict, TKey key, Func<TValue> factory)
 		{
