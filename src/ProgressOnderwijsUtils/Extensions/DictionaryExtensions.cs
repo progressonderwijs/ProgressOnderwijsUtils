@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -61,6 +62,10 @@ namespace ProgressOnderwijsUtils
 			if (!dict.ContainsKey(key))
 				dict.Add(key, factory());
 			return dict[key];
+		}
+		public static TValue GetOrAdd<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dict, TKey key, Func<TValue> factory)
+		{
+			return dict.GetOrAdd(key, _ => factory());
 		}
 	}
 
