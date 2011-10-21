@@ -10,11 +10,25 @@ namespace ProgressOnderwijsUtils.Data
 	//tooltje om handige type-wrapper te maken.
 	public static class CodeGenHelper
 	{
+		/*public class Params
+		{
+			public readonly List<Tuple<string, object>> exampleValues;
+			public void Add(string paramname)
+			{
+				
+			}
+		}
+		public static string GetRowClassDef(string query,  DataTable dt, string name = null)
+		{
+			
+
+		}*/
+
 		public static string GetRowClassDef(DataTable dt, string name = null)
 		{
 			var columns = dt.Columns.Cast<DataColumn>().Select(col => new { Type = (col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName }).ToArray();
 			var primes = Primes().Skip(1).Take(columns.Length).ToArray();
-			name = name ?? dt.TableName ?? "XYZ";
+			name = name ?? (string.IsNullOrEmpty(dt.TableName)? "XYZ" : dt.TableName);
 			return "public sealed class " + name + " : IEquatable<" + name + "> {\n"
 				   + "\treadonly int _hashcode_auto_cached;\n"
 				   + string.Join("", columns.Select(col => "\tpublic readonly " + ObjectToCode.GetCSharpFriendlyTypeName(col.Type) + " " + col.ColumnName + ";\n"))
