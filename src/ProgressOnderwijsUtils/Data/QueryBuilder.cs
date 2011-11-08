@@ -222,5 +222,15 @@ namespace ProgressOnderwijsUtils
 		public static bool operator !=(QueryBuilder a, QueryBuilder b) { return !(a == b); }
 		public override int GetHashCode() { return HashCodeHelper.ComputeHash(CanonicalReverseComponents.ToArray()) + 123; }
 		public override string ToString() { return DebugText(); }
+
+		static readonly QueryBuilder TrueClause = Create("1=1");
+		static readonly QueryBuilder WhereKeyword = Create(" where ");
+		static readonly QueryBuilder AndKeyword = Create(" and ");
+
+
+		public static QueryBuilder CreateWhereClause(IEnumerable<QueryBuilder> predicates)
+		{
+			return WhereKeyword + predicates.DefaultIfEmpty(TrueClause).Select((pred, i) => i == 0 ? pred : AndKeyword + pred).Aggregate(Concat);
+		}
 	}
 }
