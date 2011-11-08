@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
@@ -12,75 +10,77 @@ namespace ProgressOnderwijsUtilsTests
 	public class MetaDataFactoryTest
 	{
 		[Test]
-		public void Generate([Values(false, true)] bool test)
+		public void Generate()
 		{
-			XmlDocument md = MetaDataFactory.Generate(test);
+			XmlDocument md = MetaDataFactory.Generate();
 			Assert.That(md, Is.Not.Null);
 		}
 
 		[Test]
-		public void GetCertificate([Values(false, true)] bool self, [Values(false, true)] bool test)
+		public void GetSPEntity([Values(ServiceProvider.P3W, ServiceProvider.PNet)] ServiceProvider sp)
 		{
-			X509Certificate2 cer = MetaDataFactory.GetCertificate(self, test);
-			Assert.That(cer, Is.Not.Null);
+			Assert.That(MetaDataFactory.GetSPEntity(sp), Is.Not.Null);
 		}
 
 		[Test]
-		public void GetIdPEntity([Values(null, "rug", "fontys")] string organisation, [Values(false, true)] bool test)
+		public void GetSPCertificate([Values(ServiceProvider.P3W, ServiceProvider.PNet)] ServiceProvider sp)
 		{
-			string idp = MetaDataFactory.GetIdPEntity(organisation, test);
-			Assert.That(idp, Is.Not.Null);
+			Assert.That(MetaDataFactory.GetSPCertificate(sp), Is.Not.Null);
 		}
 
 		[Test]
-		public void GetIdPInstance([Values(false, true)] bool self, [Values(false, true)] bool test)
+		public void GetIdPProvider(
+			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext)] IdentityProvider idp, 
+			[Values(false, true)] bool test)
 		{
-			SAML20MetaData md = MetaDataFactory.GetIdPInstance(self, test);
-			Assert.That(md, Is.Not.Null);
+			AssertIdp(() => MetaDataFactory.GetIdPProvider(idp, test), idp, test);
+		}
+
+		[Test]
+		public void GetIdPEntity(
+			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext)] IdentityProvider idp, 
+			[Values(false, true)] bool test)
+		{
+			AssertIdp(() => MetaDataFactory.GetIdPEntity(idp, test), idp, test);
+		}
+
+		[Test]
+		public void GetIdPCertificate(
+			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext)] IdentityProvider idp, 
+			[Values(false, true)] bool test)
+		{
+			AssertIdp(() => MetaDataFactory.GetIdpCertificate(idp, test), idp, test);
+		}
+
+		void AssertIdp(Func<object> method, IdentityProvider idp, bool test)
+		{
+			if (idp == IdentityProvider.Conext && !test)
+			{
+				Assert.That(delegate { method(); }, Throws.InstanceOf<ArgumentException>());
+			}
+			else
+			{
+				Assert.That(method(), Is.Not.Null);
+			}
 		}
 	}
 
 	[TestFixture]
 	public class MetaDataTest
 	{
-		private IEnumerable<TestCaseData> IdPSSODescriptorData()
+		[Test]
+		public void IdPSSODescriptor(
+			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext )] IdentityProvider idp, 
+			[Values(false, true)] bool test)
 		{
-			yield return new TestCaseData(false, false, MetaDataFactory.GetIdPEntity(null, false)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(false, false, MetaDataFactory.GetIdPEntity(null, true)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(false, false, MetaDataFactory.GetIdPEntity("rug", false));
-			yield return new TestCaseData(false, false, MetaDataFactory.GetIdPEntity("rug", true));
-			yield return new TestCaseData(false, false, MetaDataFactory.GetIdPEntity("fontys", false));
-			yield return new TestCaseData(false, false, MetaDataFactory.GetIdPEntity("fontys", true)).Throws(typeof(InvalidOperationException));
-
-			yield return new TestCaseData(false, true, MetaDataFactory.GetIdPEntity(null, false)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(false, true, MetaDataFactory.GetIdPEntity(null, true)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(false, true, MetaDataFactory.GetIdPEntity("rug", false));
-			yield return new TestCaseData(false, true, MetaDataFactory.GetIdPEntity("rug", true));
-			yield return new TestCaseData(false, true, MetaDataFactory.GetIdPEntity("fontys", false)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(false, true, MetaDataFactory.GetIdPEntity("fontys", true));
-
-			yield return new TestCaseData(true, false, MetaDataFactory.GetIdPEntity(null, false));
-			yield return new TestCaseData(true, false, MetaDataFactory.GetIdPEntity(null, true)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(true, false, MetaDataFactory.GetIdPEntity("rug", false)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(true, false, MetaDataFactory.GetIdPEntity("rug", true)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(true, false, MetaDataFactory.GetIdPEntity("fontys", false)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(true, false, MetaDataFactory.GetIdPEntity("fontys", true)).Throws(typeof(InvalidOperationException));
-
-			yield return new TestCaseData(true, true, MetaDataFactory.GetIdPEntity(null, false)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(true, true, MetaDataFactory.GetIdPEntity(null, true));
-			yield return new TestCaseData(true, true, MetaDataFactory.GetIdPEntity("rug", false)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(true, true, MetaDataFactory.GetIdPEntity("rug", true)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(true, true, MetaDataFactory.GetIdPEntity("fontys", false)).Throws(typeof(InvalidOperationException));
-			yield return new TestCaseData(true, true, MetaDataFactory.GetIdPEntity("fontys", true)).Throws(typeof(InvalidOperationException));
-		}
-
-		[Test, TestCaseSource("IdPSSODescriptorData")]
-		public void IdPSSODescriptor(bool self, bool test, string id)
-		{
-			SAML20MetaData sut = MetaDataFactory.GetIdPInstance(self, test);
-			XElement idp = sut.IdPSSODescriptor(id);
-			string sso = sut.SingleSignOnService(idp);
-			Assert.That(sso, Is.Not.Null);
+			if (!(idp == IdentityProvider.Conext && !test))
+			{
+				SAML20MetaData provider = MetaDataFactory.GetIdPProvider(idp, test);
+				string entity = MetaDataFactory.GetIdPEntity(idp, test);
+				XElement desc = provider.IdPSSODescriptor(entity);
+				string sso = provider.SingleSignOnService(desc);
+				Assert.That(sso, Is.Not.Null);
+			}
 		}
 	}
 }
