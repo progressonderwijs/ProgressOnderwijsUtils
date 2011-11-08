@@ -170,7 +170,7 @@ namespace ProgressOnderwijsUtils
 			yield return new TestCaseData(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)).Returns(9);
 			yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
 		}
-		[Test]
+		[Test, TestCaseSource("MaandSpan")]
 		public int MaandSpanTest(DateTime d1, DateTime d2)
 		{
 			return Utils.MaandSpan(d1, d2);
