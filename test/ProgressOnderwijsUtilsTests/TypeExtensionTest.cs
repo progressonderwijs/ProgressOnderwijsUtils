@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Business;
+using Progress.Business.GenericLijst;
 using Progress.Business.Organisatie.Financieel.Betaling;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Data;
-using Progress.Business.GenericLijst;
 using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests

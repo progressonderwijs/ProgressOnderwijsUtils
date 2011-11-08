@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
-	public class UtilsTest
+	[TestFixture] public class UtilsTest
 	{
 		//[Test]
 		//public void 
