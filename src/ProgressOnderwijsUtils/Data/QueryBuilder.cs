@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using ProgressOnderwijsUtils.Data;
-using System.Diagnostics;
 
 namespace ProgressOnderwijsUtils
 {
@@ -14,12 +13,14 @@ namespace ProgressOnderwijsUtils
 		readonly IQueryComponent value;
 		readonly QueryBuilder nestedNode;
 		readonly QueryBuilder prev;
+
 		QueryBuilder(IQueryComponent then)
 		{
 			Debug.Assert(then != null);
 			prev = null;
 			value = then;
 		}
+
 		QueryBuilder(QueryBuilder prefix, IQueryComponent then)
 		{
 			if (null == prefix) throw new ArgumentNullException("prefix");
@@ -28,6 +29,7 @@ namespace ProgressOnderwijsUtils
 			prev = prefix.IsEmpty ? null : prefix;
 			value = then;
 		}
+
 		QueryBuilder(QueryBuilder prefix, QueryBuilder then)
 		{
 			if (null == prefix) throw new ArgumentNullException("prefix");
@@ -35,12 +37,12 @@ namespace ProgressOnderwijsUtils
 			prev = prefix;
 			nestedNode = then;
 		}
+
 		QueryBuilder() { }
 		public static readonly QueryBuilder Empty = new QueryBuilder();
 
 		public bool IsEmpty { get { return null == value && null == nestedNode; } }
 		public bool IsSingleElement { get { return null == prev && null != value; } }
-
 
 		//INVARIANT:
 		// IF nestedNode != null THEN prev !=null; conversely IF prev == null THEN nestedNode == null 
@@ -51,10 +53,7 @@ namespace ProgressOnderwijsUtils
 		public static QueryBuilder operator +(string a, QueryBuilder b) { return Concat(Create(a), b); }
 		public static explicit operator QueryBuilder(string a) { return Create(a); }
 
-		static QueryBuilder Concat(QueryBuilder query, IQueryComponent part)
-		{
-			return null == part ? query : new QueryBuilder(query, part);
-		}
+		static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) { return null == part ? query : new QueryBuilder(query, part); }
 
 		static QueryBuilder Concat(QueryBuilder first, QueryBuilder second)
 		{
@@ -66,10 +65,10 @@ namespace ProgressOnderwijsUtils
 			else return new QueryBuilder(first, second);
 		}
 
-
 		public static QueryBuilder Create(string str) { return new QueryBuilder(QueryComponent.CreateString(str)); }
 		public static QueryBuilder Param(object o) { return new QueryBuilder(QueryComponent.CreateParam(o)); }
 		public static QueryBuilder Create(string str, params object[] parms) { return Create(Empty, str, parms); }
+
 		public static QueryBuilder Create(QueryBuilder prefix, string str, params object[] parms)
 		{
 			IQueryComponent[] parValues = parms.Select(QueryComponent.CreateParam).ToArray();
@@ -91,10 +90,7 @@ namespace ProgressOnderwijsUtils
 
 		static readonly Regex paramsRegex = new Regex(@"\{(?<paramRef>\d+)\}|(?<queryText>((?!\{\d+\}).)+)", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
 
-		public static QueryBuilder CreateFromFilter(FilterBase filter, Dictionary<string, string> computedcolumns)
-		{
-			return "and " + filter.ToSqlString(computedcolumns) + " ";
-		}
+		public static QueryBuilder CreateFromFilter(FilterBase filter, Dictionary<string, string> computedcolumns) { return "and " + filter.ToSqlString(computedcolumns) + " "; }
 
 		public static QueryBuilder CreateFromSortOrder(OrderByColumns mostSignificantColumnFirst)
 		{
@@ -108,7 +104,12 @@ namespace ProgressOnderwijsUtils
 		{
 			public readonly string CommandText;
 			public readonly SqlParameter[] Params;
-			public SerializedQuery(string text, SqlParameter[] parms) { CommandText = text; Params = parms; }
+
+			public SerializedQuery(string text, SqlParameter[] parms)
+			{
+				CommandText = text;
+				Params = parms;
+			}
 
 			public bool Equals(SerializedQuery other) { return CommandText == other.CommandText && Params.Select(p => p.Value).SequenceEqual(other.Params.Select(p => p.Value)); }
 			public override bool Equals(object obj) { return obj is SerializedQuery && Equals((SerializedQuery)obj); }
@@ -116,15 +117,12 @@ namespace ProgressOnderwijsUtils
 			public override int GetHashCode()
 			{
 				return 11 + CommandText.GetHashCode() - Params.Length +
-					Params.Select((p, i) => p.Value.GetHashCode() * (i * 2 + 1)).Aggregate(0, (a, b) => a + b); //don't use Sum because sum does overflow checking.
+				       Params.Select((p, i) => p.Value.GetHashCode() * (i * 2 + 1)).Aggregate(0, (a, b) => a + b); //don't use Sum because sum does overflow checking.
 			}
 
 			public static bool operator ==(SerializedQuery a, SerializedQuery b) { return ReferenceEquals(a, b) || null != a && null != b && a.Equals(b); } //watch out: a!=null would create infinite recursion.
 			public static bool operator !=(SerializedQuery a, SerializedQuery b) { return !(a == b); }
-			public override string ToString()
-			{
-				return "{ CommandText = \"" + CommandText + "\", Params = {" + Params.Select(p => p.Value == DBNull.Value ? "NULL" : p.Value.ToString()).JoinStrings(", ") + "} }";
-			}
+			public override string ToString() { return "{ CommandText = \"" + CommandText + "\", Params = {" + Params.Select(p => p.Value == DBNull.Value ? "NULL" : p.Value.ToString()).JoinStrings(", ") + "} }"; }
 		}
 
 		public SerializedQuery Serialize()
@@ -133,7 +131,7 @@ namespace ProgressOnderwijsUtils
 			IQueryComponent[] components = ComponentsInReverseOrder.ToArray();
 			Array.Reverse(components);
 			var queryString = components.Select(component => component.ToSqlString(qnum)).JoinStrings();
-			var sqlParams = qnum.SqlParamters;//any parameter that was used in ToSqlString is in the numberer
+			var sqlParams = qnum.SqlParamters; //any parameter that was used in ToSqlString is in the numberer
 			return new SerializedQuery(queryString, sqlParams);
 		}
 
@@ -205,19 +203,11 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-
-
 		public override bool Equals(object obj) { return Equals(obj as QueryBuilder); }
 
-		public static bool operator ==(QueryBuilder a, QueryBuilder b)
-		{
-			return ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b);
-		}
+		public static bool operator ==(QueryBuilder a, QueryBuilder b) { return ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b); }
 
-		public bool Equals(QueryBuilder other)
-		{
-			return !ReferenceEquals(other, null) && CanonicalReverseComponents.SequenceEqual(other.CanonicalReverseComponents);
-		}
+		public bool Equals(QueryBuilder other) { return !ReferenceEquals(other, null) && CanonicalReverseComponents.SequenceEqual(other.CanonicalReverseComponents); }
 
 		public static bool operator !=(QueryBuilder a, QueryBuilder b) { return !(a == b); }
 		public override int GetHashCode() { return HashCodeHelper.ComputeHash(CanonicalReverseComponents.ToArray()) + 123; }
@@ -227,10 +217,6 @@ namespace ProgressOnderwijsUtils
 		static readonly QueryBuilder WhereKeyword = Create(" where ");
 		static readonly QueryBuilder AndKeyword = Create(" and ");
 
-
-		public static QueryBuilder CreateWhereClause(IEnumerable<QueryBuilder> predicates)
-		{
-			return WhereKeyword + predicates.DefaultIfEmpty(TrueClause).Select((pred, i) => i == 0 ? pred : AndKeyword + pred).Aggregate(Concat);
-		}
+		public static QueryBuilder CreateWhereClause(IEnumerable<QueryBuilder> predicates) { return WhereKeyword + predicates.DefaultIfEmpty(TrueClause).Select((pred, i) => i == 0 ? pred : AndKeyword + pred).Aggregate(Concat); }
 	}
 }

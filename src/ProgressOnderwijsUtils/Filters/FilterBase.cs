@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
-	[Serializable]
-	public abstract class FilterBase
+	[Serializable] public abstract class FilterBase
 	{
 		protected internal abstract QueryBuilder ToSqlStringImpl(Func<string, string> colRename);
 		protected internal abstract FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith);
