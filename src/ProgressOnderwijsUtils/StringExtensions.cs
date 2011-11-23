@@ -115,7 +115,5 @@ namespace ProgressOnderwijsUtils
 								   );
 		}
 	}
-
-
 }
 
