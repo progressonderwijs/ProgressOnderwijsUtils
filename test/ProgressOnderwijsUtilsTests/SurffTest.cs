@@ -73,14 +73,11 @@ namespace ProgressOnderwijsUtilsTests
 			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext )] IdentityProvider idp, 
 			[Values(false, true)] bool test)
 		{
-			if (!(idp == IdentityProvider.Conext && !test))
-			{
-				SAML20MetaData provider = MetaDataFactory.GetIdPProvider(idp, test);
-				string entity = MetaDataFactory.GetIdPEntity(idp, test);
-				XElement desc = provider.IdPSSODescriptor(entity);
-				string sso = provider.SingleSignOnService(desc);
-				Assert.That(sso, Is.Not.Null);
-			}
+			SAML20MetaData provider = MetaDataFactory.GetIdPProvider(idp, test);
+			string entity = MetaDataFactory.GetIdPEntity(idp, test);
+			XElement desc = provider.IdPSSODescriptor(entity);
+			string sso = provider.SingleSignOnService(desc);
+			Assert.That(sso, Is.Not.Null);
 		}
 	}
 }
