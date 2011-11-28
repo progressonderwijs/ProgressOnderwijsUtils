@@ -54,14 +54,7 @@ namespace ProgressOnderwijsUtilsTests
 
 		void AssertIdp(Func<object> method, IdentityProvider idp, bool test)
 		{
-			if (idp == IdentityProvider.Conext && !test)
-			{
-				Assert.That(delegate { method(); }, Throws.InstanceOf<ArgumentException>());
-			}
-			else
-			{
-				Assert.That(method(), Is.Not.Null);
-			}
+			Assert.That(method(), Is.Not.Null);
 		}
 	}
 
