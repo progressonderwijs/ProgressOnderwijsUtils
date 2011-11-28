@@ -114,6 +114,12 @@ namespace ProgressOnderwijsUtils
 										 Regex.Replace(current, t, t.Length > 0 ? t.Substring(0, 1).ToUpper() + t.Substring(1).ToLower() : t)
 								   );
 		}
+
+		public static string TrimToLength(this string s, int maxlength)
+		{
+			if (s == null || s.Length <= maxlength) return s;
+			else return s.Remove(maxlength);
+		}
 	}
 }
 
