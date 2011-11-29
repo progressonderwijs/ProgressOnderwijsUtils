@@ -10,9 +10,9 @@ namespace ProgressOnderwijsUtilsTests
 	public class MetaDataFactoryTest
 	{
 		[Test]
-		public void Generate()
+		public void Generate([Values(false, true)] bool test)
 		{
-			XmlDocument md = MetaDataFactory.Generate();
+			XmlDocument md = MetaDataFactory.Generate(test);
 			Assert.That(md, Is.Not.Null);
 		}
 
