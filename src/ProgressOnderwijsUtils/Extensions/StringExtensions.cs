@@ -121,14 +121,16 @@ namespace ProgressOnderwijsUtils
 			else return s.Remove(maxlength);
 		}
 
-		static bool isVowel(char c) { return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'; }
+		static bool isVowel(char c) { return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U'; }
 
 		public static string Depluralize(string pluralstring)
 		{
 			if (pluralstring.EndsWith("s")) return pluralstring.Remove(pluralstring.Length - 1);
 			if (pluralstring.EndsWith("en"))
-				if (pluralstring.Length > 4 && isVowel(pluralstring[pluralstring.Length - 4]))
-					return pluralstring.Remove(pluralstring.Length - 3) + pluralstring.Substring(pluralstring.Length - 4, 2);
+				if (pluralstring.Length >= 4 && isVowel(pluralstring[pluralstring.Length - 4]) && (pluralstring.Length < 5 || !isVowel(pluralstring[pluralstring.Length - 5])))
+					return pluralstring.Remove(pluralstring.Length - 3) + pluralstring.Substring(pluralstring.Length - 4, 2).ToLowerInvariant();
+				else if (pluralstring.Length >= 4 && pluralstring[pluralstring.Length - 4] == pluralstring[pluralstring.Length - 3])
+					return pluralstring.Remove(pluralstring.Length - 3);
 				else
 					return pluralstring.Remove(pluralstring.Length - 2);
 			else
