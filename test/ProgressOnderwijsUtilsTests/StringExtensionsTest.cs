@@ -83,6 +83,9 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase("Taal", Result = "Taal")]
 		[TestCase("Talen", Result = "Taal")]
 		[TestCase("Cases", Result = "Case")]
+		[TestCase("Fouten", Result = "Fout")]
+		[TestCase("Sappen", Result = "Sap")]
+		[TestCase("Apen", Result = "Aap")]
 		public string testDepluralize(string inp)
 		{
 			return StringExtensions.Depluralize(inp);
