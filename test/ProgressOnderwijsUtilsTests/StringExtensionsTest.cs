@@ -78,6 +78,18 @@ namespace ProgressOnderwijsUtilsTests
 			return inp.Name2UpperCasedName();
 		}
 
+		[TestCase("Tests", Result = "Test")]
+		[TestCase("Testen", Result = "Test")]
+		[TestCase("Taal", Result = "Taal")]
+		[TestCase("Talen", Result = "Taal")]
+		[TestCase("Cases", Result = "Case")]
+		public string testDepluralize(string inp)
+		{
+			return StringExtensions.Depluralize(inp);
+		}
+
+
+
 		[Test]
 		public void ToStringInvariantTest()
 		{

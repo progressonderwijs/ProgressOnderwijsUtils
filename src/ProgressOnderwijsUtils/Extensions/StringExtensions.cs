@@ -120,6 +120,20 @@ namespace ProgressOnderwijsUtils
 			if (s == null || s.Length <= maxlength) return s;
 			else return s.Remove(maxlength);
 		}
+
+		static bool isVowel(char c) { return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u'; }
+
+		public static string Depluralize(string pluralstring)
+		{
+			if (pluralstring.EndsWith("s")) return pluralstring.Remove(pluralstring.Length - 1);
+			if (pluralstring.EndsWith("en"))
+				if (pluralstring.Length > 4 && isVowel(pluralstring[pluralstring.Length - 4]))
+					return pluralstring.Remove(pluralstring.Length - 3) + pluralstring.Substring(pluralstring.Length - 4, 2);
+				else
+					return pluralstring.Remove(pluralstring.Length - 2);
+			else
+				return pluralstring;
+		}
 	}
 }
 
