@@ -49,6 +49,10 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void Debug()
 		{
+			SetLevel(Level.Debug);
+			Assert.That(() => sut.Debug(() => { throw new Exception("unexpected");}), Throws.TypeOf<Exception>());	
+			Assert.That(() => sut.Debug(() => { throw new Exception("unexpected");}, new Exception()), Throws.TypeOf<Exception>());	
+
 			SetLevel(Level.Info);
 			sut.Debug(() => { throw new Exception("unexpected");});	
 			sut.Debug(() => { throw new Exception("unexpected");}, new Exception());	
@@ -57,6 +61,10 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void Info()
 		{
+			SetLevel(Level.Info);
+			Assert.That(() => sut.Info(() => { throw new Exception("unexpected");}), Throws.TypeOf<Exception>());	
+			Assert.That(() => sut.Info(() => { throw new Exception("unexpected");}, new Exception()), Throws.TypeOf<Exception>());	
+
 			SetLevel(Level.Warn);
 			sut.Info(() => { throw new Exception("unexpected");});	
 			sut.Info(() => { throw new Exception("unexpected");}, new Exception());	
@@ -65,6 +73,10 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void Warn()
 		{
+			SetLevel(Level.Warn);
+			Assert.That(() => sut.Warn(() => { throw new Exception("unexpected");}), Throws.TypeOf<Exception>());	
+			Assert.That(() => sut.Warn(() => { throw new Exception("unexpected");}, new Exception()), Throws.TypeOf<Exception>());	
+
 			SetLevel(Level.Error);
 			sut.Warn(() => { throw new Exception("unexpected");});	
 			sut.Warn(() => { throw new Exception("unexpected");}, new Exception());	
@@ -73,6 +85,10 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void Error()
 		{
+			SetLevel(Level.Error);
+			Assert.That(() => sut.Error(() => { throw new Exception("unexpected");}), Throws.TypeOf<Exception>());	
+			Assert.That(() => sut.Error(() => { throw new Exception("unexpected");}, new Exception()), Throws.TypeOf<Exception>());	
+
 			SetLevel(Level.Fatal);
 			sut.Error(() => { throw new Exception("unexpected");});	
 			sut.Error(() => { throw new Exception("unexpected");}, new Exception());	
@@ -81,6 +97,10 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void Fatal()
 		{
+			SetLevel(Level.Fatal);
+			Assert.That(() => sut.Fatal(() => { throw new Exception("unexpected");}), Throws.TypeOf<Exception>());	
+			Assert.That(() => sut.Fatal(() => { throw new Exception("unexpected");}, new Exception()), Throws.TypeOf<Exception>());	
+
 			SetLevel(Level.Off);
 			sut.Fatal(() => { throw new Exception("unexpected");});	
 			sut.Fatal(() => { throw new Exception("unexpected");}, new Exception());	
