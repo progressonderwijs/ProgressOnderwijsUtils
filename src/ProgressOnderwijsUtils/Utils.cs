@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 		public static void TestErrorOutOfMemory()
 		{
 			List<byte[]> memorySlurper = new List<byte[]>();
-			for (long i = 0; i < long.MaxValue; i++) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
+			for (long i = 0; i < Int64.MaxValue; i++) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
 				memorySlurper.Add(Encoding.UTF8.GetBytes(@"This is a simply string which is repeatedly put in memory to test the Out Of Memory condition.  It's encoded to make sure the program really touches the data and that therefore the OS really needs to allocate the memory, and can't just 'pretend'."));
 		}
 
@@ -101,6 +101,35 @@ namespace ProgressOnderwijsUtils
 
 			return d2 > d1 ? d2 : d1;
 		}
+
+		public static bool GenerateForLanguage(DocumentLanguage doc, Taal language)
+		{
+			bool result;
+			switch (doc)
+			{
+			case DocumentLanguage.Dutch:
+				result = language == Taal.NL;
+				break;
+			case DocumentLanguage.English:
+				result = language == Taal.EN;
+				break;
+			case DocumentLanguage.German:
+				result = language == Taal.DU;
+				break;
+			case DocumentLanguage.StudentPreferenceNlEn:
+				result = language == Taal.NL || language == Taal.EN;
+				break;
+			case DocumentLanguage.CoursePreferenceNlEn:
+				result = language == Taal.NL || language == Taal.EN;
+				break;
+			case DocumentLanguage.StudentPreferenceNlEnDu:
+				result = language == Taal.NL || language == Taal.EN || language == Taal.DU;
+				break;
+			default:
+				throw new ArgumentOutOfRangeException();
+			}
+			return result;
+		}
 	}
 
 	[TestFixture]
@@ -170,6 +199,7 @@ namespace ProgressOnderwijsUtils
 			yield return new TestCaseData(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)).Returns(9);
 			yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
 		}
+
 		[Test, TestCaseSource("MaandSpan")]
 		public int MaandSpanTest(DateTime d1, DateTime d2)
 		{
@@ -222,11 +252,31 @@ namespace ProgressOnderwijsUtils
 			d1 = DateTime.Today;
 			d2 = DateTime.Today.AddDays(1);
 			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
-
 		}
 
-
-
+		[Test]
+		[TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true)]
+		[TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false)]
+		[TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false)]
+		[TestCase(DocumentLanguage.English, Taal.NL, Result = false)]
+		[TestCase(DocumentLanguage.English, Taal.EN, Result = true)]
+		[TestCase(DocumentLanguage.English, Taal.DU, Result = false)]
+		[TestCase(DocumentLanguage.German, Taal.NL, Result = false)]
+		[TestCase(DocumentLanguage.German, Taal.EN, Result = false)]
+		[TestCase(DocumentLanguage.German, Taal.DU, Result = true)]
+		[TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true)]
+		[TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true)]
+		[TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false)]
+		[TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true)]
+		[TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true)]
+		[TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true)]
+		[TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true)]
+		[TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true)]
+		[TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
+		public bool GenerateForLanguage(DocumentLanguage doc, Taal language)
+		{
+			return Utils.GenerateForLanguage(doc, language);
+		}
 	}
 
 	[TestFixture]
