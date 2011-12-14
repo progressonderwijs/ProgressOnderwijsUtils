@@ -6,7 +6,7 @@ namespace ProgressOnderwijsUtils
 {
 	public static class Filter
 	{
-		public static QueryBuilder ToSqlString(this FilterBase filter, Func<string, string> colRename) { return filter == null ? QueryBuilder.Create("1=1") : filter.ToSqlStringImpl(colRename); }
+		public static QueryBuilder ToQueryBuilder(this FilterBase filter) { return filter == null ? QueryBuilder.Create("1=1") : filter.ToQueryBuilderImpl(); }
 
 		public static FilterBase Replace(this FilterBase filter, FilterBase toReplace, FilterBase replaceWith)
 		{
@@ -19,17 +19,6 @@ namespace ProgressOnderwijsUtils
 			return filter == null
 			       	? (filterInEditMode == null ? c : null)
 			       	: filter.AddToImpl(filterInEditMode, booleanOperator, c);
-		}
-
-		public static QueryBuilder ToSqlString(this FilterBase filter, Dictionary<string, string> computedcolumns)
-		{
-			if (computedcolumns == null) return filter.ToSqlString(x => x);
-			return filter.ToSqlString(col =>
-			{
-				string outcol;
-				if (computedcolumns.TryGetValue(col, out outcol)) return outcol;
-				else return col;
-			});
 		}
 
 		public static FilterBase Remove(this FilterBase filter, FilterBase filterToRemove) { return filter.ReplaceImpl(filterToRemove, null); }

@@ -27,51 +27,50 @@ namespace ProgressOnderwijsUtils
 
 		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde) { _KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde; }
 
-		protected internal override QueryBuilder ToSqlStringImpl(Func<string, string> colRename)
+		protected internal override QueryBuilder ToQueryBuilderImpl()
 		{
-			string kolomNaamMapped = colRename(KolomNaam);
 			switch (Comparer)
 			{
 				case BooleanComparer.LessThan:
-					return kolomNaamMapped + "<" + BuildParam(colRename);
+					return KolomNaam + "<" + BuildParam();
 				case BooleanComparer.LessThanOrEqual:
-					return kolomNaamMapped + "<=" + BuildParam(colRename);
+					return KolomNaam + "<=" + BuildParam();
 				case BooleanComparer.Equal:
-					return kolomNaamMapped + "=" + BuildParam(colRename);
+					return KolomNaam + "=" + BuildParam();
 				case BooleanComparer.GreaterThanOrEqual:
-					return kolomNaamMapped + ">=" + BuildParam(colRename);
+					return KolomNaam + ">=" + BuildParam();
 				case BooleanComparer.GreaterThan:
-					return kolomNaamMapped + ">" + BuildParam(colRename);
+					return KolomNaam + ">" + BuildParam();
 				case BooleanComparer.NotEqual:
-					return kolomNaamMapped + "!=" + BuildParam(colRename);
+					return KolomNaam + "!=" + BuildParam();
 				case BooleanComparer.In:
 					if (Waarde is GroupReference)
 					{
-						return kolomNaamMapped + " in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
+						return KolomNaam + " in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
 					}
 					else
 					{
 						string[] nrs = Waarde.ToString().Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-						string clause = kolomNaamMapped + " in (" + Enumerable.Range(0, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
+						string clause = KolomNaam + " in (" + Enumerable.Range(0, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
 						return QueryBuilder.Create(clause, nrs.Cast<object>().ToArray());
 					}
 				case BooleanComparer.StartsWith:
-					return kolomNaamMapped + " like " + QueryBuilder.Param(Waarde + "%");
+					return KolomNaam + " like " + QueryBuilder.Param(Waarde + "%");
 				case BooleanComparer.Contains:
-					return kolomNaamMapped + " like " + QueryBuilder.Param("%" + Waarde + "%");
+					return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde + "%");
 				case BooleanComparer.IsNull:
-					return QueryBuilder.Create(kolomNaamMapped + " is null");
+					return QueryBuilder.Create(KolomNaam + " is null");
 				case BooleanComparer.IsNotNull:
-					return QueryBuilder.Create(kolomNaamMapped + " is not null");
+					return QueryBuilder.Create(KolomNaam + " is not null");
 				default:
 					throw new InvalidOperationException("Geen geldige operator");
 			}
 		}
 
-		QueryBuilder BuildParam(Func<string, string> colRename)
+		QueryBuilder BuildParam()
 		{
 			if (Waarde is ColumnReference)
-				return QueryBuilder.Create(colRename(((ColumnReference)Waarde).ColumnName));
+				return QueryBuilder.Create(((ColumnReference)Waarde).ColumnName);
 			else
 				return QueryBuilder.Param(Waarde);
 		}
