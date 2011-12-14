@@ -4,7 +4,8 @@ using System.Collections.Generic;
 
 namespace ProgressOnderwijsUtils
 {
-	[Serializable] public sealed class CombinedFilter : FilterBase
+	[Serializable]
+	public sealed class CombinedFilter : FilterBase, IEquatable<CombinedFilter>
 	{
 		readonly BooleanOperator andor;
 		readonly FilterBase[] filterLijst;
@@ -30,8 +31,18 @@ namespace ProgressOnderwijsUtils
 		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
 		{
 			return filterInEditMode == this
-			       	? Filter.CreateCombined(booleanOperator, this, c)
-			       	: Filter.CreateCombined(AndOr, FilterLijst.Select(f => f.AddToImpl(filterInEditMode, booleanOperator, c)));
+					? Filter.CreateCombined(booleanOperator, this, c)
+					: Filter.CreateCombined(AndOr, FilterLijst.Select(f => f.AddToImpl(filterInEditMode, booleanOperator, c)));
 		}
+
+		public override int GetHashCode()
+		{
+			long val = andor.GetHashCode() + filterLijst.Select((f, i) => f.GetHashCode() * ((long)2 * i + 1)).Sum();
+			return (int)((uint)val ^ ((uint)val >> 32));
+		}
+
+		public override bool Equals(FilterBase other) { return Equals(other as CombinedFilter); }
+		public override bool Equals(object obj) { return Equals(obj as CombinedFilter); }
+		public bool Equals(CombinedFilter obj) { return obj != null && andor == obj.andor && FilterLijst.SequenceEqual(obj.FilterLijst); }
 	}
 }

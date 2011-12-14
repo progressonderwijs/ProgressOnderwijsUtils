@@ -38,7 +38,6 @@ namespace ProgressOnderwijsUtils
 		/// Maakt een filter definitie aan.  Om twee kolommen onderling te vergelijken, moet de waarde van type ColumnReference zijn.
 		/// </summary>
 		public static FilterBase CreateCriterium(string kolomnaam, BooleanComparer comparer, object waarde) { return new CriteriumFilter(kolomnaam, comparer, waarde); }
-
 		public static FilterBase CreateCombined(BooleanOperator andor, FilterBase a, FilterBase b) { return CreateCombined(andor, new[] { a, b }); }
 		public static FilterBase CreateCombined(BooleanOperator andor, FilterBase a, FilterBase b, FilterBase c) { return CreateCombined(andor, new[] { a, b, c }); }
 		public static FilterBase CreateCombined(BooleanOperator andor, FilterBase a, FilterBase b, FilterBase c, FilterBase d) { return CreateCombined(andor, new[] { a, b, c, d }); }
