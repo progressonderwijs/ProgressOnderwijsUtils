@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
@@ -10,7 +9,7 @@ using ProgressOnderwijsUtils.Test;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture, NightlyOnly]
-	public class DateTagTest
+	public sealed class DateTagTest
 	{
 		[Test]
 		public void NoCollisionsSoon()
