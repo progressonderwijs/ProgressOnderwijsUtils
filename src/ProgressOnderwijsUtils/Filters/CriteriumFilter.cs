@@ -20,7 +20,9 @@ namespace ProgressOnderwijsUtils
 		public override bool Equals(object obj) { return Equals(obj as CriteriumFilter); }
 		public override bool Equals(FilterBase other) { return Equals(other as CriteriumFilter); }
 		public bool Equals(CriteriumFilter other) { return other != null && _KolomNaam == other.KolomNaam && _Comparer == other._Comparer && Equals(_Waarde, other._Waarde); }
-		public override int GetHashCode() { return Tuple.Create(_KolomNaam, _Comparer, _Waarde).GetHashCode() + 2; }
+		public override int GetHashCode() {
+			return 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode()); 
+		}
 
 		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In }; } }
 		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In }; } }

@@ -13,7 +13,5 @@ namespace ProgressOnderwijsUtils
 		protected internal abstract IEnumerable<string> ColumnsReferenced { get; }
 		public override string ToString() { return ToQueryBuilderImpl().DebugText(); }
 		public abstract bool Equals(FilterBase other);
-
-		
 	}
 }
