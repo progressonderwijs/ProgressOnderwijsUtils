@@ -66,6 +66,7 @@ namespace ProgressOnderwijsUtils
 			dict.Add(key,val);
 			return val;
 		}
+
 		public static TValue GetOrAdd<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dict, TKey key, Func<TValue> factory)
 		{
 			return dict.GetOrAdd(key, _ => factory());
