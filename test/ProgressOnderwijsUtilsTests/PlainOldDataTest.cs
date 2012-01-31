@@ -76,7 +76,9 @@ namespace ProgressOnderwijsUtilsTests
 					OlapCommon.RijDimensieType.Cohorten, OlapCommon.CelSomType.AbsenPercPerRij, 9,
 					OlapCommon.StudieStaakType.AlleenstudiestakersOpl, "BlaBlaTestMenu")
 					{
-						EcGrenswaarde = 42
+						EcGrenswaarde = 42,
+                        NrJarenMax = 2,
+                        StartExmType = 3
 					};
 			ComparePod(
 				olapcommon_sample
@@ -108,6 +110,8 @@ namespace ProgressOnderwijsUtilsTests
 					EerstejrNietdef = DateTime.Now.CollegeJaar(),//blech
 					ShowTijdsverloop = false,
 					EcGrenswaarde = 42,
+                    NrJarenMax = 2,
+                    StartExmType = 3,
 					ParentMenuName = "BlaBlaTestMenu",
 					aanmeldstatus = default(OlapCommon.AanmstatusType),
                     alleeneerstejr = OlapCommon.AlleenEerstejaarType.Alle,
