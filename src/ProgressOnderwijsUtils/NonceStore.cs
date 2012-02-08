@@ -60,7 +60,10 @@ namespace ProgressOnderwijsUtils
 	public interface INonceStore
 	{
 		string Generate();
+
 		bool IsOriginal(NonceStoreItem item);
+		bool IsInWindow(NonceStoreItem item);
+		bool IsNotKnown(NonceStoreItem item);
 	}
 
 	public class NonceStore : INonceStore
@@ -105,12 +108,12 @@ namespace ProgressOnderwijsUtils
 			return IsInWindow(item) && IsNotKnown(item);
 		}
 
-    	private bool IsInWindow(NonceStoreItem item)
+    	public bool IsInWindow(NonceStoreItem item)
     	{
     		return (DateTime.UtcNow - item.Timestamp).Duration() <= window;
     	}
 
-    	private bool IsNotKnown(NonceStoreItem item)
+    	public bool IsNotKnown(NonceStoreItem item)
     	{
 			lock (monitor)
 			{
