@@ -78,7 +78,7 @@ namespace ProgressOnderwijsUtilsTests
 					{
 						EcGrenswaarde = 42,
                         NrJarenMax = 2,
-                        StartExmType = 3
+                        StartExmType = OlapCommon.StartexamenType.StartPropedeuse
 					};
 			ComparePod(
 				olapcommon_sample
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtilsTests
 					ShowTijdsverloop = false,
 					EcGrenswaarde = 42,
                     NrJarenMax = 2,
-                    StartExmType = 3,
+                    StartExmType = OlapCommon.StartexamenType.StartPropedeuse,
 					ParentMenuName = "BlaBlaTestMenu",
 					aanmeldstatus = default(OlapCommon.AanmstatusType),
                     alleeneerstejr = OlapCommon.AlleenEerstejaarType.Alle,
