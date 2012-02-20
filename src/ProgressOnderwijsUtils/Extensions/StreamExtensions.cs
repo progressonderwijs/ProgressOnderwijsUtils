@@ -3,7 +3,7 @@ using System.Linq;
 using NUnit.Framework;
 using ExpressionToCodeLib;
 
-namespace ProgressOnderwijsUtils.Extensions
+namespace ProgressOnderwijsUtils
 {
 	public static class StreamExtensions
 	{

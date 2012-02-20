@@ -5,14 +5,14 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 
-namespace ProgressOnderwijsUtils.Extensions
+namespace ProgressOnderwijsUtils
 {
 	/// <summary>
 	/// Extensions for System.Data.DataTable.
 	/// </summary>
 	public static class DataTableExtensions
 	{
-		class Key : IEquatable<Key>
+		sealed class Key : IEquatable<Key>
 		{
 			readonly DataColumn[] columns;
 			readonly DataRow row;

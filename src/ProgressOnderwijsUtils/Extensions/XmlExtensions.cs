@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Xml;
 
-namespace ProgressOnderwijsUtils.Extensions
+namespace ProgressOnderwijsUtils
 {
     public static class XmlExtensions
     {

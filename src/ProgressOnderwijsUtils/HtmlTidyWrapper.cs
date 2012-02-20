@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.Text.RegularExpressions;
-using ProgressOnderwijsUtils.Extensions;
+using ProgressOnderwijsUtils;
 using System.Xml;
 using NUnit.Framework;
 
