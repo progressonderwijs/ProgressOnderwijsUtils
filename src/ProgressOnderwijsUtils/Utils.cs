@@ -117,9 +117,8 @@ namespace ProgressOnderwijsUtils
 				result = language == Taal.DU;
 				break;
 			case DocumentLanguage.StudentPreferenceNlEn:
-				result = language == Taal.NL || language == Taal.EN;
-				break;
 			case DocumentLanguage.CoursePreferenceNlEn:
+			case DocumentLanguage.ProgramPreferenceNlEn:
 				result = language == Taal.NL || language == Taal.EN;
 				break;
 			case DocumentLanguage.StudentPreferenceNlEnDu:
