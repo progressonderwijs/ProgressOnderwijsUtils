@@ -9,8 +9,9 @@ namespace ProgressOnderwijsUtils
 		TR Call<TR>(Func<T, TR> call);
 	}
 
-	public class ClientHandle<T, TB> : IClientHandle<T>, IDisposable 
-		where T : class where TB : ClientBase<T>, T
+	public class ClientHandle<T, TB> : IClientHandle<TB>, IDisposable 
+		where T : class 
+		where TB : ClientBase<T>, T
 	{
 		private readonly object monitor;
 		private readonly Func<TB> factory;
@@ -56,7 +57,7 @@ namespace ProgressOnderwijsUtils
 
 		#region Implementation of IClientHandler<out TU>
 
-		public void Call(Action<T> call)
+		public void Call(Action<TB> call)
 		{
 			try
 			{
@@ -73,7 +74,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public TR Call<TR>(Func<T, TR> call)
+		public TR Call<TR>(Func<TB, TR> call)
 		{
 			try
 			{
