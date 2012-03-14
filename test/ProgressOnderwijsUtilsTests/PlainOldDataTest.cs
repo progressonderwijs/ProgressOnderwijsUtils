@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
@@ -17,7 +16,7 @@ namespace ProgressOnderwijsUtilsTests
 	/// e.g. ComparePod(Tuple.Create(1,"z"), new {Item1 = 1, Item2 = "z"}) zou goed moeten gaan.
 	/// </summary>
 	[TestFixture]
-	public class PlainOldDataTest
+	public sealed class PlainOldDataTest
 	{
 		static Func<T, S> MakeFunc<T, S>(Func<T, S> f) { return f; }
 

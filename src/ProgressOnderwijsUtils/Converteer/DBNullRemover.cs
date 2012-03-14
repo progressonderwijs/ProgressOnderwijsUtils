@@ -1,11 +1,7 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils.Converteer
 {
@@ -49,7 +45,7 @@ namespace ProgressOnderwijsUtils.Converteer
 				Type type = typeof(T);
 				if (type.IsValueType)
 				{
-					Type nullableBase = type.GetNullableBaseType();
+					Type nullableBase = type.IfNullableGetCoreType();
 					if (nullableBase == null)
 						Extractor = ExtractValueField;
 					else if (!nullableBase.IsEnum)

@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Reflection;
 
 namespace ProgressOnderwijsUtils
 {
-	public abstract class ValueClass<T> : IEquatable<T> where T : ValueClass<T>
+	[MpNoLabelsRequired]
+	public abstract class ValueClass<T> : IEquatable<T>, IMetaObject where T : ValueClass<T>
 	{
 		//static readonly Func<T, T> copy;
 		static readonly Func<T, T, bool> equalsFunc;

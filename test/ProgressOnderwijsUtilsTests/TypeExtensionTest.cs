@@ -13,7 +13,7 @@ using ProgressOnderwijsUtils.Test;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture, NightlyOnly]
-	public class TypeExtensionTest
+	public sealed class TypeExtensionTest
 	{
 		[Test]
 		public void TestNullability()
@@ -50,9 +50,9 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void TestNullableGetter()
 		{
-			PAssert.That(() => typeof(int?).GetNullableBaseType() == typeof(int));
-			PAssert.That(() => typeof(int).GetNullableBaseType() ==null);
-			PAssert.That(() => typeof(string).GetNullableBaseType() == null);
+			PAssert.That(() => typeof(int?).IfNullableGetCoreType() == typeof(int));
+			PAssert.That(() => typeof(int).IfNullableGetCoreType() ==null);
+			PAssert.That(() => typeof(string).IfNullableGetCoreType() == null);
 		}
 
 		[Test]

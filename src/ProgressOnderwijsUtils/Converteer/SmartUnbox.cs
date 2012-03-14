@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils.Converteer
 {
@@ -36,7 +34,7 @@ namespace ProgressOnderwijsUtils.Converteer
 			static UnboxHelperClass()
 			{
 				Type type = typeof(T);
-				Type nullableBase = type.GetNullableBaseType();
+				Type nullableBase = type.IfNullableGetCoreType();
 				if (nullableBase != null && nullableBase.IsEnum)
 				{
 					Extractor = (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>),
