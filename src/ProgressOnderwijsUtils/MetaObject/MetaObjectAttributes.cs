@@ -9,8 +9,8 @@ namespace ProgressOnderwijsUtils
 		public readonly int Volgorde;
 	}
 
-	[AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-	public sealed class MpNoLabelsRequiredAttribute : Attribute { }
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true, AllowMultiple = false)]
+	public sealed class MpLabelsRequiredAttribute : Attribute { }
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
 	public sealed class MpNotMappedAttribute : Attribute { }

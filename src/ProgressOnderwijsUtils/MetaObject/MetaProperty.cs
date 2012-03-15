@@ -47,8 +47,8 @@ namespace ProgressOnderwijsUtils
 					OrDefault(Attr<MpSimpleLabelAttribute>(pi), mkAttr => mkAttr.Label),
 					OrDefault(Attr<MpTextDefKeyAttribute>(pi), mkAttr => mkAttr.Label) }
 				.SingleOrDefault(label => label != null);
-			if (Label == null && Attr<MpNoLabelsRequiredAttribute>(pi.DeclaringType) == null)
-				throw new ArgumentException("You must specify an MpSimpleLabel or MpTextDefKey on " + Naam + ", or the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " must be marked MpNoLabelsRequired");
+			if (Label == null && Attr<MpLabelsRequiredAttribute>(pi.DeclaringType) != null)
+				throw new ArgumentException("You must specify an MpSimpleLabel or MpTextDefKey on " + Naam + ", since the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " is marked MpLabelsRequired");
 			KoppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(pi), mkAttr => mkAttr.KoppelTabelNaam ?? pi.Name);
 			Verplicht = OrDefault(Attr<MpVerplichtAttribute>(pi), mkAttr => true);
 			AllowNull = OrDefault(Attr<MpAllowNullAttribute>(pi), mkAttr => true);
@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
 			return Attr<MpNotMappedAttribute>(pi) != null ? null : new MetaProperty(pi, implicitOrder);
 		}
 
-		static T Attr<T>(MemberInfo mi) where T : Attribute { return mi.GetCustomAttributes(typeof(T), false).Cast<T>().SingleOrDefault(); }
+		static T Attr<T>(MemberInfo mi) where T : Attribute { return mi.GetCustomAttributes(typeof(T), true).Cast<T>().SingleOrDefault(); }
 		static TR OrDefault<T, TR>(T val, Func<T, TR> project, TR defaultVal = default(TR)) { return Equals(val, default(T)) ? defaultVal : project(val); }
 
 		static IPropertyAccessors GetAccessors(PropertyInfo pi)

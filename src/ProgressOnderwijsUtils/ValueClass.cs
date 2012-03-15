@@ -6,7 +6,6 @@ using System.Reflection;
 
 namespace ProgressOnderwijsUtils
 {
-	[MpNoLabelsRequired]
 	public abstract class ValueClass<T> : IEquatable<T>, IMetaObject where T : ValueClass<T>
 	{
 		//static readonly Func<T, T> copy;
