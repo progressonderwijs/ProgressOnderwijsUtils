@@ -24,6 +24,17 @@ namespace ProgressOnderwijsUtils.Data
 
 		}*/
 
+		public static string GetValueClassDef(DataTable dt, string name = null)
+		{
+			var columns = dt.Columns.Cast<DataColumn>().Select(col => new { Type = (col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName }).ToArray();
+			var primes = Primes().Skip(1).Take(columns.Length).ToArray();
+			name = name ?? (string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName);
+			return "public sealed class " + name + " : ValueClass<" + name + "> {\n"
+				   + string.Join("", columns.Select(col => "\tpublic " + ObjectToCode.GetCSharpFriendlyTypeName(col.Type) + " " + col.ColumnName + " { get; set; }\n"))
+				   + "}\n";
+		}
+
+
 		public static string GetRowClassDef(DataTable dt, string name = null)
 		{
 			var columns = dt.Columns.Cast<DataColumn>().Select(col => new { Type = (col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName }).ToArray();
