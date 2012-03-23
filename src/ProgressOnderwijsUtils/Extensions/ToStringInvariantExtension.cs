@@ -20,5 +20,22 @@ namespace ProgressOnderwijsUtils
 		public static string ToStringInvariant(this float val) { return val.ToString(CultureInfo.InvariantCulture); }
 		public static string ToStringInvariant(this bool val) { return val.ToString(CultureInfo.InvariantCulture); }
 		public static string ToStringInvariant(this DateTime val) { return val.ToString(CultureInfo.InvariantCulture); }
+
+		static TR Lift<T, TR>(T? nullable, Func<T, TR> f)
+			where T : struct
+			where TR : class
+		{ return nullable == null ? default(TR) : f(nullable.Value); }
+
+		public static string ToStringInvariantOrNull(this long? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this int? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this short? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this ulong? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this uint? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this ushort? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this double? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this decimal? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this float? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this bool? val) { return Lift(val, ToStringInvariant); }
+		public static string ToStringInvariantOrNull(this DateTime? val) { return Lift(val, ToStringInvariant); }
 	}
 }
