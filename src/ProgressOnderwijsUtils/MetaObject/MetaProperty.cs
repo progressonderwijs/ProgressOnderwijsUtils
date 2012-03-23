@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
 
 			public Type DataType { get { return propertyInfo.PropertyType; } }
 
-			readonly PropertyInfo propertyInfo;
+			public readonly PropertyInfo propertyInfo;
 
 			public Impl(PropertyInfo pi, int implicitOrder)
 			{
