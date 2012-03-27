@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtils
 {
 	public interface ITranslationKeyLookup
 	{
-		TextVal Lookup(int taal, string uid);
+		TextVal Lookup(Taal taal, string uid);
 	}
 
 	public interface ITextDefKey : ITranslatable

@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
 		public string GenerateUid() { return (webmodule + "/" + sleutel).ToLowerInvariant(); }
 		public override string ToString() { return "KEY:" + GenerateUid(); }
 
-		public TextVal Translate(ITranslationKeyLookup conn, int taal)
+		public TextVal Translate(ITranslationKeyLookup conn, Taal taal)
 		{
 			return conn.Lookup(taal, GenerateUid());
 		}
