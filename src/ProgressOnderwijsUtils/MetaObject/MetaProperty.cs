@@ -23,6 +23,7 @@ namespace ProgressOnderwijsUtils
 		bool ShowDefaultOnNew { get; }
 		bool CanRead { get; }
 		Type DataType { get; }
+		PropertyInfo PropertyInfo { get; }
 	}
 
 	public static class MetaProperty
@@ -62,6 +63,7 @@ namespace ProgressOnderwijsUtils
 			public Type DataType { get { return propertyInfo.PropertyType; } }
 
 			public readonly PropertyInfo propertyInfo;
+			public PropertyInfo PropertyInfo { get { return propertyInfo; } }
 
 			public Impl(PropertyInfo pi, int implicitOrder)
 			{
