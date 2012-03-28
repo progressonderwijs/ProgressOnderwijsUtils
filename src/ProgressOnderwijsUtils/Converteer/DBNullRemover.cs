@@ -48,12 +48,12 @@ namespace ProgressOnderwijsUtils.Converteer
 					Type nullableBase = type.IfNullableGetCoreType();
 					if (nullableBase == null)
 						Extractor = ExtractValueField;
-					else if (!nullableBase.IsEnum)
+					else if (!nullableBase.IsValueType)
 						Extractor = ExtractClassOrNullableField;
 					else
 					{
 						Extractor = (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>),
-							typeof(DBNullRemover).GetMethod("ExtractNullableEnum",BindingFlags.Static|BindingFlags.NonPublic).MakeGenericMethod(nullableBase));
+							typeof(DBNullRemover).GetMethod("ExtractNullableStruct", BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(nullableBase));
 					}
 				}
 				else
@@ -65,10 +65,10 @@ namespace ProgressOnderwijsUtils.Converteer
 		}
 
 		// ReSharper disable UnusedMember.Local
-		static TEnum? ExtractNullableEnum<TEnum>(object obj) where TEnum : struct
+		static TStruct? ExtractNullableStruct<TStruct>(object obj) where TStruct : struct
 		// ReSharper restore UnusedMember.Local
 		{
-			return obj == DBNull.Value || obj == null ? default(TEnum?) : (TEnum)obj;
+			return obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj;
 		}
 	}
 }
