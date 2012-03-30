@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
 		/// Enum Vandaag = weekdays.monday;
 		/// Vandaag.In(weekdays.thursday,weekdays.friday); //false
 		/// </remarks>
-		public static bool In<T>(this T obj, params T[] values) where T:struct
+		public static bool In<T>(this T obj, params T[] values)
 		{
 			return values.Contains(obj);
 		}
