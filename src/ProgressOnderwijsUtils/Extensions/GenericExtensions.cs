@@ -20,13 +20,14 @@ namespace ProgressOnderwijsUtils
 		/// Vandaag.In(weekdays.thursday,weekdays.friday); //false
 		/// </remarks>
 		public static bool In<T>(this T obj, params T[] values)
-		{
-			return values.Contains(obj);
-		}
+			where T : struct, IConvertible, IComparable
+		{ return values.Contains(obj); }
 
-		public static bool In<T>(this T? obj, params T?[] values) where T:struct
-		{
-			return values.Contains(obj);
-		}
+		public static bool In(this string obj, params string[] values)
+		{ return values.Contains(obj); }
+
+		public static bool In<T>(this T? obj, params T?[] values)
+			where T : struct, IConvertible, IComparable
+		{ return values.Contains(obj); }
 	}
 }
