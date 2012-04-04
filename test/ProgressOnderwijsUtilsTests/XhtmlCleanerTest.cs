@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
@@ -73,7 +72,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void DecodeUnnecessaryEntities()
 		{
-			PAssert.That(() => XhtmlCleaner.TidyHtmlString("<p>&Acirc;&Eacute;&eacute;&amp;<br /></p>") == "<p>ÂÉé<br /></p>");
+			PAssert.That(() => XhtmlCleaner.TidyHtmlString("<p>&Acirc;&Eacute;&eacute;&amp;<br /></p>") == "<p>ÂÉé&amp;<br /></p>");
 		}
 	}
 }
