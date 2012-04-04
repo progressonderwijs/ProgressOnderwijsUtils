@@ -10,7 +10,7 @@ using ExpressionToCodeLib;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
-	public class HtmlTidyWrapperTest
+	public sealed class XhtmlCleanerTest
 	{
 		const string sample = @"<p><b>HTML sanitization</b> is the process of examining an HTML document and producing a new HTML document that preserves only whatever tags are designated ""safe"". HTML sanitization can be used to protect against <a href=""/wiki/Cross-site_scripting"" title=""Cross-site scripting"">cross-site scripting</a> attacks by sanitizing any HTML code submitted by a user.</p> 
 <p><br /></p> ";
@@ -18,12 +18,12 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void TextLimitWorks()
 		{
-			var tidiedSample = HtmlTidyWrapper.TidyHtmlString(sample);
+			var tidiedSample = XhtmlCleaner.TidyHtmlString(sample);
 			Assert.That(sample.LevenshteinDistanceScaled(tidiedSample), Is.LessThan(0.05));
 			int lastLength = tidiedSample.Length;
 			for (int i = tidiedSample.Length + 10; i >= 0; i--)
 			{
-				var limitedVer = HtmlTidyWrapper.TidyHtmlStringAndLimitLength(sample, i);
+				var limitedVer = XhtmlCleaner.TidyHtmlStringAndLimitLength(sample, i);
 				Assert.That(limitedVer.Length, Is.LessThanOrEqualTo(i));
 				if (limitedVer.Length < i) // if more than "needed" trimmed then:
 					Assert.That(lastLength == i + 1 || lastLength == limitedVer.Length);//either the string was already this short or it was just trimmed due to real need - but it wasn't unnecessarily trimmed!
@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void CleanerWorks()
 		{
-			var tidiedSample = HtmlTidyWrapper.TidyHtmlString(sample2);
+			var tidiedSample = XhtmlCleaner.TidyHtmlString(sample2);
 			PAssert.That(() => !tidiedSample.Contains("lalala") && !tidiedSample.Contains("script") && !tidiedSample.Contains("innerlala"));
 			PAssert.That(() => !tidiedSample.Contains("class") && !tidiedSample.Contains("style") && !tidiedSample.Contains("unknown"));
 			PAssert.That(() => tidiedSample.Contains("include this") && tidiedSample.Contains("test this") && tidiedSample.Contains("<div>") && tidiedSample.StartsWith("<p>"));
@@ -48,10 +48,32 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void FixerWorks()
 		{
-			PAssert.That(() => HtmlTidyWrapper.TidyHtmlString(sample3) == "<p>\u00A0whee</p>");
-			PAssert.That(() => HtmlTidyWrapper.TidyHtmlString(sample4) == new XText(@"1 < 2 && 3 > 0").ToString());
-			PAssert.That(() => HtmlTidyWrapper.HtmlToTextParser(sample4) == @"1 < 2 && 3 > 0");
+			PAssert.That(() => XhtmlCleaner.TidyHtmlString(sample3) == "<p>\u00A0whee</p>");
+			PAssert.That(() => XhtmlCleaner.TidyHtmlString(sample4) == new XText(@"1 < 2 && 3 > 0").ToString());
+			PAssert.That(() => XhtmlCleaner.HtmlToTextParser(sample4) == @"1 < 2 && 3 > 0");
 		}
 
+		[Test]
+		public void SupportsUnicode()
+		{
+			PAssert.That(() => XhtmlCleaner.TidyHtmlString(@"ÂÅÉéé") == @"ÂÅÉéé");
+		}
+
+		[Test]
+		public void DontMisinterpretEncodedXml()
+		{
+
+			var xEl = new XElement("div", sample3);
+			var xElEncoded = xEl.ToString(SaveOptions.None);
+
+			PAssert.That(() => XhtmlCleaner.TidyHtmlString("<p>" + xElEncoded + "</p>") == "<p>" + xElEncoded + "</p>");
+		}
+
+
+		[Test]
+		public void DecodeUnnecessaryEntities()
+		{
+			PAssert.That(() => XhtmlCleaner.TidyHtmlString("<p>&Acirc;&Eacute;&eacute;&amp;<br /></p>") == "<p>ÂÉé<br /></p>");
+		}
 	}
 }

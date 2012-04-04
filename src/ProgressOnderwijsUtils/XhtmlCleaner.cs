@@ -20,16 +20,14 @@ namespace ProgressOnderwijsUtils
 
 	//TODO: we should implement a real wrapper around html tidy sometime to support invalid but almost valid XHTML - but until we do, we'll just need to fail on
 	//invalid html.
-	public static class HtmlTidyWrapper
+	public static class XhtmlCleaner
 	{
 		static readonly Regex xmlStripRegex = new Regex(@"(<\/?[A-Za-z_][^<]*>)",
-						RegexOptions.Singleline |
-						RegexOptions.ExplicitCapture |
-						RegexOptions.Compiled);
-		static readonly Regex symbolRegex = new Regex(@"\<|\>|\&(?!\w\w\w?;)",
-						RegexOptions.Singleline | RegexOptions.IgnoreCase |
-						RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture |
-						RegexOptions.Compiled);
+						RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+		static readonly Regex symbolRegex = new Regex(@"\<|\>|\&(?![A-Za-z][A-Za-z]+;)",
+						RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
+		static readonly Regex entityRegex = new Regex(@"\&[A-Za-z][A-Za-z]+;",
+			RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.Compiled);
 
 		/// <summary>
 		/// Attempts to parse an html fragment as xml.  This works because our html is generally well formed xml.
@@ -43,7 +41,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <returns>The html fragment wrapped in a top-level "x" element - this toplevel element just
 		/// serves to permit a sequence of html nodes to be returned.  This function always returns a non-null single element named "x".</returns> 
-		static XElement XHtmlParser(string str)
+		static XElement HeuristicParse(string str)
 		{
 			XElement result = TryParse(str);
 			if (result != null) return result;
@@ -52,27 +50,28 @@ namespace ProgressOnderwijsUtils
 			// we'll manually strip something that looks like tags
 			str = xmlStripRegex.Replace(str, ""); //strip everything looking like tags
 			str = symbolRegex.Replace(str, match => new XText(match.Value).ToString());
-			//and then replace odd symbols by their encoded representations.
-			try { return XElement.Parse("<x>" + str + "</x>"); }
-			catch (XmlException) { }
+			//and then replace odd (i.e. non-conforming) symbols by their encoded representations...
 
-			//can't parse; give up and return the best we can.
-			return new XElement("x", str);
+			return TryParse(str) //then return markup without tags
+				?? new XElement("x", str);//if all else fails, return raw markup safely encoded as content.
 		}
 
 		public static XElement TryParse(string str)
 		{
 			try
 			{
-				return XElement.Parse("<x>" + str + "</x>");
-			}
-			catch (XmlException)
-			{
-			}
-			str = str.Replace("&nbsp;", "&#160;");
-			try
-			{
-				return XElement.Parse("<x>" + str + "</x>");
+				string strWithoutNonXmlEntities =
+					entityRegex.Replace(str, match => {
+						string entityReference = match.Value.Substring(1, match.Length - 2);
+
+						char? refersTo =
+							entityReference == "lt" || entityReference == "gt" || entityReference == "amp" || entityReference == "apos" || entityReference == "quot"
+							? default(char?) //no need to decode xml entities and to do so might interpret real content as markup accidentally...
+							: HtmlEntityLookup.Lookup(entityReference);
+						return refersTo.HasValue ? new string(refersTo.Value, 1) : match.Value;
+					});
+
+				return XElement.Parse("<x>" + strWithoutNonXmlEntities + "</x>");
 			}
 			catch (XmlException)
 			{
@@ -152,7 +151,7 @@ namespace ProgressOnderwijsUtils
 		/// Stips xml tags from the string for readability.  The resulting string still needs to be encoded (i.e. it is not disable-output escaping safe.)
 		/// This function also decodes xml entities and &amp;nbsp; into readable characters.
 		/// </summary>
-		public static string HtmlToTextParser(string str) { return XHtmlParser(str).Value; }
+		public static string HtmlToTextParser(string str) { return HeuristicParse(str).Value; }
 
 		/// <summary>
 		/// Serializes a document fragment as passed by Progress.NET - i.e. all children of a meaningless "&lt;x&gt;" root node.
@@ -254,7 +253,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static XElement HtmlSanitizer(string sourceString, HashSet<string> safeElements = null, HashSet<string> safeAttributes = null, HashSet<string> bannedElements = null)
 		{
-			XElement parsed = XHtmlParser(sourceString);
+			XElement parsed = HeuristicParse(sourceString);
 			return HtmlSanitizer(parsed, safeElements, safeAttributes, bannedElements);
 		}
 
@@ -264,11 +263,11 @@ namespace ProgressOnderwijsUtils
 			"b i big small em strong hr br p span div center font table thead col colgroup tbody tfoot caption tr td th h1 h2 h3 h4 h5 h6 a cite dfn code samp var dl dt dd ins del sub sup tt ul ol li pre q abbr acronym blockquote fieldset legend img".Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 		//public static IEnumerable<string> DefaultSafeElements { get { return defaultSafeElements; } }
 		//id's en names zijn niet toegestaan zodat er geen conflict kan onstaan met onze code.  style is niet secuur en kan tevens tracing info bevatten.
-		static readonly HashSet<string> defaultSafeAttr = new HashSet<string>(new[]{"lang", "title", "href", "dir", "color", "border", "face", "size", "align", "alt", "bgcolor", "cellspacing", "cellpadding", "char", "charoff", "cite", "height", "width"});
+		static readonly HashSet<string> defaultSafeAttr = new HashSet<string>(new[] { "lang", "title", "href", "dir", "color", "border", "face", "size", "align", "alt", "bgcolor", "cellspacing", "cellpadding", "char", "charoff", "cite", "height", "width" });
 		public static IEnumerable<string> DefaultSafeAttributes { get { return defaultSafeAttr; } }
 
 		//de inhoud van deze elementen is volledig oninteressant.
-		static readonly HashSet<string> defaultBannedElements = new HashSet<string>(new[]{"script","style"});
+		static readonly HashSet<string> defaultBannedElements = new HashSet<string>(new[] { "script", "style" });
 		//public static IEnumerable<string> DefaultBannedElements { get { return defaultBannedElements; } }
 	}
 

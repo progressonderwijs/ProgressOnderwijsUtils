@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
 		{
 			return new XHtmlData
 			{
-				nodes = HtmlTidyWrapper.HtmlSanitizer(s).Nodes().ToArray(),
+				nodes = XhtmlCleaner.HtmlSanitizer(s).Nodes().ToArray(),
 			};
 		}
 
