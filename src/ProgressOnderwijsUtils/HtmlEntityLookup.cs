@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using MoreLinq;
+using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
@@ -12,7 +14,6 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static IEnumerable<KeyValuePair<string, char>> Entities { get { return lookup; } }
 
-
 		/// <summary>
 		/// Looks for the matching character for an html entity.  Also finds xml entities; e.g. "lt", "gt" and "amp"
 		/// </summary>
@@ -23,7 +24,8 @@ namespace ProgressOnderwijsUtils
 			return lookup.GetOrDefault(entity, default(char?));
 		}
 
-		static readonly Dictionary<string, char> lookup = new Dictionary<string, char> {
+		static readonly Dictionary<string, char> lookup = new Dictionary<string, char>
+		{
 			{ @"Aacute", (char)0x00C1 },
 			{ @"aacute", (char)0x00E1 },
 			{ @"Acirc", (char)0x00C2 },
