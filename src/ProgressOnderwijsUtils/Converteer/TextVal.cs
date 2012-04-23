@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="text">The primary text to be shown</param>
 		/// <param name="helptext">Any additional text to potentially be shown in a tooltip.</param>
 		public TextVal(string text, string helptext) { m_text = text; m_helptext = helptext; }
-		public static TextVal CreateUndefined(string uid) { return new TextVal("ONVERTAALD: " + uid, UndefinedExtraText); }
+		public static TextVal CreateUndefined(string hint) { return new TextVal("ONVERTAALD: " + hint, UndefinedExtraText); }
 		public static bool operator ==(TextVal a, TextVal b) { return a.m_text == b.m_text && a.m_helptext == b.m_helptext; }
 		public static bool operator !=(TextVal a, TextVal b) { return !(a == b); }
 		public override bool Equals(object obj) { return obj != null && obj is TextVal && this == (TextVal)obj; }
