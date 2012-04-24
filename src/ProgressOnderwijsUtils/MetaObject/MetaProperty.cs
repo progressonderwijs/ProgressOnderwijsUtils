@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 		PropertyInfo PropertyInfo { get; }
 	}
 
-	public interface IMetaProperty<TOwner> : IMetaProperty
+	public interface IMetaProperty<in TOwner> : IMetaProperty
 	{
 		Func<TOwner, object> TypedGetter { get; }
 		Action<TOwner, object> TypedSetter { get; }

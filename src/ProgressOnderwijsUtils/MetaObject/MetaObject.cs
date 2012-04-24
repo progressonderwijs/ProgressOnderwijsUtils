@@ -13,10 +13,9 @@ namespace ProgressOnderwijsUtils
 
 	public static class MetaObject
 	{
-		//public static IEnumerable<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()).Properties; }
+		public static IEnumerable<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()).Properties; }
 		//public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
 		public static IEnumerable<IMetaProperty<T>> GetMetaProperties<T>() where T : IMetaObject { return MetaPropCache<T>.properties; }
-		public static IEnumerable<IMetaProperty<T>> GetMetaProperties<T>(this T metaobj) where T : IMetaObject { return MetaPropCache<T>.properties; }
 
 		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
 		{
