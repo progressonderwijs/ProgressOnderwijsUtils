@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 
@@ -12,9 +13,10 @@ namespace ProgressOnderwijsUtils
 
 	public static class MetaObject
 	{
-		public static IEnumerable<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()).Properties; }
-		public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
-		public static IEnumerable<IMetaProperty> GetMetaProperties<T>() where T : IMetaObject { return MetaPropCache<T>.properties; }
+		//public static IEnumerable<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()).Properties; }
+		//public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
+		public static IEnumerable<IMetaProperty<T>> GetMetaProperties<T>() where T : IMetaObject { return MetaPropCache<T>.properties; }
+		public static IEnumerable<IMetaProperty<T>> GetMetaProperties<T>(this T metaobj) where T : IMetaObject { return MetaPropCache<T>.properties; }
 
 		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
 		{
@@ -44,22 +46,25 @@ namespace ProgressOnderwijsUtils
 		interface IMetaPropCache
 		{
 			IMetaProperty[] Properties { get; }
-			object DynGet(IMetaObject obj, string propertyName);
-			void DynSet(IMetaObject obj, string propertyName, object val);
+			//object DynGet(IMetaObject obj, string propertyName);
+			//void DynSet(IMetaObject obj, string propertyName, object val);
 		}
 
 		sealed class MetaPropCache<T> : IMetaPropCache
 		{
-			public readonly static IMetaProperty[] properties;
-			static MetaPropCache() { properties = GetMetaPropertiesImpl(typeof(T)).ToArray(); }
+			public readonly static IMetaProperty<T>[] properties;
+			static MetaPropCache() { properties = GetMetaPropertiesImpl().Cast<IMetaProperty<T>>().ToArray(); }
 			public IMetaProperty[] Properties { get { return properties; } }
-			public object DynGet(IMetaObject obj, string propertyName) { return properties.Single(prop => prop.Naam == propertyName).Getter(obj); }
-			public void DynSet(IMetaObject obj, string propertyName, object val) { properties.Single(prop => prop.Naam == propertyName).Setter(obj, val); }
+			//public object DynGet(IMetaObject obj, string propertyName) { return properties.Single(prop => prop.Naam == propertyName).Getter(obj); }
+			//public void DynSet(IMetaObject obj, string propertyName, object val) { properties.Single(prop => prop.Naam == propertyName).Setter(obj, val); }
+
+			static IEnumerable<IMetaProperty> GetMetaPropertiesImpl() { return typeof(T).GetProperties().OrderBy(pi => pi.MetadataToken).Select(LoadIfMetaProperty).Where(mp => mp != null); }
+			static IMetaProperty LoadIfMetaProperty(PropertyInfo pi, int implicitOrder)
+			{
+				return pi.GetCustomAttributes(typeof(MpNotMappedAttribute), true).Any() ? null : new MetaProperty.Impl<T>(pi, implicitOrder);
+			}
 		}
 		#endregion
 
-		#region private Helpers
-		static IEnumerable<IMetaProperty> GetMetaPropertiesImpl(Type t) { return t.GetProperties().OrderBy(pi=>pi.MetadataToken).Select(MetaProperty.LoadIfMetaProperty).Where(mp => mp != null); }
-		#endregion
 	}
 }

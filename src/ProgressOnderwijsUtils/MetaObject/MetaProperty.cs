@@ -26,9 +26,16 @@ namespace ProgressOnderwijsUtils
 		PropertyInfo PropertyInfo { get; }
 	}
 
+	public interface IMetaProperty<TOwner> : IMetaProperty
+	{
+		Func<TOwner, object> TypedGetter { get; }
+		Action<TOwner, object> TypedSetter { get; }
+
+	}
+
 	public static class MetaProperty
 	{
-		public sealed class Impl<TOwner> : IMetaProperty
+		public sealed class Impl<TOwner> : IMetaProperty<TOwner>
 		{
 			readonly string naam;
 			public string Naam { get { return naam; } }
@@ -76,7 +83,7 @@ namespace ProgressOnderwijsUtils
 
 				ParameterExpression typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
 				MemberExpression typedPropExpr = Expression.Property(typedParamExpr, pi);
-				TypedGetter = Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
+				typedGetter = Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
 
 
 				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
@@ -89,7 +96,7 @@ namespace ProgressOnderwijsUtils
 							), objParamExpr, valParamExpr
 						).Compile();
 
-				TypedSetter = canWrite ? default(Action<TOwner, object>) :
+				typedSetter = canWrite ? default(Action<TOwner, object>) :
 						Expression.Lambda<Action<TOwner, object>>(
 							Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)
 							), typedParamExpr, valParamExpr
@@ -122,22 +129,18 @@ namespace ProgressOnderwijsUtils
 			public bool CanRead { get { return getter != null; } }
 
 			public readonly Func<object, object> getter;
-			public readonly Func<TOwner, object> TypedGetter;
+			public readonly Func<TOwner, object> typedGetter;
 			public Func<object, object> Getter { get { return getter; } }
+			public Func<TOwner, object> TypedGetter { get { return typedGetter; } }
 
 			public readonly Action<object, object> setter;
-			public readonly Action<TOwner, object> TypedSetter;
+			public readonly Action<TOwner, object> typedSetter;
 			public Action<object, object> Setter { get { return setter; } }
+			public Action<TOwner, object> TypedSetter { get { return typedSetter; } }
 		}
 
 
 		static T Attr<T>(MemberInfo mi) where T : Attribute { return mi.GetCustomAttributes(typeof(T), true).Cast<T>().SingleOrDefault(); }
 		static TR OrDefault<T, TR>(T val, Func<T, TR> project, TR defaultVal = default(TR)) { return Equals(val, default(T)) ? defaultVal : project(val); }
-		public static IMetaProperty LoadIfMetaProperty(PropertyInfo pi, int implicitOrder)
-		{
-			return Attr<MpNotMappedAttribute>(pi) != null ? null :
-				(IMetaProperty)Activator.CreateInstance(typeof(Impl<>).MakeGenericType(pi.DeclaringType), pi, implicitOrder);
-		}
-
 	}
 }
