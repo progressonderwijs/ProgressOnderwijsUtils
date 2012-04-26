@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils
 							),
 							Expression.Constant(", ")
 						)
-					).Aggregate((Expression)Expression.Constant(type.Name + " { "), (a, b) => Expression.Call(concatMethod, a, b)),
+					).Aggregate((Expression)Expression.Constant(type.Name + "{ "), (a, b) => Expression.Call(concatMethod, a, b)),
 					Expression.Constant("}")
 				);
 
