@@ -11,6 +11,7 @@ namespace ProgressOnderwijsUtils
 		//static readonly Func<T, T> copy;
 		static readonly Func<T, T, bool> equalsFunc;
 		static readonly Func<T, int> hashFunc;
+		static readonly Func<T, string> toStringFunc;
 
 #if DEBUG
 		protected ValueClass() { if (!(this is T)) throw new InvalidOperationException("Only T can subclass ValueClass<T>."); }
@@ -43,8 +44,37 @@ namespace ProgressOnderwijsUtils
 
 
 			hashFunc = Expression.Lambda<Func<T, int>>(Expression.Block(new[] { accumulatorVar }, storeHashAcc, finalHashExpr), parA).Compile();
-			//Expression.Call Expression.Equal(Expression.Field(parA, fi), Expression.Field(parB, fi)))
 
+			var toStringMethod = typeof(object).GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance);
+			var refEqMethod = ((Func<object, object, bool>)ReferenceEquals).Method;
+			var concatMethod = ((Func<string, string, string>)string.Concat).Method;
+
+			Func<Expression, MemberInfo, Expression> membAccess = (expr, mi) => mi is FieldInfo ? Expression.Field(expr, (FieldInfo)mi) : Expression.Property(expr, (PropertyInfo)mi);
+
+			var toStringExpr =
+				Expression.Call(concatMethod,
+					fields.Where(fi=>fi.IsPublic).Concat(
+						type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(pi=>pi.CanRead && pi.GetGetMethod() !=null)
+						.Cast<MemberInfo>()
+					)
+					.Select(fi =>
+						Expression.Call(concatMethod,
+							Expression.Call(concatMethod,
+								Expression.Constant(fi.Name + " = "),
+
+								Expression.Condition(
+									Expression.Call(null, refEqMethod, Expression.Convert(membAccess(parA, fi), typeof(object)), Expression.Default(typeof(object))),
+									Expression.Constant("<NULL>"),
+									Expression.Call(membAccess(parA, fi), toStringMethod)
+								)
+							),
+							Expression.Constant(", ")
+						)
+					).Aggregate((Expression)Expression.Constant(type.Name + " { "), (a, b) => Expression.Call(concatMethod, a, b)),
+					Expression.Constant("}")
+				);
+
+			toStringFunc = Expression.Lambda<Func<T, string>>(toStringExpr, parA).Compile();
 		}
 
 		public bool Equals(T other) { return other != null && equalsFunc((T)this, other); }
@@ -54,5 +84,6 @@ namespace ProgressOnderwijsUtils
 
 		public T Copy() { return (T)MemberwiseClone(); }
 		public T CopyWith(Action<T> action) { var copied = Copy(); action(copied); return copied; }
+		public override string ToString() { return toStringFunc((T)this); }
 	}
 }
