@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
@@ -20,8 +22,9 @@ namespace ProgressOnderwijsUtils
 		public override bool Equals(object obj) { return Equals(obj as CriteriumFilter); }
 		public override bool Equals(FilterBase other) { return Equals(other as CriteriumFilter); }
 		public bool Equals(CriteriumFilter other) { return other != null && _KolomNaam == other.KolomNaam && _Comparer == other._Comparer && Equals(_Waarde, other._Waarde); }
-		public override int GetHashCode() {
-			return 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode()); 
+		public override int GetHashCode()
+		{
+			return 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode());
 		}
 
 		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In }; } }
@@ -68,6 +71,99 @@ namespace ProgressOnderwijsUtils
 					throw new InvalidOperationException("Geen geldige operator");
 			}
 		}
+
+		public override string SerializeToString()
+		{
+			Debug.Assert(!KolomNaam.Contains('[') && !KolomNaam.Contains('&') && !KolomNaam.Contains('|') && !KolomNaam.Contains(';') && !KolomNaam.Contains(','));
+			Debug.Assert(!Comparer.NiceString().Contains(']'));
+			string waardeString = SerializeWaarde();
+			waardeString = waardeString.Replace(@"*", @"**");
+			return KolomNaam + "[" + Comparer.NiceString() + "]" + waardeString + "*";
+		}
+
+		static Tuple<string, string> FindWaardeStrAndLeftover(string s) //TODO: test strings ending with '*';
+		{
+			int i = 0;
+			StringBuilder waardeStr = new StringBuilder();
+			while (true)
+			{
+				if (s[i] != '*')
+				{
+					waardeStr.Append(s[i]);
+					i++;
+				}
+				else if (s.Length > i + 1 && s[i + 1] == '*')
+				{
+					waardeStr.Append(s[i]);
+					i += 2;
+				}
+				else
+					return Tuple.Create(waardeStr.ToString(), s.Substring(i + 1));
+			}
+		}
+
+		
+
+		public static Tuple<FilterBase, string> Parse(string SerializedRep)
+		{
+			int kolomNaamEnd = SerializedRep.IndexOf('[');
+			if (kolomNaamEnd < 0) return null;
+			string kolomNaam = SerializedRep.Substring(0, kolomNaamEnd);
+			if (kolomNaam.Contains('&') || kolomNaam.Contains('|') || !ColumnReference.IsOkName.IsMatch(kolomNaam))
+				return null;
+			SerializedRep = SerializedRep.Substring(kolomNaamEnd + 1);
+			int cmpEnd = SerializedRep.IndexOf(']');
+			if (cmpEnd < 0) return null;
+			BooleanComparer? comparer = Filter.ParseComparerNiceString(SerializedRep.Substring(0, cmpEnd));
+			if (comparer == null)
+				return null;
+			SerializedRep = SerializedRep.Substring(cmpEnd + 1);
+			var waardeAndRemaining = FindWaardeStrAndLeftover(SerializedRep);
+			object waarde = DeserializeWaardeString(waardeAndRemaining.Item1);
+			SerializedRep = waardeAndRemaining.Item2;
+			return Tuple.Create((FilterBase)new CriteriumFilter(kolomNaam, comparer.Value, waarde), SerializedRep);
+		}
+
+		string SerializeWaarde()
+		{
+			if (Waarde == null)
+				return "";
+			else if (Waarde is int)
+				return 'i' + ((int)Waarde).ToStringInvariant();
+			else if (Waarde is DateTime)
+				return 'd' + ((DateTime)Waarde).ToUniversalTime().Ticks.ToStringInvariant();
+			else if (Waarde is long)
+				return 'l' + ((long)Waarde).ToStringInvariant();
+			else if (Waarde is uint)
+				return 'I' + ((uint)Waarde).ToStringInvariant();
+			else if (Waarde is ulong)
+				return 'L' + ((ulong)Waarde).ToStringInvariant();
+			else if (Waarde is string)
+				return 's' + (string)Waarde;
+			else if (Waarde is ColumnReference)
+				return 'c' + ((ColumnReference)Waarde).ColumnName;
+			else if (Waarde is GroupReference)
+				return 'g' + ((GroupReference)Waarde).GroupId.ToStringInvariant() + ':' + ((GroupReference)Waarde).Name;
+			else throw new InvalidOperationException("Waarde is out of range for serialization!");
+		}
+
+		static object DeserializeWaardeString(string s)
+		{
+			if (s == "") return null;
+			else switch (s[0])
+				{
+					case 'i': return int.Parse(s.Substring(1), CultureInfo.InvariantCulture);
+					case 'd': return new DateTime(long.Parse(s.Substring(1), CultureInfo.InvariantCulture), DateTimeKind.Utc);
+					case 'l': return long.Parse(s.Substring(1), CultureInfo.InvariantCulture);
+					case 'I': return uint.Parse(s.Substring(1), CultureInfo.InvariantCulture);
+					case 'L': return ulong.Parse(s.Substring(1), CultureInfo.InvariantCulture);
+					case 's': return s.Substring(1);
+					case 'c': return new ColumnReference(s.Substring(1));
+					case 'g': return new GroupReference(int.Parse(s.Substring(1, s.IndexOf(':') - 1), CultureInfo.InvariantCulture), s.Substring(s.IndexOf(':') + 1));
+					default: throw new ArgumentOutOfRangeException("s", "string starts with unknown letter " + s[0]);
+				}
+		}
+
 
 		QueryBuilder BuildParam()
 		{

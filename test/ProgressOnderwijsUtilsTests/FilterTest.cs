@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Data;
 using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
@@ -195,6 +193,110 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			Assert.Throws<InvalidOperationException>(() => Filter.CreateCriterium("test", (BooleanComparer)12345, 3).ToQueryBuilder());
 			Assert.Throws<InvalidOperationException>(() => ((BooleanComparer)12345).NiceString());
+		}
+
+
+		[Test]
+		public void BasicSerializationWorks()
+		{
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).SerializeToString() == @"test[<]i3*");
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).Equals(Filter.TryParseSerializedFilter(@"test[<]i3*")));
+
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, new ColumnReference("blablabla")).SerializeToString() == @"test[<]cblablabla*");
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new GroupReference(12345,"blablablaGroup")).SerializeToString()== @"test[in]g12345:blablablaGroup*");
+
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<]i3* ") == null); //extra space!
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"test<]i3*") == null); //missing [
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<i3*") == null); //missing ]
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<<]i3*") == null); //invalid op
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"&test[<]i3*") == null); //unterminated &
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"|test[<]i3*") == null); //unterminated |
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"&test[<]i3*,") == null); //unterminated &
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"|test[<]i3*,") == null); //unterminated |
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"&test[<]i3*;") != null); //terminated &
+			PAssert.That(() => Filter.TryParseSerializedFilter(@"|test[<]i3*;") != null); //terminated |
+		}
+
+		[Test]
+		public void StarsInValuesSerializeOk()
+		{
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, "1*2").SerializeToString() == @"test[=]s1**2*");
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, "1**2").SerializeToString() == @"test[=]s1****2*");
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, "1**2*").SerializeToString() == @"test[=]s1****2***");
+		}
+
+		[Test]
+		public void CriteriumSerializationRoundTrips()
+		{
+			var filters = new[]{
+								Filter.CreateCriterium("test", BooleanComparer.LessThan, 3),
+								Filter.CreateCriterium("test", BooleanComparer.LessThanOrEqual, 3),
+								Filter.CreateCriterium("test", BooleanComparer.Equal, 3),
+								Filter.CreateCriterium("test", BooleanComparer.GreaterThanOrEqual, 3),
+								Filter.CreateCriterium("test", BooleanComparer.GreaterThan, 3),
+								Filter.CreateCriterium("test", BooleanComparer.NotEqual, 3),
+								Filter.CreateCriterium("test", BooleanComparer.Contains, "world"),
+								Filter.CreateCriterium("test", BooleanComparer.StartsWith, "world"),
+								Filter.CreateCriterium("test", BooleanComparer.IsNull, null),
+								Filter.CreateCriterium("test", BooleanComparer.IsNotNull, null),
+								Filter.CreateCriterium("test", BooleanComparer.Equal, "1*2"),
+								Filter.CreateCriterium("test", BooleanComparer.Equal, null),
+								Filter.CreateCriterium("test", BooleanComparer.Equal, new ColumnReference("blablabla")),
+								Filter.CreateCriterium("test", BooleanComparer.In, new GroupReference(12345,"blablablaGroup")),
+								Filter.CreateCriterium("test", BooleanComparer.Equal, ""),
+								Filter.CreateCriterium("test", BooleanComparer.Equal, "*1"),
+								Filter.CreateCriterium("test", BooleanComparer.Equal, "1*"),
+								Filter.CreateCriterium("test", BooleanComparer.Equal, "1**2*"),
+								Filter.CreateCriterium("test", BooleanComparer.In, "1 2 3 4 5 "),};
+			foreach (var filter in filters)
+				PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString())));
+
+		}
+
+		[Test]
+		public void ComplexFilterSerialization1()
+		{
+			var someFilter =
+				Filter.CreateCombined(BooleanOperator.And,
+									Filter.CreateCriterium("testA", BooleanComparer.LessThan, 3),
+									Filter.CreateCriterium("testB", BooleanComparer.LessThanOrEqual, 37),
+									Filter.CreateCombined(BooleanOperator.Or,
+										Filter.CreateCriterium("testC", BooleanComparer.LessThan, 3),
+										Filter.CreateCriterium("testD", BooleanComparer.LessThanOrEqual, 37)
+										)
+									);
+			PAssert.That(() => someFilter is CombinedFilter && ((CombinedFilter)someFilter).FilterLijst.OfType<CombinedFilter>().Any());
+			PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString())));
+		}
+		[Test]
+		public void ComplexFilterSerialization2()
+		{
+			var someFilter =
+				Filter.CreateCombined(BooleanOperator.And,
+									Filter.CreateCombined(BooleanOperator.Or,
+										Filter.CreateCriterium("testC", BooleanComparer.LessThan, 3),
+										Filter.CreateCriterium("testD", BooleanComparer.LessThanOrEqual, 37)
+										),
+									Filter.CreateCriterium("testA", BooleanComparer.LessThan, 3),
+									Filter.CreateCriterium("testB", BooleanComparer.LessThanOrEqual, 37)
+									);
+			PAssert.That(() => someFilter is CombinedFilter && ((CombinedFilter)someFilter).FilterLijst.OfType<CombinedFilter>().Any());
+			PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString())));
+		}
+		[Test]
+		public void ComplexFilterSerialization3()
+		{
+			var someFilter =
+				Filter.CreateCombined(BooleanOperator.And,
+									Filter.CreateCriterium("testA", BooleanComparer.LessThan, 3),
+									Filter.CreateCombined(BooleanOperator.Or,
+										Filter.CreateCriterium("testC", BooleanComparer.LessThan, 3),
+										Filter.CreateCriterium("testD", BooleanComparer.LessThanOrEqual, 37)
+										),
+									Filter.CreateCriterium("testB", BooleanComparer.LessThanOrEqual, 37)
+									);
+			PAssert.That(() => someFilter is CombinedFilter && ((CombinedFilter)someFilter).FilterLijst.OfType<CombinedFilter>().Any());
+			PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString())));
 		}
 	}
 }

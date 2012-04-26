@@ -6,13 +6,13 @@ namespace ProgressOnderwijsUtils
 	[Serializable]
 	public sealed class ColumnReference : IEquatable<ColumnReference>
 	{
-		static readonly Regex okname = new Regex(@"^\w+$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+		public static readonly Regex IsOkName = new Regex(@"^\w+$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 		public readonly string ColumnName;
 
 		public ColumnReference(string colname)
 		{
 			if (colname == null) throw new ArgumentNullException("colname");
-			else if (!okname.IsMatch(colname)) throw new ArgumentException("Geen valide kolomnaam " + colname, "colname");
+			else if (!IsOkName.IsMatch(colname)) throw new ArgumentException("Geen valide kolomnaam " + colname, "colname");
 			ColumnName = colname;
 		}
 

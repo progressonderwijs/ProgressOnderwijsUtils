@@ -35,6 +35,55 @@ namespace ProgressOnderwijsUtils
 					: Filter.CreateCombined(AndOr, FilterLijst.Select(f => f.AddToImpl(filterInEditMode, booleanOperator, c)));
 		}
 
+		public override string SerializeToString()
+		{
+			return SerializeOp() + string.Join(",", filterLijst.Select(filter => filter.SerializeToString())) + ";";
+		}
+
+		public static Tuple<FilterBase, string> Parse(string serialized)
+		{
+			if (serialized.Length == 0) return null;
+			BooleanOperator? op =
+				serialized[0] == '&' ? BooleanOperator.And :
+															serialized[0] == '|' ? BooleanOperator.Or
+																: default(BooleanOperator?);
+			if (!op.HasValue) return null;
+			List<FilterBase> filters = new List<FilterBase>();
+			serialized = serialized.Substring(1);
+			while (true)
+			{
+				var subExpression = Filter.TryParseSerializedFilterWithLeftovers(serialized);
+				if (subExpression != null)
+				{
+					filters.Add(subExpression.Item1);
+					if (subExpression.Item2.Length == 0 || subExpression.Item2[0] != ';' && subExpression.Item2[0] != ',')
+						return null;
+					else 
+						serialized = subExpression.Item2[0] == ';' ? subExpression.Item2 : subExpression.Item2.Substring(1);
+				}
+				else if (serialized.StartsWith(";"))
+				{
+					serialized = serialized.Substring(1);
+					return Tuple.Create((FilterBase)new CombinedFilter(op.Value, filters.ToArray()), serialized);
+				}
+				else
+				{
+					return null;
+				}
+			}
+		}
+
+		string SerializeOp()
+		{
+			switch (andor)
+			{
+				case BooleanOperator.And: return "&";
+				case BooleanOperator.Or: return "|";
+				default: throw new ArgumentOutOfRangeException();
+			}
+		}
+
+
 		public override int GetHashCode()
 		{
 			long val = andor.GetHashCode() + filterLijst.Select((f, i) => f.GetHashCode() * ((long)2 * i + 1)).Sum();

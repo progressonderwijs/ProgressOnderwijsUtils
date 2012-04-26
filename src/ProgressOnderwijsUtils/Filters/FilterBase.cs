@@ -12,6 +12,7 @@ namespace ProgressOnderwijsUtils
 		protected internal abstract FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c);
 		protected internal abstract IEnumerable<string> ColumnsReferenced { get; }
 		public override string ToString() { return ToQueryBuilderImpl().DebugText(); }
+		public abstract string SerializeToString();
 		public abstract bool Equals(FilterBase other);
 	}
 }

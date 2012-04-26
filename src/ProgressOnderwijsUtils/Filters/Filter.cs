@@ -11,14 +11,14 @@ namespace ProgressOnderwijsUtils
 		public static FilterBase Replace(this FilterBase filter, FilterBase toReplace, FilterBase replaceWith)
 		{
 			return filter == null ? (toReplace == null ? replaceWith : null)
-			       	: filter.ReplaceImpl(toReplace, replaceWith);
+					: filter.ReplaceImpl(toReplace, replaceWith);
 		}
 
 		public static FilterBase AddTo(this FilterBase filter, FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
 		{
 			return filter == null
-			       	? (filterInEditMode == null ? c : null)
-			       	: filter.AddToImpl(filterInEditMode, booleanOperator, c);
+					? (filterInEditMode == null ? c : null)
+					: filter.AddToImpl(filterInEditMode, booleanOperator, c);
 		}
 
 		public static FilterBase Remove(this FilterBase filter, FilterBase filterToRemove) { return filter.ReplaceImpl(filterToRemove, null); }
@@ -39,11 +39,11 @@ namespace ProgressOnderwijsUtils
 			else
 			{
 				return new CombinedFilter(andor,
-				                          conditiesArr.SelectMany(conditie =>
-				                                                  conditie is CombinedFilter && ((CombinedFilter)conditie).AndOr == andor
-				                                                  	? ((CombinedFilter)conditie).FilterLijst
-				                                                  	: new[] { conditie }
-				                          	).ToArray()
+										  conditiesArr.SelectMany(conditie =>
+																  conditie is CombinedFilter && ((CombinedFilter)conditie).AndOr == andor
+																	? ((CombinedFilter)conditie).FilterLijst
+																	: new[] { conditie }
+											).ToArray()
 					);
 			}
 		}
@@ -73,33 +73,47 @@ namespace ProgressOnderwijsUtils
 		{
 			switch (comparer)
 			{
-			case BooleanComparer.LessThan:
-				return "<";
-			case BooleanComparer.LessThanOrEqual:
-				return "<=";
-			case BooleanComparer.Equal:
-				return "=";
-			case BooleanComparer.GreaterThanOrEqual:
-				return ">=";
-			case BooleanComparer.GreaterThan:
-				return ">";
-			case BooleanComparer.NotEqual:
-				return "!=";
-			case BooleanComparer.In:
-				return "in";
-			case BooleanComparer.StartsWith:
-				return "starts with";
-			case BooleanComparer.Contains:
-				return "contains";
-			case BooleanComparer.IsNull:
-				return "is null";
-			case BooleanComparer.IsNotNull:
-				return "is not null";
-			default:
-				throw new InvalidOperationException("Geen geldige operator");
+				case BooleanComparer.LessThan:
+					return "<";
+				case BooleanComparer.LessThanOrEqual:
+					return "<=";
+				case BooleanComparer.Equal:
+					return "=";
+				case BooleanComparer.GreaterThanOrEqual:
+					return ">=";
+				case BooleanComparer.GreaterThan:
+					return ">";
+				case BooleanComparer.NotEqual:
+					return "!=";
+				case BooleanComparer.In:
+					return "in";
+				case BooleanComparer.StartsWith:
+					return "starts with";
+				case BooleanComparer.Contains:
+					return "contains";
+				case BooleanComparer.IsNull:
+					return "is null";
+				case BooleanComparer.IsNotNull:
+					return "is not null";
+				default:
+					throw new InvalidOperationException("Geen geldige operator");
 			}
 		}
 
+		static readonly Dictionary<string, BooleanComparer> niceStringValues = Enum.GetValues(typeof(BooleanComparer)).Cast<BooleanComparer>().ToDictionary(NiceString);
+
+		public static BooleanComparer? ParseComparerNiceString(string s) { return niceStringValues.GetOrDefault(s, default(BooleanComparer?)); }
+
 		public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, bool> isColValid) { return filter == null || !filter.ColumnsReferenced.All(isColValid) ? null : filter; }
+
+		public static Tuple<FilterBase, string> TryParseSerializedFilterWithLeftovers(string serialized)
+		{
+			return CombinedFilter.Parse(serialized) ?? CriteriumFilter.Parse(serialized);
+		}
+		public static FilterBase TryParseSerializedFilter(string serialized)
+		{
+			var parsed = TryParseSerializedFilterWithLeftovers(serialized);
+			return parsed != null && parsed.Item2 == "" ? parsed.Item1 : null;
+		}
 	}
 }
