@@ -30,7 +30,6 @@ namespace ProgressOnderwijsUtils
 	{
 		Func<TOwner, object> TypedGetter { get; }
 		Action<TOwner, object> TypedSetter { get; }
-
 	}
 
 	public static class MetaProperty
