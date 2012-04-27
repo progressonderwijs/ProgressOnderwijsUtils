@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -30,6 +31,7 @@ namespace ProgressOnderwijsUtils
 	{
 		Func<TOwner, object> TypedGetter { get; }
 		Action<TOwner, object> TypedSetter { get; }
+		Func<TOwner, TOwner, int> CompareByFunc { get; }
 	}
 
 	public static class MetaProperty
@@ -85,29 +87,41 @@ namespace ProgressOnderwijsUtils
 				typedGetter = Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
 
 
+				ParameterExpression parA = Expression.Parameter(typeof(TOwner), "a");
+				ParameterExpression parB = Expression.Parameter(typeof(TOwner), "b");
+				var comparer = typeof(Comparer<>).MakeGenericType(pi.PropertyType).GetProperty("Default", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
+				var cmpMethod = typeof(IComparer<>).MakeGenericType(pi.PropertyType).GetMethod("Compare", BindingFlags.Instance | BindingFlags.Public);
+
+				var cmpExpr = Expression.Call(Expression.Constant(comparer), cmpMethod, Expression.Property(parA, pi), Expression.Property(parB, pi));
+
+				compareByFunc = Expression.Lambda<Func<TOwner, TOwner, int>>(cmpExpr, parA, parB).Compile();
+
+
 				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
 
 				bool canWrite = !pi.CanWrite || pi.GetSetMethod() == null;
 				setter = canWrite ? default(Action<object, object>) :
-						Expression.Lambda<Action<object, object>>(
-							Expression.Assign(propExpr,
-								Expression.Convert(valParamExpr, pi.PropertyType)
-							), objParamExpr, valParamExpr
-						).Compile();
+																		Expression.Lambda<Action<object, object>>(
+																			Expression.Assign(propExpr,
+																							  Expression.Convert(valParamExpr, pi.PropertyType)
+																				), objParamExpr, valParamExpr
+																			).Compile();
 
 				typedSetter = canWrite ? default(Action<TOwner, object>) :
-						Expression.Lambda<Action<TOwner, object>>(
-							Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)
-							), typedParamExpr, valParamExpr
-						).Compile();
+																			Expression.Lambda<Action<TOwner, object>>(
+																				Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)
+																					), typedParamExpr, valParamExpr
+																				).Compile();
 
 
 				naam = pi.Name;
 				var mpVolgordeAttribute = Attr<MpVolgordeAttribute>(pi);
 				volgorde = mpVolgordeAttribute == null ? implicitOrder * 10 : mpVolgordeAttribute.Volgorde;
-				label = new[] {
+				label = new[]
+				{
 					OrDefault(Attr<MpSimpleLabelAttribute>(pi), mkAttr => mkAttr.Label),
-					OrDefault(Attr<MpTextDefKeyAttribute>(pi), mkAttr => mkAttr.Label) }
+					OrDefault(Attr<MpTextDefKeyAttribute>(pi), mkAttr => mkAttr.Label)
+				}
 					.SingleOrDefault(text => text != null);
 				if (Label == null && Attr<MpLabelsRequiredAttribute>(pi.DeclaringType) != null)
 					throw new ArgumentException("You must specify an MpSimpleLabel or MpTextDefKey on " + Naam + ", since the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " is marked MpLabelsRequired");
@@ -129,8 +143,11 @@ namespace ProgressOnderwijsUtils
 
 			public readonly Func<object, object> getter;
 			public readonly Func<TOwner, object> typedGetter;
+			public readonly Func<TOwner, TOwner, int> compareByFunc;
 			public Func<object, object> Getter { get { return getter; } }
 			public Func<TOwner, object> TypedGetter { get { return typedGetter; } }
+
+			public Func<TOwner, TOwner, int> CompareByFunc { get { return compareByFunc; } }
 
 			public readonly Action<object, object> setter;
 			public readonly Action<TOwner, object> typedSetter;
