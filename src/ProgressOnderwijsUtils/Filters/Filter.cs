@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace ProgressOnderwijsUtils
 {
 	public static class Filter
 	{
 		public static QueryBuilder ToQueryBuilder(this FilterBase filter) { return filter == null ? QueryBuilder.Create("1=1") : filter.ToQueryBuilderImpl(); }
+
+		public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter) where T : IMetaObject
+		{
+			if (filter == null) return _ => true;
+			var metaObjParam = Expression.Parameter(typeof(T));
+			var filterBodyExpr = filter.ToMetaObjectFilterExpr<T>(metaObjParam);
+			return Expression.Lambda<Func<T, bool>>(filterBodyExpr, metaObjParam).Compile();
+		}
 
 		public static FilterBase Replace(this FilterBase filter, FilterBase toReplace, FilterBase replaceWith)
 		{

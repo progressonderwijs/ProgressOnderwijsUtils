@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace ProgressOnderwijsUtils
 {
@@ -14,11 +16,18 @@ namespace ProgressOnderwijsUtils
 
 		internal CombinedFilter(BooleanOperator andor, FilterBase[] condities)
 		{
+			Debug.Assert(condities != null && condities.Length > 0);
 			this.andor = andor;
 			filterLijst = condities;
 		}
 
 		protected internal override IEnumerable<string> ColumnsReferenced { get { return FilterLijst.SelectMany(f => f.ColumnsReferenced); } }
+		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParExpr)
+		{
+			return
+				filterLijst.Select(filter => filter.ToMetaObjectFilterExpr<T>(objParExpr))
+					.Aggregate(andor == BooleanOperator.And ? Expression.AndAlso : (Func<Expression, Expression, Expression>)Expression.OrElse);
+		}
 
 		protected internal override QueryBuilder ToQueryBuilderImpl()
 		{
@@ -58,13 +67,13 @@ namespace ProgressOnderwijsUtils
 					filters.Add(subExpression.Item1);
 					if (subExpression.Item2.Length == 0 || subExpression.Item2[0] != ';' && subExpression.Item2[0] != ',')
 						return null;
-					else 
+					else
 						serialized = subExpression.Item2[0] == ';' ? subExpression.Item2 : subExpression.Item2.Substring(1);
 				}
 				else if (serialized.StartsWith(";"))
 				{
 					serialized = serialized.Substring(1);
-					return Tuple.Create((FilterBase)new CombinedFilter(op.Value, filters.ToArray()), serialized);
+					return Tuple.Create(Filter.CreateCombined(op.Value, filters), serialized);
 				}
 				else
 				{

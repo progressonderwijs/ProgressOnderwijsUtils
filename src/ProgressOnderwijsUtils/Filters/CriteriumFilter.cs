@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using ProgressOnderwijsUtils.Data;
 
@@ -102,7 +104,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		
+
 
 		public static Tuple<FilterBase, string> Parse(string SerializedRep)
 		{
@@ -121,7 +123,7 @@ namespace ProgressOnderwijsUtils
 			var waardeAndRemaining = FindWaardeStrAndLeftover(SerializedRep);
 			object waarde = DeserializeWaardeString(waardeAndRemaining.Item1);
 			SerializedRep = waardeAndRemaining.Item2;
-			return Tuple.Create((FilterBase)new CriteriumFilter(kolomNaam, comparer.Value, waarde), SerializedRep);
+			return Tuple.Create(Filter.CreateCriterium(kolomNaam, comparer.Value, waarde), SerializedRep);
 		}
 
 		string SerializeWaarde()
@@ -182,6 +184,51 @@ namespace ProgressOnderwijsUtils
 			return filterInEditMode == this
 				? Filter.CreateCombined(booleanOperator, this, c)
 				: this;
+		}
+
+		public static bool StartsWithHelper(string val, string with) { return val.StartsWith(with, StringComparison.Ordinal); }
+		public static bool ContainsHelper(string val, string needle) { return val.Contains(needle); }
+
+
+		static readonly MethodInfo startsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
+		static readonly MethodInfo containsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
+
+		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr)
+		{
+			if (Waarde is GroupReference)
+				throw new InvalidOperationException("Cannot interpret group reference IDs in LINQ: these are only stored in the database!");
+			var coreExpr = Expression.Property(objParamExpr, KolomNaam);
+			var waardeExpr = Waarde is ColumnReference ? Expression.Property(objParamExpr, ((ColumnReference)Waarde).ColumnName) : (Expression)Expression.Constant(Waarde);
+			switch (Comparer)
+			{
+				case BooleanComparer.LessThan:
+					return Expression.LessThan(coreExpr, waardeExpr);
+				case BooleanComparer.LessThanOrEqual:
+					return Expression.LessThanOrEqual(coreExpr, waardeExpr);
+				case BooleanComparer.Equal:
+					return Expression.Equal(coreExpr, waardeExpr);
+				case BooleanComparer.GreaterThanOrEqual:
+					return Expression.GreaterThanOrEqual(coreExpr, waardeExpr);
+				case BooleanComparer.GreaterThan:
+					return Expression.GreaterThan(coreExpr, waardeExpr);
+				case BooleanComparer.NotEqual:
+					return Expression.NotEqual(coreExpr, waardeExpr);
+				case BooleanComparer.In:
+					throw new NotImplementedException(); //TODO: de In operatie moet nog...
+				//string[] nrs = Waarde.ToString().Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+				//string clause = KolomNaam + " in (" + Enumerable.Range(0, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
+				//return QueryBuilder.Create(clause, nrs.Cast<object>().ToArray());
+				case BooleanComparer.StartsWith:
+					return Expression.Call(startsWithMethod, coreExpr, waardeExpr);
+				case BooleanComparer.Contains:
+					return Expression.Call(containsMethod, coreExpr, waardeExpr);
+				case BooleanComparer.IsNull:
+					return Expression.Equal(Expression.Default(typeof(object)), coreExpr);
+				case BooleanComparer.IsNotNull:
+					return Expression.NotEqual(Expression.Default(typeof(object)), coreExpr);
+				default:
+					throw new InvalidOperationException("Geen geldige operator");
+			}
 		}
 
 		public override string ToString()
