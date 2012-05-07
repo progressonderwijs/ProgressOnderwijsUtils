@@ -25,6 +25,8 @@ namespace ProgressOnderwijsUtils.Collections
 
 		public bool IsEmpty { get { return list == null; } }
 		public SList<T> Prepend(T head) { return new SList<T>(new Impl(head, list)); }
+		public SList<T> Reverse() { return this.Aggregate(Empty, (current, item) => current.Prepend(item)); }
+
 		public T Head { get { return list.Head; } }
 		public SList<T> Tail { get { return new SList<T>(list.Tail); } }
 
