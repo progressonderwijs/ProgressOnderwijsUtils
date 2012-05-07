@@ -8,36 +8,29 @@ namespace ProgressOnderwijsUtils
 {
 	public struct XHtmlData
 	{
-		public XNode[] nodes;
+		readonly XNode[] nodes;
 
 		public static XHtmlData Create(params object[] contents)
 		{
-			return new XHtmlData
-			{
-				nodes = new XElement("x", contents).Nodes().ToArray()
-			};
+			return new XHtmlData(new XElement("x", contents).Nodes().ToArray());
 		}
 
 		public static XHtmlData Parse(string s)
 		{
-			return new XHtmlData
-			{
-				nodes = XhtmlCleaner.HtmlSanitizer(s).Nodes().ToArray(),
-			};
+			return new XHtmlData(XhtmlCleaner.HtmlSanitizer(s).Nodes().ToArray());
 		}
+
+		XHtmlData(XNode[] nodes) { this.nodes = nodes; }
 
 		public string ToUiString()
 		{
 			using (StringWriter writer = new StringWriter())
-			using (XmlWriter inner = XmlWriter.Create(writer, new XmlWriterSettings
-				{
-					ConformanceLevel = ConformanceLevel.Fragment,
-				}))
+			using (XmlWriter inner = XmlWriter.Create(writer, new XmlWriterSettings {
+				ConformanceLevel = ConformanceLevel.Fragment,
+			}))
 			{
 				foreach (var node in nodes.EmptyIfNull())
-				{
 					node.WriteTo(inner);
-				}
 				inner.Close();
 				return writer.ToString();
 			}
