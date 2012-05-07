@@ -34,6 +34,9 @@ namespace ProgressOnderwijsUtils
 
 		OrderByColumns(ColumnSort[] order) { sortColumns = order; }
 		public OrderByColumns(string column, SortDirection dir) { sortColumns = new[] { new ColumnSort(column, dir) }; }
+		public OrderByColumns(string column, SortDirection dir, string column2, SortDirection dir2) { sortColumns = new[] { new ColumnSort(column, dir), new ColumnSort(column2, dir2) }; }
+		public OrderByColumns(string column, SortDirection dir, string column2, SortDirection dir2, string column3, SortDirection dir3) { sortColumns = new[] { new ColumnSort(column, dir), new ColumnSort(column2, dir2), new ColumnSort(column3, dir3) }; }
+		public OrderByColumns(string column, SortDirection dir, string column2, SortDirection dir2, string column3, SortDirection dir3, string column4, SortDirection dir4) { sortColumns = new[] { new ColumnSort(column, dir), new ColumnSort(column2, dir2), new ColumnSort(column3, dir3), new ColumnSort(column4, dir4) }; }
 
 		public ColumnSort GetSortColumn(string column) { return DirectAcessColumns.FirstOrDefault(sc => sc.ColumnName == column); }
 		public SortDirection? GetColumnSortDirection(string column)
