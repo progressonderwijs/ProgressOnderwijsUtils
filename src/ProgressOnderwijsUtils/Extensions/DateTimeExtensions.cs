@@ -23,6 +23,11 @@ namespace ProgressOnderwijsUtils
 				collegejaar--;
 			return collegejaar;
 		}
+
+		public static String GetTimestamp(this DateTime value)
+		{
+			return value.ToString("yyyyMMddHHmmssffff");
+		}
 		
 	}
 }
