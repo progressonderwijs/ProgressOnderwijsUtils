@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Converteer;
+using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {

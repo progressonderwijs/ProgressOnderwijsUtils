@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace ProgressOnderwijsUtils.Converteer
+namespace ProgressOnderwijsUtils.Data
 {
 	public static class DBNullRemover
 	{

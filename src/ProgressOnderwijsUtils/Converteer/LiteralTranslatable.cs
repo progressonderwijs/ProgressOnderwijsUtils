@@ -6,18 +6,14 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
-	public sealed class LiteralTranslatable : ITranslatable
+	public sealed class BilingualTranslatable : ITranslatable
 	{
 		readonly TextVal nl, en;
 
-		public LiteralTranslatable(TextVal nl, TextVal en)
+		internal BilingualTranslatable(TextVal nl, TextVal en)
 		{
 			this.nl = nl;
 			this.en = en;
-		}
-
-		public LiteralTranslatable(string nl, string en) : this(TextVal.Create(nl), TextVal.Create(en))
-		{
 		}
 
 		public string GenerateUid()
