@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
-	public sealed class BilingualTranslatable : ITranslatable
+	public sealed class BilingualTranslatable : ByValueHelperBase<BilingualTranslatable>, ITranslatable
 	{
 		readonly TextVal nl, en;
 

@@ -53,6 +53,14 @@ namespace ProgressOnderwijsUtils
 		{
 			return new BilingualTranslatable(nl, en);
 		}
+		public static ITranslatable Literal(string nl, string en, string du)
+		{
+			return new TrilingualTranslatable(TextVal.Create(nl), TextVal.Create(en), TextVal.Create(du));
+		}
+		public static ITranslatable Literal(TextVal nl, TextVal en, TextVal du)
+		{
+			return new TrilingualTranslatable(nl, en, du);
+		}
 
 
 		sealed class LimitLengthTranslatable : ITranslatable
