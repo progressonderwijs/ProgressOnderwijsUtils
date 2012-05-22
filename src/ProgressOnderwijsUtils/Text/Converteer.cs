@@ -262,15 +262,15 @@ namespace ProgressOnderwijsUtils
 				return TimeSpan.TryParse(s, CultureNL, out ignore) ? ParseState.OK : ParseState.TIJDFOUT;
 			}
 			else if (fundamentalType == typeof(long))
-// ReSharper disable ReturnValueOfPureMethodIsNotUsed
+				// ReSharper disable ReturnValueOfPureMethodIsNotUsed
 				try { Int64.Parse(s); return ParseState.OK; }
-// ReSharper restore ReturnValueOfPureMethodIsNotUsed
+				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
 				catch (FormatException) { return ParseState.MALFORMED; }
 				catch (OverflowException) { return ParseState.OVERFLOW; }
 			else if (fundamentalType == typeof(int))
-// ReSharper disable ReturnValueOfPureMethodIsNotUsed
+				// ReSharper disable ReturnValueOfPureMethodIsNotUsed
 				try { Int32.Parse(s); return ParseState.OK; }
-// ReSharper restore ReturnValueOfPureMethodIsNotUsed
+				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
 				catch (FormatException) { return ParseState.MALFORMED; }
 				catch (OverflowException) { return ParseState.OVERFLOW; }
 			else if (fundamentalType == typeof(decimal) || fundamentalType == typeof(double))
@@ -283,16 +283,16 @@ namespace ProgressOnderwijsUtils
 				return XhtmlCleaner.TryParse(s) != null ? ParseState.OK : ParseState.MALFORMED;
 			throw new ConverteerException("TryParse nog niet geimplementeerd voor " + t);
 		}
-		public static string ToDbCode(this ParseState state)
+		public static ITranslatable ToDbCode(this ParseState state)
 		{
 			switch (state)
 			{
-				case ParseState.GEENDATA: return "geendata";
-				case ParseState.OK: return "";
-				case ParseState.MALFORMED: return "illegaledatainkolom";
-				case ParseState.OVERFLOW: return "overflow";
-				case ParseState.DATUMFOUT: return "foutdatumformaat";
-				case ParseState.TIJDFOUT: return "fouttijdformaat";
+				case ParseState.GEENDATA: return Texts.GenericEdit.Geendata;
+				case ParseState.OK: return null;
+				case ParseState.MALFORMED: return Texts.GenericEdit.Illegaledatainkolom;
+				case ParseState.OVERFLOW: return Texts.GenericEdit.Overflow;
+				case ParseState.DATUMFOUT: return Texts.GenericEdit.Foutdatumformaat;
+				case ParseState.TIJDFOUT: return Texts.GenericEdit.Fouttijdformaat;
 				default: throw new InvalidOperationException("Invalid parse state");
 			}
 		}
