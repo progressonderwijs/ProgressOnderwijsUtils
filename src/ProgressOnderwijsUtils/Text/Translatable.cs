@@ -45,23 +45,10 @@ namespace ProgressOnderwijsUtils
 			return new LazyTranslatable(lazyCreator);
 		}
 
-		public static ITranslatable Literal(string nl, string en)
+		public static LiteralTranslatable Literal(string nl, string en, string du = null)
 		{
-			return new BilingualTranslatable(TextVal.Create(nl), TextVal.Create(en));
+			return new LiteralTranslatable(nl, en, du);
 		}
-		public static ITranslatable Literal(TextVal nl, TextVal en)
-		{
-			return new BilingualTranslatable(nl, en);
-		}
-		public static ITranslatable Literal(string nl, string en, string du)
-		{
-			return new TrilingualTranslatable(TextVal.Create(nl), TextVal.Create(en), TextVal.Create(du));
-		}
-		public static ITranslatable Literal(TextVal nl, TextVal en, TextVal du)
-		{
-			return new TrilingualTranslatable(nl, en, du);
-		}
-
 
 		sealed class LimitLengthTranslatable : ITranslatable
 		{
