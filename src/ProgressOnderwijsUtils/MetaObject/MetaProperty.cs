@@ -119,8 +119,7 @@ namespace ProgressOnderwijsUtils
 				volgorde = mpVolgordeAttribute == null ? implicitOrder * 10 : mpVolgordeAttribute.Volgorde;
 				label = new[]
 				{
-					OrDefault(Attr<MpSimpleLabelAttribute>(pi), mkAttr => mkAttr.Label),
-					OrDefault(Attr<MpTextDefKeyAttribute>(pi), mkAttr => mkAttr.Label)
+					OrDefault(Attr<MpSimpleLabelAttribute>(pi), mkAttr => mkAttr.Label)
 				}
 					.SingleOrDefault(text => text != null);
 				if (Label == null && Attr<MpLabelsRequiredAttribute>(pi.DeclaringType) != null)

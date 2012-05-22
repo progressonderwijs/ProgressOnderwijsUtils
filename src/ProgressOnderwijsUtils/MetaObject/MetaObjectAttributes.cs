@@ -51,13 +51,6 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	public sealed class MpTextDefKeyAttribute : Attribute
-	{
-		public MpTextDefKeyAttribute(string webmodule, string sleutel) { Label = new TextDefKey(webmodule, sleutel); }
-		public readonly ITranslatable Label;
-	}
-
-	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpKoppelTabelAttribute : Attribute
 	{
 		public MpKoppelTabelAttribute(string tabelnaam) { KoppelTabelNaam = tabelnaam; }
