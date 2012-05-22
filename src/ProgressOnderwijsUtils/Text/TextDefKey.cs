@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
 		public string Sleutel { get { return sleutel; } }
 
 		public TextDefKey(string webmodule, string sleutel) { this.webmodule = webmodule; this.sleutel = sleutel; }
-		static string cleanKey(string messyKey) { return messyKey.Replace(' ', '_').Replace('.', '_').Replace('-', '_').Replace("]", "").Replace("[", ""); }
+		public static string cleanKey(string messyKey) { return messyKey.Replace(' ', '_').Replace('.', '_').Replace('-', '_').Replace("]", "").Replace("[", ""); }
 
 		public string GenerateUid() { return (webmodule + "/" + cleanKey(sleutel)).ToLowerInvariant(); }
 		public override string ToString() { return "KEY:" + GenerateUid(); }
