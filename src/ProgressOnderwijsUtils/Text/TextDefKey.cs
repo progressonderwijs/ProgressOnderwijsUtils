@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
-	public sealed class TextDefKey : ITextDefKey
+	public sealed class TextDefKey :ITranslatable
 	{
 		readonly string webmodule;
 		readonly string sleutel;
