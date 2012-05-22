@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
 				return TextVal.Create("~" + nl);
 		}
 
-		public LiteralTranslatableWithToolTip WithTooltip(string tooltipNL, string tooltipEN, string tooltipDU = null)
+		public ITranslatable WithTooltip(string tooltipNL, string tooltipEN, string tooltipDU = null)
 		{
 			return new LiteralTranslatableWithToolTip(TextVal.Create(nl, tooltipNL), TextVal.Create(en, tooltipEN), TextVal.Create(du, tooltipDU));
 		}
