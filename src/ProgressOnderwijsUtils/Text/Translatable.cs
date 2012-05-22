@@ -57,9 +57,9 @@ namespace ProgressOnderwijsUtils
 			public LimitLengthTranslatable(ITranslatable text, int maxwidth) { m_text = text; m_maxwidth = maxwidth; }
 
 			public string GenerateUid() { return m_maxwidth + "<" + m_text.GenerateUid(); }
-			public TextVal Translate(ITranslationKeyLookup conn, Taal lang)
+			public TextVal Translate(Taal lang)
 			{
-				TextVal raw = m_text.Translate(conn, lang);
+				TextVal raw = m_text.Translate(lang);
 				var shortened = StringMeasurement.LimitTextLength(raw.Text, m_maxwidth);
 				return TextVal.Create(shortened.Item1, string.IsNullOrEmpty(raw.ExtraText) && shortened.Item2 ? raw.Text : raw.ExtraText);
 			}
@@ -70,15 +70,15 @@ namespace ProgressOnderwijsUtils
 			readonly TranslateFunction stringify;
 			public SingleTranslatable(TranslateFunction stringify) { this.stringify = stringify; }
 			public string GenerateUid() { return stringify(); }
-			public TextVal Translate(ITranslationKeyLookup conn, Taal lang) { return TextVal.Create(stringify(lang)); }
+			public TextVal Translate(Taal lang) { return TextVal.Create(stringify(lang)); }
 			public override string ToString() { return GenerateUid(); }
 		}
 		sealed class DoubleTranslatable : ITranslatable
 		{
 			readonly TranslateFunction textF, extratextF;
 			public DoubleTranslatable(TranslateFunction textFactory, TranslateFunction extratextFactory) { textF = textFactory; extratextF = extratextFactory; }
-			public string GenerateUid() { return Translate(null, Taal.NL).ToString(); }
-			public TextVal Translate(ITranslationKeyLookup conn, Taal lang) { return TextVal.Create(textF(lang), extratextF(lang)); }
+			public string GenerateUid() { return Translate(Taal.NL).ToString(); }
+			public TextVal Translate(Taal lang) { return TextVal.Create(textF(lang), extratextF(lang)); }
 			public override string ToString() { return GenerateUid(); }
 
 		}
@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtils
 			readonly string uid;
 			public LazyTranslatable(Func<ITranslatable> currentText) { this.currentText = currentText; uid = "LZ:" + currentText().GenerateUid(); }
 			public string GenerateUid() { return uid; }
-			public TextVal Translate(ITranslationKeyLookup conn, Taal lang) { return currentText().Translate(conn, lang); }
+			public TextVal Translate(Taal lang) { return currentText().Translate(lang); }
 			public override string ToString() { return GenerateUid(); }
 
 		}
@@ -99,7 +99,7 @@ namespace ProgressOnderwijsUtils
 			readonly Taal taal;
 			public ForcedLanguageTranslatable(ITranslatable underlying, Taal taal) { this.underlying = underlying; this.taal = taal; }
 			public string GenerateUid() { return underlying.GenerateUid(); }
-			public TextVal Translate(ITranslationKeyLookup conn, Taal lang) { return underlying.Translate(conn, taal); }
+			public TextVal Translate(Taal lang) { return underlying.Translate(taal); }
 			public override string ToString() { return GenerateUid(); }
 		}
 	}

@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
@@ -17,10 +20,22 @@ namespace ProgressOnderwijsUtils
 		public string GenerateUid() { return (webmodule + "/" + cleanKey(sleutel)).ToLowerInvariant(); }
 		public override string ToString() { return "KEY:" + GenerateUid(); }
 
-		public TextVal Translate(ITranslationKeyLookup conn, Taal taal)
+		public TextVal Translate(Taal taal)
 		{
-			return conn.Lookup(taal, GenerateUid());
+			string uid = GenerateUid();
+			var lookedup = teksten.GetOrDefault(uid, null);
+			if (lookedup is LiteralTranslatable || lookedup is LiteralTranslatableWithToolTip)
+			{
+				return lookedup.Translate(taal);
+			}
+			else return TextVal.CreateUndefined(uid);
 		}
+
+		static readonly Dictionary<string, ITranslatable> teksten =
+			typeof(Texts).GetNestedTypes(BindingFlags.Public)
+				.SelectMany(type =>
+							type.GetFields(BindingFlags.Public | BindingFlags.Static)
+				).ToDictionary(fi => fi.DeclaringType.Name.ToLowerInvariant() + "/" + fi.Name.ToLowerInvariant(), fi => (ITranslatable)fi.GetValue(null));
 	}
 
 	public sealed class NonsenseTranslatable : ITranslatable
@@ -35,10 +50,10 @@ namespace ProgressOnderwijsUtils
 		public string GenerateUid() { return (webmodule + "/" + cleanKey(sleutel)).ToLowerInvariant(); }
 		public override string ToString() { return "KEY:" + GenerateUid(); }
 
-		public TextVal Translate(ITranslationKeyLookup conn, Taal taal)
+		public TextVal Translate(Taal taal)
 		{
 			return TextVal.CreateUndefined(GenerateUid());
 		}
 	}
-	
+
 }

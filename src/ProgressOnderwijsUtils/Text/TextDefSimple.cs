@@ -19,6 +19,6 @@ namespace ProgressOnderwijsUtils
 		public string GenerateUid() { return "TV:" + tv.Text + "\n" + tv.ExtraText; }
 		public override string ToString() { return GenerateUid(); }
 
-		public TextVal Translate(ITranslationKeyLookup conn, Taal taal) { return tv; }
+		public TextVal Translate(Taal taal) { return tv; }
 	}
 }

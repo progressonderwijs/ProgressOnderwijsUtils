@@ -22,10 +22,10 @@ namespace ProgressOnderwijsUtils.Text
 			return core.GenerateUid() +"|"+ toreplace.Select(it => it.GenerateUid()).JoinStrings(";");
 		}
 
-		public TextVal Translate(ITranslationKeyLookup conn, Taal taal)
+		public TextVal Translate(Taal taal)
 		{
-			TextVal retval = core.Translate(conn, taal);
-			TextVal[] replacements = toreplace.Select(it => it.Translate(conn, taal)).ToArray();
+			TextVal retval = core.Translate(taal);
+			TextVal[] replacements = toreplace.Select(it => it.Translate(taal)).ToArray();
 			string[] mainTextRep = replacements.Select(tv => tv.Text).ToArray();
 			string[] helpTextRep = replacements.Select(tv => tv.ExtraTextOrDefault).ToArray();
 			return new TextVal(string.Format(retval.Text, mainTextRep), string.Format(retval.ExtraText, helpTextRep));

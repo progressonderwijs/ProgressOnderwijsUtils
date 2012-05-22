@@ -14,9 +14,9 @@ namespace ProgressOnderwijsUtils.Text
 		public ConcatTranslatable(params ITranslatable[] parts) { this.parts = parts;}
 		public string GenerateUid() { return parts.Select(it=> it.GenerateUid()).JoinStrings(); }
 
-		public TextVal Translate(ITranslationKeyLookup conn, Taal taal)
+		public TextVal Translate(Taal taal)
 		{
-			var translation = parts.Select(it => it.Translate(conn, taal)).ToArray();
+			var translation = parts.Select(it => it.Translate(taal)).ToArray();
 			return new TextVal(translation.Select(tv => tv.Text).JoinStrings(), translation.Select(tv => tv.ExtraTextOrDefault).JoinStrings());
 		}
 	}

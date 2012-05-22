@@ -8,6 +8,6 @@ namespace ProgressOnderwijsUtils
 	public interface ITranslatable
 	{
 		string GenerateUid();
-		TextVal Translate(ITranslationKeyLookup connectionOrContext, Taal lang);
+		TextVal Translate(Taal lang);
 	}
 }

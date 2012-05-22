@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
 				   + " " + Convert.ToString((du ?? "").GetHashCode(), 16);
 		}
 
-		public TextVal Translate(ITranslationKeyLookup connectionOrContext, Taal lang)
+		public TextVal Translate(Taal lang)
 		{
 			var retval =
 				lang == Taal.NL ? TextVal.Create(nl)
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
 			+ " " + Convert.ToString(du.GetHashCode(), 16);
 		}
 
-		public TextVal Translate(ITranslationKeyLookup connectionOrContext, Taal lang)
+		public TextVal Translate(Taal lang)
 		{
 			var retval =
 				lang == Taal.NL ? nl
