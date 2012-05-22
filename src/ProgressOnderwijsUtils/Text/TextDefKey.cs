@@ -22,4 +22,23 @@ namespace ProgressOnderwijsUtils
 			return conn.Lookup(taal, GenerateUid());
 		}
 	}
+
+	public sealed class NonsenseTranslatable : ITranslatable
+	{
+		readonly string webmodule;
+		readonly string sleutel;
+
+
+		public NonsenseTranslatable(string webmodule, string sleutel) { this.webmodule = webmodule; this.sleutel = sleutel; }
+		public static string cleanKey(string messyKey) { return messyKey.Replace(' ', '_').Replace('.', '_').Replace('-', '_').Replace("]", "").Replace("[", ""); }
+
+		public string GenerateUid() { return (webmodule + "/" + cleanKey(sleutel)).ToLowerInvariant(); }
+		public override string ToString() { return "KEY:" + GenerateUid(); }
+
+		public TextVal Translate(ITranslationKeyLookup conn, Taal taal)
+		{
+			return TextVal.CreateUndefined(GenerateUid());
+		}
+	}
+	
 }
