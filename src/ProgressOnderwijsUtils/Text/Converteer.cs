@@ -287,12 +287,12 @@ namespace ProgressOnderwijsUtils
 		{
 			switch (state)
 			{
-				case ParseState.GEENDATA: return Texts.GenericEdit.Geendata;
+				case ParseState.GEENDATA: return Texts.GenericEdit.GeenData;
 				case ParseState.OK: return null;
-				case ParseState.MALFORMED: return Texts.GenericEdit.Illegaledatainkolom;
+				case ParseState.MALFORMED: return Texts.GenericEdit.IllegaleDataInkolom;
 				case ParseState.OVERFLOW: return Texts.GenericEdit.Overflow;
-				case ParseState.DATUMFOUT: return Texts.GenericEdit.Foutdatumformaat;
-				case ParseState.TIJDFOUT: return Texts.GenericEdit.Fouttijdformaat;
+				case ParseState.DATUMFOUT: return Texts.GenericEdit.FoutDatumFormaat;
+				case ParseState.TIJDFOUT: return Texts.GenericEdit.FoutTijdFormaat;
 				default: throw new InvalidOperationException("Invalid parse state");
 			}
 		}
