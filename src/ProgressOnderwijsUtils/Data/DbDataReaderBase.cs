@@ -10,9 +10,9 @@ namespace ProgressOnderwijsUtils.Data
 {
 	public abstract class DbDataReaderBase : DbDataReader
 	{
-		public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length) { throw new NotImplementedException(); }
-		public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length) { throw new NotImplementedException(); }
-		public override DataTable GetSchemaTable() { throw new NotImplementedException(); }
+		public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length) { throw new NotSupportedException(); }
+		public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length) { throw new NotSupportedException(); }
+		public override DataTable GetSchemaTable() { throw new NotSupportedException(); }
 
 		public override string GetDataTypeName(int ordinal) { return GetFieldType(ordinal).ToString(); }
 

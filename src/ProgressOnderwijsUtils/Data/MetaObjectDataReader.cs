@@ -1,3 +1,4 @@
+using System.Data;
 using System.Linq;
 using System.Collections.Generic;
 using System;
@@ -16,6 +17,7 @@ namespace ProgressOnderwijsUtils.Data
 		static readonly Action<T, object[]> ReadValues;
 
 		static readonly Dictionary<string, int> indexLookup;
+		static readonly DataTable schemaTable;
 
 		static MetaObjectDataReader()
 		{
@@ -36,10 +38,47 @@ namespace ProgressOnderwijsUtils.Data
 
 			ReadValues = (Action<T, object[]>)Delegate.CreateDelegate(typeof(Action<T, object[]>), t.GetMethod("FillArray"));
 
+			schemaTable = CreateSchemaTable();
+			
 			//ReadValues = arrFiller.Compile();
 		}
 
-		public override void Close() { metaObjects.Dispose(); }
+		public override DataTable GetSchemaTable()
+		{
+			return schemaTable;
+		}
+
+		static DataTable CreateSchemaTable()
+		{
+			var dt = new DataTable();
+			dt.Columns.Add("ColumnName",typeof(string));
+			dt.Columns.Add("ColumnOrdinal",typeof(int));
+			dt.Columns.Add("ColumnSize", typeof(int));
+			dt.Columns.Add("NumericPrecision", typeof(short));
+			dt.Columns.Add("NumericScale", typeof(short));
+			dt.Columns.Add("DataType", typeof(Type));
+			dt.Columns.Add("ProviderType", typeof(int));
+			dt.Columns.Add("IsLong", typeof(bool));
+			dt.Columns.Add("AllowDBNull", typeof(bool));
+			dt.Columns.Add("IsReadOnly", typeof(bool));
+			dt.Columns.Add("IsRowVersion", typeof(bool));
+			dt.Columns.Add("IsUnique", typeof(bool));
+			dt.Columns.Add("IsKey", typeof(bool));
+			dt.Columns.Add("IsAutoIncrement", typeof(bool));
+			dt.Columns.Add("BaseCatalogName", typeof(string));
+			dt.Columns.Add("BaseSchemaName", typeof(string));
+			dt.Columns.Add("BaseTableName", typeof(string));
+			dt.Columns.Add("BaseColumnName", typeof(string));
+
+			for(int i=0;i<fields.Length;i++)
+			{
+				dt.Rows.Add(fields[i].Naam,i,-1,null,null,fields[i].DataType,null,false,fields[i].AllowNull,true,false,false,false,false,null,null,null,"val");
+			}
+			return dt;
+			
+		}
+
+		public override void Close() { metaObjects.Dispose(); isClosed = true; }
 		public MetaObjectDataReader(IEnumerable<T> objects) { metaObjects = objects.GetEnumerator(); }
 		object[] cache;
 		protected override bool ReadImpl()
