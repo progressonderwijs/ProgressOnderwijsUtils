@@ -26,9 +26,9 @@ namespace ProgressOnderwijsUtils.Log4Net
 		{
 			Encoding = Encoding.UTF8;
 			RollingStyle = RollingMode.Size;
-			AppendToFile = false;
+			AppendToFile = true;
 			MaximumFileSize = "256MB";
-			MaxSizeRollBackups = 5;
+			MaxSizeRollBackups = 9;
 			Layout = new PatternLayout("%utcdate{ISO8601} [%-4thread] %-5level %-50.50logger: %message%newline");
 		}
 
