@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
 		//public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
 		public static IEnumerable<IMetaProperty<T>> GetMetaProperties<T>() where T : IMetaObject { return MetaPropCache<T>.properties; }
 
-		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
+		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject,new()
 		{
 			DataTable dt = new DataTable();
 			var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
@@ -52,7 +52,16 @@ namespace ProgressOnderwijsUtils
 		sealed class MetaPropCache<T> : IMetaPropCache
 		{
 			public readonly static IMetaProperty<T>[] properties;
-			static MetaPropCache() { properties = GetMetaPropertiesImpl().Cast<IMetaProperty<T>>().ToArray(); }
+			static MetaPropCache() {
+				if (typeof(T) == typeof(IMetaObject))
+					throw new ArgumentException("Cannot determine metaproperties on IMetaObject itself");
+				else if (typeof(T).IsAbstract)
+					throw new ArgumentException("Cannot determine metaproperties on abstract type "+typeof(T));
+				else if (typeof(T).IsInterface)
+					throw new ArgumentException("Cannot determine metaproperties on interface type " + typeof(T));
+
+				properties = GetMetaPropertiesImpl().Cast<IMetaProperty<T>>().ToArray(); 
+			}
 			public IMetaProperty[] Properties { get { return properties; } }
 			//public object DynGet(IMetaObject obj, string propertyName) { return properties.Single(prop => prop.Naam == propertyName).Getter(obj); }
 			//public void DynSet(IMetaObject obj, string propertyName, object val) { properties.Single(prop => prop.Naam == propertyName).Setter(obj, val); }
