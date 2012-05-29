@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Collections.Generic;
 using System;
@@ -10,6 +11,19 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils.Data
 {
+	public static class MetaObjectDataReader
+	{
+		public static DbDataReader Create<T>(IEnumerable<T> entities) where T : IMetaObject, new() { return new MetaObjectDataReader<T>(entities); }
+
+		public static DbDataReader CreateDynamically(IEnumerable<IMetaObject> entities)
+		{
+			var entityType = entities.First().GetType();
+			var method = typeof(MetaObjectDataReader).GetMethod("Create", BindingFlags.Static | BindingFlags.Public, null, new[] { entityType }, null);
+			return (DbDataReader)method.Invoke(null, new object[] { entities });
+		}
+
+	}
+
 	public sealed class MetaObjectDataReader<T> : DbDataReaderBase where T : IMetaObject
 	{
 		readonly IEnumerator<T> metaObjects;
@@ -39,7 +53,7 @@ namespace ProgressOnderwijsUtils.Data
 			ReadValues = (Action<T, object[]>)Delegate.CreateDelegate(typeof(Action<T, object[]>), t.GetMethod("FillArray"));
 
 			schemaTable = CreateSchemaTable();
-			
+
 			//ReadValues = arrFiller.Compile();
 		}
 
@@ -51,8 +65,8 @@ namespace ProgressOnderwijsUtils.Data
 		static DataTable CreateSchemaTable()
 		{
 			var dt = new DataTable();
-			dt.Columns.Add("ColumnName",typeof(string));
-			dt.Columns.Add("ColumnOrdinal",typeof(int));
+			dt.Columns.Add("ColumnName", typeof(string));
+			dt.Columns.Add("ColumnOrdinal", typeof(int));
 			dt.Columns.Add("ColumnSize", typeof(int));
 			dt.Columns.Add("NumericPrecision", typeof(short));
 			dt.Columns.Add("NumericScale", typeof(short));
@@ -70,12 +84,12 @@ namespace ProgressOnderwijsUtils.Data
 			dt.Columns.Add("BaseTableName", typeof(string));
 			dt.Columns.Add("BaseColumnName", typeof(string));
 
-			for(int i=0;i<fields.Length;i++)
+			for (int i = 0; i < fields.Length; i++)
 			{
-				dt.Rows.Add(fields[i].Naam,i,-1,null,null,fields[i].DataType,null,false,fields[i].AllowNull,true,false,false,false,false,null,null,null,"val");
+				dt.Rows.Add(fields[i].Naam, i, -1, null, null, fields[i].DataType, null, false, fields[i].AllowNull, true, false, false, false, false, null, null, null, "val");
 			}
 			return dt;
-			
+
 		}
 
 		public override void Close() { metaObjects.Dispose(); isClosed = true; }
@@ -96,6 +110,5 @@ namespace ProgressOnderwijsUtils.Data
 		public override string GetName(int ordinal) { return fields[ordinal].Naam; }
 		public override int GetOrdinal(string name) { return indexLookup[name]; }
 		public override object GetValue(int ordinal) { return cache[ordinal] ?? DBNull.Value; }
-
 	}
 }

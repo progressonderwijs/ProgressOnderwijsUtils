@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -43,8 +44,7 @@ namespace ProgressOnderwijsUtils.Data
 
 			public SqlParameter ToParameter(QueryParamNumberer qnum)
 			{
-				return new SqlParameter
-				{
+				return new SqlParameter {
 					IsNullable = paramval == DBNull.Value,
 					ParameterName = "@par" + qnum.GetNumberForParam(this),
 					Value = paramval,
@@ -76,6 +76,39 @@ namespace ProgressOnderwijsUtils.Data
 			public override int GetHashCode() { return paramval.GetHashCode() + 37; }//paramval never null!
 		}
 
+		sealed class TableParamComponent : IQueryComponent, IQueryParameter
+		{
+			readonly object paramval;
+			readonly string DbTypeName;
+			internal TableParamComponent(string dbTypeName, object o) { paramval = o; DbTypeName = dbTypeName; }
+
+			public string ToSqlString(QueryParamNumberer qnum) { return "@par" + qnum.GetNumberForParam(this); }
+
+			public SqlParameter ToParameter(QueryParamNumberer qnum)
+			{
+				return new SqlParameter {
+					IsNullable = false,
+					ParameterName = "@par" + qnum.GetNumberForParam(this),
+					Value = paramval,
+					SqlDbType = SqlDbType.Structured,
+					TypeName = DbTypeName
+				};
+			}
+
+			public string ToDebugText()
+			{
+				return "{!" + ObjectToCode.ComplexObjectToPseudoCode(paramval) + "!}";
+			}
+
+
+			public bool QueryEquals(IQueryParameter other) { return Equals((object)other); }
+			public int QueryHashCode() { return paramval.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200; }//paramval never null!
+
+			public bool Equals(IQueryComponent other) { return Equals((object)other); }
+			public override bool Equals(object other) { return ReferenceEquals(this, other) || (other is TableParamComponent) && Equals(DbTypeName, ((TableParamComponent)other).DbTypeName) && Equals(paramval, ((TableParamComponent)other).paramval); }
+			public override int GetHashCode() { return QueryHashCode(); }//paramval never null!
+		}
+
 		public sealed class QueryParamEquality : IEqualityComparer<IQueryParameter>
 		{
 			public bool Equals(IQueryParameter x, IQueryParameter y) { return x.QueryEquals(y); }
@@ -87,7 +120,28 @@ namespace ProgressOnderwijsUtils.Data
 
 
 		public static IQueryComponent CreateString(string val) { return new StringComponent(val); }
-		public static IQueryComponent CreateParam(object o) { return o is LiteralSqlInt ? new StringComponent(((LiteralSqlInt)o).Value.ToStringInvariant()) : (IQueryComponent)new ParamComponent(o); }
+		public static IQueryComponent CreateParam(object o)
+		{
+			return 
+				o is IQueryParameter && o is IQueryComponent ? (IQueryComponent)o
+				: o is LiteralSqlInt ? new StringComponent(((LiteralSqlInt)o).Value.ToStringInvariant()) 
+				: (IQueryComponent)new ParamComponent(o);
+		}
+
+
+		public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
+		{
+			return new TableParamComponent(tableTypeName, MetaObjectDataReader.Create(set));
+		}
+		public static IQueryComponent ToTableParameter(IEnumerable<int> set) { return ToTableParameter("IntValues", set.Select(i => new IntValues_DbTableType { val = i })); }
+
+		public static IQueryComponent ToTableParameterWithDeducedType(string tableTypeName, IEnumerable<IMetaObject> set) { return new TableParamComponent(tableTypeName, MetaObjectDataReader.CreateDynamically(set)); }
+
+	}
+
+	public struct IntValues_DbTableType : IMetaObject
+	{
+		public int val { get; set; }
 	}
 
 	[TestFixture]

@@ -67,6 +67,25 @@ namespace ProgressOnderwijsUtils
 
 		public static QueryBuilder Create(string str) { return new QueryBuilder(QueryComponent.CreateString(str)); }
 		public static QueryBuilder Param(object o) { return new QueryBuilder(QueryComponent.CreateParam(o)); }
+
+		/// <summary>
+		/// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
+		/// 
+		///   You need to define a corresponding type in the database.
+		/// e.g:
+		/// 
+		/// CREATE TYPE [dbo].[IntValues] AS TABLE([val] [int] NOT NULL) would correspond to 
+		/// public class MyClass : IMetaObject{ public int val {get;set;} }
+		/// 
+		/// see MSDN for more details.  For int-valued parameters, a predefined overload is provided.
+		/// </summary>
+		/// <param name="typeName">name of the db-type e.g. IntValues</param>
+		/// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
+		/// <returns>a composable query-component</returns>
+public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) where T : IMetaObject, new() { return new QueryBuilder(QueryComponent.ToTableParameter(typeName, o)); }
+		public static QueryBuilder TableParamWithDeducedType(string typeName, IEnumerable<IMetaObject> o) { return new QueryBuilder(QueryComponent.ToTableParameterWithDeducedType(typeName, o)); }
+		public static QueryBuilder TableParam(IEnumerable<int> o) { return new QueryBuilder(QueryComponent.ToTableParameter(o)); }
+
 		public static QueryBuilder Create(string str, params object[] parms) { return Create(Empty, str, parms); }
 
 		public static QueryBuilder Create(QueryBuilder prefix, string str, params object[] parms)
@@ -117,7 +136,7 @@ namespace ProgressOnderwijsUtils
 			public override int GetHashCode()
 			{
 				return 11 + CommandText.GetHashCode() - Params.Length +
-				       Params.Select((p, i) => p.Value.GetHashCode() * (i * 2 + 1)).Aggregate(0, (a, b) => a + b); //don't use Sum because sum does overflow checking.
+					   Params.Select((p, i) => p.Value.GetHashCode() * (i * 2 + 1)).Aggregate(0, (a, b) => a + b); //don't use Sum because sum does overflow checking.
 			}
 
 			public static bool operator ==(SerializedQuery a, SerializedQuery b) { return ReferenceEquals(a, b) || null != a && null != b && a.Equals(b); } //watch out: a!=null would create infinite recursion.
