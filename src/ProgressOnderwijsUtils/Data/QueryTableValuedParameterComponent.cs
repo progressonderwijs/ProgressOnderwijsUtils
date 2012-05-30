@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils.Data
 		readonly string DbTypeName;
 		internal QueryTableValuedParameterComponent(string dbTypeName, object o) { paramval = o; DbTypeName = dbTypeName; }
 
-		public string ToSqlString(QueryFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
+		public string ToSqlString(CommandFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
 
 		public SqlParameter ToSqlParameter(int paramnum)
 		{

@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.Data
 {
-	sealed class QueryFactory
+	sealed class CommandFactory
 	{
 		sealed class QueryParamEquality : IEqualityComparer<IQueryParameter>
 		{
@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils.Data
 		}
 		static readonly QueryParamEquality ParamSharingComparer = new QueryParamEquality();
 
-		private QueryFactory() { }
+		private CommandFactory() { }
 
 		public static SqlCommand BuildQuery(IEnumerable<IQueryComponent> components, SqlConnection conn, int commandTimeout)
 		{
@@ -25,11 +25,11 @@ namespace ProgressOnderwijsUtils.Data
 			return CreateCommand(conn, commandTimeout, query.GenerateCommandText(), query.GenerateSqlParameters());
 		}
 
-		static QueryFactory ProcessQuery(IEnumerable<IQueryComponent> components)
+		static CommandFactory ProcessQuery(IEnumerable<IQueryComponent> components)
 		{
 			return
 				components
-					.Aggregate(new QueryFactory(), (factory, component) => factory.AppendQueryComponent(component));
+					.Aggregate(new CommandFactory(), (factory, component) => factory.AppendQueryComponent(component));
 		}
 
 		public static string BuildQueryText(IEnumerable<IQueryComponent> components)
@@ -65,7 +65,7 @@ namespace ProgressOnderwijsUtils.Data
 		readonly StringBuilder queryText = new StringBuilder();
 		readonly List<IQueryParameter> parmetersInOrder = new List<IQueryParameter>();
 		readonly Dictionary<IQueryParameter, int> lookup = new Dictionary<IQueryParameter, int>(ParamSharingComparer);
-		public QueryFactory AppendQueryComponent(IQueryComponent component)
+		public CommandFactory AppendQueryComponent(IQueryComponent component)
 		{
 			queryText.Append(component.ToSqlString(this));
 			return this;

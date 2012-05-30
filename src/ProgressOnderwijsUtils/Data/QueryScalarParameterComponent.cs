@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils.Data
 		readonly object paramval;
 		internal QueryScalarParameterComponent(object o) { paramval = o ?? DBNull.Value; }
 
-		public string ToSqlString(QueryFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
+		public string ToSqlString(CommandFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
 
 		public SqlParameter ToSqlParameter(int paramNum)
 		{

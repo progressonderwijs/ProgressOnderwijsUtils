@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils.Data
 {
 	interface IQueryComponent : IEquatable<IQueryComponent>
 	{
-		string ToSqlString(QueryFactory qnum);
+		string ToSqlString(CommandFactory qnum);
 
 		string ToDebugText();
 	}

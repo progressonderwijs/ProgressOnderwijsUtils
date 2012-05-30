@@ -4,57 +4,82 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
-	public sealed class QueryBuilder : IEquatable<QueryBuilder>
+	public abstract class QueryBuilder : IEquatable<QueryBuilder>
 	{
-		readonly QueryBuilder prev;
-		readonly IQueryComponent value;
-		readonly QueryBuilder next;
+		QueryBuilder() { } // only inner classes may inherit
+		protected virtual QueryBuilder PrefixOrNull { get { return null; } }
+		protected virtual QueryBuilder SuffixOrNull { get { return null; } }
+		internal virtual IQueryComponent ValueOrNull { get { return null; } }
 
-		QueryBuilder(IQueryComponent singleNode)
+		sealed class EmptyComponent : QueryBuilder
 		{
-			Debug.Assert(singleNode != null);
-			prev = null;
-			value = singleNode;
+			EmptyComponent() { }
+			public static readonly EmptyComponent Instance = new EmptyComponent();
 		}
 
-		QueryBuilder(QueryBuilder prefix, IQueryComponent singleComponent)
+		sealed class SingleComponent : QueryBuilder
 		{
-			if (null == prefix) throw new ArgumentNullException("prefix");
-			Debug.Assert(singleComponent != null);
-			//if (null == then) throw new ArgumentNullException("then");
-			prev = prefix.IsEmpty ? null : prefix;
-			value = singleComponent;
+			readonly IQueryComponent value;
+			internal override IQueryComponent ValueOrNull { get { return value; } }
+
+			public SingleComponent(IQueryComponent singleNode)
+			{
+				if (singleNode == null) throw new ArgumentNullException("singleNode");
+				value = singleNode;
+			}
 		}
 
-		QueryBuilder(QueryBuilder prefix, QueryBuilder continuation)
+		sealed class PrefixAndComponent : QueryBuilder
 		{
-			if (null == prefix) throw new ArgumentNullException("prefix");
-			if (null == continuation) throw new ArgumentNullException("continuation");
-			prev = prefix;
-			next = continuation;
+			readonly QueryBuilder precedingComponents;
+			readonly IQueryComponent value;
+
+			protected override QueryBuilder PrefixOrNull { get { return precedingComponents; } }
+			internal override IQueryComponent ValueOrNull { get { return value; } }
+
+			public PrefixAndComponent(QueryBuilder prefix, IQueryComponent singleComponent)
+			{
+				if (null == prefix) throw new ArgumentNullException("prefix");
+				if (null == singleComponent) throw new ArgumentNullException("singleComponent");
+				precedingComponents = prefix.IsEmpty ? null : prefix;
+				value = singleComponent;
+			}
 		}
 
-		QueryBuilder() { }
-		public static readonly QueryBuilder Empty = new QueryBuilder();
-
-		public bool IsEmpty { get { return null == value && null == next; } }
-		public bool IsSingleElement { get { return null == prev && null != value; } }
+		sealed class PrefixAndSuffix : QueryBuilder
+		{
+			readonly QueryBuilder precedingComponents, next;
+			protected override QueryBuilder PrefixOrNull { get { return precedingComponents; } }
+			protected override QueryBuilder SuffixOrNull { get { return next; } }
+			public PrefixAndSuffix(QueryBuilder prefix, QueryBuilder continuation)
+			{
+				if (null == prefix) throw new ArgumentNullException("prefix");
+				if (null == continuation) throw new ArgumentNullException("continuation");
+				precedingComponents = prefix;
+				next = continuation;
+			}
+		}
 
 		//INVARIANT:
-		// IF next != null THEN prev !=null; conversely IF prev == null THEN next == null 
+		// IF next != null THEN precedingComponents !=null; conversely IF precedingComponents == null THEN next == null 
 		// !(value != null AND next !=null)
+
+		public static QueryBuilder Empty { get { return EmptyComponent.Instance; } }
+
+		bool IsEmpty { get { return this is EmptyComponent; } }
+		bool IsSingleElement { get { return this is SingleComponent; } } //implies ValueOrNull != null
+
 
 		public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b) { return Concat(a, b); }
 		public static QueryBuilder operator +(QueryBuilder a, string b) { return Concat(a, QueryComponent.CreateString(b)); }
 		public static QueryBuilder operator +(string a, QueryBuilder b) { return Concat(Create(a), b); }
 		public static explicit operator QueryBuilder(string a) { return Create(a); }
 
-		static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) { return null == part ? query : new QueryBuilder(query, part); }
+		static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) { return null == part ? query : new PrefixAndComponent(query, part); }
 
 		static QueryBuilder Concat(QueryBuilder first, QueryBuilder second)
 		{
@@ -62,12 +87,12 @@ namespace ProgressOnderwijsUtils
 			else if (null == second) throw new ArgumentNullException("second");
 			else if (first.IsEmpty) return second;
 			else if (second.IsEmpty) return first;
-			else if (second.IsSingleElement) return new QueryBuilder(first, second.value);
-			else return new QueryBuilder(first, second);
+			else if (second.IsSingleElement) return new PrefixAndComponent(first, second.ValueOrNull);
+			else return new PrefixAndSuffix(first, second);
 		}
 
-		public static QueryBuilder Create(string str) { return new QueryBuilder(QueryComponent.CreateString(str)); }
-		public static QueryBuilder Param(object o) { return new QueryBuilder(QueryComponent.CreateParam(o)); }
+		public static QueryBuilder Create(string str) { return new SingleComponent(QueryComponent.CreateString(str)); }
+		public static QueryBuilder Param(object o) { return new SingleComponent(QueryComponent.CreateParam(o)); }
 
 		/// <summary>
 		/// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -83,9 +108,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="typeName">name of the db-type e.g. IntValues</param>
 		/// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
 		/// <returns>a composable query-component</returns>
-		public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) where T : IMetaObject, new() { return new QueryBuilder(QueryComponent.ToTableParameter(typeName, o)); }
-		public static QueryBuilder TableParamWithDeducedType(string typeName, IEnumerable<IMetaObject> o) { return new QueryBuilder(QueryComponent.ToTableParameterWithDeducedType(typeName, o)); }
-		public static QueryBuilder TableParam(IEnumerable<int> o) { return new QueryBuilder(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) where T : IMetaObject, new() { return new SingleComponent(QueryComponent.ToTableParameter(typeName, o)); }
+		public static QueryBuilder TableParamWithDeducedType(string typeName, IEnumerable<IMetaObject> o) { return new SingleComponent(QueryComponent.ToTableParameterWithDeducedType(typeName, o)); }
+		public static QueryBuilder TableParam(IEnumerable<int> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
 
 		public static QueryBuilder Create(string str, params object[] parms)
 		{
@@ -112,19 +137,17 @@ namespace ProgressOnderwijsUtils
 
 		public static QueryBuilder CreateFromSortOrder(OrderByColumns mostSignificantColumnFirst)
 		{
-			if (mostSignificantColumnFirst.Columns.Any())
-				return Create("order by " + mostSignificantColumnFirst.Columns.Select(sc => sc.SqlSortString).JoinStrings(", "));
-			else
-				return Empty;
+			return !mostSignificantColumnFirst.Columns.Any() ? Empty :
+				Create("order by " + mostSignificantColumnFirst.Columns.Select(sc => sc.SqlSortString).JoinStrings(", "));
 		}
 
-		public SqlCommand Finish(SqlConnection conn, int commandTimeout) { return QueryFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), conn, commandTimeout); }
+		public SqlCommand CreateSqlCommand(SqlConnection conn, int commandTimeout) { return CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), conn, commandTimeout); }
 
 		public string DebugText()
 		{
 			return ComponentsInReverseOrder.Reverse().Select(component => component.ToDebugText()).JoinStrings();
 		}
-		public string CommandText() { return QueryFactory.BuildQueryText(ComponentsInReverseOrder.Reverse()); }
+		public string CommandText() { return CommandFactory.BuildQueryText(ComponentsInReverseOrder.Reverse()); }
 
 		IEnumerable<IQueryComponent> ComponentsInReverseOrder
 		{
@@ -135,14 +158,15 @@ namespace ProgressOnderwijsUtils
 				QueryBuilder current = this;
 				while (true)
 				{
-					if (current.prev != null)
-						Continuation.Push(current.prev);
+					if (current.PrefixOrNull != null)
+						Continuation.Push(current.PrefixOrNull); //deal with prefix if any later
 
-					if (current.next != null)
-						current = current.next;
-					else
+					if (current.SuffixOrNull != null)
+						current = current.SuffixOrNull; //can't have a value, so deal with suffix
+					else //no suffix: either empty or with value.
 					{
-						yield return current.value;
+						if (current.ValueOrNull != null)
+							yield return current.ValueOrNull;
 						if (Continuation.Count == 0) yield break;
 
 						current = Continuation.Pop();

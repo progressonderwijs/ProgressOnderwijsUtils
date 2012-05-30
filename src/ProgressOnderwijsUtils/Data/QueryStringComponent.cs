@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Data
 	sealed class QueryStringComponent : IQueryComponent
 	{
 		public readonly string val;
-		public string ToSqlString(QueryFactory qnum) { return val; }
+		public string ToSqlString(CommandFactory qnum) { return val; }
 		internal QueryStringComponent(string val)
 		{
 			if (val == null) throw new ArgumentNullException("val");

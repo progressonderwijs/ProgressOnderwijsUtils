@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils.Collections
 	/// </summary>
 	public struct SList<T> : IEquatable<SList<T>>, IEnumerable<T>
 	{
-		class Impl
+		sealed class Impl
 		{
 			public readonly T Head;
 			public readonly Impl Tail;
