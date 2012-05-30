@@ -38,6 +38,10 @@ namespace ProgressOnderwijsUtils.Collections
 				yield return current.Head;
 		}
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return ((IEnumerable<T>)this).GetEnumerator(); }
+	}
 
+	public static class SList
+	{
+		public static SList<T> Create<T>(IEnumerable<T> mutable) { return mutable.Aggregate(SList<T>.Empty, (current, item) => current.Prepend(item)).Reverse(); }
 	}
 }
