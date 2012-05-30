@@ -11,43 +11,43 @@ namespace ProgressOnderwijsUtils
 {
 	public sealed class QueryBuilder : IEquatable<QueryBuilder>
 	{
-		readonly IQueryComponent value;
-		readonly QueryBuilder nestedNode;
 		readonly QueryBuilder prev;
+		readonly IQueryComponent value;
+		readonly QueryBuilder next;
 
-		QueryBuilder(IQueryComponent then)
+		QueryBuilder(IQueryComponent singleNode)
 		{
-			Debug.Assert(then != null);
+			Debug.Assert(singleNode != null);
 			prev = null;
-			value = then;
+			value = singleNode;
 		}
 
-		QueryBuilder(QueryBuilder prefix, IQueryComponent then)
+		QueryBuilder(QueryBuilder prefix, IQueryComponent singleComponent)
 		{
 			if (null == prefix) throw new ArgumentNullException("prefix");
-			Debug.Assert(then != null);
+			Debug.Assert(singleComponent != null);
 			//if (null == then) throw new ArgumentNullException("then");
 			prev = prefix.IsEmpty ? null : prefix;
-			value = then;
+			value = singleComponent;
 		}
 
-		QueryBuilder(QueryBuilder prefix, QueryBuilder then)
+		QueryBuilder(QueryBuilder prefix, QueryBuilder continuation)
 		{
 			if (null == prefix) throw new ArgumentNullException("prefix");
-			if (null == then) throw new ArgumentNullException("then");
+			if (null == continuation) throw new ArgumentNullException("continuation");
 			prev = prefix;
-			nestedNode = then;
+			next = continuation;
 		}
 
 		QueryBuilder() { }
 		public static readonly QueryBuilder Empty = new QueryBuilder();
 
-		public bool IsEmpty { get { return null == value && null == nestedNode; } }
+		public bool IsEmpty { get { return null == value && null == next; } }
 		public bool IsSingleElement { get { return null == prev && null != value; } }
 
 		//INVARIANT:
-		// IF nestedNode != null THEN prev !=null; conversely IF prev == null THEN nestedNode == null 
-		// !(value != null AND nestedNode !=null)
+		// IF next != null THEN prev !=null; conversely IF prev == null THEN next == null 
+		// !(value != null AND next !=null)
 
 		public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b) { return Concat(a, b); }
 		public static QueryBuilder operator +(QueryBuilder a, string b) { return Concat(a, QueryComponent.CreateString(b)); }
@@ -138,8 +138,8 @@ namespace ProgressOnderwijsUtils
 					if (current.prev != null)
 						Continuation.Push(current.prev);
 
-					if (current.nestedNode != null)
-						current = current.nestedNode;
+					if (current.next != null)
+						current = current.next;
 					else
 					{
 						yield return current.value;
