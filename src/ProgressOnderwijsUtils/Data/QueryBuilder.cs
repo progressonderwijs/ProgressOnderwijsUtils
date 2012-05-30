@@ -4,11 +4,12 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
-	public class QueryBuilder : IEquatable<QueryBuilder>
+	public sealed class QueryBuilder : IEquatable<QueryBuilder>
 	{
 		readonly IQueryComponent value;
 		readonly QueryBuilder nestedNode;
@@ -82,17 +83,15 @@ namespace ProgressOnderwijsUtils
 		/// <param name="typeName">name of the db-type e.g. IntValues</param>
 		/// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
 		/// <returns>a composable query-component</returns>
-public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) where T : IMetaObject, new() { return new QueryBuilder(QueryComponent.ToTableParameter(typeName, o)); }
+		public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) where T : IMetaObject, new() { return new QueryBuilder(QueryComponent.ToTableParameter(typeName, o)); }
 		public static QueryBuilder TableParamWithDeducedType(string typeName, IEnumerable<IMetaObject> o) { return new QueryBuilder(QueryComponent.ToTableParameterWithDeducedType(typeName, o)); }
 		public static QueryBuilder TableParam(IEnumerable<int> o) { return new QueryBuilder(QueryComponent.ToTableParameter(o)); }
 
-		public static QueryBuilder Create(string str, params object[] parms) { return Create(Empty, str, parms); }
-
-		public static QueryBuilder Create(QueryBuilder prefix, string str, params object[] parms)
+		public static QueryBuilder Create(string str, params object[] parms)
 		{
 			IQueryComponent[] parValues = parms.Select(QueryComponent.CreateParam).ToArray();
 
-			QueryBuilder query = prefix;
+			QueryBuilder query = Empty;
 
 			foreach (Match paramRefMatch in paramsRegex.Matches(str))
 			{
@@ -119,55 +118,13 @@ public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) wher
 				return Empty;
 		}
 
-		public sealed class SerializedQuery : IEquatable<SerializedQuery>
-		{
-			public readonly string CommandText;
-			public readonly SqlParameter[] Params;
-
-			public SerializedQuery(string text, SqlParameter[] parms)
-			{
-				CommandText = text;
-				Params = parms;
-			}
-
-			public bool Equals(SerializedQuery other) { return CommandText == other.CommandText && Params.Select(p => p.Value).SequenceEqual(other.Params.Select(p => p.Value)); }
-			public override bool Equals(object obj) { return obj is SerializedQuery && Equals((SerializedQuery)obj); }
-
-			public override int GetHashCode()
-			{
-				return 11 + CommandText.GetHashCode() - Params.Length +
-					   Params.Select((p, i) => p.Value.GetHashCode() * (i * 2 + 1)).Aggregate(0, (a, b) => a + b); //don't use Sum because sum does overflow checking.
-			}
-
-			public static bool operator ==(SerializedQuery a, SerializedQuery b) { return ReferenceEquals(a, b) || null != a && null != b && a.Equals(b); } //watch out: a!=null would create infinite recursion.
-			public static bool operator !=(SerializedQuery a, SerializedQuery b) { return !(a == b); }
-			public override string ToString() { return "{ CommandText = \"" + CommandText + "\", Params = {" + Params.Select(p => p.Value == DBNull.Value ? "NULL" : p.Value.ToString()).JoinStrings(", ") + "} }"; }
-		}
-
-		public SerializedQuery Serialize()
-		{
-			QueryParamNumberer qnum = new QueryParamNumberer();
-			IQueryComponent[] components = ComponentsInReverseOrder.ToArray();
-			Array.Reverse(components);
-			var queryString = components.Select(component => component.ToSqlString(qnum)).JoinStrings();
-			var sqlParams = qnum.SqlParamters; //any parameter that was used in ToSqlString is in the numberer
-			return new SerializedQuery(queryString, sqlParams);
-		}
-
-		public string CommandText()
-		{
-			QueryParamNumberer qnum = new QueryParamNumberer();
-			IQueryComponent[] components = ComponentsInReverseOrder.ToArray();
-			Array.Reverse(components);
-			return components.Select(component => component.ToSqlString(qnum)).JoinStrings();
-		}
+		public SqlCommand Finish(SqlConnection conn, int commandTimeout) { return QueryFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), conn, commandTimeout); }
 
 		public string DebugText()
 		{
-			IQueryComponent[] components = ComponentsInReverseOrder.ToArray();
-			Array.Reverse(components);
-			return components.Select(component => component.ToDebugText()).JoinStrings();
+			return ComponentsInReverseOrder.Reverse().Select(component => component.ToDebugText()).JoinStrings();
 		}
+		public string CommandText() { return QueryFactory.BuildQueryText(ComponentsInReverseOrder.Reverse()); }
 
 		IEnumerable<IQueryComponent> ComponentsInReverseOrder
 		{
@@ -198,11 +155,11 @@ public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) wher
 		{
 			get
 			{
-				var cached = new List<QueryComponent.StringComponent>();
+				var cached = new List<QueryStringComponent>();
 				foreach (var comp in ComponentsInReverseOrder)
 				{
-					if (comp is QueryComponent.StringComponent)
-						cached.Add((QueryComponent.StringComponent)comp);
+					if (comp is QueryStringComponent)
+						cached.Add((QueryStringComponent)comp);
 					else
 					{
 						if (cached.Count > 0)

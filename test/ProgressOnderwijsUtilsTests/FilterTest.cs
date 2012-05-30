@@ -117,8 +117,8 @@ namespace ProgressOnderwijsUtilsTests
 			var qAlt = QueryBuilder.Create("(test<{0} And test2<{1})", 3, 3);
 			var qAltWrong = QueryBuilder.Create("(test<{0} And test2<{1})", 3, 3.0);
 
-			PAssert.That(() => q.Serialize() == qAlt.Serialize());
-			PAssert.That(() => q.Serialize().GetHashCode() == qAlt.Serialize().GetHashCode());
+			PAssert.That(() => q.CommandText() == qAlt.CommandText());
+			PAssert.That(() => q.CommandText().GetHashCode() == qAlt.CommandText().GetHashCode());
 
 			PAssert.That(() => q.Equals(qAlt));
 			PAssert.That(() => q.Equals((object)qAlt));
@@ -128,19 +128,14 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => q == qAlt);
 			PAssert.That(() => q.GetHashCode() == qAlt.GetHashCode());
 			PAssert.That(() => q.ToString() == qAlt.ToString());
-			PAssert.That(() => q.Serialize().CommandText == qAlt.Serialize().CommandText);
-			PAssert.That(() => q.Serialize().ToString() == qAlt.Serialize().ToString());
-			PAssert.That(() => Equals(q.Serialize(), qAlt.Serialize()));
+			PAssert.That(() => q.DebugText() == qAlt.DebugText());
 
-			PAssert.That(() => qAlt.Serialize() != qAltWrong.Serialize());
-			PAssert.That(() => !Equals(qAlt.Serialize(), qAltWrong.Serialize()));
-			PAssert.That(() => qAlt.Serialize().ToString() == qAltWrong.Serialize().ToString());
-			PAssert.That(() => qAlt.Serialize().GetHashCode() != qAltWrong.Serialize().GetHashCode());
+			PAssert.That(() => qAlt.CommandText() == qAltWrong.CommandText());
+			PAssert.That(() => qAlt.DebugText() != qAltWrong.DebugText());
 			PAssert.That(() => !qAlt.Equals(qAltWrong));
 			PAssert.That(() => qAlt != qAltWrong);
 			PAssert.That(() => qAlt.GetHashCode() != qAltWrong.GetHashCode());
 			PAssert.That(() => qAlt.ToString() != qAltWrong.ToString());
-			PAssert.That(() => qAlt.Serialize().CommandText == qAltWrong.Serialize().CommandText);
 		}
 
 		[Test]
@@ -203,7 +198,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).Equals(Filter.TryParseSerializedFilter(@"test[<]i3*")));
 
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, new ColumnReference("blablabla")).SerializeToString() == @"test[<]cblablabla*");
-			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new GroupReference(12345,"blablablaGroup")).SerializeToString()== @"test[in]g12345:blablablaGroup*");
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new GroupReference(12345, "blablablaGroup")).SerializeToString() == @"test[in]g12345:blablablaGroup*");
 
 			PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<]i3* ") == null); //extra space!
 			PAssert.That(() => Filter.TryParseSerializedFilter(@"test<]i3*") == null); //missing [
