@@ -13,9 +13,7 @@ namespace ProgressOnderwijsUtils
 		static readonly Func<T, int> hashFunc;
 		static readonly Func<T, string> toStringFunc;
 
-#if DEBUG
 		protected ByValueHelperBase() { if (!(this is T)) throw new InvalidOperationException("Only T can subclass ByValueHelperBase<T>."); }
-#endif
 		static ByValueHelperBase()
 		{
 			Type type = typeof(T);
