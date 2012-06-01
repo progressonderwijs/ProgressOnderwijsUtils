@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
 				sb.Append(s);
 			return sb.ToString();
 		}
-		
+
 		/// <summary>
 		/// Join a collection of strings using a joiner string
 		/// </summary>
@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtils
 		[Test]
 		public void testJoinShortStrings()
 		{
-			Assert.That(() => new [] {"","0","1","2" }.JoinStrings(","), Is.EqualTo(",0,1,2"));
+			Assert.That(() => new[] { "", "0", "1", "2" }.JoinStrings(","), Is.EqualTo(",0,1,2"));
 		}
 	}
 }

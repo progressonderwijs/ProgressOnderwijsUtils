@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
 		/// <remarks>
 		/// **voorbeelden
 		/// 1.In(1,2,3,4); // true
-		/// "cando".In("nocando","cando") //true
+		/// "cando".In("nocando", "cando") //true
 		/// Enum Vandaag = weekdays.monday;
 		/// Vandaag.In(weekdays.thursday,weekdays.friday); //false
 		/// </remarks>
