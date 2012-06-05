@@ -20,8 +20,7 @@ namespace ProgressOnderwijsUtils.Data
 		}
 
 
-		public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new() { return new QueryTableValuedParameterComponent(tableTypeName, MetaObjectDataReader.Create(set)); }
+		public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new() { return new QueryTableValuedParameterComponent(tableTypeName, MetaObject.CreateDataReader(set)); }
 		public static IQueryComponent ToTableParameter(IEnumerable<int> set) { return ToTableParameter("IntValues", set.Select(i => new IntValues_DbTableType { val = i })); }
-		public static IQueryComponent ToTableParameterWithDeducedType(string tableTypeName, IEnumerable<IMetaObject> set) { return new QueryTableValuedParameterComponent(tableTypeName, MetaObjectDataReader.CreateDynamically(set)); }
 	}
 }

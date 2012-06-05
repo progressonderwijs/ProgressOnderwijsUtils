@@ -109,7 +109,6 @@ namespace ProgressOnderwijsUtils
 		/// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
 		/// <returns>a composable query-component</returns>
 		public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) where T : IMetaObject, new() { return new SingleComponent(QueryComponent.ToTableParameter(typeName, o)); }
-		public static QueryBuilder TableParamWithDeducedType(string typeName, IEnumerable<IMetaObject> o) { return new SingleComponent(QueryComponent.ToTableParameterWithDeducedType(typeName, o)); }
 		public static QueryBuilder TableParam(IEnumerable<int> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
 
 		public static QueryBuilder Create(string str, params object[] parms)

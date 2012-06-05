@@ -12,17 +12,7 @@ using MoreLinq;
 namespace ProgressOnderwijsUtils.Data
 {
 	public static class MetaObjectDataReader
-	{
-		public static DbDataReader Create<T>(IEnumerable<T> entities) where T : IMetaObject, new() { return new MetaObjectDataReader<T>(entities); }
-
-		public static DbDataReader CreateDynamically(IEnumerable<IMetaObject> entities)
-		{
-			var entityType = entities.First().GetType();
-			var method = typeof(MetaObjectDataReader).GetMethod("Create", BindingFlags.Static | BindingFlags.Public, null, new[] { entityType }, null);
-			return (DbDataReader)method.Invoke(null, new object[] { entities });
-		}
-
-	}
+	{}
 
 	public sealed class MetaObjectDataReader<T> : DbDataReaderBase where T : IMetaObject
 	{
