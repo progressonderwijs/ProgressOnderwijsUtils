@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
 		//public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
 		public static IEnumerable<IMetaProperty<T>> GetMetaProperties<T>() where T : IMetaObject { return MetaPropCache<T>.properties; }
 
-		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject, new()
+		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
 		{
 			DataTable dt = new DataTable();
 			var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
 			return dt;
 		}
 
-		public static MetaObjectDataReader<T> CreateDataReader<T>(IEnumerable<T> entities) where T : IMetaObject, new() { return new MetaObjectDataReader<T>(entities); }
+		public static MetaObjectDataReader<T> CreateDataReader<T>(IEnumerable<T> entities) where T : IMetaObject { return new MetaObjectDataReader<T>(entities); }
 
 		/// <summary>
 		/// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout.
@@ -45,8 +45,8 @@ namespace ProgressOnderwijsUtils
 		/// <param name="sqlconn">The Sql connection to write to</param>
 		/// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
 		/// <param name="options">The SqlBulkCopyOptions to use.  If unspecified, uses SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction which is NOT SqlBulkCopyOptions.Default</param>
-		public static void SqlBulkCopy<T>(IEnumerable<T> entities, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options=null) where T : IMetaObject, new()
-		{ 
+		public static void SqlBulkCopy<T>(IEnumerable<T> entities, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
+		{
 			SqlBulkCopyOptions effectiveOptions = options ?? (SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction);
 			using (var objectReader = CreateDataReader(entities))
 			using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null))
@@ -88,6 +88,8 @@ namespace ProgressOnderwijsUtils
 					throw new ArgumentException("Cannot determine metaproperties on abstract type " + typeof(T));
 				else if (typeof(T).IsInterface)
 					throw new ArgumentException("Cannot determine metaproperties on interface type " + typeof(T));
+				else if (!typeof(T).IsSealed)
+					throw new ArgumentException("IMetaObjects must be sealed! The type " + typeof(T) + " is not sealed");
 
 				properties = GetMetaPropertiesImpl().Cast<IMetaProperty<T>>().ToArray();
 			}
