@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
 			dt.Columns.AddRange(properties.Select(mp => new DataColumn(mp.Naam, mp.DataType.StripNullability()) { AllowDBNull = !mp.Verplicht && mp.DataType.CanBeNull() }).ToArray());
 
 			foreach (var obj in objs)
-				dt.Rows.Add(properties.Select(mp => mp.Getter(obj) ?? DBNull.Value).ToArray());
+				dt.Rows.Add(properties.Select(mp => mp.TypedGetter(obj) ?? DBNull.Value).ToArray());
 
 			if (primaryKey != null)
 				dt.PrimaryKey = primaryKey.Select(name => dt.Columns[name]).ToArray();

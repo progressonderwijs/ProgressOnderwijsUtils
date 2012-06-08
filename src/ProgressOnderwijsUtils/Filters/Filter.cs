@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
 	{
 		public static QueryBuilder ToQueryBuilder(this FilterBase filter) { return filter == null ? QueryBuilder.Create("1=1") : filter.ToQueryBuilderImpl(); }
 
-		public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter) where T : IMetaObject
+		public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter) //where T : IMetaObject
 		{
 			if (filter == null) return _ => true;
 			var metaObjParam = Expression.Parameter(typeof(T));
