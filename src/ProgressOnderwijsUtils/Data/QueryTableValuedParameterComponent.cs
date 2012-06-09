@@ -1,4 +1,5 @@
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Collections.Generic;
@@ -9,11 +10,11 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils.Data
 {
-	sealed class QueryTableValuedParameterComponent : IQueryParameter
+	sealed class QueryTableValuedParameterComponent<T> : IQueryParameter where T:IMetaObject 
 	{
-		readonly object paramval;
+		readonly IEnumerable<T> objs;
 		readonly string DbTypeName;
-		internal QueryTableValuedParameterComponent(string dbTypeName, object o) { paramval = o; DbTypeName = dbTypeName; }
+		internal QueryTableValuedParameterComponent(string dbTypeName, IEnumerable<T> list) { objs = list; DbTypeName = dbTypeName; }
 
 		public string ToSqlString(CommandFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
 
@@ -22,7 +23,7 @@ namespace ProgressOnderwijsUtils.Data
 			return new SqlParameter {
 			                        	IsNullable = false,
 			                        	ParameterName = "@par" + paramnum,
-			                        	Value = paramval,
+										Value = MetaObject.CreateDataReader(objs),
 			                        	SqlDbType = SqlDbType.Structured,
 			                        	TypeName = DbTypeName
 			                        };
@@ -30,14 +31,14 @@ namespace ProgressOnderwijsUtils.Data
 
 		public string ToDebugText()
 		{
-			return "{!" + ObjectToCode.ComplexObjectToPseudoCode(paramval) + "!}";
+			return "{!" + ObjectToCode.ComplexObjectToPseudoCode(objs) + "!}";
 		}
 
 		public bool CanShareParamNumberWith(IQueryParameter other) { return Equals((object)other); }
-		public int ParamNumberSharingHashCode() { return paramval.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200; }//paramval never null!
+		public int ParamNumberSharingHashCode() { return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200; }//paramval never null!
 
 		public bool Equals(IQueryComponent other) { return Equals((object)other); }
-		public override bool Equals(object other) { return ReferenceEquals(this, other) || (other is QueryTableValuedParameterComponent) && Equals(DbTypeName, ((QueryTableValuedParameterComponent)other).DbTypeName) && Equals(paramval, ((QueryTableValuedParameterComponent)other).paramval); }
+		public override bool Equals(object other) { return ReferenceEquals(this, other) || (other is QueryTableValuedParameterComponent<T>) && Equals(DbTypeName, ((QueryTableValuedParameterComponent<T>)other).DbTypeName) && Equals(objs, ((QueryTableValuedParameterComponent<T>)other).objs); }
 		public override int GetHashCode() { return ParamNumberSharingHashCode(); }//paramval never null!
 	}
 }
