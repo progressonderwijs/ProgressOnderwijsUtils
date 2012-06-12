@@ -197,8 +197,13 @@ namespace ProgressOnderwijsUtils
 		{
 			if (Waarde is GroupReference)
 				throw new InvalidOperationException("Cannot interpret group reference IDs in LINQ: these are only stored in the database!");
-			var coreExpr = Expression.Property(objParamExpr, KolomNaam);
+			Expression coreExpr = Expression.Property(objParamExpr, KolomNaam);
 			var waardeExpr = Waarde is ColumnReference ? Expression.Property(objParamExpr, ((ColumnReference)Waarde).ColumnName) : (Expression)Expression.Constant(Waarde);
+			if (waardeExpr.Type != coreExpr.Type && coreExpr.Type.IfNullableGetCoreType() == waardeExpr.Type)
+				waardeExpr = Expression.Convert(waardeExpr, coreExpr.Type);
+			else if (waardeExpr.Type != coreExpr.Type && coreExpr.Type == waardeExpr.Type.IfNullableGetCoreType())
+				coreExpr = Expression.Convert(coreExpr, waardeExpr.Type);
+
 			switch (Comparer)
 			{
 				case BooleanComparer.LessThan:
