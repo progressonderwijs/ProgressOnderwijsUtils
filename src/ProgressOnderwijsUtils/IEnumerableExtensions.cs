@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using NUnit.Framework;
 using System.Collections.ObjectModel;
-using ExpressionToCodeLib;
+using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
