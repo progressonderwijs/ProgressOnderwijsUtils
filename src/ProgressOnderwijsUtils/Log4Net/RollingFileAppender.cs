@@ -53,8 +53,7 @@ namespace ProgressOnderwijsUtils.Log4Net
 		{
 			get
 			{
-				Assembly assembly = Assembly.GetAssembly(typeof(RollingFileAppender));
-				return PATHS[ServerContext.GuessDatabaseVersionFromExecutingAssembly(assembly, DatabaseVersion.Undefined)];
+				return PATHS[DatabaseVersionAuto.ByDeploymentDirectory()];
 			}
 		}
 	}

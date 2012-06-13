@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void DatabaseCanProcessTableValuedParameters()
 		{
-			BusinessConnection.UsingDevTest(conn => {
+			BusinessConnection.UsingTempDevTest(conn => {
 
 				QueryBuilder q = @"select sum(val) from " + QueryBuilder.TableParam(Enumerable.Range(1, 100));
 				int sum = q.ExecuteScalar<int>(conn);
@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			QueryBuilder q = QueryBuilder.Create(@"select sum(val) from {0}", Enumerable.Range(1, 100));
 
-			BusinessConnection.UsingDevTest(conn => {
+			BusinessConnection.UsingTempDevTest(conn => {
 				int sum = q.ExecuteScalar<int>(conn);
 
 				Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
