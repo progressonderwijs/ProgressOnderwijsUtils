@@ -79,7 +79,7 @@ namespace ProgressOnderwijsUtils
 		{
 			if (cleanup <= 0) throw new ArgumentException();
 
-			this.window = window ?? new TimeSpan(0, 1, 2);
+			this.window = window ?? new TimeSpan(0, 10, 0);
 			this.cleanup = cleanup;
 			counter = 0;
 			nonce = 0;
