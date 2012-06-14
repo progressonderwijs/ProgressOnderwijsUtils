@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using ProgressOnderwijsUtils.Data;
+using System.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -57,9 +58,7 @@ namespace ProgressOnderwijsUtils
 					}
 					else
 					{
-						string[] nrs = Waarde.ToString().Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-						string clause = KolomNaam + " in (" + Enumerable.Range(0, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
-						return QueryBuilder.Create(clause, nrs.Cast<object>().ToArray());
+						return KolomNaam + " in (select val from " + QueryBuilder.TableParamDynamic((Array)Waarde) + ")";
 					}
 				case BooleanComparer.StartsWith:
 					return KolomNaam + " like " + QueryBuilder.Param(Waarde + "%");
@@ -240,6 +239,8 @@ namespace ProgressOnderwijsUtils
 		{
 			if (Waarde is GroupReference && Comparer == BooleanComparer.In)
 				return string.Format("{0} in {1}", KolomNaam, (Waarde as GroupReference).Name);
+			else if (Waarde is Array && Comparer == BooleanComparer.In)
+				return KolomNaam + " in (" + (Waarde as IEnumerable).Cast<object>().Select(o => o == null ? "NULL" : o.ToString()).JoinStrings(", ") + ")";
 			else
 				return base.ToString();
 		}
