@@ -1,5 +1,4 @@
 using System.Data;
-using System.Data.Common;
 using System.Linq;
 using System.Collections.Generic;
 using System;
@@ -11,9 +10,6 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils.Data
 {
-	public static class MetaObjectDataReader
-	{}
-
 	public sealed class MetaObjectDataReader<T> : DbDataReaderBase where T : IMetaObject
 	{
 		readonly IEnumerator<T> metaObjects;
