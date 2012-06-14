@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using ProgressOnderwijsUtils.Data;
 using System.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -24,7 +23,11 @@ namespace ProgressOnderwijsUtils
 
 		public override bool Equals(object obj) { return Equals(obj as CriteriumFilter); }
 		public override bool Equals(FilterBase other) { return Equals(other as CriteriumFilter); }
-		public bool Equals(CriteriumFilter other) { return other != null && _KolomNaam == other.KolomNaam && _Comparer == other._Comparer && Equals(_Waarde, other._Waarde); }
+		public bool Equals(CriteriumFilter other)
+		{
+			return other != null && _KolomNaam == other.KolomNaam && _Comparer == other._Comparer
+				&& StructuralComparisons.StructuralEqualityComparer.Equals(_Waarde, other._Waarde);
+		}
 		public override int GetHashCode()
 		{
 			return 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode());
@@ -77,23 +80,120 @@ namespace ProgressOnderwijsUtils
 		{
 			Debug.Assert(!KolomNaam.Contains('[') && !KolomNaam.Contains('&') && !KolomNaam.Contains('|') && !KolomNaam.Contains(';') && !KolomNaam.Contains(','));
 			Debug.Assert(!Comparer.NiceString().Contains(']'));
-			string waardeString = SerializeWaarde();
+			if (!ColumnReference.IsOkName.IsMatch(KolomNaam))
+				throw new Exception("invalid column name");
+			string waardeString = SerializeWaarde(Waarde);
 			waardeString = waardeString.Replace(@"*", @"**");
 			return KolomNaam + "[" + Comparer.NiceString() + "]" + waardeString + "*";
 		}
 
-		static Tuple<string, string> FindWaardeStrAndLeftover(string s) //TODO: test strings ending with '*';
+
+		interface IValSerializer
+		{
+			Type Type { get; }
+			char Code { get; }
+			string Serialize(object val);
+			object Deserialize(string s);
+		}
+		sealed class ValSerializer<T> : IValSerializer
+		{
+			readonly Func<T, string> serialize;
+			readonly Func<string, T> deserialize;
+			readonly char code;
+			public ValSerializer(Func<T, string> serialize, Func<string, T> deserialize, char code) { this.serialize = serialize; this.deserialize = deserialize; this.code = code; }
+
+			public char Code { get { return code; } }
+			public Type Type { get { return typeof(T); } }
+			public string Serialize(object val) { return serialize((T)val); }
+			object IValSerializer.Deserialize(string s) { return deserialize(s); }
+		}
+		static IValSerializer Serializer<T>(char code, Func<string, T> deserialize, Func<T, string> serialize) { return new ValSerializer<T>(serialize, deserialize, code); }
+
+		static readonly Dictionary<Type, IValSerializer> serializerByType;
+		static readonly Dictionary<char, IValSerializer> serializerByCode;
+		static readonly IValSerializer ArraySerializer;
+		static CriteriumFilter()
+		{
+			var helpers = new[]{
+				Serializer('i', s=>int.Parse(s, CultureInfo.InvariantCulture), i=>i.ToStringInvariant()),
+				Serializer('d', s=> new DateTime(long.Parse(s, CultureInfo.InvariantCulture), DateTimeKind.Utc), d=>d.ToUniversalTime().Ticks.ToStringInvariant()),
+				Serializer('t', s=> new TimeSpan(long.Parse(s, CultureInfo.InvariantCulture)), t=>t.Ticks.ToStringInvariant()),
+				Serializer('l', s=> long.Parse(s, CultureInfo.InvariantCulture), l=>l.ToStringInvariant()),
+				Serializer('I', s=>uint.Parse(s, CultureInfo.InvariantCulture), I=>I.ToStringInvariant()),
+				Serializer('L', s=>ulong.Parse(s, CultureInfo.InvariantCulture), L=>L.ToStringInvariant()),
+				Serializer('s', s=>s, s=>s),
+				Serializer('m', s=>decimal.Parse(s, CultureInfo.InvariantCulture), m=>m.ToStringInvariant()),
+				Serializer('f', s=>double.Parse(s, CultureInfo.InvariantCulture), f=>f.ToStringInvariant()),
+				Serializer('c', s=>new ColumnReference(s), c=>c.ColumnName),
+				Serializer('g', s=>new GroupReference(int.Parse(s.Substring(0, s.IndexOf(':')), CultureInfo.InvariantCulture), s.Substring(s.IndexOf(':') + 1)), 
+								g=>g.GroupId.ToStringInvariant() + ':' + g.Name),
+				Serializer('#', s=> {
+					var underlying = serializerByCode[s[0]];
+
+						var elems = new List<object>();
+						string remaining = s.Substring(1);//skip type code
+						while (remaining.Length > 0)
+						{
+							var currentSegment = FindUptoNonDuplicatedTerminatorWithLeftover(remaining, '#');
+							elems.Add(underlying.Deserialize(currentSegment.Item1));
+							if (currentSegment.Item2[0] != ';') throw new ArgumentOutOfRangeException("s", "serialized array does not contain ';' where expected, instead" + currentSegment.Item2[0]);
+							remaining = currentSegment.Item2.Substring(1);//skip ';'
+						}
+						var retval =Array.CreateInstance(underlying.Type, elems.Count);
+						((IList)elems).CopyTo(retval,0);
+						return retval;
+				}, 
+								arr=>
+								{ var underlying = serializerByType[arr.GetType().GetElementType()];
+									return underlying.Code + arr.Cast<object>().Select(elem => underlying.Serialize(elem).Replace("#", "##") + "#;").JoinStrings();
+								}
+					),
+
+			};
+			serializerByType = helpers.ToDictionary(serializer => serializer.Type);
+			serializerByCode = helpers.ToDictionary(serializer => serializer.Code);
+			ArraySerializer = serializerByType[typeof(Array)];
+		}
+
+		static object DeserializeWaardeString(string s)
+		{
+			if (s == "") return null;
+
+			IValSerializer serializer;
+			if (serializerByCode.TryGetValue(s[0], out serializer))
+				return serializer.Deserialize(s.Substring(1));
+			else
+				throw new ArgumentOutOfRangeException("s", "string starts with unknown letter " + s[0]);
+
+		}
+
+		static string SerializeWaarde(object waarde)
+		{
+			if (waarde == null)
+				return "";
+
+			if (waarde is Array)
+				return ArraySerializer.Code + ArraySerializer.Serialize(waarde);
+
+			IValSerializer serializer;
+			if (serializerByType.TryGetValue(waarde.GetType(), out serializer))
+				return serializer.Code + serializer.Serialize(waarde);
+			else
+				throw new ArgumentOutOfRangeException("waarde", "waarde is van onbekend type " + waarde.GetType());
+		}
+
+		static Tuple<string, string> FindUptoNonDuplicatedTerminatorWithLeftover(string s, char terminator) //TODO: test strings ending with '*';
 		{
 			int i = 0;
 			StringBuilder waardeStr = new StringBuilder();
 			while (true)
 			{
-				if (s[i] != '*')
+				if (s[i] != terminator)
 				{
 					waardeStr.Append(s[i]);
 					i++;
 				}
-				else if (s.Length > i + 1 && s[i + 1] == '*')
+				else if (s.Length > i + 1 && s[i + 1] == terminator)
 				{
 					waardeStr.Append(s[i]);
 					i += 2;
@@ -119,51 +219,12 @@ namespace ProgressOnderwijsUtils
 			if (comparer == null)
 				return null;
 			SerializedRep = SerializedRep.Substring(cmpEnd + 1);
-			var waardeAndRemaining = FindWaardeStrAndLeftover(SerializedRep);
+			var waardeAndRemaining = FindUptoNonDuplicatedTerminatorWithLeftover(SerializedRep, '*');
 			object waarde = DeserializeWaardeString(waardeAndRemaining.Item1);
 			SerializedRep = waardeAndRemaining.Item2;
 			return Tuple.Create(Filter.CreateCriterium(kolomNaam, comparer.Value, waarde), SerializedRep);
 		}
 
-		string SerializeWaarde()
-		{
-			if (Waarde == null)
-				return "";
-			else if (Waarde is int)
-				return 'i' + ((int)Waarde).ToStringInvariant();
-			else if (Waarde is DateTime)
-				return 'd' + ((DateTime)Waarde).ToUniversalTime().Ticks.ToStringInvariant();
-			else if (Waarde is long)
-				return 'l' + ((long)Waarde).ToStringInvariant();
-			else if (Waarde is uint)
-				return 'I' + ((uint)Waarde).ToStringInvariant();
-			else if (Waarde is ulong)
-				return 'L' + ((ulong)Waarde).ToStringInvariant();
-			else if (Waarde is string)
-				return 's' + (string)Waarde;
-			else if (Waarde is ColumnReference)
-				return 'c' + ((ColumnReference)Waarde).ColumnName;
-			else if (Waarde is GroupReference)
-				return 'g' + ((GroupReference)Waarde).GroupId.ToStringInvariant() + ':' + ((GroupReference)Waarde).Name;
-			else throw new InvalidOperationException("Waarde is out of range for serialization!");
-		}
-
-		static object DeserializeWaardeString(string s)
-		{
-			if (s == "") return null;
-			else switch (s[0])
-				{
-					case 'i': return int.Parse(s.Substring(1), CultureInfo.InvariantCulture);
-					case 'd': return new DateTime(long.Parse(s.Substring(1), CultureInfo.InvariantCulture), DateTimeKind.Utc);
-					case 'l': return long.Parse(s.Substring(1), CultureInfo.InvariantCulture);
-					case 'I': return uint.Parse(s.Substring(1), CultureInfo.InvariantCulture);
-					case 'L': return ulong.Parse(s.Substring(1), CultureInfo.InvariantCulture);
-					case 's': return s.Substring(1);
-					case 'c': return new ColumnReference(s.Substring(1));
-					case 'g': return new GroupReference(int.Parse(s.Substring(1, s.IndexOf(':') - 1), CultureInfo.InvariantCulture), s.Substring(s.IndexOf(':') + 1));
-					default: throw new ArgumentOutOfRangeException("s", "string starts with unknown letter " + s[0]);
-				}
-		}
 
 
 		QueryBuilder BuildParam()
@@ -202,12 +263,13 @@ namespace ProgressOnderwijsUtils
 				: this;
 		}
 
+		// ReSharper disable MemberCanBePrivate.Global
+		//not private due to access via Expression trees.
 		public static bool StartsWithHelper(string val, string with) { return val.StartsWith(with, StringComparison.Ordinal); }
-		public static bool ContainsHelper(string val, string needle) { return val.Contains(needle); }
-
-
 		static readonly MethodInfo startsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
+		public static bool ContainsHelper(string val, string needle) { return val.Contains(needle); }
 		static readonly MethodInfo containsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
+		// ReSharper restore MemberCanBePrivate.Global
 
 		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr)
 		{

@@ -163,7 +163,6 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => QueryBuilder.Create("abc") + qZeroWidthArg == QueryBuilder.Create("abc", 42));
 			PAssert.That(() => (QueryBuilder.Create("abc") + qZeroWidth).GetHashCode() == ((QueryBuilder)"abc").GetHashCode());
 			PAssert.That(() => (QueryBuilder.Create("abc") + qZeroWidthArg).GetHashCode() == QueryBuilder.Create("abc", 42).GetHashCode());
-
 		}
 
 		[Test]
@@ -224,6 +223,24 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
+		public void StarsAndHashesInArraysSerializeOk()
+		{
+			var filters = new[]{
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"1*","","#", "##","***",}),
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"*"}),
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"**"}),
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"#"}),
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"##"}),
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{""}),
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"#;"}),
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{";#"}),
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{";#","*","**#*"}),
+			};
+			foreach (var filter in filters)
+				PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString())));
+		}
+
+		[Test]
 		public void CriteriumSerializationRoundTrips()
 		{
 			var filters = new[]{
@@ -245,7 +262,9 @@ namespace ProgressOnderwijsUtilsTests
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "*1"),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "1*"),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "1**2*"),
-								Filter.CreateCriterium("test", BooleanComparer.In, "1 2 3 4 5 "),};
+								Filter.CreateCriterium("test", BooleanComparer.In, new[]{1, 2, 3, 4, 5,}),
+								Filter.CreateCriterium("test", BooleanComparer.In, new string[]{}),
+			};
 			foreach (var filter in filters)
 				PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString())));
 
@@ -266,6 +285,16 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => someFilter is CombinedFilter && ((CombinedFilter)someFilter).FilterLijst.OfType<CombinedFilter>().Any());
 			PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString())));
 		}
+
+		[Test]
+		public void EmptyArraySerializationPreservesType()
+		{
+			var someFilter = Filter.CreateCriterium("test", BooleanComparer.In, new decimal[] { });
+			PAssert.That(() => ((CriteriumFilter)Filter.TryParseSerializedFilter(someFilter.SerializeToString())).Waarde.GetType() == typeof(decimal[]));
+			PAssert.That(() => ((CriteriumFilter)Filter.TryParseSerializedFilter(someFilter.SerializeToString())).Waarde.GetType() != typeof(double[]));
+		}
+
+
 		[Test]
 		public void ComplexFilterSerialization2()
 		{
