@@ -20,8 +20,8 @@ namespace ProgressOnderwijsUtils
 			this.andor = andor;
 			filterLijst = condities;
 		}
+		protected internal override bool IsFilterValid(Func<string, Type> colTypeLookup) { return FilterLijst.All(f => f.IsFilterValid(colTypeLookup)); }
 
-		protected internal override IEnumerable<string> ColumnsReferenced { get { return FilterLijst.SelectMany(f => f.ColumnsReferenced); } }
 		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParExpr)
 		{
 			return

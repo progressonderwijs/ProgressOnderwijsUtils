@@ -86,8 +86,11 @@ namespace ProgressOnderwijsUtilsTests
 				combFilter.AddTo(testFilter, BooleanOperator.Or, Filter.CreateCriterium("abc", BooleanComparer.GreaterThan, 42)).ToQueryBuilder()
 				== QueryBuilder.Create("((test<{0} Or abc>{1}) And test2<{2})", 3, 42, 3)); //does include nested brackets!
 
-			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s != "stardust") == null);
-			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s != "stardst") == modFilter);
+			var colTypes = new[] { "stardust", "ziggy", "test", "test2" }.ToDictionary(n => n, n => typeof(int));
+			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => colTypes.GetOrDefault(s, null)) == modFilter);
+			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s == "stardust" ? null : colTypes.GetOrDefault(s, null)) == null);
+			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s == "test" ? null : colTypes.GetOrDefault(s, null)) == modFilter);//test was replaced, so ok
+			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s == "stardust" ? typeof(string) : colTypes.GetOrDefault(s, null)) == null);//types don't match
 		}
 
 
@@ -101,8 +104,8 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.Throws<ArgumentException>(() => new ColumnReference("a b"));
 			Assert.Throws<ArgumentException>(() => new ColumnReference("a.b"));
 
-			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevant") == null);
-			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s != "relevan") != null);
+			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s == "blabla" ? typeof(int) : typeof(string)) == null);
+			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ClearFilterWhenItContainsInvalidColumns(s => s == "relevant" || s == "blabla" ? typeof(int) : null) != null);
 			PAssert.That(() => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ToQueryBuilder() == QueryBuilder.Create("blabla<relevant"));
 		}
 

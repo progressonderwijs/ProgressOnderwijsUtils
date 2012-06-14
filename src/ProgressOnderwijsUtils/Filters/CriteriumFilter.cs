@@ -174,7 +174,24 @@ namespace ProgressOnderwijsUtils
 				return QueryBuilder.Param(Waarde);
 		}
 
-		protected internal override IEnumerable<string> ColumnsReferenced { get { yield return KolomNaam; if (Waarde is ColumnReference) yield return ((ColumnReference)Waarde).ColumnName; } }
+		protected internal override bool IsFilterValid(Func<string, Type> colTypeLookup)
+		{
+			var primaryType = colTypeLookup(KolomNaam);
+			if (primaryType == null)
+				return false;
+			primaryType = primaryType.StripNullability() ?? primaryType;
+
+
+			if (Comparer == BooleanComparer.In)
+				return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
+			if (!(Waarde is ColumnReference))
+				return Waarde.GetType() == primaryType;
+			Type secondaryType = colTypeLookup(((ColumnReference)Waarde).ColumnName);
+			if (secondaryType == null)
+				return false;
+			secondaryType = secondaryType.StripNullability() ?? secondaryType;
+			return secondaryType == primaryType;
+		}
 
 		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return this == toReplace ? replaceWith : this; }
 

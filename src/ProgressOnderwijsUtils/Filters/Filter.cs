@@ -113,7 +113,7 @@ namespace ProgressOnderwijsUtils
 
 		public static BooleanComparer? ParseComparerNiceString(string s) { return niceStringValues.GetOrDefault(s, default(BooleanComparer?)); }
 
-		public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, bool> isColValid) { return filter == null || !filter.ColumnsReferenced.All(isColValid) ? null : filter; }
+		public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, Type> typeIfPresent) { return filter != null && filter.IsFilterValid(typeIfPresent) ? filter : null; }
 
 		public static Tuple<FilterBase, string> TryParseSerializedFilterWithLeftovers(string serialized)
 		{
