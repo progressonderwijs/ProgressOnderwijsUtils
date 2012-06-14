@@ -19,9 +19,4 @@ namespace ProgressOnderwijsUtils.Data
 		bool CanShareParamNumberWith(IQueryParameter other);
 		int ParamNumberSharingHashCode();
 	}
-
-	public struct IntValues_DbTableType : IMetaObject
-	{
-		public int val { get; set; }
-	}
 }
