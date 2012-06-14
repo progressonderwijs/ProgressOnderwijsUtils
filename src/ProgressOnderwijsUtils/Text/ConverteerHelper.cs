@@ -19,6 +19,12 @@ namespace ProgressOnderwijsUtils.Text
 		public static TranslateFunction ToString(string obj, string format) { return language => obj; }
 		public static TranslateFunction ToString(char obj, string format) { return language => new string((char)obj, 1); }
 		public static TranslateFunction ToString(XHtmlData obj, string format) { return language => obj.ToUiString(); }
+		public static TranslateFunction ToString<T>(T[] arr, string format) {
+			var subtrans=arr.Select(obj => (TranslateFunction)ConverteerHelper.ToString((dynamic)obj, format)).ToArray();
+
+			return language => subtrans.Select(f => f(language)).JoinStrings("\n"); 
+		}
+
 
 		public static TranslateFunction ToString(bool obj, string format) { 
 			return language => {

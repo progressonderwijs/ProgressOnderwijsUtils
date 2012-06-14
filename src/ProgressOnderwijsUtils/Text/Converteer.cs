@@ -152,7 +152,7 @@ namespace ProgressOnderwijsUtils
 			if (t == null) throw new ArgumentNullException("t");
 
 			Type nonNullableType = t.IfNullableGetCoreType();
-			bool canBeNull = nonNullableType != null || !t.IsValueType;
+			bool canBeNull =!t.IsArray&& (nonNullableType != null || !t.IsValueType);
 			Type fundamentalType = nonNullableType ?? t;
 
 			if (canBeNull && s.Length == 0) return null; // dus s=="" levert null string op! --RW 24-04-2008 Moet wel zo, maar wat zijn de gevolgen?
@@ -166,6 +166,17 @@ namespace ProgressOnderwijsUtils
 			if (fundamentalType == typeof(string)) return s;
 			if (fundamentalType == typeof(bool)) return Boolean.Parse(s);
 			if (fundamentalType == typeof(XHtmlData)) return XHtmlData.Parse(s);
+			if (fundamentalType.IsArray)
+			{
+				var elementType = fundamentalType.GetElementType();
+				if(elementType.IsArray) throw new InvalidOperationException("Cannot parse jagged arrays");
+				if (fundamentalType.GetArrayRank() != 1) throw new InvalidOperationException("Can only parse arrays of rank 1");
+				var components = s.Split(WHITESPACE, StringSplitOptions.RemoveEmptyEntries);
+				var retval = Array.CreateInstance(elementType, components.Length);
+				for (int i = 0; i < components.Length; i++)
+					retval.SetValue(Parse(components[i], elementType), i);
+				return retval;
+			}
 			throw new ConverteerException("Parse nog niet geimplementeerd voor " + t);
 		}
 
@@ -241,10 +252,10 @@ namespace ProgressOnderwijsUtils
 			if (s == null) return ParseState.GEENDATA;
 
 			Type nonNullableType = t.IfNullableGetCoreType();
-			bool canBeNull = nonNullableType != null || !t.IsValueType;
+			bool canBeNull =nonNullableType != null || !t.IsValueType;
 			Type fundamentalType = nonNullableType ?? t;
 
-			if (canBeNull && s.Length == 0) return ParseState.OK; // dus s=="" levert null string op!
+			if (canBeNull && s.Length == 0) return ParseState.OK; // dus s=="" levert null string op! - en dit vangt ook lege arrays, maar dat is ok; bij het parsen worden die niet-null
 			else if (fundamentalType == typeof(bool))
 			{
 				bool ignore;
@@ -281,8 +292,15 @@ namespace ProgressOnderwijsUtils
 				return ParseState.OK;
 			else if (fundamentalType == typeof(XHtmlData))
 				return XhtmlCleaner.TryParse(s) != null ? ParseState.OK : ParseState.MALFORMED;
+			else if (fundamentalType.IsArray) {
+				if (fundamentalType.GetArrayRank() != 1) throw new InvalidOperationException("Can only parse arrays of rank 1");
+				var elementType = fundamentalType.GetElementType();
+				if (elementType.IsArray) throw new InvalidOperationException("Cannot parse jagged arrays");
+				return s.Split(WHITESPACE, StringSplitOptions.RemoveEmptyEntries).Select(sPart => TryParse(sPart, elementType)).FirstOrDefault(state => !state.IsOk());
+			}
 			throw new ConverteerException("TryParse nog niet geimplementeerd voor " + t);
 		}
+		static readonly char[] WHITESPACE = new[] { ' ', '\r', '\n' };
 		public static ITranslatable ToDbCode(this ParseState state)
 		{
 			switch (state)
