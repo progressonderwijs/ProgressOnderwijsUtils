@@ -10,7 +10,7 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils.Data
 {
-	sealed class QueryTableValuedParameterComponent<T> : IQueryParameter where T:IMetaObject 
+	sealed class QueryTableValuedParameterComponent<T> : IQueryParameter where T : IMetaObject
 	{
 		readonly IEnumerable<T> objs;
 		readonly string DbTypeName;
@@ -21,12 +21,12 @@ namespace ProgressOnderwijsUtils.Data
 		public SqlParameter ToSqlParameter(int paramnum)
 		{
 			return new SqlParameter {
-			                        	IsNullable = false,
-			                        	ParameterName = "@par" + paramnum,
-										Value = MetaObject.CreateDataReader(objs),
-			                        	SqlDbType = SqlDbType.Structured,
-			                        	TypeName = DbTypeName
-			                        };
+				IsNullable = false,
+				ParameterName = "@par" + paramnum,
+				Value = MetaObject.CreateDataReader(objs),
+				SqlDbType = SqlDbType.Structured,
+				TypeName = DbTypeName
+			};
 		}
 
 		public string ToDebugText()
@@ -38,7 +38,11 @@ namespace ProgressOnderwijsUtils.Data
 		public int ParamNumberSharingHashCode() { return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200; }//paramval never null!
 
 		public bool Equals(IQueryComponent other) { return Equals((object)other); }
-		public override bool Equals(object other) { return ReferenceEquals(this, other) || (other is QueryTableValuedParameterComponent<T>) && Equals(DbTypeName, ((QueryTableValuedParameterComponent<T>)other).DbTypeName) && Equals(objs, ((QueryTableValuedParameterComponent<T>)other).objs); }
+		public override bool Equals(object other)
+		{
+			return ReferenceEquals(this, other) || (other is QueryTableValuedParameterComponent<T>) && Equals(DbTypeName, ((QueryTableValuedParameterComponent<T>)other).DbTypeName)
+				&& (ReferenceEquals(objs, ((QueryTableValuedParameterComponent<T>)other).objs) || objs.SequenceEqual(((QueryTableValuedParameterComponent<T>)other).objs));
+		}
 		public override int GetHashCode() { return ParamNumberSharingHashCode(); }//paramval never null!
 	}
 }

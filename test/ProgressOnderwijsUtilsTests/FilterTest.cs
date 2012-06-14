@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.StartsWith, "world").ToQueryBuilder() == QueryBuilder.Create("test like {0}", "world%"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNull, null).ToQueryBuilder() == QueryBuilder.Create("test is null"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNotNull, null).ToQueryBuilder() == QueryBuilder.Create("test is not null"));
-			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, "1 2 3 4 5 ").ToQueryBuilder() == QueryBuilder.Create("test in ({0}, {1}, {2}, {3}, {4})", Enumerable.Range(1, 5).Select(i => i.ToString()).Cast<object>().ToArray()));
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test in (select val from {0})", Enumerable.Range(1, 5)));
 		}
 
 
