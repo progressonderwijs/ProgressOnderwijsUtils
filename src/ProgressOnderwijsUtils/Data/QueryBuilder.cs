@@ -110,6 +110,17 @@ namespace ProgressOnderwijsUtils
 		/// <returns>a composable query-component</returns>
 		public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) where T : IMetaObject, new() { return new SingleComponent(QueryComponent.ToTableParameter(typeName, o)); }
 		public static QueryBuilder TableParam(IEnumerable<int> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<string> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<DateTime> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<TimeSpan> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<decimal> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<char> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<bool> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<byte> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<short> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<long> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParam(IEnumerable<double> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		public static QueryBuilder TableParamDynamic(Array o) { return new SingleComponent(QueryComponent.ToTableParameter((dynamic)o)); }
 
 		public static QueryBuilder Create(string str, params object[] parms)
 		{

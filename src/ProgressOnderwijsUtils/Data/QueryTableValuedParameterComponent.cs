@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Data
 
 		public string ToDebugText()
 		{
-			return "{!" + ObjectToCode.ComplexObjectToPseudoCode(objs) + "!}";
+			return "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")";
 		}
 
 		public bool CanShareParamNumberWith(IQueryParameter other) { return Equals((object)other); }
