@@ -12,6 +12,8 @@ namespace ProgressOnderwijsUtils.Data
 		public static IQueryComponent CreateString(string val) { return new QueryStringComponent(val); }
 		public static IQueryComponent CreateParam(object o)
 		{
+			if (o is QueryBuilder)
+				throw new ArithmeticException("Cannot pass a querybuilder as a parameter");
 			return
 				o is IQueryParameter ? (IQueryComponent)o
 					: o is LiteralSqlInt ? new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant())
