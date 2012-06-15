@@ -34,14 +34,6 @@ namespace ProgressOnderwijsUtils.Collections
 			return retval;
 		}
 
-		public SList<T> Reverse2()
-		{
-			var retval = default(Impl);
-			for (var cur = list; cur != null; cur = cur.Tail)
-				retval = new Impl(cur.Head, retval);
-			return new SList<T>(retval);
-		}
-
 		public T Head { get { return list.Head; } }
 		public SList<T> Tail { get { return new SList<T>(list.Tail); } }
 
@@ -69,12 +61,12 @@ namespace ProgressOnderwijsUtils.Collections
 		public static bool operator ==(SList<T> a, SList<T> b) { return a.Equals(b); }
 		public static bool operator !=(SList<T> a, SList<T> b) { return !a.Equals(b); }
 
-		IEnumerable<SList<T>> NonEmpySuffixes
+		public IEnumerable<SList<T>> NonEmpySuffixes
 		{
 			get
 			{
-				for (var current = list; current != null; current = current.Tail)
-					yield return new SList<T>(current);
+				for (var current = this; !current.IsEmpty; current = current.Tail)
+					yield return current;
 			}
 		}
 

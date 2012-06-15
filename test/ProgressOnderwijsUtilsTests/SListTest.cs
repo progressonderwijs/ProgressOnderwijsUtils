@@ -46,6 +46,7 @@ namespace ProgressOnderwijsUtilsTests
 			var c = SList.Create(new[] { 1, 2, 3, 4 });
 
 			PAssert.That(() => a == b);
+			PAssert.That(() => a.GetHashCode() == b.GetHashCode());
 			PAssert.That(() => a.Equals(b));
 			PAssert.That(() => a.Equals((object)b));
 			PAssert.That(() => !(a != b));
@@ -95,12 +96,12 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void HashReasonableness()
 		{
-			var list = SList.Create( Enumerable.Range(0, 100).Select(i=> i*14678355468^i) );
+			var list = SList.Create(Enumerable.Range(0, 100).Select(i => i * 14678355468 ^ i));
 			List<int> hashcodes = new List<int>();
 			for (var suffix = list; !suffix.IsEmpty; suffix = suffix.Tail)
 				hashcodes.Add(suffix.GetHashCode());
 
-			PAssert.That(()=> hashcodes.Count == hashcodes.Distinct().Count());
+			PAssert.That(() => hashcodes.Count == hashcodes.Distinct().Count());
 		}
 
 		[Test]
@@ -108,5 +109,26 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			PAssert.That(() => SList<int>.Empty.GetHashCode() != SList<double>.Empty.GetHashCode());
 		}
+
+		[Test]
+		public void HashConsistentWithEquals()
+		{
+			var lists = new[]{
+				SList.Create(new[]{1,2,3}),
+				SList.Create(new[]{1,2,3}).Reverse().Reverse(),
+				SList.Create(new[]{1,2,3,3}).Reverse().Reverse(),
+				SList.Create(new[]{1,2,3,3}),
+				SList.Create(new[]{1,2,1}),
+				SList.Create(new[]{1,2,1}).Reverse(),
+			};
+
+			PAssert.That(() =>
+				(from aList in lists
+				 from bList in lists
+				 select (aList == bList) == (aList.GetHashCode() == bList.GetHashCode())).All(x => x));
+
+
+		}
+
 	}
 }
