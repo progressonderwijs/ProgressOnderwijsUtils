@@ -238,21 +238,26 @@ namespace ProgressOnderwijsUtils
 		protected internal override bool IsFilterValid(Func<string, Type> colTypeLookup)
 		{
 			var primaryType = colTypeLookup(KolomNaam);
-			if (primaryType == null)
-				return false;
-			primaryType = primaryType.StripNullability() ?? primaryType;
+			if (primaryType == null) return false;
+			primaryType = CoreType(primaryType);
 
-			if (Comparer == BooleanComparer.IsNotNull || Comparer == BooleanComparer.IsNull)
-				return Waarde == null;
-			if (Comparer == BooleanComparer.In)
-				return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
+			if (Comparer == BooleanComparer.IsNotNull || Comparer == BooleanComparer.IsNull) return Waarde == null;
+			if (Comparer == BooleanComparer.In) return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
+			//if (Waarde == null) 		
 			if (!(Waarde is ColumnReference))
-				return Waarde.GetType() == primaryType;
+				return true;	//TODO:emn: HACK? maybe remove this when criterium filters allow it.
+				//return CoreType(Waarde.GetType()) == primaryType;
 			Type secondaryType = colTypeLookup(((ColumnReference)Waarde).ColumnName);
-			if (secondaryType == null)
-				return false;
-			secondaryType = secondaryType.StripNullability() ?? secondaryType;
-			return secondaryType == primaryType;
+			if (secondaryType == null) return false;
+			return CoreType(secondaryType) == primaryType;
+		}
+
+		static Type CoreType(Type type)
+		{
+			type = type.StripNullability() ?? type;
+			if (type.IsEnum)
+				type = type.GetEnumUnderlyingType();
+			return type;
 		}
 
 		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return this == toReplace ? replaceWith : this; }
