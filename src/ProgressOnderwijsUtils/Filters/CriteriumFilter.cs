@@ -242,7 +242,8 @@ namespace ProgressOnderwijsUtils
 				return false;
 			primaryType = primaryType.StripNullability() ?? primaryType;
 
-
+			if (Comparer == BooleanComparer.IsNotNull || Comparer == BooleanComparer.IsNull)
+				return Waarde == null;
 			if (Comparer == BooleanComparer.In)
 				return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
 			if (!(Waarde is ColumnReference))
