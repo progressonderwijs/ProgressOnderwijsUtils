@@ -246,7 +246,8 @@ namespace ProgressOnderwijsUtils
 			//if (Waarde == null) 		
 			if (!(Waarde is ColumnReference))
 				return true;	//TODO:emn: HACK? maybe remove this when criterium filters allow it.
-				//return CoreType(Waarde.GetType()) == primaryType;
+			//TODO: when this is reenabled, also update FilterTest.FilterModification() to uncomment the relevant assertion.
+			//return CoreType(Waarde.GetType()) == primaryType;
 			Type secondaryType = colTypeLookup(((ColumnReference)Waarde).ColumnName);
 			if (secondaryType == null) return false;
 			return CoreType(secondaryType) == primaryType;
@@ -312,9 +313,9 @@ namespace ProgressOnderwijsUtils
 				case BooleanComparer.Contains:
 					return Expression.Call(containsMethod, coreExpr, waardeExpr);
 				case BooleanComparer.IsNull:
-					return Expression.Equal(Expression.Default(typeof(object)), coreExpr);
+					return Expression.Equal(Expression.Convert(Expression.Default(typeof(object)), coreExpr.Type), coreExpr);
 				case BooleanComparer.IsNotNull:
-					return Expression.NotEqual(Expression.Default(typeof(object)), coreExpr);
+					return Expression.NotEqual(Expression.Convert(Expression.Default(typeof(object)), coreExpr.Type), coreExpr);
 				default:
 					throw new InvalidOperationException("Geen geldige operator");
 			}
