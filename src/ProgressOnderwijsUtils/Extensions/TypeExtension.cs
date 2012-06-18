@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		/// <summary>
-		/// If type is Nullable&lt;T&gt;, returns typeof(T).  For non-Nullable&lt;&gt; types, returns null;
+		/// If type is Nullable&lt;T&gt;, returns typeof(T).  For non-Nullable&lt;&gt; types, returns the type itself - this might also be a reference type, so the resulting type may still permit the value null.
 		/// </summary>
 		public static Type StripNullability(this Type type)
 		{
