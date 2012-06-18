@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
 		int Volgorde { get; }
 		bool Verplicht { get; }
 		bool AllowNull { get; }
-		int Lengte { get; }
+		int? Lengte { get; }
 		string Regex { get; }
 		ITranslatable Label { get; }
 		string KoppelTabelNaam { get; }
@@ -50,8 +50,8 @@ namespace ProgressOnderwijsUtils
 			readonly bool allowNull;
 			public bool AllowNull { get { return allowNull; } }
 
-			readonly int lengte;
-			public int Lengte { get { return lengte; } }
+			readonly int? lengte;
+			public int? Lengte { get { return lengte; } }
 
 			readonly string regex;
 			public string Regex { get { return regex; } }
@@ -129,7 +129,7 @@ namespace ProgressOnderwijsUtils
 				allowNull = OrDefault(Attr<MpAllowNullAttribute>(pi), mkAttr => true);
 				showDefaultOnNew = OrDefault(Attr<MpShowDefaultOnNewAttribute>(pi), mkAttr => true);
 				isReadonly = Setter == null || OrDefault(Attr<MpReadonlyAttribute>(pi), mkAttr => true);
-				lengte = OrDefault(Attr<MpLengteAttribute>(pi), mkAttr => mkAttr.Lengte);
+				lengte = OrDefault(Attr<MpLengteAttribute>(pi), mkAttr => mkAttr.Lengte,default(int?));
 				regex = OrDefault(Attr<MpRegexAttribute>(pi), mkAttr => mkAttr.Regex);
 
 				if (KoppelTabelNaam != null && DataType != typeof(int) && DataType != typeof(int?))
