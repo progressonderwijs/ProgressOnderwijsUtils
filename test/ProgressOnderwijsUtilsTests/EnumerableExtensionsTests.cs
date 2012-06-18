@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void AsReadOnlyTest()
 		{
 			var nums = Enumerable.Range(1, 5).Reverse().ToArray();
-			var copy = nums.AsReadOnlyCopy();
+			var copy = nums.ToReadOnly();
 			var view = nums.AsReadOnlyView();
 			PAssert.That(() => nums.SequenceEqual(copy) && nums.SequenceEqual(view));
 			Array.Sort(nums);
