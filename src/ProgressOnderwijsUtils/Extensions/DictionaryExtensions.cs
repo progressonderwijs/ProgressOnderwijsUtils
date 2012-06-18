@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[TestFixture]
-	public class DictionaryExtensionsTests
+	public sealed class DictionaryExtensionsTests
 	{
 		[Test]
 		public void GetDefault()
