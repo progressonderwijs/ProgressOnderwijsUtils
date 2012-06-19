@@ -52,6 +52,7 @@ namespace ProgressOnderwijsUtils
 			return COLLAPSE_WHITESPACE.Replace(str, " ").Trim();
 		}
 
+		public static bool EqualsOrdinalCaseInsensitive(this string a, string b){return StringComparer.OrdinalIgnoreCase.Equals(a, b);}
 		//modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
 		public static int LevenshteinDistance(this string s, string t, int? substitutionCost = null)
 		{
