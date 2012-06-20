@@ -239,7 +239,7 @@ namespace ProgressOnderwijsUtils
 		{
 			var primaryType = colTypeLookup(KolomNaam);
 			if (primaryType == null) return false;
-			primaryType = CoreType(primaryType);
+			primaryType = primaryType.GetNonNullableUnderlyingType();
 
 			if (Comparer == BooleanComparer.IsNotNull || Comparer == BooleanComparer.IsNull) return Waarde == null;
 			if (Comparer == BooleanComparer.In) return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
@@ -250,15 +250,7 @@ namespace ProgressOnderwijsUtils
 			//return CoreType(Waarde.GetType()) == primaryType;
 			Type secondaryType = colTypeLookup(((ColumnReference)Waarde).ColumnName);
 			if (secondaryType == null) return false;
-			return CoreType(secondaryType) == primaryType;
-		}
-
-		static Type CoreType(Type type)
-		{
-			type = type.StripNullability() ?? type;
-			if (type.IsEnum)
-				type = type.GetEnumUnderlyingType();
-			return type;
+			return secondaryType.GetNonNullableUnderlyingType() == primaryType;
 		}
 
 		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return this == toReplace ? replaceWith : this; }
@@ -284,9 +276,9 @@ namespace ProgressOnderwijsUtils
 				throw new InvalidOperationException("Cannot interpret group reference IDs in LINQ: these are only stored in the database!");
 			Expression coreExpr = Expression.Property(objParamExpr, KolomNaam);
 			var waardeExpr = Waarde is ColumnReference ? Expression.Property(objParamExpr, ((ColumnReference)Waarde).ColumnName) : (Expression)Expression.Constant(Waarde);
-			if (waardeExpr.Type != coreExpr.Type && coreExpr.Type.IfNullableGetCoreType() == waardeExpr.Type)
+			if (waardeExpr.Type != coreExpr.Type && coreExpr.Type.IfNullableGetNonNullableType() == waardeExpr.Type)
 				waardeExpr = Expression.Convert(waardeExpr, coreExpr.Type);
-			else if (waardeExpr.Type != coreExpr.Type && coreExpr.Type == waardeExpr.Type.IfNullableGetCoreType())
+			else if (waardeExpr.Type != coreExpr.Type && coreExpr.Type == waardeExpr.Type.IfNullableGetNonNullableType())
 				coreExpr = Expression.Convert(coreExpr, waardeExpr.Type);
 
 			switch (Comparer)

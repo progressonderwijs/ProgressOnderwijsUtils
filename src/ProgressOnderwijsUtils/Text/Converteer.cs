@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
 			if (s == null) throw new ArgumentNullException("s");
 			if (t == null) throw new ArgumentNullException("t");
 
-			Type nonNullableType = t.IfNullableGetCoreType();
+			Type nonNullableType = t.IfNullableGetNonNullableType();
 			bool canBeNull =!t.IsArray&& (nonNullableType != null || !t.IsValueType);
 			Type fundamentalType = nonNullableType ?? t;
 
@@ -251,7 +251,7 @@ namespace ProgressOnderwijsUtils
 			if (t == null) throw new ArgumentNullException("t");
 			if (s == null) return ParseState.GEENDATA;
 
-			Type nonNullableType = t.IfNullableGetCoreType();
+			Type nonNullableType = t.IfNullableGetNonNullableType();
 			bool canBeNull =nonNullableType != null || !t.IsValueType;
 			Type fundamentalType = nonNullableType ?? t;
 

@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils
 		{
 			DataTable dt = new DataTable();
 			var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
-			dt.Columns.AddRange(properties.Select(mp => new DataColumn(mp.Naam, mp.DataType.StripNullability()) { AllowDBNull = !mp.Verplicht && mp.DataType.CanBeNull() }).ToArray());
+			dt.Columns.AddRange(properties.Select(mp => new DataColumn(mp.Naam, mp.DataType.GetNonNullableType()) { AllowDBNull = !mp.Verplicht && mp.DataType.CanBeNull() }).ToArray());
 
 			foreach (var obj in objs)
 				dt.Rows.Add(properties.Select(mp => mp.TypedGetter(obj) ?? DBNull.Value).ToArray());

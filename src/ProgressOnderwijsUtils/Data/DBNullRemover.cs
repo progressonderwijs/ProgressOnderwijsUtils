@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils.Data
 				Type type = typeof(T);
 				if (type.IsValueType)
 				{
-					Type nullableBase = type.IfNullableGetCoreType();
+					Type nullableBase = type.IfNullableGetNonNullableType();
 					if (nullableBase == null)
 						Extractor = ExtractValueField;
 					else if (!nullableBase.IsValueType)

@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// If type is Nullable&lt;T&gt;, returns typeof(T).  For non-Nullable&lt;&gt; types, returns null;
 		/// </summary>
-		public static Type IfNullableGetCoreType(this Type type)
+		public static Type IfNullableGetNonNullableType(this Type type)
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)
 				? type.GetGenericArguments()[0]
@@ -19,11 +19,23 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// If type is Nullable&lt;T&gt;, returns typeof(T).  For non-Nullable&lt;&gt; types, returns the type itself - this might also be a reference type, so the resulting type may still permit the value null.
 		/// </summary>
-		public static Type StripNullability(this Type type)
+		public static Type GetNonNullableType(this Type type)
 		{
 			return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)
 				? type.GetGenericArguments()[0]
 				: type;
+		}
+
+		/// <summary>
+		/// For enums, nullable types and nullable enums, return non-nullable underlying type; otherwise return original type.
+		/// e.g. typeof(MyEnum?) => typeof(int)
+		/// e.g. typeof(string) => typeof(string)
+		/// 
+		/// </summary>
+		public static Type GetNonNullableUnderlyingType(this Type type)
+		{
+			var nonNullableType = type.GetNonNullableType();
+			return nonNullableType.IsEnum?nonNullableType.GetEnumUnderlyingType():nonNullableType;
 		}
 
 

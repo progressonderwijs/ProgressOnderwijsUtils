@@ -50,9 +50,9 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void TestNullableGetter()
 		{
-			PAssert.That(() => typeof(int?).IfNullableGetCoreType() == typeof(int));
-			PAssert.That(() => typeof(int).IfNullableGetCoreType() ==null);
-			PAssert.That(() => typeof(string).IfNullableGetCoreType() == null);
+			PAssert.That(() => typeof(int?).IfNullableGetNonNullableType() == typeof(int));
+			PAssert.That(() => typeof(int).IfNullableGetNonNullableType() ==null);
+			PAssert.That(() => typeof(string).IfNullableGetNonNullableType() == null);
 		}
 
 		[Test]
