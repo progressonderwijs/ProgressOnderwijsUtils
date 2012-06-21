@@ -1,12 +1,8 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Text.RegularExpressions;
+using System.Threading;
 using NUnit.Framework;
 using System.Linq;
 using ProgressOnderwijsUtils.Test;
@@ -52,6 +48,29 @@ namespace ProgressOnderwijsUtils
 			T tmp = one;
 			one = other;
 			other = tmp;
+		}
+		public static T Retry<T>(Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
+		{
+			const int retryMAX = 5;
+
+			int attempt = 0;
+			while (true)
+				try
+				{
+					return func();
+				}
+				catch (Exception e)
+				{
+					if (attempt++ >= retryMAX || !shouldRetryOnThisFailure(e))
+						throw;
+				}
+		}
+		public static T Retry<T>(CancellationToken cancel, Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
+		{
+			return Retry(
+				() => { cancel.ThrowIfCancellationRequested(); return func(); },
+				e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested
+				);
 		}
 
 		/// <summary>
