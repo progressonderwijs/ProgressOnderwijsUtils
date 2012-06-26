@@ -96,6 +96,9 @@ namespace ProgressOnderwijsUtils
 		/// that has the same aspect ratio as the output dimensions.  This rectangle
 		/// is then resized to the new dimensions, unless it's smaller, then only
 		/// clipping occurs.
+		/// 
+		/// SECURITY: this method is safe if and only if microsoft's Image.FromStream is safe.
+		/// SECURITY: the image is _always_ converted, never stored raw, so corrupted image attacks against other users cannot occur.
 		/// </summary>
 		/// <param name="origImageData">The bytes of the image to resize</param>
 		/// <param name="targetWidth">The target width</param>
@@ -113,19 +116,16 @@ namespace ProgressOnderwijsUtils
 				using (Bitmap thumbnail = DownscaleAndClip(uploadedImage, targetWidth, targetHeight))
 				using (MemoryStream ms = new MemoryStream())
 				{
-					SaveImageAsJpeg(thumbnail, ms);
+					SaveImageAsJpeg(thumbnail, ms);//always resave as a security precaution.
 					return ms.ToArray();
 				}
 			}
 		}
-		public const int MAX_IMAGE_DIMENSION = 10000;//10 000 by 10 000 is quite insane ;-)
+		const int MAX_IMAGE_DIMENSION = 10000;//10 000 by 10 000 is quite insane ;-)
 
 
 
-		public static Image ToImage(byte[] arr) { return ToImage(new MemoryStream(arr)); }
-
-		public static Image ToImage(Stream str) { return Image.FromStream(str, true, true); }
-
+		public static Image ToImage(byte[] arr) { return Image.FromStream(new MemoryStream(arr), true, true); }
 
 		/// <summary>
 		/// Given a width and a height, and a aspect ratio, computes the clipping rectangle fitting within that width and height but of the right aspect ratio.
@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
 
 		public static void SaveImageAsJpeg(Image image, Stream outputStream, int? quality = null)
 		{
-			ImageCodecInfo jpgInfo = ImageCodecInfo.GetImageEncoders().Where(codecInfo => codecInfo.MimeType == "image/jpeg").First();
+			ImageCodecInfo jpgInfo = ImageCodecInfo.GetImageEncoders().First(codecInfo => codecInfo.MimeType == "image/jpeg");
 			using (EncoderParameters encParams = new EncoderParameters(1))
 			{
 				encParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)(quality??90));//quality should be in the range [0..100]
