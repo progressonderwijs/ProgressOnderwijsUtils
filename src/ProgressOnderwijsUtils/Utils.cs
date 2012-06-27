@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
@@ -92,6 +94,22 @@ namespace ProgressOnderwijsUtils
 			return joined.Length == 0 ? "(null)" : "(" + joined + ")";
 		}
 
+		public static bool IsDbConnectionFailure(Exception e)
+		{
+			SqlException sqlE = e as SqlException ?? e.InnerException as SqlException;
+
+			return (sqlE != null &&
+					(sqlE.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
+					 sqlE.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
+					 sqlE.Message.StartsWith("Timeout expired."))) ||
+				   (e is EntityException && e.Message == "The underlying provider failed on Open.");
+		}
+
+		public static string GetSqlExceptionDetailsString(Exception exception)
+		{
+			SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
+			return sql == null ? null : String.Format("[code='{0:x}'; number='{1}'; state='{2}']", sql.ErrorCode, sql.Number, sql.State);
+		}
 
 		public static bool NUnitSession()
 		{
@@ -126,25 +144,25 @@ namespace ProgressOnderwijsUtils
 			bool result;
 			switch (doc)
 			{
-			case DocumentLanguage.Dutch:
-				result = language == Taal.NL;
-				break;
-			case DocumentLanguage.English:
-				result = language == Taal.EN;
-				break;
-			case DocumentLanguage.German:
-				result = language == Taal.DU;
-				break;
-			case DocumentLanguage.StudentPreferenceNlEn:
-			case DocumentLanguage.CoursePreferenceNlEn:
-			case DocumentLanguage.ProgramPreferenceNlEn:
-				result = language == Taal.NL || language == Taal.EN;
-				break;
-			case DocumentLanguage.StudentPreferenceNlEnDu:
-				result = language == Taal.NL || language == Taal.EN || language == Taal.DU;
-				break;
-			default:
-				throw new ArgumentOutOfRangeException();
+				case DocumentLanguage.Dutch:
+					result = language == Taal.NL;
+					break;
+				case DocumentLanguage.English:
+					result = language == Taal.EN;
+					break;
+				case DocumentLanguage.German:
+					result = language == Taal.DU;
+					break;
+				case DocumentLanguage.StudentPreferenceNlEn:
+				case DocumentLanguage.CoursePreferenceNlEn:
+				case DocumentLanguage.ProgramPreferenceNlEn:
+					result = language == Taal.NL || language == Taal.EN;
+					break;
+				case DocumentLanguage.StudentPreferenceNlEnDu:
+					result = language == Taal.NL || language == Taal.EN || language == Taal.DU;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 			return result;
 		}
