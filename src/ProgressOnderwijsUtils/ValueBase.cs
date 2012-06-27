@@ -6,15 +6,22 @@ using System.Reflection;
 
 namespace ProgressOnderwijsUtils
 {
-	public abstract class ByValueHelperBase<T> : IEquatable<T> where T : ByValueHelperBase<T>
+	/// <summary> 
+	/// Helper base class to automatically implement Equals, GetHashCode, ToString()
+	/// uses all public+private fields of the object for comparisons
+	/// uses public fields and properties for ToString()
+	/// Instantiated types must be sealed and pass themselves as the type parameter T.
+	/// </summary>
+	/// <typeparam name="T">The derived type; must be sealed</typeparam>
+	public abstract class ValueBase<T> : IEquatable<T> where T : ValueBase<T>
 	{
 		//static readonly Func<T, T> copy;
 		static readonly Func<T, T, bool> equalsFunc;
 		static readonly Func<T, int> hashFunc;
 		static readonly Func<T, string> toStringFunc;
 
-		protected ByValueHelperBase() { if (!(this is T)) throw new InvalidOperationException("Only T can subclass ByValueHelperBase<T>."); }
-		static ByValueHelperBase()
+		protected ValueBase() { if (!(this is T)) throw new InvalidOperationException("Only T can subclass ByValueHelperBase<T>."); }
+		static ValueBase()
 		{
 			Type type = typeof(T);
 			if (!type.IsSealed)

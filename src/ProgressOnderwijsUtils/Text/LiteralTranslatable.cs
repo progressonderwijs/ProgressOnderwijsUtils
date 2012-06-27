@@ -6,7 +6,7 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
-	public sealed class LiteralTranslatable : ByValueHelperBase<LiteralTranslatable>, ITranslatable
+	public sealed class LiteralTranslatable : ValueBase<LiteralTranslatable>, ITranslatable
 	{
 		public readonly string nl, en, du;
 
@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 
-	public sealed class LiteralTranslatableWithToolTip : ByValueHelperBase<LiteralTranslatableWithToolTip>, ITranslatable
+	public sealed class LiteralTranslatableWithToolTip : ValueBase<LiteralTranslatableWithToolTip>, ITranslatable
 	{
 		public readonly TextVal nl, en, du;
 
