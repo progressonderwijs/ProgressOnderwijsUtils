@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using NUnit.Framework;
-using System.Linq;
+using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
@@ -23,16 +24,13 @@ namespace ProgressOnderwijsUtils
 		[ExcludeFromNCover]
 		public static void TestErrorOutOfMemory()
 		{
-			List<byte[]> memorySlurper = new List<byte[]>();
+			var memorySlurper = new List<byte[]>();
 			for (long i = 0; i < Int64.MaxValue; i++) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
 				memorySlurper.Add(Encoding.UTF8.GetBytes(@"This is a simply string which is repeatedly put in memory to test the Out Of Memory condition.  It's encoded to make sure the program really touches the data and that therefore the OS really needs to allocate the memory, and can't just 'pretend'."));
 		}
 
 		[ExcludeFromNCover]
-		public static void TestErrorNormalException()
-		{
-			throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
-		}
+		public static void TestErrorNormalException() { throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!"); }
 
 		public static bool ElfProef(int getal)
 		{
@@ -51,12 +49,14 @@ namespace ProgressOnderwijsUtils
 			one = other;
 			other = tmp;
 		}
+
 		public static T Retry<T>(Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
 		{
 			const int retryMAX = 5;
 
 			int attempt = 0;
 			while (true)
+			{
 				try
 				{
 					return func();
@@ -66,19 +66,22 @@ namespace ProgressOnderwijsUtils
 					if (attempt++ >= retryMAX || !shouldRetryOnThisFailure(e))
 						throw;
 				}
+			}
 		}
+
 		public static T Retry<T>(CancellationToken cancel, Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
 		{
 			return Retry(
-				() => { cancel.ThrowIfCancellationRequested(); return func(); },
+				() =>
+				{
+					cancel.ThrowIfCancellationRequested();
+					return func();
+				},
 				e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested
 				);
 		}
 
-		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
-		{
-			return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup));
-		}
+		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup) { return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup)); }
 
 		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
 		{
@@ -88,7 +91,6 @@ namespace ProgressOnderwijsUtils
 				distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
 			return set;
 		}
-
 
 		/// <summary>
 		/// Joins a set of values into SQL syntax; e.g. test, ab'c, xyz turn into "('test', 'ab''c', 'xyz')" and the empty set turns into "(null)".
@@ -103,6 +105,7 @@ namespace ProgressOnderwijsUtils
 		public static string SqlInClause(IEnumerable<int> values) { return SqlInClauseHelper(values.Select(val => val.ToStringInvariant())); }
 
 		static string EscapeSqlString(string val) { return '\'' + val.Replace("'", "''") + '\''; }
+
 		static string SqlInClauseHelper(IEnumerable<string> values)
 		{
 			string joined = values.JoinStrings(", ");
@@ -114,10 +117,10 @@ namespace ProgressOnderwijsUtils
 			SqlException sqlE = e as SqlException ?? e.InnerException as SqlException;
 
 			return (sqlE != null &&
-					(sqlE.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
-					 sqlE.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
-					 sqlE.Message.StartsWith("Timeout expired."))) ||
-				   (e is EntityException && e.Message == "The underlying provider failed on Open.");
+			        (sqlE.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
+			         sqlE.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
+			         sqlE.Message.StartsWith("Timeout expired."))) ||
+			       (e is EntityException && e.Message == "The underlying provider failed on Open.");
 		}
 
 		public static string GetSqlExceptionDetailsString(Exception exception)
@@ -129,7 +132,7 @@ namespace ProgressOnderwijsUtils
 		public static bool NUnitSession()
 		{
 			string procname = Process.GetCurrentProcess().ProcessName;
-			return procname.StartsWith("nunit") || procname.StartsWith("pnunit");//also supports nunit-agent, nunit-console, nunit-x86, etc.
+			return procname.StartsWith("nunit") || procname.StartsWith("pnunit"); //also supports nunit-agent, nunit-console, nunit-x86, etc.
 		}
 
 		/// <summary>
@@ -138,10 +141,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="d1"></param>
 		/// <param name="d2"></param>
 		/// <returns></returns>
-		public static int MaandSpan(DateTime d1, DateTime d2)
-		{
-			return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month);
-		}
+		public static int MaandSpan(DateTime d1, DateTime d2) { return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month); }
 
 		public static DateTime? DateMax(DateTime? d1, DateTime? d2)
 		{
@@ -159,25 +159,25 @@ namespace ProgressOnderwijsUtils
 			bool result;
 			switch (doc)
 			{
-				case DocumentLanguage.Dutch:
-					result = language == Taal.NL;
-					break;
-				case DocumentLanguage.English:
-					result = language == Taal.EN;
-					break;
-				case DocumentLanguage.German:
-					result = language == Taal.DU;
-					break;
-				case DocumentLanguage.StudentPreferenceNlEn:
-				case DocumentLanguage.CoursePreferenceNlEn:
-				case DocumentLanguage.ProgramPreferenceNlEn:
-					result = language == Taal.NL || language == Taal.EN;
-					break;
-				case DocumentLanguage.StudentPreferenceNlEnDu:
-					result = language == Taal.NL || language == Taal.EN || language == Taal.DU;
-					break;
-				default:
-					throw new ArgumentOutOfRangeException();
+			case DocumentLanguage.Dutch:
+				result = language == Taal.NL;
+				break;
+			case DocumentLanguage.English:
+				result = language == Taal.EN;
+				break;
+			case DocumentLanguage.German:
+				result = language == Taal.DU;
+				break;
+			case DocumentLanguage.StudentPreferenceNlEn:
+			case DocumentLanguage.CoursePreferenceNlEn:
+			case DocumentLanguage.ProgramPreferenceNlEn:
+				result = language == Taal.NL || language == Taal.EN;
+				break;
+			case DocumentLanguage.StudentPreferenceNlEnDu:
+				result = language == Taal.NL || language == Taal.EN || language == Taal.DU;
+				break;
+			default:
+				throw new ArgumentOutOfRangeException();
 			}
 			return result;
 		}
@@ -206,9 +206,13 @@ namespace ProgressOnderwijsUtils
 			Assert.That(other, Is.EqualTo("1"));
 		}
 
-		enum SampleEnum { ValueA, ValueB };
+		enum SampleEnum
+		{
+			ValueA,
+			ValueB
+		};
 
-		private IEnumerable<TestCaseData> InClauseData()
+		IEnumerable<TestCaseData> InClauseData()
 		{
 			yield return new TestCaseData(new int[] { }).Returns("(null)");
 			yield return new TestCaseData(new[] { 0 }).Returns("(0)");
@@ -216,30 +220,18 @@ namespace ProgressOnderwijsUtils
 			yield return new TestCaseData(new[] { SampleEnum.ValueA, SampleEnum.ValueB }).Returns("(0, 1)");
 		}
 
-		private IEnumerable<TestCaseData> InClauseStringData()
-		{
-			yield return new TestCaseData(new[] { "test", "ab'c", "xyz" }.ToList()).Returns("('test', 'ab''c', 'xyz')");
-		}
+		IEnumerable<TestCaseData> InClauseStringData() { yield return new TestCaseData(new[] { "test", "ab'c", "xyz" }.ToList()).Returns("('test', 'ab''c', 'xyz')"); }
 
 		[Test, TestCaseSource("InClauseData")]
-		public string InClause(IEnumerable<int> values)
-		{
-			return Utils.SqlInClause(values);
-		}
+		public string InClause(IEnumerable<int> values) { return Utils.SqlInClause(values); }
 
 		[Test, TestCaseSource("InClauseStringData")]
-		public string InClauseStrings(IEnumerable<string> values)
-		{
-			return Utils.SqlInClause(values);
-		}
+		public string InClauseStrings(IEnumerable<string> values) { return Utils.SqlInClause(values); }
 
 		[Test]
-		public void NUnitSession()
-		{
-			Assert.That(Utils.NUnitSession());
-		}
+		public void NUnitSession() { Assert.That(Utils.NUnitSession()); }
 
-		private IEnumerable<TestCaseData> MaandSpan()
+		IEnumerable<TestCaseData> MaandSpan()
 		{
 			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)).Returns(0);
 			yield return new TestCaseData(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)).Returns(4);
@@ -252,12 +244,9 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test, TestCaseSource("MaandSpan")]
-		public int MaandSpanTest(DateTime d1, DateTime d2)
-		{
-			return Utils.MaandSpan(d1, d2);
-		}
+		public int MaandSpanTest(DateTime d1, DateTime d2) { return Utils.MaandSpan(d1, d2); }
 
-		private IEnumerable<TestCaseData> DateMax()
+		IEnumerable<TestCaseData> DateMax()
 		{
 			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)).Returns(0);
 			yield return new TestCaseData(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)).Returns(4);
@@ -305,51 +294,45 @@ namespace ProgressOnderwijsUtils
 			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
 		}
 
-		[Test]
-		[TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true)]
-		[TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false)]
-		[TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false)]
-		[TestCase(DocumentLanguage.English, Taal.NL, Result = false)]
-		[TestCase(DocumentLanguage.English, Taal.EN, Result = true)]
-		[TestCase(DocumentLanguage.English, Taal.DU, Result = false)]
-		[TestCase(DocumentLanguage.German, Taal.NL, Result = false)]
-		[TestCase(DocumentLanguage.German, Taal.EN, Result = false)]
-		[TestCase(DocumentLanguage.German, Taal.DU, Result = true)]
-		[TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true)]
-		[TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true)]
-		[TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false)]
-		[TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true)]
-		[TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true)]
-		[TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true)]
-		[TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true)]
-		[TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true)]
-		[TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
-		public bool GenerateForLanguage(DocumentLanguage doc, Taal language)
-		{
-			return Utils.GenerateForLanguage(doc, language);
-		}
+		[Test, TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true), TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false), TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false), TestCase(DocumentLanguage.English, Taal.NL, Result = false), TestCase(DocumentLanguage.English, Taal.EN, Result = true), TestCase(DocumentLanguage.English, Taal.DU, Result = false), TestCase(DocumentLanguage.German, Taal.NL, Result = false), TestCase(DocumentLanguage.German, Taal.EN, Result = false), TestCase(DocumentLanguage.German, Taal.DU, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false), TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true), TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true), TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true), TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		public bool GenerateForLanguage(DocumentLanguage doc, Taal language) { return Utils.GenerateForLanguage(doc, language); }
 	}
 
 	[TestFixture]
 	public class ReferenceEqualityComparerTest
 	{
-		private struct TestType
+		struct TestType
 		{
-			private int value;
+			int value;
 
-			public TestType(int value)
-			{
-				this.value = value;
-			}
+			public TestType(int value) { this.value = value; }
 		}
 
-		private static readonly TestType t1 = new TestType(1);
-		private static readonly TestType t2 = new TestType(1);
+		static readonly TestType t1 = new TestType(1);
+		static readonly TestType t2 = new TestType(1);
 
 		[Test]
 		public void TestValue()
 		{
-			HashSet<TestType> sut = new HashSet<TestType>();
+			var sut = new HashSet<TestType>();
 			Assert.That(sut.Add(t1));
 			Assert.That(!sut.Add(t2));
 		}
@@ -357,7 +340,7 @@ namespace ProgressOnderwijsUtils
 		[Test]
 		public void TestReference()
 		{
-			HashSet<TestType> sut = new HashSet<TestType>(new ReferenceEqualityComparer<TestType>());
+			var sut = new HashSet<TestType>(new ReferenceEqualityComparer<TestType>());
 			Assert.That(sut.Add(t1));
 			Assert.That(sut.Add(t2));
 		}
