@@ -75,6 +75,21 @@ namespace ProgressOnderwijsUtils
 				);
 		}
 
+		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
+		{
+			return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup));
+		}
+
+		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
+		{
+			var set = elems.ToSet();
+			var distinctNewlyReachable = set.AsEnumerable();
+			while (distinctNewlyReachable.Any())
+				distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
+			return set;
+		}
+
+
 		/// <summary>
 		/// Joins a set of values into SQL syntax; e.g. test, ab'c, xyz turn into "('test', 'ab''c', 'xyz')" and the empty set turns into "(null)".
 		/// Single quotes are doubled; however, this is not rigorously safe and as such beware of SQL-injection.
