@@ -116,19 +116,16 @@ namespace ProgressOnderwijsUtils
 		{
 			if (e == null)
 				return false;
-			AggregateException aggregateException = e as AggregateException;
-			if (aggregateException != null)
-				return aggregateException.InnerExceptions.Any() && aggregateException.Flatten().InnerExceptions.DefaultIfEmpty().All(IsDbConnectionFailure);
-			if (!(e is EntityException) && !(e is SqlException))
+			else if (e is SqlException)
+				return e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
+					   e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
+					   e.Message.StartsWith("Timeout expired.");
+			else if (e is EntityException)
+				return (e.Message == "The underlying provider failed on Open.");
+			else if (e is AggregateException)
+				return ((AggregateException)e).Flatten().InnerExceptions.DefaultIfEmpty().All(IsDbConnectionFailure);
+			else
 				return IsDbConnectionFailure(e.InnerException);
-
-			SqlException sqlE = e as SqlException ?? e.InnerException as SqlException;
-
-			return (sqlE != null &&
-					(sqlE.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
-					 sqlE.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
-					 sqlE.Message.StartsWith("Timeout expired."))) ||
-				   (e is EntityException && e.Message == "The underlying provider failed on Open.");
 		}
 
 		public static string GetSqlExceptionDetailsString(Exception exception)
@@ -314,25 +311,25 @@ namespace ProgressOnderwijsUtils
 			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
 		}
 
-		[Test, TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true), TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false), TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false), TestCase(DocumentLanguage.English, Taal.NL, Result = false), TestCase(DocumentLanguage.English, Taal.EN, Result = true), TestCase(DocumentLanguage.English, Taal.DU, Result = false), TestCase(DocumentLanguage.German, Taal.NL, Result = false), TestCase(DocumentLanguage.German, Taal.EN, Result = false), TestCase(DocumentLanguage.German, Taal.DU, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false), TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true), TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true), TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true), TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		[Test,
+		TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true),
+		TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false),
+		TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false),
+		TestCase(DocumentLanguage.English, Taal.NL, Result = false),
+		TestCase(DocumentLanguage.English, Taal.EN, Result = true),
+		TestCase(DocumentLanguage.English, Taal.DU, Result = false),
+		TestCase(DocumentLanguage.German, Taal.NL, Result = false),
+		TestCase(DocumentLanguage.German, Taal.EN, Result = false),
+		TestCase(DocumentLanguage.German, Taal.DU, Result = true),
+		TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true),
+		TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true),
+		TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false),
+		TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true),
+		TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true),
+		TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true),
+		TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true),
+		TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true),
+		TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
 		public bool GenerateForLanguage(DocumentLanguage doc, Taal language) { return Utils.GenerateForLanguage(doc, language); }
 	}
 
