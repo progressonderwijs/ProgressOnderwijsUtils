@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
@@ -72,8 +73,7 @@ namespace ProgressOnderwijsUtils
 		public static T Retry<T>(CancellationToken cancel, Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
 		{
 			return Retry(
-				() =>
-				{
+				() => {
 					cancel.ThrowIfCancellationRequested();
 					return func();
 				},
@@ -114,13 +114,21 @@ namespace ProgressOnderwijsUtils
 
 		public static bool IsDbConnectionFailure(Exception e)
 		{
+			if (e == null)
+				return false;
+			AggregateException aggregateException = e as AggregateException;
+			if (aggregateException != null)
+				return aggregateException.InnerExceptions.Any() && aggregateException.Flatten().InnerExceptions.DefaultIfEmpty().All(IsDbConnectionFailure);
+			if (!(e is EntityException) && !(e is SqlException))
+				return IsDbConnectionFailure(e.InnerException);
+
 			SqlException sqlE = e as SqlException ?? e.InnerException as SqlException;
 
 			return (sqlE != null &&
-			        (sqlE.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
-			         sqlE.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
-			         sqlE.Message.StartsWith("Timeout expired."))) ||
-			       (e is EntityException && e.Message == "The underlying provider failed on Open.");
+					(sqlE.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
+					 sqlE.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
+					 sqlE.Message.StartsWith("Timeout expired."))) ||
+				   (e is EntityException && e.Message == "The underlying provider failed on Open.");
 		}
 
 		public static string GetSqlExceptionDetailsString(Exception exception)
@@ -159,25 +167,25 @@ namespace ProgressOnderwijsUtils
 			bool result;
 			switch (doc)
 			{
-			case DocumentLanguage.Dutch:
-				result = language == Taal.NL;
-				break;
-			case DocumentLanguage.English:
-				result = language == Taal.EN;
-				break;
-			case DocumentLanguage.German:
-				result = language == Taal.DU;
-				break;
-			case DocumentLanguage.StudentPreferenceNlEn:
-			case DocumentLanguage.CoursePreferenceNlEn:
-			case DocumentLanguage.ProgramPreferenceNlEn:
-				result = language == Taal.NL || language == Taal.EN;
-				break;
-			case DocumentLanguage.StudentPreferenceNlEnDu:
-				result = language == Taal.NL || language == Taal.EN || language == Taal.DU;
-				break;
-			default:
-				throw new ArgumentOutOfRangeException();
+				case DocumentLanguage.Dutch:
+					result = language == Taal.NL;
+					break;
+				case DocumentLanguage.English:
+					result = language == Taal.EN;
+					break;
+				case DocumentLanguage.German:
+					result = language == Taal.DU;
+					break;
+				case DocumentLanguage.StudentPreferenceNlEn:
+				case DocumentLanguage.CoursePreferenceNlEn:
+				case DocumentLanguage.ProgramPreferenceNlEn:
+					result = language == Taal.NL || language == Taal.EN;
+					break;
+				case DocumentLanguage.StudentPreferenceNlEnDu:
+					result = language == Taal.NL || language == Taal.EN || language == Taal.DU;
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
 			}
 			return result;
 		}
@@ -259,6 +267,18 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test]
+		public void IsDbConnFailureTest()
+		{
+			PAssert.That(() => !Utils.IsDbConnectionFailure(new Exception()));
+			PAssert.That(() => !Utils.IsDbConnectionFailure(new EntityException()));
+			PAssert.That(() => !Utils.IsDbConnectionFailure(new QueryException()));
+			PAssert.That(() => Utils.IsDbConnectionFailure(new QueryException("bla", new EntityException("The underlying provider failed on Open."))));
+			PAssert.That(() => Utils.IsDbConnectionFailure(new AggregateException(new QueryException("bla", new EntityException("The underlying provider failed on Open.")), new EntityException("The underlying provider failed on Open."))));
+			PAssert.That(() => !Utils.IsDbConnectionFailure(new AggregateException()));
+			PAssert.That(() => !Utils.IsDbConnectionFailure(null));
+		}
+
+		[Test]
 		public void DateMaxTest()
 		{
 			DateTime? d1 = null;
@@ -295,24 +315,24 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test, TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true), TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false), TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false), TestCase(DocumentLanguage.English, Taal.NL, Result = false), TestCase(DocumentLanguage.English, Taal.EN, Result = true), TestCase(DocumentLanguage.English, Taal.DU, Result = false), TestCase(DocumentLanguage.German, Taal.NL, Result = false), TestCase(DocumentLanguage.German, Taal.EN, Result = false), TestCase(DocumentLanguage.German, Taal.DU, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false), TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true), TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true), TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true), TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true), TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		public bool GenerateForLanguage(DocumentLanguage doc, Taal language) { return Utils.GenerateForLanguage(doc, language); }
 	}
 
