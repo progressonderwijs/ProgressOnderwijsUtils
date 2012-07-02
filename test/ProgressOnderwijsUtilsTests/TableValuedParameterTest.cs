@@ -15,26 +15,25 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void DatabaseCanProcessTableValuedParameters()
 		{
-			BusinessConnection.UsingTempDevTest(conn => {
+			DatabaseVersion.DevTestDB.ExecuteNonQuery(conn => {
 
-				QueryBuilder q = @"select sum(val) from " + QueryBuilder.TableParam(Enumerable.Range(1, 100));
-				int sum = q.ExecuteScalar<int>(conn);
+				                                                  QueryBuilder q = @"select sum(val) from " + QueryBuilder.TableParam(Enumerable.Range(1, 100));
+				                                                  int sum = q.ExecuteScalar<int>(conn);
 
-				Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
+				                                                  Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
 
 			});
 		}
-
 
 		[Test]
 		public void QueryBuildersCanIncludeTvps()
 		{
 			QueryBuilder q = QueryBuilder.Create(@"select sum(val) from {0}", Enumerable.Range(1, 100));
 
-			BusinessConnection.UsingTempDevTest(conn => {
-				int sum = q.ExecuteScalar<int>(conn);
+			DatabaseVersion.DevTestDB.ExecuteNonQuery(conn => {
+				                                                  int sum = q.ExecuteScalar<int>(conn);
 
-				Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
+				                                                  Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
 
 			});
 		}

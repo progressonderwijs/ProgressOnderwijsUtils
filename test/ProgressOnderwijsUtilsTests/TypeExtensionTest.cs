@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => typeof(string).CanBeNull());
 			PAssert.That(() => typeof(TypeExtensionTest).CanBeNull());
 			PAssert.That(() => typeof(IEnumerable<int>).CanBeNull());
-			PAssert.That(() => typeof(ServerContext).CanBeNull());
+			PAssert.That(() => typeof(ServerLocationAuto).CanBeNull());
 			PAssert.That(() => !typeof(int).CanBeNull());
 			
 			PAssert.That(() => !typeof(DocumentType).CanBeNull());
@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => typeof(TypeExtensionTest).BaseTypes().SequenceEqual(new[] { typeof(object) }));
 			PAssert.That(() => typeof(IEnumerable<int>).BaseTypes().SequenceEqual(new Type[] { }));
 			PAssert.That(() => typeof(int).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-			PAssert.That(() => typeof(ServerContext).BaseTypes().SequenceEqual(new[] { typeof(object) }));
+			PAssert.That(() => typeof(ServerLocationAuto).BaseTypes().SequenceEqual(new[] { typeof(object) }));
 			PAssert.That(() => typeof(Enum).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
 			PAssert.That(() => typeof(DocumentType).BaseTypes().SequenceEqual(new[] { typeof(Enum), typeof(ValueType), typeof(object) }));
 			PAssert.That(() => typeof(SelectItem<int?>).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));

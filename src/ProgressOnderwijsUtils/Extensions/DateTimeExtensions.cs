@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils
 			return collegejaar;
 		}
 
-		public static String GetTimestamp(this DateTime value)
+		public static string GetTimestamp(this DateTime value)
 		{
 			return value.ToString("yyyyMMddHHmmssffff");
 		}

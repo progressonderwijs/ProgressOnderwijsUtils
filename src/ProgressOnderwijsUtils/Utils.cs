@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 		public static void TestErrorOutOfMemory()
 		{
 			var memorySlurper = new List<byte[]>();
-			for (long i = 0; i < Int64.MaxValue; i++) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
+			for (long i = 0; i < long.MaxValue; i++) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
 				memorySlurper.Add(Encoding.UTF8.GetBytes(@"This is a simply string which is repeatedly put in memory to test the Out Of Memory condition.  It's encoded to make sure the program really touches the data and that therefore the OS really needs to allocate the memory, and can't just 'pretend'."));
 		}
 
@@ -131,7 +131,7 @@ namespace ProgressOnderwijsUtils
 		public static string GetSqlExceptionDetailsString(Exception exception)
 		{
 			SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
-			return sql == null ? null : String.Format("[code='{0:x}'; number='{1}'; state='{2}']", sql.ErrorCode, sql.Number, sql.State);
+			return sql == null ? null : string.Format("[code='{0:x}'; number='{1}'; state='{2}']", sql.ErrorCode, sql.Number, sql.State);
 		}
 
 		public static bool NUnitSession()

@@ -110,7 +110,7 @@ namespace ProgressOnderwijsUtils
 			switch (tokens[current].Type)
 			{
 				case TokenType.NumericConstant:
-					Variable.Push(Decimal.Parse(tokens[current].Value, CultureInfo.InvariantCulture.NumberFormat));
+					Variable.Push(decimal.Parse(tokens[current].Value, CultureInfo.InvariantCulture.NumberFormat));
 					break;
 				case TokenType.Variable:
 					if (parserdelegate == null)

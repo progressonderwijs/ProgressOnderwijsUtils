@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
@@ -9,13 +8,12 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
-	public class ExceptionTests
+	public sealed class ExceptionTests
 	{
 		[Test]
-		public void ClonerTest()
-		{
-			Assert.Throws<ArgumentException>(() => SerializationCloner.Clone(ServerContext.ConstructWithAutomaticLocation(DatabaseVersion.DevTestDB)));
-		}
+		public void ClonerTest() { Assert.Throws<ArgumentException>(() => SerializationCloner.Clone(new Bla())); }
+
+		sealed class Bla {}
 
 		[Test]
 		public void Exceptions()
@@ -26,19 +24,17 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.AreEqual("bla", Assert.Throws<QueryException>(() => { throw new QueryException("bla"); }).Message);
 			Assert.AreEqual("bla2", Assert.Throws<QueryException>(() => { throw new QueryException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
 
-
 			Assert.Throws<TemplateException>(() => { throw new TemplateException(); });
 			Assert.AreEqual("bla", Assert.Throws<TemplateException>(() => { throw new TemplateException("bla"); }).Message);
 			Assert.AreEqual("bla2", Assert.Throws<TemplateException>(() => { throw new TemplateException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
 			Assert.AreEqual("bla2", SerializationCloner.Clone(Assert.Throws<TemplateException>(() => { throw new TemplateException("bla", new ProgressNetException("bla2")); })).InnerException.Message);
 
-			var texc = Assert.Throws<TemplateException>(() => { throw new TemplateException(37, 42, "bla"); });
+			TemplateException texc = Assert.Throws<TemplateException>(() => { throw new TemplateException(37, 42, "bla"); });
 			PAssert.That(() => texc.Line == 37 && texc.Position == 42);
 
 			Assert.AreEqual("bla", Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla"); }).Message);
 			Assert.AreEqual("bla2", Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
 			Assert.AreEqual("bla2", SerializationCloner.Clone(Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla", new ProgressNetException("bla2")); })).InnerException.Message);
-
 
 			Assert.Throws<PNAssertException>(() => { throw new PNAssertException(); });
 			Assert.AreEqual("bla", Assert.Throws<PNAssertException>(() => { throw new PNAssertException("bla"); }).Message);
@@ -49,7 +45,6 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.AreEqual("bla", Assert.Throws<ConverteerException>(() => { throw new ConverteerException("bla"); }).Message);
 			Assert.AreEqual("bla2", Assert.Throws<ConverteerException>(() => { throw new ConverteerException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
 			Assert.AreEqual("bla2", SerializationCloner.Clone(Assert.Throws<ConverteerException>(() => { throw new ConverteerException("bla", new ProgressNetException("bla2")); })).InnerException.Message);
-
 		}
 	}
 }

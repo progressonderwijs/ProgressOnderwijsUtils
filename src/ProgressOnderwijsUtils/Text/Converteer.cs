@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils
 				return (ITranslatable)obj;
 			else if (obj is TextVal)
 				return new TextDefSimple((TextVal)obj);
-			else if (String.IsNullOrEmpty(extraformat))
+			else if (string.IsNullOrEmpty(extraformat))
 				return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format));
 			else
 				return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format), ConverteerHelper.ToStringDynamic(obj, extraformat));
@@ -157,8 +157,8 @@ namespace ProgressOnderwijsUtils
 
 			if (canBeNull && s.Length == 0) return null; // dus s=="" levert null string op! --RW 24-04-2008 Moet wel zo, maar wat zijn de gevolgen?
 
-			if (fundamentalType == typeof(int)) return Int32.Parse(s);
-			if (fundamentalType == typeof(long)) return Int64.Parse(s);
+			if (fundamentalType == typeof(int)) return int.Parse(s);
+			if (fundamentalType == typeof(long)) return long.Parse(s);
 			if (fundamentalType == typeof(decimal)) return ParseDecimal(s);		// Decimale punt ook ondersteunen - let wel, dus 100,000.0 != 100,000 zo
 			if (fundamentalType == typeof(double)) return (double)ParseDecimal(s);//Emn: dit is  misschien niet de ideale oplossing, maar eventjes snel...
 			if (fundamentalType == typeof(DateTime)) return ParseDateTime(s);
@@ -192,15 +192,15 @@ namespace ProgressOnderwijsUtils
 		static decimal ParseDecimal(string s)
 		{
 			return s.LastIndexOf(',') < s.LastIndexOf('.') //when true, either only decimal point, or thousand sep commas with decimal point
-								? Decimal.Parse(s, CultureInfo.InvariantCulture)
+								? decimal.Parse(s, CultureInfo.InvariantCulture)
 								: decimal.Parse(s, CultureNL);
 		}
 
 
-		// String naar datum conversie
+		// string naar datum conversie
 		public static DateTime? ToDateTime(string s, DatumFormaat formaat) //TODO:alleen VerwInfo en MT940 worden gebruikt?
 		{
-			if (String.IsNullOrEmpty(s))
+			if (string.IsNullOrEmpty(s))
 				return null;
 
 			string datum = DateStringCheck(s);
@@ -274,13 +274,13 @@ namespace ProgressOnderwijsUtils
 			}
 			else if (fundamentalType == typeof(long))
 				// ReSharper disable ReturnValueOfPureMethodIsNotUsed
-				try { Int64.Parse(s); return ParseState.OK; }
+				try { long.Parse(s); return ParseState.OK; }
 				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
 				catch (FormatException) { return ParseState.MALFORMED; }
 				catch (OverflowException) { return ParseState.OVERFLOW; }
 			else if (fundamentalType == typeof(int))
 				// ReSharper disable ReturnValueOfPureMethodIsNotUsed
-				try { Int32.Parse(s); return ParseState.OK; }
+				try { int.Parse(s); return ParseState.OK; }
 				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
 				catch (FormatException) { return ParseState.MALFORMED; }
 				catch (OverflowException) { return ParseState.OVERFLOW; }

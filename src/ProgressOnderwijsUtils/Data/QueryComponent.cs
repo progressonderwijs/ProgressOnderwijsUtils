@@ -43,7 +43,8 @@ namespace ProgressOnderwijsUtils.Data
 		public static IQueryComponent ToTableParameter(IEnumerable<double> set) { return BasicTypeTable("TVar_Float", set); }
 
 
-		/*CREATE TYPE TVar_Int AS TABLE (val int NOT NULL)
+		/*
+		CREATE TYPE TVar_Int AS TABLE (val int NOT NULL)
 		CREATE TYPE TVar_NVarcharMax AS TABLE (val nvarchar(max) NOT NULL)
 		CREATE TYPE TVar_DateTime2 AS TABLE (val datetime2 NOT NULL)
 		CREATE TYPE TVar_Time AS TABLE (val time NOT NULL)
@@ -53,7 +54,22 @@ namespace ProgressOnderwijsUtils.Data
 		CREATE TYPE TVar_Tinyint AS TABLE (val tinyint NOT NULL)
 		CREATE TYPE TVar_Smallint AS TABLE (val smallint NOT NULL)
 		CREATE TYPE TVar_Bigint AS TABLE (val bigint NOT NULL)
-		CREATE TYPE TVar_Float AS TABLE (val float NOT NULL)*/
+		CREATE TYPE TVar_Float AS TABLE (val float NOT NULL)
+
+		GRANT EXECUTE ON TYPE::dbo.TVar_Int TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_NVarcharMax TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_DateTime2 TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_Time TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_Decimal TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_NChar1 TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_Bit TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_Tinyint TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_Smallint TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_Bigint TO public;
+		GRANT EXECUTE ON TYPE::dbo.TVar_Float TO public;
+		 
+
+		 */
 	}
 
 	namespace Internal
