@@ -86,6 +86,7 @@ namespace ProgressOnderwijsUtilsTests
 				{
 					ExtraRijdimensie = "",
                     GeselecteerdeRijen = "",
+					GeselecteerdeStudentCel = "",
 					Rendement = false,
 					Samenvatting = true,
 					LangeLijst = false,
