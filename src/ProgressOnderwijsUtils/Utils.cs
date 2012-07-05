@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -128,16 +129,23 @@ namespace ProgressOnderwijsUtils
 				return IsDbConnectionFailure(e.InnerException);
 		}
 
+		public static Func<T, TR> F<T, TR>(Func<T, TR> v) { return v; }//purely for delegate type inference
+		public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v) { return v; }//purely for delegate type inference
+
+		public static Func<T, TR> MemoizeConcurrent<T, TR>(this Func<T, TR> v) { var cache = new ConcurrentDictionary<T, TR>(); return arg => cache.GetOrAdd(arg, v); }
+		public static Func<TContext, TKey, TR> MemoizeConcurrent<TContext, TKey, TR>(this Func<TContext, TKey, TR> v) where TContext : IDisposable { var cache = new ConcurrentDictionary<TKey, TR>(); return (ctx, arg) => cache.GetOrAdd(arg, _ => v(ctx, arg)); }
+
 		public static string GetSqlExceptionDetailsString(Exception exception)
 		{
 			SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
 			return sql == null ? null : string.Format("[code='{0:x}'; number='{1}'; state='{2}']", sql.ErrorCode, sql.Number, sql.State);
 		}
 
-		public static bool NUnitSession()
+		public static bool IsInTestSession()
 		{
-			string procname = Process.GetCurrentProcess().ProcessName;
-			return procname.StartsWith("nunit") || procname.StartsWith("pnunit"); //also supports nunit-agent, nunit-console, nunit-x86, etc.
+			return RegisterTestingProgressTools.ShouldUseTestLocking;
+			//string procname = Process.GetCurrentProcess().ProcessName;
+			//return procname.StartsWith("nunit") || procname.StartsWith("pnunit"); //also supports nunit-agent, nunit-console, nunit-x86, etc.
 		}
 
 		/// <summary>
@@ -234,7 +242,7 @@ namespace ProgressOnderwijsUtils
 		public string InClauseStrings(IEnumerable<string> values) { return Utils.SqlInClause(values); }
 
 		[Test]
-		public void NUnitSession() { Assert.That(Utils.NUnitSession()); }
+		public void NUnitSession() { Assert.That(Utils.IsInTestSession()); }
 
 		IEnumerable<TestCaseData> MaandSpan()
 		{
