@@ -89,7 +89,10 @@ namespace ProgressOnderwijsUtils
 
 				ParameterExpression parA = Expression.Parameter(typeof(TOwner), "a");
 				ParameterExpression parB = Expression.Parameter(typeof(TOwner), "b");
-				var comparer = typeof(Comparer<>).MakeGenericType(pi.PropertyType).GetProperty("Default", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
+				var comparer = 
+					pi.PropertyType == typeof(string) ? StringComparer.OrdinalIgnoreCase
+					:
+					typeof(Comparer<>).MakeGenericType(pi.PropertyType).GetProperty("Default", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
 				var cmpMethod = typeof(IComparer<>).MakeGenericType(pi.PropertyType).GetMethod("Compare", BindingFlags.Instance | BindingFlags.Public);
 
 				var cmpExpr = Expression.Call(Expression.Constant(comparer), cmpMethod, Expression.Property(parA, pi), Expression.Property(parB, pi));
