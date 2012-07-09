@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils.Log4Net
 			{ DatabaseVersion.ProductieDB, "productie" },
 			{ DatabaseVersion.TestDB, "test" },
 			{ DatabaseVersion.DevTestDB, "ontwikkel" },
-			{ DatabaseVersion.AcceptatieDB, "acceptatie" },
+			{ DatabaseVersion.KetenTestDB, "ketentest" },
 			{ DatabaseVersion.BronHODB, "bronho" },
 		}; 
 
