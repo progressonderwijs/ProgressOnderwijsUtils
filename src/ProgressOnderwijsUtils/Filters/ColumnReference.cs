@@ -6,7 +6,7 @@ namespace ProgressOnderwijsUtils
 	[Serializable]
 	public sealed class ColumnReference : IEquatable<ColumnReference>
 	{
-		public static readonly Regex IsOkName = new Regex(@"^\w+$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+		public static readonly Regex IsOkName = new Regex(@"^(\w+|getdate\(\))$", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 		public readonly string ColumnName;
 
 		public ColumnReference(string colname)
