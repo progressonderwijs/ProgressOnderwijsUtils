@@ -10,33 +10,19 @@ namespace ProgressOnderwijsUtils
 	public static class EnumerableOfStringExtension
 	{
 		/// <summary>
-		/// Joins a collection of strings into a single string
+		/// Concatenate a sequence of strings with an optional separator.  A sequence of N items includes the separator N-1 times.
 		/// </summary>
-		/// <param name="strings">string collection</param>
-		/// <param name="joiner">joiner string</param>
-		/// <returns>a string</returns>
-		public static string JoinStrings(this IEnumerable<string> strings)
-		{
-			StringBuilder sb = new StringBuilder();
-			foreach (string s in strings)
-				sb.Append(s);
-			return sb.ToString();
-		}
-
-		/// <summary>
-		/// Join a collection of strings using a joiner string
-		/// </summary>
-		/// <param name="strings">string collection</param>
+		/// <param name="strings">string sequence</param>
 		/// <param name="separator">separator string</param>
 		/// <returns>a string</returns>
-		public static string JoinStrings(this IEnumerable<string> strings, string separator)
+		public static string JoinStrings(this IEnumerable<string> strings, string separator = "")
 		{
-			return string.Join(separator, strings.ToArray());
+			return string.Join(separator, strings);
 		}
 	}
 
 	[TestFixture]
-	public class IEnumerableOfStringExtensionTest
+	public sealed class EnumerableOfStringExtensionTest
 	{
 
 		[Test]
