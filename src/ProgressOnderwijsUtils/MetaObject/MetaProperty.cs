@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Extensions;
 
 namespace ProgressOnderwijsUtils
 {
@@ -89,7 +90,7 @@ namespace ProgressOnderwijsUtils
 
 				ParameterExpression parA = Expression.Parameter(typeof(TOwner), "a");
 				ParameterExpression parB = Expression.Parameter(typeof(TOwner), "b");
-				var comparer = 
+				var comparer =
 					pi.PropertyType == typeof(string) ? StringComparer.OrdinalIgnoreCase
 					:
 					typeof(Comparer<>).MakeGenericType(pi.PropertyType).GetProperty("Default", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
@@ -120,19 +121,16 @@ namespace ProgressOnderwijsUtils
 				naam = pi.Name;
 				var mpVolgordeAttribute = Attr<MpVolgordeAttribute>(pi);
 				volgorde = mpVolgordeAttribute == null ? implicitOrder * 10 : mpVolgordeAttribute.Volgorde;
-				label = new[]
-				{
-					OrDefault(Attr<MpSimpleLabelAttribute>(pi), mkAttr => mkAttr.Label)
-				}
-					.SingleOrDefault(text => text != null);
-				if (Label == null && Attr<MpLabelsRequiredAttribute>(pi.DeclaringType) != null)
+				label = OrDefault(Attr<MpSimpleLabelAttribute>(pi), mkAttr => mkAttr.Label)
+					?? (Attr<MpLabelsRequiredAttribute>(pi.DeclaringType) == null ? Converteer.ToText(StringUtils.PrettyPrintCamelCased(pi.Name)) : null);
+				if (Label == null)
 					throw new ArgumentException("You must specify an MpSimpleLabel or MpTextDefKey on " + Naam + ", since the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " is marked MpLabelsRequired");
 				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(pi), mkAttr => mkAttr.KoppelTabelNaam ?? pi.Name);
 				verplicht = OrDefault(Attr<MpVerplichtAttribute>(pi), mkAttr => true);
 				allowNull = OrDefault(Attr<MpAllowNullAttribute>(pi), mkAttr => true);
 				showDefaultOnNew = OrDefault(Attr<MpShowDefaultOnNewAttribute>(pi), mkAttr => true);
 				isReadonly = Setter == null || OrDefault(Attr<MpReadonlyAttribute>(pi), mkAttr => true);
-				lengte = OrDefault(Attr<MpLengteAttribute>(pi), mkAttr => mkAttr.Lengte,default(int?));
+				lengte = OrDefault(Attr<MpLengteAttribute>(pi), mkAttr => mkAttr.Lengte, default(int?));
 				regex = OrDefault(Attr<MpRegexAttribute>(pi), mkAttr => mkAttr.Regex);
 
 				if (KoppelTabelNaam != null && DataType != typeof(int) && DataType != typeof(int?))

@@ -35,5 +35,9 @@ namespace ProgressOnderwijsUtils
 				return writer.ToString();
 			}
 		}
+
+		public XElement ToXHtmlDataElement() {
+			return new XElement("XHtmlData", nodes);
+		}
 	}
 }

@@ -7,6 +7,7 @@ using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using System.Globalization;
 using System.Threading;
+using ProgressOnderwijsUtils.Extensions;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -18,17 +19,17 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase("ß", "ß")]
 		public void WithoutDiakriet(string from, string to)
 		{
-			Assert.That(from.VerwijderDiakrieten(), Is.EqualTo(to));
+			Assert.That(StringUtils.VerwijderDiakrieten(@from), Is.EqualTo(to));
 		}
 
 		[Test]
 		public void ReplaceRingelS()
 		{
-			Assert.That("ß".VervangRingelS(false), Is.EqualTo("ss"));
-			Assert.That("ß".VervangRingelS(true), Is.EqualTo("SS"));
-			Assert.That("aßb".VervangRingelS(false), Is.EqualTo("assb"));
-			Assert.That("ßsß".VervangRingelS(true), Is.EqualTo("SSsSS"));
-			Assert.That("".VervangRingelS(false), Is.EqualTo(""));
+			Assert.That(StringUtils.VervangRingelS("ß", false), Is.EqualTo("ss"));
+			Assert.That(StringUtils.VervangRingelS("ß", true), Is.EqualTo("SS"));
+			Assert.That(StringUtils.VervangRingelS("aßb", false), Is.EqualTo("assb"));
+			Assert.That(StringUtils.VervangRingelS("ßsß", true), Is.EqualTo("SSsSS"));
+			Assert.That(StringUtils.VervangRingelS("", false), Is.EqualTo(""));
 		}
 
 		[Test]
@@ -46,7 +47,7 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase("een\n\ntest", Result = "een test")]
 		public string CollapseWhitespace(string str)
 		{
-			return str.CollapseWhitespace();
+			return str.NormalizeWhitespace();
 		}
 
 		[Test]
@@ -60,7 +61,7 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase("simple", "Simpler", Result = 2)]
 		[TestCase("hmmm", "yummy", Result = 3)]
 		[TestCase("World-wide", "wordy", Result = 7)]//"W"=>"w",drop "l", replace "-wide"
-		public int TestLevenshtein(string str1, string str2) { return str1.LevenshteinDistance(str2); }
+		public int TestLevenshtein(string str1, string str2) { return StringUtils.LevenshteinDistance(str1, str2); }
 
 		[Test]
 		[TestCase("joepje jofel", Result = "Joepje Jofel")]
@@ -75,7 +76,7 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase("sieb op de kast", Result = "Sieb op de Kast")]
 		public string testNaam2Upper(string inp)
 		{
-			return inp.Name2UpperCasedName();
+			return StringUtils.Name2UpperCasedName(inp);
 		}
 
 		[TestCase("Tests", Result = "Test")]
@@ -88,7 +89,7 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase("Apen", Result = "Aap")]
 		public string testDepluralize(string inp)
 		{
-			return StringExtensions.Depluralize(inp);
+			return StringUtils.Depluralize(inp);
 		}
 
 

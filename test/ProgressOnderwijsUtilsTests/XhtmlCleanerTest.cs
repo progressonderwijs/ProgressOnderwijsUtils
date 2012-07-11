@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Extensions;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -18,7 +19,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void TextLimitWorks()
 		{
 			var tidiedSample = XhtmlCleaner.TidyHtmlString(sample);
-			Assert.That(sample.LevenshteinDistanceScaled(tidiedSample), Is.LessThan(0.05));
+			Assert.That(StringUtils.LevenshteinDistanceScaled(sample, tidiedSample), Is.LessThan(0.05));
 			int lastLength = tidiedSample.Length;
 			for (int i = tidiedSample.Length + 10; i >= 0; i--)
 			{
