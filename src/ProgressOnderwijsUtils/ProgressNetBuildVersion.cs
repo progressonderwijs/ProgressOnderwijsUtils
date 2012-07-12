@@ -50,12 +50,10 @@ namespace ProgressOnderwijsUtils
 					return new string[0];
 				})
 				.OrderByDescending(File.GetLastWriteTimeUtc) //try newest one first
-				.Select(dir => {
+				.Select(revInfoFile => {
 					try
 					{
-						var revInfoFile = Path.Combine(dir, "ProgressVersion.Info.Generated");
-						if (File.Exists(revInfoFile))
-							return File.ReadAllLines(revInfoFile);
+						return File.ReadAllLines(revInfoFile);
 					}
 					catch { }
 					return null;
