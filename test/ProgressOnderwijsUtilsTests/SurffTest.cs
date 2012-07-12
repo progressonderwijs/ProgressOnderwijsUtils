@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtilsTests
 
 		[Test]
 		public void GetIdPProvider(
-			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext)] IdentityProvider idp, 
+			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext,IdentityProvider.FederatieStenden)] IdentityProvider idp, 
 			[Values(false, true)] bool test)
 		{
 			AssertIdp(() => MetaDataFactory.GetIdPProvider(idp, test), idp, test);
@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtilsTests
 
 		[Test]
 		public void GetIdPEntity(
-			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext)] IdentityProvider idp, 
+			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext, IdentityProvider.FederatieStenden)] IdentityProvider idp, 
 			[Values(false, true)] bool test)
 		{
 			AssertIdp(() => MetaDataFactory.GetIdPEntity(idp, test), idp, test);
@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtilsTests
 
 		[Test]
 		public void GetIdPCertificate(
-			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext)] IdentityProvider idp, 
+			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext, IdentityProvider.FederatieStenden)] IdentityProvider idp, 
 			[Values(false, true)] bool test)
 		{
 			AssertIdp(() => MetaDataFactory.GetIdpCertificate(idp, test), idp, test);
