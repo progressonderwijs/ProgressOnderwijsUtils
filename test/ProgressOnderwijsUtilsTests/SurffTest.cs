@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtilsTests
 	{
 		[Test]
 		public void IdPSSODescriptor(
-			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.Conext )] IdentityProvider idp, 
+			[Values(IdentityProvider.Federatie, IdentityProvider.FederatieRug, IdentityProvider.FederatieFontys, IdentityProvider.FederatieStenden, IdentityProvider.Conext )] IdentityProvider idp, 
 			[Values(false, true)] bool test)
 		{
 			SAML20MetaData provider = MetaDataFactory.GetIdPProvider(idp, test);
