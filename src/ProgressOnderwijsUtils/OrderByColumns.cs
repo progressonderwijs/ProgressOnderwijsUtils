@@ -60,7 +60,7 @@ namespace ProgressOnderwijsUtils
 				: new OrderByColumns(DirectAcessColumns.Prepend(new ColumnSort(kolomnaam, SortDirection.Desc)).ToArray());
 		}
 
-		static IEnumerable<ColumnSort> PrependFiltered(ColumnSort head, IEnumerable<ColumnSort> tail) { return head.Concat(tail.Where(sc => sc.ColumnName != head.ColumnName)); }
+		static IEnumerable<ColumnSort> PrependFiltered(ColumnSort head, IEnumerable<ColumnSort> tail) { return new[] { head }.Concat(tail.Where(sc => sc.ColumnName != head.ColumnName)); }
 
 		public OrderByColumns FirstSortBy(ColumnSort firstby) { return firstby == null ? this : new OrderByColumns(PrependFiltered(firstby, DirectAcessColumns).ToArray()); }
 		public OrderByColumns ThenSortBy(ColumnSort thenby)
