@@ -31,33 +31,18 @@ namespace ProgressOnderwijsUtils
 
 		static ProgressNetBuildVersion()
 		{
+			var assemblies = new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() }.Where(ass => ass != null);
+			var dirs = new[] { HttpRuntime.AppDomainAppPath }.Concat(assemblies.Select(ass => ass.Location));
 
-			var dirGenerators = new Func<string>[] { () => HttpRuntime.AppDomainAppPath, () => Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), () => Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) };
-			var dirs = dirGenerators.SelectMany(dirGen => { try { return new[] { dirGen() }; } catch { return new string[0]; } });
-
+			var dirsWithAncestors = Utils.TransitiveClosure(dirs, currentDirSet => currentDirSet.Where(Directory.Exists).Select(Path.GetDirectoryName));//find all ancestor paths
 			var lines =
-				Utils.TransitiveClosure( //find all ancestor paths
-					dirs,
-					dir => { try { if (Directory.Exists(dir))return new[] { Path.GetDirectoryName(dir) }; } catch { } return new string[0]; })
-				.SelectMany(path => { //find any versioninfo files in ancestor paths
-					try
-					{
-						var revInfoFile = Path.Combine(path, "ProgressVersion.Info.Generated");
-						if (File.Exists(revInfoFile))
-							return new[] { revInfoFile };
-					}
-					catch { }
-					return new string[0];
-				})
-				.OrderByDescending(File.GetLastWriteTimeUtc) //try newest one first
-				.Select(revInfoFile => {
-					try
-					{
-						return File.ReadAllLines(revInfoFile);
-					}
-					catch { }
-					return null;
-				}).FirstOrDefault(revInfoLines => revInfoLines != null);
+				dirsWithAncestors
+				.Where(Directory.Exists)
+					.Select(dir => Path.Combine(dir, "ProgressVersion.Info.Generated"))
+					.Where(File.Exists)
+					.OrderByDescending(File.GetLastWriteTimeUtc) //try newest one first
+					.Select(File.ReadAllLines)
+					.FirstOrDefault();
 
 			if (lines == null) return;
 			var svninfo = lines.Select(s => s.Trim()).Where(s => s.Length > 0).ToDictionary(s => s.Substring(0, s.IndexOf(':')), s => s.Substring(s.IndexOf(':') + 1));
@@ -70,13 +55,6 @@ namespace ProgressOnderwijsUtils
 			ComputerName = svninfo["ComputerName"].Trim();
 			JobName = svninfo["JobName"].Trim();
 			BuildId = svninfo["BuildId"].Trim();
-		}
-
-		static string GetResource(string resourceName)
-		{
-			using (var stream = typeof(ProgressNetBuildVersion).Assembly.GetManifestResourceStream(resourceName))
-			using (var reader = new StreamReader(stream))
-				return reader.ReadToEnd();
 		}
 	}
 }
