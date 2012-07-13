@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -155,6 +156,19 @@ namespace ProgressOnderwijsUtils
 		/// <param name="d2"></param>
 		/// <returns></returns>
 		public static int MaandSpan(DateTime d1, DateTime d2) { return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month); }
+
+		/// <summary>
+		/// converteerd incomplete studielinkdatums (bv 'yyyy-00-00' naar complete datum, 
+		/// waarbij nulwaarden voor datum of maand worden omgezet naar de waarde 1
+		/// </summary>
+		/// <param name="incompleteDate"></param>
+		/// <returns></returns>
+		public static DateTime SLIncompleteDateConversion(string incompleteDate) {
+			string[] incompleteDateFragments = incompleteDate.Split('-');
+			string month = incompleteDateFragments[1] == "00" ? "1" : incompleteDateFragments[1];
+			string date = incompleteDateFragments[2] == "00" ? "1" : incompleteDateFragments[2];
+			return DateTime.Parse(incompleteDateFragments[0] + "/" + month + "/" + date);
+		}
 
 		public static DateTime? DateMax(DateTime? d1, DateTime? d2)
 		{
