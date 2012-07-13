@@ -38,11 +38,11 @@ namespace ProgressOnderwijsUtils
 			var lines =
 				dirsWithAncestors
 				.Where(Directory.Exists)
-					.Select(dir => Path.Combine(dir, "ProgressVersion.Info.Generated"))
-					.Where(File.Exists)
-					.OrderByDescending(File.GetLastWriteTimeUtc) //try newest one first
-					.Select(File.ReadAllLines)
-					.FirstOrDefault();
+				.Select(dir => Path.Combine(dir, "ProgressVersion.Info.Generated"))
+				.Where(File.Exists)
+				.OrderByDescending(File.GetLastWriteTimeUtc) //try newest one first
+				.Select(File.ReadAllLines)
+				.FirstOrDefault();
 
 			if (lines == null) return;
 			var svninfo = lines.Select(s => s.Trim()).Where(s => s.Length > 0).ToDictionary(s => s.Substring(0, s.IndexOf(':')), s => s.Substring(s.IndexOf(':') + 1));
