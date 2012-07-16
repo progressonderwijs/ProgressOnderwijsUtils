@@ -8,10 +8,8 @@ namespace ProgressOnderwijsUtils.Collections
 	/// <summary>
 	/// Immutable, thread-safe, singly-linked list
 	/// </summary>
-	public struct SList<T> : IEquatable<SList<T>>, IEnumerable<T> where T : IEquatable<T>
+	public struct SList<T> : IEnumerable<T>, IEquatable<SList<T>>
 	{
-		static readonly int typeHash = typeof(T).GetHashCode();
-		static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
 
 		sealed class Impl
 		{
@@ -37,6 +35,8 @@ namespace ProgressOnderwijsUtils.Collections
 		public T Head { get { return list.Head; } }
 		public SList<T> Tail { get { return new SList<T>(list.Tail); } }
 
+		static readonly int typeHash = typeof(T).GetHashCode();
+		static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
 		public bool Equals(SList<T> other)
 		{
 			var alist = list;
