@@ -158,8 +158,9 @@ namespace ProgressOnderwijsUtils
 		public static int MaandSpan(DateTime d1, DateTime d2) { return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month); }
 
 		/// <summary>
-		/// converteerd incomplete studielinkdatums (bv 'yyyy-00-00' naar complete datum, 
+		/// converteert incomplete studielinkdatums (bv 'yyyy-00-00' naar complete datum, 
 		/// waarbij nulwaarden voor datum of maand worden omgezet naar de waarde 1
+		/// Alleen voor KVA4
 		/// </summary>
 		/// <param name="incompleteDate"></param>
 		/// <returns></returns>
