@@ -103,5 +103,17 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => comparer.GetHashCode(tree1) == comparer.GetHashCode(tree2));
 			PAssert.That(() => comparer.GetHashCode(tree1) != comparer.GetHashCode(tree4));
 		}
+
+		[Test]
+		public void PreorderTraversalNormalCase()
+		{
+			var e = Tree.Node("e");
+			var d = Tree.Node("d");
+			var cd = Tree.Node("c", d);
+			var b = Tree.Node("b");
+			var abcde = Tree.Node("a", b, cd, e);
+			PAssert.That(() => abcde.PreorderTraversal().Select(path => path.Head.SubTree.NodeValue).SequenceEqual(new[] { "a", "b", "c", "d", "e" }));
+			PAssert.That(() => abcde.PreorderTraversal().Select(path => path.Select(tree => tree.SubTree.NodeValue).JoinStrings()).SequenceEqual(new[] { "a", "ba", "ca", "dca", "ea" }));
+		}
 	}
 }
