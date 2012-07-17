@@ -121,41 +121,6 @@ namespace ProgressOnderwijsUtilsTests
 			AutomaticClassTest(olapcommon_sample);
 		}
 
-
-		[Test]
-		public void OlapSlicerTest()
-		{
-			var olapslicer_sample = new OlapSlicer(1, 2, 3, 4)
-			{
-				LangeLijst = true,
-				Opleiding = 6,
-				PreciesEenCohort = false,
-				Rendement = true,
-				Rijen = "abc",
-				Samenvatting = false,
-				ZuiverCohort = true,
-			};
-			ComparePod(olapslicer_sample,
-			new
-			{
-				ExamenType = 4,
-				LangeLijst = true,
-				Opleiding = 6,
-				PreciesEenCohort = false,
-				Rendement = true,
-				Rijen = "abc",
-				Samenvatting = false,
-				ZuiverCohort = true,
-
-				Organisatie = 1,
-				StartJaar = 2,
-				StopJaar = 3,
-				StudieStaak = OlapSlicer.StudieStaakType.metstudiestakers,
-				ShowOpleidingen = true,
-			});
-			AutomaticClassTest(olapslicer_sample);
-		}
-
 		[Test]
 		public void RegioTest()
 		{
