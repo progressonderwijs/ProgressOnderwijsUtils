@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtilsTests
 			var leaf2 = Tree.Node(2);
 			var tree1 = Tree.Node(100, Tree.Node(1), leaf2, Tree.Node(3), Tree.Node(4));
 			var tree2 = Tree.Node(100, Tree.Node(1), leaf2, Tree.Node(3), Tree.Node(4));
-			
+
 			PAssert.That(() => !ReferenceEquals(tree1, tree2));
 			PAssert.That(() => Equals(tree1, tree2));
 			PAssert.That(() => Equals(tree2, tree1));
@@ -62,8 +62,44 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => tree1.Equals(tree3));
 			PAssert.That(() => !tree2.Equals(tree3));
 
-			PAssert.That(() => Tree.EqualityComparer(StringComparer.OrdinalIgnoreCase).Equals(tree1,tree2));
+			PAssert.That(() => Tree.EqualityComparer(StringComparer.OrdinalIgnoreCase).Equals(tree1, tree2));
 			PAssert.That(() => !Tree.EqualityComparer(StringComparer.OrdinalIgnoreCase).Equals(tree1, tree4));
+		}
+
+		[Test]
+		public void SaneDefaultHashCodes()
+		{
+			var leaf2 = Tree.Node(2);
+			var tree1 = Tree.Node(100, Tree.Node(1), leaf2, Tree.Node(3), Tree.Node(4));
+			var tree2 = Tree.Node(100, Tree.Node(1), leaf2, Tree.Node(3), Tree.Node(4));
+
+			// ReSharper disable EqualExpressionComparison
+			PAssert.That(() => tree1.GetHashCode() == tree1.GetHashCode(), "hashcode should be consistent");
+			// ReSharper restore EqualExpressionComparison
+			PAssert.That(() => tree1.GetHashCode() == tree2.GetHashCode());
+			PAssert.That(() => tree1.GetHashCode() != leaf2.GetHashCode());
+
+			var equalityComparer = EqualityComparer<Tree<int>>.Default;
+			PAssert.That(() => equalityComparer.GetHashCode(tree2) == equalityComparer.GetHashCode(tree1));
+			PAssert.That(() => equalityComparer.GetHashCode(tree2) != equalityComparer.GetHashCode(leaf2));
+			PAssert.That(() => equalityComparer.GetHashCode(tree1) != equalityComparer.GetHashCode(null));
+		}
+		[Test]
+		public void CustomizableGetHashCodeWorks()
+		{
+			var comparer = Tree.EqualityComparer(StringComparer.OrdinalIgnoreCase);
+
+			var tree1 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
+			var tree2 = Tree.Node("a", Tree.Node("x"), Tree.Node("B"), Tree.Node(default(string)), Tree.Node(""));
+			var tree3 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
+			var tree4 = Tree.Node("a", Tree.Node("y"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
+
+			PAssert.That(() => tree1.GetHashCode() != tree2.GetHashCode());
+			PAssert.That(() => tree1.GetHashCode() == tree3.GetHashCode());
+			PAssert.That(() => tree2.GetHashCode() != tree3.GetHashCode());
+
+			PAssert.That(() => comparer.GetHashCode(tree1) == comparer.GetHashCode(tree2));
+			PAssert.That(() => comparer.GetHashCode(tree1) != comparer.GetHashCode(tree4));
 		}
 
 	}
