@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using ExpressionToCodeLib;
+using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
@@ -120,8 +120,8 @@ namespace ProgressOnderwijsUtils
 				return false;
 			else if (e is SqlException)
 				return e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
-					   e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
-					   e.Message.StartsWith("Timeout expired.");
+					e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
+					e.Message.StartsWith("Timeout expired.");
 			else if (e is EntityException)
 				return (e.Message == "The underlying provider failed on Open.");
 			else if (e is AggregateException)
@@ -130,11 +130,20 @@ namespace ProgressOnderwijsUtils
 				return IsDbConnectionFailure(e.InnerException);
 		}
 
-		public static Func<T, TR> F<T, TR>(Func<T, TR> v) { return v; }//purely for delegate type inference
-		public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v) { return v; }//purely for delegate type inference
+		public static Func<T, TR> F<T, TR>(Func<T, TR> v) { return v; } //purely for delegate type inference
+		public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v) { return v; } //purely for delegate type inference
 
-		public static Func<T, TR> MemoizeConcurrent<T, TR>(this Func<T, TR> v) { var cache = new ConcurrentDictionary<T, TR>(); return arg => cache.GetOrAdd(arg, v); }
-		public static Func<TContext, TKey, TR> MemoizeConcurrent<TContext, TKey, TR>(this Func<TContext, TKey, TR> v) where TContext : IDisposable { var cache = new ConcurrentDictionary<TKey, TR>(); return (ctx, arg) => cache.GetOrAdd(arg, _ => v(ctx, arg)); }
+		public static Func<T, TR> MemoizeConcurrent<T, TR>(this Func<T, TR> v)
+		{
+			var cache = new ConcurrentDictionary<T, TR>();
+			return arg => cache.GetOrAdd(arg, v);
+		}
+
+		public static Func<TContext, TKey, TR> MemoizeConcurrent<TContext, TKey, TR>(this Func<TContext, TKey, TR> v) where TContext : IDisposable
+		{
+			var cache = new ConcurrentDictionary<TKey, TR>();
+			return (ctx, arg) => cache.GetOrAdd(arg, _ => v(ctx, arg));
+		}
 
 		public static string GetSqlExceptionDetailsString(Exception exception)
 		{
@@ -164,12 +173,46 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <param name="incompleteDate"></param>
 		/// <returns></returns>
-		public static DateTime SLIncompleteDateConversion(string incompleteDate) {
-			string[] incompleteDateFragments = incompleteDate.Split('-');
+		public static DateTime SLIncompleteDateConversion(string incompleteDate)
+		{
+			var incompleteDateFragments = incompleteDate.Split('-');
 			string month = incompleteDateFragments[1] == "00" ? "1" : incompleteDateFragments[1];
 			string date = incompleteDateFragments[2] == "00" ? "1" : incompleteDateFragments[2];
 			return DateTime.Parse(incompleteDateFragments[0] + "/" + month + "/" + date);
 		}
+
+		public static string ToSortableShortString(long value)
+		{
+			char[] buffer = new char[14];// log(2^31)/log(36) < 6 char; +1 for length+sign.
+			int index = 0;
+			bool isNeg = value < 0;
+			if (isNeg)
+			{
+				while (value < 0)
+				{
+					int digit = (int)(value % 36);//in range -35..0!!
+					value = value / 36;
+					buffer[index++] = MapToBase36Char(35 + digit);
+				}
+			}
+			else
+			{
+				while (value > 0)
+				{
+					int digit = (int)(value % 36);
+					value = value / 36;
+					buffer[index++] = MapToBase36Char(digit);
+				}
+			}
+			Debug.Assert(index <= 6);
+			int encodedLength = (isNeg ? -index : index) + 13; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
+			buffer[index++] = MapToBase36Char(encodedLength);
+
+			Array.Reverse(buffer, 0, index);
+			return new string(buffer, 0, index);
+		}
+
+		static char MapToBase36Char(int digit) { return (char)((digit < 10 ? '0' : 'a' - 10) + digit); }
 
 		public static DateTime? DateMax(DateTime? d1, DateTime? d2)
 		{
@@ -184,36 +227,50 @@ namespace ProgressOnderwijsUtils
 
 		public static bool GenerateForLanguage(DocumentLanguage doc, Taal language)
 		{
-			bool result;
 			switch (doc)
 			{
 				case DocumentLanguage.Dutch:
-					result = language == Taal.NL;
-					break;
+					return language == Taal.NL;
 				case DocumentLanguage.English:
-					result = language == Taal.EN;
-					break;
+					return language == Taal.EN;
 				case DocumentLanguage.German:
-					result = language == Taal.DU;
-					break;
+					return language == Taal.DU;
 				case DocumentLanguage.StudentPreferenceNlEn:
 				case DocumentLanguage.CoursePreferenceNlEn:
 				case DocumentLanguage.ProgramPreferenceNlEn:
-					result = language == Taal.NL || language == Taal.EN;
-					break;
+					return language == Taal.NL || language == Taal.EN;
 				case DocumentLanguage.StudentPreferenceNlEnDu:
-					result = language == Taal.NL || language == Taal.EN || language == Taal.DU;
-					break;
+					return language == Taal.NL || language == Taal.EN || language == Taal.DU;
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
-			return result;
 		}
 	}
 
 	[TestFixture]
-	public class UtilsTest
+	public sealed class UtilsTest
 	{
+
+		[Test]
+		public void ToSortableStringTest()
+		{
+			var cmp = StringComparer.Ordinal;
+			var samplePoints = MoreEnumerable
+				.Generate((double)long.MinValue, sample => sample + (1.0 + Math.Abs(sample) / 10000.0))
+				.TakeWhile(sample => sample < long.MaxValue)
+				.Select(d => (long)d)
+				.Concat(new[] { long.MinValue, long.MaxValue - 1, -1, 0, 1 });
+
+			foreach (var i in samplePoints)
+			{
+				var j = i + 1;
+				string a = Utils.ToSortableShortString(i);
+				string b = Utils.ToSortableShortString(j);
+				if (cmp.Compare(a, b) >= 0)
+					throw new Exception("numbers " + i + " and " + j + " produce out-of-order strings: " + a + " and " + b);
+			}
+		}
+
 		[Test]
 		public void SwapValue()
 		{
@@ -335,24 +392,24 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test,
-		TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true),
-		TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false),
-		TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false),
-		TestCase(DocumentLanguage.English, Taal.NL, Result = false),
-		TestCase(DocumentLanguage.English, Taal.EN, Result = true),
-		TestCase(DocumentLanguage.English, Taal.DU, Result = false),
-		TestCase(DocumentLanguage.German, Taal.NL, Result = false),
-		TestCase(DocumentLanguage.German, Taal.EN, Result = false),
-		TestCase(DocumentLanguage.German, Taal.DU, Result = true),
-		TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true),
-		TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true),
-		TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false),
-		TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true),
-		TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true),
-		TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true),
-		TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true),
-		TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true),
-		TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
+		 TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true),
+		 TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false),
+		 TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false),
+		 TestCase(DocumentLanguage.English, Taal.NL, Result = false),
+		 TestCase(DocumentLanguage.English, Taal.EN, Result = true),
+		 TestCase(DocumentLanguage.English, Taal.DU, Result = false),
+		 TestCase(DocumentLanguage.German, Taal.NL, Result = false),
+		 TestCase(DocumentLanguage.German, Taal.EN, Result = false),
+		 TestCase(DocumentLanguage.German, Taal.DU, Result = true),
+		 TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true),
+		 TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true),
+		 TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false),
+		 TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true),
+		 TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true),
+		 TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true),
+		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true),
+		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true),
+		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
 		public bool GenerateForLanguage(DocumentLanguage doc, Taal language) { return Utils.GenerateForLanguage(doc, language); }
 	}
 
