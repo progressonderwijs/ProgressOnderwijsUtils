@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtilsTests
@@ -84,15 +85,16 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => equalityComparer.GetHashCode(tree2) != equalityComparer.GetHashCode(leaf2));
 			PAssert.That(() => equalityComparer.GetHashCode(tree1) != equalityComparer.GetHashCode(null));
 		}
+
 		[Test]
 		public void CustomizableGetHashCodeWorks()
 		{
 			var comparer = Tree.EqualityComparer(StringComparer.OrdinalIgnoreCase);
 
-			var tree1 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
-			var tree2 = Tree.Node("a", Tree.Node("x"), Tree.Node("B"), Tree.Node(default(string)), Tree.Node(""));
-			var tree3 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
-			var tree4 = Tree.Node("a", Tree.Node("y"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
+			var tree1 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(123.ToStringInvariant()), Tree.Node(""));
+			var tree2 = Tree.Node("a", Tree.Node("x"), Tree.Node("B"), Tree.Node(123.ToStringInvariant()), Tree.Node(""));
+			var tree3 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(123.ToStringInvariant()), Tree.Node(""));
+			var tree4 = Tree.Node("a", Tree.Node("y"), Tree.Node("b"), Tree.Node(123.ToStringInvariant()), Tree.Node(""));
 
 			PAssert.That(() => tree1.GetHashCode() != tree2.GetHashCode());
 			PAssert.That(() => tree1.GetHashCode() == tree3.GetHashCode());
@@ -101,6 +103,5 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => comparer.GetHashCode(tree1) == comparer.GetHashCode(tree2));
 			PAssert.That(() => comparer.GetHashCode(tree1) != comparer.GetHashCode(tree4));
 		}
-
 	}
 }
