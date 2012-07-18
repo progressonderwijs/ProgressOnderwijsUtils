@@ -36,6 +36,30 @@ namespace ProgressOnderwijsUtils.Collections
 			return retval;
 		}
 
+		[Pure]
+		public SList<TR> Select<TR>(Func<T, TR> map)
+		{
+			return SelectReverse(map).Reverse();
+		}
+
+		[Pure]
+		public SList<TR> SelectReverse<TR>(Func<T, TR> map)
+		{
+			var retval = SList<TR>.Empty;
+			for (var cur = this; !cur.IsEmpty; cur = cur.Tail)
+				retval = retval.Prepend(map(cur.Head));
+			return retval;
+		}
+
+		[Pure]
+		public SList<T> Skip(int count)
+		{
+			var retval = this;
+			for (int i = 0; !retval.IsEmpty && i < count; i++)
+				retval = retval.Tail;
+			return retval;
+		}
+
 		public T Head { get { return list.Head; } }
 		public SList<T> Tail { get { return new SList<T>(list.Tail); } }
 
