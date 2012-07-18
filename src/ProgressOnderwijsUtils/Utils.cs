@@ -204,7 +204,7 @@ namespace ProgressOnderwijsUtils
 					buffer[index++] = MapToBase36Char(digit);
 				}
 			}
-			Debug.Assert(index <= 6);
+			Debug.Assert(index <= 13);
 			int encodedLength = (isNeg ? -index : index) + 13; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
 			buffer[index++] = MapToBase36Char(encodedLength);
 
@@ -255,7 +255,7 @@ namespace ProgressOnderwijsUtils
 		{
 			var cmp = StringComparer.Ordinal;
 			var samplePoints = MoreEnumerable
-				.Generate((double)long.MinValue, sample => sample + (1.0 + Math.Abs(sample) / 10000.0))
+				.Generate((double)long.MinValue, sample => sample + (1.0 + Math.Abs(sample) / 1000.0))
 				.TakeWhile(sample => sample < long.MaxValue)
 				.Select(d => (long)d)
 				.Concat(new[] { long.MinValue, long.MaxValue - 1, -1, 0, 1 });
