@@ -9,15 +9,15 @@ namespace ProgressOnderwijsUtils.Text
 	public delegate string TranslateFunction(Taal taal = Taal.NL);
 	public static class ConverteerHelper
 	{
-		public static TranslateFunction ToString(long l, string format) { return language => l.ToString(format ?? "D", Translator.GetCulture(language)); }
-		public static TranslateFunction ToString(double d, string format) { return language => d.ToString(format ?? "0.0##########################", Translator.GetCulture(language)); }
-		public static TranslateFunction ToString(decimal d, string format) { return language => d.ToString(format ?? GELD_EURO, Translator.GetCulture(language)); }
-		public static TranslateFunction ToString(TimeSpan ts, string format) { return language => ts.ToString(format ?? "g", Translator.GetCulture(language)); }
-		public static TranslateFunction ToString(DateTime dt, string format) { return language => dt.ToString(format ?? (dt == dt.Date ? ALLEEN_DATUM : DATUM_EN_TIJD_IN_MINUTEN), Translator.GetCulture(language)); }
+		public static TranslateFunction ToString(long l, string format) { return language => l.ToString(format ?? "D", language.GetCulture()); }
+		public static TranslateFunction ToString(double d, string format) { return language => d.ToString(format ?? "0.##", language.GetCulture()); }
+		public static TranslateFunction ToString(decimal d, string format) { return language => d.ToString(format ?? GELD_EURO, language.GetCulture()); }
+		public static TranslateFunction ToString(TimeSpan ts, string format) { return language => ts.ToString(format ?? "g", language.GetCulture()); }
+		public static TranslateFunction ToString(DateTime dt, string format) { return language => dt.ToString(format ?? (dt == dt.Date ? ALLEEN_DATUM : DATUM_EN_TIJD_IN_MINUTEN), language.GetCulture()); }
 		public static TranslateFunction ToString(FileData obj, string format) { return language => obj.ToUiString(); }
 		public static TranslateFunction ToString(VariantData obj, string format) { return language => obj.ToUiString(); }
-		public static TranslateFunction ToString(string obj, string format) { return language => obj; }
-		public static TranslateFunction ToString(char obj, string format) { return language => new string((char)obj, 1); }
+		public static TranslateFunction ToString(string str, string format) { return language => str; }
+		public static TranslateFunction ToString(char c, string format) { return language => new string(c, 1); }
 		public static TranslateFunction ToString(XHtmlData obj, string format) { return language => obj.ToUiString(); }
 		public static TranslateFunction ToString<T>(T[] arr, string format) {
 			var subtrans=arr.Select(obj => (TranslateFunction)ConverteerHelper.ToString((dynamic)obj, format)).ToArray();
@@ -26,12 +26,12 @@ namespace ProgressOnderwijsUtils.Text
 		}
 
 
-		public static TranslateFunction ToString(bool obj, string format) { 
+		public static TranslateFunction ToString(bool b, string format) { 
 			return language => {
 				switch (language) {
-					case Taal.NL: return obj ? "Ja" : "Nee";
-					case Taal.EN: return obj ? "Yes" : "No";
-					case Taal.DU: return obj ? "Ja" : "Nein";
+					case Taal.NL: return b ? "Ja" : "Nee";
+					case Taal.EN: return b ? "Yes" : "No";
+					case Taal.DU: return b ? "Ja" : "Nein";
 					default: throw new ArgumentOutOfRangeException("language", "Taal niet bekend: " + language);
 				}
 			};
