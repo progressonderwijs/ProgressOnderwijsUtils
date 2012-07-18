@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace ProgressOnderwijsUtils.Collections
@@ -23,7 +24,10 @@ namespace ProgressOnderwijsUtils.Collections
 		public static SList<T> Empty { get { return default(SList<T>); } }
 
 		public bool IsEmpty { get { return list == null; } }
+		[Pure]
 		public SList<T> Prepend(T head) { return new SList<T>(new Impl(head, list)); }
+
+		[Pure]
 		public SList<T> Reverse()
 		{
 			var retval = Empty;
@@ -100,5 +104,8 @@ namespace ProgressOnderwijsUtils.Collections
 				retval = retval.Prepend(list[i]);
 			return retval;
 		}
+
+		public static SList<T> SingleElement<T>(T element) { return SList<T>.Empty.Prepend(element); }
+		public static SList<T> Empty<T>() { return SList<T>.Empty; }
 	}
 }

@@ -112,8 +112,8 @@ namespace ProgressOnderwijsUtilsTests
 			var cd = Tree.Node("c", d);
 			var b = Tree.Node("b");
 			var abcde = Tree.Node("a", b, cd, e);
-			PAssert.That(() => abcde.PreorderTraversal().Select(path => path.Head.SubTree.NodeValue).SequenceEqual(new[] { "a", "b", "c", "d", "e" }));
-			PAssert.That(() => abcde.PreorderTraversal().Select(path => path.Select(tree => tree.SubTree.NodeValue).JoinStrings()).SequenceEqual(new[] { "a", "ba", "ca", "dca", "ea" }));
+			PAssert.That(() => abcde.PreorderTraversal().Select(rooted => rooted.NodeValue).SequenceEqual(new[] { "a", "b", "c", "d", "e" }));
+			PAssert.That(() => abcde.RootHere().PreorderTraversal().Select(rooted => rooted.PathSegments.Select(node => node.NodeValue).JoinStrings()).SequenceEqual(new[] { "a", "ba", "ca", "dca", "ea" }));
 		}
 	}
 }

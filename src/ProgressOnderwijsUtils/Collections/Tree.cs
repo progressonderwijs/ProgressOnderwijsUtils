@@ -7,14 +7,19 @@ using System.Text;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-	public sealed class Tree<T> : IEquatable<Tree<T>>
+	public interface ITree<out TNode> where TNode : ITree<TNode>
 	{
-		static readonly ReadOnlyCollection<Tree<T>> EmptyArray = new Tree<T>[0].AsReadOnlyView(); // cache this since it will be used very commonly.
+		IArrayView<TNode> Children { get; }
+	}
+
+	public sealed class Tree<T> : IEquatable<Tree<T>>, ITree<Tree<T>>
+	{
+		static readonly IArrayView<Tree<T>> EmptyArray = new Tree<T>[0].AsReadView(); // cache this since it will be used very commonly.
 
 		readonly T nodeValue;
-		readonly ReadOnlyCollection<Tree<T>> kidArray;
+		readonly IArrayView<Tree<T>> kidArray;
 		public T NodeValue { get { return nodeValue; } }
-		public ReadOnlyCollection<Tree<T>> Children { get { return kidArray; } }
+		public IArrayView<Tree<T>> Children { get { return kidArray; } }
 
 		/// <summary>
 		/// Creates a Tree with specified child nodes.  The child node enumeration is materialized using ToArray() before usage.
@@ -32,10 +37,10 @@ namespace ProgressOnderwijsUtils.Collections
 		public Tree(T value, Tree<T>[] children)
 		{
 			nodeValue = value;
-			kidArray = children == null || children.Length == 0 ? EmptyArray : children.AsReadOnlyView();
+			kidArray = children == null || children.Length == 0 ? EmptyArray : new ArrayView<Tree<T>>(children);
 		}
+		#region Equality implementation
 		public static readonly Comparer DefaultComparer = new Comparer(EqualityComparer<T>.Default);
-
 		public sealed class Comparer : IEqualityComparer<Tree<T>>
 		{
 			static readonly int typeHash = typeof(Tree<T>).GetHashCode();
@@ -75,108 +80,103 @@ namespace ProgressOnderwijsUtils.Collections
 		public override bool Equals(object obj) { return DefaultComparer.Equals(this, obj as Tree<T>); }
 		public bool Equals(Tree<T> other) { return DefaultComparer.Equals(this, other); }
 		public override int GetHashCode() { return DefaultComparer.GetHashCode(this); }
+		#endregion
 	}
 
 	public static class Tree
 	{
-		public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children)
+		public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children) { return new Tree<T>(value, children); }
+		public static Tree<T> Node<T>(T value, Tree<T> a) { return new Tree<T>(value, new[] { a, }); }
+		public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b) { return new Tree<T>(value, new[] { a, b }); }
+		public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c) { return new Tree<T>(value, new[] { a, b, c }); }
+		public static Tree<T> Node<T>(T value, params  Tree<T>[] kids) { return new Tree<T>(value, kids); }
+		public static Tree<T> Node<T>(T value) { return new Tree<T>(value, null); }
+
+		public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
+	}
+
+	public struct RootedTreeView<T> : IEquatable<RootedTreeView<T>>, ITree<RootedTreeView<T>>
+	{
+		public readonly SList<TreePathSegment> PathSegments;
+
+		public RootedTreeView(SList<TreePathSegment> pathSegments) { PathSegments = pathSegments; }
+
+		public int Index { get { return PathSegments.Head.Index; } }
+		public Tree<T> ThisSubTree { get { return PathSegments.Head.ThisSubTree; } }
+
+		public IArrayView<RootedTreeView<T>> Children
 		{
-			return new Tree<T>(value, children);
-		}
-		public static Tree<T> Node<T>(T value, Tree<T> a)
-		{
-			return new Tree<T>(value, new[] { a, });
-		}
-		public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b)
-		{
-			return new Tree<T>(value, new[] { a, b });
-		}
-		public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c)
-		{
-			return new Tree<T>(value, new[] { a, b, c });
-		}
-		public static Tree<T> Node<T>(T value, params  Tree<T>[] kids)
-		{
-			return new Tree<T>(value, kids);
-		}
-		public static Tree<T> Node<T>(T value)
-		{
-			return new Tree<T>(value, null);
+			get
+			{
+				var treePathSegments = PathSegments;
+				return ThisSubTree.Children.Select((kid, i) => new RootedTreeView<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))));
+			}
 		}
 
-		public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
+		public T NodeValue { get { return ThisSubTree.NodeValue; } }
+		public bool IsRoot { get { return PathSegments.Tail.IsEmpty; } }
+		public bool Exists { get { return !PathSegments.IsEmpty; } }
+		public RootedTreeView<T> Parent { get { return new RootedTreeView<T>(PathSegments.Tail); } }
+
+		public struct TreePathSegment
 		{
-			return new Tree<T>.Comparer(valueComparer);
+			public readonly int Index;
+			public readonly Tree<T> ThisSubTree;
+			public T NodeValue { get { return ThisSubTree.NodeValue; } }
+			public IArrayView<Tree<T>> Children { get { return ThisSubTree.Children; } }
+
+			public TreePathSegment(int index, Tree<T> node) { Index = index; ThisSubTree = node; }
 		}
+		#region Equality implementation
+		public bool Equals(RootedTreeView<T> other)
+		{
+			//two rooted trees are identical when their underlying trees are identical and their paths within that tree are identical.
+			return PathSegments.Last().Equals(other.PathSegments.Last())
+				&& PathSegments.Select(segment => segment.Index).SequenceEqual(other.PathSegments.Select(segment => segment.Index));
+		}
+		public override int GetHashCode()
+		{
+			return PathSegments.Last().GetHashCode() + PathSegments.Select(segment => segment.Index).GetSequenceHashCode();
+		}
+		public override bool Equals(object obj) { return obj is RootedTreeView<T> && Equals((RootedTreeView<T>)obj); }
+		#endregion
 	}
 
 	public static class TreeExtensions
 	{
-		public struct TreePathSegment<T>
-		{
-			public readonly int Index;
-			public readonly Tree<T> SubTree;
-			public TreePathSegment(int index, Tree<T> node)
-			{
-				Index = index;
-				SubTree = node;
-			}
-		}
+		public static RootedTreeView<T> RootHere<T>(this Tree<T> tree) { return new RootedTreeView<T>(SList.SingleElement(new RootedTreeView<T>.TreePathSegment(0, tree))); }
 
-		public struct TreeNodeWithPath<T>
+		public static IEnumerable<T> PreorderTraversal<T>(this T tree) where T : ITree<T>
 		{
-			public readonly Tree<T> Tree;
-			public readonly SList<TreePathSegment<T>> PathToRoot;
-			public TreeNodeWithPath(Tree<T> tree, SList<TreePathSegment<T>> pathToRoot)
-			{
-				Tree = tree;
-				PathToRoot = pathToRoot;
-			}
-		}
+			yield return tree;
 
-		public static IEnumerable<SList<TreePathSegment<T>>> PreorderTraversal<T>(this Tree<T> tree)
-		{
-			var path = SList<TreePathSegment<T>>.Empty.Prepend(new TreePathSegment<T>(0, tree));
-			yield return path;
+			Stack<IEnumerator<T>> todo = new Stack<IEnumerator<T>>(16);
 
-			while (!path.IsEmpty)
+			try
 			{
-				var current = path.Head.SubTree;
-				if (current.Children.Count > 0)
-				{ //iterate children.
-					var node = current.Children[0];
-					path = path.Prepend(new TreePathSegment<T>(0, node));
-					yield return path;
-				}
-				else
+				todo.Push(tree.Children.GetEnumerator());
+
+				while (todo.Count > 0)
 				{
-					//one of three scenarios:
-					// scenario (1):  I have no parent and hence no siblings; cannot move to next node therefore: DONE!
-					// scenario (2):  I have a parent and that parent has a child after me: go to that child.
-					// scenario (3):  I have a parent but no subsequent siblings: move past parent (i.e. loop to parent.)
-
-					int nextIndex = path.Head.Index + 1;
-					path = path.Tail;
-					while (!path.IsEmpty) // scenario (1) or (2)
+					var current = todo.Peek();
+					if (current.MoveNext())
 					{
-						var container = path.Head.SubTree;
-
-						if (container.Children.Count > nextIndex)
-						{ //scenario (2)
-							path = path.Prepend(new TreePathSegment<T>(nextIndex, container.Children[nextIndex]));
-							yield return path;
-							break;
-						}
-						else
-						{ //scenario (3)
-							nextIndex = path.Head.Index + 1;
-							path = path.Tail;
-							if (path.IsEmpty)
-								yield break;//scenario (1)
-						}
+						yield return current.Current;
+						todo.Push(current.Current.Children.GetEnumerator());
+					}
+					else
+					{
+						current.Dispose();
+						todo.Pop();
 					}
 				}
 			}
+			finally
+			{
+				while (todo.Count > 0)
+					todo.Pop().Dispose();
+			}
 		}
 	}
+
 }

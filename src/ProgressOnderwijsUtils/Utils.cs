@@ -250,8 +250,7 @@ namespace ProgressOnderwijsUtils
 	[TestFixture]
 	public sealed class UtilsTest
 	{
-
-		[Test]
+		[Test, NightlyOnly]
 		public void ToSortableStringTest()
 		{
 			var cmp = StringComparer.Ordinal;

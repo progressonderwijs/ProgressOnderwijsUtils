@@ -46,6 +46,15 @@ namespace ProgressOnderwijsUtils
 		public static HashSet<T> ToSet<T>(this IEnumerable<T> list) { return new HashSet<T>(list); }
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> list) { return list ?? Enumerable.Empty<T>(); }
 
+		public static int GetSequenceHashCode<T>(this IEnumerable<T> list, IEqualityComparer<T> elementComparer = null)
+		{
+			var elemEquality = elementComparer ?? EqualityComparer<T>.Default;
+			ulong hash = 3;
+			foreach (var item in list)
+				hash = hash * 137ul + (ulong)elemEquality.GetHashCode(item);
+			return (int)hash ^ (int)(hash >> 32);
+		}
+
 		public static bool ContainsDuplicates<T>(this IEnumerable<T> list)
 		{
 			var set = new HashSet<T>();
