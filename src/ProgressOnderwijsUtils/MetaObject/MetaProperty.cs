@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -22,6 +23,7 @@ namespace ProgressOnderwijsUtils
 		ITranslatable Label { get; }
 		string KoppelTabelNaam { get; }
 		bool IsReadonly { get; }
+		bool IsKey { get; }
 		bool ShowDefaultOnNew { get; }
 		bool CanRead { get; }
 		Type DataType { get; }
@@ -73,6 +75,9 @@ namespace ProgressOnderwijsUtils
 
 			public readonly PropertyInfo propertyInfo;
 			public PropertyInfo PropertyInfo { get { return propertyInfo; } }
+
+			public readonly bool isKey;
+			public bool IsKey { get { return isKey; } }
 
 			public Impl(PropertyInfo pi, int implicitOrder)
 			{
@@ -128,6 +133,7 @@ namespace ProgressOnderwijsUtils
 				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(pi), mkAttr => mkAttr.KoppelTabelNaam ?? pi.Name);
 				verplicht = OrDefault(Attr<MpVerplichtAttribute>(pi), mkAttr => true);
 				allowNull = OrDefault(Attr<MpAllowNullAttribute>(pi), mkAttr => true);
+				isKey = OrDefault(Attr<KeyAttribute>(pi), mkAttr => true);
 				showDefaultOnNew = OrDefault(Attr<MpShowDefaultOnNewAttribute>(pi), mkAttr => true);
 				isReadonly = Setter == null || OrDefault(Attr<MpReadonlyAttribute>(pi), mkAttr => true);
 				lengte = OrDefault(Attr<MpLengteAttribute>(pi), mkAttr => mkAttr.Lengte, default(int?));

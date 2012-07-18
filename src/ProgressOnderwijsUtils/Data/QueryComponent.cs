@@ -1,4 +1,5 @@
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Collections.Generic;
 using System;
@@ -76,6 +77,7 @@ namespace ProgressOnderwijsUtils.Data
 	{
 		public struct DbTableValuedParameterWrapper<T> : IMetaObject
 		{
+			[Key]
 			public T val { get; set; }
 			public override string ToString() { return val == null ? "NULL" : val.ToString(); }
 		}
