@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Collections;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -265,9 +266,9 @@ namespace ProgressOnderwijsUtils
 		// ReSharper disable MemberCanBePrivate.Global
 		//not private due to access via Expression trees.
 		public static bool StartsWithHelper(string val, string with) { return val.StartsWith(with, StringComparison.OrdinalIgnoreCase); }
-		static readonly MethodInfo startsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
+		static readonly MethodInfo stringStartsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
 		public static bool ContainsHelper(string val, string needle) { return -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase); }
-		static readonly MethodInfo containsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
+		static readonly MethodInfo stringContainsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
 		// ReSharper restore MemberCanBePrivate.Global
 
 		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr)
@@ -296,14 +297,26 @@ namespace ProgressOnderwijsUtils
 				case BooleanComparer.NotEqual:
 					return Expression.NotEqual(coreExpr, waardeExpr);
 				case BooleanComparer.In:
-					throw new NotImplementedException(); //TODO: de In operatie moet nog...
-				//string[] nrs = Waarde.ToString().Split(new[] { ' ', '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-				//string clause = KolomNaam + " in (" + Enumerable.Range(0, nrs.Length).Select(n => "{" + n + "}").JoinStrings(", ") + ")";
-				//return QueryBuilder.Create(clause, nrs.Cast<object>().ToArray());
+					var elemType = coreExpr.Type;
+					var altElemType = elemType.MakeNullableType() ?? coreExpr.Type.IfNullableGetNonNullableType();
+					var listType = typeof(IEnumerable<>).MakeGenericType(elemType);
+					var altListType = altElemType == null ? null : typeof(IEnumerable<>).MakeGenericType(altElemType);
+					if (!listType.IsInstanceOfType(Waarde) && (altListType == null || !altListType.IsInstanceOfType(Waarde)))
+						throw new InvalidOperationException("Kan geen IN query maken voor kolom " + KolomNaam + " omdat kolom van type " + elemType + " is en de filter " + (Waarde == null ? "NULL" : "van type " + ObjectToCode.GetCSharpFriendlyTypeName(Waarde.GetType())) + " is.");
+					var setType = typeof(ISet<>).MakeGenericType(elemType);
+					var genericEnumerableOfTypeMethod = ((Func<IEnumerable, IEnumerable<object>>)Enumerable.OfType<object>).Method.GetGenericMethodDefinition();
+					var setExpr = setType.IsInstanceOfType(Waarde) ? waardeExpr
+							: Expression.New(typeof(HashSet<>).MakeGenericType(elemType).GetConstructor(new[] { listType }),
+								listType.IsInstanceOfType(Waarde) ? waardeExpr
+								: Expression.Call(genericEnumerableOfTypeMethod.MakeGenericMethod(elemType), waardeExpr)
+								)
+							;
+					var setContainsMethod = typeof(ICollection<>).MakeGenericType(elemType).GetMethod("Contains");
+					return Expression.Call(setExpr, setContainsMethod, coreExpr);
 				case BooleanComparer.StartsWith:
-					return Expression.Call(startsWithMethod, coreExpr, waardeExpr);
+					return Expression.Call(stringStartsWithMethod, coreExpr, waardeExpr);
 				case BooleanComparer.Contains:
-					return Expression.Call(containsMethod, coreExpr, waardeExpr);
+					return Expression.Call(stringContainsMethod, coreExpr, waardeExpr);
 				case BooleanComparer.IsNull:
 					return Expression.Equal(Expression.Convert(Expression.Default(typeof(object)), coreExpr.Type), coreExpr);
 				case BooleanComparer.IsNotNull:
