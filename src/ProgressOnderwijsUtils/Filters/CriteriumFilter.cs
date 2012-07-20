@@ -57,13 +57,9 @@ namespace ProgressOnderwijsUtils
 					return KolomNaam + "!=" + BuildParam();
 				case BooleanComparer.In:
 					if (Waarde is GroupReference)
-					{
 						return KolomNaam + " in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
-					}
 					else
-					{
 						return KolomNaam + " in (select val from " + QueryBuilder.TableParamDynamic((Array)Waarde) + ")";
-					}
 				case BooleanComparer.StartsWith:
 					return KolomNaam + " like " + QueryBuilder.Param(Waarde + "%");
 				case BooleanComparer.Contains:

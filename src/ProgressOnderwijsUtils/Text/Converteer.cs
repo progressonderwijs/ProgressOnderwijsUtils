@@ -148,36 +148,7 @@ namespace ProgressOnderwijsUtils
 		//Deze functie gebruiken om gebruikersinvoer in vrije textvelden te converteren naar de juiste types, eerste TryParse uitvoeren!
 		public static object Parse(string s, Type t)
 		{
-			if (s == null) throw new ArgumentNullException("s");
-			if (t == null) throw new ArgumentNullException("t");
-
-			Type nonNullableType = t.IfNullableGetNonNullableType();
-			bool canBeNull =!t.IsArray&& (nonNullableType != null || !t.IsValueType);
-			Type fundamentalType = nonNullableType ?? t;
-
-			if (canBeNull && s.Length == 0) return null; // dus s=="" levert null string op! --RW 24-04-2008 Moet wel zo, maar wat zijn de gevolgen?
-
-			if (fundamentalType == typeof(int)) return int.Parse(s);
-			if (fundamentalType == typeof(long)) return long.Parse(s);
-			if (fundamentalType == typeof(decimal)) return ParseDecimal(s);		// Decimale punt ook ondersteunen - let wel, dus 100,000.0 != 100,000 zo
-			if (fundamentalType == typeof(double)) return (double)ParseDecimal(s);//Emn: dit is  misschien niet de ideale oplossing, maar eventjes snel...
-			if (fundamentalType == typeof(DateTime)) return ParseDateTime(s);
-			if (fundamentalType == typeof(TimeSpan)) return TimeSpan.Parse(s, CultureNL);
-			if (fundamentalType == typeof(string)) return s;
-			if (fundamentalType == typeof(bool)) return Boolean.Parse(s);
-			if (fundamentalType == typeof(XHtmlData)) return XHtmlData.Parse(s);
-			if (fundamentalType.IsArray)
-			{
-				var elementType = fundamentalType.GetElementType();
-				if(elementType.IsArray) throw new InvalidOperationException("Cannot parse jagged arrays");
-				if (fundamentalType.GetArrayRank() != 1) throw new InvalidOperationException("Can only parse arrays of rank 1");
-				var components = s.Split(WHITESPACE, StringSplitOptions.RemoveEmptyEntries);
-				var retval = Array.CreateInstance(elementType, components.Length);
-				for (int i = 0; i < components.Length; i++)
-					retval.SetValue(Parse(components[i], elementType), i);
-				return retval;
-			}
-			throw new ConverteerException("Parse nog niet geimplementeerd voor " + t);
+			return TryParse(s, t).Value;
 		}
 
 		private const int YearMinimum = 1900, YearMaximum = 2100;
@@ -239,83 +210,114 @@ namespace ProgressOnderwijsUtils
 					break;
 			}
 
-			if (TryParse(datum, typeof(DateTime)).IsOk())
-				return DateTime.Parse(datum, CultureNL);
+			ParseResult parseResult = TryParse(datum, typeof(DateTime));
+			if (parseResult.IsOk)
+				return (DateTime)parseResult.Value;
 			return null;
 		}
 
-		public enum ParseState { OK, MALFORMED, OVERFLOW, GEENDATA, DATUMFOUT, TIJDFOUT }
+		public struct ParseResult
+		{
+			static readonly object Nonsense = new object();
+			public readonly ParseState State;
+			readonly object value;
+
+			public bool IsOk { get { return State == ParseState.Ok; } }
+			public object Value { get { if (!IsOk) throw new InvalidOperationException("Parse mislukt met status " + State); return value; } }
+
+			public ITranslatable ErrorMessage { get { if (IsOk)return null; else return (ITranslatable)value; } }
+
+			ParseResult(ParseState state, object value)
+			{
+				State = state;
+				this.value = value;
+			}
+			public static ParseResult Ok(object value) { return new ParseResult(ParseState.Ok, value); }
+			public static ParseResult CreateError(ParseState state, ITranslatable error)
+			{
+				if (state == ParseState.Ok)
+					throw new InvalidOperationException("Cannot set error: OK is not an error");
+				return new ParseResult(state, error);
+			}
+			public static ParseResult Malformed(Type type, string s) { return CreateError(ParseState.Malformed, Texts.GenericEdit.MalformedData(Texts.ClrTypeNames.UserReadable(type, false)).Append(Translatable.Literal(" niet "," not ", " nicht "), Converteer.ToText(" niet \""+s+"\"."))); }
+			public static ParseResult Overflow { get { return CreateError(ParseState.Overflow, Texts.GenericEdit.Overflow); } }
+			public static ParseResult Geendata { get { return CreateError(ParseState.Geendata, Texts.GenericEdit.GeenData); } }
+			public static ParseResult Datumfout { get { return CreateError(ParseState.Datumfout, Texts.GenericEdit.FoutDatumFormaat); } }
+			public static ParseResult TijdFout { get { return CreateError(ParseState.TijdFout, Texts.GenericEdit.FoutTijdFormaat); } }
+		}
+
+
+
+		public enum ParseState { Undefined, Ok, Malformed, Overflow, Geendata, Datumfout, TijdFout }
 		//Om gebruikersinvoer te controleren, daarna kan parse plaatsvinden
-		public static ParseState TryParse(string s, Type t)
+		public static ParseResult TryParse(string s, Type t)
 		{
 			if (t == null) throw new ArgumentNullException("t");
-			if (s == null) return ParseState.GEENDATA;
+			if (s == null) return ParseResult.Geendata;
 
 			Type nonNullableType = t.IfNullableGetNonNullableType();
-			bool canBeNull =nonNullableType != null || !t.IsValueType;
+			bool canBeNull = !t.IsArray && (nonNullableType != null || !t.IsValueType);
 			Type fundamentalType = nonNullableType ?? t;
 
-			if (canBeNull && s.Length == 0) return ParseState.OK; // dus s=="" levert null string op! - en dit vangt ook lege arrays, maar dat is ok; bij het parsen worden die niet-null
+			if (canBeNull && s.Length == 0) return ParseResult.Ok(null); // dus s=="" levert null string op! - en dit vangt ook lege arrays, maar dat is ok; bij het parsen worden die niet-null
 			else if (fundamentalType == typeof(bool))
 			{
-				bool ignore;
-				return Boolean.TryParse(s, out ignore) ? ParseState.OK : ParseState.MALFORMED;
+				bool value;
+				return Boolean.TryParse(s, out value) ? ParseResult.Ok(value) : ParseResult.Malformed(t,s);
 			}
 			else if (fundamentalType == typeof(DateTime))
 			{
 				DateTime parsedDate;
 				bool canParse = DateTime.TryParse(DateStringCheck(s), CultureNL, DateTimeStyles.None, out parsedDate);
-				return !canParse ? ParseState.DATUMFOUT : parsedDate.Year < YearMinimum || parsedDate.Year >= YearMaximum ? ParseState.OVERFLOW : ParseState.OK;
+				return !canParse ? ParseResult.Datumfout
+					: parsedDate.Year < YearMinimum || parsedDate.Year >= YearMaximum ? ParseResult.Overflow
+					: ParseResult.Ok(parsedDate);
 			}
 			else if (fundamentalType == typeof(TimeSpan))
 			{
-				TimeSpan ignore;
-				return TimeSpan.TryParse(s, CultureNL, out ignore) ? ParseState.OK : ParseState.TIJDFOUT;
+				TimeSpan result;
+				return TimeSpan.TryParse(s, CultureNL, out result) ? ParseResult.Ok(result) : ParseResult.TijdFout;
 			}
 			else if (fundamentalType == typeof(long))
-				// ReSharper disable ReturnValueOfPureMethodIsNotUsed
-				try { long.Parse(s); return ParseState.OK; }
-				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
-				catch (FormatException) { return ParseState.MALFORMED; }
-				catch (OverflowException) { return ParseState.OVERFLOW; }
+				try { return ParseResult.Ok(long.Parse(s)); }
+				catch (FormatException) { return ParseResult.Malformed(t, s); }
+				catch (OverflowException) { return ParseResult.Overflow; }
 			else if (fundamentalType == typeof(int))
-				// ReSharper disable ReturnValueOfPureMethodIsNotUsed
-				try { int.Parse(s); return ParseState.OK; }
-				// ReSharper restore ReturnValueOfPureMethodIsNotUsed
-				catch (FormatException) { return ParseState.MALFORMED; }
-				catch (OverflowException) { return ParseState.OVERFLOW; }
-			else if (fundamentalType == typeof(decimal) || fundamentalType == typeof(double))
-				try { ParseDecimal(s); return ParseState.OK; }
-				catch (FormatException) { return ParseState.MALFORMED; }
-				catch (OverflowException) { return ParseState.OVERFLOW; }
+				try { return ParseResult.Ok(int.Parse(s)); }
+				catch (FormatException) { return ParseResult.Malformed(t, s); }
+				catch (OverflowException) { return ParseResult.Overflow; }
+			else if (fundamentalType == typeof(decimal))
+				try { return ParseResult.Ok(ParseDecimal(s)); }
+				catch (FormatException) { return ParseResult.Malformed(t, s); }
+				catch (OverflowException) { return ParseResult.Overflow; }
+			else if (fundamentalType == typeof(double))
+				try { return ParseResult.Ok((double)ParseDecimal(s)); }
+				catch (FormatException) { return ParseResult.Malformed(t, s); }
+				catch (OverflowException) { return ParseResult.Overflow; }
 			else if (fundamentalType == typeof(string))
-				return ParseState.OK;
+				return ParseResult.Ok(s);
 			else if (fundamentalType == typeof(XHtmlData))
-				return XhtmlCleaner.TryParse(s) != null ? ParseState.OK : ParseState.MALFORMED;
-			else if (fundamentalType.IsArray) {
-				if (fundamentalType.GetArrayRank() != 1) throw new InvalidOperationException("Can only parse arrays of rank 1");
+				return XhtmlCleaner.TryParse(s) != null ? ParseResult.Ok(XHtmlData.Parse(s)) : ParseResult.Malformed(t, s);
+			else if (fundamentalType.IsArray)
+			{
 				var elementType = fundamentalType.GetElementType();
 				if (elementType.IsArray) throw new InvalidOperationException("Cannot parse jagged arrays");
-				return s.Split(WHITESPACE, StringSplitOptions.RemoveEmptyEntries).Select(sPart => TryParse(sPart, elementType)).FirstOrDefault(state => !state.IsOk());
+				if (fundamentalType.GetArrayRank() != 1) throw new InvalidOperationException("Can only parse arrays of rank 1");
+				var components = s.Split(WHITESPACE, StringSplitOptions.RemoveEmptyEntries);
+				var retval = Array.CreateInstance(elementType, components.Length);
+				for (int i = 0; i < components.Length; i++)
+				{
+					var elementParseResult = TryParse(components[i], elementType);
+					if (elementParseResult.IsOk)
+						retval.SetValue(elementParseResult.Value, i);
+					else
+						return elementParseResult;
+				}
+				return ParseResult.Ok(retval); ;
 			}
 			throw new ConverteerException("TryParse nog niet geimplementeerd voor " + t);
 		}
 		static readonly char[] WHITESPACE = new[] { ' ', '\r', '\n' };
-		public static ITranslatable ToDbCode(this ParseState state)
-		{
-			switch (state)
-			{
-				case ParseState.GEENDATA: return Texts.GenericEdit.GeenData;
-				case ParseState.OK: return null;
-				case ParseState.MALFORMED: return Texts.GenericEdit.IllegaleDataInkolom;
-				case ParseState.OVERFLOW: return Texts.GenericEdit.Overflow;
-				case ParseState.DATUMFOUT: return Texts.GenericEdit.FoutDatumFormaat;
-				case ParseState.TIJDFOUT: return Texts.GenericEdit.FoutTijdFormaat;
-				default: throw new InvalidOperationException("Invalid parse state");
-			}
-		}
-		public static bool IsOk(this ParseState state) { return state == ParseState.OK; }
-
 
 		static string DateStringCheck(string datum)
 		{

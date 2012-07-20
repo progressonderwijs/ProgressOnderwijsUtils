@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils.Text
 		public TextVal Translate(Taal taal)
 		{
 			var translation = parts.Select(it => it.Translate(taal)).ToArray();
-			return new TextVal(translation.Select(tv => tv.Text).JoinStrings(), translation.Select(tv => tv.ExtraTextOrDefault).JoinStrings());
+			return new TextVal(translation.Select(tv => tv.Text).JoinStrings(), translation.Select(tv => tv.ExtraText??"").JoinStrings());
 		}
 	}
 }

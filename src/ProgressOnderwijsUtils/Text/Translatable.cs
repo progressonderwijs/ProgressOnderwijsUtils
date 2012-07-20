@@ -50,6 +50,10 @@ namespace ProgressOnderwijsUtils
 			return new LiteralTranslatable(nl, en, du);
 		}
 
+		public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable,ITranslatable tt) { 
+			return CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).Text);
+		}
+
 		sealed class LimitLengthTranslatable : ITranslatable
 		{
 			public readonly ITranslatable m_text;

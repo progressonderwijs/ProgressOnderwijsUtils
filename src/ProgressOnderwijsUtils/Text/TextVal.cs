@@ -10,9 +10,6 @@ namespace ProgressOnderwijsUtils
 		public string Text { get { return m_text; } }
 		public string ExtraText { get { return m_helptext; } }
 
-
-		public string ExtraTextOrDefault { get { return string.IsNullOrEmpty(m_helptext) ? m_text : m_helptext; } }
-
 		public static string UndefinedExtraText { get { return "Sorry, this text is not available in your language"; } }
 		public bool IsDefined { get { return UndefinedExtraText != ExtraText; } }
 		public bool IsEmpty { get { return string.IsNullOrEmpty(Text) && string.IsNullOrEmpty(ExtraText); } }

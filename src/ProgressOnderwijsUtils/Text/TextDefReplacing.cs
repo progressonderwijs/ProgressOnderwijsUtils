@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils.Text
 
 		public string GenerateUid()
 		{
-			return core.GenerateUid() +"|"+ toreplace.Select(it => it.GenerateUid()).JoinStrings(";");
+			return core.GenerateUid() + "|" + toreplace.Select(it => it.GenerateUid()).JoinStrings(";");
 		}
 
 		public TextVal Translate(Taal taal)
@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils.Text
 			TextVal retval = core.Translate(taal);
 			TextVal[] replacements = toreplace.Select(it => it.Translate(taal)).ToArray();
 			string[] mainTextRep = replacements.Select(tv => tv.Text).ToArray();
-			string[] helpTextRep = replacements.Select(tv => tv.ExtraTextOrDefault).ToArray();
+			string[] helpTextRep = replacements.Select(tv => string.IsNullOrEmpty(tv.ExtraText) ? tv.Text : tv.ExtraText).ToArray();
 			return new TextVal(string.Format(retval.Text, mainTextRep), string.Format(retval.ExtraText, helpTextRep));
 		}
 
