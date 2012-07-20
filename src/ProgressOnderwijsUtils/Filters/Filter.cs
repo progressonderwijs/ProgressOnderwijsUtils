@@ -96,6 +96,8 @@ namespace ProgressOnderwijsUtils
 					return "!=";
 				case BooleanComparer.In:
 					return "in";
+				case BooleanComparer.NotIn:
+					return "!in";
 				case BooleanComparer.StartsWith:
 					return "starts with";
 				case BooleanComparer.Contains:

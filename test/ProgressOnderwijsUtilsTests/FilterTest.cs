@@ -30,6 +30,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNull, null).ToQueryBuilder() == QueryBuilder.Create("test is null"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNotNull, null).ToQueryBuilder() == QueryBuilder.Create("test is not null"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test in (select val from {0})", Enumerable.Range(1, 5)));
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotIn, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test not in (select val from {0})", Enumerable.Range(1, 5)));
 		}
 
 
@@ -100,6 +101,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void ColRef()
 		{
 			PAssert.That(() => !BooleanComparer.In.CanReferenceColumn());
+			PAssert.That(() => !BooleanComparer.NotIn.CanReferenceColumn());
 			PAssert.That(() => BooleanComparer.Equal.CanReferenceColumn());
 			Assert.Throws<ArgumentNullException>(() => new ColumnReference(null));
 			Assert.Throws<ArgumentException>(() => new ColumnReference("a b"));
@@ -149,7 +151,6 @@ namespace ProgressOnderwijsUtilsTests
 			var qZeroWidth = QueryBuilder.Create("");
 			var qZeroWidthArg = QueryBuilder.Create("", 42);
 			var qZeroWidth2 = QueryBuilder.Create(42.ToStringInvariant().Substring(42.ToStringInvariant().Length));
-			PAssert.That(() => !ReferenceEquals(qZeroWidth2.CommandText(), qZeroWidth.CommandText()));
 			PAssert.That(() => qEmpty != default(QueryBuilder));
 			PAssert.That(() => default(QueryBuilder) != qEmpty);
 			PAssert.That(() => !(default(QueryBuilder) == qZeroWidth));
@@ -202,6 +203,7 @@ namespace ProgressOnderwijsUtilsTests
 
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, new ColumnReference("blablabla")).SerializeToString() == @"test[<]cblablabla*");
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new GroupReference(12345, "blablablaGroup")).SerializeToString() == @"test[in]g12345:blablablaGroup*");
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotIn, new GroupReference(12345, "blablablaGroup")).SerializeToString() == @"test[!in]g12345:blablablaGroup*");
 
 			PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<]i3* ") == null); //extra space!
 			PAssert.That(() => Filter.TryParseSerializedFilter(@"test<]i3*") == null); //missing [
@@ -228,13 +230,13 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var filters = new[]{
 								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"1*","","#", "##","***",}),
-								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"*"}),
+								Filter.CreateCriterium("test", BooleanComparer.NotIn, new[]{"*"}),
 								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"**"}),
-								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"#"}),
+								Filter.CreateCriterium("test", BooleanComparer.NotIn, new[]{"#"}),
 								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"##"}),
-								Filter.CreateCriterium("test", BooleanComparer.In, new[]{""}),
+								Filter.CreateCriterium("test", BooleanComparer.NotIn, new[]{""}),
 								Filter.CreateCriterium("test", BooleanComparer.In, new[]{"#;"}),
-								Filter.CreateCriterium("test", BooleanComparer.In, new[]{";#"}),
+								Filter.CreateCriterium("test", BooleanComparer.NotIn, new[]{";#"}),
 								Filter.CreateCriterium("test", BooleanComparer.In, new[]{";#","*","**#*"}),
 			};
 			foreach (var filter in filters)
@@ -259,12 +261,15 @@ namespace ProgressOnderwijsUtilsTests
 								Filter.CreateCriterium("test", BooleanComparer.Equal, null),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, new ColumnReference("blablabla")),
 								Filter.CreateCriterium("test", BooleanComparer.In, new GroupReference(12345,"blablablaGroup")),
+								Filter.CreateCriterium("test", BooleanComparer.NotIn, new GroupReference(12345,"blablablaGroup")),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, ""),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "*1"),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "1*"),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "1**2*"),
 								Filter.CreateCriterium("test", BooleanComparer.In, new[]{1, 2, 3, 4, 5,}),
+								Filter.CreateCriterium("test", BooleanComparer.NotIn, new[]{1, 2, 3, 4, 5,}),
 								Filter.CreateCriterium("test", BooleanComparer.In, new string[]{}),
+								Filter.CreateCriterium("test", BooleanComparer.NotIn, new string[]{}),
 			};
 			foreach (var filter in filters)
 				PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString())));

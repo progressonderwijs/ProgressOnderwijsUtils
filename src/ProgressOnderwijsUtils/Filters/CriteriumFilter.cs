@@ -34,8 +34,8 @@ namespace ProgressOnderwijsUtils
 			return 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode());
 		}
 
-		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In }; } }
-		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In }; } }
+		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
+		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
 
 		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde) { _KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde; }
 
@@ -60,6 +60,11 @@ namespace ProgressOnderwijsUtils
 						return KolomNaam + " in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
 					else
 						return KolomNaam + " in (select val from " + QueryBuilder.TableParamDynamic((Array)Waarde) + ")";
+				case BooleanComparer.NotIn:
+					if (Waarde is GroupReference)
+						return KolomNaam + " not in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
+					else
+						return KolomNaam + " not in (select val from " + QueryBuilder.TableParamDynamic((Array)Waarde) + ")";
 				case BooleanComparer.StartsWith:
 					return KolomNaam + " like " + QueryBuilder.Param(Waarde + "%");
 				case BooleanComparer.Contains:
@@ -238,8 +243,10 @@ namespace ProgressOnderwijsUtils
 			if (primaryType == null) return false;
 			primaryType = primaryType.GetNonNullableUnderlyingType();
 
-			if (Comparer == BooleanComparer.IsNotNull || Comparer == BooleanComparer.IsNull) return Waarde == null;
-			if (Comparer == BooleanComparer.In) return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
+			if (Comparer == BooleanComparer.IsNotNull || Comparer == BooleanComparer.IsNull)
+				return Waarde == null;
+			if (Comparer == BooleanComparer.In || Comparer == BooleanComparer.NotIn)
+				return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
 			//if (Waarde == null) 		
 			if (!(Waarde is ColumnReference))
 				return true;	//TODO:emn: HACK? maybe remove this when criterium filters allow it.
@@ -293,6 +300,7 @@ namespace ProgressOnderwijsUtils
 				case BooleanComparer.NotEqual:
 					return Expression.NotEqual(coreExpr, waardeExpr);
 				case BooleanComparer.In:
+				case BooleanComparer.NotIn:
 					var elemType = coreExpr.Type;
 					var altElemType = elemType.MakeNullableType() ?? coreExpr.Type.IfNullableGetNonNullableType();
 					var listType = typeof(IEnumerable<>).MakeGenericType(elemType);
@@ -308,7 +316,8 @@ namespace ProgressOnderwijsUtils
 								)
 							;
 					var setContainsMethod = typeof(ICollection<>).MakeGenericType(elemType).GetMethod("Contains");
-					return Expression.Call(setExpr, setContainsMethod, coreExpr);
+					Expression inExpr = Expression.Call(setExpr, setContainsMethod, coreExpr);
+					return Comparer == BooleanComparer.In ? inExpr : Expression.Not(inExpr);
 				case BooleanComparer.StartsWith:
 					return Expression.Call(stringStartsWithMethod, coreExpr, waardeExpr);
 				case BooleanComparer.Contains:
@@ -324,10 +333,16 @@ namespace ProgressOnderwijsUtils
 
 		public override string ToString()
 		{
-			if (Waarde is GroupReference && Comparer == BooleanComparer.In)
-				return string.Format("{0} in {1}", KolomNaam, (Waarde as GroupReference).Name);
-			else if (Waarde is Array && Comparer == BooleanComparer.In)
-				return KolomNaam + " in (" + (Waarde as IEnumerable).Cast<object>().Select(o => o == null ? "NULL" : o.ToString()).JoinStrings(", ") + ")";
+			if (Comparer == BooleanComparer.In || Comparer == BooleanComparer.NotIn)
+			{
+				var optionalNot = Comparer == BooleanComparer.NotIn ? " not" : "";
+				if (Waarde is GroupReference)
+					return KolomNaam + optionalNot + " in " + (Waarde as GroupReference).Name;
+				else if (Waarde is Array)
+					return KolomNaam + optionalNot + " in (" + (Waarde as IEnumerable).Cast<object>().Select(o => o == null ? "NULL" : o.ToString()).JoinStrings(", ") + ")";
+				else
+					return base.ToString();
+			}
 			else
 				return base.ToString();
 		}
