@@ -70,6 +70,25 @@ namespace ProgressOnderwijsUtils
 					.JoinStrings(", ")
 				+ "]";
 		}
+
+		public static Dictionary<TKey, TValue> ToDictionary<TElem, TKey, TValue>(this IEnumerable<TElem> list, Func<TElem, TKey> keyLookup,
+			Func<TKey, IEnumerable<TElem>, TValue> groupMap
+			)
+		{
+			Dictionary<TKey, List<TElem>> groups = new Dictionary<TKey, List<TElem>>();
+			foreach (var elem in list)
+			{
+				var key = keyLookup(elem);
+				List<TElem> group;
+				if (!groups.TryGetValue(key, out group))
+					groups.Add(key, group = new List<TElem>());
+				group.Add(elem);
+			}
+			var retval = new Dictionary<TKey, TValue>(groups.Count);
+			foreach (var group in groups)
+				retval.Add(group.Key, groupMap(group.Key, group.Value));
+			return retval;
+		}
 	}
 
 
