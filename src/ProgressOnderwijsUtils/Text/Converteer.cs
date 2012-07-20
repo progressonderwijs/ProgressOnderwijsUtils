@@ -223,7 +223,23 @@ namespace ProgressOnderwijsUtils
 			readonly object value;
 
 			public bool IsOk { get { return State == ParseState.Ok; } }
-			public object Value { get { if (!IsOk) throw new InvalidOperationException("Parse mislukt met status " + State); return value; } }
+			public object Value
+			{
+				get
+				{
+					if (!IsOk)
+					{
+						if (State == ParseState.Geendata)
+							throw new ArgumentNullException("Parse mislukt met status " + State);
+						if (State == ParseState.Malformed || State == ParseState.Datumfout)
+							throw new FormatException("Parse mislukt met status " + State);
+						if (State == ParseState.Overflow)
+							throw new OverflowException("Parse mislukt met status " + State);
+						throw new InvalidOperationException("Parse mislukt met status " + State);
+					}
+					return value;
+				}
+			}
 
 			public ITranslatable ErrorMessage { get { if (IsOk)return null; else return (ITranslatable)value; } }
 
@@ -239,7 +255,7 @@ namespace ProgressOnderwijsUtils
 					throw new InvalidOperationException("Cannot set error: OK is not an error");
 				return new ParseResult(state, error);
 			}
-			public static ParseResult Malformed(Type type, string s) { return CreateError(ParseState.Malformed, Texts.GenericEdit.MalformedData(Texts.ClrTypeNames.UserReadable(type, false)).Append(Translatable.Literal(" niet "," not ", " nicht "), Converteer.ToText(" niet \""+s+"\"."))); }
+			public static ParseResult Malformed(Type type, string s) { return CreateError(ParseState.Malformed, Texts.GenericEdit.MalformedData(Texts.ClrTypeNames.UserReadable(type, false)).Append(Translatable.Literal(" niet ", " not ", " nicht "), Converteer.ToText(" niet \"" + s + "\"."))); }
 			public static ParseResult Overflow { get { return CreateError(ParseState.Overflow, Texts.GenericEdit.Overflow); } }
 			public static ParseResult Geendata { get { return CreateError(ParseState.Geendata, Texts.GenericEdit.GeenData); } }
 			public static ParseResult Datumfout { get { return CreateError(ParseState.Datumfout, Texts.GenericEdit.FoutDatumFormaat); } }
@@ -263,7 +279,7 @@ namespace ProgressOnderwijsUtils
 			else if (fundamentalType == typeof(bool))
 			{
 				bool value;
-				return Boolean.TryParse(s, out value) ? ParseResult.Ok(value) : ParseResult.Malformed(t,s);
+				return Boolean.TryParse(s, out value) ? ParseResult.Ok(value) : ParseResult.Malformed(t, s);
 			}
 			else if (fundamentalType == typeof(DateTime))
 			{
