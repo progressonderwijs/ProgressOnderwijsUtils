@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
 			return 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode());
 		}
 
-		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
+		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.EndsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
 		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
 
 		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde) { _KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde; }
@@ -67,6 +67,8 @@ namespace ProgressOnderwijsUtils
 						return KolomNaam + " not in (select val from " + QueryBuilder.TableParamDynamic((Array)Waarde) + ")";
 				case BooleanComparer.StartsWith:
 					return KolomNaam + " like " + QueryBuilder.Param(Waarde + "%");
+				case BooleanComparer.EndsWith:
+					return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde);
 				case BooleanComparer.Contains:
 					return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde + "%");
 				case BooleanComparer.IsNull:
@@ -270,6 +272,8 @@ namespace ProgressOnderwijsUtils
 		//not private due to access via Expression trees.
 		public static bool StartsWithHelper(string val, string with) { return val.StartsWith(with, StringComparison.OrdinalIgnoreCase); }
 		static readonly MethodInfo stringStartsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
+		public static bool EndsWithHelper(string val, string with) { return val.EndsWith(with, StringComparison.OrdinalIgnoreCase); }
+		static readonly MethodInfo stringEndsWithMethod = ((Func<string, string, bool>)EndsWithHelper).Method;
 		public static bool ContainsHelper(string val, string needle) { return -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase); }
 		static readonly MethodInfo stringContainsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
 		// ReSharper restore MemberCanBePrivate.Global
@@ -320,6 +324,8 @@ namespace ProgressOnderwijsUtils
 					return Comparer == BooleanComparer.In ? inExpr : Expression.Not(inExpr);
 				case BooleanComparer.StartsWith:
 					return Expression.Call(stringStartsWithMethod, coreExpr, waardeExpr);
+				case BooleanComparer.EndsWith:
+					return Expression.Call(stringEndsWithMethod, coreExpr, waardeExpr);
 				case BooleanComparer.Contains:
 					return Expression.Call(stringContainsMethod, coreExpr, waardeExpr);
 				case BooleanComparer.IsNull:

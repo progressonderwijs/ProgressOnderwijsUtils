@@ -27,6 +27,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotEqual, 3).ToQueryBuilder() == QueryBuilder.Create("test!={0}", 3));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Contains, "world").ToQueryBuilder() == QueryBuilder.Create("test like {0}", "%world%"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.StartsWith, "world").ToQueryBuilder() == QueryBuilder.Create("test like {0}", "world%"));
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.EndsWith, "world").ToQueryBuilder() == QueryBuilder.Create("test like {0}", "%world"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNull, null).ToQueryBuilder() == QueryBuilder.Create("test is null"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNotNull, null).ToQueryBuilder() == QueryBuilder.Create("test is not null"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test in (select val from {0})", Enumerable.Range(1, 5)));
@@ -255,6 +256,7 @@ namespace ProgressOnderwijsUtilsTests
 								Filter.CreateCriterium("test", BooleanComparer.NotEqual, 3),
 								Filter.CreateCriterium("test", BooleanComparer.Contains, "world"),
 								Filter.CreateCriterium("test", BooleanComparer.StartsWith, "world"),
+								Filter.CreateCriterium("test", BooleanComparer.EndsWith, "world"),
 								Filter.CreateCriterium("test", BooleanComparer.IsNull, null),
 								Filter.CreateCriterium("test", BooleanComparer.IsNotNull, null),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "1*2"),
@@ -273,7 +275,6 @@ namespace ProgressOnderwijsUtilsTests
 			};
 			foreach (var filter in filters)
 				PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString())));
-
 		}
 
 		[Test]
