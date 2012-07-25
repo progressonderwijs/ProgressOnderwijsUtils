@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils
 				+ "]";
 		}
 
-		public static Dictionary<TKey, TValue> ToDictionary<TElem, TKey, TValue>(this IEnumerable<TElem> list, Func<TElem, TKey> keyLookup,
+		public static Dictionary<TKey, TValue> ToGroupedDictionary<TElem, TKey, TValue>(this IEnumerable<TElem> list, Func<TElem, TKey> keyLookup,
 			Func<TKey, IEnumerable<TElem>, TValue> groupMap
 			)
 		{
