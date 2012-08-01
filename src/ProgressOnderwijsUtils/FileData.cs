@@ -1,14 +1,18 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace ProgressOnderwijsUtils
 {
-	public struct FileData : IEquatable<FileData>
+	public struct FileData : IEquatable<FileData>, IMetaObject
 	{
-		public byte[] Content { get; set; }
+		/// <summary>
+		/// Only to be used for reading and saving. Would be nice if it could be hidden somehow.
+		/// </summary>
+		public int? FileDataId { get; set; }
+
 		public string ContentType { get; set; }
 		public string FileName { get; set; }
+		public byte[] Content { get; set; }
 
 		public bool ContainsFile { get { return Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0); } }
 		public override string ToString() { return ToUiString(); }
