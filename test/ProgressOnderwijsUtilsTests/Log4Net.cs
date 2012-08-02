@@ -9,7 +9,7 @@ using log4net.Repository.Hierarchy;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
-	public class RollingFileAppenderTest
+	public sealed class RollingFileAppenderTest
 	{
 		private RollingFileAppender sut;
 
