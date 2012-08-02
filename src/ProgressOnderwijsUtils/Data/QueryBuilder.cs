@@ -91,7 +91,6 @@ namespace ProgressOnderwijsUtils
 			else return new PrefixAndSuffix(first, second);
 		}
 
-		public static QueryBuilder Create(string str) { return new SingleComponent(QueryComponent.CreateString(str)); }
 		public static QueryBuilder Param(object o) { return new SingleComponent(QueryComponent.CreateParam(o)); }
 
 		/// <summary>
