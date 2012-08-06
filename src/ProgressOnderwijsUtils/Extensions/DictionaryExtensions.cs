@@ -22,11 +22,22 @@ namespace ProgressOnderwijsUtils
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="defaultValue">The default value of the key.</param>
 		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue defaultValue = default(TValue))
+		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue defaultValue)
 		{
 			TValue result;
 			return dict.TryGetValue(key, out result) ? result : defaultValue;
 		}
+
+		// ReSharper disable IntroduceOptionalParameters.Global
+		/// <summary>
+		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
+		/// </summary>
+		/// <param name="dict">The dictionary to extract  from</param>
+		/// <param name="key">The key whose value to get.</param>
+		/// <param name="defaultValue">The default value of the key.</param>
+		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
+		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) { return GetOrDefault(dict, key, default(TValue)); }
+		// ReSharper restore IntroduceOptionalParameters.Global
 
 		/// <summary>
 		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
