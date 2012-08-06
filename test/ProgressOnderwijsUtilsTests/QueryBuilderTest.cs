@@ -73,8 +73,8 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => qEmpty.GetHashCode() == qZeroWidth.GetHashCode());
 			PAssert.That(() => qZeroWidth == qZeroWidth2);
 			PAssert.That(() => qZeroWidth.GetHashCode() == qZeroWidth2.GetHashCode());
-			PAssert.That(() => qZeroWidthArg != qZeroWidth);
-			PAssert.That(() => qZeroWidthArg.GetHashCode() != qZeroWidth.GetHashCode());
+			PAssert.That(() => qZeroWidthArg == qZeroWidth);
+			PAssert.That(() => qZeroWidthArg.GetHashCode() == qZeroWidth.GetHashCode());
 
 			PAssert.That(() => QueryBuilder.Create("abc") + qZeroWidth == (QueryBuilder)"abc");
 			PAssert.That(() => QueryBuilder.Create("abc") + qZeroWidthArg == QueryBuilder.Create("abc", 42));
