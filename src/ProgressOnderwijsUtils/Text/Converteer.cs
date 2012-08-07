@@ -65,7 +65,10 @@ namespace ProgressOnderwijsUtils
 			{ DatumFormaat.ISODate, Tuple.Create("yyyy-MM-dd", (string)null) },
 			{ DatumFormaat.ISODateTime, Tuple.Create("yyyy-MM-ddTHH:mm:ss", (string)null) },
 		};
+		static readonly DateTime dtWithManyDigits = new DateTime(2000, 1, 1) - TimeSpan.FromDays(1) - TimeSpan.FromHours(1) - TimeSpan.FromMinutes(1) - TimeSpan.FromSeconds(1) - TimeSpan.FromMilliseconds(1) - TimeSpan.FromTicks(1);
+		static readonly Dictionary<DatumFormaat, int> formaatLengte = DATE_FORMATS.Keys.ToDictionary(k => k, k => new[] { Taal.NL, Taal.EN, Taal.DU }.Select(t => dtWithManyDigits.ToString(DATE_FORMATS[k].Item1, t.GetCulture()).Length).Max());
 
+		public static int DateTimeStringLengthForFormat(DatumFormaat formaat) { return formaatLengte[formaat]; }
 
 		static readonly IDictionary<NummerFormaat, string> DECIMAL_FORMATS = new Dictionary<NummerFormaat, string>
 		{
