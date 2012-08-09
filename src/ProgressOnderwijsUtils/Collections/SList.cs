@@ -108,12 +108,12 @@ namespace ProgressOnderwijsUtils.Collections
 
 	public static class SList
 	{
-		public static SList<T> Create<T>(IEnumerable<T> list) where T : IEquatable<T>
+		public static SList<T> Create<T>(IEnumerable<T> list)
 		{
 			if (list is IList<T>) return Create((IList<T>)list);//use IList interface for reverse iterability
 			else return Create(list.ToArray());//can't help but iterate forwards, so at least stick to it with the fastest possible path.
 		}
-		public static SList<T> Create<T>(IList<T> list) where T : IEquatable<T>
+		public static SList<T> Create<T>(IList<T> list)
 		{
 			if (list is T[]) return Create((T[])list);
 			var retval = SList<T>.Empty;
@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtils.Collections
 				retval = retval.Prepend(list[i]);
 			return retval;
 		}
-		public static SList<T> Create<T>(T[] list) where T : IEquatable<T>
+		public static SList<T> Create<T>(T[] list) 
 		{
 			var retval = SList<T>.Empty;
 			for (int i = list.Length - 1; i >= 0; i--)

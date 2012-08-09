@@ -71,6 +71,19 @@ namespace ProgressOnderwijsUtils
 				+ "]";
 		}
 
+		public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(this IEnumerable<T> list, Func<T, TKey> keySelector, Func<T, TVal> valSelector)
+		{
+			return list.ToSortedList(keySelector, valSelector, Comparer<TKey>.Default);
+		}
+
+		public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(this IEnumerable<T> list, Func<T, TKey> keySelector, Func<T, TVal> valSelector, IComparer<TKey> keyComparer)
+		{
+			var retval = new SortedList<TKey, TVal>(keyComparer);
+			foreach (var item in list.OrderBy(keySelector, keyComparer))
+				retval.Add(keySelector(item), valSelector(item));
+			return retval;
+		}
+
 		public static Dictionary<TKey, TValue> ToGroupedDictionary<TElem, TKey, TValue>(this IEnumerable<TElem> list, Func<TElem, TKey> keyLookup,
 			Func<TKey, IEnumerable<TElem>, TValue> groupMap
 			)

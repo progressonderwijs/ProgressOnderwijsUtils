@@ -1,15 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
-	public struct FileData : IEquatable<FileData>
+	public struct FileData : IEquatable<FileData>, ILoadFromDbByFields
 	{
-		public byte[] Content { get; set; }
+		/// <summary>
+		/// Only to be used for reading and saving. Would be nice if it could be hidden somehow.
+		/// </summary>
+		public int? FileDataId { get; set; }
+
 		public string ContentType { get; set; }
 		public string FileName { get; set; }
+		public byte[] Content { get; set; }
 
 		public bool ContainsFile { get { return Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0); } }
 		public override string ToString() { return ToUiString(); }
@@ -32,9 +36,9 @@ namespace ProgressOnderwijsUtils
 		public bool Equals(FileData other)
 		{
 			return
-				Equals(other.ContentType, ContentType) &&
-					Equals(other.FileName, FileName)
-					&& ContentEqual(other);
+				   Equals(other.ContentType, ContentType) &&
+				   Equals(other.FileName, FileName)
+				   && ContentEqual(other);
 		}
 
 		bool ContentEqual(FileData other) { return Content == other.Content || (Content != null && other.Content != null && Content.SequenceEqual(other.Content)); }

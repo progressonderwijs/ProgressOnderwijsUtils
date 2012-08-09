@@ -99,6 +99,8 @@ namespace ProgressOnderwijsUtils
 		public bool Equals(T other) { return other != null && equalsFunc((T)this, other); }
 		public override bool Equals(object obj) { return obj is T && Equals((T)obj); }
 		public override int GetHashCode() { return hashFunc((T)this); }
+		public T Copy() { return (T)MemberwiseClone(); }
+		public T CopyWith(Action<T> action) { var copied = Copy(); action(copied); return copied; }
 
 
 		public override string ToString() { return toStringFunc((T)this); }

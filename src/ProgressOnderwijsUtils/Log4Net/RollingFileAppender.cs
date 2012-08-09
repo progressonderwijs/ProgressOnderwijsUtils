@@ -2,25 +2,24 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using log4net.Layout;
 
 namespace ProgressOnderwijsUtils.Log4Net
 {
-	public class RollingFileAppender : log4net.Appender.RollingFileAppender
+	public sealed class RollingFileAppender : log4net.Appender.RollingFileAppender //TODO:this isn't best practice code; the logging config is hardcoded and deployment dependant.
 	{
-		private const string PATH = @"C:\inetpub\logs\Progress.NET";
+		const string PATH = @"C:\inetpub\logs\Progress.NET";
 
-		private static readonly IDictionary<DatabaseVersion, string> PATHS = new Dictionary<DatabaseVersion, string>
+		static readonly IDictionary<DatabaseVersion, string> PATHS = new Dictionary<DatabaseVersion, string>
 		{
-			{ DatabaseVersion.Undefined, "." },
+			{ DatabaseVersion.Undefined, "." }, 
 			{ DatabaseVersion.ProductieDB, "productie" },
 			{ DatabaseVersion.TestDB, "test" },
 			{ DatabaseVersion.DevTestDB, "ontwikkel" },
 			{ DatabaseVersion.KetenTestDB, "ketentest" },
 			{ DatabaseVersion.BronHODB, "bronho" },
-		}; 
+		};
 
 		public RollingFileAppender()
 		{
@@ -49,12 +48,6 @@ namespace ProgressOnderwijsUtils.Log4Net
 			}
 		}
 
-		private string Context
-		{
-			get
-			{
-				return PATHS[DatabaseVersionAuto.ByDeploymentDirectory()];
-			}
-		}
+		string Context { get { return PATHS[DatabaseVersionAuto.ByDeploymentDirectory()]; } }
 	}
 }

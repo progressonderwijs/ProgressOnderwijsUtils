@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace ProgressOnderwijsUtils.Extensions
+namespace ProgressOnderwijsUtils
 {
 	public static class StringUtils
 	{
@@ -33,17 +33,17 @@ namespace ProgressOnderwijsUtils.Extensions
 			return str.Replace("ß", upper ? "SS" : "ss");
 		}
 
-		static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled);
-
-		/// <summary>
-		/// HTML-alike whitespace collapsing of this string; however, this method also trims.
-		/// </summary>
-		public static string NormalizeWhitespace(this string str)
+		public static string Capitalize(string name)
 		{
-			return COLLAPSE_WHITESPACE.Replace(str, " ").Trim();
+			return name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
 		}
-		//modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
 
+		public static string Uncapitalize(string name)
+		{
+			return name.Substring(0, 1).ToLowerInvariant() + name.Substring(1);
+		}
+
+		//modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
 		public static int LevenshteinDistance(string s, string t, int? substitutionCost = null)
 		{
 			int subsCost = substitutionCost ?? 1;
@@ -103,7 +103,7 @@ namespace ProgressOnderwijsUtils.Extensions
 										| \- |\s|\s+|\-+";
 			string[] newstr = Regex.Split(inp, Regex.Replace(expression, @"\s+", " "));
 			return newstr.Aggregate(inp, (current, t) =>
-				Regex.Replace(current, t, t.Length > 0 ? t.Substring(0, 1).ToUpper() + t.Substring(1).ToLower() : t)
+				Regex.Replace(current, t, t.Length > 0 ? Capitalize(t.ToLowerInvariant()) : t)
 				);
 		}
 

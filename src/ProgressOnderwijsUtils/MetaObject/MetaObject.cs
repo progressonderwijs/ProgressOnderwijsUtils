@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
+using ExpressionToCodeLib;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Data;
 
@@ -44,20 +43,35 @@ namespace ProgressOnderwijsUtils
 		/// Default SqlBulkCopyOptions are SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction
 		/// </summary>
 		/// <typeparam name="T">The type of metaobject to be inserted</typeparam>
-		/// <param name="entities">The list of entities to insert</param>
+		/// <param name="metaObjects">The list of entities to insert</param>
 		/// <param name="sqlconn">The Sql connection to write to</param>
 		/// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
 		/// <param name="options">The SqlBulkCopyOptions to use.  If unspecified, uses SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction which is NOT SqlBulkCopyOptions.Default</param>
-		public static void SqlBulkCopy<T>(IEnumerable<T> entities, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
+		public static void SqlBulkCopy<T>(IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
 		{
+			if (metaObjects == null)
+				throw new ArgumentNullException("metaObjects");
+			if (tableName.Contains('[') || tableName.Contains(']'))
+				throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, "tableName");
+			if (sqlconn == null)
+				throw new ArgumentNullException("sqlconn");
+			if (sqlconn.State != ConnectionState.Open)
+				throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
+
 			SqlBulkCopyOptions effectiveOptions = options ?? (SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction);
-			using (var objectReader = CreateDataReader(entities))
+			DbColumnDefinition[] dataColumns = DbColumnDefinition.GetFromTable(sqlconn, tableName);
+
+			using (var objectReader = CreateDataReader(metaObjects))
 			using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null))
 			{
+				DbColumnDefinition[] clrColumns = DbColumnDefinition.GetFromReader(objectReader);
+
+				var mapping = FieldMapping.VerifyAndCreate(clrColumns, ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)), dataColumns, "table " + tableName);
+
 				bulkCopy.BulkCopyTimeout = 3600;
 				bulkCopy.DestinationTableName = tableName;
-				foreach (var colName in objectReader.FieldNames)
-					bulkCopy.ColumnMappings.Add(colName, colName);
+				foreach (var mapEntry in mapping)
+					bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
 				bulkCopy.WriteToServer(objectReader);
 			}
 		}

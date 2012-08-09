@@ -31,14 +31,14 @@ namespace ProgressOnderwijsUtilsTests
 	}
 
 	[TestFixture, Ignore("Does not seem to work in combination with NUnit 2.6 ???")]
-	public class ILogExtensionsTest
+	public sealed class LogExtensionsTest
 	{
 		private ILog sut;
 
 		[SetUp]
 		public void SetUp()
 		{
-			sut = LogManager.GetLogger(typeof(ILogExtensionsTest));
+			sut = LogManager.GetLogger(typeof(LogExtensionsTest));
 		}
 
 		private void SetLevel(Level level)

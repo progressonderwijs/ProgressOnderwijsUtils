@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-	public class NonceStoreItem : IEquatable<NonceStoreItem>
+	public sealed class NonceStoreItem : IEquatable<NonceStoreItem>
 	{
 		public NonceStoreItem(string context, DateTime? timestamp, string nonce)
 		{

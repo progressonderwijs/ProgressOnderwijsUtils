@@ -113,7 +113,52 @@ namespace ProgressOnderwijsUtilsTests
 			var b = Tree.Node("b");
 			var abcde = Tree.Node("a", b, cd, e);
 			PAssert.That(() => abcde.PreorderTraversal().Select(rooted => rooted.NodeValue).SequenceEqual(new[] { "a", "b", "c", "d", "e" }));
-			PAssert.That(() => abcde.RootHere().PreorderTraversal().Select(rooted => rooted.PathSegments.Select(node => node.NodeValue).JoinStrings()).SequenceEqual(new[] { "a", "ba", "ca", "dca", "ea" }));
+			PAssert.That(() => abcde.RootHere().PreorderTraversal().Select(rooted => rooted.PathSelfToRoot().Select(node => node.NodeValue).JoinStrings()).SequenceEqual(new[] { "a", "ba", "ca", "dca", "ea" }));
 		}
+
+		[Test]
+		public void BuildWorks()
+		{
+			var dict = new Dictionary<string, string[]> {
+				{"root",new[]{"a","b","c"}},
+				{"a",new[]{"b","c"}},
+				{"b",new[]{"c","d"}},
+				{"c",new[]{"e","d"}},
+			};
+			var lookup = dict.SelectMany(kvp => kvp.Value.Select(v => new { Parent = kvp.Key, Child = v })).ToLookup(kv => kv.Parent, kv => kv.Child);
+
+			var tree = Tree.Build("root", id => dict.GetOrDefault(id));
+
+			var e = Tree.Node("e");
+			var d = Tree.Node("d");
+			var c = Tree.Node("c", e, d);
+			var b = Tree.Node("b", c, d);
+			var a = Tree.Node("a", b, c);
+			var root = Tree.Node("root", a, b, c);
+
+			PAssert.That(() => root.Equals(tree), "Generating a tree from a kid lookup delegate");
+
+			PAssert.That(() => root.Equals(Tree.Build("root", dict)), "Generating a tree from a dictionary");
+			PAssert.That(() => root.Equals(Tree.Build("root", lookup)), "Generating a tree from an ILookup");
+			PAssert.That(() => !ReferenceEquals(tree, root), "Test really did create the tree itself");
+
+			var root_a_b = tree.Children[0].Children[0];
+			var root_b = tree.Children[1];
+			PAssert.That(() => root_a_b.NodeValue == "b" && root_b.NodeValue == "b", "Test should select 'b' branches correctly");
+			PAssert.That(() => ReferenceEquals(root_a_b, root_b), "identical subbranches should share memory");
+		}
+
+		[Test]
+		public void BuildDetectsCycles()
+		{
+			Assert.Throws<InvalidOperationException>(() => Tree.Build(0, i => new[] { (i + 1) % 10, (i + 2) % 13 }));
+		}
+
+		[Test]
+		public void CanBuildTree1000Deep()
+		{
+			var tree = Tree.Build(0, i => Enumerable.Range(i+1, 1000 - i)); 
+		}
+
 	}
 }

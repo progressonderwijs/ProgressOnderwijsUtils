@@ -9,7 +9,7 @@ using ProgressOnderwijsUtils.Test;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture, NightlyOnly]
-	public class FileInfoExtensionTest
+	public sealed class FileInfoExtensionTest
 	{
 		private FileInfo sut;
 		private FileInfo other;

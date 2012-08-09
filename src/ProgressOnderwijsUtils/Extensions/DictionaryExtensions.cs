@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
 		public static T Field<T>(this IDictionary<string, object> dict, string key) { return DBNullRemover.Cast<T>(dict[key]); }
 
 		/// <summary>
-		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
+		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrLazyDefault if finding the default is expensive.
 		/// </summary>
 		/// <param name="dict">The dictionary to extract  from</param>
 		/// <param name="key">The key whose value to get.</param>
@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
 
 		// ReSharper disable IntroduceOptionalParameters.Global
 		/// <summary>
-		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
+		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrLazyDefault if finding the default is expensive.
 		/// </summary>
 		/// <param name="dict">The dictionary to extract  from</param>
 		/// <param name="key">The key whose value to get.</param>
@@ -61,21 +61,19 @@ namespace ProgressOnderwijsUtils
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="defaultFactory">The factory method to call to create a default value if not found.</param>
 		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-		public static TValue GetOrCreateDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> defaultFactory)
+		public static TValue GetOrLazyDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> defaultFactory)
 		{
 			TValue result;
 			return dict.TryGetValue(key, out result) ? result : defaultFactory();
 		}
 
 		/// <summary>
-		/// Retrieves the value of a dictionary with setting it to a default if the key does not yet exist.
+		/// Retrieves a value from a dictionary or adds a new value if the key does not yet exist.  An overload to lazily create the new value also exists.
 		/// </summary>
-		/// <typeparam name="TKey"></typeparam>
-		/// <typeparam name="TValue"></typeparam>
-		/// <param name="dict"></param>
+		/// <param name="dict">The dictionary possibly containing the key</param>
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="value">The default value to set if the key does not yet exists.</param>
-		/// <returns>The the key existed in the dictionary, its associated value. If not, insert key with th edefault value and return this default.</returns>
+		/// <returns>The value corresponding to the key in the dictionary (which may have just been added).</returns>
 		public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
 		{
 			if (!dict.ContainsKey(key))
@@ -83,19 +81,21 @@ namespace ProgressOnderwijsUtils
 			return dict[key];
 		}
 
-		public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> factory)
+		/// <summary>
+		/// Retrieves a value from a dictionary or adds a new value if the key does not yet exist. 
+		/// </summary>
+		/// <param name="dict">The dictionary possibly containing the key</param>
+		/// <param name="key">The key whose value to get.</param>
+		/// <param name="factory">The factory to create the value if the key does not yet exists.</param>
+		/// <returns>The value corresponding to the key in the dictionary (which may have just been added).</returns>
+		public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TKey, TValue> factory)
 		{
 			TValue val;
 			if (dict.TryGetValue(key, out val))
 				return val;
-			val = factory();
+			val = factory(key);
 			dict.Add(key, val);
 			return val;
-		}
-
-		public static TValue GetOrAdd<TKey, TValue>(this ConcurrentDictionary<TKey, TValue> dict, TKey key, Func<TValue> factory)
-		{
-			return dict.GetOrAdd(key, _ => factory());
 		}
 	}
 

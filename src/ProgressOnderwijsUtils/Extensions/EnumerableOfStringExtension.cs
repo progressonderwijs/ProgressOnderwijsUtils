@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
-using System.Diagnostics;
 
 namespace ProgressOnderwijsUtils
 {
@@ -53,7 +51,7 @@ namespace ProgressOnderwijsUtils
 		[Test]
 		public void FastJoin()
 		{
-			var ints = Enumerable.Range(0, 20000).Select(i => i.ToString()).ToArray();
+			var ints = Enumerable.Range(0, 20000).Select(i => i.ToStringInvariant()).ToArray();
 			var time = BenchTimer.MinimumTime(() => ints.JoinStrings());
 			Assert.That(time.TotalMilliseconds, Is.LessThan(5.0));
 		}

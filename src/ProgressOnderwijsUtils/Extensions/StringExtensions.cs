@@ -21,8 +21,15 @@ namespace ProgressOnderwijsUtils
 			return s == null || s.Trim().Length == 0;
 		}
 
+		static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled);
 
-
+		/// <summary>
+		/// HTML-alike whitespace collapsing of this string; however, this method also trims.
+		/// </summary>
+		public static string NormalizeWhitespace(this string str)
+		{
+			return COLLAPSE_WHITESPACE.Replace(str, " ").Trim();
+		}
 
 		public static bool EqualsOrdinalCaseInsensitive(this string a, string b){return StringComparer.OrdinalIgnoreCase.Equals(a, b);}
 		public static string TrimToLength(this string s, int maxlength)

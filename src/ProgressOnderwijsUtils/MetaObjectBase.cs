@@ -11,11 +11,8 @@ namespace ProgressOnderwijsUtils
 	/// <typeparam name="T">The sealed derived type.</typeparam>
 	public abstract class MetaObjectBase<T> : ValueBase<T>, IMetaObject where T : MetaObjectBase<T>, new()
 	{
-
 #if DEBUG
 		protected MetaObjectBase() { if (!(this is T)) throw new InvalidOperationException("Only T can subclass ValueClass<T>."); }
 #endif
-		public T Copy() { return (T)MemberwiseClone(); }
-		public T CopyWith(Action<T> action) { var copied = Copy(); action(copied); return copied; }
 	}
 }
