@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using ProgressOnderwijsUtils.Collections;
+
+namespace ProgressOnderwijsUtils.Extensions
+{
+	public static class SetExtensions
+	{
+		public static ReadOnlySet<T> AsReadOnly<T>(this ISet<T> set)
+		{
+			return new ReadOnlySet<T>(set);
+		}
+	}
+}
