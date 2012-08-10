@@ -12,7 +12,6 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[NightlyOnly]
 	public sealed class MetaObjectBulkCopyTest : TestSuiteBase
 	{
 		static readonly BlaOk[] SampleObjects = new[] {
