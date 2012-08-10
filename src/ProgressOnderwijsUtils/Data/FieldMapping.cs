@@ -5,12 +5,18 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Data
 {
+	public enum FieldMappingMode
+	{
+		IgnoreExtraDestinationFields,
+		RequireExactColumnMatches,
+	}
 	public struct FieldMapping
 	{
 		public readonly int SrcIndex, DstIndex;
 		FieldMapping(int srcIndex, int dstIndex) { SrcIndex = srcIndex; DstIndex = dstIndex; }
 
-		public static FieldMapping[] VerifyAndCreate(DbColumnDefinition[] srcFields, string srcSetDebugName, DbColumnDefinition[] dstFields, string dstSetDebugName)
+
+		public static FieldMapping[] VerifyAndCreate(DbColumnDefinition[] srcFields, string srcSetDebugName, DbColumnDefinition[] dstFields, string dstSetDebugName, FieldMappingMode mode)
 		{
 			var mkFieldDict = Utils.F(
 				(DbColumnDefinition[] fields) => fields
@@ -20,8 +26,10 @@ namespace ProgressOnderwijsUtils.Data
 
 			var srcFieldsByName = mkFieldDict(srcFields);
 			var dstFieldsByName = mkFieldDict(dstFields);
+			bool colCountMismatch = srcFieldsByName.Count > dstFieldsByName.Count || mode == FieldMappingMode.RequireExactColumnMatches && srcFieldsByName.Count < dstFieldsByName.Count;
 
-			if (srcFieldsByName.Count != dstFieldsByName.Count || srcFieldsByName.Any(dbCol => !dstFieldsByName.ContainsKey(dbCol.Key) || dstFieldsByName[dbCol.Key].UnderlyingType != dbCol.Value.UnderlyingType))
+
+			if (colCountMismatch || srcFieldsByName.Any(dbCol => !dstFieldsByName.ContainsKey(dbCol.Key) || dstFieldsByName[dbCol.Key].UnderlyingType != dbCol.Value.UnderlyingType))
 			{
 
 				var extraSrcCols = srcFieldsByName.Keys.Where(dbcol => !dstFieldsByName.ContainsKey(dbcol)).ToArray();
@@ -36,7 +44,7 @@ namespace ProgressOnderwijsUtils.Data
 																					   ).JoinStrings()
 					);
 
-				throw new InvalidOperationException("Source " + srcSetDebugName + " has different shape than destination " + dstSetDebugName + ":\n"
+				throw new InvalidOperationException("Source " + srcSetDebugName + " has different shape than destination " + dstSetDebugName + " with mode " + mode + ":\n"
 					+ (!extraSrcCols.Any() ? "" : "\n" + "Fields only on source " + srcSetDebugName + ": " + String.Join(", ", extraSrcCols))
 					+ (!extraDstCols.Any() ? "" : "\n" + "Fields only on destination " + dstSetDebugName + ": " + String.Join(", ", extraDstCols))
 					+ typeMismatchMessage
