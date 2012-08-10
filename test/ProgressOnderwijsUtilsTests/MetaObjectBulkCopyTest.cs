@@ -8,10 +8,11 @@ using Progress.Business;
 using Progress.Business.Data.Volg.DataSource;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-
+	[NightlyOnly]
 	public sealed class MetaObjectBulkCopyTest : TestSuiteBase
 	{
 		static readonly BlaOk[] SampleObjects = new[] {
