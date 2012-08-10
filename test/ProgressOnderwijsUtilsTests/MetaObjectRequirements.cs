@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtilsTests
 // ReSharper disable RedundantNameQualifier
 					typeof(ProgressOnderwijsUtils.DeepEquals), 
 					typeof(Progress.Business.BusinessConnection),
-					typeof(Progress.WebApp.RequestVars),
+					typeof(Progress.WebApp.RequestRouting.RequestVars),
 					typeof(Progress.Gadgets.Context),
 					typeof(Progress.Services.Global), 
 					typeof(Progress.WebFramework.FrameworkSession), 
