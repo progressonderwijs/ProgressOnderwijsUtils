@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
 			{
 				DbColumnDefinition[] clrColumns = DbColumnDefinition.GetFromReader(objectReader);
 
-				var mapping = FieldMapping.VerifyAndCreate(clrColumns, ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)), dataColumns, "table " + tableName, FieldMappingMode.RequireExactColumnMatches);
+				var mapping = FieldMapping.VerifyAndCreate(clrColumns, ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)), dataColumns, "table " + tableName, FieldMappingMode.IgnoreExtraDestinationFields);
 
 				bulkCopy.BulkCopyTimeout = 3600;
 				bulkCopy.DestinationTableName = tableName;
