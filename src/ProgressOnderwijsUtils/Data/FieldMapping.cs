@@ -29,7 +29,9 @@ namespace ProgressOnderwijsUtils.Data
 			bool colCountMismatch = srcFieldsByName.Count > dstFieldsByName.Count || mode == FieldMappingMode.RequireExactColumnMatches && srcFieldsByName.Count < dstFieldsByName.Count;
 
 
-			if (colCountMismatch || srcFieldsByName.Any(dbCol => !dstFieldsByName.ContainsKey(dbCol.Key) || dstFieldsByName[dbCol.Key].UnderlyingType != dbCol.Value.UnderlyingType))
+			if (colCountMismatch || srcFieldsByName.Any(srcField =>
+				!dstFieldsByName.ContainsKey(srcField.Key) || dstFieldsByName[srcField.Key].UnderlyingType != srcField.Value.UnderlyingType
+				))
 			{
 
 				var extraSrcCols = srcFieldsByName.Keys.Where(dbcol => !dstFieldsByName.ContainsKey(dbcol)).ToArray();

@@ -65,7 +65,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 		public sealed class BlaWithMissingClrFields : MetaObjectBase<BlaWithMissingClrFields>
 		{
-			public string Id { get; set; }
+			public int Id { get; set; }
 			public string Bla2 { get; set; }
 		}
 
