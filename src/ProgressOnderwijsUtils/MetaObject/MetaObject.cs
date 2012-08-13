@@ -12,8 +12,8 @@ namespace ProgressOnderwijsUtils
 {
 	//[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
 	public interface IMetaObject { }
-	public interface ILoadFromDbByConstructor { }
-	public interface ILoadFromDbByFields { }
+	public interface IReadByConstructor { }
+	public interface IReadByFields { }
 
 
 	public static class MetaObject

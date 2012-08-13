@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-	public struct FileData : IEquatable<FileData>, ILoadFromDbByFields
+	public struct FileData : IEquatable<FileData>, IReadByFields
 	{
 		/// <summary>
 		/// Only to be used for reading and saving. Would be nice if it could be hidden somehow.
