@@ -7,6 +7,19 @@ namespace ProgressOnderwijsUtils
 {
 	public static class Filter
 	{
+		public sealed class CurrentTimeToken
+		{
+			CurrentTimeToken() { }
+			public static readonly CurrentTimeToken Instance = new CurrentTimeToken();
+			public static CurrentTimeToken Parse(string s)
+			{
+				if (s != "")
+					throw new ArgumentException("Can only parse empty string as current time token!");
+				return Instance;
+			}
+		}
+
+
 		public static QueryBuilder ToQueryBuilder(this FilterBase filter) { return filter == null ? QueryBuilder.Create("1=1") : filter.ToQueryBuilderImpl(); }
 
 		public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter) //where T : IMetaObject

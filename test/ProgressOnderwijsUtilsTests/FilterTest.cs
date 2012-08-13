@@ -33,7 +33,17 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test in (select val from {0})", Enumerable.Range(1, 5)));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotIn, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test not in (select val from {0})", Enumerable.Range(1, 5)));
 		}
+		[Test]
+		public void CurrentTimeTest()
+		{
+			var filter = Filter.CreateCriterium("test", BooleanComparer.Equal, Filter.CurrentTimeToken.Instance);
+			DateTime start = DateTime.Now;
+			while (DateTime.Now == start) { }//wait until start of next tick
+			var q = filter.ToQueryBuilder();
+			var qIdeal = QueryBuilder.Create("test={0}", DateTime.Now);
 
+			PAssert.That(() => q == qIdeal);
+		}
 
 		[Test]
 		public void BooleanComparers()
@@ -163,6 +173,9 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new GroupReference(12345, "blablablaGroup")).SerializeToString() == @"test[in]g12345:blablablaGroup*");
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotIn, new GroupReference(12345, "blablablaGroup")).SerializeToString() == @"test[!in]g12345:blablablaGroup*");
 
+
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, Filter.CurrentTimeToken.Instance).SerializeToString() == @"test[<]n*");
+
 			PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<]i3* ") == null); //extra space!
 			PAssert.That(() => Filter.TryParseSerializedFilter(@"test<]i3*") == null); //missing [
 			PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<i3*") == null); //missing ]
@@ -223,6 +236,7 @@ namespace ProgressOnderwijsUtilsTests
 								Filter.CreateCriterium("test", BooleanComparer.NotIn, new GroupReference(12345,"blablablaGroup")),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, ""),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "*1"),
+								Filter.CreateCriterium("test", BooleanComparer.Equal, Filter.CurrentTimeToken.Instance),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "1*"),
 								Filter.CreateCriterium("test", BooleanComparer.Equal, "1**2*"),
 								Filter.CreateCriterium("test", BooleanComparer.In, new[]{1, 2, 3, 4, 5,}),

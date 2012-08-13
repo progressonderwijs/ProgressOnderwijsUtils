@@ -129,6 +129,7 @@ namespace ProgressOnderwijsUtils
 				Serializer('m', s=>decimal.Parse(s, CultureInfo.InvariantCulture), m=>m.ToStringInvariant()),
 				Serializer('f', s=>double.Parse(s, CultureInfo.InvariantCulture), f=>f.ToStringInvariant()),
 				Serializer('c', s=>new ColumnReference(s), c=>c.ColumnName),
+				Serializer('n', Filter.CurrentTimeToken.Parse, n=>""),
 				Serializer('g', s=>new GroupReference(int.Parse(s.Substring(0, s.IndexOf(':')), CultureInfo.InvariantCulture), s.Substring(s.IndexOf(':') + 1)), 
 								g=>g.GroupId.ToStringInvariant() + ':' + g.Name),
 				Serializer('#', s=> {
@@ -235,7 +236,10 @@ namespace ProgressOnderwijsUtils
 		{
 			if (Waarde is ColumnReference)
 				return QueryBuilder.Create(((ColumnReference)Waarde).ColumnName);
+			else if (Waarde is Filter.CurrentTimeToken)
+				return QueryBuilder.Param(DateTime.Now);
 			else
+
 				return QueryBuilder.Param(Waarde);
 		}
 
