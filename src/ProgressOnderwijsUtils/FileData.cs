@@ -6,11 +6,6 @@ namespace ProgressOnderwijsUtils
 {
 	public struct FileData : IEquatable<FileData>, IReadByFields
 	{
-		/// <summary>
-		/// Only to be used for reading and saving. Would be nice if it could be hidden somehow.
-		/// </summary>
-		public int? FileDataId { get; set; }
-
 		public string ContentType { get; set; }
 		public string FileName { get; set; }
 		public byte[] Content { get; set; }
