@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
 				var accumulateHashExpr =
 					fields.Select((fi, n) => {
 						MemberExpression fieldExpr = Expression.Field(parA, fi);
-						UnaryExpression ulongHashCodeExpr = Expression.Convert(Expression.Convert(Expression.Call(fieldExpr, GetHashcodeMethod(fi.FieldType) ), typeof(uint)), typeof(ulong));
+						UnaryExpression ulongHashCodeExpr = Expression.Convert(Expression.Convert(Expression.Call(fieldExpr, GetHashcodeMethod(fi.FieldType)), typeof(uint)), typeof(ulong));
 						var scaledHashExpr = Expression.Multiply(Expression.Constant((ulong)(2 * n + 1)), ulongHashCodeExpr);
 						return fi.FieldType.IsValueType ? (Expression)scaledHashExpr : Expression.Condition(Expression.Equal(Expression.Default(typeof(object)), fieldExpr), Expression.Constant((ulong)n), scaledHashExpr);
 					}).Aggregate((Expression)Expression.Constant(0UL), Expression.Add);
@@ -52,36 +52,9 @@ namespace ProgressOnderwijsUtils
 
 				hashFunc = Expression.Lambda<Func<T, int>>(Expression.Block(new[] { accumulatorVar }, storeHashAcc, finalHashExpr), parA).Compile();
 
-				var toStringMethod = typeof(object).GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance);
-				var refEqMethod = ((Func<object, object, bool>)ReferenceEquals).Method;
-				var concatMethod = ((Func<string, string, string>)string.Concat).Method;
 
-				Func<Expression, MemberInfo, Expression> membAccess = (expr, mi) => mi is FieldInfo ? Expression.Field(expr, (FieldInfo)mi) : Expression.Property(expr, (PropertyInfo)mi);
 
-				var toStringExpr =
-					Expression.Call(concatMethod,
-						fields.Where(fi => fi.IsPublic).Concat(
-							type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(pi => pi.CanRead && pi.GetGetMethod() != null)
-								.Cast<MemberInfo>()
-							)
-							.Select(fi =>
-								Expression.Call(concatMethod,
-									Expression.Call(concatMethod,
-										Expression.Constant(fi.Name + " = "),
-
-										Expression.Condition(
-											Expression.Call(null, refEqMethod, Expression.Convert(membAccess(parA, fi), typeof(object)), Expression.Default(typeof(object))),
-											Expression.Constant("<NULL>"),
-											Expression.Call(membAccess(parA, fi), toStringMethod)
-											)
-										),
-									Expression.Constant(", ")
-									)
-							).Aggregate((Expression)Expression.Constant(type.Name + "{ "), (a, b) => Expression.Call(concatMethod, a, b)),
-						Expression.Constant("}")
-						);
-
-				toStringFunc = Expression.Lambda<Func<T, string>>(toStringExpr, parA).Compile();
+				toStringFunc = ToStringByMembers<T>.Func;
 			}
 			catch (Exception e)
 			{
@@ -89,9 +62,11 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		static MethodInfo GetHashcodeMethod(Type type) {
-			var objectHashcodeMethod=((Func<int>)(new object().GetHashCode)).Method;
-			var method= type.GetMethod("GetHashCode", BindingFlags.Public | BindingFlags.Instance) ?? objectHashcodeMethod;
+
+		static MethodInfo GetHashcodeMethod(Type type)
+		{
+			var objectHashcodeMethod = ((Func<int>)(new object().GetHashCode)).Method;
+			var method = type.GetMethod("GetHashCode", BindingFlags.Public | BindingFlags.Instance) ?? objectHashcodeMethod;
 			return method.GetBaseDefinition() != objectHashcodeMethod ? objectHashcodeMethod : method;
 
 		}
@@ -104,5 +79,46 @@ namespace ProgressOnderwijsUtils
 
 
 		public override string ToString() { return toStringFunc((T)this); }
+	}
+
+
+	public static class ToStringByMembers<T>
+	{
+		public static readonly Func<T, string> Func = byPublicMembers();
+		static MemberExpression MemberAccessExpression(Expression expr, MemberInfo mi) { return mi is FieldInfo ? Expression.Field(expr, (FieldInfo)mi) : Expression.Property(expr, (PropertyInfo)mi); }
+
+		static Func<T, string> byPublicMembers()
+		{
+			Type type = typeof(T);
+			var refEqMethod = ((Func<object, object, bool>)ReferenceEquals).Method;
+			var toStringMethod = typeof(object).GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance);
+			var concatMethod = ((Func<string, string, string>)string.Concat).Method;
+			var parA = Expression.Parameter(type, "a");
+
+			var toStringExpr =
+				Expression.Call(concatMethod,
+					type.GetFields(BindingFlags.Instance | BindingFlags.Public).Concat(
+						type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(pi => pi.CanRead && pi.GetGetMethod() != null)
+							.Cast<MemberInfo>()
+						)
+						.Select(fi =>
+							Expression.Call(concatMethod,
+								Expression.Call(concatMethod,
+									Expression.Constant(fi.Name + " = "),
+									Expression.Condition(
+										Expression.Call(null, refEqMethod, Expression.Convert(MemberAccessExpression(parA, fi), typeof(object)), Expression.Default(typeof(object))),
+										Expression.Constant("<NULL>"),
+										Expression.Call(MemberAccessExpression(parA, fi), toStringMethod)
+										)
+									),
+								Expression.Constant(", ")
+								)
+						).Aggregate((Expression)Expression.Constant(type.Name + "{ "), (a, b) => Expression.Call(concatMethod, a, b)),
+					Expression.Constant("}")
+					);
+
+			return Expression.Lambda<Func<T, string>>(toStringExpr, parA).Compile();
+		}
+
 	}
 }
