@@ -350,16 +350,6 @@ namespace ProgressOnderwijsUtils
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Handig om Nullables en Strings direct uit de datatable te halen waarbij de DBNull wordt vertaalt naar de null
-		/// </summary>
-		/// <param name="obj">Een object dat potentieel DBNull.Value mag zijn.</param>
-		/// <returns>hetzelfde object of "null" mits het oorspronkelijke object DBNull of null was.</returns>
-		public static object ToNullable(object obj) //TODO:Remove: DbNullRemover makes this obsolete
-		{
-			return obj == DBNull.Value ? null : obj;
-		}
 	}
 
 }
