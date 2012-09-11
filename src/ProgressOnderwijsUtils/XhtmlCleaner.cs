@@ -258,7 +258,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		//door http://www.w3schools.com/tags/ en redelijke selectie gekozen.
-		//om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan.  Om geen form-problemen te hebben mogen form elementen niet.
+		//om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
 		static readonly HashSet<string> defaultSafeElements = new HashSet<string>(
 			"b i big small em strong hr br p span div center font table thead col colgroup tbody tfoot caption tr td th h1 h2 h3 h4 h5 h6 a cite dfn code samp var dl dt dd ins del sub sup tt ul ol li pre q abbr acronym blockquote fieldset legend img".Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 		//public static IEnumerable<string> DefaultSafeElements { get { return defaultSafeElements; } }
