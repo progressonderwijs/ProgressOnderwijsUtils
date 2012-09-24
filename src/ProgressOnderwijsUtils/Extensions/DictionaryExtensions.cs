@@ -97,6 +97,8 @@ namespace ProgressOnderwijsUtils
 			dict.Add(key, val);
 			return val;
 		}
+
+		public static Dictionary<TKey, TValue> Clone<TKey, TValue>(this Dictionary<TKey, TValue> old) { return old == null ? null : new Dictionary<TKey, TValue>(old, old.Comparer); }
 	}
 
 	[TestFixture]

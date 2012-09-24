@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
 			if (!retval.IsEmpty)
 				return retval;
 			else
-				return TextVal.Create("~" + nl);
+				return TextVal.Create("~" + nl, TextVal.UndefinedExtraText);
 		}
 
 		public ITranslatable WithTooltip(string tooltipNL, string tooltipEN, string tooltipDU = null)
