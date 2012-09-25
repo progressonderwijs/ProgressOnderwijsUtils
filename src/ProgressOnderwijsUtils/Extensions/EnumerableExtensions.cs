@@ -28,6 +28,7 @@ namespace ProgressOnderwijsUtils
 			}
 			return -1;
 		}
+
 		public static int IndexOf<T>(this IEnumerable<T> list, Func<T, bool> matcher)
 		{
 			if (list == null) throw new ArgumentNullException("list");

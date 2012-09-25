@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils
 				: lang == Taal.DU ? TextVal.Create(du)
 				: TextVal.CreateUndefined(nl ?? en ?? du);
 
-			if (!retval.IsEmpty)
+			if (string.IsNullOrEmpty(nl) || !retval.IsEmpty)
 				return retval;
 			else
 				return TextVal.Create("~" + nl, TextVal.UndefinedExtraText);
