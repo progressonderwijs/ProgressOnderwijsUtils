@@ -141,5 +141,23 @@ namespace ProgressOnderwijsUtils
 			var parsed = TryParseSerializedFilterWithLeftovers(serialized);
 			return parsed != null && parsed.Item2 == "" ? parsed.Item1 : null;
 		}
+
+        public static IEnumerable<FilterBase> ReplaceCurrentTimeToken(IEnumerable<FilterBase> filters, DateTime replacement)
+        {
+            foreach (FilterBase f in filters)
+            {
+                if (f is CombinedFilter)
+                {
+                    CombinedFilter cf = (CombinedFilter)f;
+                    yield return Filter.CreateCombined(cf.AndOr, ReplaceCurrentTimeToken(cf.FilterLijst, replacement));
+                }
+                else if ((f is CriteriumFilter) && (((CriteriumFilter)f).Waarde is Filter.CurrentTimeToken))
+                {
+                    CriteriumFilter cf = (CriteriumFilter)f;
+                    yield return Filter.CreateCriterium(cf.KolomNaam, cf.Comparer, replacement);
+                }
+                else yield return f;
+            }
+        }
 	}
 }
