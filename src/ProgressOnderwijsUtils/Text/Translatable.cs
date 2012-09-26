@@ -44,13 +44,26 @@ namespace ProgressOnderwijsUtils
 		{
 			return new LazyTranslatable(lazyCreator);
 		}
+		//public static LiteralTranslatable Literal(string nl, string en = null, string du = null)
+		//{
+		//	return new LiteralTranslatable(nl, en, du);
+		//}
 
-		public static LiteralTranslatable Literal(string nl, string en, string du = null)
+		public static LiteralTranslatable Literal(string nl)
+		{
+			return new LiteralTranslatable(nl, null, null);
+		}
+		public static LiteralTranslatable Literal(string nl, string en)
+		{
+			return new LiteralTranslatable(nl, en, null);
+		}
+		public static LiteralTranslatable Literal(string nl, string en, string du)
 		{
 			return new LiteralTranslatable(nl, en, du);
 		}
 
-		public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable,ITranslatable tt) { 
+		public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable, ITranslatable tt)
+		{
 			return CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).Text);
 		}
 

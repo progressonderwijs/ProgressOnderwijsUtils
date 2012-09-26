@@ -16,13 +16,15 @@ namespace ProgressOnderwijsUtils
 		/// <returns>The value at the index, or the default if the array does encompass that index.</returns>
 		public static TValue GetOrDefault<TValue>(this TValue[] array, int index, TValue defaultValue)
 		{
-			return array!=null && index < array.Length && index >= 0 ? array[index] : defaultValue;
+			return array != null && index < array.Length && index >= 0 ? array[index] : defaultValue;
 		}
 
 		static class Helper<T>
 		{
 			public static readonly T[] EmptyArray = new T[0];
 		}
+		public static T[] Empty<T>() { return Helper<T>.EmptyArray; }
+
 
 		/// <summary>
 		/// Return an empty array if it's null

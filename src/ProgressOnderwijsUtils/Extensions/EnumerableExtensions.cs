@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
 			Func<TKey, IEnumerable<TElem>, TValue> groupMap
 			)
 		{
-			Dictionary<TKey, List<TElem>> groups = new Dictionary<TKey, List<TElem>>();
+			var groups = new Dictionary<TKey, List<TElem>>();
 			foreach (var elem in list)
 			{
 				var key = keyLookup(elem);
