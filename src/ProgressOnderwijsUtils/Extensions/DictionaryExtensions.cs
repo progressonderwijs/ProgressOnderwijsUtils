@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
@@ -99,6 +100,9 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public static Dictionary<TKey, TValue> Clone<TKey, TValue>(this Dictionary<TKey, TValue> old) { return old == null ? null : new Dictionary<TKey, TValue>(old, old.Comparer); }
+
+		public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dict) { return new ReadOnlyDictionary<TKey, TValue>(dict); }
+
 	}
 
 	[TestFixture]
