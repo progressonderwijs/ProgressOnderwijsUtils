@@ -263,7 +263,7 @@ namespace ProgressOnderwijsUtils
 			"b i big small em strong hr br p span div center font table thead col colgroup tbody tfoot caption tr td th h1 h2 h3 h4 h5 h6 a cite dfn code samp var dl dt dd ins del sub sup tt ul ol li pre q abbr acronym blockquote fieldset legend img".Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 		//public static IEnumerable<string> DefaultSafeElements { get { return defaultSafeElements; } }
 		//id's en names zijn niet toegestaan zodat er geen conflict kan onstaan met onze code.  style is niet secuur en kan tevens tracing info bevatten.
-		static readonly HashSet<string> defaultSafeAttr = new HashSet<string>(new[] { "lang", "title", "href", "dir", "color", "border", "face", "size", "align", "alt", "bgcolor", "cellspacing", "cellpadding", "char", "charoff", "cite", "height", "width" });
+		static readonly HashSet<string> defaultSafeAttr = new HashSet<string>(new[] { "lang", "title", "href", "dir", "color", "border", "face", "size", "align", "alt", "bgcolor", "cellspacing", "cellpadding", "char", "charoff", "cite", "height", "width", "colspan", "rowspan" });
 		public static IEnumerable<string> DefaultSafeAttributes { get { return defaultSafeAttr; } }
 
 		//de inhoud van deze elementen is volledig oninteressant.
