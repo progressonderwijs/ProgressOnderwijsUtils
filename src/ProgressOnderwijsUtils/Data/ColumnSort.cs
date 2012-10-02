@@ -11,19 +11,19 @@ namespace ProgressOnderwijsUtils
 
 		public string ColumnName { get { return column; } }
 		public SortDirection SortDirection { get { return direction; } }
-		public string SqlSortString { get { return column + " " + direction; } }
+		public string SqlSortString() { return column + " " + direction; }
 
 		public override string ToString() { return "[" + column + " " + direction + "]"; }
 
 		public ColumnSort(string column, SortDirection direction) { this.column = column; this.direction = direction; }
 
-		public ColumnSort WithReverseDirection { get { return new ColumnSort(column, FlipDirection(direction)); } }
+		public ColumnSort WithReverseDirection() { return new ColumnSort(column, FlipDirection(direction)); }
 		public ColumnSort WithDifferentName(string newColumn) { return new ColumnSort(newColumn, direction); }
 
 
 		static SortDirection FlipDirection(SortDirection dir) { return dir == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc; }
 
-		public bool Equals(ColumnSort other) { return other !=null && ColumnName == other.ColumnName && SortDirection == other.SortDirection; }
+		public bool Equals(ColumnSort other) { return other != null && ColumnName == other.ColumnName && SortDirection == other.SortDirection; }
 		public override bool Equals(object obj) { return obj is ColumnSort && Equals((ColumnSort)obj); }
 		public override int GetHashCode() { return column.GetHashCode() + 51 * direction.GetHashCode(); }
 
@@ -45,11 +45,11 @@ namespace ProgressOnderwijsUtils
 			Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
 
 			Assert.AreNotEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc));
-			Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection);
+			Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection());
 
 			Assert.AreNotEqual(new ColumnSort("abc", SortDirection.Asc), null);
 
-			Assert.AreNotEqual(null,new ColumnSort("abc", SortDirection.Asc));
+			Assert.AreNotEqual(null, new ColumnSort("abc", SortDirection.Asc));
 		}
 
 		[Test]
@@ -69,14 +69,14 @@ namespace ProgressOnderwijsUtils
 		[Test]
 		public void CheckSqlSortString()
 		{
-			Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc).SqlSortString, "ziggy Asc");
-			Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test").SqlSortString, "test Asc");
+			Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc).SqlSortString(), "ziggy Asc");
+			Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test").SqlSortString(), "test Asc");
 		}
 		[Test]
 		public void CheckImmutable()
 		{
 			var col = new ColumnSort("ziggy", SortDirection.Asc);
-			col.WithReverseDirection.WithDifferentName("test");
+			col.WithReverseDirection().WithDifferentName("test");
 			Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc), col);
 		}
 
@@ -92,7 +92,7 @@ namespace ProgressOnderwijsUtils
 			Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Asc).GetHashCode());
 
 			Assert.AreNotEqual(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Desc).GetHashCode());
-			Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection.GetHashCode());
+			Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection().GetHashCode());
 		}
 
 	}

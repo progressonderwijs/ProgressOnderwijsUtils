@@ -56,7 +56,7 @@ namespace ProgressOnderwijsUtils
 		{
 			var oldSortCol = GetSortColumn(kolomnaam);
 			return oldSortCol != null
-				? FirstSortBy(oldSortCol.WithReverseDirection)
+				? FirstSortBy(oldSortCol.WithReverseDirection())
 				: new OrderByColumns(DirectAcessColumns.Prepend(new ColumnSort(kolomnaam, SortDirection.Desc)).ToArray());
 		}
 
@@ -68,6 +68,11 @@ namespace ProgressOnderwijsUtils
 			return thenby == null || DirectAcessColumns.Any(sc => sc.ColumnName == thenby.ColumnName) ? this
 				: new OrderByColumns(DirectAcessColumns.Concat(thenby).ToArray());
 		}
+		public OrderByColumns ThenAsc(string column) { return ThenSortBy(new ColumnSort(column, SortDirection.Asc)); }
+		public OrderByColumns ThenDesc(string column) { return ThenSortBy(new ColumnSort(column, SortDirection.Desc)); }
+		public static OrderByColumns Asc(string column) { return new OrderByColumns(column, SortDirection.Asc); }
+		public static OrderByColumns Desc(string column) { return new OrderByColumns(column, SortDirection.Desc); }
+
 		public OrderByColumns ThenSortBy(OrderByColumns thenby)
 		{
 			var mySet = new HashSet<string>(DirectAcessColumns.Select(sc => sc.ColumnName));

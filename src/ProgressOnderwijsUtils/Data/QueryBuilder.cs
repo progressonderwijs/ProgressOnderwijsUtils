@@ -147,7 +147,7 @@ namespace ProgressOnderwijsUtils
 		public static QueryBuilder CreateFromSortOrder(OrderByColumns mostSignificantColumnFirst)
 		{
 			return !mostSignificantColumnFirst.Columns.Any() ? Empty :
-				Create("order by " + mostSignificantColumnFirst.Columns.Select(sc => sc.SqlSortString).JoinStrings(", "));
+				Create("order by " + mostSignificantColumnFirst.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
 		}
 
 		public SqlCommand CreateSqlCommand(SqlConnection conn, int commandTimeout) { return CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), conn, commandTimeout); }
