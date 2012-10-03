@@ -28,15 +28,11 @@ namespace ProgressOnderwijsUtils
 		public static OrderByColumns Empty { get { return default(OrderByColumns); } }
 		public OrderByColumns(IEnumerable<ColumnSort> order)
 		{
-			HashSet<string> usedCols = new HashSet<string>();
+			var usedCols = new HashSet<string>();
 			sortColumns = order.Where(col => usedCols.Add(col.ColumnName)).ToArray();
 		}
 
 		OrderByColumns(ColumnSort[] order) { sortColumns = order; }
-		public OrderByColumns(string column, SortDirection dir) { sortColumns = new[] { new ColumnSort(column, dir) }; }
-		public OrderByColumns(string column, SortDirection dir, string column2, SortDirection dir2) { sortColumns = new[] { new ColumnSort(column, dir), new ColumnSort(column2, dir2) }; }
-		public OrderByColumns(string column, SortDirection dir, string column2, SortDirection dir2, string column3, SortDirection dir3) { sortColumns = new[] { new ColumnSort(column, dir), new ColumnSort(column2, dir2), new ColumnSort(column3, dir3) }; }
-		public OrderByColumns(string column, SortDirection dir, string column2, SortDirection dir2, string column3, SortDirection dir3, string column4, SortDirection dir4) { sortColumns = new[] { new ColumnSort(column, dir), new ColumnSort(column2, dir2), new ColumnSort(column3, dir3), new ColumnSort(column4, dir4) }; }
 
 		public ColumnSort GetSortColumn(string column) { return DirectAcessColumns.FirstOrDefault(sc => sc.ColumnName == column); }
 		public SortDirection? GetColumnSortDirection(string column)
@@ -70,8 +66,8 @@ namespace ProgressOnderwijsUtils
 		}
 		public OrderByColumns ThenAsc(string column) { return ThenSortBy(new ColumnSort(column, SortDirection.Asc)); }
 		public OrderByColumns ThenDesc(string column) { return ThenSortBy(new ColumnSort(column, SortDirection.Desc)); }
-		public static OrderByColumns Asc(string column) { return new OrderByColumns(column, SortDirection.Asc); }
-		public static OrderByColumns Desc(string column) { return new OrderByColumns(column, SortDirection.Desc); }
+		public static OrderByColumns Asc(string column) { return new OrderByColumns(new[] { new ColumnSort(column, SortDirection.Asc) }); }
+		public static OrderByColumns Desc(string column) { return new OrderByColumns(new[] { new ColumnSort(column, SortDirection.Desc) }); }
 
 		public OrderByColumns ThenSortBy(OrderByColumns thenby)
 		{
