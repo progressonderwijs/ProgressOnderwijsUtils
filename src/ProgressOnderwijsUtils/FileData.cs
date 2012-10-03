@@ -1,13 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
 	public struct FileData : IEquatable<FileData>, IReadByFields
 	{
+		private const int MAX_FILE_NAME = 64;
+
+		private string fileName;
+
 		public string ContentType { get; set; }
-		public string FileName { get; set; }
+		public string FileName
+		{
+			get { return fileName; }
+			set
+			{
+				if (value != null && value.Length > MAX_FILE_NAME)
+				{
+					if (Path.HasExtension(value))
+					{
+						fileName = string.Format("{0}{1}",
+							Path.GetFileNameWithoutExtension(value).Substring(0, MAX_FILE_NAME - Path.GetExtension(value).Length),
+							Path.GetExtension(value));
+					}
+					else
+					{
+						fileName = value.Substring(0, MAX_FILE_NAME);	
+					}
+				}
+				else
+				{
+					fileName = value;
+				}
+			}
+		}
 		public byte[] Content { get; set; }
 
 		public bool ContainsFile { get { return Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0); } }
