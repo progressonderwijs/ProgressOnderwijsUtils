@@ -147,7 +147,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => q.ToString() == qAlt.ToString());
 			PAssert.That(() => q.DebugText() == qAlt.DebugText());
 
-			PAssert.That(() => qAlt.CommandText() == qAltWrong.CommandText());
+			PAssert.That(() => qAlt.CommandText() != qAltWrong.CommandText());
 			PAssert.That(() => qAlt.DebugText() != qAltWrong.DebugText());
 			PAssert.That(() => !qAlt.Equals(qAltWrong));
 			PAssert.That(() => qAlt != qAltWrong);
