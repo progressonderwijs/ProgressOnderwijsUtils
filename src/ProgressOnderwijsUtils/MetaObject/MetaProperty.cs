@@ -125,10 +125,16 @@ namespace ProgressOnderwijsUtils
 				naam = pi.Name;
 				var mpVolgordeAttribute = Attr<MpVolgordeAttribute>(pi);
 				volgorde = mpVolgordeAttribute == null ? implicitOrder * 10 : mpVolgordeAttribute.Volgorde;
-				label = OrDefault(Attr<MpSimpleLabelAttribute>(pi), mkAttr => mkAttr.Label)
-					?? (Attr<MpLabelsRequiredAttribute>(pi.DeclaringType) == null ? Converteer.ToText(StringUtils.PrettyPrintCamelCased(pi.Name)) : null);
-				if (Label == null)
-					throw new ArgumentException("You must specify an MpSimpleLabel or MpTextDefKey on " + Naam + ", since the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " is marked MpLabelsRequired");
+
+				var labelNoTt = OrDefault(Attr<MpLabelAttribute>(pi), mkAttr => Translatable.Literal(mkAttr.NL, mkAttr.EN, mkAttr.DE));
+				if (labelNoTt == null && Attr<MpLabelsRequiredAttribute>(pi.DeclaringType) != null)
+					throw new ArgumentException("You must specify an MpLabel on " + Naam + ", since the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " is marked MpLabelsRequired");
+				if (labelNoTt == null)
+				{
+					var prettyName = StringUtils.PrettyPrintCamelCased(pi.Name);
+					labelNoTt = Translatable.Literal(prettyName, prettyName, prettyName);
+				}
+				label = OrDefault(Attr<MpTooltipAttribute>(pi), mkAttr => labelNoTt.WithTooltip(mkAttr.NL, mkAttr.EN, mkAttr.DE), labelNoTt);
 				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(pi), mkAttr => mkAttr.KoppelTabelNaam ?? pi.Name);
 				verplicht = OrDefault(Attr<MpVerplichtAttribute>(pi), mkAttr => true);
 				allowNull = OrDefault(Attr<MpAllowNullAttribute>(pi), mkAttr => true);

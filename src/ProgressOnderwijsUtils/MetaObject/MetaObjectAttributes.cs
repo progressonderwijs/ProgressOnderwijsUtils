@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
 	public sealed class MpNotMappedAttribute : Attribute { }
-	
+
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpLengteAttribute : Attribute
@@ -43,12 +43,22 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	public sealed class MpSimpleLabelAttribute : Attribute
+	public sealed class MpTooltipAttribute : Attribute
 	{
-		public MpSimpleLabelAttribute(string text, string helptext) { Label = new TextDefSimple(text, helptext); }
-		public MpSimpleLabelAttribute(string text) { Label = new TextDefSimple(text, ""); }
-		public readonly ITranslatable Label;
+		public MpTooltipAttribute(string nl, string en, string de) { NL = nl; EN = en; DE = de; }
+		public MpTooltipAttribute(string nl, string en) { NL = nl; EN = en; }
+		public MpTooltipAttribute(string nl) { NL = nl; }
+		public readonly string NL, EN, DE;
 	}
+	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class MpLabelAttribute : Attribute
+	{
+		public MpLabelAttribute(string nl, string en, string de) { NL = nl; EN = en; DE = de; }
+		public MpLabelAttribute(string nl, string en) { NL = nl; EN = en; }
+		public MpLabelAttribute(string nl) { NL = nl; }
+		public readonly string NL, EN, DE;
+	}
+
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpKoppelTabelAttribute : Attribute
