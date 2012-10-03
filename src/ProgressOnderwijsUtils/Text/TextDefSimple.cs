@@ -20,5 +20,9 @@ namespace ProgressOnderwijsUtils
 		public override string ToString() { return GenerateUid(); }
 
 		public TextVal Translate(Taal taal) { return tv; }
+
+		public static ITranslatable Create(string tekst) { return new TextDefSimple(tekst, null); }
+		public static ITranslatable Create(string tekst, string helptekst) { return new TextDefSimple(tekst, helptekst); }
+		public static ITranslatable Create(TextVal tv) { return new TextDefSimple(tv); }
 	}
 }
