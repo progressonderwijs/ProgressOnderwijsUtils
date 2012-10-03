@@ -17,8 +17,8 @@ namespace ProgressOnderwijsUtils.Log4Net
 			{ DatabaseVersion.ProductieDB, "productie" },
 			{ DatabaseVersion.TestDB, "test" },
 			{ DatabaseVersion.DevTestDB, "ontwikkel" },
-			{ DatabaseVersion.KetenTestDB, "ketentest" },
 			{ DatabaseVersion.BronHODB, "bronho" },
+			{ DatabaseVersion.KVA4DB, "kva4db" },
 		};
 
 		public RollingFileAppender()
