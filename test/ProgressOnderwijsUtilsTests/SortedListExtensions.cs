@@ -15,13 +15,13 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void SimpleTests()
 		{
-			var list1 = new SortedList { { "abc", 1 }, { "def", 2 }, { "xyz", 3 }, };
-			var list2 = new SortedList { { "def", 2 }, { "xyz", 3 }, { "abc", 1 }, };
+			var list1 = new RowKey { { "abc", 1 }, { "def", 2 }, { "xyz", 3 }, };
+			var list2 = new RowKey { { "def", 2 }, { "xyz", 3 }, { "abc", 1 }, };
 
-			var list3 = new SortedList { { "def", 2 }, { "xyz", 4 }, { "abc", 1 }, };
-			var list4 = new SortedList { { "def", 2 }, { "xyz ", 3 }, { "abc", 1 }, };
+			var list3 = new RowKey { { "def", 2 }, { "xyz", 4 }, { "abc", 1 }, };
+			var list4 = new RowKey { { "def", 2 }, { "xyz ", 3 }, { "abc", 1 }, };
 
-			var list5 = new SortedList { { "def", 2 }, { "xyz", 3 }, };
+			var list5 = new RowKey { { "def", 2 }, { "xyz", 3 }, };
 
 			PAssert.That(() => list1.EqualsKeyValue(list2) && list1 != list2);
 			PAssert.That(() => !list1.EqualsKeyValue(null));

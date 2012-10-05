@@ -9,6 +9,13 @@ namespace ProgressOnderwijsUtils
 		public readonly int Volgorde;
 	}
 
+	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class MpLijstCssAttribute : Attribute
+	{
+		public MpLijstCssAttribute(string cssClass) { CssClass = cssClass; }
+		public readonly string CssClass;
+	}
+
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true, AllowMultiple = false)]
 	public sealed class MpLabelsRequiredAttribute : Attribute { }
 
@@ -25,6 +32,10 @@ namespace ProgressOnderwijsUtils
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpVerplichtAttribute : Attribute { }
+
+	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class HideAttribute : Attribute { }
+
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpReadonlyAttribute : Attribute { }

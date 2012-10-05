@@ -12,6 +12,7 @@ namespace ProgressOnderwijsUtils
 	public interface IMetaProperty
 	{
 		string Naam { get; }
+		string LijstCssClass { get; }
 		Func<object, object> Getter { get; }
 		Action<object, object> Setter { get; }
 		int Volgorde { get; }
@@ -23,6 +24,7 @@ namespace ProgressOnderwijsUtils
 		string KoppelTabelNaam { get; }
 		bool IsReadonly { get; }
 		bool IsKey { get; }
+		bool Hide { get; }
 		bool ShowDefaultOnNew { get; }
 		bool CanRead { get; }
 		Type DataType { get; }
@@ -43,11 +45,17 @@ namespace ProgressOnderwijsUtils
 			readonly string naam;
 			public string Naam { get { return naam; } }
 
+			readonly string lijstCssClass;
+			public string LijstCssClass { get { return lijstCssClass; } }
+
 			readonly int volgorde;
 			public int Volgorde { get { return volgorde; } }
 
 			readonly bool verplicht;
 			public bool Verplicht { get { return verplicht; } }
+
+			readonly bool hide;
+			public bool Hide { get { return hide; } }
 
 			readonly bool allowNull;
 			public bool AllowNull { get { return allowNull; } }
@@ -136,7 +144,9 @@ namespace ProgressOnderwijsUtils
 				}
 				label = OrDefault(Attr<MpTooltipAttribute>(pi), mkAttr => labelNoTt.WithTooltip(mkAttr.NL, mkAttr.EN, mkAttr.DE), labelNoTt);
 				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(pi), mkAttr => mkAttr.KoppelTabelNaam ?? pi.Name);
+				lijstCssClass = OrDefault(Attr<MpLijstCssAttribute>(pi), mkAttr => mkAttr.CssClass);
 				verplicht = OrDefault(Attr<MpVerplichtAttribute>(pi), mkAttr => true);
+				hide = OrDefault(Attr<HideAttribute>(pi), mkAttr => true);
 				allowNull = OrDefault(Attr<MpAllowNullAttribute>(pi), mkAttr => true);
 				isKey = OrDefault(Attr<KeyAttribute>(pi), mkAttr => true);
 				showDefaultOnNew = OrDefault(Attr<MpShowDefaultOnNewAttribute>(pi), mkAttr => true);

@@ -23,9 +23,9 @@ namespace ProgressOnderwijsUtils
 
 		static SortDirection FlipDirection(SortDirection dir) { return dir == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc; }
 
-		public bool Equals(ColumnSort other) { return other != null && ColumnName == other.ColumnName && SortDirection == other.SortDirection; }
+		public bool Equals(ColumnSort other) { return other != null && string.Equals(ColumnName, other.ColumnName, StringComparison.OrdinalIgnoreCase) && SortDirection == other.SortDirection; }
 		public override bool Equals(object obj) { return obj is ColumnSort && Equals((ColumnSort)obj); }
-		public override int GetHashCode() { return column.GetHashCode() + 51 * direction.GetHashCode(); }
+		public override int GetHashCode() { return StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * direction.GetHashCode(); }
 
 		public static bool operator ==(ColumnSort a, ColumnSort b) { return ReferenceEquals(a, b) || null != (object)a && a.Equals(b); }
 		public static bool operator !=(ColumnSort a, ColumnSort b) { return !ReferenceEquals(a, b) && (null == (object)a || !a.Equals(b)); }

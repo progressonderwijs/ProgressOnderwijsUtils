@@ -8,12 +8,12 @@ namespace ProgressOnderwijsUtils
 {
 	public static class SortedListExtension
 	{
-		public static bool EqualsKeyValue(this SortedList a, SortedList b)
+		public static bool EqualsKeyValue(this RowKey a, RowKey b)
 		{
 			return a == b ||
 				(a != null && b != null
-					&& a.Values.Cast<object>().SequenceEqual(b.Values.Cast<object>())
-					&& a.Keys.Cast<object>().SequenceEqual(b.Keys.Cast<object>())
+					&& a.Values.SequenceEqual(b.Values)
+					&& a.Keys.SequenceEqual(b.Keys, StringComparer.OrdinalIgnoreCase)
 				);
 		}
 	}

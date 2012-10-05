@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
 		public string ExtraText { get { return m_helptext; } }
 
 		public static string UndefinedExtraText { get { return "Sorry, this text is not available in your language"; } }
-		public bool IsDefined { get { return UndefinedExtraText != ExtraText; } }
+		public bool IsDefined { get { return !(UndefinedExtraText == ExtraText || Text != null && Text.StartsWith("~") && ExtraText != null && ExtraText.StartsWith("~")); } }
 		public bool IsEmpty { get { return string.IsNullOrEmpty(Text) && string.IsNullOrEmpty(ExtraText); } }
 		/// <summary>
 		/// Creates a new fully resolved text with help-text.
