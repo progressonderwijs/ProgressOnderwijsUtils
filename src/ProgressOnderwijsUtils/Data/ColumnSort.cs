@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
 		{
 			Assert.AreNotEqual(new ColumnSort("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc));
 			Assert.AreEqual(new ColumnSort("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
-			Assert.AreNotEqual(new ColumnSort("test", SortDirection.Asc), new ColumnSort("Test", SortDirection.Asc));
+			Assert.AreEqual(new ColumnSort("test", SortDirection.Asc), new ColumnSort("Test", SortDirection.Asc));
 
 			Assert.AreNotSame(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
 			Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
@@ -58,8 +58,8 @@ namespace ProgressOnderwijsUtils
 			Assert.That(new ColumnSort("test", SortDirection.Asc) == new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
 			Assert.IsFalse(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
 
-			Assert.That(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("Test", SortDirection.Asc));
-			Assert.IsFalse(new ColumnSort("test", SortDirection.Asc) == new ColumnSort("Test", SortDirection.Asc));
+			Assert.That(new ColumnSort("test", SortDirection.Asc) == new ColumnSort("Test", SortDirection.Asc));
+			Assert.IsFalse(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("Test", SortDirection.Asc));
 
 			Assert.That(new ColumnSort("test", SortDirection.Asc) != null);
 			Assert.IsFalse(new ColumnSort("test", SortDirection.Asc) == null);
@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils
 
 			Assert.AreNotEqual(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("ziggy", SortDirection.Asc).GetHashCode());
 			Assert.AreEqual(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test").GetHashCode());
-			Assert.AreNotEqual(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("Test", SortDirection.Asc).GetHashCode());
+			Assert.AreEqual(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("Test", SortDirection.Asc).GetHashCode());
 
 			Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Asc).GetHashCode());
 
