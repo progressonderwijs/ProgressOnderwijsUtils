@@ -35,7 +35,6 @@ namespace ProgressOnderwijsUtils
 	{
 		Func<TOwner, object> TypedGetter { get; }
 		Action<TOwner, object> TypedSetter { get; }
-		Func<TOwner, TOwner, int> CompareByFunc { get; }
 	}
 
 	public static class MetaProperty
@@ -86,48 +85,38 @@ namespace ProgressOnderwijsUtils
 			public readonly bool isKey;
 			public bool IsKey { get { return isKey; } }
 
+			static T MkDel<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
 			public Impl(PropertyInfo pi, int implicitOrder)
 			{
+				bool isCovariant = !pi.PropertyType.IsValueType && !typeof(TOwner).IsValueType;
+
 				propertyInfo = pi;
-
-				ParameterExpression objParamExpr = Expression.Parameter(typeof(object), "propertyOwner");
-				MemberExpression propExpr = Expression.Property(Expression.Convert(objParamExpr, typeof(TOwner)), pi);
-				getter = Expression.Lambda<Func<object, object>>(Expression.Convert(propExpr, typeof(object)), objParamExpr).Compile();
-
 
 				ParameterExpression typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
 				MemberExpression typedPropExpr = Expression.Property(typedParamExpr, pi);
-				typedGetter = Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
+				typedGetter =
+					isCovariant ? MkDel<Func<TOwner, object>>(pi.GetGetMethod()) :
+					Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
 
+				//ParameterExpression objParamExpr = Expression.Parameter(typeof(object), "propertyOwner");
+				//MemberExpression propExpr = Expression.Property(Expression.Convert(objParamExpr, typeof(TOwner)), pi);
+				//getter = Expression.Lambda<Func<object, object>>(Expression.Convert(propExpr, typeof(object)), objParamExpr).Compile();
 
-				ParameterExpression parA = Expression.Parameter(typeof(TOwner), "a");
-				ParameterExpression parB = Expression.Parameter(typeof(TOwner), "b");
-				var comparer =
-					pi.PropertyType == typeof(string) ? StringComparer.OrdinalIgnoreCase
-					:
-					typeof(Comparer<>).MakeGenericType(pi.PropertyType).GetProperty("Default", BindingFlags.Public | BindingFlags.Static).GetValue(null, null);
-				var cmpMethod = typeof(IComparer<>).MakeGenericType(pi.PropertyType).GetMethod("Compare", BindingFlags.Instance | BindingFlags.Public);
-
-				var cmpExpr = Expression.Call(Expression.Constant(comparer), cmpMethod, Expression.Property(parA, pi), Expression.Property(parB, pi));
-
-				compareByFunc = Expression.Lambda<Func<TOwner, TOwner, int>>(cmpExpr, parA, parB).Compile();
+				getter = o => typedGetter((TOwner)o);
 
 
 				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
 
-				bool canWrite = !pi.CanWrite || pi.GetSetMethod() == null;
-				setter = canWrite ? default(Action<object, object>) :
-																		Expression.Lambda<Action<object, object>>(
-																			Expression.Assign(propExpr,
-																							  Expression.Convert(valParamExpr, pi.PropertyType)
-																				), objParamExpr, valParamExpr
+				bool cannotWrite = !pi.CanWrite || pi.GetSetMethod() == null;
+
+				typedSetter = cannotWrite ? default(Action<TOwner, object>) :
+																		Expression.Lambda<Action<TOwner, object>>(
+																			Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)
+																				), typedParamExpr, valParamExpr
 																			).Compile();
 
-				typedSetter = canWrite ? default(Action<TOwner, object>) :
-																			Expression.Lambda<Action<TOwner, object>>(
-																				Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)
-																					), typedParamExpr, valParamExpr
-																				).Compile();
+				setter = cannotWrite ? default(Action<object, object>) : (o, v) => typedSetter((TOwner)o, v);
+
 
 
 				naam = pi.Name;
@@ -164,12 +153,8 @@ namespace ProgressOnderwijsUtils
 
 			public readonly Func<object, object> getter;
 			public readonly Func<TOwner, object> typedGetter;
-			public readonly Func<TOwner, TOwner, int> compareByFunc;
 			public Func<object, object> Getter { get { return getter; } }
 			public Func<TOwner, object> TypedGetter { get { return typedGetter; } }
-
-			public Func<TOwner, TOwner, int> CompareByFunc { get { return compareByFunc; } }
-
 			public readonly Action<object, object> setter;
 			public readonly Action<TOwner, object> typedSetter;
 			public Action<object, object> Setter { get { return setter; } }
