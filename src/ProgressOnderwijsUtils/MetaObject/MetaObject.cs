@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils;
@@ -21,6 +23,33 @@ namespace ProgressOnderwijsUtils
 		public static IEnumerable<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()).Properties; }
 		//public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
 		public static IEnumerable<IMetaProperty<T>> GetMetaProperties<T>() where T : IMetaObject { return MetaPropCache<T>.properties; }
+
+		public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> property)
+		{
+			var paramExpr = property.Parameters.Single();
+			var bodyExpr = property.Body;
+
+			var innerExpr = bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr;
+
+			if (!(innerExpr is MemberExpression))
+				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
+					"The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
+			var membExpr = ((MemberExpression)innerExpr);
+			if (membExpr.Expression != paramExpr)
+				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
+					"A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
+			var propertyInfo = membExpr.Member as PropertyInfo;
+			if (propertyInfo == null)
+				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
+					"The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property");
+
+			var mp = MetaPropCache<TMetaObject>.propertiesByInfo.GetOrDefault(propertyInfo);
+			if (mp == null)
+				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
+					"The argument lambda refers to a property " + propertyInfo.Name + " that is not a MetaProperty");
+			return mp;
+		}
+
 
 		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
 		{
@@ -97,6 +126,7 @@ namespace ProgressOnderwijsUtils
 		sealed class MetaPropCache<T> : IMetaPropCache
 		{
 			public readonly static IMetaProperty<T>[] properties;
+			public readonly static ReadOnlyDictionary<PropertyInfo, IMetaProperty<T>> propertiesByInfo;
 			static MetaPropCache()
 			{
 				if (typeof(T) == typeof(IMetaObject))
@@ -109,6 +139,7 @@ namespace ProgressOnderwijsUtils
 					throw new ArgumentException("IMetaObjects must be sealed! The type " + typeof(T) + " is not sealed");
 
 				properties = GetMetaPropertiesImpl().Cast<IMetaProperty<T>>().ToArray();
+				propertiesByInfo = properties.ToDictionary(mp => mp.PropertyInfo).AsReadOnly();
 			}
 			public IMetaProperty[] Properties { get { return properties; } }
 			//public object DynGet(IMetaObject obj, string propertyName) { return properties.Single(prop => prop.Naam == propertyName).Getter(obj); }
