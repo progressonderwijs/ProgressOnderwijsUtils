@@ -25,9 +25,14 @@ namespace ProgressOnderwijsUtils
 		public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter) //where T : IMetaObject
 		{
 			if (filter == null) return _ => true;
+			return ToMetaObjectFilterExpr<T>(filter).Compile();
+		}
+
+		public static Expression<Func<T, bool>> ToMetaObjectFilterExpr<T>(FilterBase filter)
+		{
 			var metaObjParam = Expression.Parameter(typeof(T));
-			var filterBodyExpr = filter.ToMetaObjectFilterExpr<T>(metaObjParam);
-			return Expression.Lambda<Func<T, bool>>(filterBodyExpr, metaObjParam).Compile();
+			var filterBodyExpr = filter == null ? Expression.Constant(true) : filter.ToMetaObjectFilterExpr<T>(metaObjParam);
+			return Expression.Lambda<Func<T, bool>>(filterBodyExpr, metaObjParam);
 		}
 
 		public static FilterBase Replace(this FilterBase filter, FilterBase toReplace, FilterBase replaceWith)
@@ -142,22 +147,16 @@ namespace ProgressOnderwijsUtils
 			return parsed != null && parsed.Item2 == "" ? parsed.Item1 : null;
 		}
 
-        public static IEnumerable<FilterBase> ReplaceCurrentTimeToken(IEnumerable<FilterBase> filters, DateTime replacement)
-        {
-            foreach (FilterBase f in filters)
-            {
-                if (f is CombinedFilter)
-                {
-                    CombinedFilter cf = (CombinedFilter)f;
-                    yield return Filter.CreateCombined(cf.AndOr, ReplaceCurrentTimeToken(cf.FilterLijst, replacement));
-                }
-                else if ((f is CriteriumFilter) && (((CriteriumFilter)f).Waarde is Filter.CurrentTimeToken))
-                {
-                    CriteriumFilter cf = (CriteriumFilter)f;
-                    yield return Filter.CreateCriterium(cf.KolomNaam, cf.Comparer, replacement);
-                }
-                else yield return f;
-            }
-        }
+		public static FilterBase ReplaceCurrentTimeToken(FilterBase f, DateTime replacement)
+		{
+			var comb = f as CombinedFilter;
+			var crit = f as CriteriumFilter;
+			if (comb != null)
+				return CreateCombined(comb.AndOr, comb.FilterLijst.Select(kid => ReplaceCurrentTimeToken(kid, replacement)));
+			else if (crit != null && crit.Waarde is CurrentTimeToken)
+				return CreateCriterium(crit.KolomNaam, crit.Comparer, replacement);
+			else
+				return f;
+		}
 	}
 }
