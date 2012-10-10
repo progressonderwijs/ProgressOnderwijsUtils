@@ -46,6 +46,15 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
+		public void BadInFilterThrows()
+		{
+			Assert.Throws<ArgumentException>(()=> Filter.CreateCriterium("test", BooleanComparer.In, new[]{ default(int?), 1,2  }));
+			Assert.Throws<ArgumentException>(() => Filter.CreateCriterium("test", BooleanComparer.NotIn, Enumerable.Range(1,10)));
+			Filter.CreateCriterium("test", BooleanComparer.NotIn, Enumerable.Range(1, 10).ToArray());//shouldn't throw.
+		}
+
+
+		[Test]
 		public void BooleanComparers()
 		{
 			var comparers = Enum.GetValues(typeof(BooleanComparer)).Cast<BooleanComparer>();

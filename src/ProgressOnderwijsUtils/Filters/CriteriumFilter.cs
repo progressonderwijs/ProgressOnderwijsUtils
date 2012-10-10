@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Collections;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
@@ -37,7 +38,22 @@ namespace ProgressOnderwijsUtils
 		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.EndsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
 		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
 
-		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde) { _KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde; }
+		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde)
+		{
+			_KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde;
+			if ((Comparer == BooleanComparer.In || Comparer == BooleanComparer.NotIn)
+				&& !(Waarde is GroupReference))
+			{
+				try
+				{
+					QueryComponent.ToTableParameter((dynamic)(Array)Waarde);
+				}
+				catch (Exception e)
+				{
+					throw new ArgumentException("Cannot create an in filter with this value", e);
+				}
+			}
+		}
 
 		protected internal override QueryBuilder ToQueryBuilderImpl()
 		{
