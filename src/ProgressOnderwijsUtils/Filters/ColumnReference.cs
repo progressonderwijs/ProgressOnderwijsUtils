@@ -40,6 +40,8 @@ namespace ProgressOnderwijsUtils
 		public override int GetHashCode() { return 27 + Value.GetHashCode(); }
 		public static bool operator ==(LiteralSqlInt a, LiteralSqlInt b) { return ReferenceEquals(a, b) || a != null && b != null && a.Equals(b); }
 		public static bool operator !=(LiteralSqlInt a, LiteralSqlInt b) { return !ReferenceEquals(a, b) && (a == null || b == null || !a.Equals(b)); }
+
+		public static LiteralSqlInt Create(int p) { return new LiteralSqlInt(p); }
 	}
 
 }
