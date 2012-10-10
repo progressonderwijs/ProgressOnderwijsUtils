@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Data;
 
@@ -15,6 +16,7 @@ namespace ProgressOnderwijsUtils
 	//[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
 	public interface IMetaObject { }
 	public interface IReadByConstructor { }
+	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
 	public interface IReadByFields { }
 
 
