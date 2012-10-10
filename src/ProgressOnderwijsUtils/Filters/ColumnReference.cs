@@ -32,6 +32,8 @@ namespace ProgressOnderwijsUtils
 		{
 			Value = val;
 		}
+		public readonly static LiteralSqlInt Zero = new LiteralSqlInt(0);
+		public readonly static LiteralSqlInt One = new LiteralSqlInt(1);
 
 		public bool Equals(LiteralSqlInt other) { return Value == other.Value; }
 		public override bool Equals(object obj) { return obj is LiteralSqlInt && Equals((LiteralSqlInt)obj); }
