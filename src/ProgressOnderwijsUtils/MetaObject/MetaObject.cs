@@ -13,7 +13,7 @@ using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
-	//[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
+	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
 	public interface IMetaObject { }
 	public interface IReadByConstructor { }
 	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
