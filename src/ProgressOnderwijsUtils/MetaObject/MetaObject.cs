@@ -52,7 +52,6 @@ namespace ProgressOnderwijsUtils
 			return mp;
 		}
 
-
 		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
 		{
 			DataTable dt = new DataTable();
