@@ -5,6 +5,19 @@ using System.Linq.Expressions;
 
 namespace ProgressOnderwijsUtils
 {
+	public interface IFilterCreationMixin<T> { }
+
+	public static class Filter<TMetaObject>
+	{
+		public static FilterBase CreateFilter<T>(Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, T waarde)
+		{
+			var mp = MetaObject.GetByExpression(columnToFilter);
+			return Filter.CreateCriterium(mp.Naam, comparer, waarde);
+		}
+
+	}
+
+
 	public static class Filter
 	{
 		public sealed class CurrentTimeToken
@@ -54,6 +67,13 @@ namespace ProgressOnderwijsUtils
 		/// Maakt een filter definitie aan.  Om twee kolommen onderling te vergelijken, moet de waarde van type ColumnReference zijn.
 		/// </summary>
 		public static FilterBase CreateCriterium(string kolomnaam, BooleanComparer comparer, object waarde) { return new CriteriumFilter(kolomnaam, comparer, waarde); }
+
+		public static FilterBase CreateFilter<TMetaObject, T>(this IFilterCreationMixin<TMetaObject> target, Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, T waarde)
+		{
+			var mp = MetaObject.GetByExpression(columnToFilter);
+			return CreateCriterium(mp.Naam, comparer, waarde);
+		}
+
 		public static FilterBase CreateCombined(BooleanOperator andor, FilterBase a, FilterBase b, params  FilterBase[] extra) { return CreateCombined(andor, new[] { a, b }.Concat(extra)); }
 
 		public static FilterBase CreateCombined(BooleanOperator andor, IEnumerable<FilterBase> condities)
