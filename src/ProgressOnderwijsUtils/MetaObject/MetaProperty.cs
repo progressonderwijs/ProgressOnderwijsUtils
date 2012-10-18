@@ -132,6 +132,7 @@ namespace ProgressOnderwijsUtils
 					labelNoTt = Translatable.Literal(prettyName, prettyName, prettyName);
 				}
 				label = OrDefault(Attr<MpTooltipAttribute>(pi), mkAttr => labelNoTt.WithTooltip(mkAttr.NL, mkAttr.EN, mkAttr.DE), labelNoTt);
+
 				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(pi), mkAttr => mkAttr.KoppelTabelNaam ?? pi.Name);
 				lijstCssClass = OrDefault(Attr<MpLijstCssAttribute>(pi), mkAttr => mkAttr.CssClass);
 				verplicht = OrDefault(Attr<MpVerplichtAttribute>(pi), mkAttr => true);

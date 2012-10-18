@@ -68,6 +68,8 @@ namespace ProgressOnderwijsUtils
 		public MpLabelAttribute(string nl, string en) { NL = nl; EN = en; }
 		public MpLabelAttribute(string nl) { NL = nl; }
 		public readonly string NL, EN, DE;
+
+		public LiteralTranslatable ToTranslatable(){return Translatable.Literal(NL, EN, DE);}
 	}
 
 

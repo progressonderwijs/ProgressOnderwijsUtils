@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
 	{
 		static class EnumMetaCache<TEnum> where TEnum : struct
 		{
-			public static readonly ReadOnlyCollection<TEnum> EnumValues = new ReadOnlyCollection<TEnum>((TEnum[])Enum.GetValues( typeof(TEnum)));
+			public static readonly ReadOnlyCollection<TEnum> EnumValues = new ReadOnlyCollection<TEnum>((TEnum[])Enum.GetValues(typeof(TEnum)));
 			public static readonly Dictionary<TEnum, MemberInfo> EnumMembers = EnumValues.ToDictionary(v => v, v => typeof(TEnum).GetMember(v.ToString()).Single());
 
 			public static class AttrCache<TAttr> where TAttr : Attribute
@@ -42,5 +42,20 @@ namespace ProgressOnderwijsUtils
 			TEnum retval;
 			return Enum.TryParse(s, true, out retval) ? retval : default(TEnum?);
 		}
+
+
+		public static SelectItem<TEnum> MkSelectItem<TEnum>(TEnum f) where TEnum : struct
+		{
+			var label = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
+			var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
+
+			var translatable = label != null ? label.ToTranslatable()
+				: Converteer.ToText(StringUtils.PrettyPrintCamelCased(f.ToString()));
+			if (tooltip != null)
+				translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
+
+			return SelectItem.Create(f, translatable);
+		}
+
 	}
 }
