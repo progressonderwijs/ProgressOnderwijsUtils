@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
 	{
 		static class EnumMetaCache<TEnum> where TEnum : struct
 		{
-			public static readonly ReadOnlyCollection<TEnum> EnumValues = new ReadOnlyCollection<TEnum>((TEnum[])Enum.GetValues(typeof(TEnum)));
+			public static readonly ReadOnlyCollection<TEnum> EnumValues = new ReadOnlyCollection<TEnum>((TEnum[])Enum.GetValues( typeof(TEnum)));
 			public static readonly Dictionary<TEnum, MemberInfo> EnumMembers = EnumValues.ToDictionary(v => v, v => typeof(TEnum).GetMember(v.ToString()).Single());
 
 			public static class AttrCache<TAttr> where TAttr : Attribute

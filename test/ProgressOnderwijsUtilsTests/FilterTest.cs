@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void BooleanComparers()
 		{
-			var comparers = Enum.GetValues(typeof(BooleanComparer)).Cast<BooleanComparer>();
+			var comparers = EnumHelpers.GetValues<BooleanComparer>();
 			PAssert.That(() => comparers.Count() == comparers.Select(c => c.NiceString()).Distinct().Count());//all nicestrings don't throw and are distinct
 			PAssert.That(() => comparers.OrderBy(x => x).SequenceEqual(CriteriumFilter.NumericComparers.Concat(CriteriumFilter.StringComparers).Distinct().OrderBy(x => x)));//all comparers either numeric or string or both.
 		}
