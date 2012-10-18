@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils
 		public readonly string Regex;
 	}
 
-	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public sealed class MpTooltipAttribute : Attribute
 	{
 		public MpTooltipAttribute(string nl, string en, string de) { NL = nl; EN = en; DE = de; }
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
 		public MpTooltipAttribute(string nl) { NL = nl; }
 		public readonly string NL, EN, DE;
 	}
-	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public sealed class MpLabelAttribute : Attribute
 	{
 		public MpLabelAttribute(string nl, string en, string de) { NL = nl; EN = en; DE = de; }
