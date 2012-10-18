@@ -53,6 +53,10 @@ namespace ProgressOnderwijsUtils
 		{
 			return new SelectItemList<T>(new[] { addnullitem }.Concat(collection));
 		}
+		public static SelectItemList<T> CreateWithLeeg<T>(SelectItem<T> addnullitem, SelectItem<T> addnullitem2, IEnumerable<SelectItem<T>> collection)
+		{
+			return new SelectItemList<T>(new[] { addnullitem,addnullitem2 }.Concat(collection));
+		}
 
 		public static SelectItemList<T> CreateFromDb<T>(DataTable dt)
 		{
