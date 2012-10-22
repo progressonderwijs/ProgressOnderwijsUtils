@@ -31,13 +31,16 @@ namespace ProgressOnderwijsUtils
 			var paramExpr = property.Parameters.Single();
 			var bodyExpr = property.Body;
 
-			var innerExpr = bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr;
+			var innerExpr = UnwrapCast(bodyExpr);
 
 			if (!(innerExpr is MemberExpression))
 				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
 					"The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
 			var membExpr = ((MemberExpression)innerExpr);
-			if (membExpr.Expression != paramExpr)
+
+			var targetExpr = UnwrapCast(membExpr.Expression);
+
+			if (targetExpr != paramExpr)
 				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
 					"A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
 			var propertyInfo = membExpr.Member as PropertyInfo;
@@ -45,12 +48,14 @@ namespace ProgressOnderwijsUtils
 				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
 					"The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property");
 
-			var mp = MetaPropCache<TMetaObject>.propertiesByInfo.GetOrDefault(propertyInfo);
+			var mp = MetaPropCache<TMetaObject>.propertiesByInheritedInfo.GetOrDefault(propertyInfo);
 			if (mp == null)
 				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
 					"The argument lambda refers to a property " + propertyInfo.Name + " that is not a MetaProperty");
 			return mp;
 		}
+
+		static Expression UnwrapCast(Expression bodyExpr) { return bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr; }
 
 		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
 		{
@@ -128,6 +133,7 @@ namespace ProgressOnderwijsUtils
 		{
 			public readonly static IMetaProperty<T>[] properties;
 			public readonly static ReadOnlyDictionary<PropertyInfo, IMetaProperty<T>> propertiesByInfo;
+			public readonly static ReadOnlyDictionary<PropertyInfo, IMetaProperty<T>> propertiesByInheritedInfo;
 			static MetaPropCache()
 			{
 				if (typeof(T) == typeof(IMetaObject))
@@ -140,7 +146,47 @@ namespace ProgressOnderwijsUtils
 					throw new ArgumentException("IMetaObjects must be sealed! The type " + typeof(T) + " is not sealed");
 
 				properties = GetMetaPropertiesImpl().Cast<IMetaProperty<T>>().ToArray();
+
+
 				propertiesByInfo = properties.ToDictionary(mp => mp.PropertyInfo).AsReadOnly();
+
+				Dictionary<MethodInfo, IMetaProperty<T>> propertiesByGetMethod = properties.Where(mp => mp.CanRead).ToDictionary(mp => mp.PropertyInfo.GetGetMethod());
+				Dictionary<MethodInfo, IMetaProperty<T>> propertiesBySetMethod = properties.Where(mp => mp.Setter != null).ToDictionary(mp => mp.PropertyInfo.GetSetMethod());
+				propertiesByInheritedInfo = typeof(T).GetInterfaces().SelectMany(ifaceType => {
+					var map = typeof(T).GetInterfaceMap(ifaceType);
+					return ifaceType.GetProperties()
+						.Select(iProp => {
+							{
+								var ifaceGetMethod = iProp.GetGetMethod();
+								var getMethodIdx = map.InterfaceMethods.IndexOf(ifaceGetMethod);
+								if (getMethodIdx >= 0)
+								{
+									var implGetMethod = map.TargetMethods[getMethodIdx];
+									var mp = propertiesByGetMethod.GetOrDefault(implGetMethod);
+									if (mp != null)
+										return new { PropertyInfo = iProp, MetaProperty = mp };
+								}
+							}
+							{
+								var ifaceSetMethod = iProp.GetSetMethod();
+								var setMethodIdx = map.InterfaceMethods.IndexOf(ifaceSetMethod);
+								if (setMethodIdx >= 0)
+								{
+									var implSetMethod = map.TargetMethods[setMethodIdx];
+									var mp = propertiesBySetMethod.GetOrDefault(implSetMethod);
+									if (mp != null)
+										return new { PropertyInfo = iProp, MetaProperty = mp };
+								}
+							}
+							return null;
+						}).Where(entry => entry != null);
+				}).Concat(
+					propertiesByInfo.Select(kv => new {
+						PropertyInfo = kv.Key,
+						MetaProperty = kv.Value,
+					})
+				).ToDictionary(entry => entry.PropertyInfo, entry => entry.MetaProperty).AsReadOnly();
+
 			}
 			public IMetaProperty[] Properties { get { return properties; } }
 			//public object DynGet(IMetaObject obj, string propertyName) { return properties.Single(prop => prop.Naam == propertyName).Getter(obj); }
