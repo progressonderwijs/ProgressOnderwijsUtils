@@ -43,8 +43,7 @@ namespace ProgressOnderwijsUtils
 			return Enum.TryParse(s, true, out retval) ? retval : default(TEnum?);
 		}
 
-
-		public static SelectItem<TEnum> MkSelectItem<TEnum>(TEnum f) where TEnum : struct
+		public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct
 		{
 			var label = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
 			var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
@@ -54,8 +53,10 @@ namespace ProgressOnderwijsUtils
 			if (tooltip != null)
 				translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
 
-			return SelectItem.Create(f, translatable);
+			return translatable;
 		}
 
+
+		public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f) where TEnum : struct { return SelectItem.Create(f, GetLabel(f)); }
 	}
 }
