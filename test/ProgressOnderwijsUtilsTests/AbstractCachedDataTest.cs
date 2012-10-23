@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtilsTests
 			FileInfo oldfile;
 			using (var t = new TempTextFileTest())
 			{
-				oldfile = t.file;
+				oldfile = new FileInfo(t.file.FullName);
 				PAssert.That(() => oldfile.Exists && t.Data == "");
 
 				PAssert.That(() => t.WatchedFilesAsRelativeUris(oldfile.Directory.Parent).Single().ToString()
@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtilsTests
 			FileInfo oldfile;
 			using (var t = new TempTextFileTest())
 			{
-				oldfile = t.file;
+				oldfile = new FileInfo(t.file.FullName);
 				oldfile.Delete();
 				PAssert.That(() => !oldfile.Exists && t.Data == null);
 				File.WriteAllText(oldfile.FullName, "Hello World!");
@@ -96,6 +96,7 @@ namespace ProgressOnderwijsUtilsTests
 			{
 				PAssert.That(() => t.file.Exists && t.Data == "");
 				File.WriteAllText(t.file.FullName, "1, 2, 3, 4");
+				Thread.Sleep(1);
 				PAssert.That(() => t.file.Exists && t.Data == "1, 2, 3, 4");
 			}
 		}
