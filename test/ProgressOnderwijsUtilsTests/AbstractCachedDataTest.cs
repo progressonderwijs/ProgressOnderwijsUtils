@@ -75,6 +75,7 @@ namespace ProgressOnderwijsUtilsTests
 				oldfile.Delete();
 				PAssert.That(() => !oldfile.Exists && t.Data == null);
 				File.WriteAllText(oldfile.FullName, "Hello World!");
+				Assert.That(t.Data, Is.EqualTo("Hello World!"));
 				PAssert.That(() => t.Data == "Hello World!");
 				oldfile.Refresh();
 				PAssert.That(() => oldfile.Exists);
