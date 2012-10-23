@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils
 						return refersTo.HasValue ? new string(refersTo.Value, 1) : match.Value;
 					});
 
-				return XElement.Parse("<x>" + strWithoutNonXmlEntities + "</x>");
+				return XElement.Parse("<x>" + strWithoutNonXmlEntities + "</x>", LoadOptions.PreserveWhitespace);
 			}
 			catch (XmlException)
 			{

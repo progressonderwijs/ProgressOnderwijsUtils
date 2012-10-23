@@ -31,6 +31,14 @@ namespace ProgressOnderwijsUtils
 			return COLLAPSE_WHITESPACE.Replace(str, " ").Trim();
 		}
 
+		/// <summary>
+		/// HTML-alike whitespace collapsing of this string. This method does not trim.
+		/// </summary>
+		public static string CollapseWhitespace(this string str)
+		{
+			return COLLAPSE_WHITESPACE.Replace(str, " ");
+		}
+
 		public static bool EqualsOrdinalCaseInsensitive(this string a, string b){return StringComparer.OrdinalIgnoreCase.Equals(a, b);}
 		public static string TrimToLength(this string s, int maxlength)
 		{
