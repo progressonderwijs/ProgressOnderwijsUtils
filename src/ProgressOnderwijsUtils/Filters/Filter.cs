@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace ProgressOnderwijsUtils
 {
-	public interface IFilterCreationMixin<T> { }
+	public interface IFilterCreationMixin<out T> { }
 
 	public static class Filter<TMetaObject>
 	{
