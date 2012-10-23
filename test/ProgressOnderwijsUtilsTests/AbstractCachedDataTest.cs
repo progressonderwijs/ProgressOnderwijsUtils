@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
@@ -28,7 +30,7 @@ namespace ProgressOnderwijsUtilsTests
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
-			if(file!=null) file.Delete();
+			if (file != null) file.Delete();
 		}
 	}
 
@@ -57,7 +59,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void NeedsRealDir()
 		{
-			Assert.Throws<ArgumentException>(()=> {
+			Assert.Throws<ArgumentException>(() => {
 				using (var t = new TempTextFileTest(new FileInfo(@"A:\b\c\d\e")))
 				{
 				}
@@ -75,7 +77,10 @@ namespace ProgressOnderwijsUtilsTests
 				oldfile.Delete();
 				PAssert.That(() => !oldfile.Exists && t.Data == null);
 				File.WriteAllText(oldfile.FullName, "Hello World!");
-				Assert.That(t.Data, Is.EqualTo("Hello World!"));
+				var sw = Stopwatch.StartNew();
+				while (t.Data == null && sw.ElapsedMilliseconds < 500)
+					Thread.Sleep(1);
+				Thread.Sleep(1);
 				PAssert.That(() => t.Data == "Hello World!");
 				oldfile.Refresh();
 				PAssert.That(() => oldfile.Exists);
