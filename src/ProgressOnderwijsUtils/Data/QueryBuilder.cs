@@ -141,6 +141,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		static readonly Regex paramsRegex = new Regex(@"\{(?<paramRef>\d+)\}|(?<queryText>((?!\{\d+\}).)+)", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
+		private static readonly string[] AllColumns = new[] { "*" };
 
 		public static QueryBuilder CreateFromFilter(FilterBase filter) { return "and " + filter.ToQueryBuilder() + " "; }
 
@@ -224,6 +225,9 @@ namespace ProgressOnderwijsUtils
 
 		static QueryBuilder SubQueryHelper(QueryBuilder subquery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filters, OrderByColumns sortOrder, QueryBuilder topRowsOrNull)
 		{
+			projectedColumns = projectedColumns ?? AllColumns;
+			filters = filters.EmptyIfNull();
+
 			QueryBuilder filterClause = Filter.CreateCombined(BooleanOperator.And, filters).ToQueryBuilder();
 			return
 				"select" + (topRowsOrNull != null ? " top (" + topRowsOrNull + ")" : Empty) + " " + projectedColumns.JoinStrings(", ") + " from (\n"
@@ -231,8 +235,11 @@ namespace ProgressOnderwijsUtils
 					+ CreateFromSortOrder(sortOrder);
 		}
 
-		public static QueryBuilder CreatePagedSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filterBases, OrderByColumns sortOrder, int skipNrows, int takeNrows)
+		public static QueryBuilder CreatePagedSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filters, OrderByColumns sortOrder, int skipNrows, int takeNrows)
 		{
+			projectedColumns = projectedColumns ?? AllColumns;
+			filters = filters.EmptyIfNull();
+
 			var takeRowsParam = Param((long)takeNrows);
 			var skipNrowsParam = Param((long)skipNrows);
 
@@ -243,7 +250,7 @@ namespace ProgressOnderwijsUtils
 				+ "from (select _row=row_number() over (" + orderClause + "),\n"
 				+ "      _g2.*\n"
 				+ "from (\n\n"
-				+ SubQueryHelper(subQuery, projectedColumns, filterBases, sortOrder, takeRowsParam + "+" + skipNrowsParam)
+				+ SubQueryHelper(subQuery, projectedColumns, filters, sortOrder, takeRowsParam + "+" + skipNrowsParam)
 				+ "\n\n) as _g2) t\n"
 				+ "where _row > " + skipNrowsParam + " \n"
 				+ "order by _row";
