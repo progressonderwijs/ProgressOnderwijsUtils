@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		static readonly Dictionary<string, BooleanComparer> niceStringValues = EnumHelpers.GetValues<BooleanComparer>().Cast<BooleanComparer>().ToDictionary(NiceString);
+		static readonly Dictionary<string, BooleanComparer> niceStringValues = EnumHelpers.GetValues<BooleanComparer>().ToDictionary(NiceString);
 
 		public static BooleanComparer? ParseComparerNiceString(string s) { return niceStringValues.GetOrDefault(s, default(BooleanComparer?)); }
 

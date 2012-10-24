@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtils
 			foreach (Match paramRefMatch in paramsRegex.Matches(str))
 			{
 				if (paramRefMatch.Groups["paramRef"].Success)
-					query = Concat(query, parValues[int.Parse(paramRefMatch.Groups["paramRef"].Value)]);
+					query = Concat(query, parValues[Int32.Parse(paramRefMatch.Groups["paramRef"].Value)]);
 				else
 				{
 					Debug.Assert(paramRefMatch.Groups["queryText"].Success);
@@ -144,10 +144,10 @@ namespace ProgressOnderwijsUtils
 
 		public static QueryBuilder CreateFromFilter(FilterBase filter) { return "and " + filter.ToQueryBuilder() + " "; }
 
-		public static QueryBuilder CreateFromSortOrder(OrderByColumns mostSignificantColumnFirst)
+		public static QueryBuilder CreateFromSortOrder(OrderByColumns sortOrder)
 		{
-			return !mostSignificantColumnFirst.Columns.Any() ? Empty :
-				Create("order by " + mostSignificantColumnFirst.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
+			return !sortOrder.Columns.Any() ? Empty :
+				Create("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
 		}
 
 		public SqlCommand CreateSqlCommand(SqlConnection conn, int commandTimeout) { return CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), conn, commandTimeout); }
@@ -222,10 +222,44 @@ namespace ProgressOnderwijsUtils
 		public override int GetHashCode() { return HashCodeHelper.ComputeHash(CanonicalReverseComponents.ToArray()) + 123; }
 		public override string ToString() { return DebugText(); }
 
-		static readonly QueryBuilder TrueClause = Create("1=1");
-		static readonly QueryBuilder WhereKeyword = Create(" where ");
-		static readonly QueryBuilder AndKeyword = Create(" and ");
+		static QueryBuilder SubQueryHelper(QueryBuilder subquery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filters, OrderByColumns sortOrder, QueryBuilder topRowsOrNull)
+		{
+			QueryBuilder filterClause = Filter.CreateCombined(BooleanOperator.And, filters).ToQueryBuilder();
+			return
+				"select" + (topRowsOrNull != null ? " top (" + topRowsOrNull + ")" : Empty) + " " + projectedColumns.JoinStrings(", ") + " from (\n"
+					+ subquery + "\n) as _g1 where  " + filterClause + "\n"
+					+ CreateFromSortOrder(sortOrder);
+		}
 
-		public static QueryBuilder CreateWhereClause(IEnumerable<QueryBuilder> predicates) { return WhereKeyword + predicates.DefaultIfEmpty(TrueClause).Select((pred, i) => i == 0 ? pred : AndKeyword + pred).Aggregate(Concat); }
+		public static QueryBuilder CreatePagedSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filterBases, OrderByColumns sortOrder, int skipNrows, int takeNrows)
+		{
+			var takeRowsParam = Param((long)takeNrows);
+			var skipNrowsParam = Param((long)skipNrows);
+
+			var sortorder = sortOrder;
+			var orderClause = sortorder == OrderByColumns.Empty ? (QueryBuilder)"order by (select 1)" : CreateFromSortOrder(sortorder);
+
+			return "select top (" + takeRowsParam + ") " + projectedColumns.JoinStrings(", ") + "\n"
+				+ "from (select _row=row_number() over (" + orderClause + "),\n"
+				+ "      _g2.*\n"
+				+ "from (\n\n"
+				+ SubQueryHelper(subQuery, projectedColumns, filterBases, sortOrder, takeRowsParam + "+" + skipNrowsParam)
+				+ "\n\n) as _g2) t\n"
+				+ "where _row > " + skipNrowsParam + " \n"
+				+ "order by _row";
+		}
+
+		public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filterBases, OrderByColumns sortOrder)
+		{
+			return SubQueryHelper(subQuery, projectedColumns, filterBases, sortOrder, null);
+		}
+
+		public void AssertNoVariableColumns()
+		{
+			var commandText = CommandText();
+			var commandTextWithoutComments = Regex.Replace(commandText, @"/\*.*?\*/|--.*?$", "", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Multiline);
+			if (Regex.IsMatch(commandTextWithoutComments, @"(?<!count\()\*"))
+				throw new InvalidOperationException(GetType().FullName + ": Query may not use * as that might cause runtime exceptions in productie when DB changes:\n" + commandText);
+		}
 	}
 }
