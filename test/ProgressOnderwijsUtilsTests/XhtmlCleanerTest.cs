@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtilsTests
 				var limitedVer = XhtmlCleaner.TidyHtmlStringAndLimitLength(sample, i);
 				Assert.That(limitedVer.Length, Is.LessThanOrEqualTo(i));
 				if (limitedVer.Length < i) // if more than "needed" trimmed then:
-					Assert.That(lastLength == i + 1 || lastLength == limitedVer.Length);//either the string was already this short or it was just trimmed due to real need - but it wasn't unnecessarily trimmed!
+					PAssert.That(() => lastLength == i + 1 || lastLength == limitedVer.Length);//either the string was already this short or it was just trimmed due to real need - but it wasn't unnecessarily trimmed!
 				lastLength = limitedVer.Length;
 			}
 		}

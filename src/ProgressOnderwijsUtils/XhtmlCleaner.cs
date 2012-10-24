@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
@@ -88,16 +89,15 @@ namespace ProgressOnderwijsUtils
 		/// <returns>an xml segment that, if serialized without extra spacing, fits in the given length.</returns>
 		static XElement LimitLength(XElement input, int length)
 		{
-
-			XElement output = new XElement(input);
+			var output = new XElement(input);
 			XNode current = output;
 			int currentMax = length;
+			var currentLen = current.ToString(SaveOptions.DisableFormatting).Length;
+			//assume that xml length is additive; i.e. that adding a child adds precisely as much length as the child itself is long.
+			//in debug mode, this assumption is asserted; but in release mode, this assumption avoids quadratic complexity
 			while (true)
 			{
-				var stringRep = current.ToString(SaveOptions.DisableFormatting);
-				int currentLength = stringRep.Length;
-
-				if (currentLength <= currentMax) return output;
+				if (currentLen <= currentMax) return output;
 				else if (current is XComment
 					|| current is XElement && ((XElement)current).IsEmpty
 					|| current is XDocumentType
@@ -108,20 +108,27 @@ namespace ProgressOnderwijsUtils
 				}
 				else if (current is XText)
 				{
-					XText text = current as XText;
-					text.Value = text.Value.Substring(0, currentMax);
+					var text = current as XText;
+					//since XText does some \r magic, we can't just assume current.ToString is equivalent to text.Value
+					text.Value = current.ToString(SaveOptions.DisableFormatting).Replace('\r', ' ').Substring(0, currentMax); 
 					return output;
 				}
-				XElement currentEl = (XElement)current;
+				var currentEl = (XElement)current;
 
 				int lastKidLen = currentEl.LastNode.ToString(SaveOptions.DisableFormatting).Length;
-				if (currentLength - lastKidLen > currentMax)
+				if (currentLen - lastKidLen > currentMax)
+				{
 					currentEl.LastNode.Remove();
+					currentLen = !currentEl.IsEmpty ? currentLen - lastKidLen : current.ToString(SaveOptions.DisableFormatting).Length;
+					Debug.Assert(currentLen == current.ToString(SaveOptions.DisableFormatting).Length, "Current length is inconsistent!");
+				}
 				else
 				{
-					int restLen = currentLength - lastKidLen;
+					int restLen = currentLen - lastKidLen;
 					int lastKidMax = currentMax - restLen;
 					current = currentEl.LastNode;
+					currentLen = lastKidLen;
+					Debug.Assert(currentLen == current.ToString(SaveOptions.DisableFormatting).Length, "Current length is inconsistent!");
 					currentMax = lastKidMax;
 				}
 			}
