@@ -88,14 +88,14 @@ namespace ProgressOnderwijsUtils
 			static T MkDel<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
 			public Impl(PropertyInfo pi, int implicitOrder)
 			{
-				bool isCovariant = !pi.PropertyType.IsValueType && !typeof(TOwner).IsValueType;
 
 				propertyInfo = pi;
 
 				ParameterExpression typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
 				MemberExpression typedPropExpr = Expression.Property(typedParamExpr, pi);
+				bool canCallDirectly = !(typeof(TOwner).IsValueType || pi.PropertyType.IsValueType);
 				typedGetter =
-					isCovariant ? MkDel<Func<TOwner, object>>(pi.GetGetMethod()) :
+					canCallDirectly ? MkDel<Func<TOwner, object>>(pi.GetGetMethod()) :
 					Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
 
 				//ParameterExpression objParamExpr = Expression.Parameter(typeof(object), "propertyOwner");

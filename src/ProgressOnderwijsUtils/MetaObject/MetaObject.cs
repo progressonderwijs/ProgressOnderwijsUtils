@@ -59,7 +59,7 @@ namespace ProgressOnderwijsUtils
 
 		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
 		{
-			DataTable dt = new DataTable();
+			var dt = new DataTable();
 			var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
 			dt.Columns.AddRange(properties.Select(mp => new DataColumn(mp.Naam, mp.DataType.GetNonNullableType()) { AllowDBNull = !mp.Verplicht && mp.DataType.CanBeNull() }).ToArray());
 
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public static IEnumerable<IMetaProperty> GetMetaProperties(Type t)
+		public static IReadOnlyList<IMetaProperty> GetMetaProperties(Type t)
 		{
 			if (!typeof(IMetaObject).IsAssignableFrom(t))
 				throw new InvalidOperationException("Can't get meta-properties from type " + t + ", it's not a " + typeof(IMetaObject));
@@ -124,16 +124,29 @@ namespace ProgressOnderwijsUtils
 
 		interface IMetaPropCache
 		{
-			IMetaProperty[] Properties { get; }
-			//object DynGet(IMetaObject obj, string propertyName);
-			//void DynSet(IMetaObject obj, string propertyName, object val);
+			IReadOnlyList<IMetaProperty> Properties { get; }
 		}
 
 		sealed class MetaPropCache<T> : IMetaPropCache
 		{
 			public readonly static IMetaProperty<T>[] properties;
-			public readonly static ReadOnlyDictionary<PropertyInfo, IMetaProperty<T>> propertiesByInfo;
 			public readonly static ReadOnlyDictionary<PropertyInfo, IMetaProperty<T>> propertiesByInheritedInfo;
+
+
+			struct MetaAndInfo
+			{
+				readonly PropertyInfo propertyInfo;
+				readonly IMetaProperty<T> metaProperty;
+				public PropertyInfo PropertyInfo { get { return propertyInfo; } }
+				public IMetaProperty<T> MetaProperty { get { return metaProperty; } }
+				public MetaAndInfo(PropertyInfo propertyInfo, IMetaProperty<T> metaProperty)
+				{
+					this.propertyInfo = propertyInfo;
+					this.metaProperty = metaProperty;
+				}
+			}
+
+
 			static MetaPropCache()
 			{
 				if (typeof(T) == typeof(IMetaObject))
@@ -145,55 +158,34 @@ namespace ProgressOnderwijsUtils
 				else if (!typeof(T).IsSealed)
 					throw new ArgumentException("IMetaObjects must be sealed! The type " + typeof(T) + " is not sealed");
 
-				properties = GetMetaPropertiesImpl().Cast<IMetaProperty<T>>().ToArray();
-
-
-				propertiesByInfo = properties.ToDictionary(mp => mp.PropertyInfo).AsReadOnly();
+				properties = GetMetaPropertiesImpl().ToArray();
 
 				Dictionary<MethodInfo, IMetaProperty<T>> propertiesByGetMethod = properties.Where(mp => mp.CanRead).ToDictionary(mp => mp.PropertyInfo.GetGetMethod());
 				Dictionary<MethodInfo, IMetaProperty<T>> propertiesBySetMethod = properties.Where(mp => mp.Setter != null).ToDictionary(mp => mp.PropertyInfo.GetSetMethod());
 				propertiesByInheritedInfo = typeof(T).GetInterfaces().SelectMany(ifaceType => {
 					var map = typeof(T).GetInterfaceMap(ifaceType);
 					return ifaceType.GetProperties()
-						.Select(iProp => {
-							{
-								var ifaceGetMethod = iProp.GetGetMethod();
-								var getMethodIdx = map.InterfaceMethods.IndexOf(ifaceGetMethod);
-								if (getMethodIdx >= 0)
-								{
-									var implGetMethod = map.TargetMethods[getMethodIdx];
-									var mp = propertiesByGetMethod.GetOrDefault(implGetMethod);
-									if (mp != null)
-										return new { PropertyInfo = iProp, MetaProperty = mp };
-								}
-							}
-							{
-								var ifaceSetMethod = iProp.GetSetMethod();
-								var setMethodIdx = map.InterfaceMethods.IndexOf(ifaceSetMethod);
-								if (setMethodIdx >= 0)
-								{
-									var implSetMethod = map.TargetMethods[setMethodIdx];
-									var mp = propertiesBySetMethod.GetOrDefault(implSetMethod);
-									if (mp != null)
-										return new { PropertyInfo = iProp, MetaProperty = mp };
-								}
-							}
-							return null;
-						}).Where(entry => entry != null);
+						.Select(iProp => new MetaAndInfo(iProp,
+								GetMP(map, iProp.GetGetMethod(), propertiesByGetMethod)
+								?? GetMP(map, iProp.GetSetMethod(), propertiesBySetMethod)))
+						.Where(entry => entry.MetaProperty != null);
 				}).Concat(
-					propertiesByInfo.Select(kv => new {
-						PropertyInfo = kv.Key,
-						MetaProperty = kv.Value,
-					})
+					properties.Select(mp => new MetaAndInfo(mp.PropertyInfo, mp))
 				).ToDictionary(entry => entry.PropertyInfo, entry => entry.MetaProperty).AsReadOnly();
-
 			}
-			public IMetaProperty[] Properties { get { return properties; } }
-			//public object DynGet(IMetaObject obj, string propertyName) { return properties.Single(prop => prop.Naam == propertyName).Getter(obj); }
-			//public void DynSet(IMetaObject obj, string propertyName, object val) { properties.Single(prop => prop.Naam == propertyName).Setter(obj, val); }
 
-			static IEnumerable<IMetaProperty> GetMetaPropertiesImpl() { return typeof(T).GetProperties().OrderBy(pi => pi.MetadataToken).Select(LoadIfMetaProperty).Where(mp => mp != null); }
-			static IMetaProperty LoadIfMetaProperty(PropertyInfo pi, int implicitOrder)
+			static IMetaProperty<T> GetMP(InterfaceMapping map, MethodInfo ifaceMethod, Dictionary<MethodInfo, IMetaProperty<T>> propertiesByMethod)
+			{
+				var setMethodIdx = map.InterfaceMethods.IndexOf(ifaceMethod);
+				if (setMethodIdx >= 0)
+					return propertiesByMethod.GetOrDefault(map.TargetMethods[setMethodIdx]);
+				return null;
+			}
+
+			public IReadOnlyList<IMetaProperty> Properties { get { return properties; } }
+
+			static IEnumerable<IMetaProperty<T>> GetMetaPropertiesImpl() { return typeof(T).GetProperties().OrderBy(pi => pi.MetadataToken).Select(LoadIfMetaProperty).Where(mp => mp != null); }
+			static IMetaProperty<T> LoadIfMetaProperty(PropertyInfo pi, int implicitOrder)
 			{
 				return pi.GetCustomAttributes(typeof(MpNotMappedAttribute), true).Any() ? null : new MetaProperty.Impl<T>(pi, implicitOrder);
 			}
