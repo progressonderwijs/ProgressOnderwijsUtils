@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static string NormalizeWhitespace(this string str)
 		{
-			return COLLAPSE_WHITESPACE.Replace(str, " ").Trim();
+			return str == null ? null : str.CollapseWhitespace().Trim();
 		}
 
 		/// <summary>
@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static string CollapseWhitespace(this string str)
 		{
-			return COLLAPSE_WHITESPACE.Replace(str, " ");
+			return str == null ? null : COLLAPSE_WHITESPACE.Replace(str, " ");
 		}
 
 		public static bool EqualsOrdinalCaseInsensitive(this string a, string b){return StringComparer.OrdinalIgnoreCase.Equals(a, b);}

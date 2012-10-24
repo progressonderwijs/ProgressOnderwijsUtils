@@ -31,21 +31,41 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[TestCase("", Result = "")]
-		[TestCase("test", Result = "test")]
-		[TestCase(" test ", Result = "test")]
-		[TestCase("\ttest\t", Result = "test")]
-		[TestCase("\ntest\n", Result = "test")]
-		[TestCase(" \t\ntest\n\t ", Result = "test")]
-		[TestCase("een test", Result = "een test")]
-		[TestCase("een  test", Result = "een test")]
-		[TestCase("een\ttest", Result = "een test")]
-		[TestCase("een\t\ttest", Result = "een test")]
-		[TestCase("een\ntest", Result = "een test")]
-		[TestCase("een\n\ntest", Result = "een test")]
-		public string CollapseWhitespace(string str)
+		[TestCase(null, default(string))]
+		[TestCase("", "")]
+		[TestCase("test", "test")]
+		[TestCase(" test ", "test")]
+		[TestCase("\ttest\t", "test")]
+		[TestCase("\ntest\n", "test")]
+		[TestCase(" \t\ntest\n\t ", "test")]
+		[TestCase("een test", "een test")]
+		[TestCase("een  test", "een test")]
+		[TestCase("een\ttest", "een test")]
+		[TestCase("een\t\ttest", "een test")]
+		[TestCase("een\ntest", "een test")]
+		[TestCase("een\n\ntest", "een test")]
+		public void NormalizeWhitespace(string str, string expected)
 		{
-			return str.NormalizeWhitespace();
+			Assert.That(str.NormalizeWhitespace(), Is.EqualTo(expected));
+		}
+
+		[Test]
+		[TestCase(null, default(string))]
+		[TestCase("", "")]
+		[TestCase("test", "test")]
+		[TestCase(" test ", " test ")]
+		[TestCase("\ttest\t", " test ")]
+		[TestCase("\ntest\n", " test ")]
+		[TestCase(" \t\ntest\n\t ", " test ")]
+		[TestCase("een test", "een test")]
+		[TestCase("een  test", "een test")]
+		[TestCase("een\ttest", "een test")]
+		[TestCase("een\t\ttest", "een test")]
+		[TestCase("een\ntest", "een test")]
+		[TestCase("een\n\ntest", "een test")]
+		public void CollapseWhitespace(string str, string expected)
+		{
+			Assert.That(str.CollapseWhitespace(), Is.EqualTo(expected));
 		}
 
 		[Test]
