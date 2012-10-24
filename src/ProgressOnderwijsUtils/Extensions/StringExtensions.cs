@@ -1,10 +1,6 @@
-﻿using System.Globalization;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Text.RegularExpressions;
-using System.Collections;
 using System.Collections.Generic;
-using NUnit.Framework;
 using System;
 
 namespace ProgressOnderwijsUtils
@@ -21,7 +17,7 @@ namespace ProgressOnderwijsUtils
 			return s == null || s.Trim().Length == 0;
 		}
 
-		static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled);
+		static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
 		/// <summary>
 		/// HTML-alike whitespace collapsing of this string; however, this method also trims.
@@ -39,7 +35,7 @@ namespace ProgressOnderwijsUtils
 			return str == null ? null : COLLAPSE_WHITESPACE.Replace(str, " ");
 		}
 
-		public static bool EqualsOrdinalCaseInsensitive(this string a, string b){return StringComparer.OrdinalIgnoreCase.Equals(a, b);}
+		public static bool EqualsOrdinalCaseInsensitive(this string a, string b) { return StringComparer.OrdinalIgnoreCase.Equals(a, b); }
 		public static string TrimToLength(this string s, int maxlength)
 		{
 			if (s == null || s.Length <= maxlength) return s;
