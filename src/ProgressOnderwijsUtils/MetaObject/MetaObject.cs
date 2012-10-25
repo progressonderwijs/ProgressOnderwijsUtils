@@ -28,31 +28,39 @@ namespace ProgressOnderwijsUtils
 
 		public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> property)
 		{
-			var paramExpr = property.Parameters.Single();
-			var bodyExpr = property.Body;
+			return GetByInheritedExpression<TMetaObject>.Get(property);
+		}
 
-			var innerExpr = UnwrapCast(bodyExpr);
+		public static class GetByInheritedExpression<TMetaObject>
+		{
+			public static IMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> property)
+			{
+				var paramExpr = property.Parameters.Single();
+				var bodyExpr = property.Body;
 
-			if (!(innerExpr is MemberExpression))
-				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
-					"The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
-			var membExpr = ((MemberExpression)innerExpr);
+				var innerExpr = UnwrapCast(bodyExpr);
 
-			var targetExpr = UnwrapCast(membExpr.Expression);
+				if (!(innerExpr is MemberExpression))
+					throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
+						"The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
+				var membExpr = ((MemberExpression)innerExpr);
 
-			if (targetExpr != paramExpr)
-				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
-					"A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
-			var propertyInfo = membExpr.Member as PropertyInfo;
-			if (propertyInfo == null)
-				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-					"The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property");
+				var targetExpr = UnwrapCast(membExpr.Expression);
 
-			var mp = MetaPropCache<TMetaObject>.propertiesByInheritedInfo.GetOrDefault(propertyInfo);
-			if (mp == null)
-				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-					"The argument lambda refers to a property " + propertyInfo.Name + " that is not a MetaProperty");
-			return mp;
+				if (targetExpr != paramExpr)
+					throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
+						"A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
+				var propertyInfo = membExpr.Member as PropertyInfo;
+				if (propertyInfo == null)
+					throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
+						"The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property");
+
+				var mp = MetaPropCache<TMetaObject>.propertiesByInheritedInfo.GetOrDefault(propertyInfo);
+				if (mp == null)
+					throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
+						"The argument lambda refers to a property " + propertyInfo.Name + " that is not a MetaProperty");
+				return mp;
+			}
 		}
 
 		static Expression UnwrapCast(Expression bodyExpr) { return bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr; }
