@@ -6,17 +6,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-	//represents a read-only view of an array or array-like  datastructure (known size, random access)
-
-	public interface IArrayView<out T> : IEnumerable<T>
-	{
-		T this[int index] { get; }
-		int Count { get; }
-	}
-
-
-
-	public sealed class ArrayView<T> : IArrayView<T>
+	public sealed class ArrayView<T> : IReadOnlyList<T>
 	{
 		readonly T[] vals;
 		public ArrayView(T[] vals) { this.vals = vals; }
@@ -27,7 +17,7 @@ namespace ProgressOnderwijsUtils.Collections
 		public int Count { get { return vals.Length; } }
 	}
 
-	public sealed class ListView<T> : IArrayView<T>
+	public sealed class ListView<T> : IReadOnlyList<T>
 	{
 		readonly IList<T> vals;
 		public ListView(IList<T> vals) { this.vals = vals; }
@@ -38,11 +28,11 @@ namespace ProgressOnderwijsUtils.Collections
 		public int Count { get { return vals.Count; } }
 	}
 
-	public sealed class ArrayView_MappedByElement<T, TOut> : IArrayView<TOut>
+	public sealed class ArrayView_MappedByElement<T, TOut> : IReadOnlyList<TOut>
 	{
-		readonly IArrayView<T> vals;
+		readonly IReadOnlyList<T> vals;
 		readonly Func<T, TOut> map;
-		public ArrayView_MappedByElement(IArrayView<T> vals, Func<T, TOut> map) { this.vals = vals; this.map = map; }
+		public ArrayView_MappedByElement(IReadOnlyList<T> vals, Func<T, TOut> map) { this.vals = vals; this.map = map; }
 
 		public IEnumerator<TOut> GetEnumerator() { return vals.AsEnumerable().Select(map).GetEnumerator(); }
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
@@ -51,11 +41,11 @@ namespace ProgressOnderwijsUtils.Collections
 		public int Count { get { return vals.Count; } }
 	}
 
-	public sealed class ArrayView_MappedWithIndex<T, TOut> : IArrayView<TOut>
+	public sealed class ArrayView_MappedWithIndex<T, TOut> : IReadOnlyList<TOut>
 	{
-		readonly IArrayView<T> vals;
+		readonly IReadOnlyList<T> vals;
 		readonly Func<T, int, TOut> map;
-		public ArrayView_MappedWithIndex(IArrayView<T> vals, Func<T, int, TOut> map) { this.vals = vals; this.map = map; }
+		public ArrayView_MappedWithIndex(IReadOnlyList<T> vals, Func<T, int, TOut> map) { this.vals = vals; this.map = map; }
 
 		public IEnumerator<TOut> GetEnumerator() { return vals.AsEnumerable().Select(map).GetEnumerator(); }
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
@@ -66,8 +56,10 @@ namespace ProgressOnderwijsUtils.Collections
 
 	public static class ArrayViewExtensions
 	{
-		public static IArrayView<T> AsReadView<T>(this T[] vals) { return new ArrayView<T>(vals); }
-		public static IArrayView<TOut> Select<T, TOut>(this IArrayView<T> vals, Func<T, TOut> map) { return new ArrayView_MappedByElement<T, TOut>(vals, map); }
-		public static IArrayView<TOut> Select<T, TOut>(this IArrayView<T> vals, Func<T, int, TOut> map) { return new ArrayView_MappedWithIndex<T, TOut>(vals, map); }
+		public static IReadOnlyList<T> AsReadView<T>(this T[] vals) { return new ArrayView<T>(vals); }
+		public static IReadOnlyList<TOut> Select<T, TOut>(this IReadOnlyList<T> vals, Func<T, TOut> map) { return new ArrayView_MappedByElement<T, TOut>(vals, map); }
+		public static IReadOnlyList<TOut> Select<T, TOut>(this IReadOnlyList<T> vals, Func<T, int, TOut> map) { return new ArrayView_MappedWithIndex<T, TOut>(vals, map); }
+		public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, TOut> map) { return new ArrayView_MappedByElement<T, TOut>(vals, map); }
+		public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, int, TOut> map) { return new ArrayView_MappedWithIndex<T, TOut>(vals, map); }
 	}
 }

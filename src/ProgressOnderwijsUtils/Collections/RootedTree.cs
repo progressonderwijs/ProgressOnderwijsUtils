@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils.Collections
 		public int IndexInParent() { return PathSegments.Head.Index; }
 		public Tree<T> UnrootedSubTree() { return PathSegments.Head.ThisSubTree; }
 
-		public IArrayView<RootedTree<T>> Children
+		public IReadOnlyList<RootedTree<T>> Children
 		{
 			get
 			{
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils.Collections
 			public readonly int Index;
 			public readonly Tree<T> ThisSubTree;
 			public T NodeValue { get { return ThisSubTree.NodeValue; } }
-			public IArrayView<Tree<T>> Children { get { return ThisSubTree.Children; } }
+			public IReadOnlyList<Tree<T>> Children { get { return ThisSubTree.Children; } }
 
 			public TreePathSegment(int index, Tree<T> node) { Index = index; ThisSubTree = node; }
 		}

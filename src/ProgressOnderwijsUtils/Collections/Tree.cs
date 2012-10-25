@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtils.Collections
 
 	public interface ITree<out TNode> where TNode : ITree<TNode>
 	{
-		IArrayView<TNode> Children { get; }
+		IReadOnlyList<TNode> Children { get; }
 	}
 
 	public static class Tree
@@ -40,12 +40,12 @@ namespace ProgressOnderwijsUtils.Collections
 
 	public sealed class Tree<T> : IEquatable<Tree<T>>, ITree<Tree<T>>
 	{
-		static readonly IArrayView<Tree<T>> EmptyArray = new Tree<T>[0].AsReadView(); // cache this since it will be used very commonly.
+		static readonly IReadOnlyList<Tree<T>> EmptyArray = new Tree<T>[0].AsReadView(); // cache this since it will be used very commonly.
 
 		readonly T nodeValue;
-		readonly IArrayView<Tree<T>> kidArray;
+		readonly IReadOnlyList<Tree<T>> kidArray;
 		public T NodeValue { get { return nodeValue; } }
-		public IArrayView<Tree<T>> Children { get { return kidArray; } }
+		public IReadOnlyList<Tree<T>> Children { get { return kidArray; } }
 
 		/// <summary>
 		/// Creates a Tree with specified child nodes.  The child node enumeration is materialized using ToArray() before usage.
