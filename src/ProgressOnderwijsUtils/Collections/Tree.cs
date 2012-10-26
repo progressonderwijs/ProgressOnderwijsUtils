@@ -22,8 +22,8 @@ namespace ProgressOnderwijsUtils.Collections
 		public static Tree<T> Node<T>(T value) { return new Tree<T>(value, null); }
 
 		public static Tree<T> Build<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
-		public static Tree<T> Build<T>(T root, Dictionary<T, IEnumerable<T>> kidLookup) { return Build(root, id => kidLookup.GetOrDefault(id)); }
-		public static Tree<T> Build<T>(T root, Dictionary<T, T[]> kidLookup) { return Build(root, id => kidLookup.GetOrDefault(id)); }
+		public static Tree<T> Build<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) { return Build(root, id => kidLookup.GetOrDefaultR(id)); }
+		//public static Tree<T> Build<T>(T root, Dictionary<T, T[]> kidLookup) { return Build(root, id => kidLookup.GetOrDefault(id)); }
 		public static Tree<T> Build<T>(T root, ILookup<T, T> kidLookup) { return Build(root, id => kidLookup[id]); }
 
 		public static Tree<T>[] Build<T>(T[] roots, Func<T, IEnumerable<T>> kidLookup)
@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils.Collections
 
 	public sealed class Tree<T> : IEquatable<Tree<T>>, ITree<Tree<T>>
 	{
-		static readonly IReadOnlyList<Tree<T>> EmptyArray = new Tree<T>[0].AsReadView(); // cache this since it will be used very commonly.
+		static readonly IReadOnlyList<Tree<T>> EmptyArray = new Tree<T>[0]; // cache this since it will be used very commonly.
 
 		readonly T nodeValue;
 		readonly IReadOnlyList<Tree<T>> kidArray;
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils.Collections
 		public Tree(T value, Tree<T>[] children)
 		{
 			nodeValue = value;
-			kidArray = children == null || children.Length == 0 ? EmptyArray : new ArrayView<Tree<T>>(children);
+			kidArray = children ?? EmptyArray;
 		}
 		#region Equality implementation
 		public static readonly Comparer DefaultComparer = new Comparer(EqualityComparer<T>.Default);

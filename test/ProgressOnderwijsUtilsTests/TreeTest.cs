@@ -119,7 +119,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void BuildWorks()
 		{
-			var dict = new Dictionary<string, string[]> {
+			var dict = new Dictionary<string, IReadOnlyList<string>> {
 				{"root",new[]{"a","b","c"}},
 				{"a",new[]{"b","c"}},
 				{"b",new[]{"c","d"}},

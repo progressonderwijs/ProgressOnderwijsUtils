@@ -42,8 +42,8 @@ namespace ProgressOnderwijsUtils
 			}
 			return -1;
 		}
-		public static ReadOnlyCollection<T> ToReadOnly<T>(this IEnumerable<T> list) { return new ReadOnlyCollection<T>(list.ToArray()); }
-		public static ReadOnlyCollection<T> AsReadOnlyView<T>(this IList<T> list) { return list as ReadOnlyCollection<T> ?? new ReadOnlyCollection<T>(list); }
+
+		public static IReadOnlyList<T> ToReadOnly<T>(this IEnumerable<T> list) { return list.ToArray(); }
 		public static HashSet<T> ToSet<T>(this IEnumerable<T> list) { return new HashSet<T>(list); }
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> list) { return list ?? Enumerable.Empty<T>(); }
 

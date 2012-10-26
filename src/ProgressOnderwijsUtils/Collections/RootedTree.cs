@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils.Collections
 			get
 			{
 				var treePathSegments = PathSegments;
-				return UnrootedSubTree().Children.Select((kid, i) => new RootedTree<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))));
+				return UnrootedSubTree().Children.SelectIndexable((kid, i) => new RootedTree<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))));
 			}
 		}
 

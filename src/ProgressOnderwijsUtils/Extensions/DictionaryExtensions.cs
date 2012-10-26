@@ -27,13 +27,17 @@ namespace ProgressOnderwijsUtils
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="defaultValue">The default value of the key.</param>
 		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
+		public static TValue GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key, TValue defaultValue)
+		{
+			TValue result;
+			return dict.TryGetValue(key, out result) ? result : defaultValue;
+		}
 		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue defaultValue)
 		{
 			TValue result;
 			return dict.TryGetValue(key, out result) ? result : defaultValue;
 		}
 
-		// ReSharper disable IntroduceOptionalParameters.Global
 		/// <summary>
 		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrLazyDefault if finding the default is expensive.
 		/// </summary>
@@ -41,8 +45,8 @@ namespace ProgressOnderwijsUtils
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="defaultValue">The default value of the key.</param>
 		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
+		public static TValue GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key) { return GetOrDefaultR(dict, key, default(TValue)); }
 		public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) { return GetOrDefault(dict, key, default(TValue)); }
-		// ReSharper restore IntroduceOptionalParameters.Global
 
 		/// <summary>
 		/// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
@@ -51,7 +55,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="key">The key whose value to get.</param>
 		/// <param name="defaultValue">The default value of the key.</param>
 		/// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-		public static TValue? GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue? defaultValue)
+		public static TValue? GetOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key, TValue? defaultValue)
 			where TValue : struct
 		{
 			TValue result;
@@ -115,7 +119,7 @@ namespace ProgressOnderwijsUtils
 		[Test]
 		public void GetDefault()
 		{
-			IDictionary<int, int> sut = new Dictionary<int, int> { { 0, 0 } };
+			var sut = new Dictionary<int, int> { { 0, 0 } };
 			Assert.That(sut.GetOrDefault(0, 1), Is.EqualTo(0));
 			Assert.That(sut.GetOrDefault(1, 2), Is.EqualTo(2));
 			Assert.That(!sut.ContainsKey(1));

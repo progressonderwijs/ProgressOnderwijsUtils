@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using ProgressOnderwijsUtils;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace ProgressOnderwijsUtils.Collections
+namespace ProgressOnderwijsUtils
 {
 	public sealed class ArrayView<T> : IReadOnlyList<T>
 	{
@@ -57,8 +56,8 @@ namespace ProgressOnderwijsUtils.Collections
 	public static class ArrayViewExtensions
 	{
 		public static IReadOnlyList<T> AsReadView<T>(this T[] vals) { return new ArrayView<T>(vals); }
-		public static IReadOnlyList<TOut> Select<T, TOut>(this IReadOnlyList<T> vals, Func<T, TOut> map) { return new ArrayView_MappedByElement<T, TOut>(vals, map); }
-		public static IReadOnlyList<TOut> Select<T, TOut>(this IReadOnlyList<T> vals, Func<T, int, TOut> map) { return new ArrayView_MappedWithIndex<T, TOut>(vals, map); }
+		public static IReadOnlyList<T> AsReadOnlyView<T>(this IList<T> list) { return list as IReadOnlyList<T> ?? new ListView<T>(list); }
+
 		public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, TOut> map) { return new ArrayView_MappedByElement<T, TOut>(vals, map); }
 		public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, int, TOut> map) { return new ArrayView_MappedWithIndex<T, TOut>(vals, map); }
 	}

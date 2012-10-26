@@ -5,6 +5,7 @@ using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
@@ -35,7 +36,8 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var nums = Enumerable.Range(1, 5).Reverse().ToArray();
 			var copy = nums.ToReadOnly();
-			var view = nums.AsReadOnlyView();
+			var view = nums.
+				AsReadOnlyView();
 			PAssert.That(() => nums.SequenceEqual(copy) && nums.SequenceEqual(view));
 			Array.Sort(nums);
 			PAssert.That(() => nums.SequenceEqual(view) && !nums.SequenceEqual(copy));
