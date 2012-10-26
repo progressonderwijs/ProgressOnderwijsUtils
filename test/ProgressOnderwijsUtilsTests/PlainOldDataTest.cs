@@ -188,7 +188,6 @@ namespace ProgressOnderwijsUtilsTests
 			AutomaticClassTest(new OnderwijsNiveau());
 			AutomaticClassTest(new Literatuur());
 			AutomaticClassTest(new BSADossierData());
-			ComparePod(new School("abc", "def"), new { Brincode = "abc", Volgnummer = "def" });
 		}
 	}
 }
