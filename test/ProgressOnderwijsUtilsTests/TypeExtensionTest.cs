@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => typeof(Enum).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
 			PAssert.That(() => typeof(DocumentType).BaseTypes().SequenceEqual(new[] { typeof(Enum), typeof(ValueType), typeof(object) }));
 			PAssert.That(() => typeof(SelectItem<int?>).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-			PAssert.That(() => typeof(ClieopRegelsLijstManager).BaseTypes().SequenceEqual(new[] { typeof(GenericLijstManager<ClieopRegelsDataSource>), typeof(Generic0LijstManager<ClieopRegelsDataSource>), typeof(IGenericLijstManager), typeof(object) }));
+			PAssert.That(() => typeof(ClieopRegelsLijstManager).BaseTypes().SequenceEqual(new[] { typeof(GenericLijstManager<ClieopRegelsDataSource, ClieopRegelsLijstRij>), typeof(Generic0LijstManager<ClieopRegelsDataSource, ClieopRegelsLijstRij>), typeof(IGenericLijstManager), typeof(object) }));
 		}
 
 		[Test]
