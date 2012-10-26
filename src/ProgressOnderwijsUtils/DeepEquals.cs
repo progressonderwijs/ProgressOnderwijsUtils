@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
-using System.Globalization;
 using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils

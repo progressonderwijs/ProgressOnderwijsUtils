@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using System.Text.RegularExpressions;
-using ProgressOnderwijsUtils;
 using System.Xml;
-using NUnit.Framework;
+using System.Xml.Linq;
+using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {

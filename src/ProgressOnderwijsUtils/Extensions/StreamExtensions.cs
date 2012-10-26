@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
-using NUnit.Framework;
 using ExpressionToCodeLib;
+using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {

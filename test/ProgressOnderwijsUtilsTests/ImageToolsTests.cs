@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Test.Properties;
 using ProgressOnderwijsUtils;
-using System.IO;
 
 namespace ProgressOnderwijsUtilsTests
 {

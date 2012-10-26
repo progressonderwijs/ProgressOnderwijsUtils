@@ -1,13 +1,10 @@
 using System;
-using System.Linq;
-using System.Text;
-using System.Security.Cryptography;
-using System.Collections;
-using ProgressOnderwijsUtils.Radius;
-using System.Net.Sockets;
-using System.Net;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
+using System.Security.Cryptography;
 
 //see http://tools.ietf.org/html/rfc2138 or http://en.wikipedia.org/wiki/RADIUS
 //really basic idea: each packet is 1 byte code, 1 byte "identifier" (random sequence number),

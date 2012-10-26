@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
+using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
-
-using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests

@@ -1,10 +1,12 @@
 using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Drawing.Imaging;//this is not recommended?? downsides are unclear though some suggest it might be slow.
-using System.IO;
-using System.Drawing.Drawing2D;
+	//this is not recommended?? downsides are unclear though some suggest it might be slow.
+
 namespace ProgressOnderwijsUtils
 {
 	// Uses tips from http://www.glennjones.net/Post/799/Highqualitydynamicallyresizedimageswithnet.htm

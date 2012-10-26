@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business;
 using Progress.Business.Data.Organisatie.DataSource;
 using Progress.Business.GenericLijst;
 using Progress.Business.Organisatie.Financieel.Betaling;

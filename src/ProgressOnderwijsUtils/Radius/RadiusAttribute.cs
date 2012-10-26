@@ -1,6 +1,7 @@
 using System;
-using System.Net;
 using System.Linq;
+using System.Net;
+
 namespace ProgressOnderwijsUtils.Radius
 {
 	public enum RadiusAttributeType

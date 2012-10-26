@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using System.IO;
 using ProgressOnderwijsUtils.Test;
 using ProgressOnderwijsUtils.WebSupport;
 

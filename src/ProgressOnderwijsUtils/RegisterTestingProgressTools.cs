@@ -1,6 +1,7 @@
 using System.Threading;
 using NUnit.Framework;
 
+
 [SetUpFixture]
 public sealed class RegisterTestingProgressTools //may not be in a namespace!
 {

@@ -1,6 +1,6 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
-using System;
 
 [assembly: AssemblyTitle("ProgressOnderwijsUtils")]
 [assembly: AssemblyCompany("RuG")]
