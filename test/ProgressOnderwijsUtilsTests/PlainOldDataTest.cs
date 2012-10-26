@@ -44,9 +44,9 @@ namespace ProgressOnderwijsUtilsTests
 
 		public static void AutomaticClassTest<T>(T sample)
 		{
-			PropertyTester ptester = new PropertyTester(sample);
+			var ptester = new PropertyTester(sample);
 			ptester.TestProperties();
-			ConstructorTester ctester = new ConstructorTester(typeof(T));
+			var ctester = new ConstructorTester(typeof(T));
 			ctester.TestConstructors(true);
 		}
 
@@ -131,30 +131,30 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void SLBerichtSamenvattingTest()
 		{
-			var a = new SLBerichtSamenvatting
+			var a = new SLBerichtSamenvatting.Value
 			{
 				Berichttype = "abc",
 				FormNaam = "def",
 				Ontvanger = "qwerty",
 				Organisatie = 1,
 				Student = 2,
-				Studielinkberichtid = 3,
+				StudielinkberichtId = 3,
 				StudielinkNummer = 4,
 				Tekst = "asdfg",
 				Zender = "zxcvb",
-			};
-			var b = new SLBerichtSamenvatting
+			}.Finish();
+			var b = new SLBerichtSamenvatting.Value
 			{
 				Berichttype = "abc",
 				FormNaam = "def",
 				Ontvanger = "qwerty",
 				Organisatie = 1,
 				Student = 2,
-				Studielinkberichtid = 3,
+				StudielinkberichtId = 3,
 				StudielinkNummer = 4,
 				Tekst = "asdfg",
 				Zender = "zxcvb",
-			};
+			}.Finish();
 			var c =
 				new
 				{
@@ -163,7 +163,7 @@ namespace ProgressOnderwijsUtilsTests
 					Ontvanger = "qwerty",
 					Organisatie = 1,
 					Student = 2,
-					Studielinkberichtid = 3,
+					StudielinkberichtId = 3,
 					StudielinkNummer = 4,
 					Tekst = "asdfg",
 					Zender = "zxcvb",
