@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
 		static readonly Func<T, int> hashFunc;
 		static readonly Func<T, string> toStringFunc;
 
-		protected ValueBase() { if (!(this is T)) throw new InvalidOperationException("Only T can subclass ByValueHelperBase<T>."); }
+		protected ValueBase() { if (!(this is T)) throw new InvalidOperationException("Only T can subclass ValueBase<T>."); }
 		static ValueBase()
 		{
 			try
