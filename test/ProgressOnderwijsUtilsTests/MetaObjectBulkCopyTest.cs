@@ -19,48 +19,48 @@ namespace ProgressOnderwijsUtilsTests
 			new BlaOk { Bla2 = "", Id = 3 }, 
 		};
 
-		public sealed class BlaOk : MetaObjectBase<BlaOk>
+		public sealed class BlaOk : ValueBase<BlaOk>, IMetaObject
 		{
 			public int Id { get; set; }
 			public string Bla2 { get; set; }
 			public string Bla { get; set; }
 		}
-		public sealed class BlaOk2 : MetaObjectBase<BlaOk2>
+		public sealed class BlaOk2 : ValueBase<BlaOk2>, IMetaObject
 		{
 			public int Id { get; set; }
 			public string Bla { get; set; }
 			public string Bla2 { get; set; }
 		}
 
-		public sealed class BlaWithMispelledColumns : MetaObjectBase<BlaWithMispelledColumns>
+		public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IMetaObject
 		{
 			public int Idd { get; set; }
 			public string Bla { get; set; }
 			public string Bla2 { get; set; }
 		}
 
-		public sealed class BlaWithMistypedColumns : MetaObjectBase<BlaWithMistypedColumns>
+		public sealed class BlaWithMistypedColumns : ValueBase<BlaWithMistypedColumns>, IMetaObject
 		{
 			public int Bla { get; set; }
 			public int Id { get; set; }
 			public string Bla2 { get; set; }
 		}
 
-		public sealed class BlaWithMistypedColumns2 : MetaObjectBase<BlaWithMistypedColumns2>
+		public sealed class BlaWithMistypedColumns2 : ValueBase<BlaWithMistypedColumns2>, IMetaObject
 		{
 			public int Bla { get; set; }
 			public string Id { get; set; }
 			public string Bla2 { get; set; }
 		}
 
-		public sealed class BlaWithExtraClrFields : MetaObjectBase<BlaWithExtraClrFields>
+		public sealed class BlaWithExtraClrFields : ValueBase<BlaWithExtraClrFields>, IMetaObject
 		{
 			public string ExtraBla { get; set; }
 			public string Id { get; set; }
 			public int Bla { get; set; }
 			public string Bla2 { get; set; }
 		}
-		public sealed class BlaWithMissingClrFields : MetaObjectBase<BlaWithMissingClrFields>
+		public sealed class BlaWithMissingClrFields : ValueBase<BlaWithMissingClrFields>, IMetaObject
 		{
 			public int Id { get; set; }
 			public string Bla2 { get; set; }
