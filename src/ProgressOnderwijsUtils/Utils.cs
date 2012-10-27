@@ -144,6 +144,7 @@ namespace ProgressOnderwijsUtils
 
 		public static Func<T, TR> F<T, TR>(Func<T, TR> v) { return v; } //purely for delegate type inference
 		public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v) { return v; } //purely for delegate type inference
+		public static Func<T1, T2, T3, TR> F<T1, T2, T3, TR>(Func<T1, T2, T3, TR> v) { return v; } //purely for delegate type inference
 
 		public static Expression<Func<TR>> E<TR>(Expression<Func<TR>> v) { return v; } //purely for delegate type inference
 		public static Expression<Func<T, TR>> E<T, TR>(Expression<Func<T, TR>> v) { return v; } //purely for delegate type inference
