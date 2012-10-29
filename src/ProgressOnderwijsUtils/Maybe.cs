@@ -67,7 +67,10 @@ namespace ProgressOnderwijsUtils
 		public static ErrorValue Error(ITranslatable val) { return new ErrorValue(val); }
 
 
-		public static Maybe<Unit> ErrorWhenNotNull(this ITranslatable val) { return new ErrorValue(val); }
+		public static Maybe<Unit> ErrorWhenNotNull(this ITranslatable val)
+		{
+			return val == null ? Ok() : new ErrorValue(val);
+		}
 
 		public static Maybe<TOut> WhenOk<T, TOut>(this Maybe<T> state, Func<T, TOut> map) { return state.ExtractToValue(v => Ok(map(v)), Error<TOut>); }
 		public static Maybe<Unit> WhenOk<T>(this Maybe<T> state, Action<T> map) { return state.ExtractToValue(v => { map(v); return Ok(); }, Error<Unit>); }
