@@ -326,7 +326,7 @@ namespace ProgressOnderwijsUtils
 				public static Func<TReader, T[]> GetDataReaderUnpacker(TReader reader)
 				{
 					if (reader.FieldCount != ColHashPrimes.Length)
-						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; constructr parameter count = " + ColHashPrimes.Length);
+						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; field count = " + ColHashPrimes.Length);
 					var ordering = new ColumnOrdering(reader);
 
 					return LoadRows.GetOrAdd(ordering, orderingP =>
