@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
 {
 	public static class Translator
 	{
-		private static readonly IDictionary<Taal, CultureInfo> CULTURES = new Dictionary<Taal, CultureInfo>
+		static readonly IDictionary<Taal, CultureInfo> CULTURES = new Dictionary<Taal, CultureInfo>
 		{
 			{ Taal.NL, new CultureInfo("nl-NL", false) },		
 			{ Taal.EN, new CultureInfo("en-GB", false) },		
