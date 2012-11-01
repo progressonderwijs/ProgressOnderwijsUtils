@@ -155,7 +155,7 @@ namespace ProgressOnderwijsUtils
 
 		static readonly Dictionary<string, BooleanComparer> niceStringValues = EnumHelpers.GetValues<BooleanComparer>().ToDictionary(NiceString);
 
-		public static BooleanComparer? ParseComparerNiceString(string s) { return niceStringValues.GetOrDefault(s, default(BooleanComparer?)); }
+		public static BooleanComparer? ParseComparerNiceString(string s) { return niceStringValues.GetOrDefaultR(s, default(BooleanComparer?)); }
 
 		public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, Type> typeIfPresent) { return filter != null && filter.IsFilterValid(typeIfPresent) ? filter : null; }
 

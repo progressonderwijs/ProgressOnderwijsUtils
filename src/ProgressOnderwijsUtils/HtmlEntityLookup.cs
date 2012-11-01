@@ -21,10 +21,10 @@ namespace ProgressOnderwijsUtils
 		/// <returns>the character corresponding to the entity, or null if no such entity is defined in HTML</returns>
 		public static char? Lookup(string entity)
 		{
-			return lookup.GetOrDefault(entity, default(char?));
+			return lookup.GetOrDefaultR(entity, default(char?));
 		}
 
-		static readonly Dictionary<string, char> lookup = new Dictionary<string, char>
+		static readonly IReadOnlyDictionary<string, char> lookup = new Dictionary<string, char>
 		{
 			{ @"Aacute", (char)0x00C1 },
 			{ @"aacute", (char)0x00E1 },

@@ -142,7 +142,7 @@ namespace ProgressOnderwijsUtilsTests
 				StudielinkNummer = 4,
 				Tekst = "asdfg",
 				Zender = "zxcvb",
-			}.Finish();
+			}.FinishBuilding();
 			var b = new SLBerichtSamenvatting.Value
 			{
 				Berichttype = "abc",
@@ -154,7 +154,7 @@ namespace ProgressOnderwijsUtilsTests
 				StudielinkNummer = 4,
 				Tekst = "asdfg",
 				Zender = "zxcvb",
-			}.Finish();
+			}.FinishBuilding();
 			var c =
 				new
 				{
