@@ -88,12 +88,12 @@ a.KleinVet {
 		[Test]
 		public void MinifyJavascript()
 		{
-			PAssert.That(()=>outputIdealJS == JavascriptMinifyYUI.Minify(inputJS));
+			PAssert.That(()=>outputIdealJS == CssMinifyYUI.MinifyJs(inputJS));
 		}
 		[Test]
 		public void MinifyCss()
 		{
-			PAssert.That(()=>outputCss == CssMinifyYUI.Minify(inputCss));
+			PAssert.That(()=>outputCss == CssMinifyYUI.MinifyCss(inputCss));
 		}
 	}
 }
