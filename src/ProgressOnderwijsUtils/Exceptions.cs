@@ -4,17 +4,20 @@ using System.Runtime.Serialization;
 
 namespace ProgressOnderwijsUtils
 {
+	[Serializable]
 	public class NoRowsFoundException : ProgressNetException {
 		public NoRowsFoundException(string msg) : base(msg) { }
 		public NoRowsFoundException() { }
 		public NoRowsFoundException(string msg, Exception inner) : base(msg, inner) { }
 	}
 
+	[Serializable]
 	public class GeenRechtException : ProgressNetException
 	{
 		public GeenRechtException(string msg) : base(msg) { }
 	}
 
+	[Serializable]
 	public class QueryException : ProgressNetException
 	{
 		public QueryException(string msg) : base(msg) { }
