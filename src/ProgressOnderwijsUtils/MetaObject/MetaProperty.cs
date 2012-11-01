@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
 	public interface IMetaProperty
 	{
 		string Naam { get; }
-		string LijstCssClass { get; }
+		ColumnCss LijstCssClass { get; }
 		Func<object, object> Getter { get; }
 		Action<object, object> Setter { get; }
 		int Volgorde { get; }
@@ -44,8 +44,8 @@ namespace ProgressOnderwijsUtils
 			readonly string naam;
 			public string Naam { get { return naam; } }
 
-			readonly string lijstCssClass;
-			public string LijstCssClass { get { return lijstCssClass; } }
+			readonly ColumnCss lijstCssClass;
+			public ColumnCss LijstCssClass { get { return lijstCssClass; } }
 
 			readonly int volgorde;
 			public int Volgorde { get { return volgorde; } }
@@ -134,7 +134,7 @@ namespace ProgressOnderwijsUtils
 				label = OrDefault(Attr<MpTooltipAttribute>(pi), mkAttr => labelNoTt.WithTooltip(mkAttr.NL, mkAttr.EN, mkAttr.DE), labelNoTt);
 
 				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(pi), mkAttr => mkAttr.KoppelTabelNaam ?? pi.Name);
-				lijstCssClass = OrDefault(Attr<MpLijstCssAttribute>(pi), mkAttr => mkAttr.CssClass);
+				lijstCssClass = OrDefault(Attr<MpColumnCssAttribute>(pi), mkAttr => mkAttr.CssClass);
 				verplicht = OrDefault(Attr<MpVerplichtAttribute>(pi), mkAttr => true);
 				hide = OrDefault(Attr<HideAttribute>(pi), mkAttr => true);
 				allowNull = OrDefault(Attr<MpAllowNullAttribute>(pi), mkAttr => true);

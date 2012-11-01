@@ -9,11 +9,22 @@ namespace ProgressOnderwijsUtils
 		public readonly int Volgorde;
 	}
 
-	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	public sealed class MpLijstCssAttribute : Attribute
+	[Flags]
+	public enum ColumnCss
 	{
-		public MpLijstCssAttribute(string cssClass) { CssClass = cssClass; }
-		public readonly string CssClass;
+		None = 0,
+		Fout = 1 << 0,
+		AlignRight = 1 << 1,
+		AlignCenter = 1 << 2,
+		ExplicitLines = 1 << 3,
+		ExtraSpaceRight = 1 << 4,
+	}
+
+	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class MpColumnCssAttribute : Attribute
+	{
+		public MpColumnCssAttribute(ColumnCss cssClass) { CssClass = cssClass; }
+		public readonly ColumnCss CssClass;
 	}
 
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true, AllowMultiple = false)]
@@ -69,7 +80,7 @@ namespace ProgressOnderwijsUtils
 		public MpLabelAttribute(string nl) { NL = nl; }
 		public readonly string NL, EN, DE;
 
-		public LiteralTranslatable ToTranslatable(){return Translatable.Literal(NL, EN, DE);}
+		public LiteralTranslatable ToTranslatable() { return Translatable.Literal(NL, EN, DE); }
 	}
 
 
