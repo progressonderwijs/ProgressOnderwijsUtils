@@ -298,12 +298,15 @@ namespace ProgressOnderwijsUtils
 		static readonly MethodInfo stringContainsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
 		// ReSharper restore MemberCanBePrivate.Global
 
-		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr)
+		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr, Expression dateTimeNowTokenValue)
 		{
 			if (Waarde is GroupReference)
 				throw new InvalidOperationException("Cannot interpret group reference IDs in LINQ: these are only stored in the database!");
 			Expression coreExpr = Expression.Property(objParamExpr, KolomNaam);
-			var waardeExpr = Waarde is ColumnReference ? Expression.Property(objParamExpr, ((ColumnReference)Waarde).ColumnName) : (Expression)Expression.Constant(Waarde);
+			var waardeExpr = Waarde is ColumnReference
+				? Expression.Property(objParamExpr, ((ColumnReference)Waarde).ColumnName)
+				: Waarde == Filter.CurrentTimeToken.Instance ? dateTimeNowTokenValue
+				: Expression.Constant(Waarde);
 			if (waardeExpr.Type != coreExpr.Type && coreExpr.Type.IfNullableGetNonNullableType() == waardeExpr.Type)
 				waardeExpr = Expression.Convert(waardeExpr, coreExpr.Type);
 			else if (waardeExpr.Type != coreExpr.Type && coreExpr.Type == waardeExpr.Type.IfNullableGetNonNullableType())

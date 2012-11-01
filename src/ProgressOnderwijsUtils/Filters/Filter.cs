@@ -44,7 +44,9 @@ namespace ProgressOnderwijsUtils
 		public static Expression<Func<T, bool>> ToMetaObjectFilterExpr<T>(FilterBase filter)
 		{
 			var metaObjParam = Expression.Parameter(typeof(T));
-			var filterBodyExpr = filter == null ? Expression.Constant(true) : filter.ToMetaObjectFilterExpr<T>(metaObjParam);
+			var nowTokenValue = Expression.Constant(DateTime.Now, typeof(DateTime)); //rather than re-determine "now" several times, we pre-determine it to ensure one consistent moment in all filter evaluations.
+
+			var filterBodyExpr = filter == null ? Expression.Constant(true) : filter.ToMetaObjectFilterExpr<T>(metaObjParam, nowTokenValue);
 			return Expression.Lambda<Func<T, bool>>(filterBodyExpr, metaObjParam);
 		}
 
