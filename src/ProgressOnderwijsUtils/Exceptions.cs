@@ -9,12 +9,14 @@ namespace ProgressOnderwijsUtils
 		public NoRowsFoundException(string msg) : base(msg) { }
 		public NoRowsFoundException() { }
 		public NoRowsFoundException(string msg, Exception inner) : base(msg, inner) { }
+		protected NoRowsFoundException(SerializationInfo serializationinfo, StreamingContext streamingcontext) : base(serializationinfo, streamingcontext) { }
 	}
 
 	[Serializable]
 	public class GeenRechtException : ProgressNetException
 	{
 		public GeenRechtException(string msg) : base(msg) { }
+		protected GeenRechtException(SerializationInfo serializationinfo, StreamingContext streamingcontext) : base(serializationinfo, streamingcontext) { }
 	}
 
 	[Serializable]
@@ -23,6 +25,7 @@ namespace ProgressOnderwijsUtils
 		public QueryException(string msg) : base(msg) { }
 		public QueryException() { }
 		public QueryException(string msg, Exception inner) : base(msg, inner) { }
+		protected QueryException(SerializationInfo serializationinfo, StreamingContext streamingcontext) : base(serializationinfo, streamingcontext) { }
 	}
 
 	[Serializable]
