@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-
-	public interface ITree<out TNode> where TNode : ITree<TNode>
+	public interface IRecursiveStructure<out TTree> where TTree : IRecursiveStructure<TTree>
 	{
-		IReadOnlyList<TNode> Children { get; }
+		IReadOnlyList<TTree> Children { get; }
 	}
+
 
 	public static class Tree
 	{
@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils.Collections
 		public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
 	}
 
-	public sealed class Tree<T> : IEquatable<Tree<T>>, ITree<Tree<T>>
+	public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
 	{
 		static readonly IReadOnlyList<Tree<T>> EmptyArray = new Tree<T>[0]; // cache this since it will be used very commonly.
 

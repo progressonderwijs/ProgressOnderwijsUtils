@@ -10,11 +10,11 @@ namespace ProgressOnderwijsUtils
 	{
 		public static RootedTree<T> RootHere<T>(this Tree<T> tree) { return RootedTree<T>.RootTree(tree); }
 
-		public static IEnumerable<T> PreorderTraversal<T>(this T tree) where T : ITree<T>
+		public static IEnumerable<T> PreorderTraversal<T>(this T tree) where T : IRecursiveStructure<T>
 		{
 			yield return tree;
 
-			Stack<IEnumerator<T>> todo = new Stack<IEnumerator<T>>(16);
+			var todo = new Stack<IEnumerator<T>>(16);
 
 			try
 			{

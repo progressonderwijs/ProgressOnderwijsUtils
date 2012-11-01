@@ -5,7 +5,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-	public struct RootedTree<T> : IEquatable<RootedTree<T>>, ITree<RootedTree<T>>
+	public struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>>
 	{
 		public static RootedTree<T> RootTree(Tree<T> rootNode) { return new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode))); }
 
