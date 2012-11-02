@@ -1,4 +1,4 @@
-// ReSharper disable PossiblyMistakenUseOfParamsMethod
+﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
 
 using System;
 using System.Collections.Concurrent;
