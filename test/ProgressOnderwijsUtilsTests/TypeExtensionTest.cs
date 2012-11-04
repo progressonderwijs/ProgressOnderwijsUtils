@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
@@ -8,6 +9,8 @@ using Progress.Business.GenericLijst;
 using Progress.Business.Organisatie.Financieel.Betaling;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
+using Progress.WebApp.Generic;
+using Progress.WebApp.OrganisatieSpace.Financieel;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -23,13 +26,16 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => typeof(IEnumerable<int>).CanBeNull());
 			PAssert.That(() => typeof(ServerLocationAuto).CanBeNull());
 			PAssert.That(() => !typeof(int).CanBeNull());
-			
+
 			PAssert.That(() => !typeof(DocumentType).CanBeNull());
 			PAssert.That(() => !typeof(SelectItem<int?>).CanBeNull());
 
 
 			PAssert.That(() => typeof(Enum).CanBeNull());//WTF???? maar goed, dit is dan ook wel een heel gek type.
 		}
+
+		class SampleBase : ArrayList { }
+		class Sample<A> : SampleBase { }
 
 		[Test]
 		public void TestBases()
@@ -43,14 +49,14 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => typeof(Enum).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
 			PAssert.That(() => typeof(DocumentType).BaseTypes().SequenceEqual(new[] { typeof(Enum), typeof(ValueType), typeof(object) }));
 			PAssert.That(() => typeof(SelectItem<int?>).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-			PAssert.That(() => typeof(ClieopRegelsLijstManager).BaseTypes().SequenceEqual(new[] { typeof(GenericLijstManager<ClieopRegelsDataSource, ClieopRegelsLijstRij>), typeof(Generic0LijstManager<ClieopRegelsDataSource, ClieopRegelsLijstRij>),  typeof(object) }));
+			PAssert.That(() => typeof(ClieopRegelsLijst).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object) }));
 		}
 
 		[Test]
 		public void TestNullableGetter()
 		{
 			PAssert.That(() => typeof(int?).IfNullableGetNonNullableType() == typeof(int));
-			PAssert.That(() => typeof(int).IfNullableGetNonNullableType() ==null);
+			PAssert.That(() => typeof(int).IfNullableGetNonNullableType() == null);
 			PAssert.That(() => typeof(string).IfNullableGetNonNullableType() == null);
 		}
 
