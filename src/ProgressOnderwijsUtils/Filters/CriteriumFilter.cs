@@ -40,7 +40,10 @@ namespace ProgressOnderwijsUtils
 
 		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde)
 		{
-			_KolomNaam = kolomnaam; _Comparer = comparer; _Waarde = waarde;
+			_KolomNaam = kolomnaam;
+			_Comparer = comparer;
+			_Waarde = _Comparer == BooleanComparer.IsNotNull || _Comparer == BooleanComparer.IsNotNull ? null : waarde;
+
 			if ((Comparer == BooleanComparer.In || Comparer == BooleanComparer.NotIn)
 				&& !(Waarde is GroupReference))
 			{
@@ -91,7 +94,7 @@ namespace ProgressOnderwijsUtils
 						return KolomNaam + " not in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
 					else
 						return KolomNaam + " not in (select val from " + QueryBuilder.TableParamDynamic((Array)Waarde) + ")";
-				
+
 				case BooleanComparer.StartsWith:
 					return KolomNaam + " like " + QueryBuilder.Param(Waarde + "%");
 				case BooleanComparer.EndsWith:
@@ -313,7 +316,9 @@ namespace ProgressOnderwijsUtils
 			var waardeExpr = Waarde is ColumnReference
 				? Expression.Property(objParamExpr, ((ColumnReference)Waarde).ColumnName)
 				: Waarde == Filter.CurrentTimeToken.Instance ? dateTimeNowTokenValue
-				: Expression.Constant(Waarde);
+				: Waarde == null ? Expression.Default(coreExpr.Type.MakeNullableType() ?? coreExpr.Type)
+				: (Expression)Expression.Constant(Waarde, coreExpr.Type);
+
 			if (waardeExpr.Type != coreExpr.Type && coreExpr.Type.IfNullableGetNonNullableType() == waardeExpr.Type)
 				waardeExpr = Expression.Convert(waardeExpr, coreExpr.Type);
 			else if (waardeExpr.Type != coreExpr.Type && coreExpr.Type == waardeExpr.Type.IfNullableGetNonNullableType())
@@ -325,12 +330,15 @@ namespace ProgressOnderwijsUtils
 					return Expression.LessThan(coreExpr, waardeExpr);
 				case BooleanComparer.LessThanOrEqual:
 					return Expression.LessThanOrEqual(coreExpr, waardeExpr);
+				case BooleanComparer.IsNull:
 				case BooleanComparer.Equal:
 					return Expression.Equal(coreExpr, waardeExpr);
 				case BooleanComparer.GreaterThanOrEqual:
 					return Expression.GreaterThanOrEqual(coreExpr, waardeExpr);
 				case BooleanComparer.GreaterThan:
 					return Expression.GreaterThan(coreExpr, waardeExpr);
+
+				case BooleanComparer.IsNotNull:
 				case BooleanComparer.NotEqual:
 					return Expression.NotEqual(coreExpr, waardeExpr);
 				case BooleanComparer.In:
@@ -358,10 +366,6 @@ namespace ProgressOnderwijsUtils
 					return Expression.Call(stringEndsWithMethod, coreExpr, waardeExpr);
 				case BooleanComparer.Contains:
 					return Expression.Call(stringContainsMethod, coreExpr, waardeExpr);
-				case BooleanComparer.IsNull:
-					return Expression.Equal(Expression.Convert(Expression.Default(typeof(object)), coreExpr.Type), coreExpr);
-				case BooleanComparer.IsNotNull:
-					return Expression.NotEqual(Expression.Convert(Expression.Default(typeof(object)), coreExpr.Type), coreExpr);
 				default:
 					throw new InvalidOperationException("Geen geldige operator");
 			}
