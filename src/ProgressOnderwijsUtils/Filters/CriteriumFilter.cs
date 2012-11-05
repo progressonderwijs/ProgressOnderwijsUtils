@@ -59,18 +59,28 @@ namespace ProgressOnderwijsUtils
 		{
 			switch (Comparer)
 			{
+				case BooleanComparer.Equal:
+					if (Waarde == null)
+						goto case BooleanComparer.IsNull;
+					return KolomNaam + "=" + BuildParam();
+				case BooleanComparer.IsNull:
+					return QueryBuilder.Create(KolomNaam + " is null");
+				case BooleanComparer.NotEqual:
+					if (Waarde == null)
+						goto case BooleanComparer.IsNotNull;
+					return KolomNaam + "!=" + BuildParam();
+				case BooleanComparer.IsNotNull:
+					return QueryBuilder.Create(KolomNaam + " is not null");
+
 				case BooleanComparer.LessThan:
 					return KolomNaam + "<" + BuildParam();
 				case BooleanComparer.LessThanOrEqual:
 					return KolomNaam + "<=" + BuildParam();
-				case BooleanComparer.Equal:
-					return KolomNaam + "=" + BuildParam();
 				case BooleanComparer.GreaterThanOrEqual:
 					return KolomNaam + ">=" + BuildParam();
 				case BooleanComparer.GreaterThan:
 					return KolomNaam + ">" + BuildParam();
-				case BooleanComparer.NotEqual:
-					return KolomNaam + "!=" + BuildParam();
+
 				case BooleanComparer.In:
 					if (Waarde is GroupReference)
 						return KolomNaam + " in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
@@ -81,16 +91,13 @@ namespace ProgressOnderwijsUtils
 						return KolomNaam + " not in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
 					else
 						return KolomNaam + " not in (select val from " + QueryBuilder.TableParamDynamic((Array)Waarde) + ")";
+				
 				case BooleanComparer.StartsWith:
 					return KolomNaam + " like " + QueryBuilder.Param(Waarde + "%");
 				case BooleanComparer.EndsWith:
 					return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde);
 				case BooleanComparer.Contains:
 					return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde + "%");
-				case BooleanComparer.IsNull:
-					return QueryBuilder.Create(KolomNaam + " is null");
-				case BooleanComparer.IsNotNull:
-					return QueryBuilder.Create(KolomNaam + " is not null");
 				default:
 					throw new InvalidOperationException("Geen geldige operator");
 			}
