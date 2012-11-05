@@ -38,6 +38,7 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var filter = Filter.CreateCriterium("test", BooleanComparer.Equal, Filter.CurrentTimeToken.Instance);
 			DateTime start = DateTime.Now;
+			filter.ToQueryBuilder();
 			while (DateTime.Now == start) { }//wait until start of next tick
 			var q = filter.ToQueryBuilder();
 			var qIdeal = QueryBuilder.Create("test={0}", DateTime.Now);
