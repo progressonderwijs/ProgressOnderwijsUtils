@@ -11,7 +11,6 @@ namespace ProgressOnderwijsUtilsTests
 	[TestFixture]
 	public sealed class MetaObjectRequirements
 	{
-
 		[Test]
 		public void MetaObjectsAreSealedOrAbstract()
 		{

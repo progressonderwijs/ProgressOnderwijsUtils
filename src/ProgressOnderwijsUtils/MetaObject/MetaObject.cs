@@ -163,8 +163,10 @@ namespace ProgressOnderwijsUtils
 					throw new ArgumentException("Cannot determine metaproperties on abstract type " + typeof(T));
 				else if (typeof(T).IsInterface)
 					throw new ArgumentException("Cannot determine metaproperties on interface type " + typeof(T));
-				else if (!typeof(T).IsSealed)
-					throw new ArgumentException("IMetaObjects must be sealed! The type " + typeof(T) + " is not sealed");
+				else if (typeof(T).BaseTypes().Any(bt => !bt.IsAbstract && typeof(IMetaObject).IsAssignableFrom(bt)))
+					throw new ArgumentException("Cannot determine metaproperties on type with non-abstract base type(s)");
+				else if (!typeof(T).GetProperties().Any())
+					throw new ArgumentException("Cannot determine metaproperties on type without properties");
 
 				properties = GetMetaPropertiesImpl().ToArray();
 
