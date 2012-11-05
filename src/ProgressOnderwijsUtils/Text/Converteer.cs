@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using MoreLinq;
 using ProgressOnderwijsUtils;
@@ -108,6 +109,7 @@ namespace ProgressOnderwijsUtils
 
 		#region ToText
 
+		static readonly MethodInfo enumToTranslatableGeneric = ((Func<DatabaseVersion, ITranslatable>)EnumHelpers.GetLabel).Method.GetGenericMethodDefinition();
 		/// <summary>
 		/// Generieke text-efy functie die de default Progress.NET formatering en culture-info gebruikt om een waarde een vertaalbare string representatie te geven.
 		/// </summary>
@@ -125,6 +127,8 @@ namespace ProgressOnderwijsUtils
 				return (ITranslatable)obj;
 			else if (obj is TextVal)
 				return new TextDefSimple((TextVal)obj);
+			else if (obj is Enum)
+				return (ITranslatable)enumToTranslatableGeneric.MakeGenericMethod(obj.GetType()).Invoke(null, new[] { obj });
 			else if (string.IsNullOrEmpty(extraformat))
 				return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format));
 			else
