@@ -4,13 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.Data.Organisatie.DataSource;
-using Progress.Business.GenericLijst;
-using Progress.Business.Organisatie.Financieel.Betaling;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
-using Progress.WebApp.Generic;
-using Progress.WebApp.OrganisatieSpace.Financieel;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -36,6 +31,7 @@ namespace ProgressOnderwijsUtilsTests
 
 		class SampleBase : ArrayList { }
 		class Sample<A> : SampleBase { }
+		class SampleX<A> : Sample<A> { }
 
 		[Test]
 		public void TestBases()
@@ -49,7 +45,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => typeof(Enum).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
 			PAssert.That(() => typeof(DocumentType).BaseTypes().SequenceEqual(new[] { typeof(Enum), typeof(ValueType), typeof(object) }));
 			PAssert.That(() => typeof(SelectItem<int?>).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-			PAssert.That(() => typeof(ClieopRegelsLijst).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object) }));
+			PAssert.That(() => typeof(SampleX<string>).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object) }));
 		}
 
 		[Test]
