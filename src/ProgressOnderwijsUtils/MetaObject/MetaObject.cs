@@ -35,6 +35,17 @@ namespace ProgressOnderwijsUtils
 		{
 			public static IMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> property)
 			{
+				var propertyInfo = GetPropertyInfo(property);
+
+				var mp = MetaPropCache<TMetaObject>.propertiesByInheritedInfo.GetOrDefault(propertyInfo);
+				if (mp == null)
+					throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
+						"The argument lambda refers to a property " + propertyInfo.Name + " that is not a MetaProperty");
+				return mp;
+			}
+
+			public static PropertyInfo GetPropertyInfo<TParent, T>(Expression<Func<TParent, T>> property)
+			{
 				var paramExpr = property.Parameters.Single();
 				var bodyExpr = property.Body;
 
@@ -54,12 +65,7 @@ namespace ProgressOnderwijsUtils
 				if (propertyInfo == null)
 					throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
 						"The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property");
-
-				var mp = MetaPropCache<TMetaObject>.propertiesByInheritedInfo.GetOrDefault(propertyInfo);
-				if (mp == null)
-					throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-						"The argument lambda refers to a property " + propertyInfo.Name + " that is not a MetaProperty");
-				return mp;
+				return propertyInfo;
 			}
 		}
 
@@ -159,10 +165,10 @@ namespace ProgressOnderwijsUtils
 			{
 				if (typeof(T) == typeof(IMetaObject))
 					throw new ArgumentException("Cannot determine metaproperties on IMetaObject itself");
-				else if (typeof(T).IsAbstract)
-					throw new ArgumentException("Cannot determine metaproperties on abstract type " + typeof(T));
 				else if (typeof(T).IsInterface)
 					throw new ArgumentException("Cannot determine metaproperties on interface type " + typeof(T));
+				else if (typeof(T).IsAbstract)
+					throw new ArgumentException("Cannot determine metaproperties on abstract type " + typeof(T));
 				else if (typeof(T).BaseTypes().Any(bt => !bt.IsAbstract && typeof(IMetaObject).IsAssignableFrom(bt)))
 					throw new ArgumentException("Cannot determine metaproperties on type with non-abstract base type(s)");
 				else if (!typeof(T).GetProperties().Any())

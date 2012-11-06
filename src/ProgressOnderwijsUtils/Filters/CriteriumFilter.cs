@@ -317,7 +317,7 @@ namespace ProgressOnderwijsUtils
 				? Expression.Property(objParamExpr, ((ColumnReference)Waarde).ColumnName)
 				: Waarde == Filter.CurrentTimeToken.Instance ? dateTimeNowTokenValue
 				: Waarde == null ? Expression.Default(coreExpr.Type.MakeNullableType() ?? coreExpr.Type)
-				: (Expression)Expression.Constant(Waarde, coreExpr.Type);
+				: (Expression)Expression.Constant(Waarde);
 
 			if (waardeExpr.Type != coreExpr.Type && coreExpr.Type.IfNullableGetNonNullableType() == waardeExpr.Type)
 				waardeExpr = Expression.Convert(waardeExpr, coreExpr.Type);
