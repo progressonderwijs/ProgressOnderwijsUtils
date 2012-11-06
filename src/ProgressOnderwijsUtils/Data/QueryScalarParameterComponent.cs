@@ -17,13 +17,13 @@ namespace ProgressOnderwijsUtils.Data
 		public SqlParameter ToSqlParameter(int paramNum)
 		{
 			return new SqlParameter {
-			                        	IsNullable = paramval == DBNull.Value,
-			                        	ParameterName = "@par" + paramNum,
-			                        	Value = paramval,
-			                        };
+				IsNullable = paramval == DBNull.Value,
+				ParameterName = "@par" + paramNum,
+				Value = paramval,
+			};
 		}
 
-		public string ToDebugText()
+		public string ToDebugText(Taal? taalOrNull)
 		{
 			if (paramval == null || paramval == DBNull.Value)
 				return "null";
@@ -36,11 +36,12 @@ namespace ProgressOnderwijsUtils.Data
 			else if (paramval is DateTime)
 				return ((DateTime)paramval).ToString(@"\'yyyy-MM-dd HH:mm:ss.fffffff\'");
 			else
-				return "{!" + paramval + "!}";
+				return "{!" + (taalOrNull.HasValue ? Converteer.ToString(paramval, taalOrNull.Value) : paramval.ToString()) + "!}";
 		}
 
 
-		public bool CanShareParamNumberWith(IQueryParameter other) {
+		public bool CanShareParamNumberWith(IQueryParameter other)
+		{
 			return Equals(other);
 			//return ReferenceEquals(this, other) ||
 			//(other is QueryScalarParameterComponent) 
@@ -48,7 +49,8 @@ namespace ProgressOnderwijsUtils.Data
 			//&& !(paramval is int) 
 			//&& Equals(paramval, ((QueryScalarParameterComponent)other).paramval);
 		}
-		public int ParamNumberSharingHashCode() {
+		public int ParamNumberSharingHashCode()
+		{
 			return GetHashCode();
 			//return paramval.GetHashCode() + (
 			//paramval == DBNull.Value

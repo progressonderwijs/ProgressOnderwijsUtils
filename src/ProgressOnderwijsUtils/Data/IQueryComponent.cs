@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Data
 	{
 		string ToSqlString(CommandFactory qnum);
 
-		string ToDebugText();
+		string ToDebugText(Taal? taalOrNull);
 	}
 
 	interface IQueryParameter : IQueryComponent

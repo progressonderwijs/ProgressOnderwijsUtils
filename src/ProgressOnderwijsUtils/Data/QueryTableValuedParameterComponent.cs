@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Data
 			};
 		}
 
-		public string ToDebugText()
+		public string ToDebugText(Taal? taalOrNull)
 		{
 			return "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")";
 		}

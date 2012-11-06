@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils
 		public static SelectItem<T> GetItem<T>(this List<SelectItem<T>> list, Taal language, string text)
 		{
 			return (from item in list
-					where item.Option.Translate(language).Text == text
+					where item.Label.Translate(language).Text == text
 					select item).SingleOrDefault();
 		}
 	}
@@ -90,24 +90,26 @@ namespace ProgressOnderwijsUtils
 	public interface ISelectItem<out T>
 	{
 		T Value { get; }
-		ITranslatable Option { get; }
+		ITranslatable Label { get; }
 	}
 
 	public struct SelectItem<T> : ISelectItem<T>
 	{
 		readonly T v;
-		readonly ITranslatable option;
+		readonly ITranslatable label;
 
 		public T Value { get { return v; } }
-		public ITranslatable Option { get { return option; } }
+		public ITranslatable Label { get { return label; } }
 
-		public SelectItem(T v, ITranslatable option)
+		public SelectItem(T v, ITranslatable label)
 		{
+			if (label == null)
+				throw new ArgumentNullException("label");
 			this.v = v;
-			this.option = option;
+			this.label = label;
 		}
 
-		public override string ToString() { return "{" + v + ": " + option.Translate(Taal.NL).Text + "}"; }
+		public override string ToString() { return "{" + v + ": " + label.Translate(Taal.NL).Text + "}"; }
 	}
 
 	public static class SelectItem

@@ -13,8 +13,15 @@ namespace ProgressOnderwijsUtils
 		protected internal abstract FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c);
 		protected internal abstract bool IsFilterValid(Func<string, Type> colTypeLookup);
 		protected internal abstract Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr, Expression DateTimeNowToken);//where T : IMetaObject;
-		public override string ToString() { return ToQueryBuilderImpl().DebugText(); }
+		public override string ToString() { return ToQueryBuilderImpl().DebugText(null); }
 		public abstract string SerializeToString();
 		public abstract bool Equals(FilterBase other);
+
+		public ITranslatable ToText()
+		{
+			var q = ToQueryBuilderImpl();
+
+			return Translatable.CreateTranslatable(taal => q.DebugText(taal));
+		}
 	}
 }

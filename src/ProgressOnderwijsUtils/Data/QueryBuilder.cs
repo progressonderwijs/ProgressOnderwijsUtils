@@ -153,9 +153,9 @@ namespace ProgressOnderwijsUtils
 
 		public SqlCommand CreateSqlCommand(SqlConnection conn, int commandTimeout) { return CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), conn, commandTimeout); }
 
-		public string DebugText()
+		public string DebugText(Taal? taalOrNull)
 		{
-			return ComponentsInReverseOrder.Reverse().Select(component => component.ToDebugText()).JoinStrings();
+			return ComponentsInReverseOrder.Reverse().Select(component => component.ToDebugText(taalOrNull)).JoinStrings();
 		}
 		public string CommandText() { return CommandFactory.BuildQueryText(ComponentsInReverseOrder.Reverse()); }
 
@@ -221,7 +221,7 @@ namespace ProgressOnderwijsUtils
 
 		public static bool operator !=(QueryBuilder a, QueryBuilder b) { return !(a == b); }
 		public override int GetHashCode() { return HashCodeHelper.ComputeHash(CanonicalReverseComponents.ToArray()) + 123; }
-		public override string ToString() { return DebugText(); }
+		public override string ToString() { return DebugText(null); }
 
 		static QueryBuilder SubQueryHelper(QueryBuilder subquery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filters, OrderByColumns sortOrder, QueryBuilder topRowsOrNull)
 		{
