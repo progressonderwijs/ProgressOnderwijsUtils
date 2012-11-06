@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using ExpressionToCodeLib;
@@ -9,9 +8,14 @@ namespace ProgressOnderwijsUtils
 {
 	public static class EnumHelpers
 	{
-		static class EnumMetaCache<TEnum> where TEnum : struct
+		interface IEnumValues
 		{
-			public static readonly ReadOnlyCollection<TEnum> EnumValues = new ReadOnlyCollection<TEnum>((TEnum[])Enum.GetValues(typeof(TEnum)));
+			IReadOnlyList<Enum> Values();
+			ITranslatable GetLabel(Enum f);
+		}
+		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct
+		{
+			public static readonly IReadOnlyList<TEnum> EnumValues = (TEnum[])Enum.GetValues(typeof(TEnum));
 			public static readonly Dictionary<TEnum, MemberInfo> EnumMembers = EnumValues.ToDictionary(v => v, v => typeof(TEnum).GetMember(v.ToString()).Single());
 
 			public static class AttrCache<TAttr> where TAttr : Attribute
@@ -23,12 +27,34 @@ namespace ProgressOnderwijsUtils
 						select new { EnumValue = kv.Key, Attr = attr }
 						).ToLookup(x => x.EnumValue, x => x.Attr);
 			}
+
+
+			public IReadOnlyList<Enum> Values() { return EnumValues.SelectIndexable(e => (Enum)(object)e); }
+			public ITranslatable GetLabel(Enum f) { return GetLabel((TEnum)(object)f); }
+			public static ITranslatable GetLabel(TEnum f)
+			{
+
+				var label = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
+				var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
+				if (label == null && tooltip == null && !EnumMembers.ContainsKey(f))
+					throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+
+				var translatable = label != null ? label.ToTranslatable()
+					: Converteer.ToText(StringUtils.PrettyPrintCamelCased(f.ToString()));
+				if (tooltip != null)
+					translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
+
+				return translatable;
+			}
+
 		}
+
 		interface ILabelLookup
 		{
 			IEnumerable<Enum> Lookup(string s, Taal taal);
 		}
-		sealed class EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct
+
+		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct
 		{
 			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text, e => e, StringComparer.OrdinalIgnoreCase));
 			public static IEnumerable<TEnum> Lookup(string s, Taal taal) { return ParseLabels[taal][s]; }
@@ -47,9 +73,16 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public static ReadOnlyCollection<T> GetValues<T>() where T : struct
+		public static IReadOnlyList<T> GetValues<T>() where T : struct
 		{
 			return EnumMetaCache<T>.EnumValues;
+		}
+		public static IReadOnlyList<Enum> GetValues(Type enumType)
+		{
+			if (!enumType.IsEnum)
+				throw new ArgumentException("enumType must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(enumType));
+			var values = (IEnumValues)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(enumType));
+			return values.Values();
 		}
 
 		public static TEnum? TryParse<TEnum>(string s) where TEnum : struct
@@ -77,18 +110,18 @@ namespace ProgressOnderwijsUtils
 
 		public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct
 		{
+			return EnumMetaCache<TEnum>.GetLabel(f);
+		}
 
-			var label = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
-			var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
-			if (label == null && tooltip == null && !EnumMetaCache<TEnum>.EnumMembers.ContainsKey(f))
-				throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
-
-			var translatable = label != null ? label.ToTranslatable()
-				: Converteer.ToText(StringUtils.PrettyPrintCamelCased(f.ToString()));
-			if (tooltip != null)
-				translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
-
-			return translatable;
+		public static ITranslatable GetLabel(Enum enumVal)
+		{
+			if (enumVal == null)
+				throw new ArgumentNullException("enumVal");
+			var type = enumVal.GetType();
+			if (!type.IsEnum)
+				throw new ArgumentException("enumVal must be an enum value, not of type " + ObjectToCode.GetCSharpFriendlyTypeName(type));
+			var labeller = (IEnumValues)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(type));
+			return labeller.GetLabel(enumVal);
 		}
 
 

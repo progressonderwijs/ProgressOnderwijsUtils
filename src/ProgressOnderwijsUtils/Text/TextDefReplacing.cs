@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Text
 			TextVal[] replacements = toreplace.Select(it => it.Translate(taal)).ToArray();
 			string[] mainTextRep = replacements.Select(tv => tv.Text).ToArray();
 			string[] helpTextRep = replacements.Select(tv => string.IsNullOrEmpty(tv.ExtraText) ? tv.Text : tv.ExtraText).ToArray();
-			return new TextVal(string.Format(retval.Text, mainTextRep), string.Format(retval.ExtraText, helpTextRep));
+			return TextVal.Create(retval.Text == null ? null : string.Format(retval.Text, mainTextRep), retval.ExtraText == null ? null : string.Format(retval.ExtraText, helpTextRep));
 		}
 
 		public ITranslatable Core { get { return core; } } // needed for testing purposes ...

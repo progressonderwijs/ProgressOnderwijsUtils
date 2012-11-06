@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		public void ConverteerTests()
+		public void BasicConverteerTests()
 		{
 			foreach (var value in EnumHelpers.GetValues<EnumForTesting>())
 				foreach (var taal in EnumHelpers.GetValues<Taal>())
@@ -91,5 +91,14 @@ namespace ProgressOnderwijsUtilsTests
 					else
 						PAssert.That(() => value.Equals(Converteer.Parse(Converteer.ToString(value, taal), typeof(EnumForTesting), taal)));
 		}
+
+		[Test]
+		public void NullableConverteerTests()
+		{
+			PAssert.That(() => Converteer.TryParse("waarde a", typeof(EnumForTesting?), Taal.NL).Equals(Converteer.ParseResult.Ok(EnumForTesting.AValue)));
+			PAssert.That(() => Converteer.TryParse("XML value", typeof(EnumForTesting?), Taal.EN).Equals(Converteer.ParseResult.Ok(EnumForTesting.XmlValue)));
+			PAssert.That(() => Converteer.TryParse("XmlValue", typeof(EnumForTesting), Taal.EN).State == Converteer.ParseState.Malformed);
+		}
+
 	}
 }
