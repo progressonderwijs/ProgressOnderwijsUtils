@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtilsTests
 	[TestFixture]
 	public sealed class SelectItemListTest : WebSessionTestSuiteBase
 	{
-		SelectItemList<int?> sut;
+		List<SelectItem<int?>>  sut;
 
 		[SetUp]
 		public void SetUp()
