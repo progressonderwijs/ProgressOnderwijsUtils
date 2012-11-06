@@ -86,18 +86,10 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			foreach (var value in EnumHelpers.GetValues<EnumForTesting>())
 				foreach (var taal in EnumHelpers.GetValues<Taal>())
-				{
-					if (taal == Taal.NL && (value == EnumForTesting.ValueA || value == EnumForTesting.AValue))
-					{
-
-					}
+					if (taal == Taal.EN && (value == EnumForTesting.ValueA || value == EnumForTesting.AValue))
+						PAssert.That(() => Converteer.TryParse(Converteer.ToString(value, taal), typeof(EnumForTesting), taal).State == Converteer.ParseState.Malformed);
 					else
-					{
-						PAssert.That(() => value.Equals(Converteer.Parse(Converteer.ToString(value), typeof(EnumForTesting))));
-					}
-				}
+						PAssert.That(() => value.Equals(Converteer.Parse(Converteer.ToString(value, taal), typeof(EnumForTesting), taal)));
 		}
-
-
 	}
 }

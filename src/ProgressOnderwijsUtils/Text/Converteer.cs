@@ -96,14 +96,8 @@ namespace ProgressOnderwijsUtils
 		{
 			return ConverteerHelper.ToStringDynamic(obj, format)(language);
 		}
-		public static string ToString(object obj)
-		{
-			return ToString(obj, null, Taal.NL);
-		}
-		public static string ToString(object obj, Taal language)
-		{
-			return ToString(obj, null, language);
-		}
+		public static string ToString(object obj) { return ToString(obj, null, Taal.NL); }
+		public static string ToString(object obj, Taal language) { return ToString(obj, null, language); }
 
 		/// <summary>
 		/// Utility functie die de DatumFormaat enum vertaald naar de overeenkomstige format string.
@@ -164,9 +158,9 @@ namespace ProgressOnderwijsUtils
 		#region Parse
 
 		//Deze functie gebruiken om gebruikersinvoer in vrije textvelden te converteren naar de juiste types, eerste TryParse uitvoeren!
-		public static object Parse(string s, Type t)
+		public static object Parse(string s, Type t, Taal taal)
 		{
-			return TryParse(s, t).Value;
+			return TryParse(s, t, taal).Value;
 		}
 
 		private const int YearMinimum = 1900, YearMaximum = 2100;
@@ -187,7 +181,7 @@ namespace ProgressOnderwijsUtils
 
 
 		// string naar datum conversie
-		public static DateTime? ToDateTime(string s, DatumFormaat formaat) //TODO:alleen VerwInfo en MT940 worden gebruikt?
+		public static DateTime? ToDateTime(string s, DatumFormaat formaat, Taal taal = Taal.NL) //TODO:alleen VerwInfo en MT940 worden gebruikt?
 		{
 			if (string.IsNullOrEmpty(s))
 				return null;
@@ -228,7 +222,7 @@ namespace ProgressOnderwijsUtils
 					break;
 			}
 
-			ParseResult parseResult = TryParse(datum, typeof(DateTime));
+			ParseResult parseResult = TryParse(datum, typeof(DateTime), taal);
 			if (parseResult.IsOk)
 				return (DateTime)parseResult.Value;
 			return null;
@@ -284,7 +278,7 @@ namespace ProgressOnderwijsUtils
 
 		public enum ParseState { Undefined, Ok, Malformed, Overflow, Geendata, Datumfout, TijdFout }
 		//Om gebruikersinvoer te controleren, daarna kan parse plaatsvinden
-		public static ParseResult TryParse(string s, Type t)
+		public static ParseResult TryParse(string s, Type t, Taal taal)
 		{
 			if (t == null) throw new ArgumentNullException("t");
 			if (s == null) return ParseResult.Geendata;
@@ -326,7 +320,7 @@ namespace ProgressOnderwijsUtils
 				catch (OverflowException) { return ParseResult.Overflow; }
 			else if (fundamentalType.IsEnum)
 			{
-				var options = EnumHelpers.TryParseLabel(fundamentalType, s, Taal.NL).ToArray();
+				var options = EnumHelpers.TryParseLabel(fundamentalType, s, taal).ToArray();
 				return options.Length == 0 ? ParseResult.Malformed(t, s) :
 					options.Length == 1 ? ParseResult.Ok(options[0]) :
 					ParseResult.CreateError(ParseState.Malformed, Translatable.Literal("Kan waarde '", "Value '").AppendAuto(s).Append(Translatable.Literal("' niet uniek interpreteren!", "' cannot be interpreted unambiguously!")));
@@ -349,7 +343,7 @@ namespace ProgressOnderwijsUtils
 				var retval = Array.CreateInstance(elementType, components.Length);
 				for (int i = 0; i < components.Length; i++)
 				{
-					var elementParseResult = TryParse(components[i], elementType);
+					var elementParseResult = TryParse(components[i], elementType, taal);
 					if (elementParseResult.IsOk)
 						retval.SetValue(elementParseResult.Value, i);
 					else
