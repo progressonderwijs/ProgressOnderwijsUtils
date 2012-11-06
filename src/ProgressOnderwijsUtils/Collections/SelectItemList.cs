@@ -30,11 +30,6 @@ namespace ProgressOnderwijsUtils
 	public static class SelectItemList
 	{
 
-		public static void Remove<T>(this List<SelectItem<T>> selectitemlist, T value)
-		{
-			selectitemlist.RemoveAll(si => Equals(si.Value, value));
-		}
-
 		/// <summary>
 		/// Voegt een leeg item bovenaan de lijst toe
 		/// </summary>
