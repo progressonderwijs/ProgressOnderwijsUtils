@@ -23,7 +23,8 @@ namespace ProgressOnderwijsUtils.Text
 		public static TranslateFunction ToString(string str, string format) { return language => str; }
 		public static TranslateFunction ToString(char c, string format) { return language => new string(c, 1); }
 		public static TranslateFunction ToString(XHtmlData obj, string format) { return language => obj.ToUiString(); }
-		//public static TranslateFunction ToString(Enum obj, string format) { return language => EnumHelpers.GetLabel(obj); }
+		public static TranslateFunction ToString(ITranslatable obj, string format) { return language => obj.Translate(language).Text; }
+		public static TranslateFunction ToString(Enum obj, string format) { return ToString(Converteer.TranslateEnum(obj), format); }
 		public static TranslateFunction ToString<T>(T[] arr, string format)
 		{
 			var subtrans = arr.Select(obj => (TranslateFunction)ConverteerHelper.ToString((dynamic)obj, format)).ToArray();

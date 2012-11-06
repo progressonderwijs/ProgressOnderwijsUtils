@@ -92,9 +92,17 @@ namespace ProgressOnderwijsUtils
 		/// 	(zie .Net documentatie voor details)</param>
 		/// <param name="language">De taal die de te gebruiken culture aangeeft</param>
 		/// <returns>De geformateerde string die de waarde representeerd</returns>
-		public static string ToString(object obj, string format = null, Taal language = Taal.NL)
+		public static string ToString(object obj, string format, Taal language)
 		{
 			return ConverteerHelper.ToStringDynamic(obj, format)(language);
+		}
+		public static string ToString(object obj)
+		{
+			return ToString(obj, null, Taal.NL);
+		}
+		public static string ToString(object obj, Taal language)
+		{
+			return ToString(obj, null, language);
 		}
 
 		/// <summary>
@@ -128,12 +136,15 @@ namespace ProgressOnderwijsUtils
 			else if (obj is TextVal)
 				return new TextDefSimple((TextVal)obj);
 			else if (obj is Enum)
-				return (ITranslatable)enumToTranslatableGeneric.MakeGenericMethod(obj.GetType()).Invoke(null, new[] { obj });
+				return TranslateEnum((Enum)obj);
 			else if (string.IsNullOrEmpty(extraformat))
 				return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format));
 			else
 				return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format), ConverteerHelper.ToStringDynamic(obj, extraformat));
 		}
+
+		public static ITranslatable TranslateEnum(Enum obj) { return (ITranslatable)enumToTranslatableGeneric.MakeGenericMethod(obj.GetType()).Invoke(null, new object[] { obj }); }
+
 		/// <summary>
 		/// Utility functie die de NummerFormaat enum vertaald naar de overeenkomstige format string.
 		/// </summary>
@@ -313,6 +324,14 @@ namespace ProgressOnderwijsUtils
 				try { return ParseResult.Ok(ParseDecimal(s)); }
 				catch (FormatException) { return ParseResult.Malformed(t, s); }
 				catch (OverflowException) { return ParseResult.Overflow; }
+			else if (fundamentalType.IsEnum)
+			{
+				var options = EnumHelpers.TryParseLabel(fundamentalType, s, Taal.NL).ToArray();
+				return options.Length == 0 ? ParseResult.Malformed(t, s) :
+					options.Length == 1 ? ParseResult.Ok(options[0]) :
+					ParseResult.CreateError(ParseState.Malformed, Translatable.Literal("Kan waarde '", "Value '").AppendAuto(s).Append(Translatable.Literal("' niet uniek interpreteren!", "' cannot be interpreted unambiguously!")));
+			}
+			/*catch (OverflowException) { return ParseResult.Overflow; }*/
 			else if (fundamentalType == typeof(double))
 				try { return ParseResult.Ok((double)ParseDecimal(s)); }
 				catch (FormatException) { return ParseResult.Malformed(t, s); }

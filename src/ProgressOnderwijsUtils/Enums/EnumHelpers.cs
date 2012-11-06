@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -23,6 +24,20 @@ namespace ProgressOnderwijsUtils
 						).ToLookup(x => x.EnumValue, x => x.Attr);
 			}
 		}
+		interface ILabelLookup
+		{
+			IEnumerable<Enum> Lookup(string s, Taal taal);
+		}
+		sealed class EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct
+		{
+			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text, e => e, StringComparer.OrdinalIgnoreCase));
+			public static IEnumerable<TEnum> Lookup(string s, Taal taal) { return ParseLabels[taal][s]; }
+			IEnumerable<Enum> ILabelLookup.Lookup(string s, Taal taal)
+			{
+				return Lookup(s, taal).Select(e => (Enum)(object)e);
+			}
+		}
+
 
 		public static class GetAttrs<TAttr> where TAttr : Attribute
 		{
@@ -39,14 +54,34 @@ namespace ProgressOnderwijsUtils
 
 		public static TEnum? TryParse<TEnum>(string s) where TEnum : struct
 		{
+			if (!typeof(TEnum).IsEnum)
+				throw new ArgumentException("type must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+
 			TEnum retval;
 			return Enum.TryParse(s, true, out retval) ? retval : default(TEnum?);
 		}
 
+		public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct
+		{
+			return EnumLabelLookup<TEnum>.Lookup(s, taal);
+		}
+
+		public static IEnumerable<Enum> TryParseLabel(Type enumType, string s, Taal taal)
+		{
+			if (!enumType.IsEnum)
+				throw new ArgumentException("enumType must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(enumType));
+			var parser = (ILabelLookup)Activator.CreateInstance(typeof(EnumLabelLookup<>).MakeGenericType(enumType));
+			return parser.Lookup(s, taal);
+		}
+
+
 		public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct
 		{
+
 			var label = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
 			var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
+			if (label == null && tooltip == null && !EnumMetaCache<TEnum>.EnumMembers.ContainsKey(f))
+				throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
 
 			var translatable = label != null ? label.ToTranslatable()
 				: Converteer.ToText(StringUtils.PrettyPrintCamelCased(f.ToString()));
@@ -58,5 +93,7 @@ namespace ProgressOnderwijsUtils
 
 
 		public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f) where TEnum : struct { return SelectItem.Create(f, GetLabel(f)); }
+
+
 	}
 }

@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
 		public override string ToString() { return "Text: " + Text + "\nHelpText: " + ExtraText; }
 
 		public static TextVal Create(string text, string helptext) { return new TextVal(text, helptext); }
-		public static TextVal Create(string text) { return new TextVal(text, ""); }
-		public static TextVal EmptyText { get { return new TextVal("", ""); } }
+		public static TextVal Create(string text) { return new TextVal(text, null); }
+		public static TextVal EmptyText { get { return new TextVal("", null); } }
 	}
 }
