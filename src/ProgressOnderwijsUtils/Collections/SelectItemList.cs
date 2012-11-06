@@ -69,7 +69,7 @@ namespace ProgressOnderwijsUtils
 
 		public static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
 		{
-			return dt == null ? Enumerable.Empty<SelectItem<T>>() : dt.Rows.Cast<DataRow>().Select(dr => new SelectItem<T>((T)dr[0], new TextDefSimple(dr[1].ToString(), "")));
+			return dt == null ? Enumerable.Empty<SelectItem<T>>() : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)(T)dr[0], new TextDefSimple(dr[1].ToString(), "")));
 		}
 
 		public static SelectItem<T> GetItem<T>(this List<SelectItem<T>> list, T value)
@@ -101,7 +101,7 @@ namespace ProgressOnderwijsUtils
 		public T Value { get { return v; } }
 		public ITranslatable Label { get { return label; } }
 
-		public SelectItem(T v, ITranslatable label)
+		internal SelectItem(T v, ITranslatable label)
 		{
 			if (label == null)
 				throw new ArgumentNullException("label");
