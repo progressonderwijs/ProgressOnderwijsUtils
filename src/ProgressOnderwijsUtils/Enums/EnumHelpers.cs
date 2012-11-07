@@ -14,22 +14,25 @@ namespace ProgressOnderwijsUtils
 			IReadOnlyList<Enum> Values();
 			ITranslatable GetLabel(Enum f);
 		}
-		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct
-		{
-			public static readonly IReadOnlyList<TEnum> EnumValues = (TEnum[])Enum.GetValues(typeof(TEnum));
-			public static readonly Dictionary<TEnum, MemberInfo> EnumMembers = EnumValues.ToDictionary(v => v, v => typeof(TEnum).GetMember(v.ToString()).Single());
-			static readonly bool isFlags = typeof(TEnum).GetCustomAttributes(typeof(FlagsAttribute)).Any();
 
-			static readonly Func<TEnum, TEnum, bool> hasflag;
-			static readonly Func<TEnum, TEnum, TEnum> addflag;
+		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible
+		{
+			public static readonly TEnum[] EnumValues = (TEnum[])Enum.GetValues(typeof(TEnum));
+			public static readonly Dictionary<TEnum, MemberInfo> EnumMembers = EnumValues.ToDictionary(v => v, v => typeof(TEnum).GetMember(v.ToString()).Single());
+			public static readonly bool IsFlags = typeof(TEnum).GetCustomAttributes(typeof(FlagsAttribute)).Any();
+			public static readonly Func<TEnum, TEnum, bool> HasFlag;
+			public static readonly Func<TEnum, TEnum, TEnum> AddFlag;
 			static readonly Type underlying = Enum.GetUnderlyingType(typeof(TEnum));
+
 			static EnumMetaCache()
 			{
 				if (!typeof(TEnum).IsEnum)
 					throw new InvalidOperationException("EnumMetaCache werkt alleen met enums");
-
-				hasflag = MakeHasFlag();
-				addflag = MakeAddFlag();
+				if (IsFlags)
+				{
+					HasFlag = MakeHasFlag();
+					AddFlag = MakeAddFlag();
+				}
 			}
 
 			static Func<TEnum, TEnum, bool> MakeHasFlag()
@@ -43,8 +46,8 @@ namespace ProgressOnderwijsUtils
 						Expression.ConvertChecked(Expression.And(
 							Expression.ConvertChecked(flagExpr, underlying),
 							Expression.ConvertChecked(valExpr, underlying)
-						), typeof(TEnum))
-					),
+							), typeof(TEnum))
+						),
 					valExpr, flagExpr
 					).Compile();
 			}
@@ -59,11 +62,11 @@ namespace ProgressOnderwijsUtils
 						Expression.Or(
 							Expression.ConvertChecked(flagExpr, underlying),
 							Expression.ConvertChecked(valExpr, underlying)
-						), typeof(TEnum)
-					), valExpr, flagExpr).Compile();
+							), typeof(TEnum)
+						), valExpr, flagExpr).Compile();
 			}
 
-
+			//
 			public static class AttrCache<TAttr> where TAttr : Attribute
 			{
 				public static readonly ILookup<TEnum, TAttr> EnumMemberAttributes =
@@ -77,12 +80,11 @@ namespace ProgressOnderwijsUtils
 
 			public IReadOnlyList<Enum> Values() { return EnumValues.SelectIndexable(e => (Enum)(object)e); }
 			public ITranslatable GetLabel(Enum f) { return GetLabel((TEnum)(object)f); }
+
 			public static ITranslatable GetLabel(TEnum f)
 			{
-				if (isFlags)
-				{
-					return EnumValues.Where(flag => !Equals(flag, default(TEnum)) && hasflag(f, flag)).Select(GetSingleLabel).JoinTexts(TextDefSimple.Create(", "));
-				}
+				if (IsFlags)
+					return EnumValues.Where(flag => !Equals(flag, default(TEnum)) && HasFlag(f, flag)).Select(GetSingleLabel).JoinTexts(TextDefSimple.Create(", "));
 				else
 					return GetSingleLabel(f);
 			}
@@ -103,34 +105,30 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
+
+
 		interface ILabelLookup
 		{
 			IEnumerable<Enum> Lookup(string s, Taal taal);
 		}
 
-		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct
+
+		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct, IConvertible
 		{
 			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text, e => e, StringComparer.OrdinalIgnoreCase));
 			public static IEnumerable<TEnum> Lookup(string s, Taal taal) { return ParseLabels[taal][s]; }
-			IEnumerable<Enum> ILabelLookup.Lookup(string s, Taal taal)
-			{
-				return Lookup(s, taal).Select(e => (Enum)(object)e);
-			}
+			IEnumerable<Enum> ILabelLookup.Lookup(string s, Taal taal) { return Lookup(s, taal).Select(e => (Enum)(object)e); }
 		}
 
 
 		public static class GetAttrs<TAttr> where TAttr : Attribute
 		{
-			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct
-			{
-				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal];
-			}
+			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible { return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal]; }
 		}
 
-		public static IReadOnlyList<T> GetValues<T>() where T : struct
-		{
-			return EnumMetaCache<T>.EnumValues;
-		}
+
+		public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible { return EnumMetaCache<T>.EnumValues; }
+
 		public static IReadOnlyList<Enum> GetValues(Type enumType)
 		{
 			if (!enumType.IsEnum)
@@ -139,33 +137,10 @@ namespace ProgressOnderwijsUtils
 			return values.Values();
 		}
 
-		public static TEnum? TryParse<TEnum>(string s) where TEnum : struct
-		{
-			if (!typeof(TEnum).IsEnum)
-				throw new ArgumentException("type must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+		public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct,IConvertible { return EnumMetaCache<TEnum>.AddFlag; }
+		public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct,IConvertible { return EnumMetaCache<TEnum>.HasFlag; }
 
-			TEnum retval;
-			return Enum.TryParse(s, true, out retval) ? retval : default(TEnum?);
-		}
-
-		public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct
-		{
-			return EnumLabelLookup<TEnum>.Lookup(s, taal);
-		}
-
-		public static IEnumerable<Enum> TryParseLabel(Type enumType, string s, Taal taal)
-		{
-			if (!enumType.IsEnum)
-				throw new ArgumentException("enumType must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(enumType));
-			var parser = (ILabelLookup)Activator.CreateInstance(typeof(EnumLabelLookup<>).MakeGenericType(enumType));
-			return parser.Lookup(s, taal);
-		}
-
-
-		public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct
-		{
-			return EnumMetaCache<TEnum>.GetLabel(f);
-		}
+		public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible { return EnumMetaCache<TEnum>.GetLabel(f); }
 
 		public static ITranslatable GetLabel(Enum enumVal)
 		{
@@ -178,9 +153,35 @@ namespace ProgressOnderwijsUtils
 			return labeller.GetLabel(enumVal);
 		}
 
+		public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
+			where TEnum : struct, IConvertible
+		{
+			return SelectItem.Create(f, GetLabel(f));
+		}
 
-		public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f) where TEnum : struct { return SelectItem.Create(f, GetLabel(f)); }
 
+		public static TEnum? TryParse<TEnum>(string s) where TEnum : struct, IConvertible
+		{
+			if (!typeof(TEnum).IsEnum)
+				throw new ArgumentException("type must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
 
+			TEnum retval;
+			return Enum.TryParse(s, true, out retval) ? retval : default(TEnum?);
+		}
+
+		public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible { return EnumLabelLookup<TEnum>.Lookup(s, taal); }
+
+		public static IEnumerable<Enum> TryParseLabel(Type enumType, string s, Taal taal)
+		{
+			if (!enumType.IsEnum)
+				throw new ArgumentException("enumType must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(enumType));
+			var parser = (ILabelLookup)Activator.CreateInstance(typeof(EnumLabelLookup<>).MakeGenericType(enumType));
+			return parser.Lookup(s, taal);
+		}
+
+		public static bool IsDefined<TEnum>(TEnum enumval) where TEnum : struct,IConvertible
+		{
+			return Enum.IsDefined(typeof(TEnum), enumval);
+		}
 	}
 }
