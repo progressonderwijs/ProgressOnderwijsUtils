@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
 			{ DatumFormaat.AlleenTijd, Tuple.Create("HH:mm", (string)null) },
 			{ DatumFormaat.DatumEnTijdInMinuten, Tuple.Create(ConverteerHelper.DATUM_EN_TIJD_IN_MINUTEN, (string)null) },
 			{ DatumFormaat.DatumEnTijdInSeconden, Tuple.Create("dd-MM-yyyy HH:mm:ss", (string)null) },
-			{ DatumFormaat.DatumEnTijdInMilliSeconden, Tuple.Create("dd-MM-yyyy HH:mm:ss.fff", (string)null) },
+			{ DatumFormaat.DatumEnTijdInMilliseconden, Tuple.Create("dd-MM-yyyy HH:mm:ss.fff", (string)null) },
 			{ DatumFormaat.DatumToolTipTijd, Tuple.Create("dd-MM-yyyy", "dd-MM-yyyy HH:mm:ss.fff") },
 			{ DatumFormaat.JaarToolTipDatum, Tuple.Create("yyyy", "dd-MM-yyyy") },
 			{ DatumFormaat.DatumZonderJaar, Tuple.Create("dd-MM", "dd-MM-yyyy") },

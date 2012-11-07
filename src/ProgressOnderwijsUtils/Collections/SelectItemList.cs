@@ -56,6 +56,7 @@ namespace ProgressOnderwijsUtils
 
 	public struct SelectItem<T> : ISelectItem<T>
 	{
+
 		readonly T v;
 		readonly ITranslatable label;
 
@@ -79,5 +80,6 @@ namespace ProgressOnderwijsUtils
 		{
 			return new SelectItem<T>(val, text);
 		}
+
 	}
 }

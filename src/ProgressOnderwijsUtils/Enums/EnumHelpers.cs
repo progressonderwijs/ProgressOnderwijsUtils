@@ -159,6 +159,12 @@ namespace ProgressOnderwijsUtils
 			return SelectItem.Create(f, GetLabel(f));
 		}
 
+		public static SelectItem<TEnum?> GetSelectItem<TEnum>(TEnum? f)
+			where TEnum : struct, IConvertible
+		{
+			return SelectItem.Create(f, f == null ? TextDefSimple.EmptyText : GetLabel(f.Value));
+		}
+
 
 		public static TEnum? TryParse<TEnum>(string s) where TEnum : struct, IConvertible
 		{
