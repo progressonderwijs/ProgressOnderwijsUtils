@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtilsTests
 					ShowTijdsverloop = false,
 					EcGrenswaarde = 42,
                     NrJarenMax = 2,
-                    StartExmType = OlapStartExamenType.StartPropedeuse,
+                    StartExmType = OlapStartUitstroomType.StartPropedeuse,
 					ParentMenuName = "BlaBlaTestMenu",
 					aanmeldstatus = default(OlapCommon.AanmstatusType),
                     alleeneerstejr = OlapCommon.AlleenEerstejaarType.Alle,
