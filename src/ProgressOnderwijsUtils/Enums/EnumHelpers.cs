@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
 
@@ -17,6 +18,51 @@ namespace ProgressOnderwijsUtils
 		{
 			public static readonly IReadOnlyList<TEnum> EnumValues = (TEnum[])Enum.GetValues(typeof(TEnum));
 			public static readonly Dictionary<TEnum, MemberInfo> EnumMembers = EnumValues.ToDictionary(v => v, v => typeof(TEnum).GetMember(v.ToString()).Single());
+			static readonly bool isFlags = typeof(TEnum).GetCustomAttributes(typeof(FlagsAttribute)).Any();
+
+			static readonly Func<TEnum, TEnum, bool> hasflag;
+			static readonly Func<TEnum, TEnum, TEnum> addflag;
+			static readonly Type underlying = Enum.GetUnderlyingType(typeof(TEnum));
+			static EnumMetaCache()
+			{
+				if (!typeof(TEnum).IsEnum)
+					throw new InvalidOperationException("EnumMetaCache werkt alleen met enums");
+
+				hasflag = MakeHasFlag();
+				addflag = MakeAddFlag();
+			}
+
+			static Func<TEnum, TEnum, bool> MakeHasFlag()
+			{
+				ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
+				ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
+
+				return Expression.Lambda<Func<TEnum, TEnum, bool>>(
+					Expression.Equal(
+						flagExpr,
+						Expression.ConvertChecked(Expression.And(
+							Expression.ConvertChecked(flagExpr, underlying),
+							Expression.ConvertChecked(valExpr, underlying)
+						), typeof(TEnum))
+					),
+					valExpr, flagExpr
+					).Compile();
+			}
+
+			static Func<TEnum, TEnum, TEnum> MakeAddFlag()
+			{
+				ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
+				ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
+
+				return Expression.Lambda<Func<TEnum, TEnum, TEnum>>(
+					Expression.ConvertChecked(
+						Expression.Or(
+							Expression.ConvertChecked(flagExpr, underlying),
+							Expression.ConvertChecked(valExpr, underlying)
+						), typeof(TEnum)
+					), valExpr, flagExpr).Compile();
+			}
+
 
 			public static class AttrCache<TAttr> where TAttr : Attribute
 			{
@@ -33,7 +79,16 @@ namespace ProgressOnderwijsUtils
 			public ITranslatable GetLabel(Enum f) { return GetLabel((TEnum)(object)f); }
 			public static ITranslatable GetLabel(TEnum f)
 			{
+				if (isFlags)
+				{
+					return EnumValues.Where(flag => !Equals(flag, default(TEnum)) && hasflag(f, flag)).Select(GetSingleLabel).JoinTexts(TextDefSimple.Create(", "));
+				}
+				else
+					return GetSingleLabel(f);
+			}
 
+			static ITranslatable GetSingleLabel(TEnum f)
+			{
 				var label = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
 				var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
 				if (label == null && tooltip == null && !EnumMembers.ContainsKey(f))
@@ -46,7 +101,6 @@ namespace ProgressOnderwijsUtils
 
 				return translatable;
 			}
-
 		}
 
 		interface ILabelLookup
