@@ -8,34 +8,22 @@ namespace ProgressOnderwijsUtils
 {
 	public static class SelectItemList
 	{
-		/// <summary>
-		/// Voegt een leeg item bovenaan de lijst toe
-		/// </summary>
-		public static void ToevoegenLeegItem<T>(this List<SelectItem<T>> selectitemlist, SelectItem<T> addnullitem)
+		public static IReadOnlyList<SelectItem<T>> Create<T>(IEnumerable<SelectItem<T>> collection)
 		{
-			selectitemlist.Insert(0, addnullitem);
+			return collection.ToArray();
 		}
 
-		public static List<SelectItem<T>> Create<T>(IEnumerable<SelectItem<T>> collection)
-		{
-			return new List<SelectItem<T>>(collection);
-		}
-
-		public static List<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<SelectItem<T>> collection)
+		public static IReadOnlyList<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<SelectItem<T>> collection)
 		{
 			return Create(new[] { addnullitem }.Concat(collection));
 		}
-		public static List<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, SelectItem<T> addnullitem2, IEnumerable<SelectItem<T>> collection)
-		{
-			return Create(new[] { addnullitem, addnullitem2 }.Concat(collection));
-		}
 
-		public static List<SelectItem<T>> CreateFromDb<T>(DataTable dt)
+		public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(DataTable dt)
 		{
 			return Create(DbToEnumerable<T>(dt));
 		}
 
-		public static List<SelectItem<T>> CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt)
+		public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt)
 		{
 			return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt));
 		}
@@ -45,14 +33,14 @@ namespace ProgressOnderwijsUtils
 			return dt == null ? Enumerable.Empty<SelectItem<T>>() : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)(T)dr[0], new TextDefSimple(dr[1].ToString(), "")));
 		}
 
-		public static SelectItem<T> GetItem<T>(this List<SelectItem<T>> list, T value)
+		public static SelectItem<T> GetItem<T>(this IReadOnlyList<SelectItem<T>> list, T value)
 		{
 			return (from item in list
 					where item.Value.Equals(value)
 					select item).SingleOrDefault();
 		}
 
-		public static SelectItem<T> GetItem<T>(this List<SelectItem<T>> list, Taal language, string text)
+		public static SelectItem<T> GetItem<T>(this IReadOnlyList<SelectItem<T>> list, Taal language, string text)
 		{
 			return (from item in list
 					where item.Label.Translate(language).Text == text
