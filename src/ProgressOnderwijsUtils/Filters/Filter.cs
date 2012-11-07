@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 namespace ProgressOnderwijsUtils
 {
 
-	public interface IHasFilterFactory<out T>
+	public interface IFilterFactory<out T>
 	{
 	}
 
@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static FilterBase CreateCriterium(string kolomnaam, BooleanComparer comparer, object waarde) { return new CriteriumFilter(kolomnaam, comparer, waarde); }
 
-		public static FilterBase CreateFilter<TMetaObject, T>(this IHasFilterFactory<TMetaObject> target, Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, T waarde)
+		public static FilterBase CreateFilter<TMetaObject, T>(this IFilterFactory<TMetaObject> target, Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, T waarde)
 		{
 			return Filter<TMetaObject>.CreateFilter(columnToFilter, comparer, waarde);
 		}
