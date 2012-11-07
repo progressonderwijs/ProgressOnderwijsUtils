@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
 
 		public static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
 		{
-			return dt == null ? Enumerable.Empty<SelectItem<T>>() : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)(T)dr[0], new TextDefSimple(dr[1].ToString(), "")));
+			return dt == null ? Enumerable.Empty<SelectItem<T>>() : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)dr[0], new TextDefSimple(dr[1].ToString(), "")));
 		}
 
 		public static SelectItem<T> GetItem<T>(this IReadOnlyList<SelectItem<T>> list, T value)
