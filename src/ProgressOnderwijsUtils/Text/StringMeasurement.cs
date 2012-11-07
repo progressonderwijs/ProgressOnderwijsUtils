@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
 		}
 		const double pix_per_char = 7.0;
 #endif
-		public static double Measure(string str) { return str.Sum(c => char_to_width[c]); }
+		public static double Measure(string str) { return str == null ? 0.0 : str.Sum(c => char_to_width[c]); }
 		public static string LimitDisplayLength(string s, int maxWidth) { return LimitTextLength(s, maxWidth).Item1; }
 		public static Tuple<string, bool> LimitTextLength(string s, int maxWidth) { return ElideIfNecessary(s, maxWidth * ems_per_char); }
 		static Tuple<string, bool> ElideIfNecessary(string s, double ems) { return Measure(s) < ems ? Tuple.Create(s, false) : Tuple.Create(TrimToEms(s, ems - ellipsis_ems) + ellipsis, true); }
