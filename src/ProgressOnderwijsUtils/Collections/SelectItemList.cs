@@ -6,30 +6,8 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
-	/// <summary>
-	/// SelectItemList can be used for the SelectInput control. It is just a List of SelectItems with 
-	/// two extra constructors to facilitate the use of DataTables
-	/// </summary>
-	/// <typeparam name="T">Used only Types that SelectInput support, typically int, int? and string</typeparam>
-	//public sealed class SelectItemList <T> : List<SelectItem<T>>
-	//{
-
-	//	public SelectItemList() { }
-
-	//	public SelectItemList(IEnumerable<SelectItem<T>> collection)
-	//		: base(collection) { }
-
-	//	public SelectItemList <T> Clone()
-	//	{
-	//		return new SelectItemList <T>(this);
-	//	}
-
-	//	public override string ToString() { return string.Join("\n", this.Select(item => item.ToString())); }
-	//}
-
 	public static class SelectItemList
 	{
-
 		/// <summary>
 		/// Voegt een leeg item bovenaan de lijst toe
 		/// </summary>
@@ -49,7 +27,7 @@ namespace ProgressOnderwijsUtils
 		}
 		public static List<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, SelectItem<T> addnullitem2, IEnumerable<SelectItem<T>> collection)
 		{
-			return  Create(new[] { addnullitem,addnullitem2 }.Concat(collection));
+			return Create(new[] { addnullitem, addnullitem2 }.Concat(collection));
 		}
 
 		public static List<SelectItem<T>> CreateFromDb<T>(DataTable dt)
@@ -59,7 +37,7 @@ namespace ProgressOnderwijsUtils
 
 		public static List<SelectItem<T>> CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt)
 		{
-			return CreateWithLeeg( addnullitem ,DbToEnumerable<T>(dt));
+			return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt));
 		}
 
 		public static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
