@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -157,6 +158,17 @@ namespace ProgressOnderwijsUtils
 			where TEnum : struct, IConvertible
 		{
 			return SelectItem.Create(f, GetLabel(f));
+		}
+
+
+
+		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal)
+			where TEnum : struct,IConvertible
+		{
+			var dt = new DataTable { Columns = { { "id", typeof(int) }, { "tekst", typeof(string) } } };
+			foreach (var item in values.Select(GetSelectItem))
+				dt.Rows.Add(item.Value.ToInt32(null), item.Label.Translate(taal).Text);
+			return dt;
 		}
 
 		public static SelectItem<TEnum?> GetSelectItem<TEnum>(TEnum? f)
