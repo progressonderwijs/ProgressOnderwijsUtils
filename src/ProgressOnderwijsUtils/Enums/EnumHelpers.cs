@@ -24,7 +24,9 @@ namespace ProgressOnderwijsUtils
 			public static readonly bool IsFlags = typeof(TEnum).GetCustomAttributes(typeof(FlagsAttribute)).Any();
 			public static readonly Func<TEnum, TEnum, bool> HasFlag;
 			public static readonly Func<TEnum, TEnum, TEnum> AddFlag;
+			public static readonly Func<TEnum, TEnum, bool> FlagsOverlap;
 			static readonly Type underlying = Enum.GetUnderlyingType(typeof(TEnum));
+			static readonly TEnum[] EnumInOverlapOrder;
 
 			static EnumMetaCache()
 			{
@@ -33,7 +35,9 @@ namespace ProgressOnderwijsUtils
 				if (IsFlags)
 				{
 					HasFlag = MakeHasFlag();
+					FlagsOverlap = MakeFlagsOverlap();
 					AddFlag = MakeAddFlag();
+					EnumInOverlapOrder = EnumValues.OrderBy(val => EnumValues.Count(flag => HasFlag(val, flag))).ToArray();
 				}
 			}
 
@@ -53,6 +57,24 @@ namespace ProgressOnderwijsUtils
 					valExpr, flagExpr
 					).Compile();
 			}
+
+			static Func<TEnum, TEnum, bool> MakeFlagsOverlap()
+			{
+				ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
+				ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
+
+				return Expression.Lambda<Func<TEnum, TEnum, bool>>(
+					Expression.NotEqual(
+						Expression.Default(underlying),
+						Expression.And(
+							Expression.ConvertChecked(flagExpr, underlying),
+							Expression.ConvertChecked(valExpr, underlying)
+							)
+						),
+					valExpr, flagExpr
+					).Compile();
+			}
+
 
 			static Func<TEnum, TEnum, TEnum> MakeAddFlag()
 			{
@@ -93,21 +115,35 @@ namespace ProgressOnderwijsUtils
 
 			static ITranslatable GetFlagsLabel(TEnum val)
 			{
-				var matched = new List<TEnum>(EnumValues.Length);
+				var matched = new List<TEnum>(EnumInOverlapOrder.Length);
 				TEnum covered = default(TEnum);
-				//decode flags like .NET: use as few flags as possible, greedily.
-				int i = EnumValues.Length;
+
+				int i = EnumInOverlapOrder.Length;
 				while (i != 0)
 				{
 					i--;
-					var flag = EnumValues[i];
-					if (HasFlag(covered, flag) || !HasFlag(val, flag)) continue;
-					covered = AddFlag(covered, flag);
-					matched.Add(flag);
+					var flag = EnumInOverlapOrder[i];
+					if (!FlagsOverlap(covered, flag) && HasFlag(val, flag) && !Equals(flag, default(TEnum)))
+					{
+						covered = AddFlag(covered, flag);
+						matched.Add(flag);
+					}
 				}
 
 				if (!Equals(covered, val))
-					throw new ArgumentOutOfRangeException("Enum Value " + val + " is not a combination of flags in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+				{
+					foreach (var flag in EnumInOverlapOrder)
+					{
+						if (!HasFlag(covered, flag) && HasFlag(val, flag))
+						{
+							covered = AddFlag(covered, flag);
+							matched.Add(flag);
+						}
+					}
+					if (!Equals(covered, val))
+						throw new ArgumentOutOfRangeException("Enum Value " + val + " is not a combination of flags in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+				}
+
 
 				return matched.Select(GetSingleLabel).Reverse().JoinTexts(TextDefSimple.Create(", "));
 			}
@@ -138,8 +174,19 @@ namespace ProgressOnderwijsUtils
 
 		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct, IConvertible
 		{
-			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text, e => e, StringComparer.OrdinalIgnoreCase));
-			public static IEnumerable<TEnum> Lookup(string s, Taal taal) { return ParseLabels[taal][s]; }
+			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text.Trim(), e => e, StringComparer.OrdinalIgnoreCase));
+			public static IEnumerable<TEnum> Lookup(string s, Taal taal)
+			{
+
+				return !EnumMetaCache<TEnum>.IsFlags ? ParseLabels[taal][s.Trim()] :
+					new[] { 
+						s.Split(',')
+						.Select(sub => sub.Trim())
+						.Where(sub => sub.Length > 0)
+						.Select(sub => ParseLabels[taal][sub].Single())
+						.Aggregate(default(TEnum), EnumMetaCache<TEnum>.AddFlag) 
+					};
+			}
 			IEnumerable<Enum> ILabelLookup.Lookup(string s, Taal taal) { return Lookup(s, taal).Select(e => (Enum)(object)e); }
 		}
 

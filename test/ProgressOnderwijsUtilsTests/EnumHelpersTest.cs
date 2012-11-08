@@ -23,12 +23,14 @@ namespace ProgressOnderwijsUtilsTests
 		[Flags]
 		public enum FlagsEnumForTesting
 		{
+			Nothing = 0,
+
 			[MpLabel("Waarde A", "Value A")]
 			AValue = 1,
 			[MpTooltip("B", "B")]
-			BValue =2,
+			BValue = 2,
 			ABValue = 3,
-			ValueC=4,
+			ValueC = 4,
 			BCValue = 6,
 		}
 
@@ -118,7 +120,39 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "value C");
 			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.ABValue).Translate(Taal.NL).Text == "AB value");
 			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.AValue | FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "Waarde A, value C");
+			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.AValue | FlagsEnumForTesting.BValue | FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "Waarde A, BC value");
 		}
+
+		[Test]
+		public void EnumRoundTrips()
+		{
+			foreach (var taal in EnumHelpers.GetValues<Taal>().Except(new[] { Taal.None }))
+				foreach (var val in EnumHelpers.GetValues<EnumForTesting>())
+					if (taal != Taal.EN || val != EnumForTesting.AValue && val != EnumForTesting.ValueA)
+					{
+						var str = EnumHelpers.GetLabel(val).Translate(taal).Text;
+						PAssert.That(() => EnumHelpers.TryParseLabel<EnumForTesting>(str, taal).SequenceEqual(new[] { val }));
+					}
+		}
+
+		[Test]
+		public void FlagsEnumRoundTrips()
+		{
+			var values = (
+				from flag1 in EnumHelpers.GetValues<FlagsEnumForTesting>()
+				from flag2 in EnumHelpers.GetValues<FlagsEnumForTesting>()
+				select flag1 | flag2).Distinct();
+
+			foreach (var taal in EnumHelpers.GetValues<Taal>().Except(new[] { Taal.None }))
+				foreach (var combo in values)
+				{
+					var str = EnumHelpers.GetLabel(combo).Translate(taal).Text;
+					PAssert.That(() => EnumHelpers.TryParseLabel<FlagsEnumForTesting>(str, taal).SequenceEqual(new[] { combo }));
+
+				}
+		}
+
+
 
 	}
 }
