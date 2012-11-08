@@ -12,6 +12,14 @@ namespace ProgressOnderwijsUtils.Extensions
 			return new ReadOnlySet<T>(set);
 		}
 
+		/// <summary>
+		/// tbv HashSets: voeg waarde(n) aan een kopie van HashSet toe of verwijder ze,
+		/// en retourneer de kopie.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="H"></param>
+		/// <param name="toAdd"></param>
+		/// <returns>Kopie HashSet</returns>
 		public static HashSet<T> CopyAndAddItems<T>(this IEnumerable<T> H, IEnumerable<T> toAdd)
 		{
 			HashSet<T> newHashSet = new HashSet<T>(H);
