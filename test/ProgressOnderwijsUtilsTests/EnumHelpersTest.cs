@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
+using Progress.Business;
 using ProgressOnderwijsUtils;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
+using Progress.WebApp.Base;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -148,8 +151,24 @@ namespace ProgressOnderwijsUtilsTests
 				{
 					var str = EnumHelpers.GetLabel(combo).Translate(taal).Text;
 					PAssert.That(() => EnumHelpers.TryParseLabel<FlagsEnumForTesting>(str, taal).SequenceEqual(new[] { combo }));
-
 				}
+		}
+
+		[NightlyOnly, Test]
+		public void AllEnumsHaveUniqueLabels()
+		{
+			var enumTypes =
+				from coreType in new[] { typeof(BusinessConnection), typeof(TreeExtensions), typeof(SessionManager) }
+				from enumType in coreType.Assembly.GetTypes()
+				where enumType.IsEnum && !enumType.ContainsGenericParameters
+				select enumType;
+			foreach (var enumType in enumTypes)
+				foreach (var taal in new[] { Taal.NL, Taal.EN, Taal.DU })
+					foreach (var val in EnumHelpers.GetValues(enumType))
+					{
+						var str = EnumHelpers.GetLabel(val).Translate(taal).Text;
+						PAssert.That(() => EnumHelpers.TryParseLabel(enumType, str, taal).SequenceEqual(new[] { val }));
+					}
 		}
 	}
 }

@@ -19,19 +19,29 @@ namespace ProgressOnderwijsUtils
 
 		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible
 		{
-			public static readonly TEnum[] EnumValues = (TEnum[])Enum.GetValues(typeof(TEnum));
-			public static readonly Dictionary<TEnum, MemberInfo> EnumMembers = EnumValues.ToDictionary(v => v, v => typeof(TEnum).GetMember(v.ToString()).Single());
-			public static readonly bool IsFlags = typeof(TEnum).GetCustomAttributes(typeof(FlagsAttribute)).Any();
+			public static readonly TEnum[] EnumValues;
+			public static readonly ILookup<TEnum, MemberInfo> EnumMembers;
+			public static readonly bool IsFlags;
 			public static readonly Func<TEnum, TEnum, bool> HasFlag;
 			public static readonly Func<TEnum, TEnum, TEnum> AddFlag;
 			public static readonly Func<TEnum, TEnum, bool> FlagsOverlap;
-			static readonly Type underlying = Enum.GetUnderlyingType(typeof(TEnum));
+			static readonly Type underlying;
 			static readonly TEnum[] EnumInOverlapOrder;
 
 			static EnumMetaCache()
 			{
 				if (!typeof(TEnum).IsEnum)
 					throw new InvalidOperationException("EnumMetaCache werkt alleen met enums");
+
+				EnumValues = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static).Select(f => (TEnum)f.GetValue(null)).Distinct().ToArray();
+
+				EnumMembers = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static).ToLookup(f => (TEnum)f.GetValue(null), f => (MemberInfo)f);
+
+				underlying = Enum.GetUnderlyingType(typeof(TEnum));
+				IsFlags = typeof(TEnum).GetCustomAttributes(typeof(FlagsAttribute)).Any();
+
+				//((TEnum[])Enum.GetValues(typeof(TEnum))).Distinct().ToArray();
+
 				if (IsFlags)
 				{
 					HasFlag = MakeHasFlag();
@@ -95,9 +105,10 @@ namespace ProgressOnderwijsUtils
 			{
 				public static readonly ILookup<TEnum, TAttr> EnumMemberAttributes =
 					(
-						from kv in EnumMembers
-						from attr in kv.Value.GetCustomAttributes<TAttr>()
-						select new { EnumValue = kv.Key, Attr = attr }
+						from g in EnumMembers
+						from memb in g
+						from attr in memb.GetCustomAttributes<TAttr>()
+						select new { EnumValue = g.Key, Attr = attr }
 						).ToLookup(x => x.EnumValue, x => x.Attr);
 			}
 
@@ -152,7 +163,7 @@ namespace ProgressOnderwijsUtils
 			{
 				var label = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
 				var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
-				if (label == null && tooltip == null && !EnumMembers.ContainsKey(f))
+				if (label == null && tooltip == null && !EnumMembers.Contains(f))
 					throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
 
 				var translatable = label != null ? label.ToTranslatable()
@@ -174,7 +185,7 @@ namespace ProgressOnderwijsUtils
 
 		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct, IConvertible
 		{
-			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text.Trim(), e => e, StringComparer.OrdinalIgnoreCase));
+			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().Where(t=>t!=Taal.None).ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text.Trim(), e => e, StringComparer.OrdinalIgnoreCase));
 			public static IEnumerable<TEnum> Lookup(string s, Taal taal)
 			{
 
