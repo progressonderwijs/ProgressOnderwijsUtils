@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -13,7 +14,7 @@ namespace ProgressOnderwijsUtils
 		interface IEnumValues
 		{
 			IReadOnlyList<Enum> Values();
-			ITranslatable GetLabel(Enum f);
+			ITranslatable GetLabel(Enum val);
 		}
 
 		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible
@@ -80,14 +81,35 @@ namespace ProgressOnderwijsUtils
 
 
 			public IReadOnlyList<Enum> Values() { return EnumValues.SelectIndexable(e => (Enum)(object)e); }
-			public ITranslatable GetLabel(Enum f) { return GetLabel((TEnum)(object)f); }
+			public ITranslatable GetLabel(Enum val) { return GetLabel((TEnum)(object)val); }
 
-			public static ITranslatable GetLabel(TEnum f)
+			public static ITranslatable GetLabel(TEnum val)
 			{
 				if (IsFlags)
-					return EnumValues.Where(flag => !Equals(flag, default(TEnum)) && HasFlag(f, flag)).Select(GetSingleLabel).JoinTexts(TextDefSimple.Create(", "));
+					return GetFlagsLabel(val);
 				else
-					return GetSingleLabel(f);
+					return GetSingleLabel(val);
+			}
+
+			static ITranslatable GetFlagsLabel(TEnum val)
+			{
+				var matched = new List<TEnum>(EnumValues.Length);
+				TEnum covered = default(TEnum);
+				//decode flags like .NET: use as few flags as possible, greedily.
+				int i = EnumValues.Length;
+				while (i != 0)
+				{
+					i--;
+					var flag = EnumValues[i];
+					if (HasFlag(covered, flag) || !HasFlag(val, flag)) continue;
+					covered = AddFlag(covered, flag);
+					matched.Add(flag);
+				}
+
+				if (!Equals(covered, val))
+					throw new ArgumentOutOfRangeException("Enum Value " + val + " is not a combination of flags in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+
+				return matched.Select(GetSingleLabel).Reverse().JoinTexts(TextDefSimple.Create(", "));
 			}
 
 			static ITranslatable GetSingleLabel(TEnum f)
