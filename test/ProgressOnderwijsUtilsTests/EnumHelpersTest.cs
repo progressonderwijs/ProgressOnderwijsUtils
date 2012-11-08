@@ -151,8 +151,5 @@ namespace ProgressOnderwijsUtilsTests
 
 				}
 		}
-
-
-
 	}
 }
