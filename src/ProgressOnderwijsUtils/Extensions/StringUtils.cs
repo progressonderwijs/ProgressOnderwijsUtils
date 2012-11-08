@@ -25,8 +25,16 @@ namespace ProgressOnderwijsUtils
 					).Normalize(NormalizationForm.FormC);
 		}
 
-		static readonly Regex capLetter = new Regex(@"(?<=[a-z])[A-Z0-9]|(?<=[A-Z])[A-Z0-9](?=[a-rt-z]|s[a-z])", RegexOptions.Compiled);
-		public static string PrettyPrintCamelCased(string rawString) { return capLetter.Replace(rawString, m => " " + m.Value); }
+		static readonly Regex whiteSpaceSequence = new Regex(@"[ \t_]+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+		static readonly Regex capLetter = new Regex(@"(?<=[a-zA-Z])[0-9]+|(?<![A-Z])[A-Z][a-z]*|(?<=[A-Z])[A-Z]([a-rt-z]|s[a-z])[a-z]*", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+		public static string PrettyPrintCamelCased(string rawString)
+		{
+			var withSpace=
+				capLetter.Replace(rawString,
+				m => (m.Index == 0 ? "" : " ") + (m.Value.ToUpperInvariant() == m.Value ? m.Value : m.Value.ToLowerInvariant())
+				);
+			return whiteSpaceSequence.Replace(withSpace, " ");
+		}
 
 		public static string VervangRingelS(string str, bool upper)
 		{

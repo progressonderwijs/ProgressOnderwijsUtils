@@ -20,6 +20,16 @@ namespace ProgressOnderwijsUtilsTests
 			ValueA,
 		}
 
+		[Flags]
+		public enum FlagsEnumForTesting
+		{
+			[MpLabel("Waarde A", "Value A")]
+			AValue = 1,
+			[MpTooltip("B", "B")]
+			BValue =2,
+			ABValue = 3,
+			ValueC=4,
+		}
 
 		[Test]
 		public void ListsValuesInOrder()
@@ -98,6 +108,15 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => Converteer.TryParse("waarde a", typeof(EnumForTesting?), Taal.NL).Equals(Converteer.ParseResult.Ok(EnumForTesting.AValue)));
 			PAssert.That(() => Converteer.TryParse("XML value", typeof(EnumForTesting?), Taal.EN).Equals(Converteer.ParseResult.Ok(EnumForTesting.XmlValue)));
 			PAssert.That(() => Converteer.TryParse("XmlValue", typeof(EnumForTesting), Taal.EN).State == Converteer.ParseState.Malformed);
+		}
+
+		[Test]
+		public void FlagsEnumGetLabel()
+		{
+			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.BValue).Translate(Taal.NL).ExtraText == "B");
+			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "Value C");
+			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.ABValue).Translate(Taal.NL).Text == "AB Value");
+			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.AValue | FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "Waarde A, Value C");
 		}
 
 	}

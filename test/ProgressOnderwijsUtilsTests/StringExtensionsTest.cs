@@ -140,5 +140,35 @@ namespace ProgressOnderwijsUtilsTests
 				Thread.CurrentThread.CurrentCulture = oldCulture;
 			}
 		}
+
+		[Test]
+		public void PrettyPrintCamelCased()
+		{
+			var tranlations = new Dictionary<string, string> {
+				{"SMMutatie", "SM mutatie"},
+				{"XmlReader", "xml reader"},
+				//{"S0Xval", "S 0 xval"},
+				{"bla bla bla", "bla bla bla"},
+				{"iSXReader0Bla", "i SX reader 0 bla"},
+				{"Channel99", "channel 99"},
+				{"SM99", "SM 99"},
+				{"is_dit_echtZo", "is dit echt zo"},
+				{"Administratienummer_OWI", "administratienummer OWI"},
+				{"Bla_Bla", "bla bla"},
+				{"MT940Sluit","MT 940 sluit"},
+				{"Accoord2Afwijzen","accoord 2 afwijzen"},
+				{"_Multi _Space", " multi space"},
+				{"trailing Space\t", "trailing space "},
+			};
+
+			foreach (var kv in tranlations)
+			{
+				var initial = kv.Key;
+				var ideal = kv.Value;
+				PAssert.That(() => StringUtils.PrettyPrintCamelCased(initial) == ideal);
+			}
+		}
+
+
 	}
 }
