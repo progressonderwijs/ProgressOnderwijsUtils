@@ -35,6 +35,8 @@ namespace ProgressOnderwijsUtils.Data
 				return ((decimal)paramval).ToStringInvariant();
 			else if (paramval is DateTime)
 				return ((DateTime)paramval).ToString(@"\'yyyy-MM-dd HH:mm:ss.fffffff\'");
+			else if (paramval is Enum)
+				return Converteer.ToString(paramval, taalOrNull ?? Taal.NL);
 			else
 				return "{!" + (taalOrNull.HasValue ? Converteer.ToString(paramval, taalOrNull.Value) : paramval.ToString()) + "!}";
 		}
