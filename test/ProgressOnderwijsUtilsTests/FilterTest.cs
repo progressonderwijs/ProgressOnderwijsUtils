@@ -347,6 +347,45 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => run(filter).Count() == 2);
 		}
 
+
+		[Test]
+		public void MetaObject_StringEq()
+		{
+			var filterNull = helper.CreateFilter(o => o.StringVal, BooleanComparer.Equal, null);
+			var filter3 = helper.CreateFilter(o => o.StringVal, BooleanComparer.Equal, "3");
+			var filter100 = helper.CreateFilter(o => o.StringVal, BooleanComparer.Equal, "100");
+			PAssert.That(() => run(filterNull).Count() == 8);
+			PAssert.That(() => run(filter3).Count() == 1);
+			PAssert.That(() => run(filter100).Count() == 2);
+			PAssert.That(() => run(filterNull).Count() == 8);
+			PAssert.That(() => run(filter3).Count() == 1);
+			PAssert.That(() => run(Filter.TryParseSerializedFilter(filter100.SerializeToString())).Count() == 2);
+		}
+
+		[Test]
+		public void MetaObject_StringNeq()
+		{
+			var filterNull = helper.CreateFilter(o => o.StringVal, BooleanComparer.NotEqual, null);
+			var filter3 = helper.CreateFilter(o => o.StringVal, BooleanComparer.NotEqual, "3");
+			var filter100 = helper.CreateFilter(o => o.StringVal, BooleanComparer.NotEqual, "100");
+			PAssert.That(() => run(filterNull).Count() == 3);
+			PAssert.That(() => run(filter3).Count() == 10);
+			PAssert.That(() => run(filter100).Count() == 9);
+			PAssert.That(() => run(filterNull).Count() == 3);
+			PAssert.That(() => run(filter3).Count() == 10);
+			PAssert.That(() => run(Filter.TryParseSerializedFilter(filter100.SerializeToString())).Count() == 9);
+		}
+
+
+		[Test]
+		public void MetaObject_StringIn()
+		{
+			var filterIn = Filter.CreateCriterium("StringVal", BooleanComparer.In, new[] { "100", "4" });
+			var filterNotIn = Filter.CreateCriterium("StringVal", BooleanComparer.NotIn, new[] { "1", "3" });//TODO:verify SQL results too; in particular with DBNULL
+			PAssert.That(() => run(filterIn).Count() == 2);
+			PAssert.That(() => run(filterNotIn).Count() == 10);
+			PAssert.That(() => run(Filter.TryParseSerializedFilter(filterNotIn.SerializeToString())).Count() == 10);
+		}
 	}
 
 	public sealed class BlaFilterObject : ValueBase<BlaFilterObject>, IMetaObject
