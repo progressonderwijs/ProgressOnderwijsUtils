@@ -320,10 +320,31 @@ namespace ProgressOnderwijsUtils
 				: Waarde == null ? Expression.Default(coreExpr.Type.MakeNullableType() ?? coreExpr.Type)
 				: (Expression)Expression.Constant(Waarde);
 
-			if (waardeExpr.Type != coreExpr.Type && coreExpr.Type.IfNullableGetNonNullableType() == waardeExpr.Type)
-				waardeExpr = Expression.Convert(waardeExpr, coreExpr.Type);
-			else if (waardeExpr.Type != coreExpr.Type && coreExpr.Type == waardeExpr.Type.IfNullableGetNonNullableType())
-				coreExpr = Expression.Convert(coreExpr, waardeExpr.Type);
+			var waardeNullable = waardeExpr.Type.IfNullableGetNonNullableType() != null;
+			var colNullable = coreExpr.Type.IfNullableGetNonNullableType() != null;
+			if (waardeNullable != colNullable)
+				if (waardeNullable)
+					coreExpr = Expression.Convert(coreExpr, coreExpr.Type.MakeNullableType());
+				else
+					waardeExpr = Expression.Convert(waardeExpr, waardeExpr.Type.MakeNullableType());
+
+			bool isNullable = colNullable || waardeNullable;
+			if (waardeExpr.Type != coreExpr.Type) //e.g. enums
+			{
+				if (waardeExpr.Type.GetNonNullableUnderlyingType() == coreExpr.Type.GetNonNullableUnderlyingType())
+				{
+					var underlying = waardeExpr.Type.GetNonNullableUnderlyingType();
+					if (isNullable)
+						underlying = underlying.MakeNullableType();
+
+					waardeExpr = Expression.Convert(waardeExpr, underlying);
+					coreExpr = Expression.Convert(coreExpr, underlying);
+				}
+				else
+				{
+					throw new InvalidOperationException("cannot find conversion for column " + KolomNaam + " type " + ObjectToCode.GetCSharpFriendlyTypeName(coreExpr.Type) + " and value '" + ObjectToCode.ComplexObjectToPseudoCode(Waarde) + "'of type " + ObjectToCode.GetCSharpFriendlyTypeName(waardeExpr.Type));
+				}
+			}
 
 			switch (Comparer)
 			{

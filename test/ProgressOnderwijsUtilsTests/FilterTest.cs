@@ -425,6 +425,21 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
+		public void MetaObject_MixedColRef()
+		{
+			var filterA = Filter.CreateCriterium("IntNullable", BooleanComparer.Equal, new ColumnReference("enumVal"));
+			var filterB = Filter.CreateCriterium("intNonNullable", BooleanComparer.Equal, new ColumnReference("enumNullable"));
+
+			PAssert.That(() => filterA.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() != null);
+			PAssert.That(() => filterB.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() != null);
+
+
+			PAssert.That(() => run(filterA).Count() == 2);
+			PAssert.That(() => run(filterB).Count() == 2);
+		}
+
+
+		[Test]
 		public void MetaObject_ClearsNonsense()
 		{
 			var filterNonSenseA = Filter.CreateCriterium("intNonNullable", BooleanComparer.Equal, new ColumnReference("StringVal"));
@@ -432,12 +447,16 @@ namespace ProgressOnderwijsUtilsTests
 			var filterNonSenseC = Filter.CreateCriterium("intNonNullable", BooleanComparer.Equal, null);
 			var filterNonSenseD = Filter.CreateCriterium("StringVal", BooleanComparer.Equal, 1);
 			var filterNonSenseE = Filter.CreateCriterium("intNonNullable", BooleanComparer.Equal, 1.0);
+			var filterNonSenseF = Filter.CreateCriterium("enumVal", BooleanComparer.Equal, 1.0);
+			var filterNonSenseG = Filter.CreateCriterium("enumVal", BooleanComparer.Equal, null);
 
 			PAssert.That(() => filterNonSenseA.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
 			PAssert.That(() => filterNonSenseB.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
 			PAssert.That(() => filterNonSenseC.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
 			PAssert.That(() => filterNonSenseD.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
 			PAssert.That(() => filterNonSenseE.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
+			PAssert.That(() => filterNonSenseF.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
+			PAssert.That(() => filterNonSenseG.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
 		}
 	}
 
