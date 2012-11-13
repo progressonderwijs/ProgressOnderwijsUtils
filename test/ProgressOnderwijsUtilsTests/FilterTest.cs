@@ -25,10 +25,13 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.GreaterThanOrEqual, 3).ToQueryBuilder() == QueryBuilder.Create("test>={0}", 3));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.GreaterThan, 3).ToQueryBuilder() == QueryBuilder.Create("test>{0}", 3));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotEqual, 3).ToQueryBuilder() == QueryBuilder.Create("test!={0}", 3));
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, Taal.NL).ToQueryBuilder() == QueryBuilder.Create("test={0}", Taal.NL));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Contains, "world").ToQueryBuilder() == QueryBuilder.Create("test like {0}", "%world%"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.StartsWith, "world").ToQueryBuilder() == QueryBuilder.Create("test like {0}", "world%"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.EndsWith, "world").ToQueryBuilder() == QueryBuilder.Create("test like {0}", "%world"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNull, null).ToQueryBuilder() == QueryBuilder.Create("test is null"));
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, null).ToQueryBuilder() == QueryBuilder.Create("test is null"));
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotEqual, null).ToQueryBuilder() == QueryBuilder.Create("test is not null"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNotNull, null).ToQueryBuilder() == QueryBuilder.Create("test is not null"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test in (select val from {0})", Enumerable.Range(1, 5)));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotIn, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test not in (select val from {0})", Enumerable.Range(1, 5)));
@@ -37,20 +40,17 @@ namespace ProgressOnderwijsUtilsTests
 		public void CurrentTimeTest()
 		{
 			var filter = Filter.CreateCriterium("test", BooleanComparer.Equal, Filter.CurrentTimeToken.Instance);
-			DateTime start = DateTime.Now;
-			filter.ToQueryBuilder();
-			while (DateTime.Now == start) { }//wait until start of next tick
 			var q = filter.ToQueryBuilder();
-			var qIdeal = QueryBuilder.Create("test={0}", DateTime.Now);
-
-			PAssert.That(() => q == qIdeal);
+			var time = DateTime.Now;
+			bool matcheSomeOldTime = Enumerable.Range(0, 20000).Select(offset => QueryBuilder.Create("test={0}", time.AddTicks(-offset))).Any(qIdeal => q == qIdeal);
+			Assert.True(matcheSomeOldTime, "Kon geen tijd dichtbij DateTime.Now vinden die de CurrentTimeToken matched!");
 		}
 
 		[Test]
 		public void BadInFilterThrows()
 		{
-			Assert.Throws<ArgumentException>(()=> Filter.CreateCriterium("test", BooleanComparer.In, new[]{ default(int?), 1,2  }));
-			Assert.Throws<ArgumentException>(() => Filter.CreateCriterium("test", BooleanComparer.NotIn, Enumerable.Range(1,10)));
+			Assert.Throws<ArgumentException>(() => Filter.CreateCriterium("test", BooleanComparer.In, new[] { default(int?), 1, 2 }));
+			Assert.Throws<ArgumentException>(() => Filter.CreateCriterium("test", BooleanComparer.NotIn, Enumerable.Range(1, 10)));
 			Filter.CreateCriterium("test", BooleanComparer.NotIn, Enumerable.Range(1, 10).ToArray());//shouldn't throw.
 		}
 
@@ -59,8 +59,8 @@ namespace ProgressOnderwijsUtilsTests
 		public void BooleanComparers()
 		{
 			var comparers = EnumHelpers.GetValues<BooleanComparer>();
-			PAssert.That(() => comparers.Count() == comparers.Select(c => c.NiceString()).Distinct().Count());//all nicestrings don't throw and are distinct
-			PAssert.That(() => comparers.OrderBy(x => x).SequenceEqual(CriteriumFilter.NumericComparers.Concat(CriteriumFilter.StringComparers).Distinct().OrderBy(x => x)));//all comparers either numeric or string or both.
+			PAssert.That(() => comparers.Count() == comparers.Select(c => c.NiceString()).Distinct().Count(), "all nicestrings don't throw and are distinct");
+			PAssert.That(() => comparers.OrderBy(x => x).SequenceEqual(CriteriumFilter.NumericComparers.Concat(CriteriumFilter.StringComparers).Distinct().OrderBy(x => x)), "all comparers either numeric or string or both.");
 		}
 
 		[Test]
@@ -112,8 +112,8 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => colTypes.GetOrDefault(s, null)) == modFilter);
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s == "stardust" ? null : colTypes.GetOrDefault(s)) == null);
 			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s == "test" ? null : colTypes.GetOrDefault(s)) == modFilter);//test was replaced, so ok
-			//TODO: don't forget to reenable when filter type testing is on again:
-			//PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s == "stardust" ? typeof(string) : colTypes.GetOrDefault(s, null)) == null);//types don't match
+
+			PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => s == "stardust" ? typeof(string) : colTypes.GetOrDefault(s, null)) == null);//types don't match
 		}
 
 
@@ -207,6 +207,13 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
+		public void EnumsSerializeOk()
+		{
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, Taal.NL).SerializeToString() == @"test[=]i1*");
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, DatabaseVersion.ProductieDB | DatabaseVersion.DevTestDB).SerializeToString() == @"test[=]i5*");
+		}
+
+		[Test]
 		public void StarsAndHashesInArraysSerializeOk()
 		{
 			var filters = new[]{
@@ -254,6 +261,7 @@ namespace ProgressOnderwijsUtilsTests
 								Filter.CreateCriterium("test", BooleanComparer.In, new string[]{}),
 								Filter.CreateCriterium("test", BooleanComparer.NotIn, new string[]{}),
 			};
+
 			foreach (var filter in filters)
 				PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString())));
 		}
@@ -313,5 +321,52 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => someFilter is CombinedFilter && ((CombinedFilter)someFilter).FilterLijst.OfType<CombinedFilter>().Any());
 			PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString())));
 		}
+
+		static readonly BlaFilterObject[] data = new[] {
+			new BlaFilterObject(1,2,"3",BlaFilterEnumTest.Abc,BlaFilterEnumTest.Test),
+			new BlaFilterObject(null,0,null,BlaFilterEnumTest.Xyz,null),
+			new BlaFilterObject(100,0,null,BlaFilterEnumTest.Xyz,null),
+			new BlaFilterObject(null,100,"100",BlaFilterEnumTest.Test,null),
+			new BlaFilterObject(null,0,null,BlaFilterEnumTest.Xyz,BlaFilterEnumTest.Test),
+			new BlaFilterObject(100,100,null,BlaFilterEnumTest.Abc,BlaFilterEnumTest.Abc),
+			new BlaFilterObject(null,100,"100",BlaFilterEnumTest.Xyz,null),
+			new BlaFilterObject(null,1,null,BlaFilterEnumTest.Abc,null),
+			new BlaFilterObject(1,0,null,BlaFilterEnumTest.Abc,null),
+			new BlaFilterObject(1,0,null,BlaFilterEnumTest.Xyz,BlaFilterEnumTest.Abc),
+			new BlaFilterObject(null,0,null,BlaFilterEnumTest.Xyz,BlaFilterEnumTest.Xyz),
+		};
+
+	}
+
+	public class BlaFilterObject : IMetaObject
+	{
+		public BlaFilterObject(
+				 int? intNullable,
+				 int intNonNullable,
+				 string stringVal,
+				 BlaFilterEnumTest enumVal,
+				 BlaFilterEnumTest? enumNullable
+			)
+		{
+			IntNullable = intNullable;
+			IntNonNullable = intNonNullable;
+			StringVal = stringVal;
+			EnumVal = enumVal;
+			EnumNullable = enumNullable;
+		}
+		public int? IntNullable { get; set; }
+		public int IntNonNullable { get; set; }
+		public string StringVal { get; set; }
+		public BlaFilterEnumTest EnumVal { get; set; }
+		public BlaFilterEnumTest? EnumNullable { get; set; }
+	}
+
+	public enum BlaFilterEnumTest
+	{
+		Xyz,
+		[MpLabel("*")]
+		Abc,
+		[MpLabel(null)]
+		Test,
 	}
 }

@@ -207,7 +207,9 @@ namespace ProgressOnderwijsUtils
 				return ArraySerializer.Code + ArraySerializer.Serialize(waarde);
 
 			IValSerializer serializer;
-			if (serializerByType.TryGetValue(waarde.GetType(), out serializer))
+			var underlyingType = waarde is Enum ? waarde.GetType().GetEnumUnderlyingType() : waarde.GetType();
+
+			if (serializerByType.TryGetValue(underlyingType, out serializer))
 				return serializer.Code + serializer.Serialize(waarde);
 			else
 				throw new ArgumentOutOfRangeException("waarde", "waarde is van onbekend type " + waarde.GetType());
@@ -216,7 +218,7 @@ namespace ProgressOnderwijsUtils
 		static Tuple<string, string> FindUptoNonDuplicatedTerminatorWithLeftover(string s, char terminator) //TODO: test strings ending with '*';
 		{
 			int i = 0;
-			StringBuilder waardeStr = new StringBuilder();
+			var waardeStr = new StringBuilder();
 			while (true)
 			{
 				if (s[i] != terminator)
@@ -281,9 +283,8 @@ namespace ProgressOnderwijsUtils
 				return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
 			//if (Waarde == null) 		
 			if (!(Waarde is ColumnReference))
-				return true;	//TODO:emn: HACK? maybe remove this when criterium filters allow it.
+				return Waarde == null || Waarde.GetType().GetNonNullableUnderlyingType() == primaryType;
 			//TODO: when this is reenabled, also update FilterTest.FilterModification() to uncomment the relevant assertion.
-			//return CoreType(Waarde.GetType()) == primaryType;
 			Type secondaryType = colTypeLookup(((ColumnReference)Waarde).ColumnName);
 			if (secondaryType == null) return false;
 			return secondaryType.GetNonNullableUnderlyingType() == primaryType;
