@@ -101,7 +101,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void BasicConverteerTests()
 		{
 			foreach (var value in EnumHelpers.GetValues<EnumForTesting>())
-				foreach (var taal in EnumHelpers.GetValues<Taal>())
+				foreach (var taal in EnumHelpers.GetValues<Taal>().Except(new[] { Taal.None }))
 					if (taal == Taal.EN && (value == EnumForTesting.ValueA || value == EnumForTesting.AValue))
 						PAssert.That(() => Converteer.TryParse(Converteer.ToString(value, taal), typeof(EnumForTesting), taal).State == Converteer.ParseState.Malformed);
 					else

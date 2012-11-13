@@ -185,10 +185,11 @@ namespace ProgressOnderwijsUtils
 
 		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct, IConvertible
 		{
-			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().Where(t=>t!=Taal.None).ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text.Trim(), e => e, StringComparer.OrdinalIgnoreCase));
+			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().Where(t => t != Taal.None).ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text.Trim(), e => e, StringComparer.OrdinalIgnoreCase));
 			public static IEnumerable<TEnum> Lookup(string s, Taal taal)
 			{
-
+				if (taal == Taal.None)
+					throw new ArgumentOutOfRangeException("taal", "Taal is niet gezet.  (== Taal.None)");
 				return !EnumMetaCache<TEnum>.IsFlags ? ParseLabels[taal][s.Trim()] :
 					new[] { 
 						s.Split(',')
