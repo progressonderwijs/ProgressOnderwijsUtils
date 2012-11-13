@@ -283,7 +283,7 @@ namespace ProgressOnderwijsUtils
 				return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
 			//if (Waarde == null) 		
 			if (!(Waarde is ColumnReference))
-				return Waarde == null || Waarde.GetType().GetNonNullableUnderlyingType() == primaryType;
+				return Waarde == null && primaryType.CanBeNull() || Waarde != null && Waarde.GetType().GetNonNullableUnderlyingType() == primaryType;
 			//TODO: when this is reenabled, also update FilterTest.FilterModification() to uncomment the relevant assertion.
 			Type secondaryType = colTypeLookup(((ColumnReference)Waarde).ColumnName);
 			if (secondaryType == null) return false;

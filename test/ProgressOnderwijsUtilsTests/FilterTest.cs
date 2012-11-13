@@ -386,6 +386,59 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => run(filterNotIn).Count() == 10);
 			PAssert.That(() => run(Filter.TryParseSerializedFilter(filterNotIn.SerializeToString())).Count() == 10);
 		}
+
+
+		[Test]
+		public void MetaObject_IntBasics()
+		{
+			PAssert.That(() => run(helper.CreateFilter(o=>o.IntNullable,BooleanComparer.LessThan,100) ).Count() == 3);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.LessThanOrEqual, 100)).Count() == 5);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.GreaterThanOrEqual, 100)).Count() == 2);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.GreaterThan, 100)).Count() == 0);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.Equal, 100)).Count() == 2);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.NotEqual, 100)).Count() == 9);
+		}
+
+		[Test]
+		public void MetaObject_IntNonNullableBasics()
+		{
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.LessThan, 100)).Count() == 8);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.LessThanOrEqual, 100)).Count() == 11);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.GreaterThanOrEqual, 100)).Count() == 3);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.GreaterThan, 100)).Count() == 0);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.Equal, 100)).Count() == 3);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.NotEqual, 100)).Count() == 8);
+		}
+
+		[Test]
+		public void MetaObject_IntColRef()
+		{
+			var filterA = Filter.CreateCriterium("IntNullable", BooleanComparer.Equal, new ColumnReference("IntNonNullable"));
+			var filterB = Filter.CreateCriterium("intNonNullable", BooleanComparer.Equal, new ColumnReference("intnullable"));
+
+			PAssert.That(() => filterA.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() != null);
+			PAssert.That(() => filterB.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() != null);
+
+
+			PAssert.That(() => run(filterA).Count() == 1);
+			PAssert.That(() => run(filterB).Count() == 1);
+		}
+
+		[Test]
+		public void MetaObject_ClearsNonsense()
+		{
+			var filterNonSenseA = Filter.CreateCriterium("intNonNullable", BooleanComparer.Equal, new ColumnReference("StringVal"));
+			var filterNonSenseB = Filter.CreateCriterium("StringVal", BooleanComparer.Equal, new ColumnReference("intNullable"));
+			var filterNonSenseC = Filter.CreateCriterium("intNonNullable", BooleanComparer.Equal, null);
+			var filterNonSenseD = Filter.CreateCriterium("StringVal", BooleanComparer.Equal, 1);
+			var filterNonSenseE = Filter.CreateCriterium("intNonNullable", BooleanComparer.Equal, 1.0);
+
+			PAssert.That(() => filterNonSenseA.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
+			PAssert.That(() => filterNonSenseB.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
+			PAssert.That(() => filterNonSenseC.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
+			PAssert.That(() => filterNonSenseD.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
+			PAssert.That(() => filterNonSenseE.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
+		}
 	}
 
 	public sealed class BlaFilterObject : ValueBase<BlaFilterObject>, IMetaObject

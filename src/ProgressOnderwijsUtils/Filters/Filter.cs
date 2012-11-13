@@ -159,6 +159,12 @@ namespace ProgressOnderwijsUtils
 		public static BooleanComparer? ParseComparerNiceString(string s) { return niceStringValues.GetOrDefaultR(s, default(BooleanComparer?)); }
 
 		public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, Type> typeIfPresent) { return filter != null && filter.IsFilterValid(typeIfPresent) ? filter : null; }
+		public static FilterBase ClearFilterWhenItContainsInvalidColumns<T>(this FilterBase filter)
+			where T : IMetaObject
+		{
+			var byName = MetaObject.GetMetaProperties<T>().ToDictionary(mp => mp.Naam, mp => mp.DataType, StringComparer.OrdinalIgnoreCase);
+			return ClearFilterWhenItContainsInvalidColumns(filter, str => byName.GetOrDefault(str));
+		}
 
 		public static Tuple<FilterBase, string> TryParseSerializedFilterWithLeftovers(string serialized)
 		{
