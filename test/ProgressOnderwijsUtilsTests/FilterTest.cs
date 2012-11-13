@@ -335,10 +335,21 @@ namespace ProgressOnderwijsUtilsTests
 			new BlaFilterObject(1,0,null,BlaFilterEnumTest.Xyz,BlaFilterEnumTest.Abc),
 			new BlaFilterObject(null,0,null,BlaFilterEnumTest.Xyz,BlaFilterEnumTest.Xyz),
 		};
+		static readonly IFilterFactory<BlaFilterObject> helper = null;
+		static IEnumerable<BlaFilterObject> run(FilterBase filter) { return data.Where(filter.ToMetaObjectFilter<BlaFilterObject>()); }
+
+		[Test]
+		public void MetaObjectFiltersWork()
+		{
+			var filter = helper.CreateFilter(o => o.EnumNullable, BooleanComparer.Equal, BlaFilterEnumTest.Test);
+			PAssert.That(() => filter.ToQueryBuilder() == QueryBuilder.Create("EnumNullable={0}", BlaFilterEnumTest.Test));
+
+			PAssert.That(() => run(filter).Count() == 2);
+		}
 
 	}
 
-	public class BlaFilterObject : IMetaObject
+	public sealed class BlaFilterObject : ValueBase<BlaFilterObject>, IMetaObject
 	{
 		public BlaFilterObject(
 				 int? intNullable,
