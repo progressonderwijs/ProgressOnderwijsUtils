@@ -41,25 +41,6 @@ namespace ProgressOnderwijsUtils.Data
 				return "{!" + (taalOrNull.HasValue ? Converteer.ToString(paramval, taalOrNull.Value) : paramval.ToString()) + "!}";
 		}
 
-
-		public bool CanShareParamNumberWith(IQueryParameter other)
-		{
-			return Equals(other);
-			//return ReferenceEquals(this, other) ||
-			//(other is QueryScalarParameterComponent) 
-			//&& paramval != DBNull.Value 
-			//&& !(paramval is int) 
-			//&& Equals(paramval, ((QueryScalarParameterComponent)other).paramval);
-		}
-		public int ParamNumberSharingHashCode()
-		{
-			return GetHashCode();
-			//return paramval.GetHashCode() + (
-			//paramval == DBNull.Value
-			//|| paramval is int 
-			//? base.GetHashCode() : 37); //paramval never null!
-		}
-
 		public bool Equals(IQueryComponent other) { return (other is QueryScalarParameterComponent) && Equals(paramval, ((QueryScalarParameterComponent)other).paramval); }
 		public override bool Equals(object obj) { return (obj is QueryScalarParameterComponent) && Equals((QueryScalarParameterComponent)obj); }
 		public override int GetHashCode() { return paramval.GetHashCode() + 37; }//paramval never null!

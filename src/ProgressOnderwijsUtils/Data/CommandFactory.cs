@@ -8,13 +8,6 @@ namespace ProgressOnderwijsUtils.Data
 {
 	sealed class CommandFactory
 	{
-		sealed class QueryParamEquality : IEqualityComparer<IQueryParameter>
-		{
-			public bool Equals(IQueryParameter x, IQueryParameter y) { return x.CanShareParamNumberWith(y); }
-			public int GetHashCode(IQueryParameter obj) { return obj.ParamNumberSharingHashCode(); }
-		}
-		static readonly QueryParamEquality ParamSharingComparer = new QueryParamEquality();
-
 		private CommandFactory() { }
 
 		public static SqlCommand BuildQuery(IEnumerable<IQueryComponent> components, SqlConnection conn, int commandTimeout)
@@ -63,7 +56,7 @@ namespace ProgressOnderwijsUtils.Data
 
 		readonly StringBuilder queryText = new StringBuilder();
 		readonly List<IQueryParameter> parmetersInOrder = new List<IQueryParameter>();
-		readonly Dictionary<IQueryParameter, int> lookup = new Dictionary<IQueryParameter, int>(ParamSharingComparer);
+		readonly Dictionary<IQueryParameter, int> lookup = new Dictionary<IQueryParameter, int>();
 		public CommandFactory AppendQueryComponent(IQueryComponent component)
 		{
 			queryText.Append(component.ToSqlString(this));

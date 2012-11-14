@@ -33,8 +33,6 @@ namespace ProgressOnderwijsUtils.Data
 			return "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")";
 		}
 
-		public bool CanShareParamNumberWith(IQueryParameter other) { return Equals((object)other); }
-		public int ParamNumberSharingHashCode() { return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200; }//paramval never null!
 
 		public bool Equals(IQueryComponent other) { return Equals((object)other); }
 		public override bool Equals(object other)
@@ -42,6 +40,6 @@ namespace ProgressOnderwijsUtils.Data
 			return ReferenceEquals(this, other) || (other is QueryTableValuedParameterComponent<T>) && Equals(DbTypeName, ((QueryTableValuedParameterComponent<T>)other).DbTypeName)
 				&& (ReferenceEquals(objs, ((QueryTableValuedParameterComponent<T>)other).objs) || objs.SequenceEqual(((QueryTableValuedParameterComponent<T>)other).objs));
 		}
-		public override int GetHashCode() { return ParamNumberSharingHashCode(); }//paramval never null!
+		public override int GetHashCode() { return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200; }//paramval never null!
 	}
 }

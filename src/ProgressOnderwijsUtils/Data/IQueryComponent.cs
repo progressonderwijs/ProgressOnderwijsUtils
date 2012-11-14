@@ -15,7 +15,5 @@ namespace ProgressOnderwijsUtils.Data
 	interface IQueryParameter : IQueryComponent
 	{
 		SqlParameter ToSqlParameter(int paramNum);
-		bool CanShareParamNumberWith(IQueryParameter other);
-		int ParamNumberSharingHashCode();
 	}
 }
