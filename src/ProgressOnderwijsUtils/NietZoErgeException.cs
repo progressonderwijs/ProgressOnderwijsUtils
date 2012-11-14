@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace ProgressOnderwijsUtils
 {
+	[Serializable]
 	public class NietZoErgeException : ProgressNetException
 	{
 		public NietZoErgeException(string message) : base(message) { }
