@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
@@ -19,6 +20,14 @@ namespace ProgressOnderwijsUtils
 		ExplicitLines = 1 << 3,
 		ExtraSpaceRight = 1 << 4,
 	}
+	public static class ColumnCssHelpers
+	{
+		public static string JoinedClasses(this ColumnCss columnCss, string prefix)
+		{
+			return EnumHelpers.GetValues<ColumnCss>().Where(css => css != ColumnCss.None && columnCss.HasFlag(css)).Select(css => prefix + css.ToString() + " ").JoinStrings();
+		}
+	}
+
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpColumnCssAttribute : Attribute
