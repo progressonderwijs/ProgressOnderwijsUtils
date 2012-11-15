@@ -267,7 +267,6 @@ namespace ProgressOnderwijsUtils
 			else if (Waarde is Filter.CurrentTimeToken)
 				return QueryBuilder.Param(DateTime.Now);
 			else
-
 				return QueryBuilder.Param(Waarde);
 		}
 
@@ -281,9 +280,9 @@ namespace ProgressOnderwijsUtils
 				return Waarde == null;
 			if (Comparer == BooleanComparer.In || Comparer == BooleanComparer.NotIn)
 				return Waarde is GroupReference && primaryType == typeof(int) || Waarde is Array && Waarde.GetType().GetElementType() == primaryType;
-			//if (Waarde == null) 		
 			if (!(Waarde is ColumnReference))
 				return Waarde == null && primaryType.CanBeNull() || Waarde != null && Waarde.GetType().GetNonNullableUnderlyingType() == primaryType;
+
 			//TODO: when this is reenabled, also update FilterTest.FilterModification() to uncomment the relevant assertion.
 			Type secondaryType = colTypeLookup(((ColumnReference)Waarde).ColumnName);
 			if (secondaryType == null) return false;
@@ -309,42 +308,24 @@ namespace ProgressOnderwijsUtils
 		static readonly MethodInfo stringContainsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
 		// ReSharper restore MemberCanBePrivate.Global
 
-		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr, Expression dateTimeNowTokenValue)
+		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr, Expression dateTimeNowTokenValue, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier)
 		{
-			if (Waarde is GroupReference)
-				throw new InvalidOperationException("Cannot interpret group reference IDs in LINQ: these are only stored in the database!");
 			Expression coreExpr = Expression.Property(objParamExpr, KolomNaam);
-			var waardeExpr = Waarde is ColumnReference
-				? Expression.Property(objParamExpr, ((ColumnReference)Waarde).ColumnName)
-				: Waarde == Filter.CurrentTimeToken.Instance ? dateTimeNowTokenValue
-				: Waarde == null ? Expression.Default(coreExpr.Type.MakeNullableType() ?? coreExpr.Type)
-				: (Expression)Expression.Constant(Waarde);
 
-			var waardeNullable = waardeExpr.Type.IfNullableGetNonNullableType() != null;
-			var colNullable = coreExpr.Type.IfNullableGetNonNullableType() != null;
-			if (waardeNullable != colNullable)
-				if (waardeNullable)
-					coreExpr = Expression.Convert(coreExpr, coreExpr.Type.MakeNullableType());
-				else
-					waardeExpr = Expression.Convert(waardeExpr, waardeExpr.Type.MakeNullableType());
-
-			bool isNullable = colNullable || waardeNullable;
-			if (waardeExpr.Type != coreExpr.Type) //e.g. enums
+			if (Comparer == BooleanComparer.In || Comparer == BooleanComparer.NotIn)
 			{
-				if (waardeExpr.Type.GetNonNullableUnderlyingType() == coreExpr.Type.GetNonNullableUnderlyingType())
-				{
-					var underlying = waardeExpr.Type.GetNonNullableUnderlyingType();
-					if (isNullable)
-						underlying = underlying.MakeNullableType();
-
-					waardeExpr = Expression.Convert(waardeExpr, underlying);
-					coreExpr = Expression.Convert(coreExpr, underlying);
-				}
-				else
-				{
-					throw new InvalidOperationException("cannot find conversion for column " + KolomNaam + " type " + ObjectToCode.GetCSharpFriendlyTypeName(coreExpr.Type) + " and value '" + ObjectToCode.ComplexObjectToPseudoCode(Waarde) + "'of type " + ObjectToCode.GetCSharpFriendlyTypeName(waardeExpr.Type));
-				}
+				var inExpr = Waarde is GroupReference ? StaticGroupReferenceMembershipExpression(getStaticGroupContainmentVerifier, coreExpr) : ArrayMembershipExpression(coreExpr);
+				return Comparer == BooleanComparer.In ? inExpr : Expression.Not(inExpr);
 			}
+			else
+			{
+				return ScalarComparerMetaObjectFilterExpr(objParamExpr, dateTimeNowTokenValue, coreExpr);
+			}
+		}
+
+		Expression ScalarComparerMetaObjectFilterExpr(Expression objParamExpr, Expression dateTimeNowTokenValue, Expression coreExpr)
+		{
+			var waardeExpr = ConvertedWaardeExpr(objParamExpr, dateTimeNowTokenValue, ref coreExpr);
 
 			switch (Comparer)
 			{
@@ -363,25 +344,7 @@ namespace ProgressOnderwijsUtils
 				case BooleanComparer.IsNotNull:
 				case BooleanComparer.NotEqual:
 					return Expression.NotEqual(coreExpr, waardeExpr);
-				case BooleanComparer.In:
-				case BooleanComparer.NotIn:
-					var elemType = coreExpr.Type;
-					var altElemType = elemType.MakeNullableType() ?? coreExpr.Type.IfNullableGetNonNullableType();
-					var listType = typeof(IEnumerable<>).MakeGenericType(elemType);
-					var altListType = altElemType == null ? null : typeof(IEnumerable<>).MakeGenericType(altElemType);
-					if (!listType.IsInstanceOfType(Waarde) && (altListType == null || !altListType.IsInstanceOfType(Waarde)))
-						throw new InvalidOperationException("Kan geen IN query maken voor kolom " + KolomNaam + " omdat kolom van type " + elemType + " is en de filter " + (Waarde == null ? "NULL" : "van type " + ObjectToCode.GetCSharpFriendlyTypeName(Waarde.GetType())) + " is.");
-					var setType = typeof(ISet<>).MakeGenericType(elemType);
-					var genericEnumerableOfTypeMethod = ((Func<IEnumerable, IEnumerable<object>>)Enumerable.OfType<object>).Method.GetGenericMethodDefinition();
-					var setExpr = setType.IsInstanceOfType(Waarde) ? waardeExpr
-							: Expression.New(typeof(HashSet<>).MakeGenericType(elemType).GetConstructor(new[] { listType }),
-								listType.IsInstanceOfType(Waarde) ? waardeExpr
-								: Expression.Call(genericEnumerableOfTypeMethod.MakeGenericMethod(elemType), waardeExpr)
-								)
-							;
-					var setContainsMethod = typeof(ICollection<>).MakeGenericType(elemType).GetMethod("Contains");
-					Expression inExpr = Expression.Call(setExpr, setContainsMethod, coreExpr);
-					return Comparer == BooleanComparer.In ? inExpr : Expression.Not(inExpr);
+
 				case BooleanComparer.StartsWith:
 					return Expression.Call(stringStartsWithMethod, coreExpr, waardeExpr);
 				case BooleanComparer.EndsWith:
@@ -391,6 +354,71 @@ namespace ProgressOnderwijsUtils
 				default:
 					throw new InvalidOperationException("Geen geldige operator");
 			}
+		}
+
+		Expression ConvertedWaardeExpr(Expression objParamExpr, Expression dateTimeNowTokenValue, ref Expression coreExpr)
+		{
+			var waardeExpr = Waarde is ColumnReference
+				? Expression.Property(objParamExpr, ((ColumnReference)Waarde).ColumnName)
+				: Waarde == Filter.CurrentTimeToken.Instance ? dateTimeNowTokenValue
+					: Waarde == null ? Expression.Default(coreExpr.Type.MakeNullableType() ?? coreExpr.Type)
+						: (Expression)Expression.Constant(Waarde);
+
+			var waardeNullable = waardeExpr.Type.IfNullableGetNonNullableType() != null;
+			var colNullable = coreExpr.Type.IfNullableGetNonNullableType() != null;
+			if (waardeNullable != colNullable)
+				if (waardeNullable)
+					coreExpr = Expression.Convert(coreExpr, coreExpr.Type.MakeNullableType());
+				else
+					waardeExpr = Expression.Convert(waardeExpr, waardeExpr.Type.MakeNullableType());
+
+			bool isNullable = colNullable || waardeNullable;
+			if (waardeExpr.Type != coreExpr.Type) //e.g. enums
+				if (waardeExpr.Type.GetNonNullableUnderlyingType() == coreExpr.Type.GetNonNullableUnderlyingType())
+				{
+					var underlying = waardeExpr.Type.GetNonNullableUnderlyingType();
+					if (isNullable)
+						underlying = underlying.MakeNullableType();
+
+					waardeExpr = Expression.Convert(waardeExpr, underlying);
+					coreExpr = Expression.Convert(coreExpr, underlying);
+				}
+				else
+					throw new InvalidOperationException("cannot find conversion for column " + KolomNaam + " type " + ObjectToCode.GetCSharpFriendlyTypeName(coreExpr.Type) + " and value '" + ObjectToCode.ComplexObjectToPseudoCode(Waarde) + "'of type " + ObjectToCode.GetCSharpFriendlyTypeName(waardeExpr.Type));
+			return waardeExpr;
+		}
+
+		Expression ArrayMembershipExpression(Expression coreExpr)
+		{
+			var elemType = coreExpr.Type;
+			var altElemType = elemType.MakeNullableType() ?? coreExpr.Type.IfNullableGetNonNullableType();
+			var listType = typeof(IEnumerable<>).MakeGenericType(elemType);
+			var altListType = altElemType == null ? null : typeof(IEnumerable<>).MakeGenericType(altElemType);
+			if (!listType.IsInstanceOfType(Waarde) && (altListType == null || !altListType.IsInstanceOfType(Waarde)))
+				throw new InvalidOperationException("Kan geen IN query maken voor kolom " + KolomNaam + " omdat kolom van type " + elemType + " is en de filter " + (Waarde == null ? "NULL" : "van type " + ObjectToCode.GetCSharpFriendlyTypeName(Waarde.GetType())) + " is.");
+			var setType = typeof(ISet<>).MakeGenericType(elemType);
+			var genericEnumerableOfTypeMethod = ((Func<IEnumerable, IEnumerable<object>>)Enumerable.OfType<object>).Method.GetGenericMethodDefinition();
+			var setExpr = setType.IsInstanceOfType(Waarde) ? (Expression)Expression.Constant(Waarde)
+				: Expression.New(typeof(HashSet<>).MakeGenericType(elemType).GetConstructor(new[] { listType }),
+					listType.IsInstanceOfType(Waarde) ? Expression.Constant(Waarde)
+						: (Expression)Expression.Call(genericEnumerableOfTypeMethod.MakeGenericMethod(elemType), Expression.Constant(Waarde))
+					)
+				;
+			var setContainsMethod = typeof(ICollection<>).MakeGenericType(elemType).GetMethod("Contains");
+			return Expression.Call(setExpr, setContainsMethod, coreExpr);
+		}
+
+		Expression StaticGroupReferenceMembershipExpression(Func<int, Func<int, bool>> getStaticGroupContainmentVerifier, Expression coreExpr)
+		{
+			if (coreExpr.Type.GetNonNullableUnderlyingType() != typeof(int))
+				throw new InvalidOperationException("Cannot evaluate a static group for a non-integer column " + KolomNaam + " of type " + ObjectToCode.GetCSharpFriendlyTypeName(coreExpr.Type));
+
+			var membFunc = getStaticGroupContainmentVerifier(((GroupReference)Waarde).GroupId);
+
+			if (coreExpr.Type.CanBeNull())
+				return Expression.AndAlso(Expression.NotEqual(Expression.Default(coreExpr.Type), coreExpr), Expression.Invoke(Expression.Constant(membFunc), Expression.Convert(Expression.Convert(coreExpr, typeof(int?)), typeof(int))));
+
+			return Expression.Invoke(Expression.Constant(membFunc), Expression.Convert(coreExpr, typeof(int)));
 		}
 
 		public override string ToString()

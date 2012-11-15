@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business;
+using Progress.Business.Organisatie;
+using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture, NightlyOnly]
-	public sealed class FilterTest
+	public sealed class FilterTest : TestSuiteBase
 	{
 		[Test]
 		public void BasicChecks()
@@ -336,7 +339,14 @@ namespace ProgressOnderwijsUtilsTests
 			new BlaFilterObject(null,0,null,BlaFilterEnumTest.Xyz,BlaFilterEnumTest.Xyz),
 		};
 		static readonly IFilterFactory<BlaFilterObject> helper = null;
-		static IEnumerable<BlaFilterObject> run(FilterBase filter) { return data.Where(filter.ToMetaObjectFilter<BlaFilterObject>()); }
+		Func<int, Func<int, bool>> getStaticGroupContainmentVerifier;
+		IEnumerable<BlaFilterObject> run(FilterBase filter) { return data.Where(filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier)); }
+
+		[SetUp]
+		public void initGroupLookup()
+		{
+			getStaticGroupContainmentVerifier = InfoStaticGroup.CachedGroupMembershipVerifier(conn);
+		}
 
 		[Test]
 		public void MetaObjectFiltersWork()
@@ -391,7 +401,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void MetaObject_IntBasics()
 		{
-			PAssert.That(() => run(helper.CreateFilter(o=>o.IntNullable,BooleanComparer.LessThan,100) ).Count() == 3);
+			PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.LessThan, 100)).Count() == 3);
 			PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.LessThanOrEqual, 100)).Count() == 5);
 			PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.GreaterThanOrEqual, 100)).Count() == 2);
 			PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.GreaterThan, 100)).Count() == 0);

@@ -37,18 +37,18 @@ namespace ProgressOnderwijsUtils
 
 		public static QueryBuilder ToQueryBuilder(this FilterBase filter) { return filter == null ? QueryBuilder.Create("1=1") : filter.ToQueryBuilderImpl(); }
 
-		public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter) //where T : IMetaObject
+		public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier) //where T : IMetaObject
 		{
 			if (filter == null) return _ => true;
-			return ToMetaObjectFilterExpr<T>(filter).Compile();
+			return ToMetaObjectFilterExpr<T>(filter, getStaticGroupContainmentVerifier).Compile();
 		}
 
-		public static Expression<Func<T, bool>> ToMetaObjectFilterExpr<T>(FilterBase filter)
+		public static Expression<Func<T, bool>> ToMetaObjectFilterExpr<T>(FilterBase filter, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier)
 		{
 			var metaObjParam = Expression.Parameter(typeof(T));
 			var nowTokenValue = Expression.Constant(DateTime.Now, typeof(DateTime)); //rather than re-determine "now" several times, we pre-determine it to ensure one consistent moment in all filter evaluations.
 
-			var filterBodyExpr = filter == null ? Expression.Constant(true) : filter.ToMetaObjectFilterExpr<T>(metaObjParam, nowTokenValue);
+			var filterBodyExpr = filter == null ? Expression.Constant(true) : filter.ToMetaObjectFilterExpr<T>(metaObjParam, nowTokenValue, getStaticGroupContainmentVerifier);
 			return Expression.Lambda<Func<T, bool>>(filterBodyExpr, metaObjParam);
 		}
 

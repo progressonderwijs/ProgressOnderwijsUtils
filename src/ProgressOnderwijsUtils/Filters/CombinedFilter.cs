@@ -22,10 +22,10 @@ namespace ProgressOnderwijsUtils
 		}
 		protected internal override bool IsFilterValid(Func<string, Type> colTypeLookup) { return FilterLijst.All(f => f.IsFilterValid(colTypeLookup)); }
 
-		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParExpr, Expression dateTimeNowTokenValue)
+		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParExpr, Expression dateTimeNowTokenValue, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier)
 		{
 			return
-				filterLijst.Select(filter => filter.ToMetaObjectFilterExpr<T>(objParExpr, dateTimeNowTokenValue))
+				filterLijst.Select(filter => filter.ToMetaObjectFilterExpr<T>(objParExpr, dateTimeNowTokenValue, getStaticGroupContainmentVerifier))
 					.Aggregate(andor == BooleanOperator.And ? Expression.AndAlso : (Func<Expression, Expression, Expression>)Expression.OrElse);
 		}
 
