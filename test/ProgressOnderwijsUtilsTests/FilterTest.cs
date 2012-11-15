@@ -435,6 +435,25 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
+		public void MetaObject_StrCompNullSafe()
+		{
+			var filterA = helper.CreateFilter(o=>o.StringVal, BooleanComparer.Contains, "0");
+			var filterB = helper.CreateFilter(o => o.StringVal, BooleanComparer.StartsWith, "10");
+			var filterC = helper.CreateFilter(o => o.StringVal, BooleanComparer.EndsWith, "3");
+			var filterA_null = helper.CreateFilter(o => o.StringVal, BooleanComparer.Contains, null);
+			var filterB_null = helper.CreateFilter(o => o.StringVal, BooleanComparer.StartsWith, null);
+			var filterC_null = helper.CreateFilter(o => o.StringVal, BooleanComparer.EndsWith, null);
+
+			PAssert.That(() => run(filterA).Count() == 2);
+			PAssert.That(() => run(filterB).Count() == 2);
+			PAssert.That(() => run(filterC).Count() == 1);
+			PAssert.That(() => run(filterA_null).Count() == 0);
+			PAssert.That(() => run(filterB_null).Count() == 0);
+			PAssert.That(() => run(filterC_null).Count() == 0);
+		}
+
+
+		[Test]
 		public void MetaObject_MixedColRef()
 		{
 			var filterA = Filter.CreateCriterium("IntNullable", BooleanComparer.Equal, new ColumnReference("enumVal"));
