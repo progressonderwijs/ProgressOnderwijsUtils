@@ -22,11 +22,20 @@ namespace ProgressOnderwijsUtils
     <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildId:$(BUILD_ID)" Overwrite="false" Encoding="UTF-8" />
   </Target>
 */
+		[Serializable]
+		public sealed class Data : IMetaObject
+		{
+			public string WcRange { get; set; }
+			public string ComputerName { get; set; }
+			public string JobName { get; set; }
+			public string BuildId { get; set; }
+			public string WcRev { get; set; }
+			public DateTime WcNowUtc { get; set; }
+			public DateTime WcDateUtc { get; set; }
+			public bool WcMods { get; set; }
+		}
+		public static readonly Data Current;
 
-		public static readonly string WCREV, WCRANGE, ComputerName, JobName, BuildId;
-
-		public static readonly DateTime WCNOWUTC, WCDATEUTC;
-		public static readonly bool WCMODS;
 
 		static ProgressNetBuildVersion()
 		{
@@ -45,15 +54,18 @@ namespace ProgressOnderwijsUtils
 
 			if (lines == null) return;
 			var svninfo = lines.Select(s => s.Trim()).Where(s => s.Length > 0).ToDictionary(s => s.Substring(0, s.IndexOf(':')), s => s.Substring(s.IndexOf(':') + 1));
-			WCREV = svninfo["WCREV"];
-			WCRANGE = svninfo["WCRANGE"];
-			WCNOWUTC = DateTime.Parse(svninfo["WCNOWUTC"], CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-			WCDATEUTC = DateTime.Parse(svninfo["WCDATEUTC"], CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
-			WCMODS = bool.Parse(svninfo["WCMODS"]);
 
-			ComputerName = svninfo["ComputerName"].Trim();
-			JobName = svninfo["JobName"].Trim();
-			BuildId = svninfo["BuildId"].Trim();
+			Current = new Data {
+
+				WcRev = svninfo["WCREV"],
+				WcRange = svninfo["WCRANGE"],
+				WcNowUtc = DateTime.Parse(svninfo["WCNOWUTC"], CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal),
+				WcDateUtc = DateTime.Parse(svninfo["WCDATEUTC"], CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal),
+				WcMods = bool.Parse(svninfo["WCMODS"]),
+				ComputerName = svninfo["ComputerName"].Trim(),
+				JobName = svninfo["JobName"].Trim(),
+				BuildId = svninfo["BuildId"].Trim(),
+			};
 		}
 	}
 }
