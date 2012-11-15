@@ -300,11 +300,11 @@ namespace ProgressOnderwijsUtils
 
 		// ReSharper disable MemberCanBePrivate.Global
 		//not private due to access via Expression trees.
-		public static bool StartsWithHelper(string val, string with) { return val.StartsWith(with, StringComparison.OrdinalIgnoreCase); }
+		public static bool StartsWithHelper(string val, string with) { return val != null && with!=null&& val.StartsWith(with, StringComparison.OrdinalIgnoreCase); }
 		static readonly MethodInfo stringStartsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
-		public static bool EndsWithHelper(string val, string with) { return val.EndsWith(with, StringComparison.OrdinalIgnoreCase); }
+		public static bool EndsWithHelper(string val, string with) { return val != null && with != null && val.EndsWith(with, StringComparison.OrdinalIgnoreCase); }
 		static readonly MethodInfo stringEndsWithMethod = ((Func<string, string, bool>)EndsWithHelper).Method;
-		public static bool ContainsHelper(string val, string needle) { return -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase); }
+		public static bool ContainsHelper(string val, string needle) { return val != null && needle != null && -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase); }
 		static readonly MethodInfo stringContainsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
 		// ReSharper restore MemberCanBePrivate.Global
 
