@@ -14,25 +14,35 @@ namespace ProgressOnderwijsUtils
 		public int? Width;
 	}
 
-	public struct XHtmlData : IEnumerable<XNode>
+	public struct XhtmlData : IEnumerable<XNode>
 	{
 		readonly XNode[] nodes;
 		public IEnumerable<XNode> Nodes { get { return nodes.EmptyIfNull(); } }
 
-		public static XHtmlData Empty { get { return default(XHtmlData); } }
+		public static XhtmlData Empty { get { return default(XhtmlData); } }
 
 
-		public static XHtmlData Create(params object[] contents)
+		public static XhtmlData Create(params object[] contents)
 		{
-			return new XHtmlData(new XElement("x", contents).Nodes().ToArray());
+			return new XhtmlData(new XElement("x", contents).Nodes().ToArray());
 		}
 
-		public static XHtmlData Parse(string s)
+		public static XhtmlData ParseAndSanitize(string s)
 		{
-			return new XHtmlData(XhtmlCleaner.HtmlSanitizer(s).Nodes().ToArray());
+			return new XhtmlData(XhtmlCleaner.HtmlSanitizer(s).Nodes().ToArray());
 		}
 
-		public static XHtmlData GenerateToolTipHtmlFragment(IEnumerable<XNode> text, IEnumerable<XNode> tooltip, ToolTipSettings settings)
+		public static XhtmlData? TryParseAndSanitize(string s)
+		{
+			var xml = XhtmlCleaner.TryParse(s);
+			if (xml == null)
+				return null;
+
+			return new XhtmlData(XhtmlCleaner.HtmlSanitizer(xml).Nodes().ToArray());
+		}
+
+
+		public static XhtmlData GenerateToolTipHtmlFragment(IEnumerable<XNode> text, IEnumerable<XNode> tooltip, ToolTipSettings settings)
 		{
 			return
 				Create(
@@ -50,7 +60,7 @@ namespace ProgressOnderwijsUtils
 				: text);
 		}
 
-		XHtmlData(XNode[] nodes) { this.nodes = nodes; }
+		XhtmlData(XNode[] nodes) { this.nodes = nodes; }
 
 		public string ToUiString()
 		{

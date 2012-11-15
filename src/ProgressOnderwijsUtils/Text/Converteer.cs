@@ -332,8 +332,11 @@ namespace ProgressOnderwijsUtils
 				catch (OverflowException) { return ParseResult.Overflow; }
 			else if (fundamentalType == typeof(string))
 				return ParseResult.Ok(s);
-			else if (fundamentalType == typeof(XHtmlData))
-				return XhtmlCleaner.TryParse(s) != null ? ParseResult.Ok(XHtmlData.Parse(s)) : ParseResult.Malformed(t, s);
+			else if (fundamentalType == typeof(XhtmlData))
+			{
+				var res = XhtmlData.TryParseAndSanitize(s);
+				return res.HasValue ? ParseResult.Ok(res.Value) : ParseResult.Malformed(t, s);
+			}
 			else if (fundamentalType.IsArray)
 			{
 				var elementType = fundamentalType.GetElementType();

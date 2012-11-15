@@ -233,7 +233,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="safeAttributes">Attributes on elements deemed safe with a case-sensitive name in this list are retained in the output.  Null means use default selection.</param>
 		/// <returns>The parsed xhtml fragments without non-validating or unsafe tags.  The content is
 		/// wrapped in a top-level meaningless "x" tag for transport</returns>
-		static XElement HtmlSanitizer(XElement sourceHtml, HashSet<string> safeElements = null, HashSet<string> safeAttributes = null, HashSet<string> bannedElements = null)
+		public static XElement HtmlSanitizer(XElement sourceHtml, HashSet<string> safeElements = null, HashSet<string> safeAttributes = null, HashSet<string> bannedElements = null)
 		{
 			safeAttributes = safeAttributes ?? defaultSafeAttr;
 			safeElements = safeElements ?? defaultSafeElements;
