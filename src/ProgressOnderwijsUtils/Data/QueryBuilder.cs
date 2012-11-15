@@ -96,13 +96,7 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
 		/// 
-		///   You need to define a corresponding type in the database.
-		/// e.g:
-		/// 
-		/// CREATE TYPE [dbo].[IntValues] AS TABLE([val] [int] NOT NULL) would correspond to 
-		/// public class MyClass : IMetaObject{ public int val {get;set;} }
-		/// 
-		/// see MSDN for more details.  For int-valued parameters, a predefined overload is provided.
+		///   You need to define a corresponding type in the database (see QueryComponent.ToTableParameter for details).
 		/// </summary>
 		/// <param name="typeName">name of the db-type e.g. IntValues</param>
 		/// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
