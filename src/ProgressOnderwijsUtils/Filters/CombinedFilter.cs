@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils.Filters
 {
 	[Serializable]
 	public sealed class CombinedFilter : FilterBase, IEquatable<CombinedFilter>
@@ -35,11 +35,11 @@ namespace ProgressOnderwijsUtils
 			return "(" + filterLijst.Aggregate(default(QueryBuilder), (q, f) => null == q ? f.ToQueryBuilder() : q + andorQ + f.ToQueryBuilder()) + ")";
 		}
 
-		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return this == toReplace ? replaceWith : Filter.CreateCombined(AndOr, filterLijst.Select(child => child.ReplaceImpl(toReplace, replaceWith))); }
+		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return ReferenceEquals(this, toReplace) ? replaceWith : Filter.CreateCombined(AndOr, filterLijst.Select(child => child.ReplaceImpl(toReplace, replaceWith))); }
 
 		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
 		{
-			return filterInEditMode == this
+			return ReferenceEquals(filterInEditMode, this)
 					? Filter.CreateCombined(booleanOperator, this, c)
 					: Filter.CreateCombined(AndOr, FilterLijst.Select(f => f.AddToImpl(filterInEditMode, booleanOperator, c)));
 		}
@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils
 															serialized[0] == '|' ? BooleanOperator.Or
 																: default(BooleanOperator?);
 			if (!op.HasValue) return null;
-			List<FilterBase> filters = new List<FilterBase>();
+			var filters = new List<FilterBase>();
 			serialized = serialized.Substring(1);
 			while (true)
 			{

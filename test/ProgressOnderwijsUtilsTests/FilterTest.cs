@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business;
 using Progress.Business.Organisatie;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Filters;
 using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests

@@ -10,7 +10,7 @@ using System.Text;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Data;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils.Filters
 {
 	[Serializable]
 	public sealed class CriteriumFilter : FilterBase, IEquatable<CriteriumFilter>
@@ -289,18 +289,18 @@ namespace ProgressOnderwijsUtils
 			return secondaryType.GetNonNullableUnderlyingType() == primaryType;
 		}
 
-		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return this == toReplace ? replaceWith : this; }
+		protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return ReferenceEquals(this, toReplace) ? replaceWith : this; }
 
 		protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
 		{
-			return filterInEditMode == this
+			return ReferenceEquals(filterInEditMode, this)
 				? Filter.CreateCombined(booleanOperator, this, c)
 				: this;
 		}
 
 		// ReSharper disable MemberCanBePrivate.Global
 		//not private due to access via Expression trees.
-		public static bool StartsWithHelper(string val, string with) { return val != null && with!=null&& val.StartsWith(with, StringComparison.OrdinalIgnoreCase); }
+		public static bool StartsWithHelper(string val, string with) { return val != null && with != null && val.StartsWith(with, StringComparison.OrdinalIgnoreCase); }
 		static readonly MethodInfo stringStartsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
 		public static bool EndsWithHelper(string val, string with) { return val != null && with != null && val.EndsWith(with, StringComparison.OrdinalIgnoreCase); }
 		static readonly MethodInfo stringEndsWithMethod = ((Func<string, string, bool>)EndsWithHelper).Method;
@@ -405,7 +405,9 @@ namespace ProgressOnderwijsUtils
 					)
 				;
 			var setContainsMethod = typeof(ICollection<>).MakeGenericType(elemType).GetMethod("Contains");
+			// ReSharper disable PossiblyMistakenUseOfParamsMethod
 			return Expression.Call(setExpr, setContainsMethod, coreExpr);
+			// ReSharper restore PossiblyMistakenUseOfParamsMethod
 		}
 
 		Expression StaticGroupReferenceMembershipExpression(Func<int, Func<int, bool>> getStaticGroupContainmentVerifier, Expression coreExpr)

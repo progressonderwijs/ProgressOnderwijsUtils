@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils.Filters
 {
 	[Serializable]
 	public abstract class FilterBase : IEquatable<FilterBase>
