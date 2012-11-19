@@ -90,7 +90,11 @@ namespace ProgressOnderwijsUtils.Radius
 
 				byte[] response;
 				try { response = AuthNetworkHelper(serverHostname, request); }
-				catch (SocketException) { response = AuthNetworkHelper(serverHostname, request); }//one retry.
+				catch (SocketException)//one retry.
+				{
+					try { response = AuthNetworkHelper(serverHostname, request); }
+					catch (SocketException) { return RadiusAuthResults.ServiceErrorNoResponse; }
+				}
 				return ProcessServerResponse(response, requestIdentifier, requestAuthenticator, sharedSecret);
 			}
 		}
