@@ -21,15 +21,19 @@ namespace ProgressOnderwijsUtils
 
 		public static XhtmlData Empty { get { return default(XhtmlData); } }
 
+		public static XhtmlData Create(IEnumerable<XNode> nodes)
+		{
+			return new XhtmlData(nodes.ToArray());
+		}
 
 		public static XhtmlData Create(params object[] contents)
 		{
-			return new XhtmlData(new XElement("x", contents).Nodes().ToArray());
+			return Create(new XElement("x", contents).Nodes());
 		}
 
 		public static XhtmlData ParseAndSanitize(string s)
 		{
-			return new XhtmlData(XhtmlCleaner.HtmlSanitizer(s).Nodes().ToArray());
+			return XhtmlCleaner.HtmlSanitizer(s);
 		}
 
 		public static XhtmlData? TryParseAndSanitize(string s)
@@ -38,7 +42,7 @@ namespace ProgressOnderwijsUtils
 			if (xml == null)
 				return null;
 
-			return new XhtmlData(XhtmlCleaner.HtmlSanitizer(xml).Nodes().ToArray());
+			return XhtmlCleaner.HtmlSanitizer(xml.Value);
 		}
 
 
