@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils.Data
 			return new SqlParameter {
 				IsNullable = paramval == DBNull.Value,
 				ParameterName = "@par" + paramNum,
-				Value = paramval,
+				Value = paramval is Filter.CurrentTimeToken ? DateTime.Now : paramval,
 			};
 		}
 
