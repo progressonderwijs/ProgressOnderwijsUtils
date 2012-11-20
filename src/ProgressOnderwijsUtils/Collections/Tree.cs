@@ -111,6 +111,8 @@ namespace ProgressOnderwijsUtils.Collections
 			return "{ " + nodeValue.ToString() + ": " + Children.Select(t => t.ToString()).JoinStrings(", ") + " }";
 		}
 		#endregion
+
+		public int MaxDepth() { return Children.Any() ? Children.Max(sub => sub.MaxDepth()) + 1 : 0; }
 	}
 
 }
