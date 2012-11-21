@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using NUnit.Framework;
 
@@ -42,8 +43,11 @@ namespace ProgressOnderwijsUtils
 			return -1;
 		}
 
+		[Pure]
 		public static IReadOnlyList<T> ToReadOnly<T>(this IEnumerable<T> list) { return list.ToArray(); }
+		[Pure]
 		public static HashSet<T> ToSet<T>(this IEnumerable<T> list) { return new HashSet<T>(list); }
+		[Pure]
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> list) { return list ?? Enumerable.Empty<T>(); }
 
 		public static int GetSequenceHashCode<T>(this IEnumerable<T> list, IEqualityComparer<T> elementComparer = null)
