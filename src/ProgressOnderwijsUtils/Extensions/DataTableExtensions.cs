@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="comparator">Optional delegate to choose the records to delete.</param>
 		/// <param name="data">Optional object passed transparently to the comparator when called.</param>
 		/// <param name="primary">Optional flag denoting whether to set the primary key to the key specified or not.</param>
-		public static void MakeUnique(this DataTable table, DataColumn[] key, Comparator comparator, object data = null, bool primary = true)
+		public static void MakeUnique(this DataTable table, DataColumn[] key, Comparator comparator = null, object data = null, bool primary = true)
 		{
 			var duplicates =
 				from row in table.Rows.Cast<DataRow>()
