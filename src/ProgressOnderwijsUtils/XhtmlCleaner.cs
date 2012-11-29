@@ -148,7 +148,7 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Takes an insecure html fragment and cleans it up.
 		/// </summary>
-		public static string TidyHtmlString(string input) { return XWrappedToString(new XElement("x", HtmlSanitizer(input))); }
+		public static string TidyHtmlString(string input) { return HtmlSanitizer(input).ToString(); }
 
 
 		/// <summary>

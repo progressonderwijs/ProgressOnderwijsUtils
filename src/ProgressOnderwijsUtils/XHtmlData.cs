@@ -66,6 +66,11 @@ namespace ProgressOnderwijsUtils
 
 		XhtmlData(XNode[] nodes) { this.nodes = nodes; }
 
+		public override string ToString()
+		{
+			return Nodes.Select(x => x.ToString(SaveOptions.DisableFormatting)).JoinStrings();
+		}
+
 		public string ToUiString()
 		{
 			using (StringWriter writer = new StringWriter())
