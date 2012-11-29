@@ -58,16 +58,7 @@ namespace ProgressOnderwijsUtils
 		{
 			try
 			{
-				string strWithoutNonXmlEntities =
-					entityRegex.Replace(str, match => {
-						string entityReference = match.Value.Substring(1, match.Length - 2);
-
-						char? refersTo =
-							entityReference == "lt" || entityReference == "gt" || entityReference == "amp" || entityReference == "apos" || entityReference == "quot"
-							? default(char?) //no need to decode xml entities and to do so might interpret real content as markup accidentally...
-							: HtmlEntityLookup.Lookup(entityReference);
-						return refersTo.HasValue ? new string(refersTo.Value, 1) : match.Value;
-					});
+				var strWithoutNonXmlEntities = StrWithoutNonXmlEntities(str);
 
 				return XhtmlData.Create(XElement.Parse("<x>" + strWithoutNonXmlEntities + "</x>", LoadOptions.PreserveWhitespace).Nodes());
 			}
@@ -75,6 +66,29 @@ namespace ProgressOnderwijsUtils
 			{
 				return null;
 			}
+		}
+
+		public static XDocument ParseCompleteXhtmlDocument(string str)
+		{
+			var strWithoutNonXmlEntities = StrWithoutNonXmlEntities(str);
+
+			return XDocument.Parse(strWithoutNonXmlEntities, LoadOptions.PreserveWhitespace);
+		}
+
+
+		static string StrWithoutNonXmlEntities(string str)
+		{
+			string strWithoutNonXmlEntities =
+				entityRegex.Replace(str, match => {
+					string entityReference = match.Value.Substring(1, match.Length - 2);
+
+					char? refersTo =
+						entityReference == "lt" || entityReference == "gt" || entityReference == "amp" || entityReference == "apos" || entityReference == "quot"
+							? default(char?) //no need to decode xml entities and to do so might interpret real content as markup accidentally...
+							: HtmlEntityLookup.Lookup(entityReference);
+					return refersTo.HasValue ? new string(refersTo.Value, 1) : match.Value;
+				});
+			return strWithoutNonXmlEntities;
 		}
 
 		/// <summary>
@@ -107,7 +121,7 @@ namespace ProgressOnderwijsUtils
 				{
 					var text = current as XText;
 					//since XText does some \r magic, we can't just assume current.ToString is equivalent to text.Value
-					text.Value = current.ToString(SaveOptions.DisableFormatting).Replace('\r', ' ').Substring(0, currentMax); 
+					text.Value = current.ToString(SaveOptions.DisableFormatting).Replace('\r', ' ').Substring(0, currentMax);
 					return output;
 				}
 				var currentEl = (XElement)current;
