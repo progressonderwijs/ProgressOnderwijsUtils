@@ -224,7 +224,10 @@ namespace ProgressOnderwijsUtils
 				var methodBuilder = typeBuilder.DefineMethod("LoadRows", MethodAttributes.Public | MethodAttributes.Static);
 				try
 				{
-					loadRowFunc.CompileToMethod(methodBuilder);
+					if (typeof(T).IsPublic)
+						loadRowFunc.CompileToMethod(methodBuilder); //faster
+					else
+						return loadRowFunc.Compile();
 				}
 				catch (Exception e)
 				{
