@@ -161,13 +161,21 @@ namespace ProgressOnderwijsUtils
 
 			static ITranslatable GetSingleLabel(TEnum f)
 			{
-				var label = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
+				var translatedlabel = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
+				var untranslatedlabel = GetAttrs<MpLabelUntranslatedAttribute>.On(f).SingleOrDefault();
+				if (translatedlabel != null && untranslatedlabel != null)
+					throw new Exception("Cannot define both an untranslated and a translated label on the same enum: " + f);
+
+
 				var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
-				if (label == null && tooltip == null && !EnumMembers.Contains(f))
+				if (translatedlabel == null && untranslatedlabel == null && tooltip == null && !EnumMembers.Contains(f))
 					throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
 
-				var translatable = label != null ? label.ToTranslatable()
+				var translatable =
+					translatedlabel != null ? translatedlabel.ToTranslatable()
+					: untranslatedlabel != null ? untranslatedlabel.ToTranslatable()
 					: Converteer.ToText(StringUtils.PrettyPrintCamelCased(f.ToString()));
+
 				if (tooltip != null)
 					translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
 

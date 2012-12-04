@@ -92,6 +92,15 @@ namespace ProgressOnderwijsUtils
 		public LiteralTranslatable ToTranslatable() { return Translatable.Literal(NL, EN, DE); }
 	}
 
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+	public sealed class MpLabelUntranslatedAttribute : Attribute
+	{
+		public MpLabelUntranslatedAttribute(string label) { Label = label; }
+		public readonly string Label;
+
+		public LiteralTranslatable ToTranslatable() { return Translatable.Literal(Label, Label, Label); }
+	}
+
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpKoppelTabelAttribute : Attribute

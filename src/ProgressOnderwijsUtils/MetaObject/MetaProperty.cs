@@ -123,7 +123,16 @@ namespace ProgressOnderwijsUtils
 				var mpVolgordeAttribute = Attr<MpVolgordeAttribute>(pi);
 				volgorde = mpVolgordeAttribute == null ? implicitOrder * 10 : mpVolgordeAttribute.Volgorde;
 
-				var labelNoTt = OrDefault(Attr<MpLabelAttribute>(pi), mkAttr => Translatable.Literal(mkAttr.NL, mkAttr.EN, mkAttr.DE));
+				var labelNoTt = OrDefault(Attr<MpLabelAttribute>(pi), mkAttr => mkAttr.ToTranslatable());
+				var untranslatedLabelNoTt = OrDefault(Attr<MpLabelUntranslatedAttribute>(pi), mkAttr => mkAttr.ToTranslatable());
+				if (untranslatedLabelNoTt != null)
+				{
+					if (labelNoTt != null)
+						throw new Exception("Cannot define both an untranslated and a translated label on the same property " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + "." + Naam);
+					else
+						labelNoTt = untranslatedLabelNoTt;
+				}
+
 				if (labelNoTt == null && Attr<MpLabelsRequiredAttribute>(pi.DeclaringType) != null)
 					throw new ArgumentException("You must specify an MpLabel on " + Naam + ", since the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " is marked MpLabelsRequired");
 				if (labelNoTt == null)

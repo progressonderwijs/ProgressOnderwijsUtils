@@ -15,6 +15,8 @@ namespace ProgressOnderwijsUtils
 		public static ITranslatable Append(this ITranslatable a, ITranslatable b, ITranslatable c) { return new ConcatTranslatable(a, b, c); }
 		public static ITranslatable Append(this ITranslatable a, params ITranslatable[] rest) { return new ConcatTranslatable(new[] { a }.Concat(rest).ToArray()); }
 		public static ITranslatable AppendAuto(this ITranslatable a, params object[] objects) { return new ConcatTranslatable(new[] { a }.Concat(objects.Select(o => Converteer.ToText(o))).ToArray()); }
+		public static ITranslatable AppendTooltipAuto(this ITranslatable a, params object[] objects) { return new ConcatTranslatable(new[] { a }.Concat(objects.Select(o => Converteer.ToText(o).TextToTooltip())).ToArray()); }
+
 		public static ITranslatable JoinTexts(this IEnumerable<ITranslatable> a, ITranslatable splitter) { return new ConcatTranslatable(a.SelectMany((t, i) => i == 0 ? new[] { t } : new[] { splitter, t }).ToArray()); }
 
 		public static ITranslatable LimitLength(this ITranslatable translatable, int maxwidth)
@@ -67,6 +69,12 @@ namespace ProgressOnderwijsUtils
 		{
 			return CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).Text);
 		}
+
+		public static ITranslatable TextToTooltip(this ITranslatable translatable)
+		{
+			return CreateTranslatable(taal => "", taal => translatable.Translate(taal).Text);
+		}
+
 
 		public static ITranslatable ReplaceTooltipWithTooltip(this ITranslatable translatable, ITranslatable tt)
 		{
