@@ -183,13 +183,10 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-
-
 		interface ILabelLookup
 		{
 			IEnumerable<Enum> Lookup(string s, Taal taal);
 		}
-
 
 		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct, IConvertible
 		{
