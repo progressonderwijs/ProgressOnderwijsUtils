@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void GetEntities(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
 		{
 			var sut = MetaDataFactory.GetEntities(idp, sp, db);
-			Assert.That(sut, Is.Not.Empty);
+			Assert.That(sut, Is.Not.Null);
 		}
 
 		[TestCase(IdentityProvider.ConextWayf, null, null)]
