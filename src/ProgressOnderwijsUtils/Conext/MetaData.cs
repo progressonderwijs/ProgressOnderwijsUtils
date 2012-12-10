@@ -24,20 +24,22 @@ namespace ProgressOnderwijsUtils.Conext
 		public Saml20MetaData(string uri, X509Certificate2 cer)
 		{
 			this.cer = cer;
-			md = Download(uri);
+			md = XDocument.Load(uri, LoadOptions.PreserveWhitespace);
+			CheckSignature();
 		}
 
 		public Saml20MetaData(XDocument md, X509Certificate2 cer)
 		{
-			this.md = md;
 			this.cer = cer;
+			this.md = md;
+			CheckSignature();
 		}
 
-		public string SingleSignOnService(string entityID)
+		public string SingleSignOnService(string entity)
 		{
 			XElement desc = (
 				from element in md.Root.DescendantsAndSelf(NS + "IDPSSODescriptor")
-			    where element.Parent.Attribute("entityID").Value == entityID
+			    where element.Parent.Attribute("entityID").Value == entity
 			    select element
 			).Single();
 
@@ -48,31 +50,24 @@ namespace ProgressOnderwijsUtils.Conext
 			).Single();
 		}
 
-		private XDocument Download(string uri)
+		private void CheckSignature()
 		{
-			XDocument result = XDocument.Load(uri, LoadOptions.PreserveWhitespace);
-			if (!CheckSignature(result))
-			{
-				throw new CryptographicException("metadata not signed");
-			}
-			return result;
-		}
-
-		private bool CheckSignature(XDocument doc)
-		{
-			XmlDocument sig = new XmlDocument
+			XmlDocument doc = new XmlDocument
           	{
 				PreserveWhitespace = true,
           	};
 
-			using (XmlReader reader = doc.CreateReader())
+			using (XmlReader reader = md.CreateReader())
 			{
-				sig.Load(reader);
+				doc.Load(reader);
 			}
 
-			SignedXml dsig = new SignedXml(sig);
-			dsig.LoadXml(sig.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
-			return dsig.CheckSignature(cer, true); // TODO: cannot seem to validate the certificate? Must be stored?
+			SignedXml dsig = new SignedXml(doc);
+			dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
+			if (!dsig.CheckSignature(cer, true)) // TODO: cannot seem to validate the certificate? Must be stored?
+			{
+				throw new CryptographicException("metadata not signed");
+			}
 		}
 	}
 
@@ -106,14 +101,11 @@ namespace ProgressOnderwijsUtils.Conext
 
 		private const string IDP_ENTITY_RUG = "https://signon.rug.nl/nidp/saml2/metadata";
 		private const string IDP_ENTITY_RUG_TEST = "https://trr-02.id.rug.nl/nidp/saml2/metadata";
-		private const string IDP_ENTITY_FONTYS = "urn:federation:FontysADFS"; // TODO
-		private const string IDP_ENTITY_FONTYS_TEST = "urn:federation:FontysTaADFS"; // TODO
+		private const string IDP_ENTITY_FONTYS = "urn:federation:FontysADFS";
 		private const string IDP_ENTITY_VU = "https://surf-sso.ubvu.vu.nl/simplesaml/saml2/idp/metadata.php";
 		private const string IDP_ENTITY_VU_TEST = "http://stsfed.test.vu.nl/adfs/services/trust";
 		private const string IDP_ENTITY_UVA = "https://secure.uva.nl/cas";
-		private const string IDP_ENTITY_UVA_TEST = "https://cas-acc.ic.uva.nl/cas";
 		private const string IDP_ENTITY_STENDEN = "http://adfs.stenden.com/adfs/services/trust";
-		private const string IDP_ENTITY_STENDEN_TEST = "http://adfs.stenden.com/adfs/services/trust"; // TODO
 
 		private const string SP_CERTIFICATE = "surff.pfx";
 		private const string SP_PROVIDER = "https://student.progressnet.nl/saml20/";
@@ -241,6 +233,63 @@ namespace ProgressOnderwijsUtils.Conext
 			}
 		};
 
+		private static readonly IDictionary<IdentityProvider, IDictionary<ServiceProvider, IDictionary<DatabaseVersion, IDictionary<Entity, string>>>> ENTITIES =
+			new Dictionary<IdentityProvider, IDictionary<ServiceProvider, IDictionary<DatabaseVersion, IDictionary<Entity, string>>>>
+		{
+			{ IdentityProvider.Conext, new Dictionary<ServiceProvider, IDictionary<DatabaseVersion, IDictionary<Entity, string>>>
+				{
+					{ ServiceProvider.P3W, new Dictionary<DatabaseVersion, IDictionary<Entity, string>>
+						{
+							{ DatabaseVersion.ProductieDB, new Dictionary<Entity, string>
+								{
+									{ Entity.Fontys, IDP_ENTITY_FONTYS },
+									{ Entity.Stenden, IDP_ENTITY_STENDEN },
+									{ Entity.UvA, IDP_ENTITY_UVA },
+									{ Entity.VU, IDP_ENTITY_VU },
+								}
+							},
+							{ DatabaseVersion.TestDB, new Dictionary<Entity, string>
+								{
+									{ Entity.VU, IDP_ENTITY_VU_TEST },
+								}
+							},
+						}
+					},
+					{ ServiceProvider.PNet, new Dictionary<DatabaseVersion, IDictionary<Entity, string>>
+						{
+							{ DatabaseVersion.ProductieDB, new Dictionary<Entity, string>
+								{
+									{ Entity.Fontys, IDP_ENTITY_FONTYS },
+									{ Entity.Stenden, IDP_ENTITY_STENDEN },
+								}
+							},
+							{ DatabaseVersion.TestDB, new Dictionary<Entity, string>() },
+							{ DatabaseVersion.DevTestDB, new Dictionary<Entity, string>() },
+						}
+					},
+					{ ServiceProvider.Student, new Dictionary<DatabaseVersion, IDictionary<Entity, string>>
+						{
+							{ DatabaseVersion.ProductieDB, new Dictionary<Entity, string>
+								{
+									{ Entity.RuG, IDP_ENTITY_RUG },
+								}
+							},
+							{ DatabaseVersion.TestDB, new Dictionary<Entity, string>
+								{
+									{ Entity.RuG, IDP_ENTITY_RUG_TEST },
+								}
+							},
+							{ DatabaseVersion.DevTestDB, new Dictionary<Entity, string>
+								{
+									{ Entity.RuG, IDP_ENTITY_RUG_TEST },
+								}
+							},
+						}
+					},
+				}
+			},
+		};
+
 		#endregion
 
 		#region Factory methods
@@ -253,6 +302,13 @@ namespace ProgressOnderwijsUtils.Conext
 		public static IdentityProviderConfig GetIdentityProvider(IdentityProvider idp)
 		{
 			return IDENTITY_PROVIDERS[idp];
+		}
+
+		public static IDictionary<Entity, string> GetEntities(IdentityProvider idp, ServiceProvider? sp = null, DatabaseVersion? db = null)
+		{
+			return idp == IdentityProvider.ConextWayf 
+				? EnumHelpers.GetValues<Entity>().ToDictionary(o => o, o => IDP_ENTITY_WAYF)
+				: ENTITIES[idp][sp.Value][db.Value];
 		}
 
 		public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig? sp = null)

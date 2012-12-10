@@ -41,6 +41,15 @@ namespace ProgressOnderwijsUtils.Conext
 		ConextWayf,
 	}
 
+	public enum Entity
+	{
+		Fontys,
+		Stenden,
+		UvA,
+		VU,
+		RuG,
+	}
+
 	public static class SSO
 	{
 		private const string UID = "urn:mace:dir:attribute-def:uid";

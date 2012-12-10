@@ -1,4 +1,6 @@
-﻿using System.Xml;
+﻿using System;
+using System.Linq;
+using System.Xml;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Conext;
@@ -48,7 +50,6 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[TestCase(IdentityProvider.ConextWayf, null, null)]
-		/* TODO
 		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
@@ -57,16 +58,56 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.DevTestDB)]
-		*/
+		public void GetEntities(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
+		{
+			var sut = MetaDataFactory.GetEntities(idp, sp, db);
+			Assert.That(sut, Is.Not.Empty);
+		}
+
+		[TestCase(IdentityProvider.ConextWayf, null, null)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.ProductieDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.TestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.DevTestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.DevTestDB)]
 		public void GetMetaData(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
 		{
+			var sut = Saml20MetaData(idp, sp, db);
+			Assert.That(sut, Is.Not.Null);
+		}
+
+		[TestCase(IdentityProvider.ConextWayf, null, null)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.ProductieDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.TestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.DevTestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.DevTestDB)]
+		public void SingleSignOnService(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
+		{
+			var sut = Saml20MetaData(idp, sp, db);
+			foreach (var entity in MetaDataFactory.GetEntities(idp, sp, db).Values.Distinct())
+			{
+				var sso = sut.SingleSignOnService(entity);
+				Assert.That(sso, Is.Not.Null);
+				Assert.That(Uri.IsWellFormedUriString(sso, UriKind.Absolute));
+			}
+		}
+
+		private static Saml20MetaData Saml20MetaData(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
+		{
 			IdentityProviderConfig server = MetaDataFactory.GetIdentityProvider(idp);
-			ServiceProviderConfig? client = sp.HasValue && db.HasValue 
-				? MetaDataFactory.GetServiceProvider(sp.Value, db.Value) 
+			ServiceProviderConfig? client = sp.HasValue && db.HasValue
+				? MetaDataFactory.GetServiceProvider(sp.Value, db.Value)
 				: default(ServiceProviderConfig?);
 
 			var sut = MetaDataFactory.GetMetaData(server, client);
-			Assert.That(sut, Is.Not.Null);
+			return sut;
 		}
 	}
 }
