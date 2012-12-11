@@ -35,6 +35,14 @@ namespace ProgressOnderwijsUtils.Conext
 			CheckSignature();
 		}
 
+		public IEnumerable<string> GetEntities()
+		{
+			return (
+				from element in md.Root.DescendantsAndSelf(NS + "IDPSSODescriptor")
+				select element.Parent.Attribute("entityID").Value
+			).ToSet();
+		}
+
 		public string SingleSignOnService(string entity)
 		{
 			XElement desc = (
@@ -112,8 +120,6 @@ namespace ProgressOnderwijsUtils.Conext
 		private const string SP_ENTITY_P3W = "http://progresswww.nl";
 		private const string SP_ENTITY_P3W_TEST = "http://progresswww.nl/test";
 		private const string SP_ENTITY_PNET = "http://progressnet.nl";
-		private const string SP_ENTITY_PNET_TEST = "http://test.progressnet.nl";
-		private const string SP_ENTITY_PNET_DEVTEST = "http://ontwikkel.progressnet.nl";
 		private const string SP_ENTITY_STUDENT = "http://student.progressnet.nl";
 		private const string SP_ENTITY_STUDENT_TEST = "http://teststudent.progressnet.nl";
 		private const string SP_ENTITY_STUDENT_DEVTEST = "http://ontwikkelstudent.progressnet.nl";
@@ -161,22 +167,6 @@ namespace ProgressOnderwijsUtils.Conext
 						{ 
 							sp = ServiceProvider.PNet,
 							entity = SP_ENTITY_PNET, 
-							index = 0, 
-							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
-						}
-					},
-					{ DatabaseVersion.TestDB, new ServiceProviderConfig 
-						{ 
-							sp = ServiceProvider.PNet,
-							entity = SP_ENTITY_PNET_TEST, 
-							index = 0, 
-							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
-						}
-					},
-					{ DatabaseVersion.DevTestDB, new ServiceProviderConfig 
-						{ 
-							sp = ServiceProvider.PNet,
-							entity = SP_ENTITY_PNET_TEST, 
 							index = 0, 
 							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
 						}
@@ -379,9 +369,7 @@ namespace ProgressOnderwijsUtils.Conext
 					new XAttribute("validUntil", DateTime.UtcNow.AddHours(6)),
 					GenerateEntity(cer, SP_ENTITY_P3W, "https://progresswww.nl/surff/sso/post/"),
 					GenerateEntity(cer, SP_ENTITY_P3W_TEST, "https://progresswww.nl/surfftest/sso/post/"),
-					GenerateEntity(cer, SP_ENTITY_PNET, "https://student.progressnet.nl/oauth/sso/post"), // TODO
-					GenerateEntity(cer, SP_ENTITY_PNET_TEST, "https://ontwikkelgadgets.progressnet.nl/oauth/sso/post"), // TODO
-					GenerateEntity(cer, SP_ENTITY_PNET_DEVTEST, "https://ontwikkelgadgets.progressnet.nl/oauth/sso/post"), // TODO
+					GenerateEntity(cer, SP_ENTITY_PNET, "https://progressnet.nl/singlesignon"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT, "https://student.progressnet.nl/oauth/sso/post"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT_TEST, "https://teststudent.progressnet.nl/oauth/sso/post"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT_DEVTEST, "https://ontwikkelgadgets.progressnet.nl/oauth/sso/post")

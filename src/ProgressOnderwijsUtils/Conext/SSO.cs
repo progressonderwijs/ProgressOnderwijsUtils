@@ -14,20 +14,6 @@ using log4net;
 
 namespace ProgressOnderwijsUtils.Conext
 {
-	public struct Attributes
-	{
-		public string uid;
-		public string domain;
-		public IEnumerable<string> email;
-		public IEnumerable<string> roles;
-
-		public override string ToString()
-		{
-			return string.Format("uid='{0}'; domain='{1}'; emails='{2}'; roles='{3}'",
-				uid, domain, email.ToStringFlattened(), roles.ToStringFlattened());
-		}
-	}
-
 	public enum ServiceProvider
 	{
 		P3W,
@@ -43,6 +29,8 @@ namespace ProgressOnderwijsUtils.Conext
 
 	public enum Entity
 	{
+		Unknown,
+
 		Fontys,
 		Stenden,
 		UvA,
@@ -60,23 +48,23 @@ namespace ProgressOnderwijsUtils.Conext
 
 		private static readonly ILog LOG = LogManager.GetLogger(typeof(SSO));
 
-		public static void Request(HttpResponse response, ServiceProvider sp, IdentityProvider idp, DatabaseVersion db, string relayState = null)
+		public static void Request(HttpResponse response, ServiceProvider sp, DatabaseVersion db, IdentityProvider idp, Entity entity, string relayState = null)
 		{
-			LOG.Debug(() => string.Format("Request(sp='{0}', idp='{1}', db='{2}')", sp, idp, db));
+			LOG.Debug(() => string.Format("Request(sp='{0}', db='{1}', idp='{2}', entity='{3}')", sp, db, idp, entity));
 
 			ServiceProviderConfig client = MetaDataFactory.GetServiceProvider(sp, db);
 			IdentityProviderConfig server = MetaDataFactory.GetIdentityProvider(idp);
-			Saml20MetaData md = MetaDataFactory.GetMetaData(server, client);
+			IDictionary<Entity, string> entities = MetaDataFactory.GetEntities(idp, sp, db);
 
+			Saml20MetaData md = MetaDataFactory.GetMetaData(server, client);
 			AuthnRequest request = new AuthnRequest
 			{
-				Destination = md.SingleSignOnService(server.identity), // TODO !!!
+				Destination = md.SingleSignOnService(entities[entity]),
 				Issuer = new Issuer(client.entity),
 				ForceAuthn = false,
 				ProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
 				AssertionConsumerServiceIndex = client.index,
-			};	
-
+			};
 			SendAuthnRequest(request, response, client.certificate, relayState);
 		}
 
@@ -101,26 +89,36 @@ namespace ProgressOnderwijsUtils.Conext
 			return result;
 		}
 
-		public static Attributes? Process(object response, IdentityProvider idp)
+		public static Surff.Attributes? Process(object response, IdentityProvider idp)
 		{
-			LOG.Debug(() => string.Format("Process(response='{0}', idp='{1}')", response, idp));
+			var assertion = GetAssertion(response);
+			return assertion == null ? default(Surff.Attributes?) : GetAttributes(assertion, idp);
+		}
 
-			SAMLResponse resp = (SAMLResponse)response;
-			IdentityProviderConfig config = MetaDataFactory.GetIdentityProvider(idp);
+		public static XmlElement GetAssertion(object response)
+		{
+			LOG.Debug(() => string.Format("GetAssertion(response='{0}')", response));
 
-			Attributes? result = null;
-			if (resp.IsSuccess())
+			SAMLResponse resp = response as SAMLResponse;
+			if (resp != null && resp.IsSuccess())
 			{
-				XElement assertion = GetAssertion(resp, config);
-				result = new Attributes
-				{
-					uid = GetAttribute(assertion, UID),
-					domain = GetAttribute(assertion, DOMAIN),
-					email = GetAttributes(assertion, MAIL),
-					roles = GetAttributes(assertion, ROLE),
-				};
+				return resp.GetSignedAssertions()[0];
 			}
-			return result;
+			return null;
+		}
+
+		public static Surff.Attributes GetAttributes(XmlElement assertion, IdentityProvider idp)
+		{
+			LOG.Debug(() => string.Format("GetAttributes(assertion='{0}', idp='{1}')", assertion, idp));
+
+			XElement asserted = VerifyAssertion(assertion, idp);
+			return new Surff.Attributes
+			{
+				uid = GetAttribute(asserted, UID),
+				domain = GetAttribute(asserted, DOMAIN),
+				email = GetAttributes(asserted, MAIL),
+				roles = GetAttributes(asserted, ROLE),
+			};
 		}
 
 		private static void SendAuthnRequest(AuthnRequest req, HttpResponse response, X509Certificate2 cer, string relayState)
@@ -133,10 +131,10 @@ namespace ProgressOnderwijsUtils.Conext
 				cer.PrivateKey);
 		}
 
-		private static XElement GetAssertion(SAMLResponse response, IdentityProviderConfig idp)
+		private static XElement VerifyAssertion(XmlElement result, IdentityProvider idp)
 		{
-			XmlElement result = response.GetSignedAssertions()[0];
-			if (!SAMLAssertionSignature.Verify(result, idp.certificate))
+			IdentityProviderConfig config = MetaDataFactory.GetIdentityProvider(idp);
+			if (!SAMLAssertionSignature.Verify(result, config.certificate))
 			{
 				throw new CryptographicException();
 			}
