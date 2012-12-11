@@ -94,11 +94,11 @@ namespace ProgressOnderwijsUtilsTests
 	{
 		[TestCase(IdentityProvider.ConextWayf, null, null)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.ProductieDB)]
-		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
+		// TODO: [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
-		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
-		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.DevTestDB)]
+		// TODO: [TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
+		// TODO: [TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.DevTestDB)]
 		public void GetEntities(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
 		{
 			var sut = Saml20MetaData(idp, sp, db);
