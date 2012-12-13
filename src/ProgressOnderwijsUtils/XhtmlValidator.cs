@@ -27,9 +27,20 @@ namespace ProgressOnderwijsUtils
 
 		});
 
-		readonly XmlSchemaSet schemas = new XmlSchemaSet();
+		readonly XmlSchemaSet schemas = new XmlSchemaSet() { XmlResolver = new LocalXmlUrlResolver()};
 
 		readonly XmlSchema schema;
+
+		private sealed class LocalXmlUrlResolver : XmlUrlResolver
+		{
+			public override Uri ResolveUri(Uri baseUri, string relativeUri)
+			{
+				if (relativeUri.Equals("http://www.w3.org/2001/xml.xsd"))
+					return new Uri(new Uri("http://www.w3.org/2001/xml.xsd"), "http://www.w3.org/2009/01/xml.xsd");
+				
+				return base.ResolveUri(baseUri, relativeUri);
+			}
+		}
 
 		public XhtmlValidator()
 		{
