@@ -120,6 +120,8 @@ namespace ProgressOnderwijsUtils.Conext
 		private const string SP_ENTITY_P3W = "http://progresswww.nl";
 		private const string SP_ENTITY_P3W_TEST = "http://progresswww.nl/test";
 		private const string SP_ENTITY_PNET = "http://progressnet.nl";
+		private const string SP_ENTITY_PNET_TEST = "http://test.progressnet.nl";
+		private const string SP_ENTITY_PNET_DEVTEST = "http://ontwikkel.progressnet.nl";
 		private const string SP_ENTITY_STUDENT = "http://student.progressnet.nl";
 		private const string SP_ENTITY_STUDENT_TEST = "http://teststudent.progressnet.nl";
 		private const string SP_ENTITY_STUDENT_DEVTEST = "http://ontwikkelstudent.progressnet.nl";
@@ -167,6 +169,22 @@ namespace ProgressOnderwijsUtils.Conext
 						{ 
 							sp = ServiceProvider.PNet,
 							entity = SP_ENTITY_PNET, 
+							index = 0, 
+							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
+						}
+					},
+					{ DatabaseVersion.TestDB, new ServiceProviderConfig 
+						{ 
+							sp = ServiceProvider.PNet,
+							entity = SP_ENTITY_PNET_TEST, 
+							index = 0, 
+							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
+						}
+					},
+					{ DatabaseVersion.DevTestDB, new ServiceProviderConfig 
+						{ 
+							sp = ServiceProvider.PNet,
+							entity = SP_ENTITY_PNET_DEVTEST, 
 							index = 0, 
 							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
 						}
@@ -240,6 +258,9 @@ namespace ProgressOnderwijsUtils.Conext
 							},
 							{ DatabaseVersion.TestDB, new Dictionary<Entity, string>
 								{
+									{ Entity.Fontys, IDP_ENTITY_FONTYS },
+									{ Entity.Stenden, IDP_ENTITY_STENDEN },
+									{ Entity.UvA, IDP_ENTITY_UVA },
 									{ Entity.VU, IDP_ENTITY_VU_TEST },
 								}
 							},
@@ -253,8 +274,18 @@ namespace ProgressOnderwijsUtils.Conext
 									{ Entity.Stenden, IDP_ENTITY_STENDEN },
 								}
 							},
-							{ DatabaseVersion.TestDB, new Dictionary<Entity, string>() },
-							{ DatabaseVersion.DevTestDB, new Dictionary<Entity, string>() },
+							{ DatabaseVersion.TestDB, new Dictionary<Entity, string>()
+								{
+									{ Entity.Fontys, IDP_ENTITY_FONTYS },
+									{ Entity.Stenden, IDP_ENTITY_STENDEN },
+								}
+							},
+							{ DatabaseVersion.DevTestDB, new Dictionary<Entity, string>
+								{
+									{ Entity.Fontys, IDP_ENTITY_FONTYS },
+									{ Entity.Stenden, IDP_ENTITY_STENDEN },
+								}
+							},
 						}
 					},
 					{ ServiceProvider.Student, new Dictionary<DatabaseVersion, IDictionary<Entity, string>>
@@ -370,6 +401,8 @@ namespace ProgressOnderwijsUtils.Conext
 					GenerateEntity(cer, SP_ENTITY_P3W, "https://progresswww.nl/surff/sso/post/"),
 					GenerateEntity(cer, SP_ENTITY_P3W_TEST, "https://progresswww.nl/surfftest/sso/post/"),
 					GenerateEntity(cer, SP_ENTITY_PNET, "https://progressnet.nl/singlesignon"),
+					GenerateEntity(cer, SP_ENTITY_PNET_TEST, "https://test.progressnet.nl/singlesignon"),
+					GenerateEntity(cer, SP_ENTITY_PNET_DEVTEST, "https://ontwikkel.progressnet.nl/singlesignon"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT, "https://student.progressnet.nl/oauth/sso/post"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT_TEST, "https://teststudent.progressnet.nl/oauth/sso/post"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT_DEVTEST, "https://ontwikkelgadgets.progressnet.nl/oauth/sso/post")
