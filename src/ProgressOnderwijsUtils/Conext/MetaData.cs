@@ -16,8 +16,6 @@ namespace ProgressOnderwijsUtils.Conext
 {
 	public class Saml20MetaData
 	{
-		private static readonly XNamespace NS = "urn:oasis:names:tc:SAML:2.0:metadata";
-
 		private readonly XElement md;
 
 		public Saml20MetaData(XElement md)
@@ -28,7 +26,7 @@ namespace ProgressOnderwijsUtils.Conext
 		public IEnumerable<string> GetEntities()
 		{
 			return (
-				from element in md.DescendantsAndSelf(NS + "IDPSSODescriptor")
+				from element in md.DescendantsAndSelf(SchemaSet.SAMLMD_NS + "IDPSSODescriptor")
 				select element.Parent.Attribute("entityID").Value
 			).ToSet();
 		}
@@ -36,13 +34,13 @@ namespace ProgressOnderwijsUtils.Conext
 		public string SingleSignOnService(string entity)
 		{
 			XElement desc = (
-				from element in md.DescendantsAndSelf(NS + "IDPSSODescriptor")
+				from element in md.DescendantsAndSelf(SchemaSet.SAMLMD_NS + "IDPSSODescriptor")
 			    where element.Parent.Attribute("entityID").Value == entity
 			    select element
 			).Single();
 
 			return (
-				from elem in desc.Elements(NS + "SingleSignOnService")
+				from elem in desc.Elements(SchemaSet.SAMLMD_NS + "SingleSignOnService")
 				where elem.Attribute("Binding").Value == "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"
 				select elem.Attribute("Location").Value
 			).Single();
@@ -310,30 +308,10 @@ namespace ProgressOnderwijsUtils.Conext
 				throw new ArgumentException();
 			case IdentityProvider.ConextWayf:
 				var xml = XElement.Load(idp.metadata, LoadOptions.PreserveWhitespace);
-				CheckSignature(xml, idp.certificate);
+				Validate(xml, idp.certificate);
 				return new Saml20MetaData(xml);
 			default:
 				throw new ArgumentOutOfRangeException();
-			}
-		}
-
-		public static void CheckSignature(XElement assertion, X509Certificate2 cer)
-		{
-			XmlDocument doc = new XmlDocument
-          	{
-				PreserveWhitespace = true,
-          	};
-
-			using (XmlReader reader = assertion.CreateReader())
-			{
-				doc.Load(reader);
-			}
-
-			SignedXml dsig = new SignedXml(doc);
-			dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
-			if (!dsig.CheckSignature(cer, true)) // TODO: cannot seem to validate the certificate? Must be stored?
-			{
-				throw new CryptographicException("metadata not signed");
 			}
 		}
 
@@ -345,8 +323,30 @@ namespace ProgressOnderwijsUtils.Conext
 			using (StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
 			{
 				var xml = XElement.Load(reader);
-				CheckSignature(xml, cer);
+				Validate(xml, cer);
 				return new Saml20MetaData(xml);
+			}
+		}
+
+		public static void Validate(XElement assertion, X509Certificate2 cer)
+		{
+			new XDocument(assertion).Validate(null);
+
+			XmlDocument doc = new XmlDocument
+			{
+				PreserveWhitespace = true,
+			};
+
+			using (XmlReader reader = assertion.CreateReader())
+			{
+				doc.Load(reader);
+			}
+
+			SignedXml dsig = new SignedXml(doc);
+			dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
+			if (!dsig.CheckSignature(cer, true)) // TODO: cannot seem to validate the certificate? Must be stored?
+			{
+				throw new CryptographicException("metadata not signed");
 			}
 		}
 
