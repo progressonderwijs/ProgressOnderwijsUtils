@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Web;
-using System.Xml;
 using System.Xml.Linq;
-using ComponentSpace.SAML2;
-using ComponentSpace.SAML2.Assertions;
-using ComponentSpace.SAML2.Protocols;
-using ProgressOnderwijsUtils.Log4Net;
 using log4net;
+using ProgressOnderwijsUtils.Log4Net;
 
 namespace ProgressOnderwijsUtils.Conext
 {
@@ -40,11 +40,45 @@ namespace ProgressOnderwijsUtils.Conext
 
 	public static class SSO
 	{
+		private struct AuthnRequest
+		{
+			public string Destination { get; set; }
+			public string Issuer { private get; set; }
+
+			public string Encode()
+			{
+				byte[] xml = Encoding.UTF8.GetBytes(ToXml().ToString());
+				using (MemoryStream stream = new MemoryStream())
+				{
+					using (DeflateStream deflate = new DeflateStream(stream, CompressionMode.Compress))
+					{
+						deflate.Write(xml, 0, xml.Length);
+					}
+					return Convert.ToBase64String(stream.ToArray());
+				}
+			}
+
+			private XElement ToXml()
+			{
+				return new XElement(SchemaSet.SAMLP_NS + "AuthnRequest",
+					new XAttribute(XNamespace.Xmlns + "saml", SchemaSet.SAML_NS.NamespaceName),
+					new XAttribute(XNamespace.Xmlns + "sampl", SchemaSet.SAMLP_NS.NamespaceName),
+					new XAttribute("ID", "_" + Guid.NewGuid()),
+					new XAttribute("Version", "2.0"),
+					new XAttribute("IssueInstant", DateTime.UtcNow),
+					new XAttribute("Destination", Destination),
+					new XAttribute("ForceAuthn", "false"),
+					new XAttribute("IsPassive", "false"),
+					new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
+					new XElement(SchemaSet.SAML_NS + "Issuer", Issuer)
+				);
+			}
+		}
+
 		private const string UID = "urn:mace:dir:attribute-def:uid";
 		private const string MAIL = "urn:mace:dir:attribute-def:mail";
 		private const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
 		private const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
-		private static readonly XNamespace SAML_NS = "urn:oasis:names:tc:SAML:2.0:assertion";
 
 		private static readonly ILog LOG = LogManager.GetLogger(typeof(SSO));
 
@@ -60,85 +94,113 @@ namespace ProgressOnderwijsUtils.Conext
 			AuthnRequest request = new AuthnRequest
 			{
 				Destination = md.SingleSignOnService(entities[entity]),
-				Issuer = new Issuer(client.entity),
-				ForceAuthn = false,
-				ProtocolBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect",
-				AssertionConsumerServiceIndex = client.index,
+				Issuer = client.entity,
 			};
-			SendAuthnRequest(request, response, client.certificate, relayState);
+			SendSamlRequest(response, request, relayState, client.certificate);
 		}
 
-		public static object Response(HttpRequest request, out string relayState)
+		public static XElement Response(HttpRequest request, out string relayState)
 		{
 			LOG.Debug(() => string.Format("Response"));
 
-			object result;
-			try
-			{
-				XmlElement response;
-				ComponentSpace.SAML2.Profiles.SSOBrowser.ServiceProvider.ReceiveSAMLResponseByHTTPPost(request, out response, out relayState);
-				result = new SAMLResponse(response); // TODO: check signature !!!
-			}
-			catch (SAMLProfileException e)
-			{
-				LOG.Debug(() => "Response: ", e);
-				relayState = ""; // to avoid null-reference exceptions
-				result = null;
-			}
-
-			return result;
+			return ReceiveSamlResponse(request, out relayState);
 		}
 
-		public static Surff.Attributes? Process(object response, IdentityProvider idp)
+		public static Surff.Attributes? Process(XElement response, IdentityProvider idp)
 		{
-			var assertion = GetAssertion(response);
-			return assertion == null ? default(Surff.Attributes?) : GetAttributes(assertion, idp);
+			var assertion = GetAssertion(response, idp);
+			return assertion == null ? default(Surff.Attributes?) : GetAttributes(assertion);
 		}
 
-		public static XmlElement GetAssertion(object response)
+		public static XElement GetAssertion(XElement response, IdentityProvider idp)
 		{
-			LOG.Debug(() => string.Format("GetAssertion(response='{0}')", response));
+			LOG.Debug(() => string.Format("GetAssertion(response='{0}', idp='{1}')", response, idp));
 
-			SAMLResponse resp = response as SAMLResponse;
-			if (resp != null && resp.IsSuccess())
+			if (response.Descendants(SchemaSet.SAMLP_NS + "StatusCode").Single().Attribute("Value").Value == "urn:oasis:names:tc:SAML:2.0:status:Success")
 			{
-				return resp.GetSignedAssertions()[0];
+				var result = response.Descendants(SchemaSet.SAML_NS + "Assertion").Single();
+				MetaDataFactory.Validate(result, MetaDataFactory.GetIdentityProvider(idp).certificate);
+				return result;
 			}
+
+			LOG.Debug(() => string.Format("GetAssertion: not successfull"));
 			return null;
 		}
 
-		public static Surff.Attributes GetAttributes(XmlElement assertion, IdentityProvider idp)
+		public static Surff.Attributes GetAttributes(XElement assertion)
 		{
-			LOG.Debug(() => string.Format("GetAttributes(assertion='{0}', idp='{1}')", assertion, idp));
+			LOG.Debug(() => string.Format("GetAttributes(assertion='{0}')", assertion));
 
-			XElement asserted = VerifyAssertion(assertion, idp);
 			return new Surff.Attributes
 			{
-				uid = GetAttribute(asserted, UID),
-				domain = GetAttribute(asserted, DOMAIN),
-				email = GetAttributes(asserted, MAIL),
-				roles = GetAttributes(asserted, ROLE),
+				uid = GetAttribute(assertion, UID),
+				domain = GetAttribute(assertion, DOMAIN),
+				email = GetAttributes(assertion, MAIL),
+				roles = GetAttributes(assertion, ROLE),
 			};
 		}
 
-		private static void SendAuthnRequest(AuthnRequest req, HttpResponse response, X509Certificate2 cer, string relayState)
+		private static void SendSamlRequest(HttpResponse response, AuthnRequest req, string relayState, X509Certificate2 cer)
 		{
-			ComponentSpace.SAML2.Profiles.SSOBrowser.ServiceProvider.SendAuthnRequestByHTTPRedirect(
-				response, 
-				req.Destination, 
-				req.ToXml(), 
-				relayState,
-				cer.PrivateKey);
+			var qs = CreateQueryString(req, relayState, cer);
+			var url = CreateUrl(req, qs);
+			response.Redirect(url);
 		}
 
-		private static XElement VerifyAssertion(XmlElement result, IdentityProvider idp)
+		private static XElement ReceiveSamlResponse(HttpRequest request, out string relayState)
 		{
-			IdentityProviderConfig config = MetaDataFactory.GetIdentityProvider(idp);
-			if (!SAMLAssertionSignature.Verify(result, config.certificate))
+			relayState = request.Form["RelayState"];
+			var result = XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(request.Form["SAMLResponse"])));
+			result.Validate(null);
+			return result.Root;
+		}
+
+		private static string CreateUrl(AuthnRequest req, NameValueCollection qs)
+		{
+			UriBuilder builder = new UriBuilder(req.Destination);
+			if (string.IsNullOrEmpty(builder.Query))
 			{
-				throw new CryptographicException();
+				builder.Query = ToQueryString(qs);
 			}
-			return XElement.Load(result.CreateNavigator().ReadSubtree());
+			else
+			{
+				builder.Query = builder.Query.Substring(1) + "&" + ToQueryString(qs);
+			}
+			return builder.ToString();
+		}
+
+		private static NameValueCollection CreateQueryString(AuthnRequest req, string relayState, X509Certificate2 cer)
+		{
+			NameValueCollection result = new NameValueCollection();
+			result.Add("SAMLRequest", req.Encode());
+			if (!string.IsNullOrWhiteSpace(relayState))
+			{
+				result.Add("RelayState", relayState);
+			}
+			result.Add("SigAlg", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
+			result.Add("Signature", Signature(result, cer.PrivateKey));
+			return result;
+		}
+
+		private static string Signature(NameValueCollection qs, AsymmetricAlgorithm key)
+		{
+			byte[] data = Encoding.UTF8.GetBytes(ToQueryString(qs));
+			byte[] result = ((RSACryptoServiceProvider)key).SignData(data, new SHA1CryptoServiceProvider());
+			return Convert.ToBase64String(result);
+		}
+
+		private static string ToQueryString(NameValueCollection qs)
+		{
+			StringBuilder result = new StringBuilder();
+			foreach (string key in qs.Keys)
+			{
+				if (result.Length > 0)
+				{
+					result.Append("&");
+				}
+				result.AppendFormat("{0}={1}", key, Uri.EscapeDataString(qs[key]));
+			}
+			return result.ToString();
 		}
 
 		private static string GetAttribute(XElement assertion, string key)
@@ -152,14 +214,14 @@ namespace ProgressOnderwijsUtils.Conext
 		{
 			//LOG.Debug(() => string.Format("GetAttribute(assertion='{0}', key='{1}'", assertion, key));
 
-			return (from attribute in assertion.Descendants(SAML_NS + "AttributeValue")
+			return (from attribute in assertion.Descendants(SchemaSet.SAML_NS + "AttributeValue")
 			        where attribute.Parent.Attribute("Name").Value == key
 			        select attribute.Value).SingleOrDefault();
 		}
 
 		private static IEnumerable<string> GetAttributes(XElement assertion, string key)
 		{
-			return (from attribute in assertion.Descendants(SAML_NS + "AttributeValue")
+			return (from attribute in assertion.Descendants(SchemaSet.SAML_NS + "AttributeValue")
 			        where attribute.Parent.Attribute("Name").Value == key
 			        select attribute.Value).ToArray();
 		}
