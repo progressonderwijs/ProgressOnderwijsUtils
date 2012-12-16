@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtilsTests
 	[TestFixture]
 	public class NonceStoreTest
 	{
-		private IEnumerable<TestCaseData> NonceStoreItemEqualityData()
+		private static IEnumerable<TestCaseData> NonceStoreItemEqualityData()
 		{
 			yield return new TestCaseData(null, null).Returns(true);		
 			yield return new TestCaseData(null, new NonceStoreItem("c", null, "n")).Returns(false);		
@@ -31,6 +31,13 @@ namespace ProgressOnderwijsUtilsTests
 				Assert.That(lhs.GetHashCode() == rhs.GetHashCode(), Is.EqualTo(result));
 			}
 			return result;
+		}
+
+		[Test]
+		public void Generate()
+		{
+			NonceStore sut = new NonceStore();
+			Assert.That(sut.Generate(), Is.Not.EqualTo(sut.Generate()));
 		}
 
 		[Test] // we cannot use TestCaseSource as it will be executed upon loading, and these tests much later!
