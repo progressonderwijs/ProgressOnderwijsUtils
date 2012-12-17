@@ -161,7 +161,7 @@ namespace ProgressOnderwijsUtilsTests
 				idp = IdentityProvider.Conext,
 				uri = "https://localhost/webstatic/fontys?pc=123",
 			};
-			XDocument sut = SingleSignOnHandler.GeneratePostToRedirect(state, new XElement("assertion"));
+			var sut = SingleSignOnHandler.GeneratePostToRedirect(state, new XElement("assertion"));
 		}
 	}
 }
