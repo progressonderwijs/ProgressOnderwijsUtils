@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Xml;
+using System.Xml.Linq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Conext;
@@ -149,6 +150,18 @@ namespace ProgressOnderwijsUtilsTests
 			};
 
 			Assert.That(SingleSignOnHandler.Deserialize(SingleSignOnHandler.Serialize(sut)), Is.EqualTo(sut));
+		}
+
+		[Test]
+		public void GeneratePostToRedirect([Values(false, true)] bool newSession)
+		{
+			var state = new SingleSignOnHandler.RelayState
+			{
+				newSession = newSession,
+				idp = IdentityProvider.Conext,
+				uri = "https://localhost/webstatic/fontys?pc=123",
+			};
+			XDocument sut = SingleSignOnHandler.GeneratePostToRedirect(state, new XElement("assertion"));
 		}
 	}
 }
