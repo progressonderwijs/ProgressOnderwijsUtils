@@ -12,49 +12,14 @@ using System.Xml.Schema;
 namespace ProgressOnderwijsUtils
 {
 	/// <summary>
-	/// Validates XHTML as XHTML 1.0 Transitional
+	/// Validates XHTML as XHTML 5
 	/// </summary>
 	public sealed class XhtmlValidator
 	{
-		const string SCHEMA_LOCATION = "http://www.w3.org/2002/08/xhtml/xhtml1-transitional.xsd";
-
-		static readonly Lazy<byte[]> SCHEMA_DATA = new Lazy<byte[]>(delegate {
-
-			using (var web = new WebClient())
-			{
-				return web.DownloadData(SCHEMA_LOCATION);
-			}
-
-		});
-
-		readonly XmlSchemaSet schemas = new XmlSchemaSet() { XmlResolver = new LocalXmlUrlResolver()};
-
-		readonly XmlSchema schema;
-
-		private sealed class LocalXmlUrlResolver : XmlUrlResolver
-		{
-			public override Uri ResolveUri(Uri baseUri, string relativeUri)
-			{
-				if (relativeUri.Equals("http://www.w3.org/2001/xml.xsd"))
-					return new Uri(new Uri("http://www.w3.org/2001/xml.xsd"), "http://www.w3.org/2009/01/xml.xsd");
-				
-				return base.ResolveUri(baseUri, relativeUri);
-			}
-		}
-
-		public XhtmlValidator()
-		{
-			using (var stream = new MemoryStream(SCHEMA_DATA.Value, writable: false))
-			{
-				schema = XmlSchema.Read(stream, null);
-				schemas.Add(schema);
-			}
-		}
-
 		// XHTML validation requires namespaces to be set,
 		// but doing so forces you to specify namespaces in Linq-to-XML queries (which is unwieldy),
 		// so we just do it here temporarily.
-		static readonly XNamespace NAMESPACE = "http://www.w3.org/1999/xhtml";
+		static readonly XNamespace NAMESPACE = SchemaSet.XHTML_NS;
 
 		XDocument NamespacedCopy(XDocument document)
 		{
@@ -83,7 +48,7 @@ namespace ProgressOnderwijsUtils
 		public void Validate(XDocument document, ValidationEventHandler handler = null)
 		{
 			XDocument copy = NamespacedCopy(document);
-			copy.Validate(schemas, handler);
+			copy.Validate(handler);
 		}
 
 		public void Validate(XElement element, ValidationEventHandler handler = null)
@@ -91,7 +56,7 @@ namespace ProgressOnderwijsUtils
 			XElement copy = NamespacedCopy(element);
 
 			var elementName = new XmlQualifiedName(copy.Name.LocalName, copy.Name.NamespaceName);
-			copy.Validate(schema.Elements[elementName], schemas, handler);
+			copy.Validate(SchemaSet.GetPartialValidationType(elementName), handler);
 		}
 
 	}
