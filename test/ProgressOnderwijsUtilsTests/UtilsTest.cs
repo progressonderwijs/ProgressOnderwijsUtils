@@ -5,7 +5,8 @@ using NUnit.Framework;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture] public class UtilsTest
+	[TestFixture]
+	public class UtilsTest
 	{
 		//[Test]
 		//public void IntentionallyBrokenTest()
