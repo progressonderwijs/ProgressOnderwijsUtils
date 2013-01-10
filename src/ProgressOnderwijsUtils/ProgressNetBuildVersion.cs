@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
     <Exec Command="hg id -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branches:{branches}\ntags:{tags}\ndate:{date|isodate}&quot; &gt;&gt; ProgressVersion.Info.Generated " />
     <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="ComputerName:$(COMPUTERNAME)" Overwrite="false" Encoding="UTF-8" />
     <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="JobName:$(JOB_NAME)" Overwrite="false" Encoding="UTF-8" />
-    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildId:$(BUILD_ID)" Overwrite="false" Encoding="UTF-8" />
+    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildJob:$(BUILD_JOB)" Overwrite="false" Encoding="UTF-8" />
   </Target>
 */
 		[Serializable]
