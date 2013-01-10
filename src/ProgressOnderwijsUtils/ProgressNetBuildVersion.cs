@@ -14,15 +14,16 @@ namespace ProgressOnderwijsUtils
 	/// </summary>
 	public static class ProgressNetBuildVersion
 	{
-		/*  Nodig build scriptje ergens in de applicatie:
+        /*  Nodig build scriptje ergens in de applicatie:
   <Target Name="AfterBuild">
-    <Exec Command="hg id -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branches:{branches}\ntags:{tags}\ndate:{date|isodate}&quot; &gt;&gt; ProgressVersion.Info.Generated " />
+    <Exec Command="hg id -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branches:{branches}\ntags:{tags}\ndate:{date|isodate}\n&quot; &gt;&gt; ProgressVersion.Info.Generated " />
     <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="ComputerName:$(COMPUTERNAME)" Overwrite="false" Encoding="UTF-8" />
-    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="JobName:$(JOB_NAME)" Overwrite="false" Encoding="UTF-8" />
-    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildJob:$(BUILD_JOB)" Overwrite="false" Encoding="UTF-8" />
+    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildTag:$(BUILD_TAG)" Overwrite="false" Encoding="UTF-8" />
+    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildJob:$(BUILD_URL)" Overwrite="false" Encoding="UTF-8" />
+    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="Configuration:$(Configuration)" Overwrite="false" Encoding="UTF-8" />
   </Target>
 */
-		[Serializable]
+        [Serializable]
 		public sealed class Data : IMetaObject
 		{
 			public string Node { get; set; }
@@ -31,8 +32,9 @@ namespace ProgressOnderwijsUtils
 			public string Tags { get; set; }
 			
 			public string ComputerName { get; set; }
-			public string JobName { get; set; }
-			public string BuildJob { get; set; }
+			public string BuildTag { get; set; }
+			public string BuildUrl { get; set; }
+            public string BuildConfiguration { get; set; }
 			//public DateTime WcDateUtc { get; set; }
 		}
 		public static readonly Data Current;
@@ -69,9 +71,10 @@ namespace ProgressOnderwijsUtils
 				Tags = svninfo["tags"],
 
 				ComputerName = svninfo["ComputerName"].Trim(),
-				JobName = svninfo["JobName"].Trim(),
-				BuildJob = svninfo["BuildJob"].Trim(),
-			};
+				BuildTag = svninfo["BuildTag"].Trim(),
+				BuildUrl = svninfo["BuildUrl"].Trim(),
+                BuildConfiguration = svninfo["Configuration"].Trim(),
+            };
 		}
 	}
 }
