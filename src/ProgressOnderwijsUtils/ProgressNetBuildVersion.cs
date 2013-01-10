@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils
 			
 			public string ComputerName { get; set; }
 			public string JobName { get; set; }
-			public string BuildId { get; set; }
+			public string BuildJob { get; set; }
 			//public DateTime WcDateUtc { get; set; }
 		}
 		public static readonly Data Current;
@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils
 
 				ComputerName = svninfo["ComputerName"].Trim(),
 				JobName = svninfo["JobName"].Trim(),
-				BuildId = svninfo["BuildId"].Trim(),
+				BuildJob = svninfo["BuildJob"].Trim(),
 			};
 		}
 	}
