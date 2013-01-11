@@ -14,12 +14,12 @@ namespace ProgressOnderwijsUtils.Log4Net
 		static readonly IDictionary<DatabaseVersion, string> PATHS = new Dictionary<DatabaseVersion, string>
 		{
 			{ DatabaseVersion.Undefined, "." }, 
-			{ DatabaseVersion.ProductieDB, "productie" },
-			{ DatabaseVersion.TestDB, "test" },
-			{ DatabaseVersion.DevTestDB, "ontwikkel" },
-			{ DatabaseVersion.BronHODB, "bronho" },
-			{ DatabaseVersion.KVA4DB, "kva4db" },
-			{ DatabaseVersion.VeldTestDB, "veldtest" },
+			{ DatabaseVersion.ProductieDB, "Productie" },
+			{ DatabaseVersion.TestDB, "Test" },
+			{ DatabaseVersion.DevTestDB, "Ontwikkel" },
+			{ DatabaseVersion.BronHODB, "BronHO" },
+			{ DatabaseVersion.AcceptatieDB, "Acceptatie" },
+			{ DatabaseVersion.VeldTestDB, "VeldTest" },
 		};
 
 		public RollingFileAppender()
