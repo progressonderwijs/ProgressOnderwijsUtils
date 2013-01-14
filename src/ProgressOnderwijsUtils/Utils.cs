@@ -176,6 +176,12 @@ namespace ProgressOnderwijsUtils
 			//return procname.StartsWith("nunit") || procname.StartsWith("pnunit"); //also supports nunit-agent, nunit-console, nunit-x86, etc.
 		}
 
+		// vergelijk datums zonder milliseconden.
+		public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2)
+		{
+			return d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond);
+		}
+
 		/// <summary>
 		/// Geeft het verschil in maanden tussen twee datums
 		/// </summary>
