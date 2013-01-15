@@ -233,6 +233,8 @@ namespace ProgressOnderwijsUtils
 		public static QueryBuilder CreatePagedSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filters, OrderByColumns sortOrder, int skipNrows, int takeNrows)
 		{
 			projectedColumns = projectedColumns ?? AllColumns;
+			if (!projectedColumns.Any())
+				throw new InvalidOperationException("Cannot create subquery without any projected columns: at least one column must be projected (are your columns all virtual?)\nQuery:\n" + subQuery.DebugText(null));
 			filters = filters.EmptyIfNull();
 
 			var takeRowsParam = Param((long)takeNrows);
