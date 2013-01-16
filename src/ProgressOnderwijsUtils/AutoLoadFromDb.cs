@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
@@ -20,6 +21,26 @@ namespace ProgressOnderwijsUtils
 {
 	public static class AutoLoadFromDb
 	{
+		public static T ReadScalar<T>(this QueryBuilder builder, QueryBuilder.ToSqlArgs args)
+		{
+			return builder.CreateSqlCommand(args).Using(command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
+		}
+
+		public static int ExecuteNonQuery(this QueryBuilder builder, QueryBuilder.ToSqlArgs args)
+		{
+			return builder.CreateSqlCommand(args).Using(
+				command => {
+					try
+					{
+						return command.ExecuteNonQuery();
+					}
+					catch (Exception ex)
+					{
+						throw new NietZoErgeException("Non-query failed " + command.CommandText, ex);
+					}
+				});
+		}
+
 
 		/// <summary>
 		/// Reads all records of the given query from the database, unpacking into a C# array using each item's constructor.
@@ -125,8 +146,7 @@ namespace ProgressOnderwijsUtils
 
 
 		static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
-			new Dictionary<Type, MethodInfo>
-				{
+			new Dictionary<Type, MethodInfo> {
 					{ typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
 					{ typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
 					{ typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },

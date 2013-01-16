@@ -18,6 +18,8 @@ namespace ProgressOnderwijsUtils
 {
 	public static class Utils
 	{
+		public static T Using<TDisposable, T>(this TDisposable disposable, Func<TDisposable, T> func) where TDisposable : IDisposable { using (disposable) return func(disposable); }
+
 		[ExcludeFromNCover]
 		public static string TestErrorStackOverflow(int rounds)
 		{
