@@ -30,9 +30,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByConstructor<T>(this QueryBuilder q, SqlConnection conn, int commandTimeout, QueryTracer tracer) where T : IReadByConstructor
+		public static T[] ReadByConstructor<T>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs) where T : IReadByConstructor
 		{
-			using (var cmd = q.CreateSqlCommand(conn, commandTimeout, tracer))
+			using (var cmd = q.CreateSqlCommand(qArgs))
 				return ReadByConstructorUnpacker<T>(cmd);
 		}
 
@@ -55,9 +55,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByFields<T>(this QueryBuilder q, SqlConnection conn, int commandTimeout, QueryTracer tracer) where T : IReadByFields, new()
+		public static T[] ReadByFields<T>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs) where T : IReadByFields, new()
 		{
-			using (var cmd = q.CreateSqlCommand(conn, commandTimeout, tracer))
+			using (var cmd = q.CreateSqlCommand(qArgs))
 				return ReadByFieldsUnpacker<T>(cmd);
 		}
 
@@ -78,9 +78,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadPlain<T>(this QueryBuilder q, SqlConnection conn, int commandTimeout, QueryTracer tracer)
+		public static T[] ReadPlain<T>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs)
 		{
-			using (var cmd = q.CreateSqlCommand(conn, commandTimeout, tracer))
+			using (var cmd = q.CreateSqlCommand(qArgs))
 				return ReadPlainUnpacker<T>(cmd);
 		}
 
@@ -97,11 +97,11 @@ namespace ProgressOnderwijsUtils
 		/// Overloaded; see primary overload for details.  This overload unpacks two recordsets; i.e. two subsequent SELECT statements.
 		/// It's equivalent to but faster than Tuple.Create(queryA.ReadByConstructor&lt;T1&gt;(conn), queryB.ReadByConstructor&lt;T2&gt;(conn))
 		/// </summary>
-		public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, SqlConnection conn, int commandTimeout, QueryTracer tracer)
+		public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs)
 			where T1 : IReadByConstructor
 			where T2 : IReadByConstructor
 		{
-			using (var cmd = q.CreateSqlCommand(conn, commandTimeout, tracer))
+			using (var cmd = q.CreateSqlCommand(qArgs))
 				return ReadByConstructor<T1, T2>(cmd);
 		}
 

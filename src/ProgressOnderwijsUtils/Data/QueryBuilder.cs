@@ -102,6 +102,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="typeName">name of the db-type e.g. IntValues</param>
 		/// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
 		/// <returns>a composable query-component</returns>
+		// ReSharper disable UnusedMember.Global
 		public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) where T : IMetaObject, new() { return new SingleComponent(QueryComponent.ToTableParameter(typeName, o)); }
 		public static QueryBuilder TableParam(IEnumerable<int> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
 		public static QueryBuilder TableParam(IEnumerable<string> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
@@ -115,6 +116,7 @@ namespace ProgressOnderwijsUtils
 		public static QueryBuilder TableParam(IEnumerable<long> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
 		public static QueryBuilder TableParam(IEnumerable<double> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
 		public static QueryBuilder TableParamDynamic(Array o) { return new SingleComponent(QueryComponent.ToTableParameter((dynamic)o)); }
+		// ReSharper restore UnusedMember.Global
 
 		public static QueryBuilder Create(string str, params object[] parms)
 		{
@@ -146,14 +148,21 @@ namespace ProgressOnderwijsUtils
 				Create("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
 		}
 
-		public SqlCommand CreateSqlCommand(SqlConnection conn, int commandTimeout, QueryTracer optionalTracer)
+		public struct ToSqlArgs
 		{
-			var cmd = CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), conn, commandTimeout);
-			if (optionalTracer != null)
+			public SqlConnection Connection;
+			public QueryTracer Tracer;
+			public int CommandTimeout;
+		}
+
+		public SqlCommand CreateSqlCommand(ToSqlArgs args)
+		{
+			var cmd = CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), args.Connection, args.CommandTimeout);
+			if (args.Tracer != null)
 			{
 				try
 				{
-					var timer = optionalTracer.StartQueryTimer(cmd);
+					var timer = args.Tracer.StartQueryTimer(cmd);
 					cmd.Disposed += (s, e) => timer.Dispose();
 				}
 				catch
@@ -176,7 +185,7 @@ namespace ProgressOnderwijsUtils
 			get
 			{
 				if (IsEmpty) yield break;
-				Stack<QueryBuilder> Continuation = new Stack<QueryBuilder>();
+				var Continuation = new Stack<QueryBuilder>();
 				QueryBuilder current = this;
 				while (true)
 				{
