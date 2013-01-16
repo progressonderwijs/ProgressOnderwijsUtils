@@ -87,10 +87,10 @@ namespace ProgressOnderwijsUtils.Conext
 		private const string SP_ENTITY_P3W_TEST = "http://progresswww.nl/test";
 		private const string SP_ENTITY_PNET = "http://progressnet.nl";
 		private const string SP_ENTITY_PNET_TEST = "http://test.progressnet.nl";
-		private const string SP_ENTITY_PNET_DEVTEST = "http://ontwikkel.progressnet.nl";
+		private const string SP_ENTITY_PNET_ONTWIKKEL = "http://ontwikkel.progressnet.nl";
 		private const string SP_ENTITY_STUDENT = "http://student.progressnet.nl";
 		private const string SP_ENTITY_STUDENT_TEST = "http://teststudent.progressnet.nl";
-		private const string SP_ENTITY_STUDENT_DEVTEST = "http://ontwikkelstudent.progressnet.nl";
+		private const string SP_ENTITY_STUDENT_ONTWIKKEL = "http://ontwikkelstudent.progressnet.nl";
 
 		private const string RESOURCE_PATH = "ProgressOnderwijsUtils.Conext.Resources";
 		private static readonly object LOCK = new object();
@@ -147,10 +147,10 @@ namespace ProgressOnderwijsUtils.Conext
 							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
 						}
 					},
-					{ DatabaseVersion.DevTestDB, new ServiceProviderConfig 
+					{ DatabaseVersion.OntwikkelDB, new ServiceProviderConfig 
 						{ 
 							sp = ServiceProvider.PNet,
-							entity = SP_ENTITY_PNET_DEVTEST, 
+							entity = SP_ENTITY_PNET_ONTWIKKEL, 
 							index = 0, 
 							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
 						}
@@ -175,10 +175,10 @@ namespace ProgressOnderwijsUtils.Conext
 							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
 						}
 					},
-					{ DatabaseVersion.DevTestDB, new ServiceProviderConfig 
+					{ DatabaseVersion.OntwikkelDB, new ServiceProviderConfig 
 						{ 
 							sp = ServiceProvider.Student,
-							entity = SP_ENTITY_STUDENT_DEVTEST, 
+							entity = SP_ENTITY_STUDENT_ONTWIKKEL, 
 							index = 0, 
 							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
 						}
@@ -246,7 +246,7 @@ namespace ProgressOnderwijsUtils.Conext
 									{ Entity.Stenden, IDP_ENTITY_STENDEN },
 								}
 							},
-							{ DatabaseVersion.DevTestDB, new Dictionary<Entity, string>
+							{ DatabaseVersion.OntwikkelDB, new Dictionary<Entity, string>
 								{
 									{ Entity.Fontys, IDP_ENTITY_FONTYS },
 									{ Entity.Stenden, IDP_ENTITY_STENDEN },
@@ -266,7 +266,7 @@ namespace ProgressOnderwijsUtils.Conext
 									{ Entity.RuG, IDP_ENTITY_RUG },
 								}
 							},
-							{ DatabaseVersion.DevTestDB, new Dictionary<Entity, string>
+							{ DatabaseVersion.OntwikkelDB, new Dictionary<Entity, string>
 								{
 									{ Entity.RuG, IDP_ENTITY_RUG },
 								}
@@ -394,10 +394,10 @@ namespace ProgressOnderwijsUtils.Conext
 					GenerateEntity(cer, SP_ENTITY_P3W_TEST, "https://progresswww.nl/surfftest/sso/post/"),
 					GenerateEntity(cer, SP_ENTITY_PNET, "https://progressnet.nl/singlesignon"),
 					GenerateEntity(cer, SP_ENTITY_PNET_TEST, "https://test.progressnet.nl/singlesignon"),
-					GenerateEntity(cer, SP_ENTITY_PNET_DEVTEST, "https://ontwikkel.progressnet.nl/singlesignon"),
+					GenerateEntity(cer, SP_ENTITY_PNET_ONTWIKKEL, "https://ontwikkel.progressnet.nl/singlesignon"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT, "https://student.progressnet.nl/oauth/sso/post"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT_TEST, "https://teststudent.progressnet.nl/oauth/sso/post"),
-					GenerateEntity(cer, SP_ENTITY_STUDENT_DEVTEST, "https://ontwikkelgadgets.progressnet.nl/oauth/sso/post")
+					GenerateEntity(cer, SP_ENTITY_STUDENT_ONTWIKKEL, "https://ontwikkelgadgets.progressnet.nl/oauth/sso/post")
 				)
 			);
 		}

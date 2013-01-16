@@ -13,8 +13,8 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void InStruct()
 		{
-			PAssert.That(() => DatabaseVersion.DevTestDB.In(DatabaseVersion.ProductieDB, DatabaseVersion.DevTestDB));
-			PAssert.That(() => !DatabaseVersion.DevTestDB.In(DatabaseVersion.ProductieDB, DatabaseVersion.TestDB));
+			PAssert.That(() => DatabaseVersion.OntwikkelDB.In(DatabaseVersion.ProductieDB, DatabaseVersion.OntwikkelDB));
+			PAssert.That(() => !DatabaseVersion.OntwikkelDB.In(DatabaseVersion.ProductieDB, DatabaseVersion.TestDB));
 			PAssert.That(() => !default(DatabaseVersion?).In(DatabaseVersion.ProductieDB, DatabaseVersion.TestDB));
 			PAssert.That(() => default(DatabaseVersion?).In(DatabaseVersion.ProductieDB, DatabaseVersion.TestDB, null));
 
