@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 
 namespace ProgressOnderwijsUtils
 {
 	/// <summary>
-	/// Validates XHTML as XHTML 5
+	/// Validates XHTML as XHTML 1.0 Transitional
 	/// </summary>
 	public sealed class XhtmlValidator
 	{
@@ -23,24 +16,20 @@ namespace ProgressOnderwijsUtils
 
 		XDocument NamespacedCopy(XDocument document)
 		{
-			XDocument copy = new XDocument(document);
+			var copy = new XDocument(document);
 
 			foreach (var element in copy.Descendants())
-			{
 				element.Name = NAMESPACE + element.Name.LocalName;
-			}
 
 			return copy;
 		}
 
 		XElement NamespacedCopy(XElement xhtml)
 		{
-			XElement copy = new XElement(xhtml);
+			var copy = new XElement(xhtml);
 
 			foreach (var element in copy.DescendantsAndSelf())
-			{
 				element.Name = NAMESPACE + element.Name.LocalName;
-			}
 
 			return copy;
 		}
