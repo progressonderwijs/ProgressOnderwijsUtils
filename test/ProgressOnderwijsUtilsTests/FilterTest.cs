@@ -213,7 +213,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void EnumsSerializeOk()
 		{
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, Taal.NL).SerializeToString() == @"test[=]i1*");
-			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, DatabaseVersion.ProductieDB | DatabaseVersion.DevTestDB).SerializeToString() == @"test[=]i5*");
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, DatabaseVersion.ProductieDB | DatabaseVersion.OntwikkelDB).SerializeToString() == @"test[=]i5*");
 		}
 
 		[Test]

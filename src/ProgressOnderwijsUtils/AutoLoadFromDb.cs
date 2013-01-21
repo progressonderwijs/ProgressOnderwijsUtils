@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
@@ -14,11 +15,32 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
+using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
 	public static class AutoLoadFromDb
 	{
+		public static T ReadScalar<T>(this QueryBuilder builder, QueryBuilder.ToSqlArgs args)
+		{
+			return builder.CreateSqlCommand(args).Using(command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
+		}
+
+		public static int ExecuteNonQuery(this QueryBuilder builder, QueryBuilder.ToSqlArgs args)
+		{
+			return builder.CreateSqlCommand(args).Using(
+				command => {
+					try
+					{
+						return command.ExecuteNonQuery();
+					}
+					catch (Exception ex)
+					{
+						throw new NietZoErgeException("Non-query failed " + command.CommandText, ex);
+					}
+				});
+		}
+
 
 		/// <summary>
 		/// Reads all records of the given query from the database, unpacking into a C# array using each item's constructor.
@@ -29,9 +51,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByConstructor<T>(this QueryBuilder q, SqlConnection conn, int commandTimeout) where T : IReadByConstructor
+		public static T[] ReadByConstructor<T>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs) where T : IReadByConstructor
 		{
-			using (var cmd = q.CreateSqlCommand(conn, commandTimeout))
+			using (var cmd = q.CreateSqlCommand(qArgs))
 				return ReadByConstructorUnpacker<T>(cmd);
 		}
 
@@ -54,9 +76,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByFields<T>(this QueryBuilder q, SqlConnection conn, int commandTimeout) where T : IReadByFields, new()
+		public static T[] ReadByFields<T>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs) where T : IReadByFields, new()
 		{
-			using (var cmd = q.CreateSqlCommand(conn, commandTimeout))
+			using (var cmd = q.CreateSqlCommand(qArgs))
 				return ReadByFieldsUnpacker<T>(cmd);
 		}
 
@@ -77,9 +99,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadPlain<T>(this QueryBuilder q, SqlConnection conn, int commandTimeout)
+		public static T[] ReadPlain<T>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs)
 		{
-			using (var cmd = q.CreateSqlCommand(conn, commandTimeout))
+			using (var cmd = q.CreateSqlCommand(qArgs))
 				return ReadPlainUnpacker<T>(cmd);
 		}
 
@@ -96,11 +118,11 @@ namespace ProgressOnderwijsUtils
 		/// Overloaded; see primary overload for details.  This overload unpacks two recordsets; i.e. two subsequent SELECT statements.
 		/// It's equivalent to but faster than Tuple.Create(queryA.ReadByConstructor&lt;T1&gt;(conn), queryB.ReadByConstructor&lt;T2&gt;(conn))
 		/// </summary>
-		public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, SqlConnection conn, int commandTimeout)
+		public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs)
 			where T1 : IReadByConstructor
 			where T2 : IReadByConstructor
 		{
-			using (var cmd = q.CreateSqlCommand(conn, commandTimeout))
+			using (var cmd = q.CreateSqlCommand(qArgs))
 				return ReadByConstructor<T1, T2>(cmd);
 		}
 
@@ -124,8 +146,7 @@ namespace ProgressOnderwijsUtils
 
 
 		static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
-			new Dictionary<Type, MethodInfo>
-				{
+			new Dictionary<Type, MethodInfo> {
 					{ typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
 					{ typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
 					{ typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },

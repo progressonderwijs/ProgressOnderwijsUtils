@@ -37,10 +37,10 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase(ServiceProvider.P3W, DatabaseVersion.TestDB)]
 		[TestCase(ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
 		[TestCase(ServiceProvider.PNet, DatabaseVersion.TestDB)]
-		[TestCase(ServiceProvider.PNet, DatabaseVersion.DevTestDB)]
+		[TestCase(ServiceProvider.PNet, DatabaseVersion.OntwikkelDB)]
 		[TestCase(ServiceProvider.Student, DatabaseVersion.ProductieDB)]
 		[TestCase(ServiceProvider.Student, DatabaseVersion.TestDB)]
-		[TestCase(ServiceProvider.Student, DatabaseVersion.DevTestDB)]
+		[TestCase(ServiceProvider.Student, DatabaseVersion.OntwikkelDB)]
 		public void GetServiceProvider(ServiceProvider sp, DatabaseVersion db)
 		{
 			var sut = MetaDataFactory.GetServiceProvider(sp, db);
@@ -70,10 +70,10 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.TestDB)]
-		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.DevTestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.OntwikkelDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
-		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.DevTestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.OntwikkelDB)]
 		public void GetEntities(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
 		{
 			var sut = MetaDataFactory.GetEntities(idp, sp, db);
@@ -85,10 +85,10 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.TestDB)]
-		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.DevTestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.OntwikkelDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
-		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.DevTestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.OntwikkelDB)]
 		public void GetMetaData(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
 		{
 			var sut = Saml20MetaData(idp, sp, db);
@@ -104,10 +104,10 @@ namespace ProgressOnderwijsUtilsTests
 		//[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.TestDB)]
-		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.DevTestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.OntwikkelDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
 		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
-		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.DevTestDB)]
+		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.OntwikkelDB)]
 		public void GetEntities(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
 		{
 			var sut = Saml20MetaData(idp, sp, db);
@@ -120,10 +120,10 @@ namespace ProgressOnderwijsUtilsTests
 		//[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.TestDB)]
-		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.DevTestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.OntwikkelDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
 		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
-		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.DevTestDB)]
+		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.OntwikkelDB)]
 		public void SingleSignOnService(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
 		{
 			var sut = Saml20MetaData(idp, sp, db);
