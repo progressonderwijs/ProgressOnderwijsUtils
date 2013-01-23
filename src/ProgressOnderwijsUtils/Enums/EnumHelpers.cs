@@ -174,7 +174,7 @@ namespace ProgressOnderwijsUtils
 				var translatable =
 					translatedlabel != null ? translatedlabel.ToTranslatable()
 					: untranslatedlabel != null ? untranslatedlabel.ToTranslatable()
-					: Converteer.ToText(StringUtils.PrettyPrintCamelCased(f.ToString()));
+					: Converteer.ToText(StringUtils.PrettyCapitalizedPrintCamelCased(f.ToString()));
 
 				if (tooltip != null)
 					translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));

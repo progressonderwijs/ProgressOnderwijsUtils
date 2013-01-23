@@ -137,7 +137,7 @@ namespace ProgressOnderwijsUtils
 					throw new ArgumentException("You must specify an MpLabel on " + Naam + ", since the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " is marked MpLabelsRequired");
 				if (labelNoTt == null)
 				{
-					var prettyName = StringUtils.PrettyPrintCamelCased(pi.Name);
+					var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(pi.Name);
 					labelNoTt = Translatable.Literal(prettyName, prettyName, prettyName);
 				}
 				label = OrDefault(Attr<MpTooltipAttribute>(pi), mkAttr => labelNoTt.WithTooltip(mkAttr.NL, mkAttr.EN, mkAttr.DE), labelNoTt);
