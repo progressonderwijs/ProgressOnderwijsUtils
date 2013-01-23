@@ -144,31 +144,30 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void PrettyPrintCamelCased()
 		{
-			var tranlations = new Dictionary<string, string> {
-				{"SMMutatie", "SM mutatie"},
-				{"XmlReader", "xml reader"},
-				//{"S0Xval", "S 0 xval"},
-				{"bla bla bla", "bla bla bla"},
-				{"iSXReader0Bla", "i SX reader 0 bla"},
-				{"Channel99", "channel 99"},
-				{"SM99", "SM 99"},
-				{"is_dit_echtZo", "is dit echt zo"},
-				{"Administratienummer_OWI", "administratienummer OWI"},
-				{"Bla_Bla", "bla bla"},
-				{"MT940Sluit","MT 940 sluit"},
-				{"Accoord2Afwijzen","accoord 2 afwijzen"},
-				{"_Multi _Space", " multi space"},
-				{"trailing Space\t", "trailing space "},
+			var translations = new [,] {
+				{"SMMutatie", "SM mutatie", "SM mutatie"},
+				{"XmlReader", "xml reader", "Xml reader"},
+				{"S0Xval", "S 0 xval", "S 0 xval"},
+				{"bla bla bla", "bla bla bla", "bla bla bla"},
+				{"iSXReader0Bla", "i SX reader 0 bla", "i SX reader 0 bla"},
+				{"Channel99", "channel 99", "Channel 99"},
+				{"SM99", "SM 99", "SM 99"},
+				{"is_dit_echtZo", "is dit echt zo", "is dit echt zo"},
+				{"Administratienummer_OWI", "administratienummer OWI", "Administratienummer OWI"},
+				{"Bla_Bla", "bla bla", "Bla bla"},
+				{"MT940Sluit","MT 940 sluit","MT 940 sluit"},
+				{"Accoord2Afwijzen","accoord 2 afwijzen","Accoord 2 afwijzen"},
+				{"_Multi _Space", " multi space", " multi space"},
+				{"trailing Space\t", "trailing space ", "trailing space "},
 			};
-
-			foreach (var kv in tranlations)
+			for(int row=0;row<translations.GetLength(0);row++)
 			{
-				var initial = kv.Key;
-				var ideal = kv.Value;
+				var initial = translations[row, 0];
+				var ideal = translations[row, 1];
+				var idealCap = translations[row, 2];
 				PAssert.That(() => StringUtils.PrettyPrintCamelCased(initial) == ideal);
+				PAssert.That(() => StringUtils.PrettyCapitalizedPrintCamelCased(initial) == idealCap);
 			}
 		}
-
-
 	}
 }
