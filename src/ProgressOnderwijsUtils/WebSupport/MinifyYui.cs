@@ -5,7 +5,7 @@ using Yahoo.Yui.Compressor;
 
 namespace ProgressOnderwijsUtils.WebSupport
 {
-	public static class CssMinifyYUI
+	public static class MinifyYui
 	{
 		static readonly CssCompressor cssCompressor = new CssCompressor();
 		public static string MinifyCss(string originalCss) { return cssCompressor.Compress(originalCss); }
