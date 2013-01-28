@@ -199,12 +199,19 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <param name="incompleteDate"></param>
 		/// <returns></returns>
-		public static DateTime SLIncompleteDateConversion(string incompleteDate)
+		public static DateTime? SLIncompleteDateConversion(string incompleteDate)
 		{
-			var incompleteDateFragments = incompleteDate.Split('-');
-			string month = incompleteDateFragments[1] == "00" ? "1" : incompleteDateFragments[1];
-			string date = incompleteDateFragments[2] == "00" ? "1" : incompleteDateFragments[2];
-			return DateTime.Parse(incompleteDateFragments[0] + "/" + month + "/" + date);
+			if (incompleteDate != null)
+			{
+				var incompleteDateFragments = incompleteDate.Split('-');
+				string month = incompleteDateFragments[1] == "00" ? "1" : incompleteDateFragments[1];
+				string date = incompleteDateFragments[2] == "00" ? "1" : incompleteDateFragments[2];
+				return DateTime.Parse(incompleteDateFragments[0] + "/" + month + "/" + date);
+			}
+			else
+			{
+				return null;
+			}
 		}
 
 		public static string ToSortableShortString(long value)
