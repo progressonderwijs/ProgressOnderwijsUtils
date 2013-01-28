@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using Progress.Business;
 using ProgressOnderwijsUtils;
 using NUnit.Framework;
@@ -26,7 +27,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Flags]
 		public enum FlagsEnumForTesting
 		{
-			Nothing = 0,
+			[UsedImplicitly] Nothing = 0,
 
 			[MpLabel("Waarde A", "Value A")]
 			AValue = 1,
@@ -34,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
 			BValue = 2,
 			ABValue = 3,
 			ValueC = 4,
-			BCValue = 6,
+			[UsedImplicitly] BCValue = 6,
 		}
 
 		[Test]
@@ -65,8 +66,8 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void GetLabel()
 		{
-			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.XmlValue).Translate(Taal.DU).Text == "xml value");
-			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.XmlValue).Translate(Taal.EN).Text == "xml value");
+			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.XmlValue).Translate(Taal.DU).Text == "Xml value");
+			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.XmlValue).Translate(Taal.EN).Text == "Xml value");
 			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.BValue).Translate(Taal.NL).Text == "B value");
 			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.BValue).Translate(Taal.EN).ExtraText == "B");
 			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.BValue).Translate(Taal.DU).ExtraText == "~B");
@@ -120,9 +121,9 @@ namespace ProgressOnderwijsUtilsTests
 		public void FlagsEnumGetLabel()
 		{
 			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.BValue).Translate(Taal.NL).ExtraText == "B");
-			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "value C");
+			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "Value C");
 			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.ABValue).Translate(Taal.NL).Text == "AB value");
-			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.AValue | FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "Waarde A, value C");
+			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.AValue | FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "Waarde A, Value C");
 			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.AValue | FlagsEnumForTesting.BValue | FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "Waarde A, BC value");
 		}
 
