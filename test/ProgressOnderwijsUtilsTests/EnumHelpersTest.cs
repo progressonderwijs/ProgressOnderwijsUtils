@@ -154,6 +154,18 @@ namespace ProgressOnderwijsUtilsTests
 				}
 		}
 
+		[Test]
+		public void GetAttrsOn()
+		{
+			Assert.That(EnumHelpers.GetAttrs<BronHoCodeAttribute>.On(VerblijfsvergunningType.AsielBepaaldeTijd).Single().Code, Is.EqualTo("3"));
+		}
+
+		[Test]
+		public void GetAttrsFrom()
+		{
+			Assert.That(EnumHelpers.GetAttrs<BronHoCodeAttribute>.From<VerblijfsvergunningType>(attr => attr.Code == "3").Single(), Is.EqualTo(VerblijfsvergunningType.AsielBepaaldeTijd));
+		}
+
 		[NightlyOnly, Test]
 		public void AllEnumsHaveUniqueLabels()
 		{
