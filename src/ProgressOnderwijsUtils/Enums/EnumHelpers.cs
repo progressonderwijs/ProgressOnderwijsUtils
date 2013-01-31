@@ -215,9 +215,9 @@ namespace ProgressOnderwijsUtils
 				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal]; 
 			}
 
-			public static IEnumerable<T> From<T>(Func<TAttr, bool> where) where T : struct, IConvertible
+			public static IEnumerable<T> From<T>(Func<TAttr, bool> pred) where T : struct, IConvertible
 			{
-				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes.Where(grp => grp.AsEnumerable().Any(where)).Select(grp => grp.Key);
+				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes.Where(grp => grp.Any(pred)).Select(grp => grp.Key);
 			}
 		}
 
