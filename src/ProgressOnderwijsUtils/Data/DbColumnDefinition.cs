@@ -8,14 +8,20 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Data
 {
-	public sealed class DbColumnDefinition
+	public interface IColumnDefinition {
+		Type DataType { get; }
+		string Name { get; }
+	}
+
+
+	public sealed class ColumnDefinition : IColumnDefinition
 	{
-		public static DbColumnDefinition Create(DataColumn col) { return new DbColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName); }
-		public static DbColumnDefinition Create(IMetaProperty col) { return new DbColumnDefinition(col.DataType, col.Naam); }
+		public static ColumnDefinition Create(DataColumn col) { return new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName); }
+		public static ColumnDefinition Create(IMetaProperty col) { return new ColumnDefinition(col.DataType, col.Name); }
 
-		public static DbColumnDefinition[] GetFromReader(IDataRecord reader) { return Enumerable.Range(0, reader.FieldCount).Select(fI => new DbColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray(); }
+		public static ColumnDefinition[] GetFromReader(IDataRecord reader) { return Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray(); }
 
-		public static DbColumnDefinition[] GetFromTable(SqlConnection sqlconn, string tableName)
+		public static ColumnDefinition[] GetFromTable(SqlConnection sqlconn, string tableName)
 		{
 			using (SqlCommand cmd = sqlconn.CreateCommand())
 			{
@@ -25,12 +31,16 @@ namespace ProgressOnderwijsUtils.Data
 			}
 		}
 
-		public readonly Type Type;
-		public readonly string ColumnName;
-		public DbColumnDefinition(Type type, string columnName) { Type = type; ColumnName = columnName; }
+		readonly Type dataType;
+		readonly string name;
+
+		public ColumnDefinition(Type dataType, string name) { this.dataType = dataType; this.name = name; }
 		public override string ToString()
 		{
-			return ObjectToCode.GetCSharpFriendlyTypeName(Type) + " " + ColumnName;
+			return ObjectToCode.GetCSharpFriendlyTypeName(DataType) + " " + Name;
 		}
+
+		public Type DataType { get { return dataType; } }
+		public string Name { get { return name; } }
 	}
 }

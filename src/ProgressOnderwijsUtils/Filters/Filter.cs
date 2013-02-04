@@ -163,7 +163,7 @@ namespace ProgressOnderwijsUtils
 		public static FilterBase ClearFilterWhenItContainsInvalidColumns<T>(this FilterBase filter)
 			where T : IMetaObject
 		{
-			var byName = MetaObject.GetMetaProperties<T>().ToDictionary(mp => mp.Naam, mp => mp.DataType, StringComparer.OrdinalIgnoreCase);
+			var byName = MetaObject.GetMetaProperties<T>().ToDictionary(mp => mp.Name, mp => mp.DataType, StringComparer.OrdinalIgnoreCase);
 			return ClearFilterWhenItContainsInvalidColumns(filter, str => byName.GetOrDefault(str));
 		}
 

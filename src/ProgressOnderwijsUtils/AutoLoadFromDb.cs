@@ -144,7 +144,6 @@ namespace ProgressOnderwijsUtils
 
 		const BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
 
-
 		static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
 			new Dictionary<Type, MethodInfo> {
 					{ typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },

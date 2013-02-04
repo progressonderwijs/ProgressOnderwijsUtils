@@ -75,10 +75,10 @@ namespace ProgressOnderwijsUtils
 		{
 			var dt = new DataTable();
 			var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
-			dt.Columns.AddRange(properties.Select(mp => new DataColumn(mp.Naam, mp.DataType.GetNonNullableType()) { AllowDBNull = !mp.Verplicht && mp.DataType.CanBeNull() }).ToArray());
+			dt.Columns.AddRange(properties.Select(mp => new DataColumn(mp.Name, mp.DataType.GetNonNullableType()) { AllowDBNull = !mp.Required && mp.DataType.CanBeNull() }).ToArray());
 
 			foreach (var obj in objs)
-				dt.Rows.Add(properties.Select(mp => mp.TypedGetter(obj) ?? DBNull.Value).ToArray());
+				dt.Rows.Add(properties.Select(mp => mp.Getter(obj) ?? DBNull.Value).ToArray());
 
 			if (primaryKey != null)
 				dt.PrimaryKey = primaryKey.Select(name => dt.Columns[name]).ToArray();
@@ -108,12 +108,12 @@ namespace ProgressOnderwijsUtils
 				throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
 
 			SqlBulkCopyOptions effectiveOptions = options ?? (SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction);
-			DbColumnDefinition[] dataColumns = DbColumnDefinition.GetFromTable(sqlconn, tableName);
+			ColumnDefinition[] dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
 
 			using (var objectReader = CreateDataReader(metaObjects))
 			using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null))
 			{
-				DbColumnDefinition[] clrColumns = DbColumnDefinition.GetFromReader(objectReader);
+				ColumnDefinition[] clrColumns = ColumnDefinition.GetFromReader(objectReader);
 
 				var mapping = FieldMapping.VerifyAndCreate(clrColumns, ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)), dataColumns, "table " + tableName, FieldMappingMode.IgnoreExtraDestinationFields);
 
@@ -177,7 +177,7 @@ namespace ProgressOnderwijsUtils
 				properties = GetMetaPropertiesImpl().ToArray();
 
 				Dictionary<MethodInfo, IMetaProperty<T>> propertiesByGetMethod = properties.Where(mp => mp.CanRead).ToDictionary(mp => mp.PropertyInfo.GetGetMethod());
-				Dictionary<MethodInfo, IMetaProperty<T>> propertiesBySetMethod = properties.Where(mp => mp.Setter != null).ToDictionary(mp => mp.PropertyInfo.GetSetMethod());
+				Dictionary<MethodInfo, IMetaProperty<T>> propertiesBySetMethod = properties.Where(mp => mp.UntypedSetter != null).ToDictionary(mp => mp.PropertyInfo.GetSetMethod());
 				propertiesByInheritedInfo = typeof(T).GetInterfaces().SelectMany(ifaceType => {
 					var map = typeof(T).GetInterfaceMap(ifaceType);
 					return ifaceType.GetProperties()
