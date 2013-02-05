@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils.Data
 		static MetaObjectDataReader()
 		{
 			fields = MetaObject.GetMetaProperties<T>().Where(mp => mp.CanRead).Cast<MetaProperty.Impl<T>>().ToArray();
-			indexLookup = fields.Select((mp, i) => new { mp.Naam, i }).ToDictionary(x => x.Naam, x => x.i);
+			indexLookup = fields.Select((mp, i) => new { Naam = mp.Name, i }).ToDictionary(x => x.Naam, x => x.i);
 
 			var parExpr = Expression.Parameter(typeof(T));
 			var arrExpr = Expression.Parameter(typeof(object[]));
@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils.Data
 
 			for (int i = 0; i < fields.Length; i++)
 			{
-				dt.Rows.Add(fields[i].Naam, i, -1, null, null, fields[i].DataType, null, false, fields[i].AllowNull, true, false, fields[i].IsKey && fields.Count(mp => mp.IsKey) == 1, fields[i].IsKey, false, null, null, null, "val");
+				dt.Rows.Add(fields[i].Name, i, -1, null, null, fields[i].DataType, null, false, fields[i].AllowNull, true, false, fields[i].IsKey && fields.Count(mp => mp.IsKey) == 1, fields[i].IsKey, false, null, null, null, "val");
 			}
 			return dt;
 
@@ -93,8 +93,8 @@ namespace ProgressOnderwijsUtils.Data
 		}
 		public override int FieldCount { get { return fields.Length; } }
 		public override Type GetFieldType(int ordinal) { return fields[ordinal].DataType; }
-		public override string GetName(int ordinal) { return fields[ordinal].Naam; }
-		public IEnumerable<string> FieldNames { get { return fields.Select(field => field.Naam); } }
+		public override string GetName(int ordinal) { return fields[ordinal].Name; }
+		public IEnumerable<string> FieldNames { get { return fields.Select(field => field.Name); } }
 		public override int GetOrdinal(string name) { return indexLookup[name]; }
 		public override object GetValue(int ordinal) { return cache[ordinal] ?? DBNull.Value; }
 	}

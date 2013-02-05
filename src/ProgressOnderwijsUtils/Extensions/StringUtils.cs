@@ -29,9 +29,17 @@ namespace ProgressOnderwijsUtils
 		static readonly Regex capLetter = new Regex(@"(?<=[a-zA-Z])[0-9]+|(?<![A-Z])[A-Z][a-z]*|(?<=[A-Z])[A-Z]([a-rt-z]|s[a-z])[a-z]*", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 		public static string PrettyPrintCamelCased(string rawString)
 		{
-			var withSpace=
+			var withSpace =
 				capLetter.Replace(rawString,
 				m => (m.Index == 0 ? "" : " ") + (m.Value.ToUpperInvariant() == m.Value ? m.Value : m.Value.ToLowerInvariant())
+				);
+			return whiteSpaceSequence.Replace(withSpace, " ");
+		}
+		public static string PrettyCapitalizedPrintCamelCased(string rawString)
+		{
+			var withSpace =
+				capLetter.Replace(rawString,
+				m => (m.Index == 0 ? m.Value : " " + (m.Value.ToUpperInvariant() == m.Value ? m.Value : m.Value.ToLowerInvariant()))
 				);
 			return whiteSpaceSequence.Replace(withSpace, " ");
 		}

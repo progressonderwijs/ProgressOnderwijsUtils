@@ -16,12 +16,12 @@ namespace ProgressOnderwijsUtils.Data
 		FieldMapping(int srcIndex, int dstIndex) { SrcIndex = srcIndex; DstIndex = dstIndex; }
 
 
-		public static FieldMapping[] VerifyAndCreate(DbColumnDefinition[] srcFields, string srcSetDebugName, DbColumnDefinition[] dstFields, string dstSetDebugName, FieldMappingMode mode)
+		public static FieldMapping[] VerifyAndCreate(IColumnDefinition[] srcFields, string srcSetDebugName, IColumnDefinition[] dstFields, string dstSetDebugName, FieldMappingMode mode)
 		{
 			var mkFieldDict = Utils.F(
-				(DbColumnDefinition[] fields) => fields
-					.Select((colDef, i) => new { Index = i, Def = colDef, UnderlyingType = colDef.Type.GetNonNullableUnderlyingType() })
-					.ToDictionary(col => col.Def.ColumnName ?? "!!UNNAMED COLUMN!!", StringComparer.OrdinalIgnoreCase)
+				(IColumnDefinition[] fields) => fields
+					.Select((colDef, i) => new { Index = i, Def = colDef, UnderlyingType = colDef.DataType.GetNonNullableUnderlyingType() })
+					.ToDictionary(col => col.Def.Name ?? "!!UNNAMED COLUMN!!", StringComparer.OrdinalIgnoreCase)
 				);
 
 			var srcFieldsByName = mkFieldDict(srcFields);
@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtils.Data
 					);
 			}
 
-			return srcFieldsByName.Values.Select(srcCol => new FieldMapping(srcCol.Index, dstFieldsByName[srcCol.Def.ColumnName].Index)).ToArray();
+			return srcFieldsByName.Values.Select(srcCol => new FieldMapping(srcCol.Index, dstFieldsByName[srcCol.Def.Name].Index)).ToArray();
 		}
 	}
 }

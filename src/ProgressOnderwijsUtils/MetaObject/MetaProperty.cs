@@ -6,19 +6,19 @@ using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
-	public interface IMetaProperty
+	public interface IMetaProperty : IColumnDefinition
 	{
-		string Naam { get; }
 		ColumnCss LijstCssClass { get; }
-		Func<object, object> Getter { get; }
-		Action<object, object> Setter { get; }
+		Func<object, object> UntypedGetter { get; }
+		Action<object, object> UntypedSetter { get; }
 		int Volgorde { get; }
-		bool Verplicht { get; }
+		bool Required { get; }
 		bool AllowNull { get; }
-		int? Lengte { get; }
+		int? Length { get; }
 		string Regex { get; }
 		ITranslatable Label { get; }
 		string KoppelTabelNaam { get; }
@@ -27,22 +27,21 @@ namespace ProgressOnderwijsUtils
 		bool Hide { get; }
 		bool ShowDefaultOnNew { get; }
 		bool CanRead { get; }
-		Type DataType { get; }
 		PropertyInfo PropertyInfo { get; }
 	}
 
 	public interface IMetaProperty<in TOwner> : IMetaProperty
 	{
-		Func<TOwner, object> TypedGetter { get; }
-		Action<TOwner, object> TypedSetter { get; }
+		Func<TOwner, object> Getter { get; }
+		Action<TOwner, object> Setter { get; }
 	}
 
 	public static class MetaProperty
 	{
 		public sealed class Impl<TOwner> : IMetaProperty<TOwner>
 		{
-			readonly string naam;
-			public string Naam { get { return naam; } }
+			readonly string name;
+			public string Name { get { return name; } }
 
 			readonly ColumnCss lijstCssClass;
 			public ColumnCss LijstCssClass { get { return lijstCssClass; } }
@@ -50,8 +49,8 @@ namespace ProgressOnderwijsUtils
 			readonly int volgorde;
 			public int Volgorde { get { return volgorde; } }
 
-			readonly bool verplicht;
-			public bool Verplicht { get { return verplicht; } }
+			readonly bool required;
+			public bool Required { get { return required; } }
 
 			readonly bool hide;
 			public bool Hide { get { return hide; } }
@@ -59,8 +58,8 @@ namespace ProgressOnderwijsUtils
 			readonly bool allowNull;
 			public bool AllowNull { get { return allowNull; } }
 
-			readonly int? lengte;
-			public int? Lengte { get { return lengte; } }
+			readonly int? length;
+			public int? Length { get { return length; } }
 
 			readonly string regex;
 			public string Regex { get { return regex; } }
@@ -94,7 +93,7 @@ namespace ProgressOnderwijsUtils
 				ParameterExpression typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
 				MemberExpression typedPropExpr = Expression.Property(typedParamExpr, pi);
 				bool canCallDirectly = !(typeof(TOwner).IsValueType || pi.PropertyType.IsValueType);
-				typedGetter =
+				getter =
 					canCallDirectly ? MkDel<Func<TOwner, object>>(pi.GetGetMethod()) :
 					Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
 
@@ -102,24 +101,24 @@ namespace ProgressOnderwijsUtils
 				//MemberExpression propExpr = Expression.Property(Expression.Convert(objParamExpr, typeof(TOwner)), pi);
 				//getter = Expression.Lambda<Func<object, object>>(Expression.Convert(propExpr, typeof(object)), objParamExpr).Compile();
 
-				getter = o => typedGetter((TOwner)o);
+				untypedGetter = o => getter((TOwner)o);
 
 
 				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
 
 				bool cannotWrite = !pi.CanWrite || pi.GetSetMethod() == null;
 
-				typedSetter = cannotWrite ? default(Action<TOwner, object>) :
+				setter = cannotWrite ? default(Action<TOwner, object>) :
 																		Expression.Lambda<Action<TOwner, object>>(
 																			Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)
 																				), typedParamExpr, valParamExpr
 																			).Compile();
 
-				setter = cannotWrite ? default(Action<object, object>) : (o, v) => typedSetter((TOwner)o, v);
+				untypedSetter = cannotWrite ? default(Action<object, object>) : (o, v) => setter((TOwner)o, v);
 
 
 
-				naam = pi.Name;
+				name = pi.Name;
 				var mpVolgordeAttribute = Attr<MpVolgordeAttribute>(pi);
 				volgorde = mpVolgordeAttribute == null ? implicitOrder * 10 : mpVolgordeAttribute.Volgorde;
 
@@ -128,47 +127,47 @@ namespace ProgressOnderwijsUtils
 				if (untranslatedLabelNoTt != null)
 				{
 					if (labelNoTt != null)
-						throw new Exception("Cannot define both an untranslated and a translated label on the same property " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + "." + Naam);
+						throw new Exception("Cannot define both an untranslated and a translated label on the same property " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + "." + Name);
 					else
 						labelNoTt = untranslatedLabelNoTt;
 				}
 
 				if (labelNoTt == null && Attr<MpLabelsRequiredAttribute>(pi.DeclaringType) != null)
-					throw new ArgumentException("You must specify an MpLabel on " + Naam + ", since the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " is marked MpLabelsRequired");
+					throw new ArgumentException("You must specify an MpLabel on " + Name + ", since the class " + ObjectToCode.GetCSharpFriendlyTypeName(pi.DeclaringType) + " is marked MpLabelsRequired");
 				if (labelNoTt == null)
 				{
-					var prettyName = StringUtils.PrettyPrintCamelCased(pi.Name);
+					var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(pi.Name);
 					labelNoTt = Translatable.Literal(prettyName, prettyName, prettyName);
 				}
 				label = OrDefault(Attr<MpTooltipAttribute>(pi), mkAttr => labelNoTt.WithTooltip(mkAttr.NL, mkAttr.EN, mkAttr.DE), labelNoTt);
 
 				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(pi), mkAttr => mkAttr.KoppelTabelNaam ?? pi.Name);
 				lijstCssClass = OrDefault(Attr<MpColumnCssAttribute>(pi), mkAttr => mkAttr.CssClass);
-				verplicht = OrDefault(Attr<MpVerplichtAttribute>(pi), mkAttr => true);
+				required = OrDefault(Attr<MpVerplichtAttribute>(pi), mkAttr => true);
 				hide = OrDefault(Attr<HideAttribute>(pi), mkAttr => true);
 				allowNull = OrDefault(Attr<MpAllowNullAttribute>(pi), mkAttr => true);
 				isKey = OrDefault(Attr<KeyAttribute>(pi), mkAttr => true);
 				showDefaultOnNew = OrDefault(Attr<MpShowDefaultOnNewAttribute>(pi), mkAttr => true);
-				isReadonly = Setter == null || OrDefault(Attr<MpReadonlyAttribute>(pi), mkAttr => true);
-				lengte = OrDefault(Attr<MpLengteAttribute>(pi), mkAttr => mkAttr.Lengte, default(int?));
+				isReadonly = UntypedSetter == null || OrDefault(Attr<MpReadonlyAttribute>(pi), mkAttr => true);
+				length = OrDefault(Attr<MpLengteAttribute>(pi), mkAttr => mkAttr.Lengte, default(int?));
 				regex = OrDefault(Attr<MpRegexAttribute>(pi), mkAttr => mkAttr.Regex);
 
 				if (KoppelTabelNaam != null && DataType != typeof(int) && DataType != typeof(int?))
-					throw new ProgressNetException(typeof(TOwner) + " heeft Kolom " + Naam + " heeft koppeltabel " + KoppelTabelNaam + " maar is van type " + DataType + "!");
+					throw new ProgressNetException(typeof(TOwner) + " heeft Kolom " + Name + " heeft koppeltabel " + KoppelTabelNaam + " maar is van type " + DataType + "!");
 
 			}
 
 
-			public bool CanRead { get { return getter != null; } }
+			public bool CanRead { get { return untypedGetter != null; } }
 
-			public readonly Func<object, object> getter;
-			public readonly Func<TOwner, object> typedGetter;
-			public Func<object, object> Getter { get { return getter; } }
-			public Func<TOwner, object> TypedGetter { get { return typedGetter; } }
-			public readonly Action<object, object> setter;
-			public readonly Action<TOwner, object> typedSetter;
-			public Action<object, object> Setter { get { return setter; } }
-			public Action<TOwner, object> TypedSetter { get { return typedSetter; } }
+			public readonly Func<object, object> untypedGetter;
+			public readonly Func<TOwner, object> getter;
+			public Func<object, object> UntypedGetter { get { return untypedGetter; } }
+			public Func<TOwner, object> Getter { get { return getter; } }
+			public readonly Action<object, object> untypedSetter;
+			public readonly Action<TOwner, object> setter;
+			public Action<object, object> UntypedSetter { get { return untypedSetter; } }
+			public Action<TOwner, object> Setter { get { return setter; } }
 		}
 
 

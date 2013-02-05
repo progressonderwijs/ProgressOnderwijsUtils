@@ -174,7 +174,7 @@ namespace ProgressOnderwijsUtils
 				var translatable =
 					translatedlabel != null ? translatedlabel.ToTranslatable()
 					: untranslatedlabel != null ? untranslatedlabel.ToTranslatable()
-					: Converteer.ToText(StringUtils.PrettyPrintCamelCased(f.ToString()));
+					: Converteer.ToText(StringUtils.PrettyCapitalizedPrintCamelCased(f.ToString()));
 
 				if (tooltip != null)
 					translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
@@ -210,7 +210,15 @@ namespace ProgressOnderwijsUtils
 
 		public static class GetAttrs<TAttr> where TAttr : Attribute
 		{
-			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible { return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal]; }
+			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible 
+			{
+				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal]; 
+			}
+
+			public static IEnumerable<T> From<T>(Func<TAttr, bool> pred) where T : struct, IConvertible
+			{
+				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes.Where(grp => grp.Any(pred)).Select(grp => grp.Key);
+			}
 		}
 
 
