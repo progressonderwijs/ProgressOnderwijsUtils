@@ -21,14 +21,14 @@ namespace ProgressOnderwijsUtils
 {
 	public static class AutoLoadFromDb
 	{
-		public static T ReadScalar<T>(this QueryBuilder builder, QueryBuilder.ToSqlArgs args)
+		public static T ReadScalar<T>(this QueryBuilder builder, QueryBuilder.SqlCommandCreationContext commandCreationContext)
 		{
-			return builder.CreateSqlCommand(args).Using(command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
+			return builder.CreateSqlCommand(commandCreationContext).Using(command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
 		}
 
-		public static int ExecuteNonQuery(this QueryBuilder builder, QueryBuilder.ToSqlArgs args)
+		public static int ExecuteNonQuery(this QueryBuilder builder, QueryBuilder.SqlCommandCreationContext commandCreationContext)
 		{
-			return builder.CreateSqlCommand(args).Using(
+			return builder.CreateSqlCommand(commandCreationContext).Using(
 				command => {
 					try
 					{
@@ -51,9 +51,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByConstructor<T>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs) where T : IReadByConstructor
+		public static T[] ReadByConstructor<T>(this QueryBuilder q, QueryBuilder.SqlCommandCreationContext qCommandCreationContext) where T : IReadByConstructor
 		{
-			using (var cmd = q.CreateSqlCommand(qArgs))
+			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
 				return ReadByConstructorUnpacker<T>(cmd);
 		}
 
@@ -76,9 +76,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByFields<T>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs) where T : IReadByFields, new()
+		public static T[] ReadByFields<T>(this QueryBuilder q, QueryBuilder.SqlCommandCreationContext qCommandCreationContext) where T : IReadByFields, new()
 		{
-			using (var cmd = q.CreateSqlCommand(qArgs))
+			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
 				return ReadByFieldsUnpacker<T>(cmd);
 		}
 
@@ -99,9 +99,9 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadPlain<T>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs)
+		public static T[] ReadPlain<T>(this QueryBuilder q, QueryBuilder.SqlCommandCreationContext qCommandCreationContext)
 		{
-			using (var cmd = q.CreateSqlCommand(qArgs))
+			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
 				return ReadPlainUnpacker<T>(cmd);
 		}
 
@@ -118,11 +118,11 @@ namespace ProgressOnderwijsUtils
 		/// Overloaded; see primary overload for details.  This overload unpacks two recordsets; i.e. two subsequent SELECT statements.
 		/// It's equivalent to but faster than Tuple.Create(queryA.ReadByConstructor&lt;T1&gt;(conn), queryB.ReadByConstructor&lt;T2&gt;(conn))
 		/// </summary>
-		public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, QueryBuilder.ToSqlArgs qArgs)
+		public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, QueryBuilder.SqlCommandCreationContext qCommandCreationContext)
 			where T1 : IReadByConstructor
 			where T2 : IReadByConstructor
 		{
-			using (var cmd = q.CreateSqlCommand(qArgs))
+			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
 				return ReadByConstructor<T1, T2>(cmd);
 		}
 
