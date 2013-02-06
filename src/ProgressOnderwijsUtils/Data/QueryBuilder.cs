@@ -148,21 +148,27 @@ namespace ProgressOnderwijsUtils
 				Create("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
 		}
 
-		public struct ToSqlArgs
+		public struct SqlCommandCreationContext
 		{
 			public SqlConnection Connection;
 			public QueryTracer Tracer;
 			public int CommandTimeout;
+			public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds)
+			{
+				var retval = this;
+				retval.CommandTimeout = timeoutSeconds;
+				return retval;
+			}
 		}
 
-		public SqlCommand CreateSqlCommand(ToSqlArgs args)
+		public SqlCommand CreateSqlCommand(SqlCommandCreationContext commandCreationContext)
 		{
-			var cmd = CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), args.Connection, args.CommandTimeout);
-			if (args.Tracer != null)
+			var cmd = CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), commandCreationContext.Connection, commandCreationContext.CommandTimeout);
+			if (commandCreationContext.Tracer != null)
 			{
 				try
 				{
-					var timer = args.Tracer.StartQueryTimer(cmd);
+					var timer = commandCreationContext.Tracer.StartQueryTimer(cmd);
 					cmd.Disposed += (s, e) => timer.Dispose();
 				}
 				catch
