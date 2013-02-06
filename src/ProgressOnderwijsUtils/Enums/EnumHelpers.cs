@@ -254,14 +254,15 @@ namespace ProgressOnderwijsUtils
 			return SelectItem.Create(f, GetLabel(f));
 		}
 
-
-
-		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal)
+		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal, string format = "{0}")
 			where TEnum : struct,IConvertible
 		{
 			var dt = new DataTable { Columns = { { "id", typeof(int) }, { "tekst", typeof(string) } } };
 			foreach (var item in values.Select(GetSelectItem))
-				dt.Rows.Add(item.Value.ToInt32(null), item.Label.Translate(taal).Text);
+			{
+				var tekst = item.Label.Translate(taal);
+				dt.Rows.Add(item.Value.ToInt32(null), string.Format(format, tekst.Text, tekst.ExtraText));
+			}
 			return dt;
 		}
 
