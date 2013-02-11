@@ -70,6 +70,8 @@ namespace ProgressOnderwijsUtils.Data
 				return ((int)p).ToStringInvariant();
 			else if (p is bool)
 				return (bool)p ? "1" : "0";
+			else if (p is Enum)
+				return Convert.ToInt64(p) + "/*" + p + "*/";
 			else
 				return p.ToString();
 		}
