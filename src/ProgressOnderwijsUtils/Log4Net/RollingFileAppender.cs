@@ -11,17 +11,6 @@ namespace ProgressOnderwijsUtils.Log4Net
 	{
 		const string PATH = @"C:\inetpub\logs\Progress.NET";
 
-		static readonly IDictionary<DatabaseVersion, string> PATHS = new Dictionary<DatabaseVersion, string>
-		{
-			{ DatabaseVersion.Undefined, "." }, 
-			{ DatabaseVersion.ProductieDB, "Productie" },
-			{ DatabaseVersion.TestDB, "Test" },
-			{ DatabaseVersion.OntwikkelDB, "Ontwikkel" },
-			{ DatabaseVersion.BronHODB, "BronHO" },
-			{ DatabaseVersion.AcceptatieDB, "Acceptatie" },
-			{ DatabaseVersion.VeldTestDB, "VeldTest" },
-		};
-
 		public RollingFileAppender()
 		{
 			Encoding = Encoding.UTF8;
@@ -49,6 +38,13 @@ namespace ProgressOnderwijsUtils.Log4Net
 			}
 		}
 
-		string Context { get { return PATHS[DatabaseVersionAuto.ByDeploymentDirectory()]; } }
+		static string Context
+		{
+			get
+			{
+				var byDeploymentDirectory = ApplicationVersionAuto.ByDeploymentDirectory();
+				return byDeploymentDirectory == null ? "." : byDeploymentDirectory.Value.ToString();
+			}
+		}
 	}
 }
