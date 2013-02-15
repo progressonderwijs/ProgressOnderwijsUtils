@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
                 bool next = reader.MoveToFirstAttribute();
                 while (next)
                 {
-                    result[reader.Name.ToLower()] = reader.Value.ToLower();
+                    result[reader.Name.ToLower()] = reader.Value;
                     next = reader.MoveToNextAttribute();
                 }
                 reader.MoveToElement();
