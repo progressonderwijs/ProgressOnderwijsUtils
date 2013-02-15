@@ -29,6 +29,5 @@ namespace ProgressOnderwijsUtils
 		/// Return an empty array if it's null
 		/// </summary>
 		public static T[] EmptyIfNull<T>(this T[] array) { return array ?? Helper<T>.EmptyArray; }
-
 	}
 }

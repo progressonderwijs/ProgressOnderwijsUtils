@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils
 		[Pure]
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> list) { return list ?? Enumerable.Empty<T>(); }
 
-		public static int GetSequenceHashCode<T>(this IEnumerable<T> list, IEqualityComparer<T> elementComparer = null)
+		public static int GetSequenceHashCode<T>(IEnumerable<T> list, IEqualityComparer<T> elementComparer = null)
 		{
 			var elemEquality = elementComparer ?? EqualityComparer<T>.Default;
 			ulong hash = 3;

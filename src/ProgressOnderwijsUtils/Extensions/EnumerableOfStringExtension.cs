@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <param name="strings">string sequence</param>
 		/// <returns>a string</returns>
-		public static string JoinStrings(this IEnumerable<string> strings) { return JoinStrings(strings, ""); } 
+		public static string JoinStrings(this IEnumerable<string> strings) { return JoinStrings(strings, ""); }
 		//don't use optional params to allow usage in expression trees
 
 		/// <summary>
