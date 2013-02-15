@@ -65,15 +65,6 @@ namespace ProgressOnderwijsUtils
 			return !list.All(set.Add);
 		}
 
-		public static string ToStringFlattened<T>(this IEnumerable<T> self)
-		{
-			return "[" +
-				self
-					.EmptyIfNull()
-					.Select(item => item == null ? "" : item.ToString())
-					.JoinStrings(", ")
-				+ "]";
-		}
 
 		public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(this IEnumerable<T> list, Func<T, TKey> keySelector, Func<T, TVal> valSelector)
 		{
@@ -112,19 +103,6 @@ namespace ProgressOnderwijsUtils
 	[TestFixture]
 	public class EnumerableExtensionsTest
 	{
-		private IEnumerable<TestCaseData> ToStringFlattenedData()
-		{
-			yield return new TestCaseData(null, "[]");
-			yield return new TestCaseData(new string[0], "[]");
-			yield return new TestCaseData(new[] { "single" }, "[single]");
-			yield return new TestCaseData(new[] { "first", "second" }, "[first, second]");
-		}
-
-		[Test, TestCaseSource("ToStringFlattenedData")]
-		public void ToStringFlattened(IEnumerable<string> sut, string expected)
-		{
-			Assert.That(sut.ToStringFlattened(), Is.EqualTo(expected));
-		}
 	}
 
 }
