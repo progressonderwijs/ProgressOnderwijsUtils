@@ -165,8 +165,7 @@ namespace ProgressOnderwijsUtils
 		public void MakeUniqueCompareOne()
 		{
 			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } });
-			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data)
-			{
+			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data) {
 				Assert.That(data, Is.Null);
 				return one;
 			});
@@ -177,8 +176,7 @@ namespace ProgressOnderwijsUtils
 		public void MakeUniqueCompareOther()
 		{
 			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } });
-			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data)
-			{
+			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data) {
 				Assert.That((int)data == 1);
 				return other;
 			}, 1);

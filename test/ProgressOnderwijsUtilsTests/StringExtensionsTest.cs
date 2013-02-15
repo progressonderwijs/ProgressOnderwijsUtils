@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase("maarten middelmaat--meloen", Result = "Maarten Middelmaat-Meloen")]
 		[TestCase("carolien    Kaasteen", Result = "Carolien Kaasteen")]
 		[TestCase("miep boezeroen-jansen van der sloot op 't gootje v.d. geest de la terrine du soupe au beurre à demi v/d zo-is-het-wel-genoeg ja"
-					, Result = "Miep Boezeroen-Jansen van der Sloot op 't Gootje v.d. Geest de la Terrine du Soupe au Beurre à Demi v/d Zo-Is-Het-Wel-Genoeg Ja")]
+			  , Result = "Miep Boezeroen-Jansen van der Sloot op 't Gootje v.d. Geest de la Terrine du Soupe au Beurre à Demi v/d Zo-Is-Het-Wel-Genoeg Ja")]
 		[TestCase("'s-gravenhage", Result = "'s-Gravenhage")]
 		[TestCase("'s gravenhage", Result = "'s Gravenhage")]
 		[TestCase("'sgravenhage", Result = "'s Gravenhage")]
@@ -144,7 +144,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void PrettyPrintCamelCased()
 		{
-			var translations = new [,] {
+			var translations = new[,] {
 				{"SMMutatie", "SM mutatie", "SM mutatie"},
 				{"XmlReader", "xml reader", "Xml reader"},
 				{"S0Xval", "S 0 xval", "S 0 xval"},
@@ -160,7 +160,7 @@ namespace ProgressOnderwijsUtilsTests
 				{"_Multi _Space", " multi space", " multi space"},
 				{"trailing Space\t", "trailing space ", "trailing space "},
 			};
-			for(int row=0;row<translations.GetLength(0);row++)
+			for (int row = 0; row < translations.GetLength(0); row++)
 			{
 				var initial = translations[row, 0];
 				var ideal = translations[row, 1];
@@ -168,6 +168,17 @@ namespace ProgressOnderwijsUtilsTests
 				PAssert.That(() => StringUtils.PrettyPrintCamelCased(initial) == ideal);
 				PAssert.That(() => StringUtils.PrettyCapitalizedPrintCamelCased(initial) == idealCap);
 			}
+		}
+
+		[TestCase(null, "[]")]
+		[TestCase(new string[0], "[]")]
+		[TestCase(new[] { "single" }, "[single]")]
+		[TestCase(new[] { "first", "second" }, "[first, second]")]
+		[TestCase(new object[] { 1, "2", null, 3 }, "[1, 2, , 3]")]
+		[Test]
+		public void ToFlatDebugString(IEnumerable<object> sut, string expected)
+		{
+			Assert.That(StringUtils.ToFlatDebugString(sut), Is.EqualTo(expected));
 		}
 	}
 }
