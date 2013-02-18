@@ -129,6 +129,8 @@ namespace ProgressOnderwijsUtils
 		{
 			if (!typeof(IMetaObject).IsAssignableFrom(t))
 				throw new InvalidOperationException("Can't get meta-properties from type " + t + ", it's not a " + typeof(IMetaObject));
+			while (t.BaseType != null && !t.BaseType.IsAbstract && typeof(IMetaObject).IsAssignableFrom(t.BaseType))
+				t = t.BaseType;
 			IMetaPropCache cache = GetCache(t);
 			return cache.Properties;
 		}
@@ -169,16 +171,21 @@ namespace ProgressOnderwijsUtils
 					throw new ArgumentException("Cannot determine metaproperties on interface type " + typeof(T));
 				else if (typeof(T).IsAbstract)
 					throw new ArgumentException("Cannot determine metaproperties on abstract type " + typeof(T));
-				else if (typeof(T).BaseTypes().Any(bt => !bt.IsAbstract && typeof(IMetaObject).IsAssignableFrom(bt)))
-					throw new ArgumentException("Cannot determine metaproperties on type with non-abstract base type(s)");
-				else if (!typeof(T).GetProperties().Any())
-					throw new ArgumentException("Cannot determine metaproperties on type without properties");
+				else
+				{
+					var nonAbstractBaseTypes = typeof(T).BaseTypes().Where(bt => !bt.IsAbstract && typeof(IMetaObject).IsAssignableFrom(bt));
+					if (nonAbstractBaseTypes.Any())
+						throw new ArgumentException("Cannot determine metaproperties on type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " with non-abstract base type(s) : " + string.Join(", ", nonAbstractBaseTypes.Select(ObjectToCode.GetCSharpFriendlyTypeName)));
+					else if (!typeof(T).GetProperties().Any())
+						throw new ArgumentException("Cannot determine metaproperties on type without properties");
+				}
 
 				properties = GetMetaPropertiesImpl().ToArray();
 
 				Dictionary<MethodInfo, IMetaProperty<T>> propertiesByGetMethod = properties.Where(mp => mp.CanRead).ToDictionary(mp => mp.PropertyInfo.GetGetMethod());
 				Dictionary<MethodInfo, IMetaProperty<T>> propertiesBySetMethod = properties.Where(mp => mp.UntypedSetter != null).ToDictionary(mp => mp.PropertyInfo.GetSetMethod());
-				propertiesByInheritedInfo = typeof(T).GetInterfaces().SelectMany(ifaceType => {
+				propertiesByInheritedInfo = typeof(T).GetInterfaces().SelectMany(ifaceType =>
+				{
 					var map = typeof(T).GetInterfaceMap(ifaceType);
 					return ifaceType.GetProperties()
 						.Select(iProp => new MetaAndInfo(iProp,
