@@ -73,6 +73,17 @@ namespace ProgressOnderwijsUtils
 		public readonly string Regex;
 	}
 
+	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class MpDatumFormaatAttribute : Attribute
+	{
+		public MpDatumFormaatAttribute(DatumFormaat formaat) 
+		{
+			Formaat = formaat; 
+		}
+
+		public readonly DatumFormaat Formaat;
+	}
+
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public sealed class MpTooltipAttribute : Attribute
 	{

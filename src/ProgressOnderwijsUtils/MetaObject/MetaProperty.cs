@@ -20,6 +20,7 @@ namespace ProgressOnderwijsUtils
 		bool AllowNull { get; }
 		int? Lengte { get; }
 		string Regex { get; }
+		DatumFormaat? DatumTijd { get; }
 		ITranslatable Label { get; }
 		string KoppelTabelNaam { get; }
 		bool IsReadonly { get; }
@@ -64,6 +65,9 @@ namespace ProgressOnderwijsUtils
 
 			readonly string regex;
 			public string Regex { get { return regex; } }
+
+			readonly DatumFormaat? datumtijd;
+			public DatumFormaat? DatumTijd { get { return datumtijd; } }
 
 			readonly ITranslatable label;
 			public ITranslatable Label { get { return label; } }
@@ -152,12 +156,11 @@ namespace ProgressOnderwijsUtils
 				isReadonly = Setter == null || OrDefault(Attr<MpReadonlyAttribute>(pi), mkAttr => true);
 				lengte = OrDefault(Attr<MpLengteAttribute>(pi), mkAttr => mkAttr.Lengte, default(int?));
 				regex = OrDefault(Attr<MpRegexAttribute>(pi), mkAttr => mkAttr.Regex);
+				datumtijd = OrDefault(Attr<MpDatumFormaatAttribute>(pi), mkAttr => mkAttr.Formaat, default(DatumFormaat?));
 
-				if (KoppelTabelNaam != null && DataType != typeof(int) && DataType != typeof(int?))
+				if (KoppelTabelNaam != null && DataType.GetNonNullableUnderlyingType() != typeof(int))
 					throw new ProgressNetException(typeof(TOwner) + " heeft Kolom " + Naam + " heeft koppeltabel " + KoppelTabelNaam + " maar is van type " + DataType + "!");
-
 			}
-
 
 			public bool CanRead { get { return getter != null; } }
 
@@ -170,7 +173,6 @@ namespace ProgressOnderwijsUtils
 			public Action<object, object> Setter { get { return setter; } }
 			public Action<TOwner, object> TypedSetter { get { return typedSetter; } }
 		}
-
 
 		static T Attr<T>(MemberInfo mi) where T : Attribute { return mi.GetCustomAttributes(typeof(T), true).Cast<T>().SingleOrDefault(); }
 		static TR OrDefault<T, TR>(T val, Func<T, TR> project, TR defaultVal = default(TR)) { return Equals(val, default(T)) ? defaultVal : project(val); }
