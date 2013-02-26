@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils.Collections
 		}
 		public override int GetHashCode()
 		{
-			return PathSegments.Last().ThisSubTree.GetHashCode() + PathSegments.Select(segment => segment.Index).GetSequenceHashCode();
+			return PathSegments.Last().ThisSubTree.GetHashCode() + EnumerableExtensions.GetSequenceHashCode(PathSegments.Select(segment => segment.Index));
 		}
 		public override bool Equals(object obj) { return obj is RootedTree<T> && Equals((RootedTree<T>)obj); }
 		#endregion

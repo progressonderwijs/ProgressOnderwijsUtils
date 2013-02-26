@@ -73,6 +73,17 @@ namespace ProgressOnderwijsUtils
 		public readonly string Regex;
 	}
 
+	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class MpDatumFormaatAttribute : Attribute
+	{
+		public MpDatumFormaatAttribute(DatumFormaat formaat) 
+		{
+			Formaat = formaat; 
+		}
+
+		public readonly DatumFormaat Formaat;
+	}
+
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public sealed class MpTooltipAttribute : Attribute
 	{
@@ -81,6 +92,14 @@ namespace ProgressOnderwijsUtils
 		public MpTooltipAttribute(string nl) { NL = nl; }
 		public readonly string NL, EN, DE;
 	}
+
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+	public sealed class MpTooltipUntranslatedAttribute : Attribute
+	{
+		public MpTooltipUntranslatedAttribute(string tooltip) { Tooltip = tooltip; }
+		public readonly string Tooltip;
+	}
+
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public sealed class MpLabelAttribute : Attribute
 	{
@@ -100,7 +119,6 @@ namespace ProgressOnderwijsUtils
 
 		public LiteralTranslatable ToTranslatable() { return Translatable.Literal(Label, Label, Label); }
 	}
-
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpKoppelTabelAttribute : Attribute
