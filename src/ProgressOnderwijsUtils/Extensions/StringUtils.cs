@@ -86,15 +86,25 @@ namespace ProgressOnderwijsUtils
 			return LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length));
 		}
 
+		public static string ToFlatDebugString<T>(IEnumerable<T> self)
+		{
+			return "[" +
+			  self
+				.EmptyIfNull()
+				.Select(item => item == null ? "" : item.ToString())
+				.JoinStrings(", ")
+			  + "]";
+		}
+
 		public static long? ParseInt64(string s)
 		{
 			long val;
-			return long.TryParse(s, out val) ? val : default(long?);
+			return Int64.TryParse(s, out val) ? val : default(long?);
 		}
 		public static int? ParseInt32(string s)
 		{
 			int val;
-			return int.TryParse(s, out val) ? val : default(int?);
+			return Int32.TryParse(s, out val) ? val : default(int?);
 		}
 
 		/// <summary>

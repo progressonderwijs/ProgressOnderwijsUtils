@@ -16,17 +16,8 @@ namespace ProgressOnderwijsUtils
 		/// <returns></returns>
 		public static int CollegeJaar(this DateTime datetime)
 		{
-			int collegejaar = datetime.Year;
 			//Als startdatum januari t/m augustus dan is het collegejaar een jaar eerder
-			if (datetime.Month < 9)
-				collegejaar--;
-			return collegejaar;
+			return datetime.Year - (datetime.Month < 9 ? 1 : 0);
 		}
-
-		public static string GetTimestamp(this DateTime value)
-		{
-			return value.ToString("yyyyMMddHHmmssffff");
-		}
-		
 	}
 }

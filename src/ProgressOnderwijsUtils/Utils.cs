@@ -8,18 +8,14 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
-using ExpressionToCodeLib;
 using MoreLinq;
-using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
-	public static class Utils
+	public static class ErrorUtils
 	{
-		public static T Using<TDisposable, T>(this TDisposable disposable, Func<TDisposable, T> func) where TDisposable : IDisposable { using (disposable) return func(disposable); }
-
 		[ExcludeFromNCover]
 		public static string TestErrorStackOverflow(int rounds)
 		{
@@ -37,6 +33,15 @@ namespace ProgressOnderwijsUtils
 
 		[ExcludeFromNCover]
 		public static void TestErrorNormalException() { throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!"); }
+	}
+
+	public static class DisposableExtensions
+	{
+		public static T Using<TDisposable, T>(this TDisposable disposable, Func<TDisposable, T> func) where TDisposable : IDisposable { using (disposable) return func(disposable); }
+	}
+
+	public static class Utils
+	{
 
 		public static bool ElfProef(int getal)
 		{
@@ -46,6 +51,10 @@ namespace ProgressOnderwijsUtils
 			return res != 0 && res % 11 == 0;
 		}
 
+		/// <summary>
+		/// Uses the sieve of erasthenos
+		/// </summary>
+		/// <returns>all 64-bit representable primes</returns>
 		public static IEnumerable<ulong> Primes()
 		{
 			var primes = new List<ulong>();
@@ -89,12 +98,12 @@ namespace ProgressOnderwijsUtils
 		public static T Retry<T>(CancellationToken cancel, Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
 		{
 			return Retry(
-				() => {
-					cancel.ThrowIfCancellationRequested();
-					return func();
-				},
-				e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested
-				);
+			  () => {
+				  cancel.ThrowIfCancellationRequested();
+				  return func();
+			  },
+			  e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested
+			  );
 		}
 
 		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup) { return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup)); }
@@ -134,8 +143,8 @@ namespace ProgressOnderwijsUtils
 				return false;
 			else if (e is SqlException)
 				return e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
-					e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
-					e.Message.StartsWith("Timeout expired.");
+				  e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
+				  e.Message.StartsWith("Timeout expired.");
 			else if (e is EntityException)
 				return (e.Message == "The underlying provider failed on Open.");
 			else if (e is AggregateException)
@@ -277,201 +286,6 @@ namespace ProgressOnderwijsUtils
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
-		}
-	}
-
-	[TestFixture]
-	public sealed class UtilsTest
-	{
-		[Test, NightlyOnly]
-		public void ToSortableStringTest()
-		{
-			var cmp = StringComparer.Ordinal;
-			var samplePoints = MoreEnumerable
-				.Generate((double)long.MinValue, sample => sample + (1.0 + Math.Abs(sample) / 1000.0))
-				.TakeWhile(sample => sample < long.MaxValue)
-				.Select(d => (long)d)
-				.Concat(new[] { long.MinValue, long.MaxValue - 1, -1, 0, 1 });
-
-			foreach (var i in samplePoints)
-			{
-				var j = i + 1;
-				string a = Utils.ToSortableShortString(i);
-				string b = Utils.ToSortableShortString(j);
-				if (cmp.Compare(a, b) >= 0)
-					throw new Exception("numbers " + i + " and " + j + " produce out-of-order strings: " + a + " and " + b);
-			}
-		}
-
-		[Test]
-		public void SwapValue()
-		{
-			int one = 1;
-			int other = 2;
-			Utils.Swap(ref one, ref other);
-			Assert.That(one, Is.EqualTo(2));
-			Assert.That(other, Is.EqualTo(1));
-		}
-
-		[Test]
-		public void SwapReference()
-		{
-			string one = "1";
-			string other = "2";
-			Utils.Swap(ref one, ref other);
-			Assert.That(one, Is.EqualTo("2"));
-			Assert.That(other, Is.EqualTo("1"));
-		}
-
-		enum SampleEnum
-		{
-			ValueA,
-			ValueB
-		};
-
-		IEnumerable<TestCaseData> InClauseData()
-		{
-			yield return new TestCaseData(new int[] { }).Returns("(null)");
-			yield return new TestCaseData(new[] { 0 }).Returns("(0)");
-			yield return new TestCaseData(new[] { 0, 1 }).Returns("(0, 1)");
-			yield return new TestCaseData(new[] { SampleEnum.ValueA, SampleEnum.ValueB }).Returns("(0, 1)");
-		}
-
-		IEnumerable<TestCaseData> InClauseStringData() { yield return new TestCaseData(new[] { "test", "ab'c", "xyz" }.ToList()).Returns("('test', 'ab''c', 'xyz')"); }
-
-		[Test, TestCaseSource("InClauseData")]
-		public string InClause(IEnumerable<int> values) { return Utils.SqlInClause(values); }
-
-		[Test, TestCaseSource("InClauseStringData")]
-		public string InClauseStrings(IEnumerable<string> values) { return Utils.SqlInClause(values); }
-
-		[Test]
-		public void NUnitSession() { Assert.That(Utils.IsInTestSession()); }
-
-		IEnumerable<TestCaseData> MaandSpan()
-		{
-			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)).Returns(0);
-			yield return new TestCaseData(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)).Returns(4);
-			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2001, 1, 1)).Returns(12);
-			yield return new TestCaseData(new DateTime(2001, 1, 1), new DateTime(2000, 1, 1)).Returns(12);
-			yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 2, 1)).Returns(5);
-			yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 4, 1)).Returns(7);
-			yield return new TestCaseData(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)).Returns(9);
-			yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
-		}
-
-		[Test, TestCaseSource("MaandSpan")]
-		public int MaandSpanTest(DateTime d1, DateTime d2) { return Utils.MaandSpan(d1, d2); }
-
-		IEnumerable<TestCaseData> DateMax()
-		{
-			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)).Returns(0);
-			yield return new TestCaseData(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)).Returns(4);
-			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2001, 1, 1)).Returns(12);
-			yield return new TestCaseData(new DateTime(2001, 1, 1), new DateTime(2000, 1, 1)).Returns(12);
-			yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 2, 1)).Returns(5);
-			yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 4, 1)).Returns(7);
-			yield return new TestCaseData(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)).Returns(9);
-			yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
-		}
-
-		[Test]
-		public void IsDbConnFailureTest()
-		{
-			PAssert.That(() => !Utils.IsDbConnectionFailure(new Exception()));
-			PAssert.That(() => !Utils.IsDbConnectionFailure(new EntityException()));
-			PAssert.That(() => !Utils.IsDbConnectionFailure(new QueryException()));
-			PAssert.That(() => Utils.IsDbConnectionFailure(new QueryException("bla", new EntityException("The underlying provider failed on Open."))));
-			PAssert.That(() => Utils.IsDbConnectionFailure(new AggregateException(new QueryException("bla", new EntityException("The underlying provider failed on Open.")), new EntityException("The underlying provider failed on Open."))));
-			PAssert.That(() => !Utils.IsDbConnectionFailure(new AggregateException()));
-			PAssert.That(() => !Utils.IsDbConnectionFailure(null));
-		}
-
-		[Test]
-		public void DateMaxTest()
-		{
-			DateTime? d1 = null;
-			DateTime? d2 = null;
-
-			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(null));
-
-			d1 = DateTime.Today;
-			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d1));
-
-			d1 = null;
-			d2 = DateTime.Today;
-			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
-
-			d1 = DateTime.Today;
-			d2 = DateTime.Today;
-			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d1));
-
-			d1 = DateTime.Today.AddDays(-1);
-			d2 = DateTime.Today;
-			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
-
-			d1 = DateTime.Today.AddDays(1);
-			d2 = DateTime.Today;
-			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d1));
-
-			d1 = DateTime.Today;
-			d2 = DateTime.Today.AddDays(-1);
-			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d1));
-
-			d1 = DateTime.Today;
-			d2 = DateTime.Today.AddDays(1);
-			Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
-		}
-
-		[Test,
-		 TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true),
-		 TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false),
-		 TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false),
-		 TestCase(DocumentLanguage.English, Taal.NL, Result = false),
-		 TestCase(DocumentLanguage.English, Taal.EN, Result = true),
-		 TestCase(DocumentLanguage.English, Taal.DU, Result = false),
-		 TestCase(DocumentLanguage.German, Taal.NL, Result = false),
-		 TestCase(DocumentLanguage.German, Taal.EN, Result = false),
-		 TestCase(DocumentLanguage.German, Taal.DU, Result = true),
-		 TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true),
-		 TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true),
-		 TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false),
-		 TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true),
-		 TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true),
-		 TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true),
-		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true),
-		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true),
-		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
-		public bool GenerateForLanguage(DocumentLanguage doc, Taal language) { return Utils.GenerateForLanguage(doc, language); }
-	}
-
-	[TestFixture]
-	public class ReferenceEqualityComparerTest
-	{
-		struct TestType
-		{
-			int value;
-
-			public TestType(int value) { this.value = value; }
-		}
-
-		static readonly TestType t1 = new TestType(1);
-		static readonly TestType t2 = new TestType(1);
-
-		[Test]
-		public void TestValue()
-		{
-			var sut = new HashSet<TestType>();
-			Assert.That(sut.Add(t1));
-			Assert.That(!sut.Add(t2));
-		}
-
-		[Test]
-		public void TestReference()
-		{
-			var sut = new HashSet<TestType>(new ReferenceEqualityComparer<TestType>());
-			Assert.That(sut.Add(t1));
-			Assert.That(sut.Add(t2));
 		}
 	}
 }
