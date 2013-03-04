@@ -76,7 +76,7 @@ namespace ProgressOnderwijsUtils.Conext
 		private const string IDP_ENTITY_WAYF = "https://engine.surfconext.nl/authentication/idp/metadata";
 
 		private const string IDP_ENTITY_RUG = "https://signon.rug.nl/nidp/saml2/metadata";
-		private const string IDP_ENTITY_FONTYS = "urn:federation:FontysADFS";
+		private const string IDP_ENTITY_FONTYS = "http://adfs2.fontys.nl/adfs/services/trust";
 		private const string IDP_ENTITY_VU = "https://surf-sso.ubvu.vu.nl/simplesaml/saml2/idp/metadata.php";
 		private const string IDP_ENTITY_UVA = "https://secure.uva.nl/cas";
 		private const string IDP_ENTITY_STENDEN = "http://adfs.stenden.com/adfs/services/trust";
