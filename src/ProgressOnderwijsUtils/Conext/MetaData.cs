@@ -227,7 +227,7 @@ namespace ProgressOnderwijsUtils.Conext
 									{ Entity.Fontys, IDP_ENTITY_FONTYS },
 									{ Entity.Stenden, IDP_ENTITY_STENDEN },
 									{ Entity.UvA, IDP_ENTITY_UVA },
-									{ Entity.VU, IDP_ENTITY_VU },
+									// Hebben nog geen toestemming gegeven: { Entity.VU, IDP_ENTITY_VU },
 								}
 							},
 						}
