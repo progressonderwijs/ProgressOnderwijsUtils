@@ -5,10 +5,18 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Conext;
+using ProgressOnderwijsUtils.Test;
 using Progress.WebApp.RequestRouting;
 
 namespace ProgressOnderwijsUtilsTests
 {
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+	public sealed class ConextAttribute : CategoryAttribute
+	{
+	}
+
+
+	[Conext, NightlyOnly]
 	public abstract class ConextTestSuite
 	{
 		protected static Saml20MetaData Saml20MetaData(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
@@ -151,7 +159,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 	}
 
-	[TestFixture]
+	[TestFixture, Conext, NightlyOnly]
 	public class SingleSignOnHandlerTest
 	{
 		[Test]
