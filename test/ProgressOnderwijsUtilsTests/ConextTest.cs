@@ -101,7 +101,7 @@ namespace ProgressOnderwijsUtilsTests
 	{
 		[TestCase(IdentityProvider.ConextWayf, null, null)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.ProductieDB)]
-		//[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.OntwikkelDB)]
@@ -117,7 +117,7 @@ namespace ProgressOnderwijsUtilsTests
 
 		[TestCase(IdentityProvider.ConextWayf, null, null)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.ProductieDB)]
-		//[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.TestDB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.OntwikkelDB)]
