@@ -147,7 +147,31 @@ namespace ProgressOnderwijsUtils.Conext
 							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
 						}
 					},
+					{ DatabaseVersion.AcceptatieDB, new ServiceProviderConfig 
+						{ 
+							sp = ServiceProvider.PNet,
+							entity = SP_ENTITY_PNET_TEST, 
+							index = 0, 
+							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
+						}
+					},
+					{ DatabaseVersion.VeldTestDB, new ServiceProviderConfig 
+						{ 
+							sp = ServiceProvider.PNet,
+							entity = SP_ENTITY_PNET_TEST, 
+							index = 0, 
+							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
+						}
+					},
 					{ DatabaseVersion.OntwikkelDB, new ServiceProviderConfig 
+						{ 
+							sp = ServiceProvider.PNet,
+							entity = SP_ENTITY_PNET_ONTWIKKEL, 
+							index = 0, 
+							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
+						}
+					},
+					{ DatabaseVersion.BronHODB, new ServiceProviderConfig 
 						{ 
 							sp = ServiceProvider.PNet,
 							entity = SP_ENTITY_PNET_ONTWIKKEL, 
@@ -240,13 +264,31 @@ namespace ProgressOnderwijsUtils.Conext
 									{ Entity.Stenden, IDP_ENTITY_STENDEN },
 								}
 							},
-							{ DatabaseVersion.TestDB, new Dictionary<Entity, string>()
+							{ DatabaseVersion.TestDB, new Dictionary<Entity, string>
+								{
+									{ Entity.Fontys, IDP_ENTITY_FONTYS },
+									{ Entity.Stenden, IDP_ENTITY_STENDEN },
+								}
+							},
+							{ DatabaseVersion.AcceptatieDB, new Dictionary<Entity, string>
+								{
+									{ Entity.Fontys, IDP_ENTITY_FONTYS },
+									{ Entity.Stenden, IDP_ENTITY_STENDEN },
+								}
+							},
+							{ DatabaseVersion.VeldTestDB, new Dictionary<Entity, string>
 								{
 									{ Entity.Fontys, IDP_ENTITY_FONTYS },
 									{ Entity.Stenden, IDP_ENTITY_STENDEN },
 								}
 							},
 							{ DatabaseVersion.OntwikkelDB, new Dictionary<Entity, string>
+								{
+									{ Entity.Fontys, IDP_ENTITY_FONTYS },
+									{ Entity.Stenden, IDP_ENTITY_STENDEN },
+								}
+							},
+							{ DatabaseVersion.BronHODB, new Dictionary<Entity, string>
 								{
 									{ Entity.Fontys, IDP_ENTITY_FONTYS },
 									{ Entity.Stenden, IDP_ENTITY_STENDEN },
