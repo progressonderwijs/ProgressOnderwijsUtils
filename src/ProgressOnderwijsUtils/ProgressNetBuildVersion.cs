@@ -14,16 +14,16 @@ namespace ProgressOnderwijsUtils
 	/// </summary>
 	public static class ProgressNetBuildVersion
 	{
-        /*  Nodig build scriptje ergens in de applicatie:
+		/*  Nodig build scriptje ergens in de applicatie:
   <Target Name="AfterBuild">
-    <Exec Command="hg id -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branches:{branches}\ntags:{tags}\ndate:{date|isodate}\n&quot; &gt;&gt; ProgressVersion.Info.Generated " />
-    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="ComputerName:$(COMPUTERNAME)" Overwrite="false" Encoding="UTF-8" />
-    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildTag:$(BUILD_TAG)" Overwrite="false" Encoding="UTF-8" />
-    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildJob:$(BUILD_URL)" Overwrite="false" Encoding="UTF-8" />
-    <WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="Configuration:$(Configuration)" Overwrite="false" Encoding="UTF-8" />
+	<Exec Command="hg id --encoding utf8 -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branches:{branches}\ntags:{tags}\ndate:{date|isodate}\n&quot; &gt;&gt; ProgressVersion.Info.Generated " />
+	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="ComputerName:$(COMPUTERNAME)" Overwrite="false" Encoding="UTF-8" />
+	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildTag:$(BUILD_TAG)" Overwrite="false" Encoding="UTF-8" />
+	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildJob:$(BUILD_URL)" Overwrite="false" Encoding="UTF-8" />
+	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="Configuration:$(Configuration)" Overwrite="false" Encoding="UTF-8" />
   </Target>
 */
-        [Serializable]
+		[Serializable]
 		public sealed class Data : IMetaObject
 		{
 			public string Node { get; set; }
