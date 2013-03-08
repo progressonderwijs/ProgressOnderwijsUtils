@@ -53,9 +53,9 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void SanityCheck()
 		{
-			Assert.Throws<PAssertFailedException>(() => ComparePod(new LabelCode("abc", false), new { waarde = "abc", Vrijveld = false }));//case-sensitive
-			Assert.Throws<PAssertFailedException>(() => ComparePod(new LabelCode("abc", false), new { Waarde = "Abc", Vrijveld = false }));//value-sensitive
-			Assert.Throws<PAssertFailedException>(() => ComparePod(new LabelCode(null, false), new { Waarde = "", Vrijveld = false }));//no weirdness
+			Assert.Throws<AssertionException>(() => ComparePod(new LabelCode("abc", false), new { waarde = "abc", Vrijveld = false }));//case-sensitive
+			Assert.Throws<AssertionException>(() => ComparePod(new LabelCode("abc", false), new { Waarde = "Abc", Vrijveld = false }));//value-sensitive
+			Assert.Throws<AssertionException>(() => ComparePod(new LabelCode(null, false), new { Waarde = "", Vrijveld = false }));//no weirdness
 		}
 
 		[Test]
