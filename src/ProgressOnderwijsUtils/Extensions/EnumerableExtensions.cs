@@ -98,11 +98,4 @@ namespace ProgressOnderwijsUtils
 			return retval;
 		}
 	}
-
-
-	[TestFixture]
-	public class EnumerableExtensionsTest
-	{
-	}
-
 }
