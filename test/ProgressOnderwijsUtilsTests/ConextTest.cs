@@ -127,7 +127,7 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.BronHODB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
 		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
-		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.OntwikkelDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.OntwikkelDB)]
 		public void GetEntities(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
 		{
 			var sut = Saml20MetaData(idp, sp, db);
@@ -146,7 +146,7 @@ namespace ProgressOnderwijsUtilsTests
 		[TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.BronHODB)]
 		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.ProductieDB)]
 		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.TestDB)]
-		//[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.OntwikkelDB)]
+		[TestCase(IdentityProvider.Conext, ServiceProvider.Student, DatabaseVersion.OntwikkelDB)]
 		public void SingleSignOnService(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
 		{
 			var sut = Saml20MetaData(idp, sp, db);
