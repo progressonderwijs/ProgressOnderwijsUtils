@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.Organisatie;
+using Progress.Business.Organisaties;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Filters;
