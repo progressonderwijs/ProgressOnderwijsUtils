@@ -439,7 +439,7 @@ namespace ProgressOnderwijsUtils.Conext
 					GenerateEntity(cer, SP_ENTITY_PNET_ONTWIKKEL, "https://ontwikkel.progressnet.nl/singlesignon"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT, "https://student.progressnet.nl/oauth/sso/post"),
 					GenerateEntity(cer, SP_ENTITY_STUDENT_TEST, "https://teststudent.progressnet.nl/oauth/sso/post"),
-					GenerateEntity(cer, SP_ENTITY_STUDENT_ONTWIKKEL, "https://ontwikkelgadgets.progressnet.nl/oauth/sso/post")
+					GenerateEntity(cer, SP_ENTITY_STUDENT_ONTWIKKEL, "https://ontwikkelstudent.progressnet.nl/oauth/sso/post")
 				)
 			);
 		}
