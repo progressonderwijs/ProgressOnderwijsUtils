@@ -7,7 +7,6 @@ using NUnit.Framework;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
 	public class TemporaryIntentionallyFailingTestFixtureToTestJenkins1
 	{
 		[TestFixtureSetUp]
@@ -20,7 +19,6 @@ namespace ProgressOnderwijsUtilsTests
 		}
 	}
 
-	[TestFixture]
 	public class TemporaryIntentionallyFailingTestFixtureToTestJenkins2
 	{
 		[TestFixtureTearDown]
@@ -35,7 +33,6 @@ namespace ProgressOnderwijsUtilsTests
 		}
 	}
 
-	[TestFixture]
 	public class TemporaryIntentionallyFailingTestFixtureToTestJenkins3
 	{
 		[SetUp]
@@ -50,7 +47,6 @@ namespace ProgressOnderwijsUtilsTests
 		}
 	}
 
-	[TestFixture]
 	public class TemporaryIntentionallyFailingTestFixtureToTestJenkins4
 	{
 		[TearDown]

@@ -8,7 +8,6 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture, NightlyOnly]
 	public class EnumerableExtensionsTests
 	{
 #pragma warning disable 1720

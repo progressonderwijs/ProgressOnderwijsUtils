@@ -3,16 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 using ProgressOnderwijsUtils.WebSupport;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture,NightlyOnly]
 	public class MinifyTest
 	{
 		const string inputJS =
-@"// is.js
+			@"// is.js
 
 // (c) 2001 Douglas Crockford
 // 2001 June 3
@@ -45,11 +43,11 @@ if (is.ua.indexOf('gecko') >= 0) {
     is.gecko = true;
 }
 ";
-		const string outputIdealJS =@"var is={ie:navigator.appName==""Microsoft Internet Explorer"",java:navigator.javaEnabled(),ns:navigator.appName==""Netscape"",ua:navigator.userAgent.toLowerCase(),version:parseFloat(navigator.appVersion.substr(21))||parseFloat(navigator.appVersion),win:navigator.platform==""Win32""};is.mac=is.ua.indexOf(""mac"")>=0;if(is.ua.indexOf(""opera"")>=0){is.ie=is.ns=false;is.opera=true}if(is.ua.indexOf(""gecko"")>=0){is.ie=is.ns=false;is.gecko=true};";
-			/*@"var is={ie:navigator.appName=='Microsoft Internet Explorer',java:navigator.javaEnabled(),ns:navigator.appName=='Netscape',ua:navigator.userAgent.toLowerCase(),version:parseFloat(navigator.appVersion.substr(21))||parseFloat(navigator.appVersion),win:navigator.platform=='Win32'}
+
+		const string outputIdealJS = @"var is={ie:navigator.appName==""Microsoft Internet Explorer"",java:navigator.javaEnabled(),ns:navigator.appName==""Netscape"",ua:navigator.userAgent.toLowerCase(),version:parseFloat(navigator.appVersion.substr(21))||parseFloat(navigator.appVersion),win:navigator.platform==""Win32""};is.mac=is.ua.indexOf(""mac"")>=0;if(is.ua.indexOf(""opera"")>=0){is.ie=is.ns=false;is.opera=true}if(is.ua.indexOf(""gecko"")>=0){is.ie=is.ns=false;is.gecko=true};";
+		/*@"var is={ie:navigator.appName=='Microsoft Internet Explorer',java:navigator.javaEnabled(),ns:navigator.appName=='Netscape',ua:navigator.userAgent.toLowerCase(),version:parseFloat(navigator.appVersion.substr(21))||parseFloat(navigator.appVersion),win:navigator.platform=='Win32'}
 is.mac=is.ua.indexOf('mac')>=0;if(is.ua.indexOf('opera')>=0){is.ie=is.ns=false;is.opera=true;}
 if(is.ua.indexOf('gecko')>=0){is.ie=is.ns=false;is.gecko=true;}";*/
-
 		const string inputCss = @".noxslt {
 	background-color: #faf !important;
 	font-family: MS Sans Serif, Sans-Serif;
@@ -84,17 +82,12 @@ a.KleinVet {
 	font-size: 80%;
 	color: #365a9c;
 }
-",outputCss = @".noxslt{background-color:#faf!important;font-family:MS Sans Serif,Sans-Serif;font-size:smaller;color:#000}#reqTime{color:black;background:#eee;padding:.2em;white-space:pre-wrap;font-family:Segoe UI,Verdana,Helvetica,sans-serif;font-size:130%}.adisabled{color:Gray!important}.KleinVet{font-weight:bold;font-size:80%;color:Gray}a.KleinVet{color:#365a9c}.treebuttons,.taallinks,.statusmodule a{font-weight:bold;font-size:80%;color:#365a9c}";
+", outputCss = @".noxslt{background-color:#faf!important;font-family:MS Sans Serif,Sans-Serif;font-size:smaller;color:#000}#reqTime{color:black;background:#eee;padding:.2em;white-space:pre-wrap;font-family:Segoe UI,Verdana,Helvetica,sans-serif;font-size:130%}.adisabled{color:Gray!important}.KleinVet{font-weight:bold;font-size:80%;color:Gray}a.KleinVet{color:#365a9c}.treebuttons,.taallinks,.statusmodule a{font-weight:bold;font-size:80%;color:#365a9c}";
 
 		[Test]
-		public void MinifyJavascript()
-		{
-			PAssert.That(()=>outputIdealJS == MinifyYui.MinifyJs(inputJS));
-		}
+		public void MinifyJavascript() { PAssert.That(() => outputIdealJS == MinifyYui.MinifyJs(inputJS)); }
+
 		[Test]
-		public void MinifyCss()
-		{
-			PAssert.That(()=>outputCss == MinifyYui.MinifyCss(inputCss));
-		}
+		public void MinifyCss() { PAssert.That(() => outputCss == MinifyYui.MinifyCss(inputCss)); }
 	}
 }

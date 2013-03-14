@@ -4,11 +4,11 @@ using System.Linq;
 using NUnit.Framework;
 using Progress.Business;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public class TableValuedParameterTest
 	{
 

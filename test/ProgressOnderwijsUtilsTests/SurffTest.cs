@@ -3,11 +3,11 @@ using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Surff;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public class MetaDataFactoryTest
 	{
 		[Test]
@@ -58,9 +58,7 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.That(method(), Is.Not.Null);
 		}
 	}
-
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public class MetaDataTest
 	{
 		[Test]

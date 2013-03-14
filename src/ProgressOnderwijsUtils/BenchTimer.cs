@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -23,8 +24,7 @@ namespace ProgressOnderwijsUtils
 			return bestTime;
 		}
 	}
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public class BTTester
 	{
 		[Test]

@@ -5,11 +5,11 @@ using NUnit.Framework;
 using Progress.Business;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public sealed class SelectItemListTest : WebSessionTestSuiteBase
 	{
 		IReadOnlyList<SelectItem<int?>>  sut;

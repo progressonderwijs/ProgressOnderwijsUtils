@@ -6,11 +6,11 @@ using System.Threading;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public class StringExtensionsTest
 	{
 		[TestCase("é", "e")]

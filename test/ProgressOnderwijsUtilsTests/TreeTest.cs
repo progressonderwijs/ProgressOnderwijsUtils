@@ -4,12 +4,12 @@ using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public sealed class TreeTest
 	{
 		[Test]

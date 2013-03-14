@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public class ReferenceEqualityComparerTest
 	{
 		struct TestType

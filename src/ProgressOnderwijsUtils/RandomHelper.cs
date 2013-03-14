@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using MoreLinq;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -71,8 +72,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	sealed class RndTest
 	{
 		[Test]

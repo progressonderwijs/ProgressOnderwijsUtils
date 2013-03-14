@@ -3,11 +3,11 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public class SchemaSetTest
 	{
 		static readonly XElement VALID = new XElement(SchemaSet.SAMLP_NS + "AuthnRequest",

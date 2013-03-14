@@ -3,13 +3,13 @@ using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Test.CodeStyle;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 using ProgressOnderwijsUtils.WebSupport;
 using Progress.WebFramework.Internal;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public class CompressedUtf8StringTest
 	{
 		[Test]

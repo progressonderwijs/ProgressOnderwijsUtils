@@ -4,12 +4,12 @@ using System;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 using MoreLinq;
 
 namespace ProgressOnderwijsUtils.Data
 {
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public sealed class TestQueryComponent
 	{
 		[Test]

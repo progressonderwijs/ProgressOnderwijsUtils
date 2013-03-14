@@ -9,7 +9,6 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture, NightlyOnly]
 	public class OrderByColumnsTest
 	{
 		readonly static ColumnSort ziggyA = new ColumnSort("ziggy", SortDirection.Asc);

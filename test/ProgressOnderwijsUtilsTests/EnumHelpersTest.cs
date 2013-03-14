@@ -11,7 +11,6 @@ using Progress.WebApp.Base;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	
 	public class EnumHelpersTest
 	{
 		public enum EnumForTesting
@@ -39,21 +38,21 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void ListsValuesInOrder()
 		{
 			PAssert.That(() => new[] { EnumForTesting.AValue, EnumForTesting.BValue, EnumForTesting.XmlValue, EnumForTesting.ValueA }.SequenceEqual(EnumHelpers.GetValues<EnumForTesting>()));
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void NonEnumsThrow()
 		{
 			Assert.Throws<ArgumentException>(() => EnumHelpers.TryParse<int>("123"));
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void TryParsePlain()
 		{
 			PAssert.That(() => EnumHelpers.TryParse<EnumForTesting>("XmlValue") == EnumForTesting.XmlValue);
@@ -67,7 +66,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void GetLabel()
 		{
 			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.XmlValue).Translate(Taal.DU).Text == "Xml value");
@@ -83,7 +82,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void TryParseLabelUntyped()
 		{
 			PAssert.That(() => EnumHelpers.TryParseLabel(typeof(EnumForTesting), "Waarde A", Taal.NL).SequenceEqual(new Enum[] { EnumForTesting.AValue }));
@@ -93,7 +92,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void TryParseLabelTyped()
 		{
 			PAssert.That(() => EnumHelpers.TryParseLabel<EnumForTesting>("Waarde A", Taal.NL).SequenceEqual(new[] { EnumForTesting.AValue }));
@@ -105,7 +104,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void BasicConverteerTests()
 		{
 			foreach (var value in EnumHelpers.GetValues<EnumForTesting>())
@@ -117,7 +116,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void NullableConverteerTests()
 		{
 			PAssert.That(() => Converteer.TryParse("waarde a", typeof(EnumForTesting?), Taal.NL).Equals(Converteer.ParseResult.Ok(EnumForTesting.AValue)));
@@ -126,7 +125,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void FlagsEnumGetLabel()
 		{
 			PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.BValue).Translate(Taal.NL).ExtraText == "B");
@@ -137,7 +136,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void EnumRoundTrips()
 		{
 			foreach (var taal in EnumHelpers.GetValues<Taal>().Except(new[] { Taal.None }))
@@ -150,7 +149,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void FlagsEnumRoundTrips()
 		{
 			var values = (
@@ -167,20 +166,20 @@ namespace ProgressOnderwijsUtilsTests
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void GetAttrsOn()
 		{
 			Assert.That(EnumHelpers.GetAttrs<BronHoCodeAttribute>.On(VerblijfsvergunningType.AsielBepaaldeTijd).Single().Code, Is.EqualTo("3"));
 		}
 
 		[Test]
-		[ProgressOnderwijsUtils.Test.Continuous]
+		[Continuous]
 		public void GetAttrsFrom()
 		{
 			Assert.That(EnumHelpers.GetAttrs<BronHoCodeAttribute>.From<VerblijfsvergunningType>(attr => attr.Code == "3").Single(), Is.EqualTo(VerblijfsvergunningType.AsielBepaaldeTijd));
 		}
 
-		[NightlyOnly, Test]
+		[Test]
 		public void AllEnumsHaveUniqueLabels()
 		{
 			var enumTypes =

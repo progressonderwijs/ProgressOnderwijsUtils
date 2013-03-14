@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -104,8 +105,7 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
-	[TestFixture]
-	[ProgressOnderwijsUtils.Test.Continuous]
+	[Continuous]
 	public class DataTableExtensionsTest
 	{
 		DataTable sut;

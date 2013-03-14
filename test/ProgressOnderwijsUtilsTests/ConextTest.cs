@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtilsTests
 	}
 
 
-	[Conext, NightlyOnly]
+	[Conext]
 	public abstract class ConextTestSuite
 	{
 		protected static Saml20MetaData Saml20MetaData(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
@@ -31,7 +31,6 @@ namespace ProgressOnderwijsUtilsTests
 		}
 	}
 
-	[TestFixture]
 	public class ConextMetaDataFactoryTest : ConextTestSuite
 	{
 		[Test]
@@ -113,7 +112,6 @@ namespace ProgressOnderwijsUtilsTests
 		}
 	}
 
-	[TestFixture]
 	public class Saml20MetaDataTest : ConextTestSuite
 	{
 		[TestCase(IdentityProvider.ConextWayf, null, null)]
@@ -159,7 +157,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 	}
 
-	[TestFixture, Conext, NightlyOnly]
+	[TestFixture, Conext]
 	public class SingleSignOnHandlerTest
 	{
 		[Test]
