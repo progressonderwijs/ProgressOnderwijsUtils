@@ -9,6 +9,7 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public sealed class SelectItemListTest : WebSessionTestSuiteBase
 	{
 		IReadOnlyList<SelectItem<int?>>  sut;

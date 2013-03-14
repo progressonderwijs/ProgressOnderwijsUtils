@@ -9,6 +9,7 @@ using MoreLinq;
 namespace ProgressOnderwijsUtils.Data
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public sealed class TestQueryComponent
 	{
 		[Test]

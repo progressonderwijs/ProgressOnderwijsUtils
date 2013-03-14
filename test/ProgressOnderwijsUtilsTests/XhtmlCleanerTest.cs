@@ -9,6 +9,7 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public sealed class XhtmlCleanerTest
 	{
 		const string sample = @"<p><b>HTML sanitization</b> is the process of examining an HTML document and producing a new HTML document that preserves only whatever tags are designated ""safe"". HTML sanitization can be used to protect against <a href=""/wiki/Cross-site_scripting"" title=""Cross-site scripting"">cross-site scripting</a> attacks by sanitizing any HTML code submitted by a user.</p> 

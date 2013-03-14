@@ -28,6 +28,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public sealed class EnumerableOfStringExtensionTest
 	{
 

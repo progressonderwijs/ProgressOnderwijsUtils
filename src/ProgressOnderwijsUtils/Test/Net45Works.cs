@@ -6,6 +6,7 @@ using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils.Test
 {
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class Net45Works
 	{
 		[Test]

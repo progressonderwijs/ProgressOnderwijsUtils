@@ -9,6 +9,7 @@ using Progress.WebFramework.Internal;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class CompressedUtf8StringTest
 	{
 		[Test]

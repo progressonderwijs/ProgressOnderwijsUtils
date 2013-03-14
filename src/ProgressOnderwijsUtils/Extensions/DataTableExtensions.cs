@@ -105,6 +105,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class DataTableExtensionsTest
 	{
 		DataTable sut;

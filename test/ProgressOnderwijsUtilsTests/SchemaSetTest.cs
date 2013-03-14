@@ -7,6 +7,7 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class SchemaSetTest
 	{
 		static readonly XElement VALID = new XElement(SchemaSet.SAMLP_NS + "AuthnRequest",

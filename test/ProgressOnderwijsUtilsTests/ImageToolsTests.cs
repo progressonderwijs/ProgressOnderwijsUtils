@@ -18,6 +18,7 @@ namespace ProgressOnderwijsUtilsTests
 		}
 	}
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class ImageToolsTests
 	{
 		[Test]

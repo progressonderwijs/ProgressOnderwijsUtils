@@ -9,6 +9,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public sealed class MetaObjectBulkCopyTest : TestSuiteBase
 	{
 		static readonly BlaOk[] SampleObjects = new[] {

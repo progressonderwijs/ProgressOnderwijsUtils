@@ -72,6 +72,7 @@ namespace ProgressOnderwijsUtils
 
 
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	sealed class RndTest
 	{
 		[Test]

@@ -120,6 +120,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class DeepEqualsTest
 	{
 		[Test]

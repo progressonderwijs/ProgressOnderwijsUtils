@@ -10,6 +10,7 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class StringExtensionsTest
 	{
 		[TestCase("é", "e")]

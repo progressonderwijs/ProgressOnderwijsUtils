@@ -43,6 +43,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class GroupReferenceTest
 	{
 		[Test]

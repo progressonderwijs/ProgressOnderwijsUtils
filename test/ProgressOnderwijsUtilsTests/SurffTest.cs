@@ -7,6 +7,7 @@ using ProgressOnderwijsUtils.Surff;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class MetaDataFactoryTest
 	{
 		[Test]
@@ -59,6 +60,7 @@ namespace ProgressOnderwijsUtilsTests
 	}
 
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class MetaDataTest
 	{
 		[Test]

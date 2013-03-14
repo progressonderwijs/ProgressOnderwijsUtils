@@ -9,6 +9,7 @@ using ProgressOnderwijsUtils.Collections;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public sealed class SListTest
 	{
 		[Test]

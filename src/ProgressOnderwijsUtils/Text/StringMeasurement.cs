@@ -64,6 +64,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class StringMeasurementTest
 	{
 #if ENABLE_GDI_MEASUREMENT

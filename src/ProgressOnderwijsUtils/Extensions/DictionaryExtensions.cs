@@ -125,6 +125,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public sealed class DictionaryExtensionsTests
 	{
 		[Test]

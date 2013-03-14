@@ -8,6 +8,7 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtilsTests
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class NonceStoreTest
 	{
 		private static IEnumerable<TestCaseData> NonceStoreItemEqualityData()

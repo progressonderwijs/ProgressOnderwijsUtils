@@ -4,6 +4,7 @@ using NUnit.Framework;
 namespace ProgressOnderwijsUtils
 {
 	[TestFixture]
+	[ProgressOnderwijsUtils.Test.Continuous]
 	public class ReferenceEqualityComparerTest
 	{
 		struct TestType
