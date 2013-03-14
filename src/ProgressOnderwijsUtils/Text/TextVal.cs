@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils
 		public static bool operator !=(TextVal a, TextVal b) { return !(a == b); }
 		public override bool Equals(object obj) { return obj != null && obj is TextVal && this == (TextVal)obj; }
 		public override int GetHashCode() { return (m_text == null ? 0 : m_text.GetHashCode()) + (m_helptext == null ? 0 : 137 * m_helptext.GetHashCode()); }
-		public override string ToString() { return "Text: " + Text + "\nHelpText: " + ExtraText; }
+		public override string ToString() { return "\"" + Text + "\"/\"" + ExtraText + "\""; }
 
 		public static TextVal Create(string text, string helptext) { return new TextVal(text, helptext); }
 		public static TextVal Create(string text) { return new TextVal(text, ""); }
