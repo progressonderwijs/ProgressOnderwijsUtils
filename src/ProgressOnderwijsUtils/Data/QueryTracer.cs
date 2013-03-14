@@ -7,9 +7,8 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using MoreLinq;
-using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtils.Data
+namespace ProgressOnderwijsUtils
 {
 	public sealed class QueryTracer
 	{

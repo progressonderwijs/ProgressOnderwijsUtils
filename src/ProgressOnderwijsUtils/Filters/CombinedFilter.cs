@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace ProgressOnderwijsUtils.Filters
+namespace ProgressOnderwijsUtils
 {
 	[Serializable]
 	public sealed class CombinedFilter : FilterBase, IEquatable<CombinedFilter>

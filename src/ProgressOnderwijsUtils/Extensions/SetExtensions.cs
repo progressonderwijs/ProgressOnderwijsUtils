@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProgressOnderwijsUtils.Collections;
 
-namespace ProgressOnderwijsUtils.Extensions
+namespace ProgressOnderwijsUtils
 {
 	public static class SetExtensions
 	{

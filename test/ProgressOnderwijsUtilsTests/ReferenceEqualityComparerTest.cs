@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtilsTests
 {
 	[Continuous]
 	public class ReferenceEqualityComparerTest

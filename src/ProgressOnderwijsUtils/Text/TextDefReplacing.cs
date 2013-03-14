@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
-using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtils.Text
+namespace ProgressOnderwijsUtils
 {
 	public sealed class TextDefReplacing : ITranslatable
 	{

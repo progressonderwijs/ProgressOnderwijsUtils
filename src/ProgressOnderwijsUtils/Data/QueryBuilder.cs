@@ -4,8 +4,6 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using ProgressOnderwijsUtils.Data;
-using ProgressOnderwijsUtils.Filters;
 
 namespace ProgressOnderwijsUtils
 {

@@ -3,7 +3,9 @@ using NUnit.Framework;
 
 
 [SetUpFixture]
+// ReSharper disable CheckNamespace
 public sealed class RegisterTestingProgressTools //may not be in a namespace!
+// ReSharper restore CheckNamespace
 {
 	static int testsLoaded;
 	public static bool ShouldUseTestLocking { get { return testsLoaded > 0; } }

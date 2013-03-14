@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils.DeploymentScriptingUtils
 {
 	/// <summary>
 	/// Useful in LINQpad queries

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Data;
 using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
