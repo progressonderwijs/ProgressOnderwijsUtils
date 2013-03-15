@@ -210,9 +210,9 @@ namespace ProgressOnderwijsUtils
 
 		public static class GetAttrs<TAttr> where TAttr : Attribute
 		{
-			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible 
+			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible
 			{
-				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal]; 
+				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal];
 			}
 
 			public static IEnumerable<T> From<T>(Func<TAttr, bool> pred) where T : struct, IConvertible
@@ -270,6 +270,14 @@ namespace ProgressOnderwijsUtils
 			where TEnum : struct, IConvertible
 		{
 			return SelectItem.Create(f, f == null ? TextDefSimple.EmptyText : GetLabel(f.Value));
+		}
+
+		public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
+			this IReadOnlyList<SelectItem<TEnum?>> enumSelectItemList)
+			where TEnum : struct, IConvertible
+		{
+			return enumSelectItemList.Select(item => SelectItem.Create(item.Value.HasValue ? (int?)item.Value.Value.ToInt32(null) : default(int?), item.Label))
+				.ToArray();
 		}
 
 
