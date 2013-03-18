@@ -35,7 +35,6 @@ namespace ProgressOnderwijsUtilsTests
 	}
 
 
-	[TestFixture, NightlyOnly]
 	public class AbstractCachedDataTest
 	{
 		[Test]

@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
+	[Continuous]
 	public class NonceStoreTest
 	{
 		private static IEnumerable<TestCaseData> NonceStoreItemEqualityData()

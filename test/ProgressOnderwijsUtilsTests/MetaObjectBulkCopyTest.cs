@@ -6,9 +6,11 @@ using NUnit.Framework;
 using Progress.Business;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
+	[Continuous]
 	public sealed class MetaObjectBulkCopyTest : TestSuiteBase
 	{
 		static readonly BlaOk[] SampleObjects = new[] {

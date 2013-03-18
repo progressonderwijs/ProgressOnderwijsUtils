@@ -5,10 +5,11 @@ using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Collections;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
+	[Continuous]
 	public sealed class SListTest
 	{
 		[Test]

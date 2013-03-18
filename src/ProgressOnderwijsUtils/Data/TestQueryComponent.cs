@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 using MoreLinq;
 
-namespace ProgressOnderwijsUtils.Data
+namespace ProgressOnderwijsUtils
 {
-	[TestFixture]
+	[Continuous]
 	public sealed class TestQueryComponent
 	{
 		[Test]

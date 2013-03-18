@@ -5,10 +5,11 @@ using System.Reflection;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
+	[Continuous]
 	public sealed class MetaObjectRequirements
 	{
 		[Test]

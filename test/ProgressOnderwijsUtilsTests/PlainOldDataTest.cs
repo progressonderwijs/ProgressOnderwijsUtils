@@ -5,6 +5,7 @@ using System.Reflection;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 using TheJoyOfCode.QualityTools;
 
 namespace ProgressOnderwijsUtilsTests
@@ -15,7 +16,7 @@ namespace ProgressOnderwijsUtilsTests
 	/// Om eentje toe te voegen, maak een nieuwe test en roep ComparePod(A,B) aan, waarbij A en B propery-voor-property vergeleken worden.
 	/// e.g. ComparePod(Tuple.Create(1,"z"), new {Item1 = 1, Item2 = "z"}) zou goed moeten gaan.
 	/// </summary>
-	[TestFixture]
+	[Continuous]
 	public sealed class PlainOldDataTest
 	{
 		static Func<T, S> MakeFunc<T, S>(Func<T, S> f) { return f; }
@@ -53,9 +54,9 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void SanityCheck()
 		{
-			Assert.Throws<PAssertFailedException>(() => ComparePod(new LabelCode("abc", false), new { waarde = "abc", Vrijveld = false }));//case-sensitive
-			Assert.Throws<PAssertFailedException>(() => ComparePod(new LabelCode("abc", false), new { Waarde = "Abc", Vrijveld = false }));//value-sensitive
-			Assert.Throws<PAssertFailedException>(() => ComparePod(new LabelCode(null, false), new { Waarde = "", Vrijveld = false }));//no weirdness
+			Assert.Throws<AssertionException>(() => ComparePod(new LabelCode("abc", false), new { waarde = "abc", Vrijveld = false }));//case-sensitive
+			Assert.Throws<AssertionException>(() => ComparePod(new LabelCode("abc", false), new { Waarde = "Abc", Vrijveld = false }));//value-sensitive
+			Assert.Throws<AssertionException>(() => ComparePod(new LabelCode(null, false), new { Waarde = "", Vrijveld = false }));//no weirdness
 		}
 
 		[Test]

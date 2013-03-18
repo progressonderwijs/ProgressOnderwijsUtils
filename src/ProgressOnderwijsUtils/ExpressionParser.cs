@@ -259,7 +259,6 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 #region Tests
-	[TestFixture]
 	public class ExpressionParserTest
 	{
 		[Test]

@@ -9,7 +9,6 @@ using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {

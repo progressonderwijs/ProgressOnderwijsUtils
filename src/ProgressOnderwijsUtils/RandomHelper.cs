@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using MoreLinq;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -68,41 +69,41 @@ namespace ProgressOnderwijsUtils
 				sb.Append((char)(GetUInt32(letters) + min));
 			return sb.ToString();
 		}
+	}
 
 
-		[TestFixture]
-		sealed class RndTest
+	[Continuous]
+	sealed class RndTest
+	{
+		[Test]
+		public void CheckRandomBasic()
 		{
-			[Test]
-			public void CheckRandomBasic()
-			{
-				HashSet<uint> numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
-				Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => GetUInt32()).Take(10000).Any(num => num > int.MaxValue));
-				Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => GetInt64()).Take(10000).Any(num => num > uint.MaxValue));
-				Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => GetUInt64()).Take(10000).Any(num => num > long.MaxValue));
-				Assert.IsTrue(numTo37.SetEquals(MoreEnumerable.GenerateByIndex(i => GetUInt32(37)).Take(10000))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
-			}
+			HashSet<uint> numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
+			Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32()).Take(10000).Any(num => num > Int32.MaxValue));
+			Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetInt64()).Take(10000).Any(num => num > UInt32.MaxValue));
+			Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt64()).Take(10000).Any(num => num > Int64.MaxValue));
+			Assert.IsTrue(numTo37.SetEquals(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32(37)).Take(10000))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
+		}
 
-			[Test]
-			public void CheckString()
+		[Test]
+		public void CheckString()
+		{
+			for (int i = 0; i < 50; i++)
 			{
-				for (int i = 0; i < 50; i++)
-				{
-					int len = (int)GetUInt32(300);
-					string str = GetStringOfLatinLower(len);
-					Assert.That(str.Length == len);
-					Assert.IsFalse(str.AsEnumerable().Any(c => c < 'a' || c > 'z'));
-				}
+				int len = (int)RandomHelper.GetUInt32(300);
+				string str = RandomHelper.GetStringOfLatinLower(len);
+				Assert.That(str.Length == len);
+				Assert.IsFalse(str.AsEnumerable().Any(c => c < 'a' || c > 'z'));
 			}
+		}
 
-			[Test]
-			public void CheckStrings()
-			{
-				Assert.That(GetStringOfNumbers(10), Is.StringMatching("[0-9]{10}"));
-				Assert.That(GetStringCapitalized(10), Is.StringMatching("[A-Z][a-z]{9}"));
-				Assert.That(GetStringOfLatinLower(7) , Is.StringMatching("[a-z]{7}"));
-				//Assert.That(RandomHelper. (10), Is.StringMatching("[0-9]{10}"));
-			}
+		[Test]
+		public void CheckStrings()
+		{
+			Assert.That(RandomHelper.GetStringOfNumbers(10), Is.StringMatching("[0-9]{10}"));
+			Assert.That(RandomHelper.GetStringCapitalized(10), Is.StringMatching("[A-Z][a-z]{9}"));
+			Assert.That(RandomHelper.GetStringOfLatinLower(7) , Is.StringMatching("[a-z]{7}"));
+			//Assert.That(RandomHelper. (10), Is.StringMatching("[0-9]{10}"));
 		}
 	}
 }

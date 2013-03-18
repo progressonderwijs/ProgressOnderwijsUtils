@@ -4,9 +4,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtils.Data
+namespace ProgressOnderwijsUtils
 {
 	public interface IColumnDefinition {
 		Type DataType { get; }

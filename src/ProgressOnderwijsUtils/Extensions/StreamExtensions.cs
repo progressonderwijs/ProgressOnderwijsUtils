@@ -2,6 +2,7 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -28,7 +29,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 	}
-	[TestFixture]
+	[Continuous]
 	public class StreamExtensionsTestClass
 	{
 		[Test]

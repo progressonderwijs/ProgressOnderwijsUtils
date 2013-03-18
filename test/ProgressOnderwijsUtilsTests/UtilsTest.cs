@@ -5,14 +5,14 @@ using System.Linq;
 using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
+using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
 	public sealed class UtilsTest
 	{
-		[Test, NightlyOnly]
+		[Test]
 		public void ToSortableStringTest()
 		{
 			var cmp = StringComparer.Ordinal;
@@ -33,6 +33,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test]
+		[Continuous]
 		public void SwapValue()
 		{
 			int one = 1;
@@ -43,6 +44,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test]
+		[Continuous]
 		public void SwapReference()
 		{
 			string one = "1";
@@ -53,6 +55,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test]
+		[Continuous]
 		public void InClause()
 		{
 			PAssert.That(() => Utils.SqlInClause(new int[] { }) == "(null)");
@@ -63,6 +66,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test]
+		[Continuous]
 		public void NUnitSession() { Assert.That(Utils.IsInTestSession()); }
 
 		IEnumerable<TestCaseData> MaandSpan()
@@ -78,6 +82,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test, TestCaseSource("MaandSpan")]
+		[Continuous]
 		public int MaandSpanTest(DateTime d1, DateTime d2) { return Utils.MaandSpan(d1, d2); }
 
 		IEnumerable<TestCaseData> DateMax()
@@ -93,6 +98,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test]
+		[Continuous]
 		public void IsDbConnFailureTest()
 		{
 			PAssert.That(() => !Utils.IsDbConnectionFailure(new Exception()));
@@ -105,6 +111,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Test]
+		[Continuous]
 		public void DateMaxTest()
 		{
 			DateTime? d1 = null;
@@ -159,6 +166,7 @@ namespace ProgressOnderwijsUtils
 		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true),
 		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true),
 		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
+		[Continuous]
 		public bool GenerateForLanguage(DocumentLanguage doc, Taal language) { return Utils.GenerateForLanguage(doc, language); }
 	}
 }

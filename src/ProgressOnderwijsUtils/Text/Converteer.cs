@@ -1,11 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using MoreLinq;
-using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Text;
 
 namespace ProgressOnderwijsUtils
@@ -67,7 +65,7 @@ namespace ProgressOnderwijsUtils
 			{ DatumFormaat.ISODateTime, Tuple.Create("yyyy-MM-ddTHH:mm:ss", (string)null) },
 		};
 		static readonly DateTime dtWithManyDigits = new DateTime(2000, 1, 1) - TimeSpan.FromDays(1) - TimeSpan.FromHours(1) - TimeSpan.FromMinutes(1) - TimeSpan.FromSeconds(1) - TimeSpan.FromMilliseconds(1) - TimeSpan.FromTicks(1);
-		static readonly Dictionary<DatumFormaat, int> formaatLengte = DATE_FORMATS.Keys.ToDictionary(k => k, k => new[] { Taal.NL, Taal.EN, Taal.DU }.Select(t => dtWithManyDigits.ToString(DATE_FORMATS[k].Item1, t.GetCulture()).Length).Max());
+		static readonly Dictionary<DatumFormaat, int> formaatLengte = DATE_FORMATS.Keys.ToDictionary(k => k, k => new[] { Taal.NL, Taal.EN, Taal.DU }.Select(t => dtWithManyDigits.ToString(DATE_FORMATS[k].Item1, Translator.GetCulture(t)).Length).Max());
 
 		public static int DateTimeStringLengthForFormat(DatumFormaat formaat) { return formaatLengte[formaat]; }
 

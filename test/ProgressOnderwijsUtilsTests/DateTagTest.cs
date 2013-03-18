@@ -8,7 +8,6 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture, NightlyOnly]
 	public sealed class DateTagTest
 	{
 		[Test]

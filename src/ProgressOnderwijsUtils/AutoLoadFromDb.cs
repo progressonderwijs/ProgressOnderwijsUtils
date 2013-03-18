@@ -15,7 +15,6 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
-using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
@@ -167,7 +166,7 @@ namespace ProgressOnderwijsUtils
 			return mappings.SelectMany(
 				map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
 				.ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
-		}
+		}	
 		static readonly AssemblyBuilder assemblyBuilder;
 		static readonly ModuleBuilder moduleBuilder;
 		static int counter;
@@ -260,7 +259,7 @@ namespace ProgressOnderwijsUtils
 			}
 
 			public static class ByFieldImpl<T>
-	where T : IReadByFields, new()
+			where T : IReadByFields, new()
 			{
 
 				sealed class ColumnOrdering : IEquatable<ColumnOrdering>
@@ -308,7 +307,7 @@ namespace ProgressOnderwijsUtils
 					}
 					catch (ArgumentException argE)
 					{
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByFields's writable fields & properties must have a case insensitively unique name", argE);
+						throw new ArgumentException(FriendlyName + " : IReadByFields's writable fields & properties must have a case insensitively unique name", argE);
 					}
 
 					ColHashPrimes = Utils.Primes().Take(GetMember.Count).Select(i => (uint)i).ToArray();
@@ -327,20 +326,20 @@ namespace ProgressOnderwijsUtils
 				{
 
 					if (!type.IsSealed)
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByFields must be a public, sealed type!");
+						throw new ArgumentException(FriendlyName + " : IReadByFields must be a public, sealed type!");
 
 #if false
 					if (!type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery"))
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByFields must have a public static method DbQuery that returns a QueryBuilder");
+						throw new ArgumentException(FriendlyName + " : IReadByFields must have a public static method DbQuery that returns a QueryBuilder");
 					if (type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery" && mi.ReturnType != typeof(QueryBuilder)))
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByFields's DbQuery does not return QueryBuilder");
+						throw new ArgumentException(FriendlyName + " : IReadByFields's DbQuery does not return QueryBuilder");
 #endif
 					if (type.GetConstructors().All(ci => ci.GetParameters().Any()) && !type.IsValueType)
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByFields must have a parameterless public constructor.");
+						throw new ArgumentException(FriendlyName + " : IReadByFields must have a parameterless public constructor.");
 
 
 					if (!GetMember.Values.All(mi => SupportsType(MemberType(mi))))
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByFields's writable fields & properties must have only simple types: cannot support "
+						throw new ArgumentException(FriendlyName + " : IReadByFields's writable fields & properties must have only simple types: cannot support "
 							+ GetMember.Where(miKV => !SupportsType(MemberType(miKV.Value))).Select(miKV => ObjectToCode.GetCSharpFriendlyTypeName(MemberType(miKV.Value)) + " " + miKV.Key).JoinStrings(", "));
 
 				}

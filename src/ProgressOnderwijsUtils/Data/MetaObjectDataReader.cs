@@ -5,10 +5,9 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using ProgressOnderwijsUtils;
 using MoreLinq;
 
-namespace ProgressOnderwijsUtils.Data
+namespace ProgressOnderwijsUtils
 {
 	public sealed class MetaObjectDataReader<T> : DbDataReaderBase where T : IMetaObject
 	{

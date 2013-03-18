@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
-using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtils.Text
+namespace ProgressOnderwijsUtils
 {
 	public delegate string TranslateFunction(Taal taal = Taal.NL);
 	public static class ConverteerHelper

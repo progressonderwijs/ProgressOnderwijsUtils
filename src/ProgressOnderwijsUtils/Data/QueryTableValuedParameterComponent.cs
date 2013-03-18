@@ -4,10 +4,9 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils;
 using MoreLinq;
 
-namespace ProgressOnderwijsUtils.Data
+namespace ProgressOnderwijsUtils
 {
 	sealed class QueryTableValuedParameterComponent<T> : IQueryParameter where T : IMetaObject
 	{
