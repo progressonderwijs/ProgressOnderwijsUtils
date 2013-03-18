@@ -9,33 +9,6 @@ namespace ProgressOnderwijsUtils
 {
 	public enum ToegangsRol
 	{
-		[MpLabel("Lege rol")]
-		[RolSoort.Oud]
-		LegeRol = -36,
-
-		[MpLabel("Nieuwe structuur: volg onderwijs beheer alles")]
-		[RolSoort.Oud, ImpliedBy(Superuser0)]
-		NieuweStructuur_VolgOnderwijsBeheerAlles = -33,
-
-		[MpLabel("Nieuwe structuur: organisatietabblad alleen inkijken")]
-		[RolSoort.Oud, ImpliedBy(NieuweStructuur_VolgOnderwijsBeheerAlles, Superuser0)]
-		NieuweStructuur_OrganisatietabbladAlleenInkijken = -32,
-
-		[MpLabel("Nieuwe structuur: studenttabblad financieel inkijken (was 23)")]
-		[RolSoort.Oud, ImpliedBy(Superuser0)]
-		NieuweStructuur_StudenttabbladFinancieelInkijkenWas23 = -31,
-
-		[MpLabel("Nieuwe structuur: bekijken inschrijvingen basis")]
-		[RolSoort.Oud, ImpliedBy(NieuweStructuur_OrganisatietabbladAlleenInkijken, Superuser0)]
-		NieuweStructuur_BekijkenInschrijvingenBasis = -30,
-
-		[MpLabel("Gebruik webservices")]
-		[RolSoort.Oud, ImpliedBy(Superuser0)]
-		GebruikWebservices = -29,
-
-		[MpLabel("Onderwijsadministratie")]
-		[RolSoort.Oud, ImpliedBy(Superuser0)]
-		Onderwijsadministratie = -28,
 
 		[MpLabel("Studentadministratie voorlopige toelating")]
 		[RolSoort.Oud, ImpliedBy(Studentadministratie)]
@@ -73,40 +46,32 @@ namespace ProgressOnderwijsUtils
 		[RolSoort.Oud, ImpliedBy(StudentadministratieExtra)]
 		Studentadministratie = -18,
 
-		[MpLabel("Kengetallen")]
-		[RolSoort.Oud, ImpliedBy(Superuser0)]
-		Kengetallen = -17,
-
 		[MpLabel("Studentadministratie beheerder")]
-		[RolSoort.Oud, ImpliedBy(Superuser0)]
+		[RolSoort.Oud]
 		StudentadministratieBeheerder = -5,
 
 		[MpLabel("Studentadministratie extra")]
 		[RolSoort.Oud, ImpliedBy(StudentadministratieBeheerder)]
 		StudentadministratieExtra = -4,
 
-		[MpLabel("Superuser 0")]
-		[RolSoort.Oud]
-		Superuser0 = 0,
-
 		[MpLabel("Bekijken wijzigen verwijderen alle tabellen")]
-		[RolSoort.Recht, ImpliedBy(Superuser0, Superuser)]
+		[RolSoort.Recht, ImpliedBy(Superuser)]
 		BekijkenWijzigenVerwijderenAlleTabellen = 1,
 
 		[MpLabel("Student bekijk personalia")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
 		StudentBekijkPersonalia = 2,
 
 		[MpLabel("Organisatie toevoegen verwijderen wijzigen")]
-		[RolSoort.Recht, ImpliedBy(StudentadministratieBeheerder, Superuser0, BeheerInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieBeheerder, BeheerInschrijvingen)]
 		OrganisatieToevoegenVerwijderenWijzigen = 4,
 
 		[MpLabel("Organisatieboom bekijken selecteren")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_OrganisatietabbladAlleenInkijken, StudentadministratieVoorlopigeToelating, StudentadministratieAlleenInkijken, StudentadministratieNietReguliereInschrijvingen, Studentadministratie, Kengetallen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieVoorlopigeToelating, StudentadministratieAlleenInkijken, StudentadministratieNietReguliereInschrijvingen, Studentadministratie)]
 		OrganisatieboomBekijkenSelecteren = 5,
 
 		[MpLabel("Rapporten kengetallen")]
-		[RolSoort.Recht, ImpliedBy(Kengetallen, StudentadministratieExtra, BekijkenKengetallen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieExtra, BekijkenKengetallen)]
 		RapportenKengetallen = 30,
 
 		[MpLabel("Student wijzig personalia")]
@@ -118,7 +83,7 @@ namespace ProgressOnderwijsUtils
 		StudentVerwijderen = 33,
 
 		[MpLabel("Opleidingen bekijken")]
-		[RolSoort.Recht, ImpliedBy(Studentadministratie, Kengetallen, BeheerInschrijvingen, BeheerGetuigschriften)]
+		[RolSoort.Recht, ImpliedBy(Studentadministratie, BeheerInschrijvingen, BeheerGetuigschriften)]
 		OpleidingenBekijken = 35,
 
 		[MpLabel("Opleidingen toevoegen verwijderen wijzigen")]
@@ -126,15 +91,15 @@ namespace ProgressOnderwijsUtils
 		OpleidingenToevoegenVerwijderenWijzigen = 36,
 
 		[MpLabel("Accounts toevoegen verwijderen wijzigen")]
-		[RolSoort.Recht, ImpliedBy(Superuser0, BeheerAccountsEnRollen)]
+		[RolSoort.Recht, ImpliedBy(BeheerAccountsEnRollen)]
 		AccountsToevoegenVerwijderenWijzigen = 37,
 
 		[MpLabel("Student tabblad")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieVoorlopigeToelating, StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieVoorlopigeToelating, StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
 		StudentTabblad = 38,
 
 		[MpLabel("Bekijken wijzigen verwijderen meta data")]
-		[RolSoort.Recht, ImpliedBy(Superuser0, Superuser)]
+		[RolSoort.Recht, ImpliedBy(Superuser)]
 		BekijkenWijzigenVerwijderenMetaData = 42,
 
 		[MpLabel("Inschrijving basis tabellen bekijken")]
@@ -170,11 +135,11 @@ namespace ProgressOnderwijsUtils
 		StudentPasfotoToevoegenVerwijderen = 50,
 
 		[MpLabel("Student persoon tabblad")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
 		StudentPersoonTabblad = 51,
 
 		[MpLabel("Inschrijvingen tabblad")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieVoorlopigeToelating, StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieVoorlopigeToelating, StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
 		InschrijvingenTabblad = 52,
 
 		[MpLabel("Student financieel tabblad")]
@@ -198,11 +163,11 @@ namespace ProgressOnderwijsUtils
 		VooropleidingenVerifieeren = 59,
 
 		[MpLabel("Vooropleidingen bekijken")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieBalieAlleenStudenttabblad, BekijkenInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieBalieAlleenStudenttabblad, BekijkenInschrijvingen)]
 		VooropleidingenBekijken = 60,
 
 		[MpLabel("Aanmeldingen bekijken")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieVoorlopigeToelating, StudentadministratieBalieAlleenStudenttabblad, BekijkenInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieVoorlopigeToelating, StudentadministratieBalieAlleenStudenttabblad, BekijkenInschrijvingen)]
 		AanmeldingenBekijken = 61,
 
 		[MpLabel("Aanmeldingen toevoegen wijzigen")]
@@ -262,11 +227,11 @@ namespace ProgressOnderwijsUtils
 		StudielinkberichtenBekijken = 75,
 
 		[MpLabel("Studielinkberichten beheer")]
-		[RolSoort.Recht, ImpliedBy(Superuser0, Superuser, BeheerStudielink)]
+		[RolSoort.Recht, ImpliedBy(Superuser, BeheerStudielink)]
 		StudielinkberichtenBeheer = 76,
 
 		[MpLabel("Inschrijvingen bekijken")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieVoorlopigeToelating, StudentadministratieBalieAlleenStudenttabblad, BekijkenInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieVoorlopigeToelating, StudentadministratieBalieAlleenStudenttabblad, BekijkenInschrijvingen)]
 		InschrijvingenBekijken = 77,
 
 		[MpLabel("Financieel betalingsinformatie bekijken")]
@@ -278,7 +243,7 @@ namespace ProgressOnderwijsUtils
 		FinancieelBetalingsinformatieToevoegenWijzigenVerwijderen = 80,
 
 		[MpLabel("Student identificatie bekijken")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieBalieAlleenStudenttabblad, BekijkenInschrijvingenUitgebreid)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieBalieAlleenStudenttabblad, BekijkenInschrijvingenUitgebreid)]
 		StudentIdentificatieBekijken = 81,
 
 		[MpLabel("Financieel clieop toevoegen verwijderen wijzigen")]
@@ -290,7 +255,7 @@ namespace ProgressOnderwijsUtils
 		FinancieelClieopBekijken = 83,
 
 		[MpLabel("Niet reguliere inschrijvingen bekijken")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
 		NietReguliereInschrijvingenBekijken = 84,
 
 		[MpLabel("Niet reguliere inschrijvingen wijzigen verwijderen")]
@@ -326,7 +291,7 @@ namespace ProgressOnderwijsUtils
 		StudentToevoegen = 92,
 
 		[MpLabel("Student adres bekijken")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_BekijkenInschrijvingenBasis, StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
 		StudentAdresBekijken = 93,
 
 		[MpLabel("Student adres toevoegen")]
@@ -358,7 +323,7 @@ namespace ProgressOnderwijsUtils
 		OrganisatieFinancieelCollegegeldTabelBeheer = 100,
 
 		[MpLabel("Organisatie onderwijs tab")]
-		[RolSoort.Recht, ImpliedBy(Superuser0, BekijkenStudievolg)]
+		[RolSoort.Recht, ImpliedBy(BekijkenStudievolg)]
 		OrganisatieOnderwijsTab = 101,
 
 		[MpLabel("Examenstabblad")]
@@ -374,7 +339,7 @@ namespace ProgressOnderwijsUtils
 		StudentTaaltoetstabblad = 104,
 
 		[MpLabel("Webservice alle tabellen lezen")]
-		[RolSoort.Recht, ImpliedBy(GebruikWebservices)]
+		[RolSoort.Recht]
 		WebserviceAlleTabellenLezen = 105,
 
 		[MpLabel("Document templates")]
@@ -398,27 +363,27 @@ namespace ProgressOnderwijsUtils
 		BbcAfdrukken = 110,
 
 		[MpLabel("Student communicatie tabblad")]
-		[RolSoort.Recht, ImpliedBy(StudentadministratieBalieAlleenStudenttabblad, Superuser0, Superuser, BekijkenInschrijvingenUitgebreid, WijzigenCrm)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieBalieAlleenStudenttabblad, Superuser, BekijkenInschrijvingenUitgebreid, WijzigenCrm)]
 		StudentCommunicatieTabblad = 111,
 
 		[MpLabel("Student communicatie toevoegen verwijderen wijzigen")]
-		[RolSoort.Recht, ImpliedBy(StudentadministratieAlleenInkijken, StudentadministratieExtra, Superuser0, WijzigenInschrijvingenEnAanmeldingen, WijzigenCrm)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieAlleenInkijken, StudentadministratieExtra, WijzigenInschrijvingenEnAanmeldingen, WijzigenCrm)]
 		StudentCommunicatieToevoegenVerwijderenWijzigen = 112,
 
 		[MpLabel("Communicatie template toevoegen verwijderen wijzigen")]
-		[RolSoort.Recht, ImpliedBy(Superuser0, Superuser, BeheerGetuigschriften)]
+		[RolSoort.Recht, ImpliedBy(Superuser, BeheerGetuigschriften)]
 		CommunicatieTemplateToevoegenVerwijderenWijzigen = 113,
 
 		[MpLabel("Volg onderwijs beheer alles")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_VolgOnderwijsBeheerAlles, BeheerStudievolg)]
+		[RolSoort.Recht, ImpliedBy(BeheerStudievolg)]
 		VolgOnderwijsBeheerAlles = 114,
 
 		[MpLabel("Volg onderwijs beheer beperkt")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_VolgOnderwijsBeheerAlles, WijzigenStudievolg)]
+		[RolSoort.Recht, ImpliedBy(WijzigenStudievolg)]
 		VolgOnderwijsBeheerBeperkt = 115,
 
 		[MpLabel("Volg onderwijs inzien")]
-		[RolSoort.Recht, ImpliedBy(NieuweStructuur_VolgOnderwijsBeheerAlles, BekijkenStudievolg)]
+		[RolSoort.Recht, ImpliedBy(BekijkenStudievolg)]
 		VolgOnderwijsInzien = 116,
 
 		[MpLabel("Bekijken kengetallen")]
