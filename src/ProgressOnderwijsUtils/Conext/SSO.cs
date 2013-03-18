@@ -106,10 +106,10 @@ namespace ProgressOnderwijsUtils.Conext
 			return ReceiveSamlResponse(request, out relayState);
 		}
 
-		public static Surff.Attributes? Process(XElement response, IdentityProvider idp)
+		public static Attributes? Process(XElement response, IdentityProvider idp)
 		{
 			var assertion = GetAssertion(response, idp);
-			return assertion == null ? default(Surff.Attributes?) : GetAttributes(assertion, idp);
+			return assertion == null ? default(Attributes?) : GetAttributes(assertion, idp);
 		}
 
 		public static XElement GetAssertion(XElement response, IdentityProvider idp)
@@ -127,12 +127,12 @@ namespace ProgressOnderwijsUtils.Conext
 			return null;
 		}
 
-		public static Surff.Attributes GetAttributes(XElement assertion, IdentityProvider idp)
+		public static Attributes GetAttributes(XElement assertion, IdentityProvider idp)
 		{
 			LOG.Debug(() => string.Format("GetAttributes(assertion='{0}')", assertion));
 
 			MetaDataFactory.Validate(assertion, MetaDataFactory.GetIdentityProvider(idp).certificate);
-			return new Surff.Attributes
+			return new Attributes
 			{
 				uid = GetAttribute(assertion, UID),
 				domain = GetAttribute(assertion, DOMAIN),
