@@ -38,6 +38,20 @@ namespace ProgressOnderwijsUtils.Conext
 		RuG,
 	}
 
+	public struct Attributes
+	{
+		public string uid;
+		public string domain;
+		public IEnumerable<string> email;
+		public IEnumerable<string> roles;
+
+		public override string ToString()
+		{
+			return string.Format("uid='{0}'; domain='{1}'; emails='{2}'; roles='{3}'",
+				uid, domain, StringUtils.ToFlatDebugString(email), StringUtils.ToFlatDebugString(roles));
+		}
+	}
+
 	public static class SSO
 	{
 		private struct AuthnRequest
