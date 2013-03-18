@@ -710,7 +710,7 @@ namespace ProgressOnderwijsUtils
 		TakenVanIedereenWijzigenVerwijderenAnnuleren = 216,
 
 		[MpLabel("Beheer getuigschriften")]
-		[RolSoort.Nieuw, ImpliedBy(Superuser, Combi_BeheerAlles)]
+		[RolSoort.Nieuw, ImpliedBy(Superuser, Combi_BeheerAlles, Combi_FontysBeheerFO)]
 		BeheerGetuigschriften = 217,
 
 		[MpLabel("Bekijken cursusdeelnames en aanbod")]
@@ -718,7 +718,7 @@ namespace ProgressOnderwijsUtils
 		BekijkenCursusdeelnamesEnAanbod = 218,
 
 		[MpLabel("Wijzigen cursusaanbod")]
-		[RolSoort.Nieuw, ImpliedBy(BeheerCursusaanbodCursusdeelnames)]
+		[RolSoort.Nieuw, ImpliedBy(BeheerCursusaanbodCursusdeelnames, Combi_FontysBeheerFO)]
 		WijzigenCursusaanbod = 219,
 
 		[MpLabel("Cursus stam tabellen toevoegen wijzigen verwijderen")]
@@ -734,7 +734,7 @@ namespace ProgressOnderwijsUtils
 		StudentRichtingToevoegenWijzigenVerwijderen = 222,
 
 		[MpLabel("COMBI: bekijk inschrijving/financieel/studielink/cursus")]
-		[RolSoort.Nieuw]
+		[RolSoort.Nieuw, ImpliedBy(Combi_FontysBeheerFO)]
 		Combi_BekijkInschrijvingFinancieelStudielinkCursus = 223,
 
 		[MpLabel("COMBI: beheer alles")]
@@ -744,6 +744,10 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Document generatie vooropleidingen")]
 		[RolSoort.Recht]
 		DocumentGeneratieVooropleidingen = 225,
+
+		[MpLabel("COMBI: Fontys Beheer FO")]
+		[RolSoort.Nieuw]
+		Combi_FontysBeheerFO = 226,
 	}
 
 
