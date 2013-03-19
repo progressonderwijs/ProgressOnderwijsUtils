@@ -385,10 +385,6 @@ namespace ProgressOnderwijsUtils
 		[RolSoort.NieuwAttribute, Implies(RapportenKengetallen)]
 		BekijkenKengetallen = 119,
 
-		[MpLabel("Organisatietabblad en boom")]
-		[RolSoort.RechtAttribute]
-		OrganisatietabbladEnBoom = 120,
-
 		[MpLabel("Bekijken studievolg")]
 		[RolSoort.NieuwAttribute, Implies(StudentOnderwijsTabblad, OrganisatieOnderwijsTab, VolgOnderwijsInzien, BekijkenInschrijvingen, BsaStatusBekijken)]
 		BekijkenStudievolg = 121,
@@ -664,10 +660,6 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Studenten samenvoegen")]
 		[RolSoort.RechtAttribute]
 		StudentenSamenvoegen = 215,
-
-		[MpLabel("Taken van iedereen wijzigen verwijderen annuleren")]
-		[RolSoort.RechtAttribute]
-		TakenVanIedereenWijzigenVerwijderenAnnuleren = 216,
 
 		[MpLabel("Beheer getuigschriften")]
 		[RolSoort.NieuwAttribute, Implies(OpleidingenBekijken, OrganisatieBeheerTabblad, DocumentTemplates, CommunicatieTemplateToevoegenVerwijderenWijzigen, ExamencommissiesBeheer, DiplomaSupplementBeheer)]
