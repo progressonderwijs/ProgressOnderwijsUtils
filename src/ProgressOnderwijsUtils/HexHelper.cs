@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Collections;
-
+using NUnit.Framework;
 namespace ProgressOnderwijsUtils
 {
 	public static class HexHelper
@@ -68,5 +69,42 @@ namespace ProgressOnderwijsUtils
 		static readonly int[] byteLookup = Enumerable.Range(0, 'f' + 1)
 			.Select(c => '0' <= c && c <= '9' ? c - '0' : 'A' <= c && c <= 'F' ? c - 'A' + 10 : 'a' <= c && c <= 'f' ? c - 'a' + 10 : -1)
 			.ToArray();
+	}
+
+
+	public class HexHelperTest
+	{
+		[Test]
+		public void DetectsOddStrings()
+		{
+			Assert.Throws<ArgumentException>(() => HexHelper.HexToBytes("abc"));
+		}
+
+		[Test]
+		public void DetectsUntrimmedStrings()
+		{
+			Assert.Throws<InvalidOperationException>(() => HexHelper.HexToBytes(" abc"));
+		}
+
+		[Test]
+		public void Detects0xPrefix()
+		{
+			Assert.Throws<InvalidOperationException>(() => HexHelper.HexToBytes("0xabcd"));
+		}
+
+		[Test]
+		public void SimpleCaseToArray()
+		{
+			PAssert.That(() => HexHelper.HexToBytes("ffed").SequenceEqual(new byte[] { 255, 237, }));
+			PAssert.That(() => HexHelper.HexToBytes("deadbeef").SequenceEqual(new byte[] { 0xde, 0xad, 0xbe, 0xef }));
+		}
+
+		[Test]
+		public void SimpleCaseToString()
+		{
+			PAssert.That(() => "ffed" == HexHelper.BytesToHex(new byte[] { 255, 237, }));
+			PAssert.That(() => "deadbeef" == HexHelper.BytesToHex(new byte[] { 0xde, 0xad, 0xbe, 0xef }));
+		}
+
 	}
 }
