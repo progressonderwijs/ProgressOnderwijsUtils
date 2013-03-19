@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
 		OrganisatieToevoegenVerwijderenWijzigen = 4,
 
 		[MpLabel("Organisatieboom bekijken selecteren")]
-		[RolSoort.Recht, ImpliedBy(StudentadministratieVoorlopigeToelating, StudentadministratieAlleenInkijken, StudentadministratieNietReguliereInschrijvingen, Studentadministratie)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieVoorlopigeToelating, StudentadministratieAlleenInkijken, StudentadministratieNietReguliereInschrijvingen)]
 		OrganisatieboomBekijkenSelecteren = 5,
 
 		[MpLabel("Rapporten kengetallen")]
