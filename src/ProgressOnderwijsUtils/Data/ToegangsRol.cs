@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 		StudentadministratieVoorlopigeToelating = -27,
 
 		[MpLabel("Studentadministratie balie (alleen studenttabblad)")]
-		[RolSoort.OudAttribute, Implies(StudentBekijkPersonalia, StudentTabblad, StudentPersoonTabblad, StudentInschrijvingenTabblad, StudentKenemerkenTabblad, VooropleidingenBekijken, AanmeldingenBekijken, AanmeldingInschrijvingMededelingenBekijken, NegatiefBindenStudieadviesBekijken, StudielinkberichtenBekijken, InschrijvingenBekijken, StudentIdentificatieBekijken, NietReguliereInschrijvingenBekijken, StudentAdresBekijken, Examenstabblad, Uitschrijvingentabblad, StudentTaaltoetstabblad, DocumentGeneratie, BbcBekijken, BbcToevoegenWijzigen, BbcAfdrukken, StudentCommunicatieTabblad)]
+		[RolSoort.OudAttribute, Implies(StudentBekijkPersonalia, StudentTabblad, StudentPersoonTabblad, StudentInschrijvingenTabblad, StudentKenmerkenTabblad, VooropleidingenBekijken, AanmeldingenBekijken, AanmeldingInschrijvingMededelingenBekijken, NegatiefBindenStudieadviesBekijken, StudielinkberichtenBekijken, InschrijvingenBekijken, StudentIdentificatieBekijken, NietReguliereInschrijvingenBekijken, StudentAdresBekijken, Examenstabblad, Uitschrijvingentabblad, StudentTaaltoetstabblad, DocumentGeneratie, BbcBekijken, BbcToevoegenWijzigen, BbcAfdrukken, StudentCommunicatieTabblad)]
 		StudentadministratieBalieAlleenStudenttabblad = -26,
 
 		[MpLabel("Uitsluitend adreswijzigingen, te combineren met andere rollen")]
@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
 		StudentadministratieNietReguliereInschrijvingen = -20,
 
 		[MpLabel("Studentadministratie")]
-		[RolSoort.OudAttribute, Implies(StudentadministratieVoorlopigeToelating, UitsluitendAdreswijzigingenTeCombinerenMetAndereRollen, StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken, StudentadministratieNietReguliereInschrijvingen, StudentWijzigPersonalia, StudentVerwijderen, OpleidingenBekijken, InschrijvingBasisTabellenBekijken, OrganisatieFinancieelTabblad, StudentIdentificatieToevoegenVerwijderenWijzigen, StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen, StudentPasfotoToevoegenVerwijderen, StudentFinancieelTabblad, StudentOnderwijsTabblad, StudentKenemerkenTabblad, VooropleidingenToevoegenVerwijderenWijzigen, VooropleidingenVerifieeren, AanmeldingenToevoegenWijzigen, AanmeldingDefinitiefInschrijven, AanmeldingInschrijvingIntrekken, InschrijvingUitschrijven, InschrijvingExamenToevoegenVerwijderenWijzigen, AanmeldingInschrijvingMededelingVersturen, BlokkeerInschrijvingBekijken, SMMutatiesBekijken, FinancieelBetalingsinformatieBekijken, FinancieelBetalingsinformatieToevoegenWijzigenVerwijderen, NietReguliereInschrijvingenWijzigenVerwijderen, StudentAdresWijzigenVerwijderen, StudentKenmerkToevoegenVerwijderenWijzigen)]
+		[RolSoort.OudAttribute, Implies(StudentadministratieVoorlopigeToelating, UitsluitendAdreswijzigingenTeCombinerenMetAndereRollen, StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken, StudentadministratieNietReguliereInschrijvingen, StudentWijzigPersonalia, StudentVerwijderen, OpleidingenBekijken, InschrijvingBasisTabellenBekijken, OrganisatieFinancieelTabblad, StudentIdentificatieToevoegenVerwijderenWijzigen, StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen, StudentPasfotoToevoegenVerwijderen, StudentFinancieelTabblad, StudentOnderwijsTabblad, VooropleidingenToevoegenVerwijderenWijzigen, VooropleidingenVerifieeren, AanmeldingenToevoegenWijzigen, AanmeldingDefinitiefInschrijven, AanmeldingInschrijvingIntrekken, InschrijvingUitschrijven, InschrijvingExamenToevoegenVerwijderenWijzigen, AanmeldingInschrijvingMededelingVersturen, BlokkeerInschrijvingBekijken, SMMutatiesBekijken, FinancieelBetalingsinformatieBekijken, FinancieelBetalingsinformatieToevoegenWijzigenVerwijderen, NietReguliereInschrijvingenWijzigenVerwijderen)]
 		Studentadministratie = -18,
 
 		[MpLabel("Studentadministratie beheerder")]
@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils
 		StudentadministratieBeheerder = -5,
 
 		[MpLabel("Studentadministratie extra")]
-		[RolSoort.OudAttribute, Implies(Studentadministratie, RapportenKengetallen, OrganisatieFinancieelTabblad, StudentIdentificatieVerifieeren, StudentOverledenVerifieeren, VooropleidingenVerifieeren, NegatiefBindendStudieadviesToevoegenWijzigenVerwijderen, BlokkeerInschrijvingToevoegenWijzigenVerwijderen, VoorlopigeToelatingInvoerenWijziginVerwijderen, StudentCommunicatieToevoegenVerwijderenWijzigen, InschrijvingNotitiesToevoegenWijzigenVerwijderen)]
+		[RolSoort.OudAttribute, Implies(Studentadministratie, RapportenKengetallen, StudentOverledenVerifieeren, NegatiefBindendStudieadviesToevoegenWijzigenVerwijderen, BlokkeerInschrijvingToevoegenWijzigenVerwijderen, InschrijvingNotitiesToevoegenWijzigenVerwijderen)]
 		StudentadministratieExtra = -4,
 
 		[MpLabel("Bekijken wijzigen verwijderen alle tabellen")]
@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Student kenemerken tabblad")]
 		[RolSoort.RechtAttribute]
-		StudentKenemerkenTabblad = 55,
+		StudentKenmerkenTabblad = 55,
 
 		[MpLabel("Vooropleidingen toevoegen verwijderen wijzigen")]
 		[RolSoort.RechtAttribute]
@@ -406,7 +406,7 @@ namespace ProgressOnderwijsUtils
 		BekijkenUitwisselingDuo = 124,
 
 		[MpLabel("Wijzigen inschrijvingen en aanmeldingen")]
-		[RolSoort.NieuwAttribute, Implies(StudentWijzigPersonalia, StudentIdentificatieToevoegenVerwijderenWijzigen, StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen, StudentOverledenVerifieeren, VooropleidingenToevoegenVerwijderenWijzigen, VooropleidingenVerifieeren, AanmeldingenToevoegenWijzigen, AanmeldingDefinitiefInschrijven, AanmeldingInschrijvingIntrekken, AanmeldingInschrijvingMededelingVersturen, NegatiefBindendStudieadviesToevoegenWijzigenVerwijderen, BlokkeerInschrijvingToevoegenWijzigenVerwijderen, StudentAdresWijzigenVerwijderen, StudentKenmerkToevoegenVerwijderenWijzigen, DocumentGeneratie, StudentCommunicatieToevoegenVerwijderenWijzigen, WijzigenCorrespondentieadressen, InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen, WijzigenVoorlopigeToelating, BekijkenInschrijvingenUitgebreid, StudentCommunicatieInschrijvingToevoegen, InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunning, WijzigenPasfoto, StudentRichtingToevoegenWijzigenVerwijderen)]
+		[RolSoort.NieuwAttribute, Implies(StudentWijzigPersonalia, StudentIdentificatieToevoegenVerwijderenWijzigen, StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen, StudentOverledenVerifieeren, VooropleidingenToevoegenVerwijderenWijzigen, VooropleidingenVerifieeren, AanmeldingenToevoegenWijzigen, AanmeldingDefinitiefInschrijven, AanmeldingInschrijvingIntrekken, AanmeldingInschrijvingMededelingVersturen, NegatiefBindendStudieadviesToevoegenWijzigenVerwijderen, BlokkeerInschrijvingToevoegenWijzigenVerwijderen, StudentAdresWijzigenVerwijderen, StudentKenmerkToevoegenVerwijderenWijzigen, DocumentGeneratie, StudentCommunicatieToevoegenVerwijderenWijzigen, WijzigenCorrespondentieadressen, InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen, WijzigenVoorlopigeToelating, StudentCommunicatieInschrijvingToevoegen, InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunning, WijzigenPasfoto, StudentRichtingToevoegenWijzigenVerwijderen)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
 		[MpLabel("Wijzigen uitschrijvingen")]
@@ -450,11 +450,11 @@ namespace ProgressOnderwijsUtils
 		WijzigenVoorlopigeToelating = 137,
 
 		[MpLabel("Superuser")]
-		[RolSoort.NieuwAttribute, Implies(BekijkenWijzigenVerwijderenAlleTabellen, BekijkenWijzigenVerwijderenMetaData, StudielinkberichtenBeheer, StudentCommunicatieTabblad, CommunicatieTemplateToevoegenVerwijderenWijzigen, BeheerFinancieel, BeheerInschrijvingen, BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan, WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften)]
+		[RolSoort.NieuwAttribute, Implies(BekijkenWijzigenVerwijderenAlleTabellen, BekijkenWijzigenVerwijderenMetaData, BeheerFinancieel, BeheerInschrijvingen, BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan, WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften)]
 		Superuser = 138,
 
 		[MpLabel("Wijzigen studievolg")]
-		[RolSoort.NieuwAttribute, Implies(VolgOnderwijsBeheerBeperkt, BekijkenStudievolg, WijzigenCrm, WijzigenBsaBijzondereOmstandighedenStudiebegeleiding, StudievoortgangNotitiesBekijken, StudievoortgangNotitiesToevoegenWijzigenVerwijderen)]
+		[RolSoort.NieuwAttribute, Implies(VolgOnderwijsBeheerBeperkt, WijzigenBsaBijzondereOmstandighedenStudiebegeleiding, StudievoortgangNotitiesToevoegenWijzigenVerwijderen)]
 		WijzigenStudievolg = 139,
 
 		[MpLabel("Beheer studievolg")]
@@ -466,7 +466,7 @@ namespace ProgressOnderwijsUtils
 		BekijkenInschrijvingen = 160,
 
 		[MpLabel("Bekijken inschrijvingen uitgebreid")]
-		[RolSoort.NieuwAttribute, Implies(StudentKenemerkenTabblad, AanmeldingInschrijvingMededelingenBekijken, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad, Examenstabblad, Uitschrijvingentabblad, StudentTaaltoetstabblad, StudentCommunicatieTabblad, BekijkenInschrijvingen, InschrijvingNotitiesBekijken, CommunicatieBekijken, ExamenWaardepapierBekijken)]
+		[RolSoort.NieuwAttribute, Implies(StudentKenmerkenTabblad, AanmeldingInschrijvingMededelingenBekijken, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad, Examenstabblad, Uitschrijvingentabblad, StudentTaaltoetstabblad, StudentCommunicatieTabblad, BekijkenInschrijvingen, InschrijvingNotitiesBekijken, CommunicatieBekijken, ExamenWaardepapierBekijken)]
 		BekijkenInschrijvingenUitgebreid = 161,
 
 		[MpLabel("Bekijken financieel")]
