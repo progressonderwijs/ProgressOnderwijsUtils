@@ -336,11 +336,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Student taaltoetstabblad")]
 		[RolSoort.RechtAttribute]
 		StudentTaaltoetstabblad = 104,
-
-		[MpLabel("Webservice alle tabellen lezen")]
-		[RolSoort.RechtAttribute]
-		WebserviceAlleTabellenLezen = 105,
-
+		
 		[MpLabel("Document templates")]
 		[RolSoort.RechtAttribute]
 		DocumentTemplates = 106,
