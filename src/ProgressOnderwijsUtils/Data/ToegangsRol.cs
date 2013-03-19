@@ -9,7 +9,6 @@ namespace ProgressOnderwijsUtils
 {
 	public enum ToegangsRol
 	{
-
 		[MpLabel("Studentadministratie voorlopige toelating")]
 		[RolSoort.Oud, ImpliedBy(Studentadministratie)]
 		StudentadministratieVoorlopigeToelating = -27,
