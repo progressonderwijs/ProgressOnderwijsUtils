@@ -137,9 +137,9 @@ namespace ProgressOnderwijsUtils
 		[RolSoort.Recht, ImpliedBy(StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
 		StudentPersoonTabblad = 51,
 
-		[MpLabel("Inschrijvingen tabblad")]
+		[MpLabel("Student inschrijvingen tabblad")]
 		[RolSoort.Recht, ImpliedBy(StudentadministratieVoorlopigeToelating, StudentadministratieBalieAlleenStudenttabblad, StudentadministratieNietReguliereInschrijvingen, BekijkenInschrijvingen)]
-		InschrijvingenTabblad = 52,
+		StudentInschrijvingenTabblad = 52,
 
 		[MpLabel("Student financieel tabblad")]
 		[RolSoort.Recht, ImpliedBy(FinanciëleAdministratieAlleenInkijken, Studentadministratie, BekijkenFinancieel)]
@@ -295,7 +295,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Student adres toevoegen")]
 		[RolSoort.Recht, ImpliedBy(UitsluitendAdreswijzigingen, TeCombinerenMetAndereRollen, StudentadministratieNietReguliereInschrijvingen, WijzigenCorrespondentieadressen, InvoerNietReguliereInschrijvingen)]
-		StudentAdresToevoegen = 94,
+		StudentAdresWijzigenBeperkt = 94,
 
 		[MpLabel("Student adres wijzigen verwijderen")]
 		[RolSoort.Recht, ImpliedBy(UitsluitendAdreswijzigingen, TeCombinerenMetAndereRollen, Studentadministratie, WijzigenInschrijvingenEnAanmeldingen)]
