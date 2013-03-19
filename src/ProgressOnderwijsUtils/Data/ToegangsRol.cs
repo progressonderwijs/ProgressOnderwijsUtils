@@ -19,11 +19,11 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Uitsluitend adreswijzigingen, te combineren met andere rollen")]
 		[RolSoort.Oud, ImpliedBy(Studentadministratie)]
-		UitsluitendAdreswijzigingen, TeCombinerenMetAndereRollen = -25,
+		UitsluitendAdreswijzigingenTeCombinerenMetAndereRollen = -25,
 
 		[MpLabel("Studentadministratie alleen lezen, met accorderen toelatingseisen en kenmerken")]
 		[RolSoort.Oud, ImpliedBy(Studentadministratie)]
-		StudentadministratieAlleenLezen, MetAccorderenToelatingseisenEnKenmerken = -24,
+		StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken = -24,
 
 		[MpLabel("Financiële administratie alleen inkijken")]
 		[RolSoort.Oud, ImpliedBy(FinanciëleAdministratie)]
@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
 		FinanciëleAdministratie = -22,
 
 		[MpLabel("Studentadministratie alleen inkijken")]
-		[RolSoort.Oud, ImpliedBy(StudentadministratieAlleenLezen, MetAccorderenToelatingseisenEnKenmerken)]
+		[RolSoort.Oud, ImpliedBy(StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken)]
 		StudentadministratieAlleenInkijken = -21,
 
 		[MpLabel("Studentadministratie niet-reguliere inschrijvingen")]
@@ -294,15 +294,15 @@ namespace ProgressOnderwijsUtils
 		StudentAdresBekijken = 93,
 
 		[MpLabel("Student adres toevoegen")]
-		[RolSoort.Recht, ImpliedBy(UitsluitendAdreswijzigingen, TeCombinerenMetAndereRollen, StudentadministratieNietReguliereInschrijvingen, WijzigenCorrespondentieadressen, InvoerNietReguliereInschrijvingen)]
+		[RolSoort.Recht, ImpliedBy(UitsluitendAdreswijzigingenTeCombinerenMetAndereRollen, StudentadministratieNietReguliereInschrijvingen, WijzigenCorrespondentieadressen, InvoerNietReguliereInschrijvingen)]
 		StudentAdresWijzigenBeperkt = 94,
 
 		[MpLabel("Student adres wijzigen verwijderen")]
-		[RolSoort.Recht, ImpliedBy(UitsluitendAdreswijzigingen, TeCombinerenMetAndereRollen, Studentadministratie, WijzigenInschrijvingenEnAanmeldingen)]
+		[RolSoort.Recht, ImpliedBy(UitsluitendAdreswijzigingenTeCombinerenMetAndereRollen, Studentadministratie, WijzigenInschrijvingenEnAanmeldingen)]
 		StudentAdresWijzigenVerwijderen = 95,
 
 		[MpLabel("Aanmelding toelatingseisen accorderen")]
-		[RolSoort.Recht, ImpliedBy(StudentadministratieAlleenLezen, MetAccorderenToelatingseisenEnKenmerken, WijzigenAccorderenToelatingseisen)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken, WijzigenAccorderenToelatingseisen)]
 		AanmeldingToelatingseisenAccorderen = 96,
 
 		[MpLabel("Student eisen tabblad")]
@@ -314,7 +314,7 @@ namespace ProgressOnderwijsUtils
 		VoorlopigeToelatingInvoerenWijziginVerwijderen = 98,
 
 		[MpLabel("Student kenmerk toevoegen verwijderen wijzigen")]
-		[RolSoort.Recht, ImpliedBy(StudentadministratieAlleenLezen, MetAccorderenToelatingseisenEnKenmerken, Studentadministratie, WijzigenInschrijvingenEnAanmeldingen, BeheerStudievolg)]
+		[RolSoort.Recht, ImpliedBy(StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken, Studentadministratie, WijzigenInschrijvingenEnAanmeldingen, BeheerStudievolg)]
 		StudentKenmerkToevoegenVerwijderenWijzigen = 99,
 
 		[MpLabel("Organisatie financieel collegegeld tabel beheer")]
