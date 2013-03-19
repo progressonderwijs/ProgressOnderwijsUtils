@@ -714,9 +714,6 @@ namespace ProgressOnderwijsUtils
 		Combi_FontysBeheerFO = 226,
 	}
 
-
-
-
 	/*
 	 * Ontwikkelmethodiek:
 	 *  
