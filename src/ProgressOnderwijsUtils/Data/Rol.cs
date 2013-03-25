@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Studentadministratie"),
 		 Implies(StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken,
-			 StudentWijzigPersonalia, OpleidingenBekijken, OrganisatieFinancieelTabblad,
+			 StudentWijzigPersonalia, OpleidingenBekijken, Rol.BekijkenFinancieelUitgebreid,
 			 StudentIdentificatieToevoegenVerwijderenWijzigen,
 			 StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen,
 			 StudentPasfotoToevoegenVerwijderen,
@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Studentadministratie beheerder"),
 		 Implies(FinanciëleAdministratie, StudentadministratieExtra,
 			 OrganisatieToevoegenVerwijderenWijzigen,
-			 OpleidingenToevoegenVerwijderenWijzigen, OrganisatieBeheerTabblad,
+			 OpleidingenToevoegenVerwijderenWijzigen,
 			 SMMutatiesToevoegenWijzigenVerwijderen, StudentEisenTabblad,
 			 OrganisatieFinancieelCollegegeldTabelBeheer,
 			 DocumentTemplates,
@@ -73,20 +73,8 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Opleidingen toevoegen verwijderen wijzigen")]
 		OpleidingenToevoegenVerwijderenWijzigen = 36,
 
-		[MpLabel("Accounts toevoegen verwijderen wijzigen")]
-		AccountsToevoegenVerwijderenWijzigen = 37,
-
 		[MpLabel("Student tabblad")]
 		StudentTabblad = 38,
-
-		[MpLabel("Bekijken wijzigen verwijderen meta data")]
-		BekijkenWijzigenVerwijderenMetaData = 42,
-
-		[MpLabel("Organisatie beheer tabblad")]
-		OrganisatieBeheerTabblad = 44,
-
-		[MpLabel("Organisatie financieel tabblad")]
-		OrganisatieFinancieelTabblad = 45,
 
 		[MpLabel("Student identificatie toevoegen verwijderen wijzigen")]
 		StudentIdentificatieToevoegenVerwijderenWijzigen = 46,
@@ -337,11 +325,11 @@ namespace ProgressOnderwijsUtils
 		WijzigenToevoegenAfdrukkenBbc = 133,
 
 		[MpLabel("Beheer financieel"), Toekenbaar,
-		 Implies(OrganisatieBeheerTabblad, FinancieelClieopToevoegenVerwijderenWijzigen, FinancieelClieopBekijken, OrganisatieFinancieelCollegegeldTabelBeheer, WijzigenFinancieel)]
+		 Implies(FinancieelClieopToevoegenVerwijderenWijzigen, FinancieelClieopBekijken, OrganisatieFinancieelCollegegeldTabelBeheer, WijzigenFinancieel)]
 		BeheerFinancieel = 134,
 
 		[MpLabel("Beheer inschrijvingen"), Toekenbaar,
-		 Implies(OrganisatieToevoegenVerwijderenWijzigen, OpleidingenBekijken, OpleidingenToevoegenVerwijderenWijzigen, OrganisatieBeheerTabblad, DocumentTemplates,
+		 Implies(OrganisatieToevoegenVerwijderenWijzigen, OpleidingenBekijken, OpleidingenToevoegenVerwijderenWijzigen, DocumentTemplates,
 			 BekijkenKengetallen, WijzigenInschrijvingenEnAanmeldingen, WijzigenUitschrijvingen, WijzigenExamens, WijzigenCrm, TakenBekijkenWijzigen, StatischeGroepenAanmakenWijzigenVerwijderen, 
 			 StatischeGroepenGebruiken, KenmerkenToevoegenWijzigenVerwijderen, BatchesToevoegenWijzigenVerwijderen, StudentenSamenvoegen)]
 		BeheerInschrijvingen = 135,
@@ -375,10 +363,10 @@ namespace ProgressOnderwijsUtils
 			 FinancieelMachtigingBekijken, BbcBekijken, BekijkenInschrijvingen)]
 		BekijkenFinancieel = 162,
 
-		[MpLabel("Bekijken financieel uitgebreid"), Toekenbaar, Implies(OrganisatieFinancieelTabblad, BekijkenFinancieel, FinancieelNotitiesBekijken)]
+		[MpLabel("Bekijken financieel uitgebreid"), Toekenbaar, Implies(BekijkenFinancieel, FinancieelNotitiesBekijken)]
 		BekijkenFinancieelUitgebreid = 163,
 
-		[MpLabel("Beheer accounts en rollen"), Toekenbaar, Implies(AccountsToevoegenVerwijderenWijzigen, OrganisatieBeheerTabblad)]
+		[MpLabel("Beheer accounts en rollen"), Toekenbaar]
 		BeheerAccountsEnRollen = 165,
 
 		[MpLabel("Beheer studielink"), Toekenbaar, Implies(StudielinkberichtenBeheer, BekijkenStudielinkberichten)]
@@ -515,7 +503,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Studenten samenvoegen")]
 		StudentenSamenvoegen = 215,
 
-		[MpLabel("Beheer getuigschriften"), Toekenbaar, Implies(OpleidingenBekijken, OrganisatieBeheerTabblad, ExamencommissiesBeheer, DiplomaSupplementBeheer)]
+		[MpLabel("Beheer getuigschriften"), Toekenbaar, Implies(OpleidingenBekijken, ExamencommissiesBeheer, DiplomaSupplementBeheer)]
 		BeheerGetuigschriften = 217,
 
 		[MpLabel("Bekijken cursusdeelnames en aanbod"), Toekenbaar, Implies(CursusaanbodBekijken, CursusdeelnamesBekijken, CursussenTab)]
