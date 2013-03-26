@@ -51,7 +51,10 @@ namespace ProgressOnderwijsUtils
 				orderby ouder, kind//not strictly necessary
 				select new { ouder, kind };
 
+			//var autoKoppelDown = EnumHelpers.GetValues<Rol>().Where(rol => rol != Rol.Iedereen).Select(rol => new { ouder = rol, kind = Rol.Iedereen });
+
 			var koppelingen = koppelDown
+				//.Concat(autoKoppelDown)
 				//.Concat(koppelUp)
 						.Distinct().OrderBy(r => r.kind);
 

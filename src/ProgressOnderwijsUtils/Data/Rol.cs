@@ -7,6 +7,7 @@ namespace ProgressOnderwijsUtils
 {
 	public enum Rol
 	{
+
 		[MpLabel("Studentadministratie alleen lezen, met accorderen toelatingseisen en kenmerken"),
 		 Implies(StudentadministratieAlleenInkijken, AanmeldingToelatingseisenAccorderen, StudentKenmerkToevoegenVerwijderenWijzigen)]
 		StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken = -24,
@@ -57,6 +58,8 @@ namespace ProgressOnderwijsUtils
 			 BlokkeerInschrijvingToevoegenWijzigenVerwijderen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen)]
 		StudentadministratieExtra = -4,
+
+		//Iedereen = -1,
 
 		[MpLabel("Student bekijk personalia")]
 		StudentBekijkPersonalia = 2,
