@@ -25,6 +25,33 @@ namespace ProgressOnderwijsUtils
 			return builder.CreateSqlCommand(commandCreationContext).Using(command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
 		}
 
+		/// <summary>
+		/// Leest DataTable op basis van het huidige commando met de huidige parameters
+		/// </summary>
+		/// <param name="builder">De uit-te-voeren query</param>
+		/// <param name="conn">De database om tegen te query-en</param>
+		public static DataTable ReadDataTable(this QueryBuilder builder, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
+		{
+			return builder.CreateSqlCommand(conn).Using(
+					command => {
+						try
+						{
+							using (var adapter = new SqlDataAdapter(command))
+							{
+								adapter.MissingSchemaAction = missingSchemaAction;
+								var dt = new DataTable();
+								adapter.Fill(dt);
+								return dt;
+							}
+						}
+						catch (Exception e)
+						{
+							throw new QueryException("Query failed: " + command.CommandText, e);
+						}
+					});
+		}
+
+
 		public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
 			return builder.CreateSqlCommand(commandCreationContext).Using(
@@ -166,7 +193,7 @@ namespace ProgressOnderwijsUtils
 			return mappings.SelectMany(
 				map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
 				.ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
-		}	
+		}
 		static readonly AssemblyBuilder assemblyBuilder;
 		static readonly ModuleBuilder moduleBuilder;
 		static int counter;
