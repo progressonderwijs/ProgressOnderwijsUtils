@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
 	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
 	public interface IReadByFields { }
 	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
-	public interface IMetaObject : IReadByFields { }
+	public interface IMetaObject  { }
 	public interface IReadByConstructor { }
 
 
