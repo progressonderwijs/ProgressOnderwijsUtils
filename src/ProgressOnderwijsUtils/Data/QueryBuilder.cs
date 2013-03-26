@@ -146,19 +146,6 @@ namespace ProgressOnderwijsUtils
 				Create("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
 		}
 
-		public struct SqlCommandCreationContext
-		{
-			public SqlConnection Connection;
-			public QueryTracer Tracer;
-			public int CommandTimeout;
-			public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds)
-			{
-				var retval = this;
-				retval.CommandTimeout = timeoutSeconds;
-				return retval;
-			}
-		}
-
 		public SqlCommand CreateSqlCommand(SqlCommandCreationContext commandCreationContext)
 		{
 			var cmd = CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), commandCreationContext.Connection, commandCreationContext.CommandTimeout);
@@ -294,6 +281,30 @@ namespace ProgressOnderwijsUtils
 			var commandTextWithoutComments = Regex.Replace(commandText, @"/\*.*?\*/|--.*?$", "", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Multiline);
 			if (Regex.IsMatch(commandTextWithoutComments, @"(?<!count\()\*"))
 				throw new InvalidOperationException(GetType().FullName + ": Query may not use * as that might cause runtime exceptions in productie when DB changes:\n" + commandText);
+		}
+	}
+
+
+	public class SqlCommandCreationContext : IDisposable
+	{
+		public SqlConnection Connection { get; private set; }
+		public QueryTracer Tracer { get; private set; }
+		public int CommandTimeout { get; private set; }
+		public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds)
+		{
+			return new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer);
+		}
+
+		public SqlCommandCreationContext(SqlConnection conn, int defaultTimeout, QueryTracer tracer)
+		{
+			Connection = conn;
+			CommandTimeout = defaultTimeout;
+			Tracer = tracer;
+		}
+
+		public void Dispose()
+		{
+			Connection.Dispose();
 		}
 	}
 }
