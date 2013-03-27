@@ -172,6 +172,8 @@ namespace ProgressOnderwijsUtils
 
 		static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
 			new Dictionary<Type, MethodInfo> {
+					{ typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
+					{ typeof(short), typeof(IDataRecord).GetMethod("GetInt16", binding) },
 					{ typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
 					{ typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
 					{ typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
