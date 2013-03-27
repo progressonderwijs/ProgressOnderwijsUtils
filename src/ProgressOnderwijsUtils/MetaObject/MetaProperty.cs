@@ -103,10 +103,11 @@ namespace ProgressOnderwijsUtils
 
 				ParameterExpression typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
 				MemberExpression typedPropExpr = Expression.Property(typedParamExpr, pi);
+
+				bool canCallTypedDirectly = !typeof(TOwner).IsValueType;
+				getTyped = canCallTypedDirectly ? MkDel<Func<TOwner, TProperty>>(pi.GetGetMethod()) : Expression.Lambda<Func<TOwner, TProperty>>(typedPropExpr, typedParamExpr).Compile();
+
 				bool canCallDirectly = !(typeof(TOwner).IsValueType || pi.PropertyType.IsValueType);
-
-				getTyped = MkDel<Func<TOwner, TProperty>>(pi.GetGetMethod());
-
 				getter =
 					canCallDirectly ? MkDel<Func<TOwner, object>>(pi.GetGetMethod()) :
 					Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
@@ -119,11 +120,17 @@ namespace ProgressOnderwijsUtils
 
 
 				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
+				var typedValParamExpr = Expression.Parameter(typeof(TProperty), "newValue");
 
 				bool cannotWrite = !pi.CanWrite || pi.GetSetMethod() == null;
 
 
-				setTyped = cannotWrite ? null : MkDel<Action<TOwner, TProperty>>(pi.GetSetMethod());
+				setTyped = cannotWrite ? null : 
+						canCallDirectly? MkDel<Action<TOwner, TProperty>>(pi.GetSetMethod())
+						: Expression.Lambda<Action<TOwner, TProperty>>(
+																			Expression.Assign(typedPropExpr, typedValParamExpr)
+																			, typedParamExpr, typedValParamExpr
+																			).Compile();
 
 
 				setter = cannotWrite ? default(Action<TOwner, object>) :
