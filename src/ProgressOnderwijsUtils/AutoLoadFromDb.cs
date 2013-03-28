@@ -290,7 +290,6 @@ namespace ProgressOnderwijsUtils
 			public static class ByFieldImpl<T>
 			where T : IReadByFields, new()
 			{
-
 				sealed class ColumnOrdering : IEquatable<ColumnOrdering>
 				{
 					public readonly string[] Cols;
