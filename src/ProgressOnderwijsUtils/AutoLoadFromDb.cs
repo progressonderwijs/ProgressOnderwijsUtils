@@ -172,16 +172,21 @@ namespace ProgressOnderwijsUtils
 
 		static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
 			new Dictionary<Type, MethodInfo> {
+					{ typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
 					{ typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
+					{ typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod("GetBytes", BindingFlags.Public | BindingFlags.Static) },
+					{ typeof(char), typeof(IDataRecord).GetMethod("GetChar", binding) },
+					{ typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod("GetChars", BindingFlags.Public | BindingFlags.Static) },
+					{ typeof(DateTime), typeof(IDataRecord).GetMethod("GetDateTime", binding) },
+					{ typeof(decimal), typeof(IDataRecord).GetMethod("GetDecimal", binding) },
+					{ typeof(double), typeof(IDataRecord).GetMethod("GetDouble", binding) },
+					{ typeof(float), typeof(IDataRecord).GetMethod("GetFloat", binding) },
+					{ typeof(Guid), typeof(IDataRecord).GetMethod("GetGuid", binding) },
 					{ typeof(short), typeof(IDataRecord).GetMethod("GetInt16", binding) },
 					{ typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
 					{ typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
 					{ typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
-					{ typeof(decimal), typeof(IDataRecord).GetMethod("GetDecimal", binding) },
-					{ typeof(double), typeof(IDataRecord).GetMethod("GetDouble", binding) },
-					{ typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
-					{ typeof(DateTime), typeof(IDataRecord).GetMethod("GetDateTime", binding) },
-					{ typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod("GetBytes", BindingFlags.Public | BindingFlags.Static) },
+					
 				};
 
 		//static bool SupportsType(Type type) { return GetterMethodsByType.ContainsKey(type); }
@@ -493,6 +498,17 @@ namespace ProgressOnderwijsUtils
 			long offset = 0;
 			while (offset < byteCount)
 				offset += row.GetBytes(colIndex, offset, arr, (int)offset, (int)byteCount);
+			return arr;
+		}
+		[UsedImplicitly]
+		public static char[] GetChars(this IDataRecord row, int colIndex)
+		{
+			long charCount = row.GetChars(colIndex, 0L, null, 0, 0);
+			if (charCount > int.MaxValue) throw new NotSupportedException("Array too large!");
+			var arr = new char[charCount];
+			long offset = 0;
+			while (offset < charCount)
+				offset += row.GetChars(colIndex, offset, arr, (int)offset, (int)charCount);
 			return arr;
 		}
 	}
