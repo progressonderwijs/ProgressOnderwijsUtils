@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true, AllowMultiple = false)]
 	public sealed class MpLabelsRequiredAttribute : Attribute { }
 
-	[AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
 	public sealed class MpNotMappedAttribute : Attribute { }
 
 
