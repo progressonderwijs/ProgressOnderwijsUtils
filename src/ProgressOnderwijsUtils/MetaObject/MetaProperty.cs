@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define ExtraTyped
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -27,7 +28,8 @@ namespace ProgressOnderwijsUtils
 		bool Hide { get; }
 		bool ShowDefaultOnNew { get; }
 		bool CanRead { get; }
-		PropertyInfo PropertyInfo { get; }
+		MemberInfo MemberInfo { get; }
+		Expression GetterExpression(Expression paramExpr);
 	}
 
 	public interface IMetaProperty<in TOwner> : IMetaProperty
@@ -38,10 +40,11 @@ namespace ProgressOnderwijsUtils
 
 	public interface IMetaProperty<in TOwner, TProperty> : IMetaProperty<TOwner>
 	{
+#if ExtraTyped
 		Func<TOwner, TProperty> GetTyped { get; }
 		Action<TOwner, TProperty> SetTyped { get; }
+#endif
 	}
-
 
 	public static class MetaProperty
 	{
@@ -86,10 +89,17 @@ namespace ProgressOnderwijsUtils
 			readonly bool showDefaultOnNew;
 			public bool ShowDefaultOnNew { get { return showDefaultOnNew; } }
 
-			public Type DataType { get { return propertyInfo.PropertyType; } }
+			readonly Type dataType;
+			public Type DataType { get { return dataType; } }
 
-			public readonly PropertyInfo propertyInfo;
-			public PropertyInfo PropertyInfo { get { return propertyInfo; } }
+			public readonly MemberInfo memberInfo;
+			public MemberInfo MemberInfo { get { return memberInfo; } }
+			public Expression GetterExpression(Expression paramExpr)
+			{
+				return
+					memberInfo is PropertyInfo ? Expression.Property(paramExpr, (PropertyInfo)memberInfo)
+					: Expression.Field(paramExpr, (FieldInfo)memberInfo);
+			}
 
 			public readonly bool isKey;
 			public bool IsKey { get { return isKey; } }
@@ -99,38 +109,40 @@ namespace ProgressOnderwijsUtils
 			{
 				if (pi.PropertyType != typeof(TProperty))
 					throw new InvalidOperationException("Cannot initialize metaproperty: type mismatch.");
-				propertyInfo = pi;
+				memberInfo = pi;
+				dataType = pi.PropertyType;
 
 				ParameterExpression typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
 				MemberExpression typedPropExpr = Expression.Property(typedParamExpr, pi);
 
+#if ExtraTyped
 				bool canCallTypedDirectly = !typeof(TOwner).IsValueType;
 				getTyped = canCallTypedDirectly ? MkDel<Func<TOwner, TProperty>>(pi.GetGetMethod()) : Expression.Lambda<Func<TOwner, TProperty>>(typedPropExpr, typedParamExpr).Compile();
+#endif
 
 				bool canCallDirectly = !(typeof(TOwner).IsValueType || pi.PropertyType.IsValueType);
 				getter =
 					canCallDirectly ? MkDel<Func<TOwner, object>>(pi.GetGetMethod()) :
 					Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
 
-				//ParameterExpression objParamExpr = Expression.Parameter(typeof(object), "propertyOwner");
-				//MemberExpression propExpr = Expression.Property(Expression.Convert(objParamExpr, typeof(TOwner)), pi);
-				//getter = Expression.Lambda<Func<object, object>>(Expression.Convert(propExpr, typeof(object)), objParamExpr).Compile();
 
 				untypedGetter = o => getter((TOwner)o);
 
 
 				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
-				var typedValParamExpr = Expression.Parameter(typeof(TProperty), "newValue");
+
 
 				bool cannotWrite = !pi.CanWrite || pi.GetSetMethod() == null;
 
-
-				setTyped = cannotWrite ? null : 
-						canCallDirectly? MkDel<Action<TOwner, TProperty>>(pi.GetSetMethod())
+#if ExtraTyped
+				var typedValParamExpr = Expression.Parameter(typeof(TProperty), "newValue");
+				setTyped = cannotWrite ? null :
+						canCallDirectly ? MkDel<Action<TOwner, TProperty>>(pi.GetSetMethod())
 						: Expression.Lambda<Action<TOwner, TProperty>>(
 																			Expression.Assign(typedPropExpr, typedValParamExpr)
 																			, typedParamExpr, typedValParamExpr
 																			).Compile();
+#endif
 
 
 				setter = cannotWrite ? default(Action<TOwner, object>) :
@@ -185,19 +197,23 @@ namespace ProgressOnderwijsUtils
 			public bool CanRead { get { return untypedGetter != null; } }
 
 			readonly Func<object, object> untypedGetter;
-			readonly Func<TOwner, object> getter;
-			readonly Func<TOwner, TProperty> getTyped;
 			public Func<object, object> UntypedGetter { get { return untypedGetter; } }
-			public Func<TOwner, object> Getter { get { return getter; } }
-			public Func<TOwner, TProperty> GetTyped { get { return getTyped; } }
-
 			readonly Action<object, object> untypedSetter;
-			readonly Action<TOwner, object> setter;
-			readonly Action<TOwner, TProperty> setTyped;
 			public Action<object, object> UntypedSetter { get { return untypedSetter; } }
+
+
+			readonly Func<TOwner, object> getter;
+			public Func<TOwner, object> Getter { get { return getter; } }
+			readonly Action<TOwner, object> setter;
 			public Action<TOwner, object> Setter { get { return setter; } }
 
+#if	 ExtraTyped
+			readonly Func<TOwner, TProperty> getTyped;
+			public Func<TOwner, TProperty> GetTyped { get { return getTyped; } }
+			readonly Action<TOwner, TProperty> setTyped;
 			public Action<TOwner, TProperty> SetTyped { get { return setTyped; } }
+#endif
+
 		}
 
 		static T Attr<T>(MemberInfo mi) where T : Attribute { return mi.GetCustomAttributes(typeof(T), true).Cast<T>().SingleOrDefault(); }
