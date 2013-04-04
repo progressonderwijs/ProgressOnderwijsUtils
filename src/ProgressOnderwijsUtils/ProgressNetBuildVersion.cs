@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils
 			var assemblies = new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() }.Where(ass => ass != null);
 			var dirs = new[] { HttpRuntime.AppDomainAppPath }.Concat(assemblies.Select(ass => ass.Location));
 
-			var dirsWithAncestors = Utils.TransitiveClosure(dirs, currentDirSet => currentDirSet.Where(Directory.Exists).Select(Path.GetDirectoryName));//find all ancestor paths
+			var dirsWithAncestors = Utils.TransitiveClosure(dirs, currentDirSet => currentDirSet.Where(dir=>dir!=null).Where(Directory.Exists).Select(Path.GetDirectoryName));//find all ancestor paths
 			var lines =
 				dirsWithAncestors
 				.Where(Directory.Exists)
