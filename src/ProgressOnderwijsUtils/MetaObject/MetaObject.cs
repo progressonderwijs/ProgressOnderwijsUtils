@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
 	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
 	public interface IReadByFields { }
 	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
-	public interface IMetaObject  { }
+	public interface IMetaObject { }
 	public interface IReadByConstructor { }
 
 
@@ -176,7 +176,8 @@ namespace ProgressOnderwijsUtils
 					if (nonAbstractBaseTypes.Any())
 						throw new ArgumentException("Cannot determine metaproperties on type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " with non-abstract base type(s) : " + string.Join(", ", nonAbstractBaseTypes.Select(ObjectToCode.GetCSharpFriendlyTypeName)));
 					else if (!typeof(T).GetProperties().Any())
-						throw new ArgumentException("Cannot determine metaproperties on type without properties");
+						Console.WriteLine("Warning: attempting to load metaproperties on type " + typeof(T) + " without properties.");
+						//throw new ArgumentException("Cannot determine metaproperties on type " + typeof(T) + " without properties");
 				}
 
 				properties = GetMetaPropertiesImpl().ToArray();
