@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -19,14 +20,14 @@ namespace ProgressOnderwijsUtils
 
 	public static class MetaObject
 	{
-		public static IEnumerable<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()).Properties; }
+		public static IMetaPropCache GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()); }
 		//public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
-		public static IEnumerable<IMetaProperty<T>> GetMetaProperties<T>() where T : IMetaObject { return MetaPropCache<T>.MetaProperties; }
+		public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject { return MetaInfo<T>.Instance; }
 
 		public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
 		{
 			var memberInfo = GetMemberInfo(propertyExpression);
-			var retval = MetaPropCache<TMetaObject>.MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo);
+			var retval = MetaInfo<TMetaObject>.Instance.SingleOrDefault(mp => mp.PropertyInfo == memberInfo);
 			if (retval == null)
 				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
 						"The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
@@ -40,7 +41,7 @@ namespace ProgressOnderwijsUtils
 				var memberInfo = GetMemberInfo(propertyExpression);
 				if (typeof(TParent).IsClass || typeof(TParent) == typeof(TMetaObject))
 				{
-					var retval = MetaPropCache<TMetaObject>.MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo);
+					var retval = MetaInfo<TMetaObject>.Instance.SingleOrDefault(mp => mp.PropertyInfo == memberInfo);
 					if (retval == null)
 						throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
 								"The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
@@ -55,7 +56,7 @@ namespace ProgressOnderwijsUtils
 					if (getterIdx == -1)
 						throw new InvalidOperationException("The metaobject " + typeof(TMetaObject) + " does not implement method " + getter.Name);
 					var mpGetter = interfacemap.TargetMethods[getterIdx];
-					return MetaPropCache<TMetaObject>.MetaProperties.Single(mp => mp.PropertyInfo is PropertyInfo && ((PropertyInfo)mp.PropertyInfo).GetGetMethod() == mpGetter);
+					return MetaInfo<TMetaObject>.Instance.Single(mp => mp.PropertyInfo is PropertyInfo && ((PropertyInfo)mp.PropertyInfo).GetGetMethod() == mpGetter);
 				}
 				else throw new InvalidOperationException("Impossible: parent " + typeof(TParent) + " is neither the metaobject type " + typeof(TMetaObject) + " itself, nor a (base) class, nor a base interface.");
 			}
@@ -153,7 +154,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		#region Meta property cache
-		static IMetaPropCache GetCache(Type t) { return (IMetaPropCache)typeof(MetaPropCache<>).MakeGenericType(t).GetConstructor(Type.EmptyTypes).Invoke(null); }
+		static IMetaPropCache GetCache(Type t) { return (IMetaPropCache)typeof(MetaInfo<>).MakeGenericType(t).GetConstructor(Type.EmptyTypes).Invoke(null); }
 
 		#endregion
 	}

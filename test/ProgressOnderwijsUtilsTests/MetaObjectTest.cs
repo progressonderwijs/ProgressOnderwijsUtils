@@ -10,7 +10,12 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	public sealed class SimpleObject : IMetaObject
+	public interface ISimpleInterface
+	{
+		string Property { get; set; }
+	}
+
+	public sealed class SimpleObject : ValueBase<SimpleObject>, IMetaObject
 	{
 		public int Field;
 		public string Property { get; set; }
@@ -57,7 +62,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void ReturnsSameMetaProperties()
 		{
 			var mps = MetaObject.GetMetaProperties<SimpleObject>();
-			var mpsAlt = new SimpleObject().GetMetaProperties();
+			var mpsAlt = new SimpleObject().GetMetaProperties().Properties;
 			PAssert.That(() => mps.SequenceEqual(mpsAlt));
 		}
 
@@ -74,7 +79,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void IsReadable()
 		{
-			var readable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp=>mp.CanRead);
+			var readable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp => mp.CanRead);
 			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "ReadonlyProperty", "PrivateSetter" };
 			PAssert.That(() => readable.Select(mp => mp.Name).SequenceEqual(expected));
 		}
@@ -87,5 +92,19 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => writable.Select(mp => mp.Name).SequenceEqual(expected));
 		}
 
+
+		[Test]
+		public void CanSetAndGet()
+		{
+			var o = new SimpleObject { Property = "foo", LabelledProperty = "bar" };
+			var moDef = MetaObject.GetMetaProperties<SimpleObject>();
+			PAssert.That(() => (string)moDef["Property"].Getter(o) == "foo");
+			PAssert.That(() => (string)moDef["labelledProperty"].Getter(o) == "bar");
+
+			moDef["property"].Setter(o, "aha");
+			moDef["LabelledProperty"].Setter(o, "really");
+
+			PAssert.That(() => o.Equals(new SimpleObject { Property = "aha", LabelledProperty = "really" }) );
+		}
 	}
 }
