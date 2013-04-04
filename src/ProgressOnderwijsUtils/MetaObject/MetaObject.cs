@@ -13,10 +13,10 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtils
 {
 	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
+	public interface IReadByFields { }
+	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
 	public interface IMetaObject { }
 	public interface IReadByConstructor { }
-	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
-	public interface IReadByFields { }
 
 
 	public static class MetaObject
@@ -176,15 +176,15 @@ namespace ProgressOnderwijsUtils
 					if (nonAbstractBaseTypes.Any())
 						throw new ArgumentException("Cannot determine metaproperties on type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " with non-abstract base type(s) : " + string.Join(", ", nonAbstractBaseTypes.Select(ObjectToCode.GetCSharpFriendlyTypeName)));
 					else if (!typeof(T).GetProperties().Any())
-						throw new ArgumentException("Cannot determine metaproperties on type without properties");
+						Console.WriteLine("Warning: attempting to load metaproperties on type " + typeof(T) + " without properties.");
+						//throw new ArgumentException("Cannot determine metaproperties on type " + typeof(T) + " without properties");
 				}
 
 				properties = GetMetaPropertiesImpl().ToArray();
 
 				Dictionary<MethodInfo, IMetaProperty<T>> propertiesByGetMethod = properties.Where(mp => mp.CanRead).ToDictionary(mp => mp.PropertyInfo.GetGetMethod());
 				Dictionary<MethodInfo, IMetaProperty<T>> propertiesBySetMethod = properties.Where(mp => mp.UntypedSetter != null).ToDictionary(mp => mp.PropertyInfo.GetSetMethod());
-				propertiesByInheritedInfo = typeof(T).GetInterfaces().SelectMany(ifaceType =>
-				{
+				propertiesByInheritedInfo = typeof(T).GetInterfaces().SelectMany(ifaceType => {
 					var map = typeof(T).GetInterfaceMap(ifaceType);
 					return ifaceType.GetProperties()
 						.Select(iProp => new MetaAndInfo(iProp,
@@ -209,8 +209,16 @@ namespace ProgressOnderwijsUtils
 			static IEnumerable<IMetaProperty<T>> GetMetaPropertiesImpl() { return typeof(T).GetProperties().OrderBy(pi => pi.MetadataToken).Select(LoadIfMetaProperty).Where(mp => mp != null); }
 			static IMetaProperty<T> LoadIfMetaProperty(PropertyInfo pi, int implicitOrder)
 			{
-				return pi.GetCustomAttributes(typeof(MpNotMappedAttribute), true).Any() ? null : new MetaProperty.Impl<T>(pi, implicitOrder);
+				return pi.GetCustomAttributes(typeof(MpNotMappedAttribute), true).Any() ? null
+					: (IMetaProperty<T>)genLoad.MakeGenericMethod(pi.PropertyType).Invoke(null, new object[] { pi, implicitOrder });
 			}
+
+			static readonly MethodInfo genLoad = Utils.F<PropertyInfo, int, IMetaProperty<T>>(LoadExact<object>).Method.GetGenericMethodDefinition();
+			static IMetaProperty<T> LoadExact<TProperty>(PropertyInfo pi, int implicitOrder)
+			{
+				return new MetaProperty.Impl<T, TProperty>(pi, implicitOrder);
+			}
+
 		}
 		#endregion
 	}
