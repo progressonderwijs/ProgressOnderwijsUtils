@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 		ColumnCss LijstCssClass { get; }
 		Func<object, object> UntypedGetter { get; }
 		Action<object, object> UntypedSetter { get; }
-		int Volgorde { get; }
+		int Index { get; }
 		bool Required { get; }
 		bool AllowNull { get; }
 		int? Length { get; }
@@ -46,8 +46,8 @@ namespace ProgressOnderwijsUtils
 			public string Name { get { return name; } }
 			readonly ColumnCss lijstCssClass;
 			public ColumnCss LijstCssClass { get { return lijstCssClass; } }
-			readonly int volgorde;
-			public int Volgorde { get { return volgorde; } }
+			readonly int index;
+			public int Index { get { return index; } }
 			readonly bool required;
 			public bool Required { get { return required; } }
 			readonly bool hide;
@@ -93,8 +93,7 @@ namespace ProgressOnderwijsUtils
 			{
 				propertyInfo = pi;
 				name = pi.Name;
-				var mpVolgordeAttribute = Attr<MpVolgordeAttribute>(propertyInfo);
-				volgorde = mpVolgordeAttribute == null ? implicitOrder * 10 : mpVolgordeAttribute.Volgorde;
+				index = implicitOrder;
 
 				var labelNoTt = LabelNoTt(propertyInfo);
 				label = OrDefault(Attr<MpTooltipAttribute>(propertyInfo)

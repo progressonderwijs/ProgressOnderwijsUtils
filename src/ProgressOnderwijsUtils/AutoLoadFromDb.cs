@@ -323,10 +323,6 @@ namespace ProgressOnderwijsUtils
 				static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
 				static readonly Dictionary<string, PropertyInfo> GetMember;
 				static readonly uint[] ColHashPrimes;
-				static Type MemberType(PropertyInfo pi)
-				{
-					return pi.PropertyType;
-				}
 
 				static ByMetaObjectImpl()
 				{
@@ -368,9 +364,9 @@ namespace ProgressOnderwijsUtils
 						throw new ArgumentException(FriendlyName + " : IMetaObject must have a parameterless public constructor.");
 
 
-					if (!GetMember.Values.All(mi => SupportsType(MemberType(mi))))
+					if (!GetMember.Values.All(mi => SupportsType(mi.PropertyType)))
 						throw new ArgumentException(FriendlyName + " : IMetaObject's writable properties must have only simple types: cannot support "
-							+ GetMember.Where(miKV => !SupportsType(MemberType(miKV.Value))).Select(miKV => ObjectToCode.GetCSharpFriendlyTypeName(MemberType(miKV.Value)) + " " + miKV.Key).JoinStrings(", "));
+							+ GetMember.Where(miKV => !SupportsType(miKV.Value.PropertyType)).Select(miKV => ObjectToCode.GetCSharpFriendlyTypeName(miKV.Value.PropertyType) + " " + miKV.Key).JoinStrings(", "));
 
 				}
 
@@ -393,7 +389,7 @@ namespace ProgressOnderwijsUtils
 									PropertyInfo member;
 									if (!GetMember.TryGetValue(colName, out member))
 										throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
-									return Expression.Bind(member, GetColValueExpr(readerParamExpr, i, MemberType(member)));
+									return Expression.Bind(member, GetColValueExpr(readerParamExpr, i, member.PropertyType));
 								}))));
 				}
 			}

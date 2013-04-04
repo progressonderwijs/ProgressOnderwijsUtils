@@ -3,13 +3,6 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false), Obsolete]
-	public sealed class MpVolgordeAttribute : Attribute
-	{
-		public MpVolgordeAttribute(int volgorde) { Volgorde = volgorde; }
-		public readonly int Volgorde;
-	}
-
 	[Flags]
 	public enum ColumnCss
 	{
