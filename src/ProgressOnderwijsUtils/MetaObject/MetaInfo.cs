@@ -87,5 +87,6 @@ namespace ProgressOnderwijsUtils
 			return retval;
 		}
 
+		public bool TryGetValue(string colName, out IMetaProperty<T> metaProperty) { return ByName.TryGetValue(colName, out metaProperty); }
 	}
 }

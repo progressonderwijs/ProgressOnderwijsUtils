@@ -27,6 +27,7 @@ namespace ProgressOnderwijsUtils
 		bool Hide { get; }
 		bool ShowDefaultOnNew { get; }
 		bool CanRead { get; }
+		bool CanWrite { get; }
 		PropertyInfo PropertyInfo { get; }
 		Expression GetterExpression(Expression paramExpr);
 	}
@@ -74,7 +75,8 @@ namespace ProgressOnderwijsUtils
 			readonly bool isKey;
 			public bool IsKey { get { return isKey; } }
 
-			public bool CanRead { get { return untypedGetter != null; } }
+			public bool CanRead { get { return getter != null; } }
+			public bool CanWrite { get { return setter != null; } }
 			readonly Func<object, object> untypedGetter;
 			public Func<object, object> UntypedGetter { get { return untypedGetter; } }
 			readonly Action<object, object> untypedSetter;
