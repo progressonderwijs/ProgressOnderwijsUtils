@@ -102,17 +102,17 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByFields<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IReadByFields, new()
+		public static T[] ReadMetaObjects<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
 		{
 			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
-				return ReadByFieldsUnpacker<T>(cmd);
+				return ReadMetaObjectsUnpacker<T>(cmd);
 		}
 
-		public static T[] ReadByFieldsUnpacker<T>(SqlCommand cmd) where T : IReadByFields, new()
+		public static T[] ReadMetaObjectsUnpacker<T>(SqlCommand cmd) where T : IMetaObject, new()
 		{
 			using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess))
 			{
-				var unpacker = DataReaderSpecialization<SqlDataReader>.ByFieldImpl<T>.GetDataReaderUnpacker(reader);
+				var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.GetDataReaderUnpacker(reader);
 				return unpacker(reader);
 			}
 		}
@@ -292,8 +292,8 @@ namespace ProgressOnderwijsUtils
 				return loadRows;
 			}
 
-			public static class ByFieldImpl<T>
-			where T : IReadByFields, new()
+			public static class ByMetaObjectImpl<T>
+			where T : IMetaObject, new()
 			{
 				sealed class ColumnOrdering : IEquatable<ColumnOrdering>
 				{
@@ -321,26 +321,24 @@ namespace ProgressOnderwijsUtils
 
 				static Type type { get { return typeof(T); } }
 				static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
-				static readonly Dictionary<string, MemberInfo> GetMember;
+				static readonly Dictionary<string, PropertyInfo> GetMember;
 				static readonly uint[] ColHashPrimes;
-				static Type MemberType(MemberInfo mi)
+				static Type MemberType(PropertyInfo pi)
 				{
-					return mi is FieldInfo ? ((FieldInfo)mi).FieldType : ((PropertyInfo)mi).PropertyType;
+					return pi.PropertyType;
 				}
 
-				static ByFieldImpl()
+				static ByMetaObjectImpl()
 				{
-					GetMember = new Dictionary<string, MemberInfo>(StringComparer.OrdinalIgnoreCase);
+					GetMember = new Dictionary<string, PropertyInfo>(StringComparer.OrdinalIgnoreCase);
 					try
 					{
-						foreach (var fi in PublicFields())
-							GetMember.Add(fi.Name, fi);
 						foreach (var pi in PublicProperties())
 							GetMember.Add(pi.Name, pi);
 					}
 					catch (ArgumentException argE)
 					{
-						throw new ArgumentException(FriendlyName + " : IReadByFields's writable fields & properties must have a case insensitively unique name", argE);
+						throw new ArgumentException(FriendlyName + " : IMetaObject's writable properties must have a case insensitively unique name", argE);
 					}
 
 					ColHashPrimes = Utils.Primes().Take(GetMember.Count).Select(i => (uint)i).ToArray();
@@ -353,26 +351,25 @@ namespace ProgressOnderwijsUtils
 				}
 
 				static IEnumerable<PropertyInfo> PublicProperties() { return type.GetProperties().Where(pi => pi.CanWrite && pi.GetSetMethod() != null); }
-				static IEnumerable<FieldInfo> PublicFields() { return type.GetFields().Where(fi => !fi.Attributes.HasFlag(FieldAttributes.InitOnly)); }
 
 				static void VerifyTypeValidity()
 				{
 
 					if (!type.IsSealed)
-						throw new ArgumentException(FriendlyName + " : IReadByFields must be a public, sealed type!");
+						throw new ArgumentException(FriendlyName + " : IMetaObject must be a public, sealed type!");
 
 #if false
 					if (!type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery"))
-						throw new ArgumentException(FriendlyName + " : IReadByFields must have a public static method DbQuery that returns a QueryBuilder");
+						throw new ArgumentException(FriendlyName + " : IMetaObject must have a public static method DbQuery that returns a QueryBuilder");
 					if (type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery" && mi.ReturnType != typeof(QueryBuilder)))
-						throw new ArgumentException(FriendlyName + " : IReadByFields's DbQuery does not return QueryBuilder");
+						throw new ArgumentException(FriendlyName + " : IMetaObject's DbQuery does not return QueryBuilder");
 #endif
 					if (type.GetConstructors().All(ci => ci.GetParameters().Any()) && !type.IsValueType)
-						throw new ArgumentException(FriendlyName + " : IReadByFields must have a parameterless public constructor.");
+						throw new ArgumentException(FriendlyName + " : IMetaObject must have a parameterless public constructor.");
 
 
 					if (!GetMember.Values.All(mi => SupportsType(MemberType(mi))))
-						throw new ArgumentException(FriendlyName + " : IReadByFields's writable fields & properties must have only simple types: cannot support "
+						throw new ArgumentException(FriendlyName + " : IMetaObject's writable properties must have only simple types: cannot support "
 							+ GetMember.Where(miKV => !SupportsType(MemberType(miKV.Value))).Select(miKV => ObjectToCode.GetCSharpFriendlyTypeName(MemberType(miKV.Value)) + " " + miKV.Key).JoinStrings(", "));
 
 				}
@@ -389,7 +386,7 @@ namespace ProgressOnderwijsUtils
 							Expression.MemberInit(
 								Expression.New(type),
 								orderingP.Cols.Select((colName, i) => {
-									MemberInfo member;
+									PropertyInfo member;
 									if (!GetMember.TryGetValue(colName, out member))
 										throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
 									return Expression.Bind(member, GetColValueExpr(readerParamExpr, i, MemberType(member)));

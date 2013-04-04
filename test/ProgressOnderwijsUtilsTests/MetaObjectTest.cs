@@ -21,8 +21,12 @@ namespace ProgressOnderwijsUtilsTests
 		[MpLabel("bla", "bla")]
 		public string LabelledProperty { get; set; }
 		string PrivateProperty { get; set; }
+#pragma warning disable 169
 		DateTime PrivateField;
+#pragma warning restore 169
+#pragma warning disable 649
 		public readonly double ReadonlyField;
+#pragma warning restore 649
 		public double ReadonlyProperty { get { return 0.0; } }
 		public char WriteonlyProperty { set { } }
 		public object PrivateSetter { get; private set; }
