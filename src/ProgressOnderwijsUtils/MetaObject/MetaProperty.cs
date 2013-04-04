@@ -114,19 +114,20 @@ namespace ProgressOnderwijsUtils
 
 				ParameterExpression typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
 				MemberExpression typedPropExpr = Expression.Property(typedParamExpr, pi);
-
+				var getterMethod = pi.GetGetMethod();
+				var canRead = getterMethod != null;
 #if ExtraTyped
 				bool canCallTypedDirectly = !typeof(TOwner).IsValueType;
-				getTyped = canCallTypedDirectly ? MkDel<Func<TOwner, TProperty>>(pi.GetGetMethod()) : Expression.Lambda<Func<TOwner, TProperty>>(typedPropExpr, typedParamExpr).Compile();
+				getTyped = !canRead ? null : canCallTypedDirectly ? MkDel<Func<TOwner, TProperty>>(pi.GetGetMethod()) : Expression.Lambda<Func<TOwner, TProperty>>(typedPropExpr, typedParamExpr).Compile();
 #endif
 
 				bool canCallDirectly = !(typeof(TOwner).IsValueType || pi.PropertyType.IsValueType);
-				getter =
+				getter = !canRead ? null :
 					canCallDirectly ? MkDel<Func<TOwner, object>>(pi.GetGetMethod()) :
 					Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
 
 
-				untypedGetter = o => getter((TOwner)o);
+				untypedGetter = !canRead ? default(Func<object, object>) : o => getter((TOwner)o);
 
 
 				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
