@@ -10,7 +10,6 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-
 	public sealed class SimpleObject : IMetaObject
 	{
 		public int Field;
@@ -64,10 +63,25 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var mps = MetaObject.GetMetaProperties<SimpleObject>();
 			var names = mps.Select(mp => mp.Name);
-			var expected = new[] { "Field", "Property", "HiddenProperty", "LabelledProperty", "ReadonlyField", "ReadonlyProperty", "WriteonlyProperty", "PrivateSetter", "PrivateGetter", };
+			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "ReadonlyProperty", "WriteonlyProperty", "PrivateSetter", "PrivateGetter", };
 			PAssert.That(() => names.SequenceEqual(expected));
 		}
 
+		[Test]
+		public void IsReadable()
+		{
+			var readable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp=>mp.CanRead);
+			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "ReadonlyProperty", "PrivateSetter" };
+			PAssert.That(() => readable.Select(mp => mp.Name).SequenceEqual(expected));
+		}
+
+		[Test]
+		public void IsWritable()
+		{
+			var writable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp => mp.Setter != null);
+			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "WriteonlyProperty", "PrivateGetter", };
+			PAssert.That(() => writable.Select(mp => mp.Name).SequenceEqual(expected));
+		}
 
 	}
 }

@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils
 		public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
 		{
 			var memberInfo = GetMemberInfo(propertyExpression);
-			var retval = MetaPropCache<TMetaObject>.MetaProperties.SingleOrDefault(mp => mp.MemberInfo == memberInfo);
+			var retval = MetaPropCache<TMetaObject>.MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo);
 			if (retval == null)
 				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
 						"The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
 				var memberInfo = GetMemberInfo(propertyExpression);
 				if (typeof(TParent).IsClass || typeof(TParent) == typeof(TMetaObject))
 				{
-					var retval = MetaPropCache<TMetaObject>.MetaProperties.SingleOrDefault(mp => mp.MemberInfo == memberInfo);
+					var retval = MetaPropCache<TMetaObject>.MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo);
 					if (retval == null)
 						throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
 								"The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
@@ -57,13 +57,12 @@ namespace ProgressOnderwijsUtils
 					if (getterIdx == -1)
 						throw new InvalidOperationException("The metaobject " + typeof(TMetaObject) + " does not implement method " + getter.Name);
 					var mpGetter = interfacemap.TargetMethods[getterIdx];
-					return MetaPropCache<TMetaObject>.MetaProperties.Single(mp => mp.MemberInfo is PropertyInfo && ((PropertyInfo)mp.MemberInfo).GetGetMethod() == mpGetter);
+					return MetaPropCache<TMetaObject>.MetaProperties.Single(mp => mp.PropertyInfo is PropertyInfo && ((PropertyInfo)mp.PropertyInfo).GetGetMethod() == mpGetter);
 				}
 				else throw new InvalidOperationException("Impossible: parent " + typeof(TParent) + " is neither the metaobject type " + typeof(TMetaObject) + " itself, nor a (base) class, nor a base interface.");
 			}
 
 		}
-
 
 		public static MemberInfo GetMemberInfo<TObject, TProperty>(Expression<Func<TObject, TProperty>> property)
 		{
@@ -158,53 +157,8 @@ namespace ProgressOnderwijsUtils
 		#region Meta property cache
 		static IMetaPropCache GetCache(Type t) { return (IMetaPropCache)typeof(MetaPropCache<>).MakeGenericType(t).GetConstructor(Type.EmptyTypes).Invoke(null); }
 
-		interface IMetaPropCache
-		{
-			IReadOnlyList<IMetaProperty> Properties { get; }
-		}
-
-		sealed class MetaPropCache<T> : IMetaPropCache
-		{
-			public readonly static IMetaProperty<T>[] MetaProperties;
-
-			static MetaPropCache()
-			{
-				if (typeof(T) == typeof(IMetaObject))
-					throw new ArgumentException("Cannot determine metaproperties on IMetaObject itself");
-				else if (typeof(T).IsInterface)
-					throw new ArgumentException("Cannot determine metaproperties on interface type " + typeof(T));
-				else if (typeof(T).IsAbstract)
-					throw new ArgumentException("Cannot determine metaproperties on abstract type " + typeof(T));
-				else
-				{
-					var nonAbstractBaseTypes = typeof(T).BaseTypes().Where(bt => !bt.IsAbstract && typeof(IMetaObject).IsAssignableFrom(bt));
-					if (nonAbstractBaseTypes.Any())
-						throw new ArgumentException("Cannot determine metaproperties on type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " with non-abstract base type(s) : " + string.Join(", ", nonAbstractBaseTypes.Select(ObjectToCode.GetCSharpFriendlyTypeName)));
-					else if (!typeof(T).GetProperties().Any())
-						Console.WriteLine("Warning: attempting to load metaproperties on type " + typeof(T) + " without properties.");
-					//throw new ArgumentException("Cannot determine metaproperties on type " + typeof(T) + " without properties");
-				}
-
-				MetaProperties = GetMetaPropertiesImpl().ToArray();
-			}
-
-
-			public IReadOnlyList<IMetaProperty> Properties { get { return MetaProperties; } }
-
-			static IEnumerable<IMetaProperty<T>> GetMetaPropertiesImpl() { return typeof(T).GetProperties().OrderBy(pi => pi.MetadataToken).Select(LoadIfMetaProperty).Where(mp => mp != null); }
-			static IMetaProperty<T> LoadIfMetaProperty(PropertyInfo pi, int implicitOrder)
-			{
-				return pi.GetCustomAttributes(typeof(MpNotMappedAttribute), true).Any() ? null
-					: (IMetaProperty<T>)genLoad.MakeGenericMethod(pi.PropertyType).Invoke(null, new object[] { pi, implicitOrder });
-			}
-
-			static readonly MethodInfo genLoad = Utils.F<PropertyInfo, int, IMetaProperty<T>>(LoadExact<object>).Method.GetGenericMethodDefinition();
-			static IMetaProperty<T> LoadExact<TProperty>(PropertyInfo pi, int implicitOrder)
-			{
-				return new MetaProperty.Impl<T, TProperty>(pi, implicitOrder);
-			}
-
-		}
 		#endregion
 	}
+
+
 }

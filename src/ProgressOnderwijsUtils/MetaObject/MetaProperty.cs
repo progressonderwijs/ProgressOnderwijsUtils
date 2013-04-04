@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
 		bool Hide { get; }
 		bool ShowDefaultOnNew { get; }
 		bool CanRead { get; }
-		MemberInfo MemberInfo { get; }
+		PropertyInfo PropertyInfo { get; }
 		Expression GetterExpression(Expression paramExpr);
 	}
 
@@ -38,17 +38,9 @@ namespace ProgressOnderwijsUtils
 		Action<TOwner, object> Setter { get; }
 	}
 
-
-	public interface IMetaProperty<in TOwner, TProperty> : IMetaProperty<TOwner>
-	{
-		Func<TOwner, TProperty> GetTyped { get; }
-		Action<TOwner, TProperty> SetTyped { get; }
-	}
-
-
 	public static class MetaProperty
 	{
-		public sealed class Impl<TOwner, TProperty> : IMetaProperty<TOwner, TProperty>
+		public sealed class Impl<TOwner> : IMetaProperty<TOwner>
 		{
 			readonly string name;
 			public string Name { get { return name; } }
@@ -76,10 +68,9 @@ namespace ProgressOnderwijsUtils
 			public bool IsReadonly { get { return isReadonly; } }
 			readonly bool showDefaultOnNew;
 			public bool ShowDefaultOnNew { get { return showDefaultOnNew; } }
-			readonly Type dataType;
-			public Type DataType { get { return dataType; } }
-			readonly MemberInfo memberInfo;
-			public MemberInfo MemberInfo { get { return memberInfo; } }
+			public Type DataType { get { return propertyInfo.PropertyType; } }
+			readonly PropertyInfo propertyInfo;
+			public PropertyInfo PropertyInfo { get { return propertyInfo; } }
 			readonly bool isKey;
 			public bool IsKey { get { return isKey; } }
 
@@ -92,102 +83,48 @@ namespace ProgressOnderwijsUtils
 			public Func<TOwner, object> Getter { get { return getter; } }
 			readonly Action<TOwner, object> setter;
 			public Action<TOwner, object> Setter { get { return setter; } }
-			readonly Func<TOwner, TProperty> getTyped;
-			public Func<TOwner, TProperty> GetTyped { get { return getTyped; } }
-			readonly Action<TOwner, TProperty> setTyped;
-			public Action<TOwner, TProperty> SetTyped { get { return setTyped; } }
 
 			public Expression GetterExpression(Expression paramExpr)
 			{
-				return
-					memberInfo is PropertyInfo ? Expression.Property(paramExpr, (PropertyInfo)memberInfo)
-						: Expression.Field(paramExpr, (FieldInfo)memberInfo);
+				return Expression.Property(paramExpr, propertyInfo);
 			}
 
-			Impl(MemberInfo mi, int implicitOrder, Type memberType)
+			public Impl(PropertyInfo pi, int implicitOrder)
 			{
-				if (memberType != typeof(TProperty))
-					throw new InvalidOperationException("Cannot initialize metaproperty: type mismatch.");
-				memberInfo = mi;
-				dataType = memberType;
-				name = mi.Name;
-				var mpVolgordeAttribute = Attr<MpVolgordeAttribute>(memberInfo);
+				propertyInfo = pi;
+				name = pi.Name;
+				var mpVolgordeAttribute = Attr<MpVolgordeAttribute>(propertyInfo);
 				volgorde = mpVolgordeAttribute == null ? implicitOrder * 10 : mpVolgordeAttribute.Volgorde;
 
-				var labelNoTt = LabelNoTt(memberInfo);
-				label = OrDefault(Attr<MpTooltipAttribute>(memberInfo)
+				var labelNoTt = LabelNoTt(propertyInfo);
+				label = OrDefault(Attr<MpTooltipAttribute>(propertyInfo)
 					, mkAttr => labelNoTt.WithTooltip(mkAttr.NL, mkAttr.EN, mkAttr.DE)
 					, labelNoTt);
 
-				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(memberInfo),
-					mkAttr => mkAttr.KoppelTabelNaam ?? memberInfo.Name);
-				lijstCssClass = OrDefault(Attr<MpColumnCssAttribute>(memberInfo), mkAttr => mkAttr.CssClass);
-				required = OrDefault(Attr<MpVerplichtAttribute>(memberInfo), mkAttr => true);
-				hide = OrDefault(Attr<HideAttribute>(memberInfo), mkAttr => true);
-				allowNull = OrDefault(Attr<MpAllowNullAttribute>(memberInfo), mkAttr => true);
-				isKey = OrDefault(Attr<KeyAttribute>(memberInfo), mkAttr => true);
-				showDefaultOnNew = OrDefault(Attr<MpShowDefaultOnNewAttribute>(memberInfo), mkAttr => true);
-				isReadonly = UntypedSetter == null || OrDefault(Attr<MpReadonlyAttribute>(memberInfo), mkAttr => true);
-				length = OrDefault(Attr<MpLengteAttribute>(memberInfo), mkAttr => mkAttr.Lengte, default(int?));
-				regex = OrDefault(Attr<MpRegexAttribute>(memberInfo), mkAttr => mkAttr.Regex);
-				datumtijd = OrDefault(Attr<MpDatumFormaatAttribute>(memberInfo), mkAttr => mkAttr.Formaat, default(DatumFormaat?));
+				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(propertyInfo),
+					mkAttr => mkAttr.KoppelTabelNaam ?? propertyInfo.Name);
+				lijstCssClass = OrDefault(Attr<MpColumnCssAttribute>(propertyInfo), mkAttr => mkAttr.CssClass);
+				required = OrDefault(Attr<MpVerplichtAttribute>(propertyInfo), mkAttr => true);
+				hide = OrDefault(Attr<HideAttribute>(propertyInfo), mkAttr => true);
+				allowNull = OrDefault(Attr<MpAllowNullAttribute>(propertyInfo), mkAttr => true);
+				isKey = OrDefault(Attr<KeyAttribute>(propertyInfo), mkAttr => true);
+				showDefaultOnNew = OrDefault(Attr<MpShowDefaultOnNewAttribute>(propertyInfo), mkAttr => true);
+				isReadonly = UntypedSetter == null || OrDefault(Attr<MpReadonlyAttribute>(propertyInfo), mkAttr => true);
+				length = OrDefault(Attr<MpLengteAttribute>(propertyInfo), mkAttr => mkAttr.Lengte, default(int?));
+				regex = OrDefault(Attr<MpRegexAttribute>(propertyInfo), mkAttr => mkAttr.Regex);
+				datumtijd = OrDefault(Attr<MpDatumFormaatAttribute>(propertyInfo), mkAttr => mkAttr.Formaat, default(DatumFormaat?));
 
 				if (KoppelTabelNaam != null && DataType.GetNonNullableUnderlyingType() != typeof(int))
 					throw new ProgressNetException(typeof(TOwner) + " heeft Kolom " + Name + " heeft koppeltabel " +
 						KoppelTabelNaam + " maar is van type " + DataType + "!");
 
+				getter = MkGetter(pi);
+				untypedGetter = getter == null ? default(Func<object, object>) : o => getter((TOwner)o);
+
+				setter = MkSetter(pi);
+				untypedSetter = setter == null ? default(Action<object, object>) : (o, v) => setter((TOwner)o, v);
 			}
 
-			public Impl(PropertyInfo pi, int implicitOrder)
-				: this(pi, implicitOrder, pi.PropertyType)
-			{
-
-				var getterMethod = pi.GetGetMethod();
-
-				getTyped = MkTypedGetter(pi, getterMethod);
-				getter = MkGetter(pi, getterMethod);
-				untypedGetter = !(getterMethod != null) ? default(Func<object, object>) : o => getter((TOwner)o);
-
-
-
-				var setterMethod = pi.GetSetMethod();
-			setTyped = MkTypedSetter(pi, setterMethod);
-				setter = MkSetter(pi, setterMethod);
-				untypedSetter = setterMethod == null ? default(Action<object, object>) : (o, v) => setter((TOwner)o, v);
-			}
-
-			public Impl(FieldInfo fi, int implicitOrder)
-				: this(fi, implicitOrder, fi.FieldType)
-			{
-				var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
-				var typedPropExpr = Expression.Field(typedParamExpr, fi);
-
-				getTyped = Expression.Lambda<Func<TOwner, TProperty>>(typedPropExpr, typedParamExpr).Compile();
-				getter = getTyped as Func<TOwner, object> ?? Expression.Lambda<Func<TOwner, object>>(Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr).Compile();
-				untypedGetter = o => getTyped((TOwner)o);
-
-				if (fi.IsInitOnly)
-				{
-					setTyped = null;
-					setter = null;
-					untypedSetter = null;
-				}
-				else
-				{
-					var typedValParamExpr = Expression.Parameter(typeof(TProperty), "newValue");
-					var valParamExpr = Expression.Parameter(typeof(object), "newValue");
-
-					setTyped = Expression.Lambda<Action<TOwner, TProperty>>(
-								Expression.Assign(typedPropExpr, typedValParamExpr),
-								typedParamExpr, typedValParamExpr
-								).Compile();
-					setter = Expression.Lambda<Action<TOwner, object>>(
-								Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, typeof(TProperty))),
-								typedParamExpr, valParamExpr
-								).Compile();
-					untypedSetter = (o, v) => setTyped((TOwner)o, (TProperty)v);
-				}
-			}
 
 
 
@@ -215,8 +152,9 @@ namespace ProgressOnderwijsUtils
 				return labelNoTt;
 			}
 
-			static Action<TOwner, object> MkSetter(PropertyInfo pi, MethodInfo setterMethod)
+			static Action<TOwner, object> MkSetter(PropertyInfo pi)
 			{
+				var setterMethod = pi.GetSetMethod();
 				if (setterMethod == null)
 					return null;
 				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
@@ -229,42 +167,9 @@ namespace ProgressOnderwijsUtils
 						).Compile();
 			}
 
-			static Action<TOwner, TProperty> MkTypedSetter(PropertyInfo pi, MethodInfo setterMethod)
+			static Func<TOwner, object> MkGetter(PropertyInfo pi)
 			{
-				if (setterMethod == null)
-					return null;
-				else if (typeof(TOwner).IsValueType)
-				{ //cannot call directly; value type methods pass self by reference.
-					var typedValParamExpr = Expression.Parameter(typeof(TProperty), "newValue");
-					var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
-					var typedPropExpr = Expression.Property(typedParamExpr, pi);
-
-					return
-						Expression.Lambda<Action<TOwner, TProperty>>(
-							Expression.Assign(typedPropExpr, typedValParamExpr),
-							typedParamExpr, typedValParamExpr
-							).Compile();
-				}
-				else
-					return MkDel<Action<TOwner, TProperty>>(setterMethod);
-			}
-
-			static Func<TOwner, TProperty> MkTypedGetter(PropertyInfo pi, MethodInfo getterMethod)
-			{
-
-				if (getterMethod == null)
-					return null;
-				else if (!typeof(TOwner).IsValueType)
-					return MkDel<Func<TOwner, TProperty>>(getterMethod);
-
-				// direct call not allowed; value type methods pass self by reference.
-				var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
-				var typedPropExpr = Expression.Property(typedParamExpr, pi);
-				return Expression.Lambda<Func<TOwner, TProperty>>(typedPropExpr, typedParamExpr).Compile();
-			}
-
-			static Func<TOwner, object> MkGetter(PropertyInfo pi, MethodInfo getterMethod)
-			{
+				var getterMethod = pi.GetGetMethod();
 				if (getterMethod == null)
 					return null;
 				else if (!typeof(TOwner).IsValueType && !pi.PropertyType.IsValueType)
