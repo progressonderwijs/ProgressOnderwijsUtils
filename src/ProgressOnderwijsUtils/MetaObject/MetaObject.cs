@@ -25,16 +25,13 @@ namespace ProgressOnderwijsUtils
 		public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject { return MetaInfo<T>.Instance; }
 
 		public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
+			where TMetaObject : IMetaObject
 		{
-			var memberInfo = GetMemberInfo(propertyExpression);
-			var retval = MetaInfo<TMetaObject>.Instance.SingleOrDefault(mp => mp.PropertyInfo == memberInfo);
-			if (retval == null)
-				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-						"The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
-			return retval;
+			return MetaInfo<TMetaObject>.Instance.GetByExpression(propertyExpression);
 		}
 
 		public static class GetByInheritedExpression<TMetaObject>
+			where TMetaObject : IMetaObject
 		{
 			public static IMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
 			{

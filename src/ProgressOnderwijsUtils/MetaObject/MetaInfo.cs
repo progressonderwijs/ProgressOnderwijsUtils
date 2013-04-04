@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
 
@@ -22,6 +23,7 @@ namespace ProgressOnderwijsUtils
 	}
 
 	public sealed class MetaInfo<T> : IMetaPropCache<T>, IEnumerable<IMetaProperty<T>>
+		where T : IMetaObject
 	{
 		readonly IMetaProperty<T>[] MetaProperties;
 		readonly IReadOnlyList<IMetaProperty<T>> ReadOnlyView;
@@ -74,5 +76,16 @@ namespace ProgressOnderwijsUtils
 		public IEnumerator<IMetaProperty<T>> GetEnumerator() { return ReadOnlyView.GetEnumerator(); }
 
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+
+		public IMetaProperty<T> GetByExpression<TProp>(Expression<Func<T, TProp>> propertyExpression)
+		{
+			var memberInfo = MetaObject.GetMemberInfo(propertyExpression);
+			var retval = MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo); //TODO:get by name.
+			if (retval == null)
+				throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
+						"The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
+			return retval;
+		}
+
 	}
 }

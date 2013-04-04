@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtilsTests
 		string Property { get; set; }
 	}
 
-	public sealed class SimpleObject : ValueBase<SimpleObject>, IMetaObject
+	public sealed class SimpleObject : ValueBase<SimpleObject>, IMetaObject, ISimpleInterface
 	{
 		public int Field;
 		public string Property { get; set; }
@@ -106,5 +106,15 @@ namespace ProgressOnderwijsUtilsTests
 
 			PAssert.That(() => o.Equals(new SimpleObject { Property = "aha", LabelledProperty = "really" }) );
 		}
+
+
+		[Test]
+		public void CanGetByExpression()
+		{
+			var mp = MetaObject.GetByExpression((SimpleObject o) => o.Property);
+			PAssert.That(() => mp.Name == "Property" && mp.DataType == typeof(string));
+		}
+
+
 	}
 }
