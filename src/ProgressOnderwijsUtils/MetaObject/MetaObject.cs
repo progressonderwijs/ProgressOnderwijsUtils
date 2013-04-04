@@ -153,11 +153,8 @@ namespace ProgressOnderwijsUtils
 			return cache.Properties;
 		}
 
-		#region Meta property cache
-		static IMetaPropCache GetCache(Type t) { return (IMetaPropCache)typeof(MetaInfo<>).MakeGenericType(t).GetConstructor(Type.EmptyTypes).Invoke(null); }
 
-		#endregion
+		static readonly MethodInfo genGetCache = Utils.F(GetMetaProperties<IMetaObject>).Method.GetGenericMethodDefinition();
+		static IMetaPropCache GetCache(Type t) { return (IMetaPropCache)genGetCache.MakeGenericMethod(t).Invoke(null, null); }
 	}
-
-
 }
