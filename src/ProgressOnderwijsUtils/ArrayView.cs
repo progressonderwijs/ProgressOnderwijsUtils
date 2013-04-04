@@ -77,5 +77,23 @@ namespace ProgressOnderwijsUtils
 		public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, int, TOut> map) { return new ArrayView_MappedWithIndex<T, TOut>(vals, map); }
 		public static IReadOnlyCollection<TOut> SelectROCountable<T, TOut>(this IReadOnlyCollection<T> vals, Func<T, TOut> map) { return new ReadOnlyCollectionView_Mapped<T, TOut>(vals, map); }
 		public static IReadOnlyCollection<TOut> SelectCountable<T, TOut>(this ICollection<T> vals, Func<T, TOut> map) { return new CollectionView_Mapped<T, TOut>(vals, map); }
+		public static T[] ToArray<T>(this IReadOnlyList<T> list)
+		{
+			var retval = new T[list.Count];
+			for (int i = 0; i < retval.Length; i++)
+				retval[i] = list[i];
+			return retval;
+		}
+		public static T[] ToArray<T>(this IReadOnlyCollection<T> list)
+		{
+			var retval = new T[list.Count];
+			int i = 0;
+			foreach (var item in list)
+				retval[i++] = item;
+			if (i != retval.Length)
+				throw new InvalidOperationException("collection claimed to have Count = " + retval.Length + ", but is actually only " + i + " long.");
+			return retval;
+		}
+
 	}
 }

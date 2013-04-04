@@ -108,11 +108,11 @@ namespace ProgressOnderwijsUtils
 				return ReadMetaObjectsUnpacker<T>(cmd);
 		}
 
-		public static T[] ReadMetaObjectsUnpacker<T>(SqlCommand cmd) where T : IMetaObject, new()
+		public static T[] ReadMetaObjectsUnpacker<T>(SqlCommand cmd, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
 		{
 			using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess))
 			{
-				var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.GetDataReaderUnpacker(reader);
+				var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.GetDataReaderUnpacker(reader, fieldMappingMode);
 				return unpacker(reader);
 			}
 		}
@@ -375,10 +375,14 @@ namespace ProgressOnderwijsUtils
 				}
 
 
-				public static Func<TReader, T[]> GetDataReaderUnpacker(TReader reader)
+// ReSharper disable UnusedParameter.Local
+				public static Func<TReader, T[]> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
+// ReSharper restore UnusedParameter.Local
 				{
-					if (reader.FieldCount != ColHashPrimes.Length)
-						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; field count = " + ColHashPrimes.Length);
+					if (reader.FieldCount > ColHashPrimes.Length || reader.FieldCount < ColHashPrimes.Length && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches)
+						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; field count = " + ColHashPrimes.Length + "\n" +
+							"datareader: " + Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).JoinStrings(", ") + "\n" +
+							FriendlyName+": " + GetMember.Keys.JoinStrings(", "));
 					var ordering = new ColumnOrdering(reader);
 
 					return LoadRows.GetOrAdd(ordering, orderingP =>
