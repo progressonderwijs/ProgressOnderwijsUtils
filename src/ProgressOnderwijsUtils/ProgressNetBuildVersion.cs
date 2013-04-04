@@ -30,11 +30,11 @@ namespace ProgressOnderwijsUtils
 			public DateTime Date { get; set; }
 			public string Branches { get; set; }
 			public string Tags { get; set; }
-			
+
 			public string ComputerName { get; set; }
 			public string BuildTag { get; set; }
 			public string BuildUrl { get; set; }
-            public string BuildConfiguration { get; set; }
+			public string BuildConfiguration { get; set; }
 			//public DateTime WcDateUtc { get; set; }
 		}
 		public static readonly Data Current;
@@ -43,9 +43,13 @@ namespace ProgressOnderwijsUtils
 		static ProgressNetBuildVersion()
 		{
 			var assemblies = new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() }.Where(ass => ass != null);
-			var dirs = new[] { HttpRuntime.AppDomainAppPath }.Concat(assemblies.Select(ass => ass.Location));
+			var httpRuntimePath = default(string);
+			try { httpRuntimePath = HttpRuntime.AppDomainAppPath; }
+			catch { }
 
-			var dirsWithAncestors = Utils.TransitiveClosure(dirs, currentDirSet => currentDirSet.Where(dir=>dir!=null).Where(Directory.Exists).Select(Path.GetDirectoryName));//find all ancestor paths
+			var dirs = new[] { httpRuntimePath }.Concat(assemblies.Select(ass => ass.Location));
+
+			var dirsWithAncestors = Utils.TransitiveClosure(dirs, currentDirSet => currentDirSet.Where(Directory.Exists).Select(Path.GetDirectoryName));//find all ancestor paths
 			var lines =
 				dirsWithAncestors
 				.Where(Directory.Exists)
@@ -73,8 +77,8 @@ namespace ProgressOnderwijsUtils
 				ComputerName = svninfo["ComputerName"].Trim(),
 				BuildTag = svninfo["BuildTag"].Trim(),
 				BuildUrl = svninfo["BuildUrl"].Trim(),
-                BuildConfiguration = svninfo["Configuration"].Trim(),
-            };
+				BuildConfiguration = svninfo["Configuration"].Trim(),
+			};
 		}
 	}
 }
