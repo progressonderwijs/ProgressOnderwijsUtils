@@ -158,14 +158,20 @@ namespace ProgressOnderwijsUtils
 				var setterMethod = pi.GetSetMethod();
 				if (setterMethod == null)
 					return null;
-				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
-				var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
-				var typedPropExpr = Expression.Property(typedParamExpr, pi);
+				if (typeof(TOwner).IsValueType)
+					return (Action<TOwner, object>)StructSetterM.MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { setterMethod });
+				else
+					return (Action<TOwner, object>)ClassSetterM.MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { setterMethod });
+				
+				//faster code, slower startup:				
+				//var valParamExpr = Expression.Parameter(typeof(object), "newValue");
+				//var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
+				//var typedPropExpr = Expression.Property(typedParamExpr, pi);
 
-				return Expression.Lambda<Action<TOwner, object>>(
-						Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)),
-						typedParamExpr, valParamExpr
-						).Compile();
+				//return Expression.Lambda<Action<TOwner, object>>(
+				//		Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)),
+				//		typedParamExpr, valParamExpr
+				//		).Compile();
 			}
 
 			static Func<TOwner, object> MkGetter(PropertyInfo pi)
@@ -173,18 +179,73 @@ namespace ProgressOnderwijsUtils
 				var getterMethod = pi.GetGetMethod();
 				if (getterMethod == null)
 					return null;
-				else if (!typeof(TOwner).IsValueType && !pi.PropertyType.IsValueType)
-					return MkDel<Func<TOwner, object>>(getterMethod);
+				else if (pi.PropertyType.IsValueType)
+				{
+					if (typeof(TOwner).IsValueType)
+						return (Func<TOwner, object>)StructStructGetterM.MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { getterMethod });
+					else
+						return (Func<TOwner, object>)ClassStructGetterM.MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { getterMethod });
+				}
+				else
+				{
+					if (typeof(TOwner).IsValueType)
+						return StructClassGetter(getterMethod);
+					else
+						return MkDelegate<Func<TOwner, object>>(getterMethod);
+				}
 
-				var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
-				var typedPropExpr = Expression.Property(typedParamExpr, pi);
-				return Expression.Lambda<Func<TOwner, object>>(
-						Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr
-						).Compile();
+				//faster code, slower startup:				
+				//var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
+				//var typedPropExpr = Expression.Property(typedParamExpr, pi);
+				//return Expression.Lambda<Func<TOwner, object>>(
+				//		Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr
+				//		).Compile();
 			}
+
+			static MethodInfo MkGenGetter(Func<MethodInfo, Func<TOwner, object>> f) { return f.Method.GetGenericMethodDefinition(); }
+			static MethodInfo MkGenSetter(Func<MethodInfo, Action<TOwner, object>> f) { return f.Method.GetGenericMethodDefinition(); }
+
+			static readonly MethodInfo
+
+				ClassStructGetterM = MkGenGetter(ClassStructGetter<object>),
+				StructStructGetterM = MkGenGetter(StructStructGetter<object>),
+					ClassSetterM = MkGenSetter(ClassSetter<object>),
+				StructSetterM = MkGenSetter(StructSetter<object>)
+
+				;
+			internal static Func<TOwner, object> StructClassGetter(MethodInfo mi)
+			{
+				var del = MkDelegate<StructGetterDel<object>>(mi);
+				return o => del(ref o);
+			}
+			internal static Func<TOwner, object> ClassStructGetter<TVal>(MethodInfo mi)
+			{
+				var del = MkDelegate<Func<TOwner, TVal>>(mi);
+				return o => del(o);
+			}
+			internal static Func<TOwner, object> StructStructGetter<TVal>(MethodInfo mi)
+			{
+				var del = MkDelegate<StructGetterDel<TVal>>(mi);
+				return o => del(ref o);
+			}
+
+			internal static Action<TOwner, object> ClassSetter<TVal>(MethodInfo mi)
+			{
+				var del = MkDelegate<Action<TOwner, TVal>>(mi);
+				return (o, v) => del(o, (TVal)v);
+			}
+			internal static Action<TOwner, object> StructSetter<TVal>(MethodInfo mi)
+			{
+				var del = MkDelegate<StructSetterDel<TVal>>(mi);
+				return (o, v) => del(ref o, (TVal)v);
+			}
+
+			delegate TVal StructGetterDel<out TVal>(ref TOwner obj);
+			delegate void StructSetterDel<in TVal>(ref TOwner obj, TVal val);
 		}
 
-		static T MkDel<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
+
+		static T MkDelegate<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
 		static T Attr<T>(MemberInfo mi) where T : Attribute { return mi.GetCustomAttributes(typeof(T), true).Cast<T>().SingleOrDefault(); }
 		static TR OrDefault<T, TR>(T val, Func<T, TR> project, TR defaultVal = default(TR)) { return Equals(val, default(T)) ? defaultVal : project(val); }
 	}
