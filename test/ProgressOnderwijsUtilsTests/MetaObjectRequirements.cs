@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Test.CodeStyle;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
@@ -13,29 +14,18 @@ namespace ProgressOnderwijsUtilsTests
 	public sealed class MetaObjectRequirements
 	{
 		[Test]
-		public void MetaObjectsAreSealedOrAbstract()
+		public void MetaObjectsAreAbstractOrNotInherited()
 		{
 			var metaObjectTypes =
-				from exampleType in new[] {
-// ReSharper disable RedundantNameQualifier
-					typeof(ProgressOnderwijsUtils.DeepEquals), 
-					typeof(Progress.Business.BusinessConnection),
-					typeof(Progress.WebApp.RequestRouting.RequestVars),
-					typeof(Progress.Gadgets.Context),
-					typeof(Progress.Services.Global), 
-					typeof(Progress.WebFramework.FrameworkSession), 
-					typeof(ProgressOnderwijsUtilsTests.MetaObjectRequirements) 
-// ReSharper restore RedundantNameQualifier
-				}
-				let assembly = Assembly.GetAssembly(exampleType)
+				from assembly in ClassNameConflicts.ProgressAssemblies
 				from type in assembly.GetTypes()
 				where typeof(IMetaObject).IsAssignableFrom(type)
 				select type;
 
-			var unsealedNonAbstractMetaObjectTypes = metaObjectTypes.Where(type => !type.IsSealed && !type.IsAbstract);
+			var typesWithNonAbstractBaseMetaObjects = metaObjectTypes.Where(type => !type.IsAbstract && type.BaseTypes().Any(baseT => !baseT.IsAbstract && typeof(IMetaObject).IsAssignableFrom(baseT)));
 
-			PAssert.That(() => !unsealedNonAbstractMetaObjectTypes.Any(),
-				"MetaObject types must be sealed or abstract.  Reason: metaproperties can be resolved using ANY of the concrete types of the metaobject, so that inheritance will can cause subclass instances' properties to be omitted."
+			PAssert.That(() => !typesWithNonAbstractBaseMetaObjects.Any(),
+				"MetaObject types must not be inherited (unless they're abstract).  Reason: metaproperties can be resolved using ANY of the concrete types of the metaobject, so that inheritance will cause subclass instances' properties to be omitted."
 				);
 
 		}
