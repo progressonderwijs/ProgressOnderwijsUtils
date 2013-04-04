@@ -1,5 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -31,7 +32,7 @@ namespace ProgressOnderwijsUtils
 		public static bool operator !=(ColumnSort a, ColumnSort b) { return !ReferenceEquals(a, b) && (null == (object)a || !a.Equals(b)); }
 	}
 
-	[TestFixture]
+	[Continuous]
 	public class SortColumnTest
 	{
 		[Test]

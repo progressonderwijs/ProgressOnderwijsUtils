@@ -7,6 +7,7 @@ using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Test.Properties;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -17,7 +18,7 @@ namespace ProgressOnderwijsUtilsTests
 			return (Math.Abs(a.G - b.G) * 0.5 + Math.Abs(a.R - b.R) * 0.35 + Math.Abs(a.B - b.B) * 0.15) / 255.0;
 		}
 	}
-	[TestFixture]
+	[Continuous]
 	public class ImageToolsTests
 	{
 		[Test]

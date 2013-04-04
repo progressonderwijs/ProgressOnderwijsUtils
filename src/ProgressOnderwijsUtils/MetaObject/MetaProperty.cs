@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
@@ -37,9 +36,16 @@ namespace ProgressOnderwijsUtils
 		Action<TOwner, object> Setter { get; }
 	}
 
+	public interface IMetaProperty<in TOwner, TProperty> : IMetaProperty<TOwner>
+	{
+		Func<TOwner, TProperty> GetTyped { get; }
+		Action<TOwner, TProperty> SetTyped { get; }
+	}
+
+
 	public static class MetaProperty
 	{
-		public sealed class Impl<TOwner> : IMetaProperty<TOwner>
+		public sealed class Impl<TOwner, TProperty> : IMetaProperty<TOwner, TProperty>
 		{
 			readonly string name;
 			public string Name { get { return name; } }
@@ -91,11 +97,16 @@ namespace ProgressOnderwijsUtils
 			static T MkDel<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
 			public Impl(PropertyInfo pi, int implicitOrder)
 			{
-
+				if (pi.PropertyType != typeof(TProperty))
+					throw new InvalidOperationException("Cannot initialize metaproperty: type mismatch.");
 				propertyInfo = pi;
 
 				ParameterExpression typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
 				MemberExpression typedPropExpr = Expression.Property(typedParamExpr, pi);
+
+				bool canCallTypedDirectly = !typeof(TOwner).IsValueType;
+				getTyped = canCallTypedDirectly ? MkDel<Func<TOwner, TProperty>>(pi.GetGetMethod()) : Expression.Lambda<Func<TOwner, TProperty>>(typedPropExpr, typedParamExpr).Compile();
+
 				bool canCallDirectly = !(typeof(TOwner).IsValueType || pi.PropertyType.IsValueType);
 				getter =
 					canCallDirectly ? MkDel<Func<TOwner, object>>(pi.GetGetMethod()) :
@@ -109,8 +120,18 @@ namespace ProgressOnderwijsUtils
 
 
 				var valParamExpr = Expression.Parameter(typeof(object), "newValue");
+				var typedValParamExpr = Expression.Parameter(typeof(TProperty), "newValue");
 
 				bool cannotWrite = !pi.CanWrite || pi.GetSetMethod() == null;
+
+
+				setTyped = cannotWrite ? null : 
+						canCallDirectly? MkDel<Action<TOwner, TProperty>>(pi.GetSetMethod())
+						: Expression.Lambda<Action<TOwner, TProperty>>(
+																			Expression.Assign(typedPropExpr, typedValParamExpr)
+																			, typedParamExpr, typedValParamExpr
+																			).Compile();
+
 
 				setter = cannotWrite ? default(Action<TOwner, object>) :
 																		Expression.Lambda<Action<TOwner, object>>(
@@ -163,14 +184,20 @@ namespace ProgressOnderwijsUtils
 
 			public bool CanRead { get { return untypedGetter != null; } }
 
-			public readonly Func<object, object> untypedGetter;
-			public readonly Func<TOwner, object> getter;
+			readonly Func<object, object> untypedGetter;
+			readonly Func<TOwner, object> getter;
+			readonly Func<TOwner, TProperty> getTyped;
 			public Func<object, object> UntypedGetter { get { return untypedGetter; } }
 			public Func<TOwner, object> Getter { get { return getter; } }
-			public readonly Action<object, object> untypedSetter;
-			public readonly Action<TOwner, object> setter;
+			public Func<TOwner, TProperty> GetTyped { get { return getTyped; } }
+
+			readonly Action<object, object> untypedSetter;
+			readonly Action<TOwner, object> setter;
+			readonly Action<TOwner, TProperty> setTyped;
 			public Action<object, object> UntypedSetter { get { return untypedSetter; } }
 			public Action<TOwner, object> Setter { get { return setter; } }
+
+			public Action<TOwner, TProperty> SetTyped { get { return setTyped; } }
 		}
 
 		static T Attr<T>(MemberInfo mi) where T : Attribute { return mi.GetCustomAttributes(typeof(T), true).Cast<T>().SingleOrDefault(); }

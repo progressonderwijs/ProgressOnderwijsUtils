@@ -5,15 +5,14 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
-using ProgressOnderwijsUtils;
 using MoreLinq;
 
-namespace ProgressOnderwijsUtils.Data
+namespace ProgressOnderwijsUtils
 {
 	public sealed class MetaObjectDataReader<T> : DbDataReaderBase where T : IMetaObject
 	{
 		readonly IEnumerator<T> metaObjects;
-		static readonly MetaProperty.Impl<T>[] fields;
+		static readonly IMetaProperty<T>[] fields;
 		static readonly Action<T, object[]> ReadValues;
 
 		static readonly Dictionary<string, int> indexLookup;
@@ -21,13 +20,13 @@ namespace ProgressOnderwijsUtils.Data
 
 		static MetaObjectDataReader()
 		{
-			fields = MetaObject.GetMetaProperties<T>().Where(mp => mp.CanRead).Cast<MetaProperty.Impl<T>>().ToArray();
+			fields = MetaObject.GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
 			indexLookup = fields.Select((mp, i) => new { Naam = mp.Name, i }).ToDictionary(x => x.Naam, x => x.i);
 
 			var parExpr = Expression.Parameter(typeof(T));
 			var arrExpr = Expression.Parameter(typeof(object[]));
 
-			var arrFiller = Expression.Lambda<Action<T, object[]>>(Expression.Block(fields.Select((field, i) => Expression.Assign(Expression.ArrayAccess(arrExpr, Expression.Constant(i)), Expression.Convert(Expression.Property(parExpr, field.propertyInfo), typeof(object))))), parExpr, arrExpr);
+			var arrFiller = Expression.Lambda<Action<T, object[]>>(Expression.Block(fields.Select((field, i) => Expression.Assign(Expression.ArrayAccess(arrExpr, Expression.Constant(i)), Expression.Convert(Expression.Property(parExpr, field.PropertyInfo), typeof(object))))), parExpr, arrExpr);
 
 			var ab = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("MetaObjectDataReader_Helper"), AssemblyBuilderAccess.Run);
 			var mod = ab.DefineDynamicModule("MetaObjectDataReader_HelperModule");

@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System;
-using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtils.Data
+namespace ProgressOnderwijsUtils
 {
 	public enum FieldMappingMode
 	{

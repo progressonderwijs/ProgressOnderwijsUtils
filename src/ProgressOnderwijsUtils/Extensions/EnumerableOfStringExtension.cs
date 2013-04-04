@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -27,7 +28,7 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
-	[TestFixture]
+	[Continuous]
 	public sealed class EnumerableOfStringExtensionTest
 	{
 

@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace ProgressOnderwijsUtils
 {
-	public static class XmlSerializeHelper
+	public static class XmlSerializerHelper
 	{
 		public static T Deserialize<T>(string xml) { return XmlSerializeHelper<T>.Deserialize(xml); }
 		public static object Deserialize(Type t, string xml)
@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
 						.Invoke(null)
 					).DeserializeInst(reader);
 		}
-		public static string Serialize(object o)
+		public static string SerializeToString(object o)
 		{
 			using (var writer = new StringWriter())
 			{
@@ -36,6 +36,20 @@ namespace ProgressOnderwijsUtils
 						).SerializeToInst(xw, o);
 				return writer.ToString();
 			}
+		}
+		public static XElement SerializeToXElement(object o)
+		{
+			var doc = new XDocument();
+			using (var xw = doc.CreateWriter())
+				((IXmlSerializeHelper)
+					typeof(XmlSerializeHelper<>)
+						.MakeGenericType(o.GetType())
+						.GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+						.Single()
+						.Invoke(null)
+					).SerializeToInst(xw, o);
+
+			return doc.Root;
 		}
 	}
 

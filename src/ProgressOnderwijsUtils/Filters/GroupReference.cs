@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -42,7 +43,7 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
-	[TestFixture]
+	[Continuous]
 	public class GroupReferenceTest
 	{
 		[Test]

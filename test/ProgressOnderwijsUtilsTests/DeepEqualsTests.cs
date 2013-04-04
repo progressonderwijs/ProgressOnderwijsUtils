@@ -5,10 +5,11 @@ using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[TestFixture]
+	[Continuous]
 	public class DeepEqualsTest
 	{
 		[Test]

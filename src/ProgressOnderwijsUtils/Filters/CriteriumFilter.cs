@@ -8,9 +8,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Data;
 
-namespace ProgressOnderwijsUtils.Filters
+namespace ProgressOnderwijsUtils
 {
 	[Serializable]
 	public sealed class CriteriumFilter : FilterBase, IEquatable<CriteriumFilter>

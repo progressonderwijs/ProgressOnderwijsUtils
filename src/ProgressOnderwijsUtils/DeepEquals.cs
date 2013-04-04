@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -119,7 +120,7 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
-	[TestFixture]
+	[Continuous]
 	public class DeepEqualsTest
 	{
 		[Test]

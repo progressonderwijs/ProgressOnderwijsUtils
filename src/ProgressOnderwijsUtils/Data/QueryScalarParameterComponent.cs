@@ -2,10 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using System;
-using ProgressOnderwijsUtils;
 using MoreLinq;
 
-namespace ProgressOnderwijsUtils.Data
+namespace ProgressOnderwijsUtils
 {
 	sealed class QueryScalarParameterComponent : IQueryParameter
 	{

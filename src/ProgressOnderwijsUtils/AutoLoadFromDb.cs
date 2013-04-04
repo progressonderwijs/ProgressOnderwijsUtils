@@ -15,18 +15,44 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
-using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
 	public static class AutoLoadFromDb
 	{
-		public static T ReadScalar<T>(this QueryBuilder builder, QueryBuilder.SqlCommandCreationContext commandCreationContext)
+		public static T ReadScalar<T>(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
 			return builder.CreateSqlCommand(commandCreationContext).Using(command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
 		}
 
-		public static int ExecuteNonQuery(this QueryBuilder builder, QueryBuilder.SqlCommandCreationContext commandCreationContext)
+		/// <summary>
+		/// Leest DataTable op basis van het huidige commando met de huidige parameters
+		/// </summary>
+		/// <param name="builder">De uit-te-voeren query</param>
+		/// <param name="conn">De database om tegen te query-en</param>
+		public static DataTable ReadDataTable(this QueryBuilder builder, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
+		{
+			return builder.CreateSqlCommand(conn).Using(
+					command => {
+						try
+						{
+							using (var adapter = new SqlDataAdapter(command))
+							{
+								adapter.MissingSchemaAction = missingSchemaAction;
+								var dt = new DataTable();
+								adapter.Fill(dt);
+								return dt;
+							}
+						}
+						catch (Exception e)
+						{
+							throw new QueryException("Query failed: " + command.CommandText, e);
+						}
+					});
+		}
+
+
+		public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
 			return builder.CreateSqlCommand(commandCreationContext).Using(
 				command => {
@@ -51,7 +77,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByConstructor<T>(this QueryBuilder q, QueryBuilder.SqlCommandCreationContext qCommandCreationContext) where T : IReadByConstructor
+		public static T[] ReadByConstructor<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IReadByConstructor
 		{
 			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
 				return ReadByConstructorUnpacker<T>(cmd);
@@ -76,7 +102,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByFields<T>(this QueryBuilder q, QueryBuilder.SqlCommandCreationContext qCommandCreationContext) where T : IReadByFields, new()
+		public static T[] ReadByFields<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IReadByFields, new()
 		{
 			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
 				return ReadByFieldsUnpacker<T>(cmd);
@@ -99,7 +125,7 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadPlain<T>(this QueryBuilder q, QueryBuilder.SqlCommandCreationContext qCommandCreationContext)
+		public static T[] ReadPlain<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext)
 		{
 			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
 				return ReadPlainUnpacker<T>(cmd);
@@ -118,7 +144,7 @@ namespace ProgressOnderwijsUtils
 		/// Overloaded; see primary overload for details.  This overload unpacks two recordsets; i.e. two subsequent SELECT statements.
 		/// It's equivalent to but faster than Tuple.Create(queryA.ReadByConstructor&lt;T1&gt;(conn), queryB.ReadByConstructor&lt;T2&gt;(conn))
 		/// </summary>
-		public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, QueryBuilder.SqlCommandCreationContext qCommandCreationContext)
+		public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext)
 			where T1 : IReadByConstructor
 			where T2 : IReadByConstructor
 		{
@@ -146,6 +172,8 @@ namespace ProgressOnderwijsUtils
 
 		static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
 			new Dictionary<Type, MethodInfo> {
+					{ typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
+					{ typeof(short), typeof(IDataRecord).GetMethod("GetInt16", binding) },
 					{ typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
 					{ typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
 					{ typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
@@ -262,7 +290,6 @@ namespace ProgressOnderwijsUtils
 			public static class ByFieldImpl<T>
 			where T : IReadByFields, new()
 			{
-
 				sealed class ColumnOrdering : IEquatable<ColumnOrdering>
 				{
 					public readonly string[] Cols;
