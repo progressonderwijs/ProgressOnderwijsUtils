@@ -126,7 +126,10 @@ namespace ProgressOnderwijsUtils
 				untypedSetter = setter == null ? default(Action<object, object>) : (o, v) => setter((TOwner)o, v);
 			}
 
-
+			public override string ToString()
+			{
+				return ObjectToCode.GetCSharpFriendlyTypeName(typeof(TOwner)) + "." + name;
+			}
 
 
 			LiteralTranslatable LabelNoTt(MemberInfo memberInfo)
@@ -162,7 +165,7 @@ namespace ProgressOnderwijsUtils
 					return (Action<TOwner, object>)StructSetterM.MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { setterMethod });
 				else
 					return (Action<TOwner, object>)ClassSetterM.MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { setterMethod });
-				
+
 				//faster code, slower startup:				
 				//var valParamExpr = Expression.Parameter(typeof(object), "newValue");
 				//var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
