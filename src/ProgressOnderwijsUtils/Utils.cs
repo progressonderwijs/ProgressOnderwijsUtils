@@ -153,6 +153,7 @@ namespace ProgressOnderwijsUtils
 				return IsDbConnectionFailure(e.InnerException);
 		}
 
+		public static Func<TR> F<TR>(Func<TR> v) { return v; } //purely for delegate type inference
 		public static Func<T, TR> F<T, TR>(Func<T, TR> v) { return v; } //purely for delegate type inference
 		public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v) { return v; } //purely for delegate type inference
 		public static Func<T1, T2, T3, TR> F<T1, T2, T3, TR>(Func<T1, T2, T3, TR> v) { return v; } //purely for delegate type inference

@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 			var parExpr = Expression.Parameter(typeof(T));
 			var arrExpr = Expression.Parameter(typeof(object[]));
 
-			var arrFiller = Expression.Lambda<Action<T, object[]>>(Expression.Block(fields.Select((field, i) => Expression.Assign(Expression.ArrayAccess(arrExpr, Expression.Constant(i)), Expression.Convert(Expression.Property(parExpr, field.PropertyInfo), typeof(object))))), parExpr, arrExpr);
+			var arrFiller = Expression.Lambda<Action<T, object[]>>(Expression.Block(fields.Select((field, i) => Expression.Assign(Expression.ArrayAccess(arrExpr, Expression.Constant(i)), Expression.Convert(field.GetterExpression(parExpr), typeof(object))))), parExpr, arrExpr);
 
 			var ab = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("MetaObjectDataReader_Helper"), AssemblyBuilderAccess.Run);
 			var mod = ab.DefineDynamicModule("MetaObjectDataReader_HelperModule");

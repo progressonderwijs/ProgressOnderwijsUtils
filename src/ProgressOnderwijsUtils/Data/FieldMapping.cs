@@ -6,8 +6,8 @@ namespace ProgressOnderwijsUtils
 {
 	public enum FieldMappingMode
 	{
-		IgnoreExtraDestinationFields,
 		RequireExactColumnMatches,
+		IgnoreExtraDestinationFields,
 	}
 	public struct FieldMapping
 	{
