@@ -186,7 +186,6 @@ namespace ProgressOnderwijsUtils
 					{ typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
 					{ typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
 					{ typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
-					
 				};
 
 		//static bool SupportsType(Type type) { return GetterMethodsByType.ContainsKey(type); }
@@ -211,14 +210,28 @@ namespace ProgressOnderwijsUtils
 			moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
 		}
 
-
+		static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
 		static class DataReaderSpecialization<TReader> where TReader : IDataReader
 		{
 			static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(typeof(TReader).GetInterfaceMap(typeof(IDataRecord)), typeof(TReader).GetInterfaceMap(typeof(IDataReader)));
 			static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod("IsDBNull", binding)];
 			static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
-			static bool SupportsType(Type type) { return GetterMethodsByType.ContainsKey(type.GetNonNullableUnderlyingType()); }
-			static MethodInfo GetterForType(Type underlyingType) { return InterfaceMap[GetterMethodsByType[underlyingType]]; }
+			static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
+
+
+			static bool SupportsType(Type type)
+			{
+				var underlyingType = type.GetNonNullableUnderlyingType();
+				return GetterMethodsByType.ContainsKey(underlyingType) || isSqlDataReader && underlyingType == typeof(TimeSpan);
+			}
+
+			static MethodInfo GetterForType(Type underlyingType)
+			{
+
+				return
+					isSqlDataReader && underlyingType == typeof(TimeSpan) ? getTimeSpan_SqlDataReader
+					: InterfaceMap[GetterMethodsByType[underlyingType]];
+			}
 
 			static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, Type type)
 			{
@@ -302,7 +315,7 @@ namespace ProgressOnderwijsUtils
 					public ColumnOrdering(TReader reader)
 					{
 						var primeArr = ColHashPrimes;
-						Cols = new string[primeArr.Length];
+						Cols = new string[reader.FieldCount];
 						cachedHash = 0;
 						for (int i = 0; i < Cols.Length; i++)
 						{
@@ -312,7 +325,16 @@ namespace ProgressOnderwijsUtils
 						}
 					}
 
-					public bool Equals(ColumnOrdering other) { return cachedHash == other.cachedHash && Cols.SequenceEqual(other.Cols); }
+					public bool Equals(ColumnOrdering other)
+					{
+						var oCols = other.Cols;
+						if (cachedHash != other.cachedHash || Cols.Length != oCols.Length)
+							return false;
+						for (int i = 0; i < Cols.Length; i++)
+							if (!Cols[i].Equals(oCols[i], StringComparison.OrdinalIgnoreCase))
+								return false;
+						return true;
+					}
 					public override int GetHashCode() { return (int)(uint)((cachedHash >> 32) + cachedHash); }
 					public override bool Equals(object obj) { return obj is ColumnOrdering && Equals((ColumnOrdering)obj); }
 				}
@@ -328,10 +350,10 @@ namespace ProgressOnderwijsUtils
 
 				static ByMetaObjectImpl()
 				{
-					ColHashPrimes = Utils.Primes().Take(metadata.Count(mp => mp.Setter != null && SupportsType(mp.DataType))).Select(i => (uint)i).ToArray();
+					ColHashPrimes = Utils.Primes().Take(metadata.Count(mp => mp.CanWrite && SupportsType(mp.DataType))).Select(i => (uint)i).ToArray();
 					if (ColHashPrimes.Length == 0)
 						throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
-					hasUnsupportedColumns = metadata.Any(mp => mp.Setter != null && !SupportsType(mp.DataType));
+					hasUnsupportedColumns = metadata.Any(mp => mp.CanWrite && !SupportsType(mp.DataType));
 
 					LoadRows = new ConcurrentDictionary<ColumnOrdering, Func<TReader, T[]>>();
 				}
