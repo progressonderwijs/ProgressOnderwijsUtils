@@ -127,8 +127,5 @@ namespace ProgressOnderwijsUtilsTests
 			var propertyMp = MetaObject.GetByExpression((SimpleObject o) => o.Property);
 			PAssert.That(() => !propertyMp.IsReadonly && propertyMp.CanWrite);
 		}
-
-
-
 	}
 }
