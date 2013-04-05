@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void IsWritable()
 		{
-			var writable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp => mp.Setter != null);
+			var writable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp => mp.CanWrite);
 			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "WriteonlyProperty", "PrivateGetter", };
 			PAssert.That(() => writable.Select(mp => mp.Name).SequenceEqual(expected));
 		}
