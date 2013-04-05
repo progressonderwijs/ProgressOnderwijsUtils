@@ -302,7 +302,7 @@ namespace ProgressOnderwijsUtils
 					public ColumnOrdering(TReader reader)
 					{
 						var primeArr = ColHashPrimes;
-						Cols = new string[primeArr.Length];
+						Cols = new string[reader.FieldCount];
 						cachedHash = 0;
 						for (int i = 0; i < Cols.Length; i++)
 						{
@@ -312,7 +312,16 @@ namespace ProgressOnderwijsUtils
 						}
 					}
 
-					public bool Equals(ColumnOrdering other) { return cachedHash == other.cachedHash && Cols.SequenceEqual(other.Cols); }
+					public bool Equals(ColumnOrdering other)
+					{
+						var oCols = other.Cols;
+						if (cachedHash != other.cachedHash || Cols.Length != oCols.Length)
+							return false;
+						for (int i = 0; i < Cols.Length; i++)
+							if (!Cols[i].Equals(oCols[i], StringComparison.OrdinalIgnoreCase))
+								return false;
+						return true;
+					}
 					public override int GetHashCode() { return (int)(uint)((cachedHash >> 32) + cachedHash); }
 					public override bool Equals(object obj) { return obj is ColumnOrdering && Equals((ColumnOrdering)obj); }
 				}
