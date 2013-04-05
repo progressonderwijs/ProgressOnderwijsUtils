@@ -25,6 +25,8 @@ namespace ProgressOnderwijsUtilsTests
 		public string HiddenProperty { get; set; }
 		[MpLabel("bla", "bla")]
 		public string LabelledProperty { get; set; }
+		[MpReadonly]
+		public string MpReadonlyProperty { get; set; }
 		string PrivateProperty { get; set; }
 #pragma warning disable 169
 		DateTime PrivateField;
@@ -114,6 +116,18 @@ namespace ProgressOnderwijsUtilsTests
 			var mp = MetaObject.GetByExpression((SimpleObject o) => o.Property);
 			PAssert.That(() => mp.Name == "Property" && mp.DataType == typeof(string));
 		}
+
+		[Test]
+		public void ReadonlyWorks()
+		{
+			var readonlyPropertyMp = MetaObject.GetByExpression((SimpleObject o) => o.ReadonlyProperty);
+			PAssert.That(() => readonlyPropertyMp.IsReadonly && !readonlyPropertyMp.CanWrite);
+			var mpReadonlyPropertyMp = MetaObject.GetByExpression((SimpleObject o) => o.MpReadonlyProperty);
+			PAssert.That(() => mpReadonlyPropertyMp.IsReadonly && mpReadonlyPropertyMp.CanWrite);
+			var propertyMp = MetaObject.GetByExpression((SimpleObject o) => o.Property);
+			PAssert.That(() => !propertyMp.IsReadonly && propertyMp.CanWrite);
+		}
+
 
 
 	}
