@@ -3,13 +3,6 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	public sealed class MpVolgordeAttribute : Attribute
-	{
-		public MpVolgordeAttribute(int volgorde) { Volgorde = volgorde; }
-		public readonly int Volgorde;
-	}
-
 	[Flags]
 	public enum ColumnCss
 	{
@@ -39,7 +32,7 @@ namespace ProgressOnderwijsUtils
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true, AllowMultiple = false)]
 	public sealed class MpLabelsRequiredAttribute : Attribute { }
 
-	[AttributeUsage(AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
 	public sealed class MpNotMappedAttribute : Attribute { }
 
 

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-	public struct FileData : IEquatable<FileData>, IReadByFields
+	public struct FileData : IEquatable<FileData>, IMetaObject
 	{
 		private const int MAX_FILE_NAME = 64;
 

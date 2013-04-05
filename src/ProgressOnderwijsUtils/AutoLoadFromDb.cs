@@ -102,17 +102,17 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByFields<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IReadByFields, new()
+		public static T[] ReadMetaObjects<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
 		{
 			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
-				return ReadByFieldsUnpacker<T>(cmd);
+				return ReadMetaObjectsUnpacker<T>(cmd);
 		}
 
-		public static T[] ReadByFieldsUnpacker<T>(SqlCommand cmd) where T : IReadByFields, new()
+		public static T[] ReadMetaObjectsUnpacker<T>(SqlCommand cmd, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
 		{
 			using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess))
 			{
-				var unpacker = DataReaderSpecialization<SqlDataReader>.ByFieldImpl<T>.GetDataReaderUnpacker(reader);
+				var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.GetDataReaderUnpacker(reader, fieldMappingMode);
 				return unpacker(reader);
 			}
 		}
@@ -172,16 +172,21 @@ namespace ProgressOnderwijsUtils
 
 		static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
 			new Dictionary<Type, MethodInfo> {
+					{ typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
 					{ typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
+					{ typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod("GetBytes", BindingFlags.Public | BindingFlags.Static) },
+					{ typeof(char), typeof(IDataRecord).GetMethod("GetChar", binding) },
+					{ typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod("GetChars", BindingFlags.Public | BindingFlags.Static) },
+					{ typeof(DateTime), typeof(IDataRecord).GetMethod("GetDateTime", binding) },
+					{ typeof(decimal), typeof(IDataRecord).GetMethod("GetDecimal", binding) },
+					{ typeof(double), typeof(IDataRecord).GetMethod("GetDouble", binding) },
+					{ typeof(float), typeof(IDataRecord).GetMethod("GetFloat", binding) },
+					{ typeof(Guid), typeof(IDataRecord).GetMethod("GetGuid", binding) },
 					{ typeof(short), typeof(IDataRecord).GetMethod("GetInt16", binding) },
 					{ typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
 					{ typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
 					{ typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
-					{ typeof(decimal), typeof(IDataRecord).GetMethod("GetDecimal", binding) },
-					{ typeof(double), typeof(IDataRecord).GetMethod("GetDouble", binding) },
-					{ typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
-					{ typeof(DateTime), typeof(IDataRecord).GetMethod("GetDateTime", binding) },
-					{ typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod("GetBytes", BindingFlags.Public | BindingFlags.Static) },
+					
 				};
 
 		//static bool SupportsType(Type type) { return GetterMethodsByType.ContainsKey(type); }
@@ -287,8 +292,8 @@ namespace ProgressOnderwijsUtils
 				return loadRows;
 			}
 
-			public static class ByFieldImpl<T>
-			where T : IReadByFields, new()
+			public static class ByMetaObjectImpl<T>
+			where T : IMetaObject, new()
 			{
 				sealed class ColumnOrdering : IEquatable<ColumnOrdering>
 				{
@@ -316,67 +321,29 @@ namespace ProgressOnderwijsUtils
 
 				static Type type { get { return typeof(T); } }
 				static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
-				static readonly Dictionary<string, MemberInfo> GetMember;
 				static readonly uint[] ColHashPrimes;
-				static Type MemberType(MemberInfo mi)
+				static readonly MetaInfo<T> metadata = MetaInfo<T>.Instance;
+				static readonly bool hasUnsupportedColumns;
+
+
+				static ByMetaObjectImpl()
 				{
-					return mi is FieldInfo ? ((FieldInfo)mi).FieldType : ((PropertyInfo)mi).PropertyType;
-				}
+					ColHashPrimes = Utils.Primes().Take(metadata.Count(mp => mp.Setter != null && SupportsType(mp.DataType))).Select(i => (uint)i).ToArray();
+					if (ColHashPrimes.Length == 0)
+						throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
+					hasUnsupportedColumns = metadata.Any(mp => mp.Setter != null && !SupportsType(mp.DataType));
 
-				static ByFieldImpl()
-				{
-					GetMember = new Dictionary<string, MemberInfo>(StringComparer.OrdinalIgnoreCase);
-					try
-					{
-						foreach (var fi in PublicFields())
-							GetMember.Add(fi.Name, fi);
-						foreach (var pi in PublicProperties())
-							GetMember.Add(pi.Name, pi);
-					}
-					catch (ArgumentException argE)
-					{
-						throw new ArgumentException(FriendlyName + " : IReadByFields's writable fields & properties must have a case insensitively unique name", argE);
-					}
-
-					ColHashPrimes = Utils.Primes().Take(GetMember.Count).Select(i => (uint)i).ToArray();
-
-					VerifyTypeValidity();
 					LoadRows = new ConcurrentDictionary<ColumnOrdering, Func<TReader, T[]>>();
-					//LoadRows = CreateLoadRowsMethod<T>(readerParamExpr =>
-					//	Expression.New(constructor, ConstructorParameters.Select((ci, i) => GetColValueExpr(readerParamExpr, i, ci.ParameterType)))
-					//	);
 				}
 
-				static IEnumerable<PropertyInfo> PublicProperties() { return type.GetProperties().Where(pi => pi.CanWrite && pi.GetSetMethod() != null); }
-				static IEnumerable<FieldInfo> PublicFields() { return type.GetFields().Where(fi => !fi.Attributes.HasFlag(FieldAttributes.InitOnly)); }
-
-				static void VerifyTypeValidity()
+				// ReSharper disable UnusedParameter.Local
+				public static Func<TReader, T[]> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
+				// ReSharper restore UnusedParameter.Local
 				{
-
-					if (!type.IsSealed)
-						throw new ArgumentException(FriendlyName + " : IReadByFields must be a public, sealed type!");
-
-#if false
-					if (!type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery"))
-						throw new ArgumentException(FriendlyName + " : IReadByFields must have a public static method DbQuery that returns a QueryBuilder");
-					if (type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery" && mi.ReturnType != typeof(QueryBuilder)))
-						throw new ArgumentException(FriendlyName + " : IReadByFields's DbQuery does not return QueryBuilder");
-#endif
-					if (type.GetConstructors().All(ci => ci.GetParameters().Any()) && !type.IsValueType)
-						throw new ArgumentException(FriendlyName + " : IReadByFields must have a parameterless public constructor.");
-
-
-					if (!GetMember.Values.All(mi => SupportsType(MemberType(mi))))
-						throw new ArgumentException(FriendlyName + " : IReadByFields's writable fields & properties must have only simple types: cannot support "
-							+ GetMember.Where(miKV => !SupportsType(MemberType(miKV.Value))).Select(miKV => ObjectToCode.GetCSharpFriendlyTypeName(MemberType(miKV.Value)) + " " + miKV.Key).JoinStrings(", "));
-
-				}
-
-
-				public static Func<TReader, T[]> GetDataReaderUnpacker(TReader reader)
-				{
-					if (reader.FieldCount != ColHashPrimes.Length)
-						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; field count = " + ColHashPrimes.Length);
+					if (reader.FieldCount > ColHashPrimes.Length || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches)
+						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; property count = " + ColHashPrimes.Length + "\n" +
+							"datareader: " + Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).JoinStrings(", ") + "\n" +
+							FriendlyName + ": " + metadata.Where(mp => mp.CanWrite).Select(mp => mp.Name).JoinStrings(", "));
 					var ordering = new ColumnOrdering(reader);
 
 					return LoadRows.GetOrAdd(ordering, orderingP =>
@@ -384,10 +351,10 @@ namespace ProgressOnderwijsUtils
 							Expression.MemberInit(
 								Expression.New(type),
 								orderingP.Cols.Select((colName, i) => {
-									MemberInfo member;
-									if (!GetMember.TryGetValue(colName, out member))
+									IMetaProperty<T> member;
+									if (!metadata.TryGetValue(colName, out member))
 										throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
-									return Expression.Bind(member, GetColValueExpr(readerParamExpr, i, MemberType(member)));
+									return Expression.Bind(member.PropertyInfo, GetColValueExpr(readerParamExpr, i, member.DataType));
 								}))));
 				}
 			}
@@ -493,6 +460,17 @@ namespace ProgressOnderwijsUtils
 			long offset = 0;
 			while (offset < byteCount)
 				offset += row.GetBytes(colIndex, offset, arr, (int)offset, (int)byteCount);
+			return arr;
+		}
+		[UsedImplicitly]
+		public static char[] GetChars(this IDataRecord row, int colIndex)
+		{
+			long charCount = row.GetChars(colIndex, 0L, null, 0, 0);
+			if (charCount > int.MaxValue) throw new NotSupportedException("Array too large!");
+			var arr = new char[charCount];
+			long offset = 0;
+			while (offset < charCount)
+				offset += row.GetChars(colIndex, offset, arr, (int)offset, (int)charCount);
 			return arr;
 		}
 	}
