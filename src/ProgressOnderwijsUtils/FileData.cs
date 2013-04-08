@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
+	//TODO:make immutable.
 	public struct FileData : IEquatable<FileData>, IMetaObject
 	{
 		private const int MAX_FILE_NAME = 64;
