@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtilsTests
 			var typesWithNonAbstractBaseMetaObjects = metaObjectTypes.Where(type => !type.IsAbstract && type.BaseTypes().Any(baseT => !baseT.IsAbstract && typeof(IMetaObject).IsAssignableFrom(baseT)));
 
 			PAssert.That(() => !typesWithNonAbstractBaseMetaObjects.Any(),
-				"MetaObject types must not be inherited (unless they're abstract).  Reason: metaproperties can be resolved using ANY of the concrete types of the metaobject, so that inheritance will cause subclass instances' properties to be omitted."
+				"MetaObject types must not be inherited (unless they're abstract).  Reason: metaproperties can be resolved using ANY of the concrete types of the metaobject, so that inheritance can cause subclass instances' properties to be omitted unpredictably."
 				);
 
 		}
