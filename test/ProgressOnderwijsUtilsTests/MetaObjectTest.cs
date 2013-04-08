@@ -25,6 +25,8 @@ namespace ProgressOnderwijsUtilsTests
 		public string HiddenProperty { get; set; }
 		[MpLabel("bla", "bla")]
 		public string LabelledProperty { get; set; }
+		[MpReadonly]
+		public string MpReadonlyProperty { get; set; }
 		string PrivateProperty { get; set; }
 #pragma warning disable 169
 		DateTime PrivateField;
@@ -53,7 +55,7 @@ namespace ProgressOnderwijsUtilsTests
 			var typesWithNonAbstractBaseMetaObjects = metaObjectTypes.Where(type => !type.IsAbstract && type.BaseTypes().Any(baseT => !baseT.IsAbstract && typeof(IMetaObject).IsAssignableFrom(baseT)));
 
 			PAssert.That(() => !typesWithNonAbstractBaseMetaObjects.Any(),
-				"MetaObject types must not be inherited (unless they're abstract).  Reason: metaproperties can be resolved using ANY of the concrete types of the metaobject, so that inheritance will cause subclass instances' properties to be omitted."
+				"MetaObject types must not be inherited (unless they're abstract).  Reason: metaproperties can be resolved using ANY of the concrete types of the metaobject, so that inheritance can cause subclass instances' properties to be omitted unpredictably."
 				);
 
 		}
@@ -72,7 +74,7 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var mps = MetaObject.GetMetaProperties<SimpleObject>();
 			var names = mps.Select(mp => mp.Name);
-			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "ReadonlyProperty", "WriteonlyProperty", "PrivateSetter", "PrivateGetter", };
+			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "MpReadonlyProperty", "ReadonlyProperty", "WriteonlyProperty", "PrivateSetter", "PrivateGetter", };
 			PAssert.That(() => names.SequenceEqual(expected));
 		}
 
@@ -80,7 +82,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void IsReadable()
 		{
 			var readable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp => mp.CanRead);
-			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "ReadonlyProperty", "PrivateSetter" };
+			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "MpReadonlyProperty", "ReadonlyProperty", "PrivateSetter" };
 			PAssert.That(() => readable.Select(mp => mp.Name).SequenceEqual(expected));
 		}
 
@@ -88,7 +90,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void IsWritable()
 		{
 			var writable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp => mp.CanWrite);
-			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "WriteonlyProperty", "PrivateGetter", };
+			var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "MpReadonlyProperty", "WriteonlyProperty", "PrivateGetter", };
 			PAssert.That(() => writable.Select(mp => mp.Name).SequenceEqual(expected));
 		}
 
@@ -104,7 +106,7 @@ namespace ProgressOnderwijsUtilsTests
 			moDef["property"].Setter(o, "aha");
 			moDef["LabelledProperty"].Setter(o, "really");
 
-			PAssert.That(() => o.Equals(new SimpleObject { Property = "aha", LabelledProperty = "really" }) );
+			PAssert.That(() => o.Equals(new SimpleObject { Property = "aha", LabelledProperty = "really" }));
 		}
 
 
@@ -115,6 +117,15 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => mp.Name == "Property" && mp.DataType == typeof(string));
 		}
 
-
+		[Test]
+		public void ReadonlyWorks()
+		{
+			var readonlyPropertyMp = MetaObject.GetByExpression((SimpleObject o) => o.ReadonlyProperty);
+			PAssert.That(() => readonlyPropertyMp.IsReadonly && !readonlyPropertyMp.CanWrite);
+			var mpReadonlyPropertyMp = MetaObject.GetByExpression((SimpleObject o) => o.MpReadonlyProperty);
+			PAssert.That(() => mpReadonlyPropertyMp.IsReadonly && mpReadonlyPropertyMp.CanWrite);
+			var propertyMp = MetaObject.GetByExpression((SimpleObject o) => o.Property);
+			PAssert.That(() => !propertyMp.IsReadonly && propertyMp.CanWrite);
+		}
 	}
 }

@@ -11,10 +11,133 @@ namespace ProgressOnderwijsUtils
 {
 	public enum TagSafety
 	{
-		ReplaceWithContent,
-		RemoveCompletely,
-		Secure
+		/// <summary>
+		/// This tag is black-listed; the entire tag with all its descendants should be excluded from the output.
+		/// </summary>
+		Unsafe,
+		/// <summary>
+		/// This tag is not white-listed; it's contents should be included in the output but the tag itself (and its attributes) should be removed.
+		/// </summary>
+		Unknown,
+		/// <summary>
+		/// This tag is safe even when a hostile hacker controls its contents and white-listed attributes; it can be included in output.
+		/// </summary>
+		Safe
 	}
+
+	public interface IHtmlFilter
+	{
+		/// <summary>
+		/// Returns whether the tag should be allowed.
+		/// </summary>
+		/// <param name="elem">The element being checked for security</param>
+		/// <returns>The status of the tag.</returns>
+		TagSafety AllowTag(XElement elem);
+
+		/// <summary>
+		/// Whether the attribute is secure and should be allowed.
+		/// </summary>
+		bool AllowAttribute(XAttribute attr);
+	}
+
+	public static class HtmlFilter
+	{
+		sealed class DelegateHtmlFilter : IHtmlFilter
+		{
+			readonly Func<XElement, TagSafety> filterTag;
+			readonly Func<XAttribute, bool> filterAttr;
+			public DelegateHtmlFilter(Func<XElement, TagSafety> filterTag, Func<XAttribute, bool> filterAttr)
+			{
+				this.filterTag = filterTag;
+				this.filterAttr = filterAttr;
+			}
+
+			public TagSafety AllowTag(XElement elem) { return filterTag(elem); }
+
+			public bool AllowAttribute(XAttribute attr) { return filterAttr(attr); }
+		}
+
+
+
+		sealed class SafeStyleFilter : IHtmlFilter
+		{
+			public static readonly SafeStyleFilter Instance = new SafeStyleFilter();
+			public TagSafety AllowTag(XElement elem) { return TagSafety.Unsafe; }
+			public bool AllowAttribute(XAttribute attr) { return IsSafeStyleAttribute(attr); }
+			static readonly Regex
+				SafeStyleRegex = new Regex(@"^
+	\s*margin(-(left|right|top|bottom))?	\s*:\s*
+		\d+(px|em|cm|mm|)\s*;?\s*
+$", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+
+			static bool IsSafeStyleAttribute(XAttribute attr) { return attr.Name.LocalName == "style" && SafeStyleRegex.IsMatch(attr.Value); }
+		}
+
+		sealed class AllowWhenAny : IHtmlFilter
+		{
+			readonly IHtmlFilter[] filters;
+			public AllowWhenAny(params IHtmlFilter[] filters) { this.filters = filters ?? new IHtmlFilter[0]; }
+
+			public TagSafety AllowTag(XElement elem)
+			{
+				var retval = TagSafety.Unsafe;
+				foreach (var filter in filters)
+				{
+					var tagSafety = filter.AllowTag(elem);
+					if (tagSafety == TagSafety.Safe)
+						return TagSafety.Safe;
+					else if (tagSafety > retval)
+						retval = tagSafety;
+				}
+				return retval;
+			}
+
+			public bool AllowAttribute(XAttribute attr) { return filters.Any(filter => filter.AllowAttribute(attr)); }
+		}
+
+
+		sealed class SetBasedHtmlFilter : IHtmlFilter
+		{
+			readonly HashSet<string> bannedElements, safeElements, safeAttributes;
+
+			public SetBasedHtmlFilter(IEnumerable<string> bannedElements, IEnumerable<string> safeElements, IEnumerable<string> safeAttributes)
+			{
+				this.bannedElements = MkSet(bannedElements);
+				this.safeElements = MkSet(safeElements);
+				this.safeAttributes = MkSet(safeAttributes);
+			}
+
+			static HashSet<string> MkSet(IEnumerable<string> elems) { return new HashSet<string>(elems ?? new string[0], StringComparer.OrdinalIgnoreCase); }
+
+			public TagSafety AllowTag(XElement elem)
+			{
+				return bannedElements.Contains(elem.Name.LocalName) ? TagSafety.Unsafe
+					: safeElements.Contains(elem.Name.LocalName) ? TagSafety.Safe
+						: TagSafety.Unknown;
+			}
+
+			public bool AllowAttribute(XAttribute attr)
+			{
+				return safeAttributes.Contains(attr.Name.LocalName);
+			}
+		}
+
+		static readonly string[]
+			banned = "script style".Split(' '),
+			safe = "b i u big small em strong hr br p span div center font table thead col colgroup tbody tfoot caption tr td th h1 h2 h3 h4 h5 h6 a cite dfn code samp var dl dt dd ins del sub sup tt ul ol li pre q abbr acronym blockquote fieldset legend img".Split(' '),
+			safeAttr = "lang title href dir color border face size align alt bgcolor cellspacing cellpadding char charoff cite height width colspan rowspan".Split(' ');
+
+		static readonly SetBasedHtmlFilter defaultSets = new SetBasedHtmlFilter(banned, safe, safeAttr);
+
+		//om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
+		public static readonly IHtmlFilter
+			Default = new AllowWhenAny(defaultSets, SafeStyleFilter.Instance),
+
+			InternalNameAllowed =
+				new AllowWhenAny(new SetBasedHtmlFilter(banned, safe, safeAttr.Concat(new[] { "name" })), SafeStyleFilter.Instance)
+			;
+	}
+
 
 
 	//TODO: we should implement a real wrapper around html tidy sometime to support invalid but almost valid XHTML - but until we do, we'll just need to fail on
@@ -30,16 +153,14 @@ namespace ProgressOnderwijsUtils
 
 		/// <summary>
 		/// Attempts to parse an html fragment as xml.  This works because our html is generally well formed xml.
-		/// When parsing fails, the method returns a best-guess string representation (which tries to at least decode entities into unicode.
-		/// To fit the result into an element, it is wrapped in a top level "x" element.
-		/// 
-		/// This method should eventually be replaced by a real call to Tidy.NET.
+		/// When parsing fails, the method returns a best-guess string representation which tries to decode entities into unicode.
 		/// 
 		/// This is not a security check; the output of this function can still contain dangerous tags!
 		/// 
+		/// Use Sanitze() to clean up parsed html.
 		/// </summary>
 		/// <returns>The html fragment.</returns> 
-		static XhtmlData HeuristicParse(string str)
+		public static XhtmlData HeuristicParse(string str)
 		{
 			XhtmlData? result = TryParse(str);
 			if (result != null) return result.Value;
@@ -152,7 +273,7 @@ namespace ProgressOnderwijsUtils
 		public static string TidyHtmlStringAndLimitLength(string input, int length)
 		{
 			int wrapperLength = "<x></x>".Length;
-			XElement sanitizedWrappedInput = new XElement("x", HtmlSanitizer(input));
+			XElement sanitizedWrappedInput = new XElement("x", HeuristicParse(input).Sanitize());
 			XElement trimmedVersion = int.MaxValue - wrapperLength > length
 				? LimitLength(sanitizedWrappedInput, length + wrapperLength)
 				: sanitizedWrappedInput;
@@ -162,7 +283,7 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Takes an insecure html fragment and cleans it up.
 		/// </summary>
-		public static string TidyHtmlString(string input) { return HtmlSanitizer(input).ToString(); }
+		public static string SanitizeHtmlString(string input) { return HeuristicParse(input).Sanitize().ToString(); }
 
 
 		/// <summary>
@@ -181,24 +302,24 @@ namespace ProgressOnderwijsUtils
 				: xRootEl.ToString(SaveOptions.DisableFormatting);
 		}
 
-		static IEnumerable<XNode> FilterElem(XNode node, Func<XElement, TagSafety> elemFilter, Func<XAttribute, bool> attrFilter)
+		static IEnumerable<XNode> FilterElem(XNode node, IHtmlFilter filter)
 		{
 			if (node is XText)
 				return Enumerable.Repeat(node, 1);
 			else if (node is XElement)
 			{
-				XElement elem = (XElement)node;
-				TagSafety safety = elemFilter(elem);
-				if (safety == TagSafety.RemoveCompletely)
+				var elem = (XElement)node;
+				var safety = filter.AllowTag(elem);
+				if (safety == TagSafety.Unsafe)
 					return Enumerable.Empty<XNode>();
-				else if (safety == TagSafety.ReplaceWithContent)
-					return elem.Nodes().SelectMany(childnode => FilterElem(childnode, elemFilter, attrFilter));
-				else if (safety == TagSafety.Secure)
+				else if (safety == TagSafety.Unknown)
+					return elem.Nodes().SelectMany(childnode => FilterElem(childnode, filter));
+				else if (safety == TagSafety.Safe)
 					return
 						Enumerable.Repeat<XNode>(
 							new XElement(elem.Name,
-								elem.Attributes().Where(attrFilter),
-								elem.Nodes().Select(childnode => FilterElem(childnode, elemFilter, attrFilter))
+								elem.Attributes().Where(filter.AllowAttribute),
+								elem.Nodes().Select(childnode => FilterElem(childnode, filter))
 							)
 							, 1);
 				else
@@ -219,73 +340,29 @@ namespace ProgressOnderwijsUtils
 		/// For practical purposes, there is a HashSet based version that simply filters on element name.
 		/// </summary>
 		/// <param name="sourceHtml">The xhtml to sanitize.  The root element is ignored.</param>
-		/// <param name="elemFilter">The filter to apply to elements (called for each element in the source).</param>
-		/// <param name="attrFilter">The filter to apply to attributes (called for each attribute in the source).</param>
 		/// <returns>The parsed xhtml fragments without non-validating or unsafe tags.</returns>
-		static XhtmlData HtmlSanitizer(XhtmlData sourceHtml, Func<XElement, TagSafety> elemFilter, Func<XAttribute, bool> attrFilter)
+		public static XhtmlData Sanitize(this XhtmlData sourceHtml)
 		{
-			return XhtmlData.Create(
-				sourceHtml.SelectMany(node => FilterElem(node, elemFilter, attrFilter))
-				);
+			return sourceHtml.Sanitize(HtmlFilter.Default);
 		}
 
-		/// <summary>This function sanitizes an html tree fragment and returns it wrapped in a single toplevel "x" element.
-		///  - Any element that is banned is removed along with all its attributes and descendants.
-		///  - Any element that is in the safe set is retained, and its attributes and descendants are recursively verified in the same way.
-		///    If a "safe" element contains an unsafe element, the unsafe element is thus removed.
-		///  - Any html that is neither banned nor safe is removed, but its (safe) children are included in the output.
-		///  - text nodes are considered safe.
-		///  - Only attributes that are in the safe set and themselves are defined on the safe set are copied to the output.
-		/// </summary>
-		/// <param name="sourceHtml">The xhtml to sanitize.</param>
-		/// <param name="bannedElements">Elements and their descendents with a name in this list are removed completely.  All names
-		/// in this list must be lowercase.  Matching occurs case insensitively.  Null means use default selection.</param>
-		/// <param name="safeElements">Elements with a case-sensitive name in this list are retained in the output.  
-		/// The attributes and descendents are recursively filtered.  Null means use default selection.</param>
-		/// <param name="safeAttributes">Attributes on elements deemed safe with a case-sensitive name in this list are retained in the output.  Null means use default selection.</param>
-		/// <returns>The parsed xhtml fragments without non-validating or unsafe tags.</returns>
-		public static XhtmlData HtmlSanitizer(XhtmlData sourceHtml, HashSet<string> safeElements = null, HashSet<string> safeAttributes = null, HashSet<string> bannedElements = null)
-		{
-			safeAttributes = safeAttributes ?? defaultSafeAttr;
-			safeElements = safeElements ?? defaultSafeElements;
-			bannedElements = bannedElements ?? defaultBannedElements;
-			if (bannedElements.Overlaps(safeElements.Select(elem => elem.ToLowerInvariant())))
-				throw new ProgressNetException("Some elements are both banned and safe: this makes no sense.");
-			else if (bannedElements.Any(name => name.ToLowerInvariant() != name))
-				throw new ProgressNetException("All banned elements must be in lower case.");
-
-			return HtmlSanitizer(sourceHtml,
-				elem => safeElements.Contains(elem.Name.LocalName) ? TagSafety.Secure :
-						bannedElements.Contains(elem.Name.LocalName.ToLowerInvariant()) ? TagSafety.RemoveCompletely : TagSafety.ReplaceWithContent,
-				attr => safeAttributes.Contains(attr.Name.LocalName));
-		}
-
-		/// <summary>This function parses and sanitizes an html tree.
+		/// <summary>This function sanitizes an html tree.
 		///  - Any html that isn't recognized as html is considered content (e.g. a lone ampersand)
 		///  - Any html that can't be parsed (say, an unclosed element) is stripped.
-		///  - Any html that can be parsed is processed according the above overloads.
+		///  - Any html that can be parsed but is explicitly considered "safe" list removed.
+		///  - Html that can be parsed and is explicitly on the "safe" list is retained.
+		///  
+		///  Be aware that the filters may receive a mixture of upper and/or lowercase tags, depending on the source!
 		/// 
-		/// This overload takes a string as input and attempts to parse it.
+		/// For practical purposes, there is a HashSet based version that simply filters on element name.
 		/// </summary>
-		public static XhtmlData HtmlSanitizer(string sourceString, HashSet<string> safeElements = null, HashSet<string> safeAttributes = null, HashSet<string> bannedElements = null)
+		/// <param name="sourceHtml">The xhtml to sanitize.  The root element is ignored.</param>
+		/// <param name="filter">The filter to apply to elements (called for each element in the source).</param>
+		/// <returns>The parsed xhtml fragments without non-validating or unsafe tags.</returns>
+		public static XhtmlData Sanitize(this XhtmlData sourceHtml, IHtmlFilter filter)
 		{
-			XhtmlData parsed = HeuristicParse(sourceString);
-			return HtmlSanitizer(parsed, safeElements, safeAttributes, bannedElements);
+			filter = filter ?? HtmlFilter.Default;
+			return XhtmlData.Create(sourceHtml.SelectMany(node => FilterElem(node, filter)));
 		}
-
-		//door http://www.w3schools.com/tags/ en redelijke selectie gekozen.
-		//om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
-		static readonly HashSet<string> defaultSafeElements = new HashSet<string>(
-			"b i u big small em strong hr br p span div center font table thead col colgroup tbody tfoot caption tr td th h1 h2 h3 h4 h5 h6 a cite dfn code samp var dl dt dd ins del sub sup tt ul ol li pre q abbr acronym blockquote fieldset legend img".Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
-		//public static IEnumerable<string> DefaultSafeElements { get { return defaultSafeElements; } }
-		//id's en names zijn niet toegestaan zodat er geen conflict kan onstaan met onze code.  style is niet secuur en kan tevens tracing info bevatten.
-		static readonly HashSet<string> defaultSafeAttr = new HashSet<string>(new[] { "lang", "title", "href", "dir", "color", "border", "face", "size", "align", "alt", "bgcolor", "cellspacing", "cellpadding", "char", "charoff", "cite", "height", "width", "colspan", "rowspan" });
-		public static IEnumerable<string> DefaultSafeAttributes { get { return defaultSafeAttr; } }
-
-		//de inhoud van deze elementen is volledig oninteressant.
-		static readonly HashSet<string> defaultBannedElements = new HashSet<string>(new[] { "script", "style" });
-		//public static IEnumerable<string> DefaultBannedElements { get { return defaultBannedElements; } }
 	}
-
-
 }
