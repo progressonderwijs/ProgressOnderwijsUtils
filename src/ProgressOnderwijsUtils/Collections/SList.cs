@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils.Collections
 		}
 
 		[Pure]
-		public SList<TR> Select<TR>(Func<T, TR> map)
+		public SList<TR> SelectEager<TR>(Func<T, TR> map)
 		{
 			return SelectReverse(map).Reverse();
 		}
