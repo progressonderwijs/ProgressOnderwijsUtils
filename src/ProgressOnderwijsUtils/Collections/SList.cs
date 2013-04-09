@@ -28,6 +28,15 @@ namespace ProgressOnderwijsUtils.Collections
 		public SList<T> Prepend(T head) { return new SList<T>(new Impl(head, list)); }
 
 		[Pure]
+		public SList<T> Prepend(SList<T> heads)
+		{
+			var retval = this;
+			for (var cur = heads.Reverse(); !cur.IsEmpty; cur = cur.Tail)
+				retval = retval.Prepend(cur.Head);
+			return retval;
+		}
+
+		[Pure]
 		public SList<T> Reverse()
 		{
 			var retval = Empty;
@@ -48,6 +57,16 @@ namespace ProgressOnderwijsUtils.Collections
 			var retval = SList<TR>.Empty;
 			for (var cur = this; !cur.IsEmpty; cur = cur.Tail)
 				retval = retval.Prepend(map(cur.Head));
+			return retval;
+		}
+
+		[Pure]
+		public SList<T> WhereReverse(Func<T, bool> filter)
+		{
+			var retval = Empty;
+			for (var cur = this; !cur.IsEmpty; cur = cur.Tail)
+				if (filter(cur.Head))
+					retval = retval.Prepend(cur.Head);
 			return retval;
 		}
 
@@ -104,6 +123,7 @@ namespace ProgressOnderwijsUtils.Collections
 				yield return current.Head;
 		}
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return ((IEnumerable<T>)this).GetEnumerator(); }
+
 	}
 
 	public static class SList
@@ -121,7 +141,7 @@ namespace ProgressOnderwijsUtils.Collections
 				retval = retval.Prepend(list[i]);
 			return retval;
 		}
-		public static SList<T> Create<T>(T[] list) 
+		public static SList<T> Create<T>(T[] list)
 		{
 			var retval = SList<T>.Empty;
 			for (int i = list.Length - 1; i >= 0; i--)
