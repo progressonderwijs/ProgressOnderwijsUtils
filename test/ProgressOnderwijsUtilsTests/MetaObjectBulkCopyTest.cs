@@ -106,14 +106,14 @@ namespace ProgressOnderwijsUtilsTests
 		public void BulkCopyAllowsExactMatch()
 		{
 			MetaObject.SqlBulkCopy(SampleObjects, conn.SqlConnection, "#MyTable");
-			var fromDb = QueryBuilder.Create("select * from #MyTable order by Id").ReadAsEntities<BlaOk>(conn);
+			var fromDb = QueryBuilder.Create("select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(conn);
 			PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
 		}
 		[Test]
 		public void BulkCopySupportsColumnReordering()
 		{
 			MetaObject.SqlBulkCopy(SampleObjects, conn.SqlConnection, "#MyTable");
-			var fromDb = QueryBuilder.Create("select * from #MyTable order by Id").ReadAsEntities<BlaOk2>(conn);
+			var fromDb = QueryBuilder.Create("select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(conn);
 			PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
 		}
 	}

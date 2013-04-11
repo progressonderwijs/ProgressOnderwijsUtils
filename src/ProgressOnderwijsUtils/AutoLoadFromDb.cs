@@ -102,17 +102,17 @@ namespace ProgressOnderwijsUtils
 		/// <param name="q">The query to execute</param>
 		/// <param name="conn">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
-		public static T[] ReadByFields<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IReadByFields, new()
+		public static T[] ReadMetaObjects<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
 		{
 			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
-				return ReadByFieldsUnpacker<T>(cmd);
+				return ReadMetaObjectsUnpacker<T>(cmd);
 		}
 
-		public static T[] ReadByFieldsUnpacker<T>(SqlCommand cmd) where T : IReadByFields, new()
+		public static T[] ReadMetaObjectsUnpacker<T>(SqlCommand cmd, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
 		{
 			using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess))
 			{
-				var unpacker = DataReaderSpecialization<SqlDataReader>.ByFieldImpl<T>.GetDataReaderUnpacker(reader);
+				var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.GetDataReaderUnpacker(reader, fieldMappingMode);
 				return unpacker(reader);
 			}
 		}
@@ -172,16 +172,20 @@ namespace ProgressOnderwijsUtils
 
 		static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
 			new Dictionary<Type, MethodInfo> {
+					{ typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
 					{ typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
+					{ typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod("GetBytes", BindingFlags.Public | BindingFlags.Static) },
+					{ typeof(char), typeof(IDataRecord).GetMethod("GetChar", binding) },
+					{ typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod("GetChars", BindingFlags.Public | BindingFlags.Static) },
+					{ typeof(DateTime), typeof(IDataRecord).GetMethod("GetDateTime", binding) },
+					{ typeof(decimal), typeof(IDataRecord).GetMethod("GetDecimal", binding) },
+					{ typeof(double), typeof(IDataRecord).GetMethod("GetDouble", binding) },
+					{ typeof(float), typeof(IDataRecord).GetMethod("GetFloat", binding) },
+					{ typeof(Guid), typeof(IDataRecord).GetMethod("GetGuid", binding) },
 					{ typeof(short), typeof(IDataRecord).GetMethod("GetInt16", binding) },
 					{ typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
 					{ typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
 					{ typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
-					{ typeof(decimal), typeof(IDataRecord).GetMethod("GetDecimal", binding) },
-					{ typeof(double), typeof(IDataRecord).GetMethod("GetDouble", binding) },
-					{ typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
-					{ typeof(DateTime), typeof(IDataRecord).GetMethod("GetDateTime", binding) },
-					{ typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod("GetBytes", BindingFlags.Public | BindingFlags.Static) },
 				};
 
 		//static bool SupportsType(Type type) { return GetterMethodsByType.ContainsKey(type); }
@@ -206,14 +210,28 @@ namespace ProgressOnderwijsUtils
 			moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
 		}
 
-
+		static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
 		static class DataReaderSpecialization<TReader> where TReader : IDataReader
 		{
 			static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(typeof(TReader).GetInterfaceMap(typeof(IDataRecord)), typeof(TReader).GetInterfaceMap(typeof(IDataReader)));
 			static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod("IsDBNull", binding)];
 			static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
-			static bool SupportsType(Type type) { return GetterMethodsByType.ContainsKey(type.GetNonNullableUnderlyingType()); }
-			static MethodInfo GetterForType(Type underlyingType) { return InterfaceMap[GetterMethodsByType[underlyingType]]; }
+			static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
+
+
+			static bool SupportsType(Type type)
+			{
+				var underlyingType = type.GetNonNullableUnderlyingType();
+				return GetterMethodsByType.ContainsKey(underlyingType) || isSqlDataReader && underlyingType == typeof(TimeSpan);
+			}
+
+			static MethodInfo GetterForType(Type underlyingType)
+			{
+
+				return
+					isSqlDataReader && underlyingType == typeof(TimeSpan) ? getTimeSpan_SqlDataReader
+					: InterfaceMap[GetterMethodsByType[underlyingType]];
+			}
 
 			static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, Type type)
 			{
@@ -287,8 +305,8 @@ namespace ProgressOnderwijsUtils
 				return loadRows;
 			}
 
-			public static class ByFieldImpl<T>
-			where T : IReadByFields, new()
+			public static class ByMetaObjectImpl<T>
+			where T : IMetaObject, new()
 			{
 				sealed class ColumnOrdering : IEquatable<ColumnOrdering>
 				{
@@ -297,7 +315,7 @@ namespace ProgressOnderwijsUtils
 					public ColumnOrdering(TReader reader)
 					{
 						var primeArr = ColHashPrimes;
-						Cols = new string[primeArr.Length];
+						Cols = new string[reader.FieldCount];
 						cachedHash = 0;
 						for (int i = 0; i < Cols.Length; i++)
 						{
@@ -307,7 +325,16 @@ namespace ProgressOnderwijsUtils
 						}
 					}
 
-					public bool Equals(ColumnOrdering other) { return cachedHash == other.cachedHash && Cols.SequenceEqual(other.Cols); }
+					public bool Equals(ColumnOrdering other)
+					{
+						var oCols = other.Cols;
+						if (cachedHash != other.cachedHash || Cols.Length != oCols.Length)
+							return false;
+						for (int i = 0; i < Cols.Length; i++)
+							if (!Cols[i].Equals(oCols[i], StringComparison.OrdinalIgnoreCase))
+								return false;
+						return true;
+					}
 					public override int GetHashCode() { return (int)(uint)((cachedHash >> 32) + cachedHash); }
 					public override bool Equals(object obj) { return obj is ColumnOrdering && Equals((ColumnOrdering)obj); }
 				}
@@ -316,67 +343,29 @@ namespace ProgressOnderwijsUtils
 
 				static Type type { get { return typeof(T); } }
 				static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
-				static readonly Dictionary<string, MemberInfo> GetMember;
 				static readonly uint[] ColHashPrimes;
-				static Type MemberType(MemberInfo mi)
+				static readonly MetaInfo<T> metadata = MetaInfo<T>.Instance;
+				static readonly bool hasUnsupportedColumns;
+
+
+				static ByMetaObjectImpl()
 				{
-					return mi is FieldInfo ? ((FieldInfo)mi).FieldType : ((PropertyInfo)mi).PropertyType;
-				}
+					ColHashPrimes = Utils.Primes().Take(metadata.Count(mp => mp.CanWrite && SupportsType(mp.DataType))).Select(i => (uint)i).ToArray();
+					if (ColHashPrimes.Length == 0)
+						throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
+					hasUnsupportedColumns = metadata.Any(mp => mp.CanWrite && !SupportsType(mp.DataType));
 
-				static ByFieldImpl()
-				{
-					GetMember = new Dictionary<string, MemberInfo>(StringComparer.OrdinalIgnoreCase);
-					try
-					{
-						foreach (var fi in PublicFields())
-							GetMember.Add(fi.Name, fi);
-						foreach (var pi in PublicProperties())
-							GetMember.Add(pi.Name, pi);
-					}
-					catch (ArgumentException argE)
-					{
-						throw new ArgumentException(FriendlyName + " : IReadByFields's writable fields & properties must have a case insensitively unique name", argE);
-					}
-
-					ColHashPrimes = Utils.Primes().Take(GetMember.Count).Select(i => (uint)i).ToArray();
-
-					VerifyTypeValidity();
 					LoadRows = new ConcurrentDictionary<ColumnOrdering, Func<TReader, T[]>>();
-					//LoadRows = CreateLoadRowsMethod<T>(readerParamExpr =>
-					//	Expression.New(constructor, ConstructorParameters.Select((ci, i) => GetColValueExpr(readerParamExpr, i, ci.ParameterType)))
-					//	);
 				}
 
-				static IEnumerable<PropertyInfo> PublicProperties() { return type.GetProperties().Where(pi => pi.CanWrite && pi.GetSetMethod() != null); }
-				static IEnumerable<FieldInfo> PublicFields() { return type.GetFields().Where(fi => !fi.Attributes.HasFlag(FieldAttributes.InitOnly)); }
-
-				static void VerifyTypeValidity()
+				// ReSharper disable UnusedParameter.Local
+				public static Func<TReader, T[]> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
+				// ReSharper restore UnusedParameter.Local
 				{
-
-					if (!type.IsSealed)
-						throw new ArgumentException(FriendlyName + " : IReadByFields must be a public, sealed type!");
-
-#if false
-					if (!type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery"))
-						throw new ArgumentException(FriendlyName + " : IReadByFields must have a public static method DbQuery that returns a QueryBuilder");
-					if (type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery" && mi.ReturnType != typeof(QueryBuilder)))
-						throw new ArgumentException(FriendlyName + " : IReadByFields's DbQuery does not return QueryBuilder");
-#endif
-					if (type.GetConstructors().All(ci => ci.GetParameters().Any()) && !type.IsValueType)
-						throw new ArgumentException(FriendlyName + " : IReadByFields must have a parameterless public constructor.");
-
-
-					if (!GetMember.Values.All(mi => SupportsType(MemberType(mi))))
-						throw new ArgumentException(FriendlyName + " : IReadByFields's writable fields & properties must have only simple types: cannot support "
-							+ GetMember.Where(miKV => !SupportsType(MemberType(miKV.Value))).Select(miKV => ObjectToCode.GetCSharpFriendlyTypeName(MemberType(miKV.Value)) + " " + miKV.Key).JoinStrings(", "));
-
-				}
-
-
-				public static Func<TReader, T[]> GetDataReaderUnpacker(TReader reader)
-				{
-					if (reader.FieldCount != ColHashPrimes.Length)
-						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; field count = " + ColHashPrimes.Length);
+					if (reader.FieldCount > ColHashPrimes.Length || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches)
+						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; property count = " + ColHashPrimes.Length + "\n" +
+							"datareader: " + Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).JoinStrings(", ") + "\n" +
+							FriendlyName + ": " + metadata.Where(mp => mp.CanWrite).Select(mp => mp.Name).JoinStrings(", "));
 					var ordering = new ColumnOrdering(reader);
 
 					return LoadRows.GetOrAdd(ordering, orderingP =>
@@ -384,10 +373,10 @@ namespace ProgressOnderwijsUtils
 							Expression.MemberInit(
 								Expression.New(type),
 								orderingP.Cols.Select((colName, i) => {
-									MemberInfo member;
-									if (!GetMember.TryGetValue(colName, out member))
+									IMetaProperty<T> member;
+									if (!metadata.TryGetValue(colName, out member))
 										throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
-									return Expression.Bind(member, GetColValueExpr(readerParamExpr, i, MemberType(member)));
+									return Expression.Bind(member.PropertyInfo, GetColValueExpr(readerParamExpr, i, member.DataType));
 								}))));
 				}
 			}
@@ -495,334 +484,16 @@ namespace ProgressOnderwijsUtils
 				offset += row.GetBytes(colIndex, offset, arr, (int)offset, (int)byteCount);
 			return arr;
 		}
-	}
-
-#if LINQPAD_BENCHMARK
-	public struct VolgOnderwijsOnderwijsVal : ILoadFromDbByConstructor
-	{
-		public readonly int? Ouder;
-		public readonly int Kind;
-		public readonly int? Student;
-		public readonly bool Verplicht;
-		public readonly bool Verwijderd;
-		public readonly int? Afgeleidvan;
-		public readonly int? Volgorde;
-		public readonly int Onderwijsonderwijsid;
-		public readonly int? Periodevan;
-		public readonly int? Periodetot;
-		public VolgOnderwijsOnderwijsVal(int? ouder, int kind, int? student, bool verplicht, bool verwijderd, int? afgeleidvan, int? volgorde, int onderwijsonderwijsid, int? periodevan, int? periodetot)
+		[UsedImplicitly]
+		public static char[] GetChars(this IDataRecord row, int colIndex)
 		{
-			Ouder = ouder;
-			Kind = kind;
-			Student = student;
-			Verplicht = verplicht;
-			Verwijderd = verwijderd;
-			Afgeleidvan = afgeleidvan;
-			Volgorde = volgorde;
-			Onderwijsonderwijsid = onderwijsonderwijsid;
-			Periodevan = periodevan;
-			Periodetot = periodetot;
-		}
-
-		public static QueryBuilder DbQuery()
-		{
-			return QueryBuilder.Create(@"select * from volgonderwijsonderwijs");
+			long charCount = row.GetChars(colIndex, 0L, null, 0, 0);
+			if (charCount > int.MaxValue) throw new NotSupportedException("Array too large!");
+			var arr = new char[charCount];
+			long offset = 0;
+			while (offset < charCount)
+				offset += row.GetChars(colIndex, offset, arr, (int)offset, (int)charCount);
+			return arr;
 		}
 	}
-
-
-	public sealed class VolgOnderwijsOnderwijsMO : IMetaObject
-	{
-		public int? Ouder { get; set; }
-		public int Kind { get; set; }
-		public int? Student { get; set; }
-		public bool Verplicht { get; set; }
-		public bool Verwijderd { get; set; }
-		public int? Afgeleidvan { get; set; }
-		public int? Volgorde { get; set; }
-		public int Onderwijsonderwijsid { get; set; }
-		public int? Periodevan { get; set; }
-		public int? Periodetot { get; set; }
-	}
-
-
-
-	public sealed class StudentInschrijvingVal : ILoadFromDbByConstructor
-	{
-		public readonly int Inschrijvingid;
-		public readonly int Student;
-		public readonly int Opleiding;
-		public readonly int Fase;
-		public readonly int Soort;
-		public readonly int Periodestudiejaar;
-		public readonly DateTime Datumvan;
-		public readonly DateTime Datumtot;
-		public readonly int Bekostiging;
-		public readonly bool? Nietherinschrijven;
-		public readonly int? Aanmeldingstatus;
-		public readonly DateTime? Aanmeldingdatum;
-		public readonly int? Aanmeldingvooropleiding;
-		public readonly int? Aanmeldingdeficientiestatus;
-		public readonly bool? Aanmeldingeerstejaar;
-		public readonly bool? Aanmeldingverzoekintrekken;
-		public readonly int? Aanmeldingibgstatus;
-		public readonly int? Aanmeldingibgredenafkeur;
-		public readonly int? Beeindigingreden;
-		public readonly DateTime? Beeindigingdatumingediend;
-		public readonly DateTime? Beeindigingdatum;
-		public readonly string Beeindigingopmerkingstudent;
-		public readonly string Beeindigingopmerkingadministratie;
-		public readonly bool? Beeindigingverzoekrestitutie;
-		public readonly bool? Beeindigingaccoord;
-		public readonly DateTime? Examendatum;
-		public readonly int? Examenjudicium;
-		public readonly int? Examencode;
-		public readonly DateTime? Examenaanvraagdatum;
-		public readonly DateTime? Examenjudiciumdatum;
-		public readonly bool? Flex;
-		public readonly bool? Kop;
-		public readonly bool? Offline;
-		public readonly int? Bekostigingtoegekend;
-		public readonly int? Bekostigingexamentoegekend;
-		public readonly DateTime? Datumdefinitief;
-		public readonly DateTime? Beeindigingdatumgewenst;
-		public readonly decimal? Collegegeld;
-		public readonly bool? Collegegeldhandmatig;
-		public readonly bool? Bijvak;
-		public readonly string Opmerking;
-		public readonly DateTime? Voorlopigetoelatingtot;
-		public readonly DateTime? Voorlopigetoelatingvan;
-		public readonly bool? Bsaselect;
-		public readonly string Aanmeldingstudielinkstartoccasion;
-		public readonly int? Duoindicatiecollegegeld;
-		public readonly string Diplomanummer;
-		public readonly int? Bsacluster;
-		public StudentInschrijvingVal(int inschrijvingid, int student, int opleiding, int fase, int soort, int periodestudiejaar, DateTime datumvan, DateTime datumtot, int bekostiging, bool? nietherinschrijven, int? aanmeldingstatus, DateTime? aanmeldingdatum, int? aanmeldingvooropleiding, int? aanmeldingdeficientiestatus, bool? aanmeldingeerstejaar, bool? aanmeldingverzoekintrekken, int? aanmeldingibgstatus, int? aanmeldingibgredenafkeur, int? beeindigingreden, DateTime? beeindigingdatumingediend, DateTime? beeindigingdatum, string beeindigingopmerkingstudent, string beeindigingopmerkingadministratie, bool? beeindigingverzoekrestitutie, bool? beeindigingaccoord, DateTime? examendatum, int? examenjudicium, int? examencode, DateTime? examenaanvraagdatum, DateTime? examenjudiciumdatum, bool? flex, bool? kop, bool? offline, int? bekostigingtoegekend, int? bekostigingexamentoegekend, DateTime? datumdefinitief, DateTime? beeindigingdatumgewenst, decimal? collegegeld, bool? collegegeldhandmatig, bool? bijvak, string opmerking, DateTime? voorlopigetoelatingtot, DateTime? voorlopigetoelatingvan, bool? bsaselect, string aanmeldingstudielinkstartoccasion, int? duoindicatiecollegegeld, string diplomanummer, int? bsacluster)
-		{
-			Inschrijvingid = inschrijvingid;
-			Student = student;
-			Opleiding = opleiding;
-			Fase = fase;
-			Soort = soort;
-			Periodestudiejaar = periodestudiejaar;
-			Datumvan = datumvan;
-			Datumtot = datumtot;
-			Bekostiging = bekostiging;
-			Nietherinschrijven = nietherinschrijven;
-			Aanmeldingstatus = aanmeldingstatus;
-			Aanmeldingdatum = aanmeldingdatum;
-			Aanmeldingvooropleiding = aanmeldingvooropleiding;
-			Aanmeldingdeficientiestatus = aanmeldingdeficientiestatus;
-			Aanmeldingeerstejaar = aanmeldingeerstejaar;
-			Aanmeldingverzoekintrekken = aanmeldingverzoekintrekken;
-			Aanmeldingibgstatus = aanmeldingibgstatus;
-			Aanmeldingibgredenafkeur = aanmeldingibgredenafkeur;
-			Beeindigingreden = beeindigingreden;
-			Beeindigingdatumingediend = beeindigingdatumingediend;
-			Beeindigingdatum = beeindigingdatum;
-			Beeindigingopmerkingstudent = beeindigingopmerkingstudent;
-			Beeindigingopmerkingadministratie = beeindigingopmerkingadministratie;
-			Beeindigingverzoekrestitutie = beeindigingverzoekrestitutie;
-			Beeindigingaccoord = beeindigingaccoord;
-			Examendatum = examendatum;
-			Examenjudicium = examenjudicium;
-			Examencode = examencode;
-			Examenaanvraagdatum = examenaanvraagdatum;
-			Examenjudiciumdatum = examenjudiciumdatum;
-			Flex = flex;
-			Kop = kop;
-			Offline = offline;
-			Bekostigingtoegekend = bekostigingtoegekend;
-			Bekostigingexamentoegekend = bekostigingexamentoegekend;
-			Datumdefinitief = datumdefinitief;
-			Beeindigingdatumgewenst = beeindigingdatumgewenst;
-			Collegegeld = collegegeld;
-			Collegegeldhandmatig = collegegeldhandmatig;
-			Bijvak = bijvak;
-			Opmerking = opmerking;
-			Voorlopigetoelatingtot = voorlopigetoelatingtot;
-			Voorlopigetoelatingvan = voorlopigetoelatingvan;
-			Bsaselect = bsaselect;
-			Aanmeldingstudielinkstartoccasion = aanmeldingstudielinkstartoccasion;
-			Duoindicatiecollegegeld = duoindicatiecollegegeld;
-			Diplomanummer = diplomanummer;
-			Bsacluster = bsacluster;
-		}
-
-		public static QueryBuilder DbQuery()
-		{
-			return QueryBuilder.Create(@"select * from studentinschrijving");
-		}
-	}
-
-
-	public sealed class StudentInschrijvingMetaObject : IMetaObject
-	{
-		public int Inschrijvingid { get; set; }
-		public int Student { get; set; }
-		public int Opleiding { get; set; }
-		public int Fase { get; set; }
-		public int Soort { get; set; }
-		public int Periodestudiejaar { get; set; }
-		public DateTime Datumvan { get; set; }
-		public DateTime Datumtot { get; set; }
-		public int Bekostiging { get; set; }
-		public bool? Nietherinschrijven { get; set; }
-		public int? Aanmeldingstatus { get; set; }
-		public DateTime? Aanmeldingdatum { get; set; }
-		public int? Aanmeldingvooropleiding { get; set; }
-		public int? Aanmeldingdeficientiestatus { get; set; }
-		public bool? Aanmeldingeerstejaar { get; set; }
-		public bool? Aanmeldingverzoekintrekken { get; set; }
-		public int? Aanmeldingibgstatus { get; set; }
-		public int? Aanmeldingibgredenafkeur { get; set; }
-		public int? Beeindigingreden { get; set; }
-		public DateTime? Beeindigingdatumingediend { get; set; }
-		public DateTime? Beeindigingdatum { get; set; }
-		public string Beeindigingopmerkingstudent { get; set; }
-		public string Beeindigingopmerkingadministratie { get; set; }
-		public bool? Beeindigingverzoekrestitutie { get; set; }
-		public bool? Beeindigingaccoord { get; set; }
-		public DateTime? Examendatum { get; set; }
-		public int? Examenjudicium { get; set; }
-		public int? Examencode { get; set; }
-		public DateTime? Examenaanvraagdatum { get; set; }
-		public DateTime? Examenjudiciumdatum { get; set; }
-		public bool? Flex { get; set; }
-		public bool? Kop { get; set; }
-		public bool? Offline { get; set; }
-		public int? Bekostigingtoegekend { get; set; }
-		public int? Bekostigingexamentoegekend { get; set; }
-		public DateTime? Datumdefinitief { get; set; }
-		public DateTime? Beeindigingdatumgewenst { get; set; }
-		public decimal? Collegegeld { get; set; }
-		public bool? Collegegeldhandmatig { get; set; }
-		public bool? Bijvak { get; set; }
-		public string Opmerking { get; set; }
-		public DateTime? Voorlopigetoelatingtot { get; set; }
-		public DateTime? Voorlopigetoelatingvan { get; set; }
-		public bool? Bsaselect { get; set; }
-		public string Aanmeldingstudielinkstartoccasion { get; set; }
-		public int? Duoindicatiecollegegeld { get; set; }
-		public string Diplomanummer { get; set; }
-		public int? Bsacluster { get; set; }
-	}
-
-
-
-	public struct StudentVal : ILoadFromDbByConstructor
-	{
-		public readonly int Studentid;
-		public readonly int Organisatie;
-		public readonly int Studentnummer;
-		public readonly int? Account;
-		public readonly string Naam;
-		public readonly string Naampartner;
-		public readonly string Voorvoegsels;
-		public readonly string Voorletters;
-		public readonly string Voornamen;
-		public readonly string Roepnaam;
-		public readonly int? Geslacht;
-		public readonly DateTime? Geboortedatum;
-		public readonly string Geboorteplaats;
-		public readonly int? Geboorteland;
-		public readonly string Oudervoogd;
-		public readonly string Emailprive;
-		public readonly string Emailinstelling;
-		public readonly string Persoonlijknummer;
-		public readonly string Externecode;
-		public readonly string Ocenwnummer;
-		public readonly string Bsn;
-		public readonly string Onderwijsnummer;
-		public readonly string Studielinknummer;
-		public readonly int? Telefoonnummermobielland;
-		public readonly string Telefoonnummermobiel;
-		public readonly int? Relatievorm;
-		public readonly int? Taalstudielink;
-		public readonly int? Toestemmingsverklaring;
-		public readonly bool? Geheimhoudinggba;
-		public readonly bool? Geboortedatumonbekend;
-		public readonly int? Nationaliteit;
-		public readonly int? Nationaliteit2;
-		public readonly int? Prwinnummer;
-		public StudentVal(int studentid, int organisatie, int studentnummer, int? account, string naam, string naampartner, string voorvoegsels, string voorletters, string voornamen, string roepnaam, int? geslacht, DateTime? geboortedatum, string geboorteplaats, int? geboorteland, string oudervoogd, string emailprive, string emailinstelling, string persoonlijknummer, string externecode, string ocenwnummer, string bsn, string onderwijsnummer, string studielinknummer, int? telefoonnummermobielland, string telefoonnummermobiel, int? relatievorm, int? taalstudielink, int? toestemmingsverklaring, bool? geheimhoudinggba, bool? geboortedatumonbekend, int? nationaliteit, int? nationaliteit2, int? prwinnummer)
-		{
-			Studentid = studentid;
-			Organisatie = organisatie;
-			Studentnummer = studentnummer;
-			Account = account;
-			Naam = naam;
-			Naampartner = naampartner;
-			Voorvoegsels = voorvoegsels;
-			Voorletters = voorletters;
-			Voornamen = voornamen;
-			Roepnaam = roepnaam;
-			Geslacht = geslacht;
-			Geboortedatum = geboortedatum;
-			Geboorteplaats = geboorteplaats;
-			Geboorteland = geboorteland;
-			Oudervoogd = oudervoogd;
-			Emailprive = emailprive;
-			Emailinstelling = emailinstelling;
-			Persoonlijknummer = persoonlijknummer;
-			Externecode = externecode;
-			Ocenwnummer = ocenwnummer;
-			Bsn = bsn;
-			Onderwijsnummer = onderwijsnummer;
-			Studielinknummer = studielinknummer;
-			Telefoonnummermobielland = telefoonnummermobielland;
-			Telefoonnummermobiel = telefoonnummermobiel;
-			Relatievorm = relatievorm;
-			Taalstudielink = taalstudielink;
-			Toestemmingsverklaring = toestemmingsverklaring;
-			Geheimhoudinggba = geheimhoudinggba;
-			Geboortedatumonbekend = geboortedatumonbekend;
-			Nationaliteit = nationaliteit;
-			Nationaliteit2 = nationaliteit2;
-			Prwinnummer = prwinnummer;
-		}
-
-		public static QueryBuilder DbQuery()
-		{
-			return QueryBuilder.Create(@"select * from student");
-		}
-	}
-
-	public sealed class StudentMetaObject : IMetaObject
-	{
-		public int Studentid { get; set; }
-		public int Organisatie { get; set; }
-		public int Studentnummer { get; set; }
-		public int? Account { get; set; }
-		public string Naam { get; set; }
-		public string Naampartner { get; set; }
-		public string Voorvoegsels { get; set; }
-		public string Voorletters { get; set; }
-		public string Voornamen { get; set; }
-		public string Roepnaam { get; set; }
-		public int? Geslacht { get; set; }
-		public DateTime? Geboortedatum { get; set; }
-		public string Geboorteplaats { get; set; }
-		public int? Geboorteland { get; set; }
-		public string Oudervoogd { get; set; }
-		public string Emailprive { get; set; }
-		public string Emailinstelling { get; set; }
-		public string Persoonlijknummer { get; set; }
-		public string Externecode { get; set; }
-		public string Ocenwnummer { get; set; }
-		public string Bsn { get; set; }
-		public string Onderwijsnummer { get; set; }
-		public string Studielinknummer { get; set; }
-		public int? Telefoonnummermobielland { get; set; }
-		public string Telefoonnummermobiel { get; set; }
-		public int? Relatievorm { get; set; }
-		public int? Taalstudielink { get; set; }
-		public int? Toestemmingsverklaring { get; set; }
-		public bool? Geheimhoudinggba { get; set; }
-		public bool? Geboortedatumonbekend { get; set; }
-		public int? Nationaliteit { get; set; }
-		public int? Nationaliteit2 { get; set; }
-		public int? Prwinnummer { get; set; }
-	}
-#endif
 }

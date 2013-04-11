@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
 	{
 		public static FilterBase CreateFilter<T>(Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, T waarde)
 		{
-			var pi = MetaObject.GetByInheritedExpression<TMetaObject>.GetPropertyInfo(columnToFilter);
+			var pi = MetaObject.GetMemberInfo(columnToFilter);
 			return Filter.CreateCriterium(pi.Name, comparer, waarde);
 		}
 	}

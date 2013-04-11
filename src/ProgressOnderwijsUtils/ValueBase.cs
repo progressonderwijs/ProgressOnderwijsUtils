@@ -15,46 +15,14 @@ namespace ProgressOnderwijsUtils
 	/// <typeparam name="T">The derived type; must be sealed</typeparam>
 	public abstract class ValueBase<T> : IEquatable<T> where T : ValueBase<T>
 	{
-		//static readonly Func<T, T> copy;
-		static readonly Func<T, T, bool> equalsFunc;
-		static readonly Func<T, int> hashFunc;
-		static readonly Func<T, string> toStringFunc;
 
 		protected ValueBase() { if (!(this is T)) throw new InvalidOperationException("Only T can subclass ValueBase<T>."); }
 		static ValueBase()
 		{
 			try
 			{
-				Type type = typeof(T);
-				if (!type.IsSealed)
+				if (!typeof(T).IsSealed)
 					throw new InvalidOperationException("Value Classes must be sealed.");
-
-				var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-				var parA = Expression.Parameter(type, "a");
-				var parB = Expression.Parameter(type, "b");
-				var areAllFieldsEqualExpr =
-					fields.Select(fi => Expression.Equal(Expression.Field(parA, fi), Expression.Field(parB, fi)))
-						.Aggregate((Expression)Expression.Constant(true), Expression.AndAlso);
-				equalsFunc = Expression.Lambda<Func<T, T, bool>>(areAllFieldsEqualExpr, parA, parB).Compile();
-
-				var accumulatorVar = Expression.Variable(typeof(ulong), "hashcodeAccumulator");
-				var accumulateHashExpr =
-					fields.Select((fi, n) => {
-						MemberExpression fieldExpr = Expression.Field(parA, fi);
-						UnaryExpression ulongHashCodeExpr = Expression.Convert(Expression.Convert(Expression.Call(fieldExpr, GetHashcodeMethod(fi.FieldType)), typeof(uint)), typeof(ulong));
-						var scaledHashExpr = Expression.Multiply(Expression.Constant((ulong)(2 * n + 1)), ulongHashCodeExpr);
-						return fi.FieldType.IsValueType ? (Expression)scaledHashExpr : Expression.Condition(Expression.Equal(Expression.Default(typeof(object)), fieldExpr), Expression.Constant((ulong)n), scaledHashExpr);
-					}).Aggregate((Expression)Expression.Constant(0UL), Expression.Add);
-				var storeHashAcc = Expression.Assign(accumulatorVar, accumulateHashExpr);
-				var finalHashExpr = Expression.ExclusiveOr(Expression.Convert(accumulatorVar, typeof(int)), Expression.Convert(Expression.RightShift(accumulatorVar, Expression.Constant(32)), typeof(int)));
-
-
-				hashFunc = Expression.Lambda<Func<T, int>>(Expression.Block(new[] { accumulatorVar }, storeHashAcc, finalHashExpr), parA).Compile();
-
-
-
-				toStringFunc = ToStringByMembers<T>.Func;
 			}
 			catch (Exception e)
 			{
@@ -63,29 +31,21 @@ namespace ProgressOnderwijsUtils
 		}
 
 
-		static MethodInfo GetHashcodeMethod(Type type)
-		{
-			var objectHashcodeMethod = ((Func<int>)(new object().GetHashCode)).Method;
-			var method = type.GetMethod("GetHashCode", BindingFlags.Public | BindingFlags.Instance) ?? objectHashcodeMethod;
-			return method.GetBaseDefinition() != objectHashcodeMethod ? objectHashcodeMethod : method;
-
-		}
-
-		public bool Equals(T other) { return other != null && equalsFunc((T)this, other); }
+		public bool Equals(T other) { return other != null && EqualsByMembers<T>.Func((T)this, other); }
 		public override bool Equals(object obj) { return obj is T && Equals((T)obj); }
-		public override int GetHashCode() { return hashFunc((T)this); }
+		public override int GetHashCode() { return GetHashCodeByMembers<T>.Func((T)this); }
 		public T Copy() { return (T)MemberwiseClone(); }
 		public T CopyWith(Action<T> action) { var copied = Copy(); action(copied); return copied; }
 
 
-		public override string ToString() { return toStringFunc((T)this); }
+		public override string ToString() { return ToStringByMembers<T>.Func((T)this); }
 	}
 
 
-    public static class ToStringByMembers
-    {
-        public static string ToStringByPublicMembers<T>(T obj) {return ToStringByMembers<T>.Func(obj);}
-    }
+	public static class ToStringByMembers
+	{
+		public static string ToStringByPublicMembers<T>(T obj) { return ToStringByMembers<T>.Func(obj); }
+	}
 
 	public static class ToStringByMembers<T>
 	{
@@ -126,4 +86,63 @@ namespace ProgressOnderwijsUtils
 		}
 
 	}
+
+	public static class GetHashCodeByMembers<T>
+	{
+		public static readonly Func<T, int> Func = init();
+		static Func<T, int> init()
+		{
+			var fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+			var parA = Expression.Parameter(typeof(T), "a");
+			var accumulatorVar = Expression.Variable(typeof(ulong), "hashcodeAccumulator");
+			var accumulateHashExpr =
+				fields.Select((fi, n) => {
+					MemberExpression fieldExpr = Expression.Field(parA, fi);
+					UnaryExpression ulongHashCodeExpr =
+						Expression.Convert(
+							Expression.Convert(Expression.Call(fieldExpr, GetHashcodeMethod(fi.FieldType)), typeof(uint)),
+							typeof(ulong));
+					var scaledHashExpr = Expression.Multiply(Expression.Constant((ulong)(2 * n + 1)), ulongHashCodeExpr);
+					return fi.FieldType.IsValueType
+						? (Expression)scaledHashExpr
+						: Expression.Condition(Expression.Equal(Expression.Default(typeof(object)), fieldExpr),
+							Expression.Constant((ulong)n), scaledHashExpr);
+				}).Aggregate((Expression)Expression.Constant(0UL), Expression.Add);
+			var storeHashAcc = Expression.Assign(accumulatorVar, accumulateHashExpr);
+			var finalHashExpr = Expression.ExclusiveOr(Expression.Convert(accumulatorVar, typeof(int)),
+				Expression.Convert(Expression.RightShift(accumulatorVar, Expression.Constant(32)), typeof(int)));
+
+			var compile =
+				Expression.Lambda<Func<T, int>>(
+					Expression.Block(new[] { accumulatorVar }, storeHashAcc, finalHashExpr), parA).Compile();
+			return compile;
+		}
+
+		static MethodInfo GetHashcodeMethod(Type type)
+		{
+			var objectHashcodeMethod = ((Func<int>)(new object().GetHashCode)).Method;
+			var method = type.GetMethod("GetHashCode", BindingFlags.Public | BindingFlags.Instance) ?? objectHashcodeMethod;
+			return method.GetBaseDefinition() != objectHashcodeMethod ? objectHashcodeMethod : method;
+		}
+	}
+
+	public static class EqualsByMembers<T>
+	{
+		public static Func<T, T, bool> Func = EqualsFunc();
+
+		static Func<T, T, bool> EqualsFunc()
+		{
+			var fields = typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+			var parA = Expression.Parameter(typeof(T), "a");
+			var parB = Expression.Parameter(typeof(T), "b");
+			var areAllFieldsEqualExpr =
+				fields.Select(fi => Expression.Equal(Expression.Field(parA, fi), Expression.Field(parB, fi)))
+					.Aggregate((Expression)Expression.Constant(true), Expression.AndAlso);
+			var compile = Expression.Lambda<Func<T, T, bool>>(areAllFieldsEqualExpr, parA, parB).Compile();
+			return compile;
+		}
+
+	}
+
 }
