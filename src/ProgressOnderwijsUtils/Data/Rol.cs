@@ -60,6 +60,7 @@ namespace ProgressOnderwijsUtils
 		StudentadministratieExtra = -4,
 
 		//Iedereen = -1,
+		//Iedereen = 1,
 
 		[MpLabel("Student bekijk personalia")]
 		StudentBekijkPersonalia = 2,
