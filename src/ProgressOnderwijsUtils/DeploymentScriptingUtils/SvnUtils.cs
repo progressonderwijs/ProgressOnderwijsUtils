@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils.DeploymentScriptingUtils
 			public string author;
 			public string msg;
 			public string ToShortString() { return author + "@" + date.ToShortDateString() + ": " + StringMeasurement.LimitDisplayLength(msg.Replace("\n", " "), 80); }
-		}
+		} 
 
 
 		public static IEnumerable<SvnLogEntry> LastLogMessages(string path, int? limit = null)
