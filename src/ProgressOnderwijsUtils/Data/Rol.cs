@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Studentadministratie"),
 		 Implies(StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken,
-			 StudentWijzigPersonalia, OpleidingenBekijken, Rol.BekijkenFinancieelUitgebreid,
+			 StudentWijzigPersonalia, OpleidingenBekijken, BekijkenFinancieelUitgebreid,
 			 StudentIdentificatieToevoegenVerwijderenWijzigen,
 			 StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen,
 			 StudentPasfotoToevoegenVerwijderen,
@@ -58,9 +58,6 @@ namespace ProgressOnderwijsUtils
 			 BlokkeerInschrijvingToevoegenWijzigenVerwijderen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen)]
 		StudentadministratieExtra = -4,
-
-		//Iedereen = -1,
-		//Iedereen = 1,
 
 		[MpLabel("Student bekijk personalia")]
 		StudentBekijkPersonalia = 2,
@@ -537,11 +534,11 @@ namespace ProgressOnderwijsUtils
 		DocumentGeneratieVooropleidingen = 225,
 
 		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften, BeheerCursusaanbodCursusdeelnames,
-			Rol.StatischeGroepenAanmakenWijzigenVerwijderen, Rol.StudentRichtingToevoegenWijzigenVerwijderen)]
+			StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
 		Combi_FontysBeheerFO = 226,
 
-		[MpLabel("COMBI: Fontys Muteer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, Rol.WijzigenCursusdeelnames, 
-			Rol.WijzigenExamens, Rol.StatischeGroepenAanmakenWijzigenVerwijderen, Rol.StudentRichtingToevoegenWijzigenVerwijderen)]
+		[MpLabel("COMBI: Fontys Muteer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, WijzigenCursusdeelnames, 
+			WijzigenExamens, StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
 		Combi_FontysMuteerFO = 227,
 	}
 }
