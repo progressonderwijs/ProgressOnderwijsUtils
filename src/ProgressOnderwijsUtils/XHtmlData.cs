@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
 
 		public static XhtmlData ParseAndSanitize(string s)
 		{
-			return XhtmlCleaner.HtmlSanitizer(s);
+			return XhtmlCleaner.HeuristicParse(s).Sanitize();
 		}
 
 		public static XhtmlData? TryParseAndSanitize(string s)
@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
 			if (xml == null)
 				return null;
 
-			return XhtmlCleaner.HtmlSanitizer(xml.Value);
+			return XhtmlCleaner.Sanitize(xml.Value);
 		}
 
 
