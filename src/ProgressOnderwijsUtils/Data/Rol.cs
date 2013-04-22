@@ -292,7 +292,7 @@ namespace ProgressOnderwijsUtils
 			 StudentCommunicatieToevoegenVerwijderenWijzigen, WijzigenCorrespondentieadressen,
 			 InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunning, WijzigenPasfoto,
-			 StudentRichtingToevoegenWijzigenVerwijderen)]
+			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
 		[MpLabel("Wijzigen uitschrijvingen"), Toekenbaar,
@@ -334,7 +334,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Beheer inschrijvingen"), Toekenbaar,
 		 Implies(OrganisatieToevoegenVerwijderenWijzigen, OpleidingenBekijken, OpleidingenToevoegenVerwijderenWijzigen, DocumentTemplates,
-			 BekijkenKengetallen, WijzigenInschrijvingenEnAanmeldingen, WijzigenUitschrijvingen, WijzigenExamens, WijzigenCrm, TakenBekijkenWijzigen, StatischeGroepenAanmakenWijzigenVerwijderen, 
+			 BekijkenKengetallen, WijzigenInschrijvingenEnAanmeldingen, WijzigenUitschrijvingen, WijzigenExamens, WijzigenCrm, TakenBekijkenWijzigen, StatischeGroepenAanmakenWijzigenVerwijderen,
 			 StatischeGroepenGebruiken, KenmerkenToevoegenWijzigenVerwijderen, BatchesToevoegenWijzigenVerwijderen, StudentenSamenvoegen)]
 		BeheerInschrijvingen = 135,
 
@@ -540,8 +540,11 @@ namespace ProgressOnderwijsUtils
 			Rol.StatischeGroepenAanmakenWijzigenVerwijderen, Rol.StudentRichtingToevoegenWijzigenVerwijderen)]
 		Combi_FontysBeheerFO = 226,
 
-		[MpLabel("COMBI: Fontys Muteer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, Rol.WijzigenCursusdeelnames, 
+		[MpLabel("COMBI: Fontys Muteer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, Rol.WijzigenCursusdeelnames,
 			Rol.WijzigenExamens, Rol.StatischeGroepenAanmakenWijzigenVerwijderen, Rol.StudentRichtingToevoegenWijzigenVerwijderen)]
 		Combi_FontysMuteerFO = 227,
+
+		[MpLabel("Wijzigen voorlopige toelating"), Toekenbaar, Implies(Rol.BekijkenInschrijvingenUitgebreid)]
+		WijzigenVoorlopigeToelating = 228,
 	}
 }
