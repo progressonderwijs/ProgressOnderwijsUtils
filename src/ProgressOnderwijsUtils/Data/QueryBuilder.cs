@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -67,15 +68,20 @@ namespace ProgressOnderwijsUtils
 		// IF next != null THEN precedingComponents !=null; conversely IF precedingComponents == null THEN next == null 
 		// !(value != null AND next !=null)
 
+		[Pure]
 		public static QueryBuilder Empty { get { return EmptyComponent.Instance; } }
 
 		bool IsEmpty { get { return this is EmptyComponent; } }
 		bool IsSingleElement { get { return this is SingleComponent; } } //implies ValueOrNull != null
 
 
+		[Pure]
 		public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b) { return Concat(a, b); }
+		[Pure]
 		public static QueryBuilder operator +(QueryBuilder a, string b) { return Concat(a, QueryComponent.CreateString(b)); }
+		[Pure]
 		public static QueryBuilder operator +(string a, QueryBuilder b) { return Concat(Create(a), b); }
+		[Pure]
 		public static explicit operator QueryBuilder(string a) { return Create(a); }
 
 		static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) { return null == part ? query : new PrefixAndComponent(query, part); }
@@ -90,6 +96,7 @@ namespace ProgressOnderwijsUtils
 			else return new PrefixAndSuffix(first, second);
 		}
 
+		[Pure]
 		public static QueryBuilder Param(object o) { return new SingleComponent(QueryComponent.CreateParam(o)); }
 
 		/// <summary>
@@ -101,21 +108,35 @@ namespace ProgressOnderwijsUtils
 		/// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
 		/// <returns>a composable query-component</returns>
 		// ReSharper disable UnusedMember.Global
+		[Pure]
 		public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o) where T : IMetaObject, new() { return new SingleComponent(QueryComponent.ToTableParameter(typeName, o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<int> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<string> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<DateTime> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<TimeSpan> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<decimal> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<char> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<bool> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<byte> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<short> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<long> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<double> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
+		[Pure]
 		public static QueryBuilder TableParamDynamic(Array o) { return new SingleComponent(QueryComponent.ToTableParameter((dynamic)o)); }
 		// ReSharper restore UnusedMember.Global
 
+		[Pure]
 		public static QueryBuilder Create(string str, params object[] parms)
 		{
 			IQueryComponent[] parValues = parms.Select(QueryComponent.CreateParam).ToArray();
@@ -138,14 +159,17 @@ namespace ProgressOnderwijsUtils
 		static readonly Regex paramsRegex = new Regex(@"\{(?<paramRef>\d+)\}|(?<queryText>((?!\{\d+\}).)+)", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
 		private static readonly string[] AllColumns = new[] { "*" };
 
+		[Pure]
 		public static QueryBuilder CreateFromFilter(FilterBase filter) { return "and " + filter.ToQueryBuilder() + " "; }
 
+		[Pure]
 		public static QueryBuilder CreateFromSortOrder(OrderByColumns sortOrder)
 		{
 			return !sortOrder.Columns.Any() ? Empty :
 				Create("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
 		}
 
+		[Pure]
 		public SqlCommand CreateSqlCommand(SqlCommandCreationContext commandCreationContext)
 		{
 			var cmd = CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), commandCreationContext.Connection, commandCreationContext.CommandTimeout);
@@ -165,10 +189,12 @@ namespace ProgressOnderwijsUtils
 			return cmd;
 		}
 
+		[Pure]
 		public string DebugText(Taal? taalOrNull)
 		{
 			return ComponentsInReverseOrder.Reverse().Select(component => component.ToDebugText(taalOrNull)).JoinStrings();
 		}
+		[Pure]
 		public string CommandText() { return CommandFactory.BuildQueryText(ComponentsInReverseOrder.Reverse()); }
 
 		IEnumerable<IQueryComponent> ComponentsInReverseOrder
@@ -225,14 +251,20 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
+		[Pure]
 		public override bool Equals(object obj) { return Equals(obj as QueryBuilder); }
 
+		[Pure]
 		public static bool operator ==(QueryBuilder a, QueryBuilder b) { return ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b); }
 
+		[Pure]
 		public bool Equals(QueryBuilder other) { return !ReferenceEquals(other, null) && CanonicalReverseComponents.SequenceEqual(other.CanonicalReverseComponents); }
 
+		[Pure]
 		public static bool operator !=(QueryBuilder a, QueryBuilder b) { return !(a == b); }
+		[Pure]
 		public override int GetHashCode() { return HashCodeHelper.ComputeHash(CanonicalReverseComponents.ToArray()) + 123; }
+		[Pure]
 		public override string ToString() { return DebugText(null); }
 
 		static QueryBuilder SubQueryHelper(QueryBuilder subquery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filters, OrderByColumns sortOrder, QueryBuilder topRowsOrNull)
@@ -247,6 +279,7 @@ namespace ProgressOnderwijsUtils
 					+ CreateFromSortOrder(sortOrder);
 		}
 
+		[Pure]
 		public static QueryBuilder CreatePagedSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filters, OrderByColumns sortOrder, int skipNrows, int takeNrows)
 		{
 			projectedColumns = projectedColumns ?? AllColumns;
@@ -270,11 +303,13 @@ namespace ProgressOnderwijsUtils
 				+ "order by _row";
 		}
 
+		[Pure]
 		public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filterBases, OrderByColumns sortOrder)
 		{
 			return SubQueryHelper(subQuery, projectedColumns, filterBases, sortOrder, null);
 		}
 
+		[Pure]
 		public void AssertNoVariableColumns()
 		{
 			var commandText = CommandText();

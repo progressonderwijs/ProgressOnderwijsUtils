@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void TextLimitWorks()
 		{
-			var tidiedSample = XhtmlCleaner.TidyHtmlString(sample);
+			var tidiedSample = XhtmlCleaner.SanitizeHtmlString(sample);
 			Assert.That(StringUtils.LevenshteinDistanceScaled(sample, tidiedSample), Is.LessThan(0.05));
 			int lastLength = tidiedSample.Length;
 			for (int i = tidiedSample.Length + 10; i >= 0; i--)
@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void CleanerWorks()
 		{
-			var tidiedSample = XhtmlCleaner.TidyHtmlString(sample2);
+			var tidiedSample = XhtmlCleaner.SanitizeHtmlString(sample2);
 			PAssert.That(() => !tidiedSample.Contains("lalala") && !tidiedSample.Contains("script") && !tidiedSample.Contains("innerlala"));
 			PAssert.That(() => !tidiedSample.Contains("class") && !tidiedSample.Contains("style") && !tidiedSample.Contains("unknown"));
 			PAssert.That(() => tidiedSample.Contains("include this") && tidiedSample.Contains("test this") && tidiedSample.Contains("<div>") && tidiedSample.StartsWith("<p>"));
@@ -48,15 +48,15 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void FixerWorks()
 		{
-			PAssert.That(() => XhtmlCleaner.TidyHtmlString(sample3) == "<p>\u00A0whee</p>");
-			PAssert.That(() => XhtmlCleaner.TidyHtmlString(sample4) == new XText(@"1 < 2 && 3 > 0").ToString());
+			PAssert.That(() => XhtmlCleaner.SanitizeHtmlString(sample3) == "<p>\u00A0whee</p>");
+			PAssert.That(() => XhtmlCleaner.SanitizeHtmlString(sample4) == new XText(@"1 < 2 && 3 > 0").ToString());
 			PAssert.That(() => XhtmlCleaner.HtmlToTextParser(sample4) == @"1 < 2 && 3 > 0");
 		}
 
 		[Test]
 		public void SupportsUnicode()
 		{
-			PAssert.That(() => XhtmlCleaner.TidyHtmlString(@"ÂÅÉéé") == @"ÂÅÉéé");
+			PAssert.That(() => XhtmlCleaner.SanitizeHtmlString(@"ÂÅÉéé") == @"ÂÅÉéé");
 		}
 
 		[Test]
@@ -66,14 +66,30 @@ namespace ProgressOnderwijsUtilsTests
 			var xEl = new XElement("div", sample3);
 			var xElEncoded = xEl.ToString(SaveOptions.None);
 
-			PAssert.That(() => XhtmlCleaner.TidyHtmlString("<p>" + xElEncoded + "</p>") == "<p>" + xElEncoded + "</p>");
+			PAssert.That(() => XhtmlCleaner.SanitizeHtmlString("<p>" + xElEncoded + "</p>") == "<p>" + xElEncoded + "</p>");
 		}
 
 
 		[Test]
 		public void DecodeUnnecessaryEntities()
 		{
-			PAssert.That(() => XhtmlCleaner.TidyHtmlString("<p>&Acirc;&Eacute;&eacute;&amp;<br /></p>") == "<p>ÂÉé&amp;<br /></p>");
+			PAssert.That(() => XhtmlCleaner.SanitizeHtmlString("<p>&Acirc;&Eacute;&eacute;&amp;<br /></p>") == "<p>ÂÉé&amp;<br /></p>");
+		}
+
+		[Test]
+		public void RemovesUnknownElements()
+		{
+			PAssert.That(() => XhtmlCleaner.SanitizeHtmlString(@"This <p>paragraph contains <unknown>nonsense</unknown></p>.") == @"This <p>paragraph contains nonsense</p>.");
+		}
+		[Test]
+		public void RemovesStyleTags()
+		{
+			PAssert.That(() => XhtmlCleaner.SanitizeHtmlString(@"This is not <span style=""display: none"">invisible</span>.") == @"This is not <span>invisible</span>.");
+		}
+		[Test]
+		public void AllowsMarginStyleTags()
+		{
+			PAssert.That(() => XhtmlCleaner.SanitizeHtmlString(@"This <p style=""margin-left: 40px;"">is indented</p>!") == @"This <p style=""margin-left: 40px;"">is indented</p>!");
 		}
 	}
 }

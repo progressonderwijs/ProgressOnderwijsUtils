@@ -93,6 +93,13 @@ namespace ProgressOnderwijsUtils
 
 			public Impl(PropertyInfo pi, int implicitOrder)
 			{
+				// first define the getters/setters, they are used below
+				getter = MkGetter(pi);
+				untypedGetter = getter == null ? default(Func<object, object>) : o => getter((TOwner)o);
+
+				setter = MkSetter(pi);
+				untypedSetter = setter == null ? default(Action<object, object>) : (o, v) => setter((TOwner)o, v);
+
 				propertyInfo = pi;
 				name = pi.Name;
 				index = implicitOrder;
@@ -119,14 +126,12 @@ namespace ProgressOnderwijsUtils
 					throw new ProgressNetException(typeof(TOwner) + " heeft Kolom " + Name + " heeft koppeltabel " +
 						KoppelTabelNaam + " maar is van type " + DataType + "!");
 
-				getter = MkGetter(pi);
-				untypedGetter = getter == null ? default(Func<object, object>) : o => getter((TOwner)o);
-
-				setter = MkSetter(pi);
-				untypedSetter = setter == null ? default(Action<object, object>) : (o, v) => setter((TOwner)o, v);
 			}
 
-
+			public override string ToString()
+			{
+				return ObjectToCode.GetCSharpFriendlyTypeName(typeof(TOwner)) + "." + name;
+			}
 
 
 			LiteralTranslatable LabelNoTt(MemberInfo memberInfo)
@@ -162,7 +167,7 @@ namespace ProgressOnderwijsUtils
 					return (Action<TOwner, object>)StructSetterM.MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { setterMethod });
 				else
 					return (Action<TOwner, object>)ClassSetterM.MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { setterMethod });
-				
+
 				//faster code, slower startup:				
 				//var valParamExpr = Expression.Parameter(typeof(object), "newValue");
 				//var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");

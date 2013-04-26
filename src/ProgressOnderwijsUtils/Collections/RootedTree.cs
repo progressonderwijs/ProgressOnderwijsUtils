@@ -32,11 +32,11 @@ namespace ProgressOnderwijsUtils.Collections
 		{
 			//two rooted trees are identical when their underlying trees are identical and their paths within that tree are identical.
 			return PathSegments.Last().ThisSubTree.Equals(other.PathSegments.Last().ThisSubTree)
-				&& PathSegments.Select(segment => segment.Index).SequenceEqual(other.PathSegments.Select(segment => segment.Index));
+				&& PathSegments.SelectEager(segment => segment.Index).SequenceEqual(other.PathSegments.SelectEager(segment => segment.Index));
 		}
 		public override int GetHashCode()
 		{
-			return PathSegments.Last().ThisSubTree.GetHashCode() + EnumerableExtensions.GetSequenceHashCode(PathSegments.Select(segment => segment.Index));
+			return PathSegments.Last().ThisSubTree.GetHashCode() + EnumerableExtensions.GetSequenceHashCode(PathSegments.SelectEager(segment => segment.Index));
 		}
 		public override bool Equals(object obj) { return obj is RootedTree<T> && Equals((RootedTree<T>)obj); }
 		#endregion

@@ -140,6 +140,14 @@ namespace ProgressOnderwijsUtils
 		public static Maybe<Unit> WhenOk<T>(this Maybe<T> state, Action<T> map) { return state.ExtractToValue(v => { map(v); return Ok(); }, Error<Unit>); }
 
 		/// <summary>
+		/// Processes a possibly failed value.  
+		/// When the input state is failed, the provided error handler is called and the output state is also failed (with the same message).
+		/// If the input is OK, the output is OK with the same value.
+		/// </summary>
+		public static Maybe<T> WhenError<T>(this Maybe<T> state, Action<ITranslatable> handler) { return state.ExtractToValue(Ok, err => { handler(err); return Error(err); }); }
+
+
+		/// <summary>
 		/// Maps a possibly failed value to a new value using a mapping function that itself can fail.
 		/// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, it is transformed using the
 		/// provided "map" function (which may itself report an error).   The function is eagerly evaluated, i.e. not like Enumerable.Select, but like
