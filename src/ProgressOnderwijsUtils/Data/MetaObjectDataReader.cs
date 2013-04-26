@@ -76,7 +76,7 @@ namespace ProgressOnderwijsUtils
 			return dt;
 
 		}
-
+		
 		public override void Close() { metaObjects.Dispose(); isClosed = true; }
 		public MetaObjectDataReader(IEnumerable<T> objects) { metaObjects = objects.GetEnumerator(); }
 		object[] cache;
