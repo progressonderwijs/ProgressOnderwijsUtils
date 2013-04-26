@@ -21,10 +21,10 @@ namespace ProgressOnderwijsUtilsTests
 
 		public TempTextFileTest() : this(new FileInfo(Path.GetTempFileName())) { }
 
-		protected override void Reload()
+		protected override string Load()
 		{
 			file.Refresh();
-			Data = file.Exists ? File.ReadAllText(file.FullName) : null;
+			return file.Exists ? File.ReadAllText(file.FullName) : null;
 		}
 
 		protected override void Dispose(bool disposing)

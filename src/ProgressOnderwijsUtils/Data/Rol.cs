@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Studentadministratie"),
 		 Implies(StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken,
-			 StudentWijzigPersonalia, OpleidingenBekijken, Rol.BekijkenFinancieelUitgebreid,
+			 StudentWijzigPersonalia, OpleidingenBekijken, BekijkenFinancieelUitgebreid,
 			 StudentIdentificatieToevoegenVerwijderenWijzigen,
 			 StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen,
 			 StudentPasfotoToevoegenVerwijderen,
@@ -58,9 +58,6 @@ namespace ProgressOnderwijsUtils
 			 BlokkeerInschrijvingToevoegenWijzigenVerwijderen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen)]
 		StudentadministratieExtra = -4,
-
-		//Iedereen = -1,
-		//Iedereen = 1,
 
 		[MpLabel("Student bekijk personalia")]
 		StudentBekijkPersonalia = 2,
@@ -292,7 +289,7 @@ namespace ProgressOnderwijsUtils
 			 StudentCommunicatieToevoegenVerwijderenWijzigen, WijzigenCorrespondentieadressen,
 			 InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunning, WijzigenPasfoto,
-			 StudentRichtingToevoegenWijzigenVerwijderen)]
+			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
 		[MpLabel("Wijzigen uitschrijvingen"), Toekenbaar,
@@ -334,7 +331,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Beheer inschrijvingen"), Toekenbaar,
 		 Implies(OrganisatieToevoegenVerwijderenWijzigen, OpleidingenBekijken, OpleidingenToevoegenVerwijderenWijzigen, DocumentTemplates,
-			 BekijkenKengetallen, WijzigenInschrijvingenEnAanmeldingen, WijzigenUitschrijvingen, WijzigenExamens, WijzigenCrm, TakenBekijkenWijzigen, StatischeGroepenAanmakenWijzigenVerwijderen, 
+			 BekijkenKengetallen, WijzigenInschrijvingenEnAanmeldingen, WijzigenUitschrijvingen, WijzigenExamens, WijzigenCrm, TakenBekijkenWijzigen, StatischeGroepenAanmakenWijzigenVerwijderen,
 			 StatischeGroepenGebruiken, KenmerkenToevoegenWijzigenVerwijderen, BatchesToevoegenWijzigenVerwijderen, StudentenSamenvoegen)]
 		BeheerInschrijvingen = 135,
 
@@ -537,11 +534,14 @@ namespace ProgressOnderwijsUtils
 		DocumentGeneratieVooropleidingen = 225,
 
 		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften, BeheerCursusaanbodCursusdeelnames,
-			Rol.StatischeGroepenAanmakenWijzigenVerwijderen, Rol.StudentRichtingToevoegenWijzigenVerwijderen)]
+			Rol.StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
 		Combi_FontysBeheerFO = 226,
 
-		[MpLabel("COMBI: Fontys Muteer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, Rol.WijzigenCursusdeelnames, 
-			Rol.WijzigenExamens, Rol.StatischeGroepenAanmakenWijzigenVerwijderen, Rol.StudentRichtingToevoegenWijzigenVerwijderen)]
+		[MpLabel("COMBI: Fontys Muteer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, WijzigenCursusdeelnames,
+			WijzigenExamens, StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
 		Combi_FontysMuteerFO = 227,
+
+		[MpLabel("Wijzigen voorlopige toelating"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
+		WijzigenVoorlopigeToelating = 228,
 	}
 }
