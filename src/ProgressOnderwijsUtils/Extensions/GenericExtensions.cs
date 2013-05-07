@@ -29,5 +29,12 @@ namespace ProgressOnderwijsUtils
 		public static bool In<T>(this T? obj, params T?[] values)
 			where T : struct, IConvertible, IComparable
 		{ return values.Contains(obj); }
+
+		public static bool Between(this int num, int lower, int upper, bool inclusive = false)
+		{
+			return inclusive
+				? lower <= num && num <= upper
+				: lower < num && num < upper;
+		}
 	}
 }
