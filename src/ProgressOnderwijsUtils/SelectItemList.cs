@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
 
 		static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
 		{
-			return DbToEnumerable<T>(dt, dt.Columns[0], dt.Columns[1]);
+			return dt == null ? DbToEnumerable<T>(null, null, null): DbToEnumerable<T>(dt, dt.Columns[0], dt.Columns[1]);
 		}
 
 		static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt, DataColumn idColumn, DataColumn textColumn)
