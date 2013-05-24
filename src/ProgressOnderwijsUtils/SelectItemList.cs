@@ -22,14 +22,29 @@ namespace ProgressOnderwijsUtils
 			return Create(DbToEnumerable<T>(dt));
 		}
 
+		public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(DataTable dt, DataColumn idColumn, DataColumn textColumn)
+		{
+			return Create(DbToEnumerable<T>(dt, idColumn, textColumn));
+		}
+
 		public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt)
 		{
 			return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt));
 		}
 
-		public static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
+		public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt, DataColumn idColumn, DataColumn textColumn)
 		{
-			return dt == null ? Enumerable.Empty<SelectItem<T>>() : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)dr[0], new TextDefSimple(dr[1].ToString(), "")));
+			return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt, idColumn, textColumn));
+		}
+
+		static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
+		{
+			return DbToEnumerable<T>(dt, dt.Columns[0], dt.Columns[1]);
+		}
+
+		static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt, DataColumn idColumn, DataColumn textColumn)
+		{
+			return dt == null ? Enumerable.Empty<SelectItem<T>>() : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)dr[idColumn], new TextDefSimple(dr[textColumn].ToString(), "")));
 		}
 
 		public static SelectItem<T> GetItem<T>(this IReadOnlyList<SelectItem<T>> list, T value)
