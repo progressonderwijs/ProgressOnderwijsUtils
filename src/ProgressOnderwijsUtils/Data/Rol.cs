@@ -288,7 +288,7 @@ namespace ProgressOnderwijsUtils
 			 WijzigenStudentKenmerken, DocumentGeneratie,
 			 StudentCommunicatieToevoegenVerwijderenWijzigen, WijzigenCorrespondentieadressen,
 			 InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
-			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunning, WijzigenPasfoto,
+			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunningVnummer, WijzigenPasfoto,
 			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
@@ -340,7 +340,8 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Superuser"), Implies(BeheerFinancieel, BeheerInschrijvingen,
 			 BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
-			 WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften)]
+			 WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften,
+			 WijzigenDocumentenVooropleidingen)]
 		Superuser = 138,
 
 		[MpLabel("Wijzigen studievolg"), Toekenbaar,
@@ -448,9 +449,9 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Student wijzig personalia beperkt")]
 		StudentWijzigPersonaliaBeperkt = 196,
 
-		[MpLabel("Wijzigen verblijfsvergunning"), Toekenbaar,
-		 Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning)]
-		WijzigenVerblijfsvergunning = 197,
+		[MpLabel("Wijzigen verblijfsvergunning/Vnummer"), Toekenbaar,
+		 Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning, StudentWijzigPersonaliaBeperkt)]
+		WijzigenVerblijfsvergunningVnummer = 197,
 
 		[MpLabel("Student wijzig verblijfsvergunning")]
 		StudentWijzigVerblijfsvergunning = 198,
@@ -530,8 +531,8 @@ namespace ProgressOnderwijsUtils
 			 BeheerUitwisselingDuo, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, BeheerGetuigschriften)]
 		Combi_BeheerAlles = 224,
 
-		[MpLabel("Document generatie vooropleidingen")]
-		DocumentGeneratieVooropleidingen = 225,
+		[MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
+		WijzigenDocumentenVooropleidingen = 225,
 
 		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften, BeheerCursusaanbodCursusdeelnames,
 			Rol.StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
