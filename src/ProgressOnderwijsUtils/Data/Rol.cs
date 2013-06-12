@@ -288,7 +288,7 @@ namespace ProgressOnderwijsUtils
 			 WijzigenStudentKenmerken, DocumentGeneratie,
 			 StudentCommunicatieToevoegenVerwijderenWijzigen, WijzigenCorrespondentieadressen,
 			 InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
-			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunning, WijzigenPasfoto,
+			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunningVnummer, WijzigenPasfoto,
 			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
@@ -449,9 +449,9 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Student wijzig personalia beperkt")]
 		StudentWijzigPersonaliaBeperkt = 196,
 
-		[MpLabel("Wijzigen verblijfsvergunning"), Toekenbaar,
+		[MpLabel("Wijzigen verblijfsvergunning/Vnummer"), Toekenbaar,
 		 Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning)]
-		WijzigenVerblijfsvergunning = 197,
+		WijzigenVerblijfsvergunningVnummer = 197,
 
 		[MpLabel("Student wijzig verblijfsvergunning")]
 		StudentWijzigVerblijfsvergunning = 198,
