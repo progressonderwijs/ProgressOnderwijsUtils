@@ -450,7 +450,7 @@ namespace ProgressOnderwijsUtils
 		StudentWijzigPersonaliaBeperkt = 196,
 
 		[MpLabel("Wijzigen verblijfsvergunning/Vnummer"), Toekenbaar,
-		 Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning)]
+		 Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning, StudentWijzigPersonaliaBeperkt)]
 		WijzigenVerblijfsvergunningVnummer = 197,
 
 		[MpLabel("Student wijzig verblijfsvergunning")]
