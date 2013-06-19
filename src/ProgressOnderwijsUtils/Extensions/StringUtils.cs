@@ -172,5 +172,6 @@ namespace ProgressOnderwijsUtils
 			else
 				return pluralstring;
 		}
+
 	}
 }
