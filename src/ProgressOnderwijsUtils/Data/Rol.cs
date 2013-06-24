@@ -341,7 +341,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Superuser"), Implies(BeheerFinancieel, BeheerInschrijvingen,
 			 BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
 			 WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften,
-			 WijzigenDocumentenVooropleidingen)]
+			 WijzigenDocumentenVooropleidingen, StudentadministratieBeheerder)]
 		Superuser = 138,
 
 		[MpLabel("Wijzigen studievolg"), Toekenbaar,
