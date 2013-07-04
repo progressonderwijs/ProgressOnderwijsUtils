@@ -51,10 +51,10 @@ namespace ProgressOnderwijsUtils
 				orderby ouder, kind//not strictly necessary
 				select new { ouder, kind };
 
-			var autoKoppelDown = EnumHelpers.GetValues<Rol>().Where(rol => rol != Rol.Iedereen).Select(rol => new { ouder = rol, kind = Rol.Iedereen });
+			//var autoKoppelDown = EnumHelpers.GetValues<Rol>().Where(rol => rol != Rol.Iedereen).Select(rol => new { ouder = rol, kind = Rol.Iedereen });
 
 			var koppelingen = koppelDown
-				.Concat(autoKoppelDown)
+				//.Concat(autoKoppelDown)
 				//.Concat(koppelUp)
 						.Distinct().OrderBy(r => r.kind);
 
@@ -71,6 +71,12 @@ namespace ProgressOnderwijsUtils
 		{
 			return Utils.TransitiveClosure(new[] { root }, rol => ChildrenOf[rol]);
 		}
+
+		public static HashSet<Rol> BovenliggendeToegangsRollen(this Rol root)
+		{
+			return Utils.TransitiveClosure(new[] { root }, rol => ParentsOf[rol]);
+		}
+
 		public static HashSet<Rol> OnderliggendeToegangsRollen(this IEnumerable<Rol> roots)
 		{
 			return Utils.TransitiveClosure(roots, rol => ChildrenOf[rol]);

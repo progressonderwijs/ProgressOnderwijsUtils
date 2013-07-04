@@ -199,7 +199,7 @@ namespace ProgressOnderwijsUtils
 			return mappings.SelectMany(
 				map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
 				.ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
-		}
+		}	
 		static readonly AssemblyBuilder assemblyBuilder;
 		static readonly ModuleBuilder moduleBuilder;
 		static int counter;

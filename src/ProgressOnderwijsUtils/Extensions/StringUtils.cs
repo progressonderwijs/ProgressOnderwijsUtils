@@ -49,6 +49,19 @@ namespace ProgressOnderwijsUtils
 			return str.Replace("ß", upper ? "SS" : "ss");
 		}
 
+        public static string SepaTekenset(string s)
+        {
+            return Regex.Replace(s, @"[^a-zA-z0-9 /-?:().,'+]+", "");
+        }
+
+        public static string SepaTekensetEnModificaties(string s)
+        {
+            s = VerwijderDiakrieten(s);
+            s = VervangRingelS(s, false);
+            s = SepaTekenset(s);
+            return s;
+        }
+
 		public static string Capitalize(string name)
 		{
 			return name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
@@ -159,5 +172,6 @@ namespace ProgressOnderwijsUtils
 			else
 				return pluralstring;
 		}
+
 	}
 }
