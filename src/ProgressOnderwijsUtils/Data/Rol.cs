@@ -547,10 +547,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Wijzigen batchregels student"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
 		WijzigenStudentBatchRegel = 229,
 
-		[MpLabel("Wijzigen eigen pasfoto"), MpTooltip("Laat de student zijn eigen pasfoto wijzigen.")]
-		WijzigenEigenPasfoto = 230,
-
-		[MpLabel("Wijzigen eigen documenten inschrijving"), MpTooltip("Laat de student zijn eigen verklaring van inschrijving genereren.")]
-		WijzigenEigenDocumentenInschrijving = 231,
+		[MpLabel("Student"), MpTooltip("Virtule rol voor studenten die extern inloggen")]
+		Student = 230,
 	}
 }
