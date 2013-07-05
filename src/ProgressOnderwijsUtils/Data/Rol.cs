@@ -7,7 +7,6 @@ namespace ProgressOnderwijsUtils
 {
 	public enum Rol
 	{
-
 		[MpLabel("Studentadministratie alleen lezen, met accorderen toelatingseisen en kenmerken"),
 		 Implies(StudentadministratieAlleenInkijken, AanmeldingToelatingseisenAccorderen, WijzigenStudentKenmerken)]
 		StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken = -24,
@@ -547,5 +546,11 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Wijzigen batchregels student"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
 		WijzigenStudentBatchRegel = 229,
+
+		[MpLabel("Wijzigen eigen pasfoto"), MpTooltip("Laat de student zijn eigen pasfoto wijzigen.")]
+		WijzigenEigenPasfoto = 230,
+
+		[MpLabel("Wijzigen eigen documenten inschrijving"), MpTooltip("Laat de student zijn eigen verklaring van inschrijving genereren.")]
+		WijzigenEigenDocumentenInschrijving = 231,
 	}
 }
