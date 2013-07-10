@@ -35,7 +35,16 @@ namespace ProgressOnderwijsUtils
 			return str == null ? null : COLLAPSE_WHITESPACE.Replace(str, " ");
 		}
 
-		public static bool EqualsOrdinalCaseInsensitive(this string a, string b) { return StringComparer.OrdinalIgnoreCase.Equals(a, b); }
+		public static bool EqualsOrdinalCaseInsensitive(this string a, string b) 
+		{
+			return StringComparer.OrdinalIgnoreCase.Equals(a, b); 
+		}
+
+		public static bool Contains(this string str, string value, StringComparison compare)
+		{
+			return str.IndexOf(value, compare) >= 0;
+		}
+
 		public static string TrimToLength(this string s, int maxlength)
 		{
 			if (s == null || s.Length <= maxlength) return s;
