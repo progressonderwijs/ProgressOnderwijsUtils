@@ -352,11 +352,11 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Bekijken inschrijvingen"), Toekenbaar,
 		 Implies(StudentBekijkPersonalia, StudentTabblad, StudentPersoonTabblad, StudentInschrijvingenTabblad, VooropleidingenBekijken,
-			 AanmeldingenBekijken, InschrijvingenBekijken, NietReguliereInschrijvingenBekijken, StudentAdresBekijken)]
+			 AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, StudentAdresBekijken)]
 		BekijkenInschrijvingen = 160,
 
 		[MpLabel("Bekijken inschrijvingen uitgebreid"), Toekenbaar,
-		 Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad, Examenstabblad,
+		 Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad, 
 			 Uitschrijvingentabblad, StudentCommunicatieTabblad, BekijkenInschrijvingen, InschrijvingNotitiesBekijken, ExamenWaardepapierBekijken)]
 		BekijkenInschrijvingenUitgebreid = 161,
 
