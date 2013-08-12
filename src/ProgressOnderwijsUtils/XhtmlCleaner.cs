@@ -287,7 +287,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
 
 
 		/// <summary>
-		/// Stips xml tags from the string for readability.  The resulting string still needs to be encoded (i.e. it is not disable-output escaping safe.)
+		/// Strips xml tags from the string for readability.  The resulting string still needs to be encoded (i.e. it is not disable-output escaping safe.)
 		/// This function also decodes xml entities and &amp;nbsp; into readable characters.
 		/// </summary>
 		public static string HtmlToTextParser(string str) { return new XElement("x", HeuristicParse(str)).Value; }

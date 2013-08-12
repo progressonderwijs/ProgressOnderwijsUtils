@@ -7,7 +7,6 @@ namespace ProgressOnderwijsUtils
 {
 	public enum Rol
 	{
-
 		[MpLabel("Studentadministratie alleen lezen, met accorderen toelatingseisen en kenmerken"),
 		 Implies(StudentadministratieAlleenInkijken, AanmeldingToelatingseisenAccorderen, WijzigenStudentKenmerken)]
 		StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken = -24,
@@ -353,11 +352,11 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Bekijken inschrijvingen"), Toekenbaar,
 		 Implies(StudentBekijkPersonalia, StudentTabblad, StudentPersoonTabblad, StudentInschrijvingenTabblad, VooropleidingenBekijken,
-			 AanmeldingenBekijken, InschrijvingenBekijken, NietReguliereInschrijvingenBekijken, StudentAdresBekijken)]
+			 AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, StudentAdresBekijken)]
 		BekijkenInschrijvingen = 160,
 
 		[MpLabel("Bekijken inschrijvingen uitgebreid"), Toekenbaar,
-		 Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad, Examenstabblad,
+		 Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad, 
 			 Uitschrijvingentabblad, StudentCommunicatieTabblad, BekijkenInschrijvingen, InschrijvingNotitiesBekijken, ExamenWaardepapierBekijken)]
 		BekijkenInschrijvingenUitgebreid = 161,
 
@@ -547,5 +546,8 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Wijzigen batchregels student"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
 		WijzigenStudentBatchRegel = 229,
+
+		[MpLabel("Student"), MpTooltip("Virtule rol voor studenten die extern inloggen")]
+		Student = 230,
 	}
 }
