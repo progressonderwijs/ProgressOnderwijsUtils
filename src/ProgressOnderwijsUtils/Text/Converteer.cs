@@ -160,7 +160,10 @@ namespace ProgressOnderwijsUtils
 		{
 			return TryParse(s, t, taal).Value;
 		}
-
+		public static T Parse<T>(string s, Taal taal)
+		{
+			return (T)TryParse(s, typeof(T), taal).Value;
+		}
 		private const int YearMinimum = 1900, YearMaximum = 2100;
 
 		static DateTime ParseDateTime(string s)

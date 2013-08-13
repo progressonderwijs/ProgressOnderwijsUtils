@@ -7,7 +7,6 @@ namespace ProgressOnderwijsUtils
 {
 	public enum Rol
 	{
-
 		[MpLabel("Studentadministratie alleen lezen, met accorderen toelatingseisen en kenmerken"),
 		 Implies(StudentadministratieAlleenInkijken, AanmeldingToelatingseisenAccorderen, WijzigenStudentKenmerken)]
 		StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken = -24,
@@ -288,7 +287,7 @@ namespace ProgressOnderwijsUtils
 			 WijzigenStudentKenmerken, DocumentGeneratie,
 			 StudentCommunicatieToevoegenVerwijderenWijzigen, WijzigenCorrespondentieadressen,
 			 InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
-			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunning, WijzigenPasfoto,
+			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunningVnummer, WijzigenPasfoto,
 			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
@@ -340,7 +339,8 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Superuser"), Implies(BeheerFinancieel, BeheerInschrijvingen,
 			 BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
-			 WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften)]
+			 WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften,
+			 WijzigenDocumentenVooropleidingen)]
 		Superuser = 138,
 
 		[MpLabel("Wijzigen studievolg"), Toekenbaar,
@@ -352,11 +352,11 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Bekijken inschrijvingen"), Toekenbaar,
 		 Implies(StudentBekijkPersonalia, StudentTabblad, StudentPersoonTabblad, StudentInschrijvingenTabblad, VooropleidingenBekijken,
-			 AanmeldingenBekijken, InschrijvingenBekijken, NietReguliereInschrijvingenBekijken, StudentAdresBekijken)]
+			 AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, StudentAdresBekijken)]
 		BekijkenInschrijvingen = 160,
 
 		[MpLabel("Bekijken inschrijvingen uitgebreid"), Toekenbaar,
-		 Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad, Examenstabblad,
+		 Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad, 
 			 Uitschrijvingentabblad, StudentCommunicatieTabblad, BekijkenInschrijvingen, InschrijvingNotitiesBekijken, ExamenWaardepapierBekijken)]
 		BekijkenInschrijvingenUitgebreid = 161,
 
@@ -448,9 +448,9 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Student wijzig personalia beperkt")]
 		StudentWijzigPersonaliaBeperkt = 196,
 
-		[MpLabel("Wijzigen verblijfsvergunning"), Toekenbaar,
-		 Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning)]
-		WijzigenVerblijfsvergunning = 197,
+		[MpLabel("Wijzigen verblijfsvergunning/Vnummer"), Toekenbaar,
+		 Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning, StudentWijzigPersonaliaBeperkt)]
+		WijzigenVerblijfsvergunningVnummer = 197,
 
 		[MpLabel("Student wijzig verblijfsvergunning")]
 		StudentWijzigVerblijfsvergunning = 198,
@@ -530,8 +530,8 @@ namespace ProgressOnderwijsUtils
 			 BeheerUitwisselingDuo, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, BeheerGetuigschriften)]
 		Combi_BeheerAlles = 224,
 
-		[MpLabel("Document generatie vooropleidingen")]
-		DocumentGeneratieVooropleidingen = 225,
+		[MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
+		WijzigenDocumentenVooropleidingen = 225,
 
 		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften, BeheerCursusaanbodCursusdeelnames,
 			Rol.StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
@@ -546,5 +546,8 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Wijzigen batchregels student"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
 		WijzigenStudentBatchRegel = 229,
+
+		[MpLabel("Student"), MpTooltip("Virtule rol voor studenten die extern inloggen")]
+		Student = 230,
 	}
 }
