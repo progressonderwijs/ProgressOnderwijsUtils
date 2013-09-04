@@ -307,7 +307,7 @@ namespace ProgressOnderwijsUtils
 
 		public static IEnumerable<T> AllCombinations<T>() where T : struct
 		{
-			// Constuct a function for OR-ing together two enums
+			// Construct a function for OR-ing together two enums
 			Type type = typeof(T);
 			var param1 = Expression.Parameter(type);
 			var param2 = Expression.Parameter(type);
