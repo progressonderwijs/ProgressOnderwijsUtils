@@ -549,5 +549,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Student"), MpTooltip("Virtule rol voor studenten die extern inloggen")]
 		Student = 230,
+
+
 	}
 }
