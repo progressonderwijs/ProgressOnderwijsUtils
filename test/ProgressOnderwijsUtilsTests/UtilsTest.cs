@@ -168,5 +168,23 @@ namespace ProgressOnderwijsUtilsTests
 		 TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false)]
 		[Continuous]
 		public bool GenerateForLanguage(DocumentLanguage doc, Taal language) { return Utils.GenerateForLanguage(doc, language); }
+
+
+		public static IEnumerable<TestCaseData> RoundUpData()
+		{
+			yield return new TestCaseData(1.12m, 2, 1.12m);
+			yield return new TestCaseData(1.0m, 2, 1.0m);
+			yield return new TestCaseData(1.121m, 2, 1.13m);
+			yield return new TestCaseData(1.129m, 2, 1.13m);
+			yield return new TestCaseData(1000001.122m, 2, 1000001.13m);
+			yield return new TestCaseData(1000001.129m, 2, 1000001.13m);
+
+		}
+
+		[Test, TestCaseSource("RoundUpData")]
+		public void RoundUp(decimal waarde, int posities, decimal resultaat)
+		{
+			Assert.That(Utils.RoundUp(waarde, posities), Is.EqualTo(resultaat));
+		}
 	}
 }
