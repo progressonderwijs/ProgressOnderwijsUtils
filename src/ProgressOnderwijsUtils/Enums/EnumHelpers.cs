@@ -273,7 +273,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
-			this IReadOnlyList<SelectItem<TEnum?>> enumSelectItemList)
+			this IEnumerable<SelectItem<TEnum?>> enumSelectItemList)
 			where TEnum : struct, IConvertible
 		{
 			return enumSelectItemList.Select(item => SelectItem.Create(item.Value.HasValue ? (int?)item.Value.Value.ToInt32(null) : default(int?), item.Label))
