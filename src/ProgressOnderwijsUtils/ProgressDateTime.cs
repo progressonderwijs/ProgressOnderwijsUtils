@@ -34,13 +34,24 @@ namespace ProgressOnderwijsUtils
 		}
 
 		/// <summary>
-		/// De (voor de software) huidige datum
+		/// De (voor de software) huidige datumtijd
 		/// </summary>
 		public static DateTime Now
 		{
 			get
 			{
 				return DateTime.Now.AddDays(DaysToAdd);
+			}
+		}
+
+		/// <summary>
+		/// De (voor de software) huidige datum
+		/// </summary>
+		public static DateTime Today
+		{
+			get
+			{
+				return DateTime.Today.AddDays(DaysToAdd);
 			}
 		}
 	}
