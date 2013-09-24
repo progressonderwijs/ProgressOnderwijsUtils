@@ -288,5 +288,12 @@ namespace ProgressOnderwijsUtils
 					throw new ArgumentOutOfRangeException();
 			}
 		}
+
+		public static decimal RoundUp(decimal input, int places)
+		{
+			var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));
+			return Math.Ceiling(input * multiplier) / multiplier;
+		}
+
 	}
 }
