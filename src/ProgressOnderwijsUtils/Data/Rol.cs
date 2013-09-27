@@ -533,7 +533,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
 		WijzigenDocumentenVooropleidingen = 225,
 
-		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften, BeheerCursusaanbodCursusdeelnames,
+		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften, 
 			Rol.StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
 		Combi_FontysBeheerFO = 226,
 
