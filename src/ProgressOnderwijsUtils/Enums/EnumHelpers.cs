@@ -168,8 +168,8 @@ namespace ProgressOnderwijsUtils
 
 
 				var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
-				if (translatedlabel == null && untranslatedlabel == null && tooltip == null && !EnumMembers.Contains(f))
-					throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+				//if (translatedlabel == null && untranslatedlabel == null && tooltip == null && !EnumMembers.Contains(f))
+					//throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
 
 				var translatable =
 					translatedlabel != null ? translatedlabel.ToTranslatable()
