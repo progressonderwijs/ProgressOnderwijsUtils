@@ -288,7 +288,8 @@ namespace ProgressOnderwijsUtils
 			 StudentCommunicatieToevoegenVerwijderenWijzigen, WijzigenCorrespondentieadressen,
 			 InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunningVnummer, WijzigenPasfoto,
-			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel)]
+			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel, 
+			 WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
 		[MpLabel("Wijzigen uitschrijvingen"), Toekenbaar,
@@ -550,6 +551,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Student"), MpTooltip("Virtule rol voor studenten die extern inloggen")]
 		Student = 230,
 
-
+		[MpLabel("Wijzigen/toevoegen communicatie aanmelding/inschrijving/uitschrijving/examen"), Toekenbaar]
+		WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen = 231,
 	}
 }
