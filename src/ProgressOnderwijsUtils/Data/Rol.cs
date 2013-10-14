@@ -553,5 +553,11 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Wijzigen/toevoegen communicatie aanmelding/inschrijving/uitschrijving/examen"), Toekenbaar]
 		WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen = 231,
+
+		[MpLabel("Wijzigen/toevoegen communicatie studievolg")]
+		WijzigenCommunicatieStudievolg = 232,
+
+		[MpLabel("Wijzigen/toevoegen communicatie financieel")]
+		WijzigenCommunicatieFinancieel = 233,
 	}
 }
