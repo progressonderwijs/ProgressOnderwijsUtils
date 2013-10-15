@@ -36,6 +36,7 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNotNull, null).ToQueryBuilder() == QueryBuilder.Create("test is not null"));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test in (select val from {0})", Enumerable.Range(1, 5)));
 			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotIn, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder() == QueryBuilder.Create("test not in (select val from {0})", Enumerable.Range(1, 5)));
+			PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.HasFlag, 3).ToQueryBuilder() == QueryBuilder.Create("test & {0} = {0}", 3));
 		}
 		[Test]
 		public void CurrentTimeTest()
@@ -261,6 +262,7 @@ namespace ProgressOnderwijsUtilsTests
 								Filter.CreateCriterium("test", BooleanComparer.NotIn, new[]{1, 2, 3, 4, 5,}),
 								Filter.CreateCriterium("test", BooleanComparer.In, new string[]{}),
 								Filter.CreateCriterium("test", BooleanComparer.NotIn, new string[]{}),
+								Filter.CreateCriterium("test", BooleanComparer.HasFlag, 3),
 			};
 
 			foreach (var filter in filters)
@@ -435,7 +437,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void MetaObject_StrCompNullSafe()
 		{
-			var filterA = helper.CreateFilter(o=>o.StringVal, BooleanComparer.Contains, "0");
+			var filterA = helper.CreateFilter(o => o.StringVal, BooleanComparer.Contains, "0");
 			var filterB = helper.CreateFilter(o => o.StringVal, BooleanComparer.StartsWith, "10");
 			var filterC = helper.CreateFilter(o => o.StringVal, BooleanComparer.EndsWith, "3");
 			var filterA_null = helper.CreateFilter(o => o.StringVal, BooleanComparer.Contains, null);
