@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.EndsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
-		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
+		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn, BooleanComparer.HasFlag,  }; } }
 
 		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde)
 		{
@@ -100,6 +100,8 @@ namespace ProgressOnderwijsUtils
 					return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde);
 				case BooleanComparer.Contains:
 					return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde + "%");
+				case BooleanComparer.HasFlag:
+					return KolomNaam + " & " + BuildParam() + " = " + BuildParam();
 				default:
 					throw new InvalidOperationException("Geen geldige operator");
 			}
