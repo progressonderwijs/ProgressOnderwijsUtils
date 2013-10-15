@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ProgressOnderwijsUtils
 {
@@ -96,6 +98,41 @@ namespace ProgressOnderwijsUtils
 		public static bool operator !=(FileData left, FileData right)
 		{
 			return !left.Equals(right);
+		}
+
+		#endregion
+
+		#region Serialization
+
+		public FileData Serialize<T>(T obj)
+		{
+			using (var stream = new MemoryStream())
+			{
+				var formatter = new BinaryFormatter();
+				formatter.Serialize(stream, obj);
+				return new FileData
+				{
+					Content = stream.ToArray(),
+					ContentType = MediaTypeNames.Application.Octet,
+					FileName = typeof(T).Name,
+				};
+			}
+		}
+
+		public T Deserialize<T>(FileData file)
+		{
+			if (file.ContainsFile)
+			{
+				using (var stream = new MemoryStream(file.Content))
+				{
+					var formatter = new BinaryFormatter();
+					return (T)formatter.Deserialize(stream);
+				}
+			}
+			else
+			{
+				return default(T);
+			}
 		}
 
 		#endregion
