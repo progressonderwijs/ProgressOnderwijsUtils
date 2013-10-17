@@ -104,7 +104,7 @@ namespace ProgressOnderwijsUtils
 
 		#region Serialization
 
-		public static FileData Serialize<T>(T obj)
+		public static FileData Serialize<T>(T obj, string fileName = null)
 		{
 			using (var stream = new MemoryStream())
 			{
@@ -114,7 +114,7 @@ namespace ProgressOnderwijsUtils
 				{
 					Content = stream.ToArray(),
 					ContentType = MediaTypeNames.Application.Octet,
-					FileName = typeof(T).Name + ".bin",
+					FileName = fileName ?? GetFileName<T>(),
 				};
 			}
 		}
@@ -133,6 +133,15 @@ namespace ProgressOnderwijsUtils
 			{
 				return default(T);
 			}
+		}
+
+		private static string GetFileName<T>()
+		{
+			Type type = typeof(T);
+			string result = type.Name;
+			result = type.IsGenericType ? result.Substring(0, result.IndexOf("`", StringComparison.InvariantCulture)) : result;
+			result += ".bin";
+			return result;
 		}
 
 		#endregion
