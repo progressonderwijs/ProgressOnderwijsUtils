@@ -155,6 +155,14 @@ namespace ProgressOnderwijsUtils.Conext
 							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
 						}
 					},
+					{ DatabaseVersion.DuoTestDB, new ServiceProviderConfig 
+						{ 
+							sp = ServiceProvider.PNet,
+							entity = SP_ENTITY_PNET_TEST, 
+							index = 0, 
+							certificate = GetCertificate(SP_CERTIFICATE, "b00zen") 
+						}
+					},
 					{ DatabaseVersion.VeldTestDB, new ServiceProviderConfig 
 						{ 
 							sp = ServiceProvider.PNet,
@@ -271,6 +279,12 @@ namespace ProgressOnderwijsUtils.Conext
 								}
 							},
 							{ DatabaseVersion.AcceptatieDB, new Dictionary<Entity, string>
+								{
+									{ Entity.Fontys, IDP_ENTITY_FONTYS },
+									{ Entity.Stenden, IDP_ENTITY_STENDEN },
+								}
+							},
+							{ DatabaseVersion.DuoTestDB, new Dictionary<Entity, string>
 								{
 									{ Entity.Fontys, IDP_ENTITY_FONTYS },
 									{ Entity.Stenden, IDP_ENTITY_STENDEN },
