@@ -1,18 +1,22 @@
 ﻿using System;
 using System.Linq;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
 	[Flags]
 	public enum ColumnCss
 	{
+		[ExcludeFromTest]
 		None = 0,
+
 		Fout = 1 << 0,
 		AlignRight = 1 << 1,
 		AlignCenter = 1 << 2,
 		ExplicitLines = 1 << 3,
 		ExtraSpaceRight = 1 << 4,
 	}
+
 	public static class ColumnCssHelpers
 	{
 		public static string JoinedClasses(this ColumnCss columnCss, string prefix)
@@ -20,7 +24,6 @@ namespace ProgressOnderwijsUtils
 			return EnumHelpers.GetValues<ColumnCss>().Where(css => css != ColumnCss.None && columnCss.HasFlag(css)).Select(css => prefix + css.ToString() + " ").JoinStrings();
 		}
 	}
-
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpColumnCssAttribute : Attribute
