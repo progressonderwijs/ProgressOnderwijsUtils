@@ -211,6 +211,8 @@ namespace ProgressOnderwijsUtils
 		}
 
 		static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
+		static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
+
 		static class DataReaderSpecialization<TReader> where TReader : IDataReader
 		{
 			static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(typeof(TReader).GetInterfaceMap(typeof(IDataRecord)), typeof(TReader).GetInterfaceMap(typeof(IDataReader)));
@@ -222,15 +224,18 @@ namespace ProgressOnderwijsUtils
 			static bool SupportsType(Type type)
 			{
 				var underlyingType = type.GetNonNullableUnderlyingType();
-				return GetterMethodsByType.ContainsKey(underlyingType) || isSqlDataReader && underlyingType == typeof(TimeSpan);
+				return GetterMethodsByType.ContainsKey(underlyingType) || 
+					(isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
 			}
 
 			static MethodInfo GetterForType(Type underlyingType)
 			{
-
-				return
-					isSqlDataReader && underlyingType == typeof(TimeSpan) ? getTimeSpan_SqlDataReader
-					: InterfaceMap[GetterMethodsByType[underlyingType]];
+				if (isSqlDataReader && underlyingType == typeof(TimeSpan))
+					return getTimeSpan_SqlDataReader;
+				else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset))
+					return getDateTimeOffset_SqlDataReader;
+				else
+					return InterfaceMap[GetterMethodsByType[underlyingType]];
 			}
 
 			static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, Type type)
