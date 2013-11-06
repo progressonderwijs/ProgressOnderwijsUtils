@@ -141,6 +141,8 @@ namespace ProgressOnderwijsUtils
 					return "is null";
 				case BooleanComparer.IsNotNull:
 					return "is not null";
+				case BooleanComparer.HasFlag:
+					return "has flag";
 				default:
 					throw new InvalidOperationException("Geen geldige operator");
 			}

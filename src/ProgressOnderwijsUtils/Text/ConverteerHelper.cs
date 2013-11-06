@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
 		public static TranslateFunction ToString(decimal d, string format) { return language => d.ToString(format ?? GELD_EURO, language.GetCulture()); }
 		public static TranslateFunction ToString(TimeSpan ts, string format) { return language => ts.ToString(format ?? "g", language.GetCulture()); }
 		public static TranslateFunction ToString(DateTime dt, string format) { return language => dt.ToString(format ?? (dt == dt.Date ? ALLEEN_DATUM : DATUM_EN_TIJD_IN_MINUTEN), language.GetCulture()); }
-		public static TranslateFunction ToString(FileData obj, string format) { return language => obj.ToUiString(); }
+		public static TranslateFunction ToString(FileData obj, string format) { return language => obj.ContainsFile ? string.Format("{0} ({1} KB)", obj.FileName, obj.Content.Length / 1000m) : ""; }
 		public static TranslateFunction ToString(VariantData obj, string format) { return language => obj.ToUiString(); }
 		public static TranslateFunction ToString(string str, string format) { return language => str; }
 		public static TranslateFunction ToString(char c, string format) { return language => new string(c, 1); }

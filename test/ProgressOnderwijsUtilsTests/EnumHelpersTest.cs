@@ -78,7 +78,8 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.XmlValue).Translate(Taal.DU).ExtraText == "");
 			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.AValue).Translate(Taal.NL).Text == "Waarde A");
 			PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.AValue).Translate(Taal.EN).Text == "Value A");
-			Assert.Throws<ArgumentOutOfRangeException>(() => EnumHelpers.GetLabel((EnumForTesting)(-1)));
+			PAssert.That(() => EnumHelpers.GetLabel((EnumForTesting)(-1)).Translate(Taal.NL).Text == "-1");
+			//Assert.Throws<ArgumentOutOfRangeException>(() => EnumHelpers.GetLabel((EnumForTesting)(-1)));
 		}
 
 		[Test]
