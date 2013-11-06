@@ -40,6 +40,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
+		[MpNotMapped]
 		public bool ContainsFile 
 		{
 			get 
