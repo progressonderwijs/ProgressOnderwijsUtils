@@ -166,9 +166,14 @@ namespace ProgressOnderwijsUtils.Conext
 		private static XElement ReceiveSamlResponse(HttpRequest request, out string relayState)
 		{
 			relayState = request.Form["RelayState"];
-			var result = XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(request.Form["SAMLResponse"])));
-			result.Validate(null);
-			return result.Root;
+			var response = request.Form["SAMLResponse"];
+			if (response != null)
+			{
+				var result = XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(response)));
+				result.Validate(null);
+				return result.Root;
+			}
+			return null;
 		}
 
 		private static string CreateUrl(AuthnRequest req, NameValueCollection qs)
