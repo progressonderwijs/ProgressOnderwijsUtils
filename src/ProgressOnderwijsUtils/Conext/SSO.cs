@@ -19,6 +19,7 @@ namespace ProgressOnderwijsUtils.Conext
 		P3W,
 		PNet,
 		Student,
+		StudentOAuth,
 	}
 
 	public enum IdentityProvider
