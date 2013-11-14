@@ -18,6 +18,7 @@ namespace ProgressOnderwijsUtils
 	{
 		readonly XNode[] nodes;
 		public IEnumerable<XNode> Nodes { get { return nodes.EmptyIfNull(); } }
+		public bool IsEmpty { get { return nodes == null || nodes.Length == 0; } }
 
 		public static XhtmlData Empty { get { return default(XhtmlData); } }
 
