@@ -559,5 +559,9 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Wijzigen/toevoegen communicatie financieel")]
 		WijzigenCommunicatieFinancieel = 233,
+
+		[MpLabel("Wijzigen/toevoegen groepen"), Toekenbaar, Implies(Rol.StatischeGroepenAanmakenWijzigenVerwijderen)]
+		WijzigenGroepen = 234,
+
 	}
 }
