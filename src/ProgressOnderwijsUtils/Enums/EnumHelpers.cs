@@ -254,7 +254,7 @@ namespace ProgressOnderwijsUtils
 			return SelectItem.Create(f, GetLabel(f));
 		}
 
-		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal, string format = "{0}")
+		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal, string format = "{0}", bool sortTekst = false)
 			where TEnum : struct,IConvertible
 		{
 			var dt = new DataTable { Columns = { { "id", typeof(int) }, { "tekst", typeof(string) } } };
@@ -262,6 +262,12 @@ namespace ProgressOnderwijsUtils
 			{
 				var tekst = item.Label.Translate(taal);
 				dt.Rows.Add(item.Value.ToInt32(null), string.Format(format, tekst.Text, tekst.ExtraText));
+			}
+			if (sortTekst)
+			{
+				var dv = dt.DefaultView;
+				dv.Sort = "tekst";
+				return dv.ToTable();
 			}
 			return dt;
 		}
