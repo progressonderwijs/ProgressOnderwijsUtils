@@ -8,6 +8,15 @@ namespace ProgressOnderwijsUtils
 {
 	public static class HtmlEntityLookup
 	{
+		public static readonly IReadOnlyDictionary<string, string> PredefinedEntities = new Dictionary<string, string>
+		{
+			{ @"""", "&quot;" },
+			{ @"&", "&amp;" },
+			{ @"'", "&apos;" },
+			{ @"<", "&lt;" },
+			{ @">", "&gt;" },
+		};
+
 		/// <summary>
 		/// All known HTML entities.  Includes xml entities; e.g. "lt", "gt" and "amp".
 		/// The key is the entity name without preceding '&' and terminating ';'.

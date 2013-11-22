@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
@@ -41,6 +40,11 @@ namespace ProgressOnderwijsUtils
 				retval++;
 			}
 			return -1;
+		}
+
+		public static IEnumerable<TSource> WhereIf<TSource>(this IEnumerable<TSource> source, bool condition, Func<TSource, bool> predicate)
+		{
+			return condition ? source.Where(predicate) : source;
 		}
 
 		[Pure]
