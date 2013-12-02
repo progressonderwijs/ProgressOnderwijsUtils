@@ -32,6 +32,13 @@ namespace ProgressOnderwijsUtils
 		public readonly ColumnCss CssClass;
 	}
 
+	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class MpHtmlEditModeAttribute : Attribute
+	{
+		public MpHtmlEditModeAttribute(HtmlEditMode htmlMode) { HtmlMode = htmlMode; }
+		public readonly HtmlEditMode HtmlMode;
+	}
+
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true, AllowMultiple = false)]
 	public sealed class MpLabelsRequiredAttribute : Attribute { }
 
