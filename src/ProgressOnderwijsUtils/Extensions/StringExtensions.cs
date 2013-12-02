@@ -50,6 +50,11 @@ namespace ProgressOnderwijsUtils
 			if (s == null || s.Length <= maxlength) return s;
 			else return s.Remove(maxlength);
 		}
+
+		public static string Replace(this string s, IEnumerable<KeyValuePair<string, string>> replacements) 
+		{
+			return replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value)); 
+		}
 	}
 }
 
