@@ -30,6 +30,7 @@ namespace ProgressOnderwijsUtils
 		bool CanWrite { get; }
 		PropertyInfo PropertyInfo { get; }
 		Expression GetterExpression(Expression paramExpr);
+		HtmlEditMode HtmlMode { get; }
 	}
 
 
@@ -47,6 +48,8 @@ namespace ProgressOnderwijsUtils
 			public string Name { get { return name; } }
 			readonly ColumnCss lijstCssClass;
 			public ColumnCss LijstCssClass { get { return lijstCssClass; } }
+			readonly HtmlEditMode htmlMode;
+			public HtmlEditMode HtmlMode { get { return htmlMode; } }
 			readonly int index;
 			public int Index { get { return index; } }
 			readonly bool required;
@@ -112,6 +115,7 @@ namespace ProgressOnderwijsUtils
 				koppelTabelNaam = OrDefault(Attr<MpKoppelTabelAttribute>(propertyInfo),
 					mkAttr => mkAttr.KoppelTabelNaam ?? propertyInfo.Name);
 				lijstCssClass = OrDefault(Attr<MpColumnCssAttribute>(propertyInfo), mkAttr => mkAttr.CssClass);
+				htmlMode = OrDefault(Attr<MpHtmlEditModeAttribute>(propertyInfo), mkAttr => mkAttr.HtmlMode);
 				required = OrDefault(Attr<MpVerplichtAttribute>(propertyInfo), mkAttr => true);
 				hide = OrDefault(Attr<HideAttribute>(propertyInfo), mkAttr => true);
 				allowNull = OrDefault(Attr<MpAllowNullAttribute>(propertyInfo), mkAttr => true);
