@@ -101,7 +101,7 @@ namespace ProgressOnderwijsUtils
 				case BooleanComparer.Contains:
 					return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde + "%");
 				case BooleanComparer.HasFlag:
-					return KolomNaam + " & " + BuildParam() + " = " + BuildParam();
+					return "(" + KolomNaam + " & " + BuildParam() + ") = " + BuildParam();
 				default:
 					throw new InvalidOperationException("Geen geldige operator");
 			}
