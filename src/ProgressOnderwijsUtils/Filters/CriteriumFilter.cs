@@ -307,6 +307,8 @@ namespace ProgressOnderwijsUtils
 		static readonly MethodInfo stringEndsWithMethod = ((Func<string, string, bool>)EndsWithHelper).Method;
 		public static bool ContainsHelper(string val, string needle) { return val != null && needle != null && -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase); }
 		static readonly MethodInfo stringContainsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
+		public static bool HasFlagHelper(long val, long flag) { return (val & flag) == flag; }
+		public readonly MethodInfo hasFlagMethod = ((Func<long, long, bool>)HasFlagHelper).Method;
 		// ReSharper restore MemberCanBePrivate.Global
 
 		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr, Expression dateTimeNowTokenValue, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier)
@@ -352,6 +354,10 @@ namespace ProgressOnderwijsUtils
 					return Expression.Call(stringEndsWithMethod, coreExpr, waardeExpr);
 				case BooleanComparer.Contains:
 					return Expression.Call(stringContainsMethod, coreExpr, waardeExpr);
+
+				case BooleanComparer.HasFlag:
+					return Expression.Call(hasFlagMethod, coreExpr, waardeExpr);
+
 				default:
 					throw new InvalidOperationException("Geen geldige operator");
 			}
