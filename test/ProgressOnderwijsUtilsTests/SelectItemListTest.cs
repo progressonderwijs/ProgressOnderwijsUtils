@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtilsTests
 		[SetUp]
 		public void SetUp()
 		{
-			sut = Applicatie.KoppelTabel(conn, "land", session.Organisatie.OrganisatieId, session.Language, session.Account.Id);
+			sut = Applicatie.KoppelTabel(conn, session, "land");
 		}
 
 		[Test]
