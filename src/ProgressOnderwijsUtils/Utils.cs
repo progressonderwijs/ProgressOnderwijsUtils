@@ -209,7 +209,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <param name="incompleteDate"></param>
 		/// <returns></returns>
-		public static DateTime? SLIncompleteDateConversion(string incompleteDate)
+		public static DateTime? SLMaybeIncompleteDateConversion(string incompleteDate)
 		{
 			if (incompleteDate != null)
 			{
