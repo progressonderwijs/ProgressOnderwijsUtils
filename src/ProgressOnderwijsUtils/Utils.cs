@@ -294,6 +294,24 @@ namespace ProgressOnderwijsUtils
 			var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));
 			return Math.Ceiling(input * multiplier) / multiplier;
 		}
+	}
 
+	public class ComparisonComparer<T> : IComparer<T>
+	{
+		readonly Comparison<T> comparer;
+ 
+		public ComparisonComparer(Comparison<T> comparer)
+		{
+			this.comparer = comparer;
+		}
+
+		#region Implementation of IComparer<in T>
+
+		public int Compare(T x, T y)
+		{
+			return comparer(x, y);
+		}
+
+		#endregion
 	}
 }
