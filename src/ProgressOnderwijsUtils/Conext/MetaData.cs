@@ -383,6 +383,13 @@ namespace ProgressOnderwijsUtils.Conext
 			},
 		};
 
+		private static readonly IDictionary<RootOrganisatie, Entity> INSTELLINGEN = new Dictionary<RootOrganisatie, Entity>
+		{
+			{ RootOrganisatie.CHN, Entity.Stenden },
+			{ RootOrganisatie.RUG, Entity.RuG },
+			{ RootOrganisatie.Fontys, Entity.Fontys },
+		};
+
 		#endregion
 
 		#region Factory methods
@@ -402,6 +409,11 @@ namespace ProgressOnderwijsUtils.Conext
 			return idp == IdentityProvider.ConextWayf 
 				? EnumHelpers.GetValues<Entity>().ToDictionary(o => o, o => IDP_ENTITY_WAYF)
 				: ENTITIES[idp][sp.Value][db.Value];
+		}
+
+		public static Entity GetEntity(RootOrganisatie instelling)
+		{
+			return INSTELLINGEN.GetOrDefault(instelling, Entity.Unknown);
 		}
 
 		public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig? sp = null)

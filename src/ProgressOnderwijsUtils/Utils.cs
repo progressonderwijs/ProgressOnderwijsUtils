@@ -145,6 +145,8 @@ namespace ProgressOnderwijsUtils
 				return e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
 				  e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
 				  e.Message.StartsWith("Timeout expired.");
+			else if (e is DBConcurrencyException)
+				return e.Message.StartsWith("Concurrency violation:");
 			else if (e is EntityException)
 				return (e.Message == "The underlying provider failed on Open.");
 			else if (e is AggregateException)
@@ -209,7 +211,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <param name="incompleteDate"></param>
 		/// <returns></returns>
-		public static DateTime? SLIncompleteDateConversion(string incompleteDate)
+		public static DateTime? SLMaybeIncompleteDateConversion(string incompleteDate)
 		{
 			if (incompleteDate != null)
 			{
@@ -294,6 +296,24 @@ namespace ProgressOnderwijsUtils
 			var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));
 			return Math.Ceiling(input * multiplier) / multiplier;
 		}
+	}
 
+	public class ComparisonComparer<T> : IComparer<T>
+	{
+		readonly Comparison<T> comparer;
+ 
+		public ComparisonComparer(Comparison<T> comparer)
+		{
+			this.comparer = comparer;
+		}
+
+		#region Implementation of IComparer<in T>
+
+		public int Compare(T x, T y)
+		{
+			return comparer(x, y);
+		}
+
+		#endregion
 	}
 }
