@@ -39,6 +39,7 @@ namespace ProgressOnderwijsUtils.Conext
 		RuG,
 	}
 
+	[Serializable]
 	public struct Attributes
 	{
 		public string uid;
