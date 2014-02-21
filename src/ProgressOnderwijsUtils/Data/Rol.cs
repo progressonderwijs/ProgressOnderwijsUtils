@@ -563,5 +563,8 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Wijzigen/toevoegen groepen"), Toekenbaar, Implies(Rol.StatischeGroepenAanmakenWijzigenVerwijderen)]
 		WijzigenGroepen = 234,
 
+		[MpLabel("Wijzigen Matching"), Toekenbaar, Implies(Rol.BekijkenInschrijvingen)]
+		WijzigenMatching = 235,
+
 	}
 }
