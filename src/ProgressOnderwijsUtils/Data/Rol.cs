@@ -289,7 +289,7 @@ namespace ProgressOnderwijsUtils
 			 InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunningVnummer, WijzigenPasfoto,
 			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel, 
-			 WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen)]
+			 WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen, WijzigenMatching)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
 		[MpLabel("Wijzigen uitschrijvingen"), Toekenbaar,
@@ -562,6 +562,9 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Wijzigen/toevoegen groepen"), Toekenbaar, Implies(Rol.StatischeGroepenAanmakenWijzigenVerwijderen)]
 		WijzigenGroepen = 234,
+
+		[MpLabel("Wijzigen Matching"), Toekenbaar, Implies(Rol.BekijkenInschrijvingen)]
+		WijzigenMatching = 235,
 
 	}
 }
