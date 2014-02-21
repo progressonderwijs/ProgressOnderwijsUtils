@@ -289,7 +289,7 @@ namespace ProgressOnderwijsUtils
 			 InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunningVnummer, WijzigenPasfoto,
 			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel, 
-			 WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen)]
+			 WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen, WijzigenMatching)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
 		[MpLabel("Wijzigen uitschrijvingen"), Toekenbaar,
