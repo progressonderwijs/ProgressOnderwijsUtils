@@ -145,6 +145,8 @@ namespace ProgressOnderwijsUtils
 				return e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
 				  e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
 				  e.Message.StartsWith("Timeout expired.");
+			else if (e is DBConcurrencyException)
+				return e.Message.StartsWith("Concurrency violation:");
 			else if (e is EntityException)
 				return (e.Message == "The underlying provider failed on Open.");
 			else if (e is AggregateException)
