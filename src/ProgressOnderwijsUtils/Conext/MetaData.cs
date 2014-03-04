@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -96,8 +97,7 @@ namespace ProgressOnderwijsUtils.Conext
 		private const string SP_ENTITY_STUDENT_ONTWIKKEL_OAUTH = "http://ontwikkelstudent.progressnet.nl/oauth";
 
 		private const string RESOURCE_PATH = "ProgressOnderwijsUtils.Conext.Resources";
-		private static readonly object LOCK = new object();
-		private static readonly IDictionary<string, X509Certificate2> CERTIFICATES = new Dictionary<string, X509Certificate2>();
+		private static readonly ConcurrentDictionary<string, X509Certificate2> CERTIFICATES = new ConcurrentDictionary<string, X509Certificate2>();
 		private static readonly IDictionary<string, Saml20MetaData> INSTANCES = new Dictionary<string, Saml20MetaData>();
 
 		private static readonly XNamespace NS_XSD = "http://www.w3.org/2001/XMLSchema-instance";
@@ -470,20 +470,16 @@ namespace ProgressOnderwijsUtils.Conext
 
 		private static X509Certificate2 GetCertificate(string cer, string passwd)
 		{
-			lock (LOCK)
+			return CERTIFICATES.GetOrAdd(cer, c =>
 			{
-				if (!CERTIFICATES.ContainsKey(cer))
+				byte[] buf;
+				using (Stream str = GetResource(cer))
 				{
-					byte[] buf;
-					using (Stream str = GetResource(cer))
-					{
-						buf = new byte[str.Length];
-						str.Read(buf, 0, buf.Length);
-					}
-					CERTIFICATES.Add(cer, new X509Certificate2(buf, passwd));
+					buf = new byte[str.Length];
+					str.Read(buf, 0, buf.Length);
 				}
-				return CERTIFICATES[cer];
-			}
+				return new X509Certificate2(buf, passwd);
+			});
 		}
 
 		#endregion
