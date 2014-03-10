@@ -314,11 +314,10 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Wijzigen financieel"), Toekenbaar,
 		 Implies(FinancieelBetalingsinformatieToevoegenWijzigenVerwijderen,
-			 FinancieelBetalingenToevoegenVerwijderenWijzigen,
-			 FinancieelCollegegeldToevoegenVerwijderenWijzigen,
+			 FinancieelBetalingenToevoegenVerwijderenWijzigen, FinancieelCollegegeldToevoegenVerwijderenWijzigen,
 			 FinancieelMachtingToevoegenVerwijderenWijzigen, WijzigenToevoegenAfdrukkenBbc,
-			 BekijkenFinancieelUitgebreid,
-			 FinancieelNotitiesToevoegenWijzigenVerwijderen)]
+			 BekijkenFinancieelUitgebreid, FinancieelNotitiesToevoegenWijzigenVerwijderen, 
+			 WijzigenCommunicatieFinancieel)]
 		WijzigenFinancieel = 132,
 
 		[MpLabel("Wijzigen/ toevoegen/ afdrukken BBC's"), Toekenbaar,
@@ -531,7 +530,7 @@ namespace ProgressOnderwijsUtils
 			 BeheerUitwisselingDuo, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, BeheerGetuigschriften)]
 		Combi_BeheerAlles = 224,
 
-		[MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
+		[MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(Rol.BekijkenInschrijvingen)]
 		WijzigenDocumentenVooropleidingen = 225,
 
 		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften, 
