@@ -314,11 +314,10 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Wijzigen financieel"), Toekenbaar,
 		 Implies(FinancieelBetalingsinformatieToevoegenWijzigenVerwijderen,
-			 FinancieelBetalingenToevoegenVerwijderenWijzigen,
-			 FinancieelCollegegeldToevoegenVerwijderenWijzigen,
+			 FinancieelBetalingenToevoegenVerwijderenWijzigen, FinancieelCollegegeldToevoegenVerwijderenWijzigen,
 			 FinancieelMachtingToevoegenVerwijderenWijzigen, WijzigenToevoegenAfdrukkenBbc,
-			 BekijkenFinancieelUitgebreid,
-			 FinancieelNotitiesToevoegenWijzigenVerwijderen)]
+			 BekijkenFinancieelUitgebreid, FinancieelNotitiesToevoegenWijzigenVerwijderen, 
+			 WijzigenCommunicatieFinancieel)]
 		WijzigenFinancieel = 132,
 
 		[MpLabel("Wijzigen/ toevoegen/ afdrukken BBC's"), Toekenbaar,
@@ -345,7 +344,7 @@ namespace ProgressOnderwijsUtils
 		Superuser = 138,
 
 		[MpLabel("Wijzigen studievolg"), Toekenbaar,
-		 Implies(VolgOnderwijsBeheerBeperkt, WijzigenBsaBijzondereOmstandighedenStudiebegeleiding, StudievoortgangNotitiesToevoegenWijzigenVerwijderen)]
+		 Implies(VolgOnderwijsBeheerBeperkt, WijzigenBsaBijzondereOmstandighedenStudiebegeleiding, StudievoortgangNotitiesToevoegenWijzigenVerwijderen, WijzigenCommunicatieStudievolg)]
 		WijzigenStudievolg = 139,
 
 		[MpLabel("Beheer studievolg"), Toekenbaar, Implies(WijzigenStudentKenmerken, VolgOnderwijsBeheerAlles, WijzigenStudievolg)]
@@ -531,7 +530,7 @@ namespace ProgressOnderwijsUtils
 			 BeheerUitwisselingDuo, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, BeheerGetuigschriften)]
 		Combi_BeheerAlles = 224,
 
-		[MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
+		[MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(Rol.BekijkenInschrijvingen)]
 		WijzigenDocumentenVooropleidingen = 225,
 
 		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften, 
@@ -548,7 +547,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Wijzigen batchregels student"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
 		WijzigenStudentBatchRegel = 229,
 
-		[MpLabel("Student"), MpTooltip("Virtule rol voor studenten die extern inloggen")]
+		[MpLabel("Student"), MpTooltip("Virtuele rol voor studenten die extern inloggen")]
 		Student = 230,
 
 		[MpLabel("Wijzigen/toevoegen communicatie aanmelding/inschrijving/uitschrijving/examen"), Toekenbaar]
