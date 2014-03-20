@@ -316,4 +316,30 @@ namespace ProgressOnderwijsUtils
 
 		#endregion
 	}
+
+	public class EqualsEqualityComparer<T> : IEqualityComparer<T>
+	{
+		readonly Func<T, T, bool> equals;
+		readonly Func<T, int> hashCode; 
+
+		public EqualsEqualityComparer(Func<T, T, bool> equals, Func<T, int> hashCode = null)
+		{
+			this.equals = equals;
+			this.hashCode = hashCode;
+		}
+
+		#region Implementation of IEqualityComparer<in T>
+
+		public bool Equals(T x, T y)
+		{
+			return equals(x, y);
+		}
+		
+		public int GetHashCode(T obj)
+		{
+			return hashCode == null ? obj.GetHashCode() : hashCode(obj);
+		}
+
+		#endregion
+	}
 }
