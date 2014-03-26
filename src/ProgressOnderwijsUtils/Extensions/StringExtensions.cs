@@ -45,6 +45,11 @@ namespace ProgressOnderwijsUtils
 			return str.IndexOf(value, compare) >= 0;
 		}
 
+		public static string XFormat(this string s, params object[] p)
+		{
+			return String.Format(s, p);
+		}
+
 		public static string TrimToLength(this string s, int maxlength)
 		{
 			if (s == null || s.Length <= maxlength) return s;
