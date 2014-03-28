@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
+using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
@@ -51,6 +52,10 @@ namespace ProgressOnderwijsUtils
 					});
 		}
 
+		static async Task<int> ExecuteNonQueryAsync(SqlCommand command)
+		{
+			return await command.ExecuteNonQueryAsync();
+		}
 
 		public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
@@ -58,7 +63,7 @@ namespace ProgressOnderwijsUtils
 				command => {
 					try
 					{
-						return command.ExecuteNonQuery();
+						return ExecuteNonQueryAsync(command).Result;
 					}
 					catch (Exception ex)
 					{
