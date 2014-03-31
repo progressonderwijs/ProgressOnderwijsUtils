@@ -4,7 +4,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
@@ -13,7 +12,6 @@ using System.Reflection.Emit;
 using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -50,7 +48,6 @@ namespace ProgressOnderwijsUtils
 						}
 					});
 		}
-
 
 		public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
