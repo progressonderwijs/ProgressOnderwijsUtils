@@ -5,6 +5,7 @@ using ProgressOnderwijsUtils.ToegangsRolInternal;
 
 namespace ProgressOnderwijsUtils
 {
+	[OdsTable]
 	public enum Rol
 	{
 		[MpLabel("Studentadministratie alleen lezen, met accorderen toelatingseisen en kenmerken"),
