@@ -4,17 +4,14 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
-using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -52,18 +49,13 @@ namespace ProgressOnderwijsUtils
 					});
 		}
 
-		static async Task<int> ExecuteNonQueryAsync(SqlCommand command)
-		{
-			return await command.ExecuteNonQueryAsync();
-		}
-
 		public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
 			return builder.CreateSqlCommand(commandCreationContext).Using(
 				command => {
 					try
 					{
-						return ExecuteNonQueryAsync(command).Result;
+						return command.ExecuteNonQuery();
 					}
 					catch (Exception ex)
 					{
