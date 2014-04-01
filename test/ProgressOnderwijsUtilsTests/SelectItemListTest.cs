@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtilsTests
 		[SetUp]
 		public void SetUp()
 		{
-			sut = Applicatie.KoppelTabel(conn, session, "land");
+			sut = Applicatie.KoppelTabel(conn, Session, "land");
 		}
 
 		[Test]
@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void GetItemByText()
 		{
-			AssertItem(sut.GetItem(session.Language, "Nederland"), (int)Land.Nederland);
+			AssertItem(sut.GetItem(Session.Language, "Nederland"), (int)Land.Nederland);
 		}
 
 		void AssertItem(SelectItem<int?> item, int? expected)
