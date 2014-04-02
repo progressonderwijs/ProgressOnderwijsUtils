@@ -5,10 +5,14 @@ namespace ProgressOnderwijsUtils
 {
 	public struct VariantData : IEquatable<VariantData>
 	{
+		readonly Type type;
+		readonly object value;
+
 		public static VariantData Create<T>(T value)
 		{
 			return new VariantData(typeof(T), value);
 		}
+
 		public VariantData(Type type, object value)
 		{
 			if (type == null)
@@ -28,12 +32,20 @@ namespace ProgressOnderwijsUtils
 			this.type = type;
 			this.value = value;
 		}
-		readonly Type type;
-		readonly object value;
+
 		public Type Type { get { return type; } }
 		public object Value { get { return value; } }
 
-		public override string ToString() { return ToUiString(); }
+		public T GetValue<T>()
+		{
+			return (T)value;
+		}
+
+		public override string ToString()
+		{
+			return ToUiString();
+		}
+
 		public string ToUiString()
 		{
 			return string.Format(CultureInfo.InvariantCulture, "{0} : {1}", Value, Type);
@@ -41,7 +53,7 @@ namespace ProgressOnderwijsUtils
 
 		public bool Equals(VariantData other)
 		{
-			return Equals(other.Type, Type) && Equals(other.Value, Value);
+			return other.Type == Type && Equals(other.Value, Value);
 		}
 
 		public override bool Equals(object obj)
@@ -62,6 +74,11 @@ namespace ProgressOnderwijsUtils
 		public static bool operator !=(VariantData left, VariantData right)
 		{
 			return !left.Equals(right);
+		}
+
+		public static explicit operator string(VariantData data)
+		{
+			return data.ToString();
 		}
 	}
 }
