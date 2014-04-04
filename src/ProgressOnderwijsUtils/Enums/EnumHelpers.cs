@@ -221,6 +221,16 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
+		public static T GetAttributeValue<T>(this Enum enumValue) where T : Attribute
+		{
+			var memberInfo = enumValue.GetType().GetMember(enumValue.ToString()).FirstOrDefault();
+			if (memberInfo != null)
+			{
+				var attribute = (T)memberInfo.GetCustomAttributes(typeof(T), false).FirstOrDefault();
+				return attribute;
+			}
+			return null;
+		}
 
 		public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible { return EnumMetaCache<T>.EnumValues; }
 

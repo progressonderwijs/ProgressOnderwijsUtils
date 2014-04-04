@@ -96,7 +96,7 @@ namespace ProgressOnderwijsUtils
 		//	}
 		//}
 
-		internal sealed class ImpliesAttribute : Attribute
+		public sealed class ImpliesAttribute : Attribute
 		{
 			public readonly IReadOnlyList<Rol> Kinderen;
 			public ImpliesAttribute(params Rol[] kinderen)
