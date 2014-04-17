@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,7 +13,9 @@ namespace ProgressOnderwijsUtils
 	/// </summary>
 	public static class ProgressNetBuildVersion
 	{
-		/*  Nodig build scriptje ergens in de applicatie:
+		/* 
+		 * Nodig build scriptje ergens in de applicatie:
+		 * 
   <Target Name="AfterBuild">
 	<Exec Command="hg id --encoding utf8 -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branches:{branches}\ntags:{tags}\ndate:{date|isodate}\n&quot; &gt;&gt; ProgressVersion.Info.Generated " />
 	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="ComputerName:$(COMPUTERNAME)" Overwrite="false" Encoding="UTF-8" />
@@ -22,7 +23,8 @@ namespace ProgressOnderwijsUtils
 	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildJob:$(BUILD_URL)" Overwrite="false" Encoding="UTF-8" />
 	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="Configuration:$(Configuration)" Overwrite="false" Encoding="UTF-8" />
   </Target>
-*/
+
+		*/
 		[Serializable]
 		public sealed class Data : IMetaObject
 		{
@@ -70,7 +72,7 @@ namespace ProgressOnderwijsUtils
 
 			Current = new Data {
 				Node = nodeId,
-				Date = DateTime.Parse(svninfo["date"], CultureInfo.InvariantCulture),
+				Date = AssemblyCreationDate,
 				Branches = svninfo["branches"],
 				Tags = svninfo["tags"],
 
@@ -79,6 +81,46 @@ namespace ProgressOnderwijsUtils
 				BuildUrl = svninfo["BuildUrl"].Trim(),
 				BuildConfiguration = svninfo["Configuration"].Trim(),
 			};
+		}
+
+		static DateTime AssemblyCreationDate
+		{
+			get
+			{
+				return RetrieveLinkerTimestamp(typeof(ProgressNetBuildVersion));
+			}
+		}
+
+		private static DateTime FileCreationDate(Type t)
+		{
+			var fi = new FileInfo(AssemblyPath(t));
+ 			fi.Refresh();
+			return fi.LastWriteTime;
+		}
+
+		private static DateTime RetrieveLinkerTimestamp(Type t)
+		{
+			const int peHeaderOffset = 60;
+			const int linkerTimestampOffset = 8;
+			var b = new byte[2048];
+			FileStream s = null;
+			try
+			{
+				s = new FileStream(AssemblyPath(t), FileMode.Open, FileAccess.Read);
+				s.Read(b, 0, 2048);
+			}
+			finally
+			{
+				if (s != null)
+					s.Close();
+			}
+			var dt = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(BitConverter.ToInt32(b, BitConverter.ToInt32(b, peHeaderOffset) + linkerTimestampOffset));
+			return dt.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(dt).Hours);
+		}
+
+		private static string AssemblyPath(Type t)
+		{
+			return Assembly.GetAssembly(t).Location;
 		}
 	}
 }
