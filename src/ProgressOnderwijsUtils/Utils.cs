@@ -95,15 +95,16 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
+		public static void Retry(CancellationToken cancel, Action action, Func<Exception, bool> shouldRetryOnThisFailure)
+		{
+			Retry(() => { cancel.ThrowIfCancellationRequested(); action(); return default(object); },
+				e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested);
+		}
+
 		public static T Retry<T>(CancellationToken cancel, Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
 		{
-			return Retry(
-			  () => {
-				  cancel.ThrowIfCancellationRequested();
-				  return func();
-			  },
-			  e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested
-			  );
+			return Retry(() => { cancel.ThrowIfCancellationRequested(); return func(); },
+			  e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested);
 		}
 
 		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup) { return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup)); }
@@ -312,6 +313,32 @@ namespace ProgressOnderwijsUtils
 		public int Compare(T x, T y)
 		{
 			return comparer(x, y);
+		}
+
+		#endregion
+	}
+
+	public class EqualsEqualityComparer<T> : IEqualityComparer<T>
+	{
+		readonly Func<T, T, bool> equals;
+		readonly Func<T, int> hashCode; 
+
+		public EqualsEqualityComparer(Func<T, T, bool> equals, Func<T, int> hashCode = null)
+		{
+			this.equals = equals;
+			this.hashCode = hashCode;
+		}
+
+		#region Implementation of IEqualityComparer<in T>
+
+		public bool Equals(T x, T y)
+		{
+			return equals(x, y);
+		}
+		
+		public int GetHashCode(T obj)
+		{
+			return hashCode == null ? obj.GetHashCode() : hashCode(obj);
 		}
 
 		#endregion
