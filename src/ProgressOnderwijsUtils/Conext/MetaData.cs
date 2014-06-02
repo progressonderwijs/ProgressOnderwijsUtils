@@ -70,10 +70,10 @@ namespace ProgressOnderwijsUtils.Conext
 
 		private const string IDP_CERTIFICATE = "conext.cer";
 
-		private const string IDP_PROVIDER = "https://engine.surfconext.nl/authentication/proxy/idps-metadata";
-		private const string IDP_PROVIDER_WAYF = "https://engine.surfconext.nl/authentication/idp/metadata";
+		private const string IDP_PROVIDER = "https://engine.surfconext.nl/authentication/proxy/idps-metadata/key:20140505";
+		private const string IDP_PROVIDER_WAYF = "https://engine.surfconext.nl/authentication/idp/metadata/key:20140505";
 
-		private const string IDP_ENTITY = "https://engine.surfconext.nl/authentication/proxy/idps-metadata";
+		private const string IDP_ENTITY = "https://engine.surfconext.nl/authentication/proxy/idps-metadata/key:20140505";
 		private const string IDP_ENTITY_WAYF = "https://engine.surfconext.nl/authentication/idp/metadata";
 
 		private const string IDP_ENTITY_RUG = "https://signon.rug.nl/nidp/saml2/metadata";
