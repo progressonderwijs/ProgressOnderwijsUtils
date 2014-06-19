@@ -2,13 +2,14 @@
 using System.Diagnostics;
 using System.Globalization;
 using JetBrains.Annotations;
-using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
+	public interface IIdentifier { int Value { get; set; } }
+
 	[Serializable]
 	[DebuggerStepThrough]
-	public class Identifier<T> where T : Identifier<T>, new()
+	public class Identifier<T> : IIdentifier where T : Identifier<T>, new()
 	{
 		#region "  Constructor"
 		public Identifier() { }
@@ -24,7 +25,7 @@ namespace ProgressOnderwijsUtils
 		}
 		#endregion
 
-		public int Value { get; internal set; }
+		public int Value { get; set; }
 
 		#region " Comparison"
 		// Alleen expliciete casts toestaan
@@ -61,6 +62,9 @@ namespace ProgressOnderwijsUtils
 
 		public static bool operator ==(Identifier<T> a, Identifier<T> b)
 		{
+			if (((object)a == null) && ((object)b == null))
+				return true;
+
 			if (((object)a == null) || ((object)b == null))
 				return false;
 
@@ -94,51 +98,5 @@ namespace ProgressOnderwijsUtils
 		}
 #pragma warning restore 169
 		#endregion
-	}
-
-	[TestFixture]
-	public class TestIdentifier
-	{
-		class TestId : Identifier<TestId> { }
-
-		[Test]
-		public static void EqualityCheck()
-		{
-			const int value = 12;
-			var id = TestId.Create(value);
-			Assert.That(id == (TestId)value, Is.True);
-			// ReSharper disable EqualExpressionComparison
-			Assert.That(id == id, Is.True);
-			// ReSharper restore EqualExpressionComparison
-			Assert.That(id.Equals(value), Is.True);
-		}
-
-		[Test]
-		public static void Speed()
-		{
-			var value1 = (int?)12;
-			var value2 = (int?)12;
-			var id1 = TestId.Create(12);
-			var id2 = TestId.Create(12);
-
-			const int steps = 10000000;
-			var stopwatch = new Stopwatch();
-
-			stopwatch.Restart();
-			for (var i = 0; i < steps; i++)
-			{
-				Assert.That(value1, Is.EqualTo(value2));
-			}
-			var time1 = stopwatch.ElapsedMilliseconds;
-
-			stopwatch.Restart();
-			for (var i = 0; i < steps; i++)
-			{
-				Assert.That(id1, Is.EqualTo(id2));
-			}
-			var time2 = stopwatch.ElapsedMilliseconds;
-			var fraction = Math.Abs((time1 - time2) / time1);
-			Assert.That(fraction, Is.LessThan(0.01));
-		}
 	}
 }
