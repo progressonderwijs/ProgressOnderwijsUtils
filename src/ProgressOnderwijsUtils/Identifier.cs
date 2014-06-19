@@ -11,11 +11,11 @@ namespace ProgressOnderwijsUtils
 	public class Identifier<T> where T : Identifier<T>, new()
 	{
 		#region "  Constructor"
-		internal Identifier() { }
+		public Identifier() { }
 
 		public Identifier(int value)
 		{
-			this.Value = value;
+			Value = value;
 		}
 
 		public static T Create(int value)
