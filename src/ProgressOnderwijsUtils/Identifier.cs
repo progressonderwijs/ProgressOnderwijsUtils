@@ -6,7 +6,10 @@ using JetBrains.Annotations;
 namespace ProgressOnderwijsUtils
 {
 	// de IIdentifier wordt met name in de AutoLoadFromDb gebruikt om de mapping van Sql Server naar .Net uit te voeren
-	public interface IIdentifier { int Value { get; set; } }
+	public interface IIdentifier
+	{
+		int Value { get; set; }
+	}
 
 	public class Identifier
 	{
@@ -23,6 +26,14 @@ namespace ProgressOnderwijsUtils
 		public Identifier(int value)
 		{
 			Value = value;
+		}
+
+		public static string Databasename
+		{
+			get
+			{
+				return typeof(T).Name.ToLower(CultureInfo.InvariantCulture) + "id";
+			}
 		}
 
 		public static T Create(int value)
