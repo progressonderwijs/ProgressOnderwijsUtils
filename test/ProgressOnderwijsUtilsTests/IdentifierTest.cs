@@ -38,9 +38,9 @@ namespace ProgressOnderwijsUtilsTests
 		public static void Casting()
 		{
 			const int value = 12;
-			Assert.That((TestId)value, Is.EqualTo(value));
-			Assert.That((Identifier<TestId>)value, Is.EqualTo(value));
-			Assert.That(TestId.Create(value), Is.EqualTo(value));
+			Assert.That(((TestId)value).Value, Is.EqualTo(value));
+			Assert.That(((Identifier<TestId>)value).Value, Is.EqualTo(value));
+			Assert.That((TestId.Create(value)).Value, Is.EqualTo(value));
 		}
 
 		[Test]
@@ -85,9 +85,9 @@ namespace ProgressOnderwijsUtilsTests
 		[Test, Ignore]
 		public void DatabasePlain()
 		{
-			var r = QueryBuilder.Create("select 1").ReadPlain<TestRow>(conn);
+			var r = QueryBuilder.Create("select 1").ReadPlain<TestId>(conn);
 			Assert.That(r.Count(), Is.EqualTo(1));
-			Assert.That(r[0].testid, Is.EqualTo((TestId)1));
+			Assert.That(r[0], Is.EqualTo((TestId)1));
 		}
 
 		public sealed class TestLijstRij : IMetaObject
