@@ -5,7 +5,13 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
+	// de IIdentifier wordt met name in de AutoLoadFromDb gebruikt om de mapping van Sql Server naar .Net uit te voeren
 	public interface IIdentifier { int Value { get; set; } }
+
+	public class Identifier
+	{
+		public static Type BaseType { get { return typeof(int); } }
+	}
 
 	[Serializable]
 	[DebuggerStepThrough]
@@ -28,12 +34,6 @@ namespace ProgressOnderwijsUtils
 		public int Value { get; set; }
 
 		#region " Comparison"
-		// Alleen expliciete casts toestaan
-		public static explicit operator Identifier<T>(int value)
-		{
-			return Create(value);
-		}
-
 		public override int GetHashCode()
 		{
 			return Value.GetHashCode();
@@ -58,6 +58,12 @@ namespace ProgressOnderwijsUtils
 		bool Equals(Identifier<T> obj)
 		{
 			return obj.Value == Value;
+		}
+
+		// Alleen expliciete casts toestaan
+		public static explicit operator Identifier<T>(int value)
+		{
+			return Create(value);
 		}
 
 		public static bool operator ==(Identifier<T> a, Identifier<T> b)

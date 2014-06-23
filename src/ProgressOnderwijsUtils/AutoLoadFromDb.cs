@@ -209,6 +209,7 @@ namespace ProgressOnderwijsUtils
 
 		static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
 		static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
+		static readonly MethodInfo getIdentifier_SqlDataReader = typeof(SqlDataReader).GetMethod("GetInt32", binding);
 
 		static class DataReaderSpecialization<TReader> where TReader : IDataReader
 		{
@@ -222,7 +223,7 @@ namespace ProgressOnderwijsUtils
 			{
 				var underlyingType = type.GetNonNullableUnderlyingType();
 				return GetterMethodsByType.ContainsKey(underlyingType) || 
-					(isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
+					(isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset) || typeof(IIdentifier).IsAssignableFrom(underlyingType)));
 			}
 
 			static MethodInfo GetterForType(Type underlyingType)
@@ -231,6 +232,8 @@ namespace ProgressOnderwijsUtils
 					return getTimeSpan_SqlDataReader;
 				else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset))
 					return getDateTimeOffset_SqlDataReader;
+				else if (isSqlDataReader && typeof(IIdentifier).IsAssignableFrom(underlyingType))
+					return getIdentifier_SqlDataReader;
 				else
 					return InterfaceMap[GetterMethodsByType[underlyingType]];
 			}
@@ -239,14 +242,28 @@ namespace ProgressOnderwijsUtils
 			{
 				bool canBeNull = type.CanBeNull();
 				Type underlyingType = type.GetNonNullableUnderlyingType();
-				bool needsCast = underlyingType != type.GetNonNullableType();
+				bool needsCast = ((underlyingType != type.GetNonNullableType()) && (!typeof(IIdentifier).IsAssignableFrom(type.BaseType)));
 				var iConstant = Expression.Constant(i);
 				var callExpr = underlyingType == typeof(byte[]) ? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant) : Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
 				var castExpr = !needsCast ? (Expression)callExpr : Expression.Convert(callExpr, type.GetNonNullableType());
-				var colValueExpr = !canBeNull ? castExpr :
-					Expression.Condition(
-						Expression.Call(readerParamExpr, IsDBNullMethod, iConstant), Expression.Default(type),
-						Expression.Convert(castExpr, type));
+				Expression colValueExpr;
+				if (!canBeNull)
+					colValueExpr = castExpr;
+				else
+				{
+					var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
+					var ifTrue = Expression.Default(type);
+					Expression ifFalse;
+					if (typeof(IIdentifier).IsAssignableFrom(type))
+					{
+						var conversionMethod = type.BaseType.GetMethod("Create");
+						ifFalse = Expression.Convert(castExpr, type, conversionMethod);
+					}
+					else
+						ifFalse = Expression.Convert(castExpr, type);
+
+					colValueExpr = Expression.Condition(test, ifTrue, ifFalse);
+				}
 				return colValueExpr;
 			}
 
@@ -463,8 +480,9 @@ namespace ProgressOnderwijsUtils
 				{
 					if (reader.FieldCount != 1)
 						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + " != 1");
-					if (!Enumerable.Range(0, reader.FieldCount).Select(reader.GetFieldType)
-						.SequenceEqual(new[] { typeof(T).GetNonNullableUnderlyingType() }))
+					if (!Enumerable.Range(0, reader.FieldCount)
+								.Select(reader.GetFieldType)
+								.SequenceEqual(new[] { typeof(T).GetNonNullableUnderlyingType() }))
 						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + ":\n"
 							+ Enumerable.Range(0, reader.FieldCount).Select(i => reader.GetName(i) + " : " + ObjectToCode.GetCSharpFriendlyTypeName(reader.GetFieldType(i))).JoinStrings(", "));
 				}
