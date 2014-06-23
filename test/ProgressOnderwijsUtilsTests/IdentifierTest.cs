@@ -71,10 +71,27 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.That(fraction, Is.LessThan(0.01));
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void DatabaseScalar()
 		{
-			Assert.That(QueryBuilder.Create("select 1").ReadScalar<TestId>(conn), Is.EqualTo((TestId)1));
+			DatabaseTest("select 1", (TestId)1);
+		}
+
+		[Test]
+		public void DatabaseScalarNull()
+		{
+			DatabaseTest("select cast(null as int)", default(TestId));
+		}
+
+		[Test]
+		public void DatabaseScalarEmpty()
+		{
+			DatabaseTest("select 1 where 1 = 2", default(TestId));
+		}
+
+		private void DatabaseTest(string query, TestId expected)
+		{
+			Assert.That(QueryBuilder.Create(query).ReadScalar<TestId>(conn), Is.EqualTo(expected));
 		}
 
 		// ReSharper disable MemberCanBePrivate.Global
@@ -82,7 +99,7 @@ namespace ProgressOnderwijsUtilsTests
 		public class TestRow { [UsedImplicitly] public TestId testid; }
 		// ReSharper restore MemberCanBePrivate.Global
 
-		[Test, Ignore]
+		[Test]
 		public void DatabasePlain()
 		{
 			var r = QueryBuilder.Create("select 1").ReadPlain<TestId>(conn);
@@ -113,7 +130,7 @@ namespace ProgressOnderwijsUtilsTests
 			}
 		}
 
-		[Test, Ignore]
+		[Test]
 		public void Datasource()
 		{
 			var ds = new TestDatasource();

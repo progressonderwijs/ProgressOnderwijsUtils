@@ -69,6 +69,9 @@ namespace ProgressOnderwijsUtils
 				if (obj == DBNull.Value)
 					return default(T);
 
+				if (obj == null)
+					return default(T);
+
 				var r = (T)Activator.CreateInstance(typeof(T), null);
 				var i = r as IIdentifier;
 				// ReSharper disable PossibleNullReferenceException
