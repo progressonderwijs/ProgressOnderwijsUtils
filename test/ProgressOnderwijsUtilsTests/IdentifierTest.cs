@@ -8,7 +8,6 @@ using Progress.Business;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using Progress.Business.Data.GenericLijst;
-using Progress.Business.GenericLijst;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -24,7 +23,9 @@ namespace ProgressOnderwijsUtilsTests
 			var id = TestId.Create(value);
 			Assert.That(id == (TestId)value, Is.True);
 			// ReSharper disable EqualExpressionComparison
+#pragma warning disable 1718
 			Assert.That(id == id, Is.True);
+#pragma warning restore 1718
 			// ReSharper restore EqualExpressionComparison
 			Assert.That(id.Equals(value), Is.True);
 			// ReSharper disable ConditionIsAlwaysTrueOrFalse
@@ -70,7 +71,7 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.That(fraction, Is.LessThan(0.01));
 		}
 
-		[Test]
+		[Test, Ignore]
 		public void DatabaseScalar()
 		{
 			Assert.That(QueryBuilder.Create("select 1").ReadScalar<TestId>(conn), Is.EqualTo((TestId)1));
@@ -81,7 +82,7 @@ namespace ProgressOnderwijsUtilsTests
 		public class TestRow { [UsedImplicitly] public TestId testid; }
 		// ReSharper restore MemberCanBePrivate.Global
 
-		[Test]
+		[Test, Ignore]
 		public void DatabasePlain()
 		{
 			var r = QueryBuilder.Create("select 1").ReadPlain<TestRow>(conn);
@@ -102,7 +103,9 @@ namespace ProgressOnderwijsUtilsTests
 			}
 		}
 
+		// ReSharper disable MemberCanBePrivate.Global
 		public class TestDatasource : AbstractDataSource<TestLijstRij, TestLijstMpConfig>
+		// ReSharper restore MemberCanBePrivate.Global
 		{
 			protected override QueryBuilder Query()
 			{
@@ -110,7 +113,7 @@ namespace ProgressOnderwijsUtilsTests
 			}
 		}
 
-		[Test]
+		[Test, Ignore]
 		public void Datasource()
 		{
 			var ds = new TestDatasource();
