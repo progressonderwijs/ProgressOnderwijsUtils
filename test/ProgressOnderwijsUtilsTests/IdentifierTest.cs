@@ -139,5 +139,38 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.That(rows.Count, Is.EqualTo(1));
 			Assert.That(rows[0].TestId, Is.EqualTo((TestId)1));
 		}
+
+		[Test]
+		public void ReadMetaObjects()
+		{
+			var query = QueryBuilder.Create(@"select testid = 1 union all select 2 union all select null");
+			var result = query.ReadMetaObjects<TestLijstRij>(conn);
+			Assert.That(result.Count(), Is.EqualTo(3));
+			Assert.That(result.Count(r => r.TestId == (TestId)1), Is.EqualTo(1));
+			Assert.That(result.Count(r => r.TestId == (TestId)2), Is.EqualTo(1));
+			Assert.That(result.Count(r => r.TestId == (TestId)(int?)(null)), Is.EqualTo(1));
+		}
+
+		[Test]
+		public void ReadWithParameters()
+		{
+			var parameter = (TestId)1;
+			var query = QueryBuilder.Create(@"select testid = {0}", parameter);
+			var result = query.ReadMetaObjects<TestLijstRij>(conn);
+			Assert.That(result.Count(), Is.EqualTo(1));
+			Assert.That(result.Count(r => r.TestId == parameter), Is.EqualTo(1));
+		}
+
+		[Test]
+		public void ReadWithNullParameters()
+		{
+			var parameter = (TestId)(int?)null;
+			// ReSharper disable ExpressionIsAlwaysNull
+			var query = QueryBuilder.Create(@"select testid = {0}", parameter);
+			var result = query.ReadMetaObjects<TestLijstRij>(conn);
+			Assert.That(result.Count(), Is.EqualTo(1));
+			Assert.That(result.Count(r => r.TestId == parameter), Is.EqualTo(1));
+			// ReSharper restore ExpressionIsAlwaysNull
+		}
 	}
 }
