@@ -5,6 +5,8 @@ using System.Linq;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using Progress.Business;
+using Progress.Business.Data;
+using Progress.Business.GenericEdit;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using Progress.Business.Data.GenericLijst;
@@ -171,6 +173,17 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.That(result.Count(), Is.EqualTo(1));
 			Assert.That(result.Count(r => r.TestId == parameter), Is.EqualTo(1));
 			// ReSharper restore ExpressionIsAlwaysNull
+		}
+
+		[Test]
+		public void GenericBusinessEdit()
+		{
+			var be = new GenericBusinessEdit(Session, "student");
+			be.ReadNieuw(conn);
+			be.SetId(Id.RootOrganisatie.Create((int)RootOrganisatie.UVH));
+			be.Values["studentnummer"] = 0;
+			be.Values["naam"] = "nvt";
+			be.Save(conn);
 		}
 	}
 }

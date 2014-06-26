@@ -9,6 +9,8 @@ namespace ProgressOnderwijsUtils
 	public interface IIdentifier
 	{
 		int Value { get; set; }
+		string DbPrimaryKeyName { get; }
+		string DbForeignKeyName { get; }
 	}
 
 	public class Identifier
@@ -28,11 +30,19 @@ namespace ProgressOnderwijsUtils
 			Value = value;
 		}
 
-		public static string Databasename
+		public string DbPrimaryKeyName
 		{
 			get
 			{
 				return typeof(T).Name.ToLower(CultureInfo.InvariantCulture) + "id";
+			}
+		}
+
+		public string DbForeignKeyName
+		{
+			get
+			{
+				return typeof(T).Name.ToLower(CultureInfo.InvariantCulture);
 			}
 		}
 
