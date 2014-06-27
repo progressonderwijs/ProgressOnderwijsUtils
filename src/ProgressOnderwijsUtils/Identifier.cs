@@ -52,7 +52,22 @@ namespace ProgressOnderwijsUtils
 		}
 		#endregion
 
-		public int Value { get; set; }
+		private bool valueSet = false;
+		private int _value;
+		public int Value
+		{
+			get
+			{
+				if (!valueSet)
+					throw new ArgumentException("De waarde van deze identifier wordt uitgelezen voordat deze is gezet");
+				return _value;
+			}
+			set
+			{
+				valueSet = true;
+				_value = value;
+			}
+		}
 
 		#region " Comparison"
 		public override int GetHashCode()
