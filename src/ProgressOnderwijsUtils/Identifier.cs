@@ -8,6 +8,7 @@ namespace ProgressOnderwijsUtils
 	// de IIdentifier wordt met name in de AutoLoadFromDb gebruikt om de mapping van Sql Server naar .Net uit te voeren
 	public interface IIdentifier
 	{
+		bool HasValue { get; }
 		int Value { get; set; }
 		string DbPrimaryKeyName { get; }
 		string DbForeignKeyName { get; }
@@ -54,6 +55,9 @@ namespace ProgressOnderwijsUtils
 
 		private bool valueSet = false;
 		private int _value;
+
+		public bool HasValue { get { return valueSet; } }
+
 		public int Value
 		{
 			get
