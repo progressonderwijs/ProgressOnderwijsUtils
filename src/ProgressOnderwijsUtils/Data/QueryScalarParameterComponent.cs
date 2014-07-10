@@ -15,10 +15,17 @@ namespace ProgressOnderwijsUtils
 
 		public SqlParameter ToSqlParameter(int paramNum)
 		{
+			object value;
+			if (paramval is Filter.CurrentTimeToken)
+				value = DateTime.Now;
+			else if (typeof(IIdentifier).IsAssignableFrom(paramval.GetType().BaseType))
+				value = paramval == null ? (int?)null : ((IIdentifier)paramval).Value;
+			else
+				value = paramval;
 			return new SqlParameter {
 				IsNullable = paramval == DBNull.Value,
 				ParameterName = "@par" + paramNum,
-				Value = paramval is Filter.CurrentTimeToken ? DateTime.Now : paramval,
+				Value = value,
 			};
 		}
 

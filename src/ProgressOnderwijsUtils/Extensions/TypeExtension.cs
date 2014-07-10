@@ -35,7 +35,11 @@ namespace ProgressOnderwijsUtils
 		public static Type GetNonNullableUnderlyingType(this Type type)
 		{
 			var nonNullableType = type.GetNonNullableType();
-			return nonNullableType.IsEnum?nonNullableType.GetEnumUnderlyingType():nonNullableType;
+			if (nonNullableType.IsEnum)
+				return nonNullableType.GetEnumUnderlyingType();
+			if (typeof(IIdentifier).IsAssignableFrom(type.BaseType))
+				return Identifier.BaseType;
+			return nonNullableType;
 		}
 
 

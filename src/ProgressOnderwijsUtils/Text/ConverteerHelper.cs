@@ -12,6 +12,7 @@ namespace ProgressOnderwijsUtils
 		// ReSharper disable MemberCanBePrivate.Global
 		// ReSharper disable UnusedParameter.Global
 		//used in dynamic code:
+		public static TranslateFunction ToString(IIdentifier i, string format) { return language => i.Value.ToString(format ?? "D", language.GetCulture()); }
 		public static TranslateFunction ToString(long l, string format) { return language => l.ToString(format ?? "D", language.GetCulture()); }
 		public static TranslateFunction ToString(double d, string format) { return language => d.ToString(format ?? "0.##", language.GetCulture()); }
 		public static TranslateFunction ToString(decimal d, string format) { return language => d.ToString(format ?? GELD_EURO, language.GetCulture()); }

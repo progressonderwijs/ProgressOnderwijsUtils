@@ -4,6 +4,7 @@ using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using Progress.Business;
+using Progress.Business.Volg;
 using ProgressOnderwijsUtils;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
@@ -187,6 +188,8 @@ namespace ProgressOnderwijsUtilsTests
 				from coreType in new[] { typeof(BusinessConnection), typeof(TreeExtensions), typeof(SessionManager) }
 				from enumType in coreType.Assembly.GetTypes()
 				where enumType.IsEnum && !enumType.ContainsGenericParameters
+				where enumType != typeof(VoortgangCategorie) // zelfde namen voor verschillende instellingen
+				where enumType != typeof(VoortgangCategorieSoort) // zelfde namen voor verschillende instellingen
 				select enumType;
 			foreach (var enumType in enumTypes)
 				foreach (var taal in new[] { Taal.NL, Taal.EN, Taal.DU })
