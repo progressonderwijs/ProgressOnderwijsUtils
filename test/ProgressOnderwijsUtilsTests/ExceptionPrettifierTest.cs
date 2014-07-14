@@ -4,7 +4,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using ApprovalTests;
 using ApprovalTests.Reporters;
-using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.ErrorHandling;
 
@@ -12,32 +11,35 @@ namespace ProgressOnderwijsUtilsTests
 {
 	public class ExampleTestClass
 	{
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		public static void CausesError()
+		{
+			throw new Exception("This is an exception");
+		}
+
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		public void IndirectErrorViaInterface<T>(T param, string arg2 = "bla")
+		{
+			((IExampleTestInterface)new NestedClass()).SomeMethod();
+		}
+
+
 		interface IExampleTestInterface
 		{
 			void SomeMethod();
 		}
 
-		public static void CausesError()
-		{
-			throw new Exception("This is an exception");
-		}
+
 		class NestedClass : IExampleTestInterface
 		{
-			void IExampleTestInterface.SomeMethod()
-			{
-				throw new NotImplementedException();
-			}
-		}
-		public void IndirectErrorViaInterface<T>(T param, string arg2 = "bla")
-		{
-			((IExampleTestInterface)new NestedClass()).SomeMethod();
+			void IExampleTestInterface.SomeMethod() { throw new NotImplementedException(); }
 		}
 	}
+
 
 	[UseReporter(typeof(DiffReporter))]
 	public class ExceptionPrettifierTest
 	{
-
 		[Test, MethodImpl(MethodImplOptions.NoInlining)]
 		public void TrivialStackTraceWorks()
 		{
@@ -65,6 +67,5 @@ namespace ProgressOnderwijsUtilsTests
 					ExceptionPrettifier.PrettyPrintException(e));
 			}
 		}
-
 	}
 }
