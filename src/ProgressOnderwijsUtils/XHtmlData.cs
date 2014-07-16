@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 		public int? Width;
 	}
 
-	public struct XhtmlData : IEnumerable<XNode>
+	public struct XhtmlData : IEnumerable<XNode>, IEquatable<XhtmlData>
 	{
 		readonly XNode[] nodes;
 		public IEnumerable<XNode> Nodes { get { return nodes.EmptyIfNull(); } }
@@ -67,6 +67,21 @@ namespace ProgressOnderwijsUtils
 
 		XhtmlData(XNode[] nodes) { this.nodes = nodes; }
 
+		public bool Equals(XhtmlData other)
+		{
+			return EqualsByMembers<XhtmlData>.Func(this, other);
+		}
+
+		public override bool Equals(object obj)
+		{
+			return obj is XhtmlData && this.Equals((XhtmlData)obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return GetHashCodeByMembers<XhtmlData>.Func(this);
+		}
+
 		public override string ToString()
 		{
 			return Nodes.Select(x => x.ToString(SaveOptions.DisableFormatting)).JoinStrings();
@@ -75,7 +90,8 @@ namespace ProgressOnderwijsUtils
 		public string ToUiString()
 		{
 			using (StringWriter writer = new StringWriter())
-			using (XmlWriter inner = XmlWriter.Create(writer, new XmlWriterSettings {
+			using (XmlWriter inner = XmlWriter.Create(writer, new XmlWriterSettings
+			{
 				ConformanceLevel = ConformanceLevel.Fragment,
 			}))
 			{
