@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -53,7 +51,7 @@ namespace ProgressOnderwijsUtils
 					if (getterIdx == -1)
 						throw new InvalidOperationException("The metaobject " + typeof(TMetaObject) + " does not implement method " + getter.Name);
 					var mpGetter = interfacemap.TargetMethods[getterIdx];
-					return MetaInfo<TMetaObject>.Instance.Single(mp => mp.PropertyInfo is PropertyInfo && ((PropertyInfo)mp.PropertyInfo).GetGetMethod() == mpGetter);
+					return MetaInfo<TMetaObject>.Instance.Single(mp => mp.PropertyInfo.GetGetMethod() == mpGetter);
 				}
 				else throw new InvalidOperationException("Impossible: parent " + typeof(TParent) + " is neither the metaobject type " + typeof(TMetaObject) + " itself, nor a (base) class, nor a base interface.");
 			}
@@ -130,7 +128,9 @@ namespace ProgressOnderwijsUtils
 			{
 				ColumnDefinition[] clrColumns = ColumnDefinition.GetFromReader(objectReader);
 
+				// ReSharper disable CoVariantArrayConversion
 				var mapping = FieldMapping.VerifyAndCreate(clrColumns, ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)), dataColumns, "table " + tableName, FieldMappingMode.IgnoreExtraDestinationFields);
+				// ReSharper restore CoVariantArrayConversion
 
 				bulkCopy.BulkCopyTimeout = 3600;
 				bulkCopy.DestinationTableName = tableName;
