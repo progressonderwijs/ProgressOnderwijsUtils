@@ -452,6 +452,38 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => run(filterC_null).Count() == 0);
 		}
 
+		[Test]
+		public void MetaObject_EnumGreaterThanComparison()
+		{
+			var filter  = Filter<BlaFilterObject>.CreateFilter(o => o.EnumVal, BooleanComparer.GreaterThan, BlaFilterEnumTest.Abc);
+			var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
+			PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
+		}
+
+		[Test]
+		public void MetaObject_NullableEnumGreaterThanComparison()
+		{
+			var filter = Filter<BlaFilterObject>.CreateFilter(o => o.EnumNullable, BooleanComparer.GreaterThan, BlaFilterEnumTest.Abc);
+			var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
+			PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, BlaFilterEnumTest.Test)));
+			PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
+		}
+		[Test]
+		public void MetaObject_EnumGreaterThanNullableKolom()
+		{
+			var filter = Filter.CreateCriterium("EnumVal", BooleanComparer.GreaterThan, new ColumnReference("EnumNullable"));
+			var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
+			PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Xyz, BlaFilterEnumTest.Test)));
+			PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
+		}
+		[Test]
+		public void MetaObject_NullableEnumGreaterThanNonNullableKolom()
+		{
+			var filter = Filter.CreateCriterium("EnumNullable", BooleanComparer.GreaterThan, new ColumnReference("EnumVal"));
+			var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
+			PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Xyz, BlaFilterEnumTest.Test)));
+			PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
+		}
 
 		[Test]
 		public void MetaObject_MixedColRef()
