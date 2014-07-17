@@ -27,7 +27,8 @@ namespace ProgressOnderwijsUtils
 		}
 
 		/// <summary>
-		/// For enums, nullable types and nullable enums, return non-nullable underlying type; otherwise return original type.
+		/// For enums, nullable types and nullable enums, return non-nullable underlying type;
+		/// otherwise return original type.
 		/// e.g. typeof(MyEnum?) => typeof(int)
 		/// e.g. typeof(string) => typeof(string)
 		/// 
@@ -42,6 +43,21 @@ namespace ProgressOnderwijsUtils
 			return nonNullableType;
 		}
 
+		/// <summary>
+		/// Find (nullable) underlying type corresponding to a (nullable) enum.
+		/// Nullability is unaltered; Non-enum types are unaltered.
+		/// </summary>
+		public static Type GetUnderlyingType(this Type type)
+		{
+			var maybeNonNullable = type.IfNullableGetNonNullableType();
+			if (!(maybeNonNullable ?? type).IsEnum)
+				return type;
+			else if(maybeNonNullable == null)
+				return type.GetEnumUnderlyingType();
+			else
+				return maybeNonNullable.GetEnumUnderlyingType().MakeNullableType();
+
+		}
 
 		public static bool CanBeNull(this Type type)
 		{
