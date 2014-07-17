@@ -126,6 +126,8 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
+
+	//TODO: this class is buggy; it doesn't support struct members, for one.  I should probably import the ValueUtils sometime.
 	public static class EqualsByMembers<T>
 	{
 		public static Func<T, T, bool> Func = EqualsFunc();
