@@ -473,7 +473,7 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var filter = Filter.CreateCriterium("EnumVal", BooleanComparer.GreaterThan, new ColumnReference("EnumNullable"));
 			var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
-			PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Xyz, BlaFilterEnumTest.Test)));
+			PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Abc, BlaFilterEnumTest.Xyz)));
 			PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
 		}
 		[Test]
@@ -481,7 +481,7 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var filter = Filter.CreateCriterium("EnumNullable", BooleanComparer.GreaterThan, new ColumnReference("EnumVal"));
 			var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
-			PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Xyz, BlaFilterEnumTest.Test)));
+			PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, BlaFilterEnumTest.Abc)));
 			PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
 		}
 
