@@ -49,12 +49,19 @@ namespace ProgressOnderwijsUtils.ErrorHandling
 				if (!String.IsNullOrEmpty(fileName))
 				{
 					sb.Append(" in ");
-					sb.Append(fileName);
+					sb.Append(StripIrrelevantPathPrefix(fileName));
 					sb.Append(":line ");
 					sb.Append(frame.GetFileLineNumber());
 				}
 				sb.Append('\n');
 			}
+		}
+
+		static string StripIrrelevantPathPrefix(string fileName)
+		{
+			const string needle = @"\progress\";
+			int idx = fileName.IndexOf(needle, StringComparison.Ordinal);
+			return idx < 0 ? fileName : fileName.Substring(idx + needle.Length);
 		}
 
 		static void PrintMethodParameters(StringBuilder sb, MethodBase method)
