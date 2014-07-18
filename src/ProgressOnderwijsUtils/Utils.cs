@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using MoreLinq;
+using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
@@ -184,6 +185,32 @@ namespace ProgressOnderwijsUtils
 			return sql == null ? null : String.Format("[code='{0:x}'; number='{1}'; state='{2}']", sql.ErrorCode, sql.Number, sql.State);
 		}
 
+		/// <summary>
+		/// Executes a test body, marking a test as inconclusive rather than failed when a timeout occurs.
+		/// </summary>
+		public static void IgnoreTimeouts(Action test)
+		{
+			//Ideally, we'd retry the test, however, since lots of test are in a complex inheritance chain
+			//we can't really seperate the test body from the side-effects in the setup/teardown.
+			//In particuarly, a retry wouldn't run in its own environment.
+
+			try { test(); }
+			catch (Exception e)
+			{
+
+				for (var current = e; current != null; current = current.InnerException)
+				{
+					if (current is SqlException && ((SqlException)e).ErrorCode == -2)
+					{
+						Assert.Inconclusive("TIMEOUT DETECETD\n\n" + e);
+						return;//Assert.Inconclusive never returns, but just to be sure...
+					}
+				}
+				throw;
+			}
+		}
+
+
 		public static bool IsInTestSession()
 		{
 			return RegisterTestingProgressTools.ShouldUseTestLocking;
@@ -302,7 +329,7 @@ namespace ProgressOnderwijsUtils
 	public class ComparisonComparer<T> : IComparer<T>
 	{
 		readonly Comparison<T> comparer;
- 
+
 		public ComparisonComparer(Comparison<T> comparer)
 		{
 			this.comparer = comparer;
@@ -321,7 +348,7 @@ namespace ProgressOnderwijsUtils
 	public class EqualsEqualityComparer<T> : IEqualityComparer<T>
 	{
 		readonly Func<T, T, bool> equals;
-		readonly Func<T, int> hashCode; 
+		readonly Func<T, int> hashCode;
 
 		public EqualsEqualityComparer(Func<T, T, bool> equals, Func<T, int> hashCode = null)
 		{
@@ -335,7 +362,7 @@ namespace ProgressOnderwijsUtils
 		{
 			return equals(x, y);
 		}
-		
+
 		public int GetHashCode(T obj)
 		{
 			return hashCode == null ? obj.GetHashCode() : hashCode(obj);
