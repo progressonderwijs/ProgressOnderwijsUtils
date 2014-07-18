@@ -6,6 +6,7 @@ using ApprovalTests;
 using ApprovalTests.Reporters;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.ErrorHandling;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -40,7 +41,7 @@ namespace ProgressOnderwijsUtilsTests
 	[UseReporter(typeof(DiffReporter))]
 	public class ExceptionPrettifierTest
 	{
-		[Test, MethodImpl(MethodImplOptions.NoInlining)]
+		[Test, MethodImpl(MethodImplOptions.NoInlining), Continuous]
 		public void TrivialStackTraceWorks()
 		{
 			try
@@ -54,7 +55,7 @@ namespace ProgressOnderwijsUtilsTests
 			}
 		}
 
-		[Test, MethodImpl(MethodImplOptions.NoInlining)]
+		[Test, MethodImpl(MethodImplOptions.NoInlining), Continuous]
 		public void ExplicitInterfaceImplementationInNestedClass()
 		{
 			try
