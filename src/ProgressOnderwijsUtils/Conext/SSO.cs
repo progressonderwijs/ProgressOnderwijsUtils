@@ -49,8 +49,7 @@ namespace ProgressOnderwijsUtils.Conext
 
 		public override string ToString()
 		{
-			return string.Format("uid='{0}'; domain='{1}'; emails='{2}'; roles='{3}'",
-				uid, domain, StringUtils.ToFlatDebugString(email), StringUtils.ToFlatDebugString(roles));
+			return "uid='"+uid+"'; domain='"+domain+"'; emails='"+StringUtils.ToFlatDebugString(email)+"'; roles='"+StringUtils.ToFlatDebugString(roles)+"'";
 		}
 	}
 
