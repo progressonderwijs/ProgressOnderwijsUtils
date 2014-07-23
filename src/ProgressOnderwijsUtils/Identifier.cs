@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils
 			Value = value;
 		}
 
-		public string DbPrimaryKeyName
+		public virtual string DbPrimaryKeyName
 		{
 			get
 			{
@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public string DbForeignKeyName
+		public virtual string DbForeignKeyName
 		{
 			get
 			{
