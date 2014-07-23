@@ -55,6 +55,39 @@ namespace ProgressOnderwijsUtils
 		public static TranslateFunction ToStringDynamic(object obj, string format = null)
 		{
 			if (obj == null || obj == DBNull.Value) return language => "";
+			//perf critical: We avoid the overhead of dynamic in common cases by adding
+			//these redundant if statements.  Removing them means (in particular) that
+			//CriteriumFilter.ToString relies on dynamic code, which slows down test
+			//discovery.
+
+			if (obj is ITranslatable)
+				return ToString((ITranslatable)obj, format);
+			if (obj is string)
+				return ToString((string)obj, format);
+			if (obj is int)
+				return ToString((int)obj, format);
+			if (obj is Enum)
+				return ToString((Enum)obj, format);
+			if (obj is decimal)
+				return ToString((decimal)obj, format);
+			if (obj is DateTime)
+				return ToString((DateTime)obj, format);
+			if (obj is TimeSpan)
+				return ToString((TimeSpan)obj, format);
+			if (obj is char)
+				return ToString((char)obj, format);
+			if (obj is XhtmlData)
+				return ToString((XhtmlData)obj, format);
+			if (obj is VariantData)
+				return ToString((VariantData)obj, format);
+			if (obj is FileData)
+				return ToString((FileData)obj, format);
+			if (obj is double)
+				return ToString((double)obj, format);
+			if (obj is long)
+				return ToString((long)obj, format);
+			if (obj is IIdentifier)
+				return ToString((IIdentifier)obj, format);
 			try
 			{
 				return ConverteerHelper.ToString((dynamic)obj, format);
@@ -64,5 +97,7 @@ namespace ProgressOnderwijsUtils
 				throw new ConverteerException("unknown type " + obj.GetType() + " to stringify", e);
 			}
 		}
+
+
 	}
 }
