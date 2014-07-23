@@ -96,7 +96,7 @@ namespace ProgressOnderwijsUtils.Conext
 		private const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
 		private const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
 
-		private static readonly ILog LOG = LogManager.GetLogger(typeof(SSO));
+		static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SSO));
 
 		public static void Request(HttpResponse response, ServiceProvider sp, DatabaseVersion db, IdentityProvider idp, Entity entity, string relayState = null)
 		{
