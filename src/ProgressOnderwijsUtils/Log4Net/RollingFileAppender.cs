@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using JetBrains.Annotations;
 using log4net.Layout;
 
 namespace ProgressOnderwijsUtils.Log4Net
 {
-	public sealed class RollingFileAppender : log4net.Appender.RollingFileAppender //TODO:this isn't best practice code; the logging config is hardcoded and deployment dependant.
+
+	[UsedImplicitly]//dynamically loaded as per log4net.config
+	public sealed class RollingFileAppender : log4net.Appender.RollingFileAppender 
+		//TODO:this isn't best practice code; the logging config is hardcoded and deployment dependant.
 	{
 		const string PATH = @"C:\inetpub\logs\Progress.NET";
 
