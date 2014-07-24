@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtilsTests
 			{
 				PAssert.That(() =>
 					ExceptionPrettifier.PrettyPrintException(e) ==
-						"The method or operation is not implemented.\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.NestedClass.SomeMethod() in test\\Tools\\ExceptionPrettifierTest.cs:line 36\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.IndirectErrorViaInterface<T>(T param, string arg2) in test\\Tools\\ExceptionPrettifierTest.cs:line 24\n   at ProgressOnderwijsUtilsTests.ExceptionPrettifierTest.ExplicitInterfaceImplementationInNestedClass() in test\\Tools\\ExceptionPrettifierTest.cs:line 63\n");
+						"The method or operation is not implemented.\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.NestedClass.SomeMethod() in test\\Tools\\ExceptionPrettifierTest.cs:line 36\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.IndirectErrorViaInterface<T>(T param, string arg2) in test\\Tools\\ExceptionPrettifierTest.cs:line 24\n   at ProgressOnderwijsUtilsTests.ExceptionPrettifierTest.ExplicitInterfaceImplementationInNestedClass() in test\\Tools\\ExceptionPrettifierTest.cs:line 64\n");
 			}
 		}
 	}
