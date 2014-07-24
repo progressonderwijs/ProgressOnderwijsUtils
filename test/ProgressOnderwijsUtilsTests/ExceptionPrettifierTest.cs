@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtilsTests
 			throw new Exception("This is an exception");
 		}
 
-		[MethodImpl(MethodImplOptions.NoInlining)]
+		[MethodImpl(MethodImplOptions.NoInlining)] // ReSharper disable once MemberCanBeMadeStatic.Global
 		public void IndirectErrorViaInterface<T>(T param, string arg2 = "bla")
 		{
 			((IExampleTestInterface)new NestedClass()).SomeMethod();
@@ -50,8 +50,9 @@ namespace ProgressOnderwijsUtilsTests
 			}
 			catch (Exception e)
 			{
-				PAssert.That(()=>
-					ExceptionPrettifier.PrettyPrintException(e) == "This is an exception\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.CausesError() in test\\Tools\\ExceptionPrettifierTest.cs:line 18\n   at ProgressOnderwijsUtilsTests.ExceptionPrettifierTest.TrivialStackTraceWorks() in test\\Tools\\ExceptionPrettifierTest.cs:line 49\n");
+				PAssert.That(() =>
+					ExceptionPrettifier.PrettyPrintException(e) ==
+						"This is an exception\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.CausesError() in test\\Tools\\ExceptionPrettifierTest.cs:line 18\n   at ProgressOnderwijsUtilsTests.ExceptionPrettifierTest.TrivialStackTraceWorks() in test\\Tools\\ExceptionPrettifierTest.cs:line 49\n");
 			}
 		}
 
@@ -64,8 +65,9 @@ namespace ProgressOnderwijsUtilsTests
 			}
 			catch (Exception e)
 			{
-				PAssert.That(()=>
-					ExceptionPrettifier.PrettyPrintException(e) == "The method or operation is not implemented.\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.NestedClass.SomeMethod() in test\\Tools\\ExceptionPrettifierTest.cs:line 36\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.IndirectErrorViaInterface<T>(T param, string arg2) in test\\Tools\\ExceptionPrettifierTest.cs:line 24\n   at ProgressOnderwijsUtilsTests.ExceptionPrettifierTest.ExplicitInterfaceImplementationInNestedClass() in test\\Tools\\ExceptionPrettifierTest.cs:line 63\n");
+				PAssert.That(() =>
+					ExceptionPrettifier.PrettyPrintException(e) ==
+						"The method or operation is not implemented.\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.NestedClass.SomeMethod() in test\\Tools\\ExceptionPrettifierTest.cs:line 36\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.IndirectErrorViaInterface<T>(T param, string arg2) in test\\Tools\\ExceptionPrettifierTest.cs:line 24\n   at ProgressOnderwijsUtilsTests.ExceptionPrettifierTest.ExplicitInterfaceImplementationInNestedClass() in test\\Tools\\ExceptionPrettifierTest.cs:line 63\n");
 			}
 		}
 	}

@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtilsTests
 			AssertItem(sut.GetItem(Session.Language, "Nederland"), (int)Land.Nederland);
 		}
 
-		void AssertItem(SelectItem<int?> item, int? expected)
+		static void AssertItem(SelectItem<int?> item, int? expected)
 		{
 			Assert.That(item.Value, Is.EqualTo(expected));
 		}
