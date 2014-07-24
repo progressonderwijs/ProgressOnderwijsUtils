@@ -169,7 +169,7 @@ namespace ProgressOnderwijsUtils
 
 				var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
 				//if (translatedlabel == null && untranslatedlabel == null && tooltip == null && !EnumMembers.Contains(f))
-					//throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+				//throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
 
 				var translatable =
 					translatedlabel != null ? translatedlabel.ToTranslatable()
@@ -324,17 +324,9 @@ namespace ProgressOnderwijsUtils
 		public static IEnumerable<T> AllCombinations<T>() where T : struct
 		{
 			// Construct a function for OR-ing together two enums
-			Type type = typeof(T);
-			var param1 = Expression.Parameter(type);
-			var param2 = Expression.Parameter(type);
-			var orFunction = Expression.Lambda<Func<T, T, T>>(
-				Expression.Convert(
-					Expression.Or(
-						Expression.Convert(param1, type.GetEnumUnderlyingType()),
-						Expression.Convert(param2, type.GetEnumUnderlyingType())),
-					type), param1, param2).Compile();
+			var orFunction = OrFunction<T>.OrFunc;
 
-			var initalValues = (T[])Enum.GetValues(type);
+			var initalValues = (T[])Enum.GetValues(typeof(T));
 			var discoveredCombinations = new HashSet<T>(initalValues);
 			var queue = new Queue<T>(initalValues);
 
@@ -352,5 +344,43 @@ namespace ProgressOnderwijsUtils
 
 			return discoveredCombinations;
 		}
+
+		static class OrFunction<T> where T : struct
+		{
+
+			public static readonly Func<T, T, T> OrFunc;
+			static OrFunction()
+			{
+				var type = typeof(T);
+				var underlyingType = type.GetEnumUnderlyingType();
+				OrFunc = FastPath(underlyingType) ?? GetFlagOrFunction(type, underlyingType);
+			}
+
+			static Func<T, T, T> GetFlagOrFunction(Type type, Type underlyingType)
+			{
+				var param1 = Expression.Parameter(type);
+				var param2 = Expression.Parameter(type);
+				var orFunction = Expression.Lambda<Func<T, T, T>>(
+					Expression.Convert(
+						Expression.Or(
+							Expression.Convert(param1, underlyingType),
+							Expression.Convert(param2, underlyingType)),
+						type), param1, param2).Compile();
+				return orFunction;
+			}
+
+			static Func<T, T, T> FastPath(Type underlyingType)
+			{
+				if (underlyingType == typeof(int))
+				{
+					//fastpath for most common enum type; relevant for unit-test discovery.
+					Func<int, int, int> f = Or;
+					return (Func<T, T, T>)Delegate.CreateDelegate(typeof(Func<T, T, T>), null, f.Method);
+				}
+				return null;
+			}
+		}
+		static int Or(int a, int b) { return a | b; }
+
 	}
 }
