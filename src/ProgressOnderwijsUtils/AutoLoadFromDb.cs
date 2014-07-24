@@ -422,16 +422,6 @@ namespace ProgressOnderwijsUtils
 					if (!type.IsSealed || !type.IsPublic)
 						throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor must be a public, sealed type.");
 
-#if false
-					if (!type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery"))
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor must have a public static method DbQuery that returns a QueryBuilder");
-					if (type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery" && mi.ReturnType != typeof(QueryBuilder)))
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor's DbQuery does not return QueryBuilder");
-#endif
-
-					//if (type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery" && !mi.GetParameters().All(SupportsParameter)))
-					//	throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor's DbQuery may only have simple types as parameters (" + GetterMethodsByType.Keys.Select(t => ObjectToCode.GetCSharpFriendlyTypeName(t)).JoinStrings(", ") + ")");
-
 					var constructors = type.GetConstructors().Where(ci => ci.GetParameters().Any()).ToArray();
 					if (constructors.Length != 1)
 						throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor must have a single public constructor (not counting a structs implicit constructor), not " + constructors.Length);
