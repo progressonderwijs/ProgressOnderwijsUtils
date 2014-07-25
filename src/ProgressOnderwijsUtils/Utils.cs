@@ -170,19 +170,6 @@ namespace ProgressOnderwijsUtils
 		public static Expression<Func<T, TR>> E<T, TR>(Expression<Func<T, TR>> v) { return v; } //purely for delegate type inference
 		public static Expression<Func<T1, T2, TR>> E<T1, T2, TR>(Expression<Func<T1, T2, TR>> v) { return v; } //purely for delegate type inference
 
-
-		public static Func<T, TR> MemoizeConcurrent<T, TR>(this Func<T, TR> v)
-		{
-			var cache = new ConcurrentDictionary<T, TR>();
-			return arg => cache.GetOrAdd(arg, v);
-		}
-
-		public static Func<TContext, TKey, TR> MemoizeConcurrent<TContext, TKey, TR>(this Func<TContext, TKey, TR> v) where TContext : IDisposable
-		{
-			var cache = new ConcurrentDictionary<TKey, TR>();
-			return (ctx, arg) => cache.GetOrAdd(arg, _ => v(ctx, arg));
-		}
-
 		public static string GetSqlExceptionDetailsString(Exception exception)
 		{
 			SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
@@ -201,20 +188,24 @@ namespace ProgressOnderwijsUtils
 			try { test(); }
 			catch (Exception e)
 			{
-
-				for (var current = e; current != null; current = current.InnerException)
-				{
-					var sqlE = current as SqlException;
-					if (sqlE != null && sqlE.Number == -2)
-					{
-						Assert.Inconclusive("TIMEOUT DETECETD\n\n" + e);
-						return; //Assert.Inconclusive never returns, but just to be sure...
-					}
-				}
+				if (IsTimeoutException(e))
+					Assert.Inconclusive("TIMEOUT DETECETD\n\n" + e);
 				throw;
 			}
 		}
 
+		static bool IsTimeoutException(Exception e)
+		{
+			for (var current = e; current != null; current = current.InnerException)
+			{
+				var sqlE = current as SqlException;
+				if (sqlE != null && sqlE.Number == -2)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 
 		public static bool IsInTestSession()
 		{
