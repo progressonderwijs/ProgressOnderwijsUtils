@@ -204,10 +204,11 @@ namespace ProgressOnderwijsUtils
 
 				for (var current = e; current != null; current = current.InnerException)
 				{
-					if (current is SqlException && ((SqlException)e).ErrorCode == -2)
+					var sqlE = current as SqlException;
+					if (sqlE != null && sqlE.Number == -2)
 					{
 						Assert.Inconclusive("TIMEOUT DETECETD\n\n" + e);
-						return;//Assert.Inconclusive never returns, but just to be sure...
+						return; //Assert.Inconclusive never returns, but just to be sure...
 					}
 				}
 				throw;
