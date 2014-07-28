@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
-	public abstract class ResourceStore<T> where T : ResourceStore<T>
+	public interface IResourceStore {
+		Stream GetResource(string filename);
+		IEnumerable<string> GetResourceNames();
+	}
+
+
+	public abstract class ResourceStore<T> : IResourceStore where T : ResourceStore<T>
 	{
 		protected ResourceStore()
 		{
@@ -22,6 +25,16 @@ namespace ProgressOnderwijsUtils
 		public Stream GetResource(string filename)
 		{
 			return typeof(T).GetResource(filename);
+		}
+
+		public IEnumerable<string> GetResourceNames()
+		{
+			var nsPrefix = typeof(T).Namespace+".";
+			foreach (var fullname in typeof(T).Assembly.GetManifestResourceNames())
+			{
+				if (fullname.StartsWith(nsPrefix))
+					yield return fullname.Substring(nsPrefix.Length);
+			}
 		}
 	}
 }

@@ -12,6 +12,7 @@ using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using ProgressOnderwijsUtils.Conext.Resources;
 
 namespace ProgressOnderwijsUtils.Conext
 {
@@ -96,19 +97,12 @@ namespace ProgressOnderwijsUtils.Conext
 		private const string SP_ENTITY_STUDENT_TEST_OAUTH = "http://teststudent.progressnet.nl/oauth";
 		private const string SP_ENTITY_STUDENT_ONTWIKKEL_OAUTH = "http://ontwikkelstudent.progressnet.nl/oauth";
 
-		private const string RESOURCE_PATH = "ProgressOnderwijsUtils.Conext.Resources";
 		private static readonly ConcurrentDictionary<string, X509Certificate2> CERTIFICATES = new ConcurrentDictionary<string, X509Certificate2>();
 		private static readonly IDictionary<string, Saml20MetaData> INSTANCES = new Dictionary<string, Saml20MetaData>();
 
 		private static readonly XNamespace NS_XSD = "http://www.w3.org/2001/XMLSchema-instance";
 		private static readonly XNamespace NS_DS = "http://www.w3.org/2000/09/xmldsig#";
 		private static readonly XNamespace NS_MD = "urn:oasis:names:tc:SAML:2.0:metadata";
-
-		private static Stream GetResource(string paths)
-		{
-			return typeof(MetaDataFactory).Assembly.GetManifestResourceStream(
-				new[]{paths}.Aggregate(RESOURCE_PATH, (current, path) => string.Format(CultureInfo.InvariantCulture, "{0}.{1}", current, path)));
-		}
 
 		private static readonly IDictionary<ServiceProvider, IDictionary<DatabaseVersion, ServiceProviderConfig>> SERVICE_PROVIDERS = new Dictionary<ServiceProvider, IDictionary<DatabaseVersion, ServiceProviderConfig>>
 		{
@@ -473,7 +467,7 @@ namespace ProgressOnderwijsUtils.Conext
 			return CERTIFICATES.GetOrAdd(cer, c =>
 			{
 				byte[] buf;
-				using (Stream str = GetResource(cer))
+				using (Stream str = new ConextResources().GetResource(cer))
 				{
 					buf = new byte[str.Length];
 					str.Read(buf, 0, buf.Length);
