@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -93,6 +94,11 @@ namespace ProgressOnderwijsUtils
 			int backtickIdx = typename.IndexOf('`');
 			// ReSharper restore PossibleNullReferenceException
 			return backtickIdx == -1 ? typename : typename.Substring(0, backtickIdx);
+		}
+
+		public static string FriendlyName(this Type type)
+		{
+			return ObjectToCode.GetCSharpFriendlyTypeName(type);
 		}
 	}
 }
