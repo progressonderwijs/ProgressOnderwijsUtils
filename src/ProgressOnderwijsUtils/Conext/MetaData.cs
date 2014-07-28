@@ -104,10 +104,10 @@ namespace ProgressOnderwijsUtils.Conext
 		private static readonly XNamespace NS_DS = "http://www.w3.org/2000/09/xmldsig#";
 		private static readonly XNamespace NS_MD = "urn:oasis:names:tc:SAML:2.0:metadata";
 
-		private static Stream GetResource(params string[] paths)
+		private static Stream GetResource(string paths)
 		{
 			return typeof(MetaDataFactory).Assembly.GetManifestResourceStream(
-				paths.Aggregate(RESOURCE_PATH, (current, path) => string.Format(CultureInfo.InvariantCulture, "{0}.{1}", current, path)));
+				new[]{paths}.Aggregate(RESOURCE_PATH, (current, path) => string.Format(CultureInfo.InvariantCulture, "{0}.{1}", current, path)));
 		}
 
 		private static readonly IDictionary<ServiceProvider, IDictionary<DatabaseVersion, ServiceProviderConfig>> SERVICE_PROVIDERS = new Dictionary<ServiceProvider, IDictionary<DatabaseVersion, ServiceProviderConfig>>
