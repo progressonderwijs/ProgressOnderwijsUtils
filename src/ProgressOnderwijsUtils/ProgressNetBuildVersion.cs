@@ -122,6 +122,6 @@ namespace ProgressOnderwijsUtils
 			return dt.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(dt).Hours);
 		}
 
-		static string AssemblyPath(Type t) { return Assembly.GetAssembly(t).Location; }
+		static string AssemblyPath(Type t) { return t.Assembly.Location; }
 		}
 }

@@ -106,7 +106,7 @@ namespace ProgressOnderwijsUtils.Conext
 
 		private static Stream GetResource(params string[] paths)
 		{
-			return Assembly.GetAssembly(typeof(MetaDataFactory)).GetManifestResourceStream(
+			return typeof(MetaDataFactory).Assembly.GetManifestResourceStream(
 				paths.Aggregate(RESOURCE_PATH, (current, path) => string.Format(CultureInfo.InvariantCulture, "{0}.{1}", current, path)));
 		}
 
