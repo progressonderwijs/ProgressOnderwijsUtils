@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Data.Entity.Core;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,6 +12,7 @@ using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
+using EntityException = System.Data.Entity.Core.EntityException;
 
 namespace ProgressOnderwijsUtils
 {
