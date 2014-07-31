@@ -49,10 +49,16 @@ namespace ProgressOnderwijsUtils
 		public IDisposable StartQueryTimer(SqlCommand sqlCommand)
 		{
 			string prefix = !IncludeSensitiveInfo ? "" :
-	sqlCommand.Parameters.Cast<SqlParameter>().Select(par => "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par) + ";\nSET " + par.ParameterName + " = " + SqlValueString(par.Value) + ";\n").JoinStrings();
+	CommandParamString(sqlCommand);
 			//when machine is in LAN, we're not running on the production server: assume it's OK to include potentially confidential info like passwords in debug output.
 			return StartQueryTimer(prefix + sqlCommand.CommandText);
 		}
+
+		public static string CommandParamString(SqlCommand sqlCommand)
+		{
+			return sqlCommand.Parameters.Cast<SqlParameter>().Select(par => "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par) + ";\nSET " + par.ParameterName + " = " + SqlValueString(par.Value) + ";\n").JoinStrings();
+		}
+
 		static string SqlParamTypeString(SqlParameter par) { return par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : ""); }
 
 		public static string SqlValueString(object p) // Not Secure, just a debug tool!
