@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
 
 	[Serializable]
 	[DebuggerStepThrough]
-	public class Identifier<T> : IIdentifier where T : Identifier<T>, new()
+	public class Identifier<T> : IIdentifier, IComparable<T> where T : Identifier<T>, new()
 	{
 		#region "  Constructor"
 		public Identifier() { }
@@ -77,6 +77,11 @@ namespace ProgressOnderwijsUtils
 		public override int GetHashCode()
 		{
 			return Value.GetHashCode();
+		}
+
+		public int CompareTo(T other) 
+		{
+			return Value.CompareTo(other.Value);
 		}
 
 		public override string ToString()
