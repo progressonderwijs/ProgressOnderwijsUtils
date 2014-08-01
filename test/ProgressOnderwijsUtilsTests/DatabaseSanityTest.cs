@@ -7,11 +7,9 @@ using NUnit.Framework;
 using Progress.Business;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[Continuous]
 	public sealed class DatabaseSanityTest : TestSuiteBase
 	{
 		[Test]
@@ -48,6 +46,8 @@ namespace ProgressOnderwijsUtilsTests
 				join sys.tables tc on cc.object_id = tc.object_id
 				join sys.schemas sp on sp.schema_id = tp.schema_id
 				join sys.schemas sc on sc.schema_id = tc.schema_id
+				join sys.index_columns xcc on xcc.object_id = tc.object_id and xcc.column_id = cc.column_id
+				join sys.indexes xc on xc.object_id = xcc.object_id and xc.index_id = xcc.index_id and xc.is_primary_key = 1
 				left join sys.foreign_key_columns fkcu on fkcu.parent_object_id = tp.object_id
 														and fkcu.parent_column_id = cp.column_id
 				left join sys.foreign_key_columns fkc on fkc.parent_object_id = tp.object_id
