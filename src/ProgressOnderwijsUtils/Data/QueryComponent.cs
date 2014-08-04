@@ -9,7 +9,12 @@ namespace ProgressOnderwijsUtils
 {
 	static class QueryComponent
 	{
-		public static IQueryComponent CreateString(string val) { return new QueryStringComponent(val); }
+		public static IQueryComponent CreateString(string val) {
+			if (val == "")
+				return null;
+			else
+				return new QueryStringComponent(val); 
+		}
 		public static IQueryComponent CreateParam(object o)
 		{
 			if (o is QueryBuilder)
