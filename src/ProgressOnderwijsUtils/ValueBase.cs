@@ -13,6 +13,7 @@ namespace ProgressOnderwijsUtils
 	/// Instantiated types must be sealed and pass themselves as the type parameter T.
 	/// </summary>
 	/// <typeparam name="T">The derived type; must be sealed</typeparam>
+	[Serializable]
 	public abstract class ValueBase<T> : IEquatable<T> where T : ValueBase<T>
 	{
 
