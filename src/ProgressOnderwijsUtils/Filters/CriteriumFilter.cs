@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtils
 			{
 				try
 				{
-					QueryComponent.ToTableParameter((dynamic)(Array)Waarde);
+					QueryComponent.ToTableParameter((Array)Waarde);
 				}
 				catch (Exception e)
 				{

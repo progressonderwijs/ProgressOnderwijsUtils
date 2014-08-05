@@ -3,18 +3,21 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using ExpressionToCodeLib;
 using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
 	static class QueryComponent
 	{
-		public static IQueryComponent CreateString(string val) {
+		public static IQueryComponent CreateString(string val)
+		{
 			if (val == "")
 				return null;
 			else
-				return new QueryStringComponent(val); 
+				return new QueryStringComponent(val);
 		}
+
 		public static IQueryComponent CreateParam(object o)
 		{
 			if (o is QueryBuilder)
@@ -24,34 +27,48 @@ namespace ProgressOnderwijsUtils
 			else if (o is LiteralSqlInt)
 				return new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant());
 			else if (o is IEnumerable && !(o is string) && !(o is byte[]))
-				return ToTableParameter((dynamic)o);
-				//perf critical: DO NOT convert this if into a ternary; doing so means the 
-				//entire expression becomes dynamically typed which causes a noticable 
-				//performance degradation!
+				return ToTableParameter((IEnumerable)o);
 			else
 				return new QueryScalarParameterComponent(o);
 		}
 
-		public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new() { return new QueryTableValuedParameterComponent<T>(tableTypeName, set); }
-
-		static IQueryComponent BasicTypeTable<T>(string tableTypeName, IEnumerable<T> set)
-			where T : IComparable, IComparable<T>, IEquatable<T> //add conditions to help detect accidentally using an invalid type at compile time.
+		public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
 		{
-			return ToTableParameter(tableTypeName, set.Select(i => new Internal.DbTableValuedParameterWrapper<T> { val = i }));
+			return new QueryTableValuedParameterComponent<T>(tableTypeName, set);
 		}
 
-		public static IQueryComponent ToTableParameter(IEnumerable<int> set) { return BasicTypeTable("TVar_Int", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<string> set) { return BasicTypeTable("TVar_NVarcharMax", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<DateTime> set) { return BasicTypeTable("TVar_DateTime2", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<TimeSpan> set) { return BasicTypeTable("TVar_Time", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<decimal> set) { return BasicTypeTable("TVar_Decimal", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<char> set) { return BasicTypeTable("TVar_NChar1", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<bool> set) { return BasicTypeTable("TVar_Bit", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<byte> set) { return BasicTypeTable("TVar_Tinyint", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<short> set) { return BasicTypeTable("TVar_Smallint", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<long> set) { return BasicTypeTable("TVar_Bigint", set); }
-		public static IQueryComponent ToTableParameter(IEnumerable<double> set) { return BasicTypeTable("TVar_Float", set); }
+		static IQueryComponent TryToTableParameter<T>(string tableTypeName, IEnumerable set)
+			where T : IComparable, IComparable<T>, IEquatable<T>
+		{
+			if (set is IEnumerable<T>)
+			{
+				var typedSet = ((IEnumerable<T>)set);
+				var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { val = i });
+				return ToTableParameter(tableTypeName, projectedSet);
+			}
+			else
+				return null;
+		}
 
+		public static IQueryComponent ToTableParameter(IEnumerable set)
+		{
+			var retval = null
+				?? TryToTableParameter<int>("TVar_Int", set)
+					?? TryToTableParameter<string>("TVar_NVarcharMax", set)
+						?? TryToTableParameter<DateTime>("TVar_DateTime2", set)
+							?? TryToTableParameter<TimeSpan>("TVar_Time", set)
+								?? TryToTableParameter<decimal>("TVar_Decimal", set)
+									?? TryToTableParameter<char>("TVar_NChar1", set)
+										?? TryToTableParameter<bool>("TVar_Bit", set)
+											?? TryToTableParameter<byte>("TVar_Tinyint", set)
+												?? TryToTableParameter<short>("TVar_Smallint", set)
+													?? TryToTableParameter<long>("TVar_Bigint", set)
+														?? TryToTableParameter<double>("TVar_Float", set)
+				;
+			if (retval == null)
+				throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(set.GetType()) + " as a table valued parameter", "set");
+			return retval;
+		}
 
 		/*
 		CREATE TYPE TVar_Int AS TABLE (val int NOT NULL)
@@ -82,14 +99,19 @@ namespace ProgressOnderwijsUtils
 		 */
 	}
 
+
 	namespace Internal
 	{
+		//public needed for auto-mapping
 		public struct DbTableValuedParameterWrapper<T> : IMetaObject
 		{
 			[Key]
 			public T val { get; set; }
-			public override string ToString() { return val == null ? "NULL" : val.ToString(); }
+
+			public override string ToString()
+			{
+				return val == null ? "NULL" : val.ToString();
+			}
 		}
 	}
-
 }

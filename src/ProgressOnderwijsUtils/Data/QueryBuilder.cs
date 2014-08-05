@@ -134,7 +134,7 @@ namespace ProgressOnderwijsUtils
 		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<double> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
 		[Pure]
-		public static QueryBuilder TableParamDynamic(Array o) { return new SingleComponent(QueryComponent.ToTableParameter((dynamic)o)); }
+		public static QueryBuilder TableParamDynamic(Array o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
 		// ReSharper restore UnusedMember.Global
 
 		[Pure]
