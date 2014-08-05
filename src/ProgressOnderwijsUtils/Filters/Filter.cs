@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace ProgressOnderwijsUtils
 {
-	public interface IFilterFactory<out T> {}
+	public interface IFilterFactory<out T> { }
 
 
 	public static class Filter<TMetaObject>
@@ -72,7 +72,13 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static FilterBase CreateCriterium(string kolomnaam, BooleanComparer comparer, object waarde) { return new CriteriumFilter(kolomnaam, comparer, waarde); }
 
-		public static FilterBase CreateFilter<TMetaObject, T>(this IFilterFactory<TMetaObject> target, Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, T waarde) { return Filter<TMetaObject>.CreateFilter(columnToFilter, comparer, waarde); }
+		// ReSharper disable once UnusedParameter.Global
+		public static FilterBase CreateFilter<TMetaObject, T>(this IFilterFactory<TMetaObject> target, Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, T waarde)
+		{
+			return Filter<TMetaObject>.CreateFilter(columnToFilter, comparer, waarde);
+		}
+
+
 		public static FilterBase CreateCombined(BooleanOperator andor, FilterBase a, FilterBase b, params FilterBase[] extra) { return CreateCombined(andor, new[] { a, b }.Concat(extra)); }
 
 		public static FilterBase CreateCombined(BooleanOperator andor, IEnumerable<FilterBase> condities)
