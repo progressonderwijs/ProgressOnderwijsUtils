@@ -44,30 +44,42 @@ namespace ProgressOnderwijsUtils
 	{
 		public static readonly CultureInfo CultureNL = new CultureInfo("nl-NL", false) { DateTimeFormat = { ShortDatePattern = "dd-MM-yyyy" } };
 
-		#region Configuration
 
-		public static readonly IDictionary<DatumFormaat, Tuple<string, string>> DATE_FORMATS = new Dictionary<DatumFormaat, Tuple<string, string>>
+		static readonly Dictionary<DatumFormaat, TextVal> DATE_FORMATS = new Dictionary<DatumFormaat, TextVal>
 		{
-			{ DatumFormaat.AlleenDatum, Tuple.Create(ConverteerHelper.ALLEEN_DATUM, (string)null) },
-			{ DatumFormaat.AlleenTijd, Tuple.Create("HH:mm", (string)null) },
-			{ DatumFormaat.DatumEnTijdInMinuten, Tuple.Create(ConverteerHelper.DATUM_EN_TIJD_IN_MINUTEN, (string)null) },
-			{ DatumFormaat.DatumEnTijdInSeconden, Tuple.Create("dd-MM-yyyy HH:mm:ss", (string)null) },
-			{ DatumFormaat.DatumEnTijdInMilliseconden, Tuple.Create("dd-MM-yyyy HH:mm:ss.fff", (string)null) },
-			{ DatumFormaat.DatumToolTipTijd, Tuple.Create("dd-MM-yyyy", "dd-MM-yyyy HH:mm:ss.fff") },
-			{ DatumFormaat.JaarToolTipDatum, Tuple.Create("yyyy", "dd-MM-yyyy") },
-			{ DatumFormaat.DatumZonderJaar, Tuple.Create("dd-MM", "dd-MM-yyyy") },
-			{ DatumFormaat.SMDatum, Tuple.Create("yyyyMMdd", (string)null) },
-			{ DatumFormaat.SMDatumTijd, Tuple.Create("yyyyMMddHHmmss", (string)null) },
-			{ DatumFormaat.ClieopDatum, Tuple.Create("ddMMyy", (string)null) },
-			{ DatumFormaat.MT940Datum, Tuple.Create("yyMMdd", (string)null) },
-			{ DatumFormaat.VerwInfoDatum, Tuple.Create("yyMMdd", (string)null) },
-			{ DatumFormaat.ISODate, Tuple.Create("yyyy-MM-dd", (string)null) },
-			{ DatumFormaat.ISODateTime, Tuple.Create("yyyy-MM-ddTHH:mm:ss", (string)null) },
+			{ DatumFormaat.AlleenDatum, new TextVal(ConverteerHelper.ALLEEN_DATUM, null) },
+			{ DatumFormaat.AlleenTijd, new TextVal("HH:mm", null) },
+			{ DatumFormaat.DatumEnTijdInMinuten, new TextVal(ConverteerHelper.DATUM_EN_TIJD_IN_MINUTEN, null) },
+			{ DatumFormaat.DatumEnTijdInSeconden, new TextVal("dd-MM-yyyy HH:mm:ss", null) },
+			{ DatumFormaat.DatumEnTijdInMilliseconden, new TextVal("dd-MM-yyyy HH:mm:ss.fff", null) },
+			{ DatumFormaat.DatumToolTipTijd, new TextVal("dd-MM-yyyy", "dd-MM-yyyy HH:mm:ss.fff") },
+			{ DatumFormaat.JaarToolTipDatum, new TextVal("yyyy", "dd-MM-yyyy") },
+			{ DatumFormaat.DatumZonderJaar, new TextVal("dd-MM", "dd-MM-yyyy") },
+			{ DatumFormaat.SMDatum, new TextVal("yyyyMMdd", null) },
+			{ DatumFormaat.SMDatumTijd, new TextVal("yyyyMMddHHmmss", null) },
+			{ DatumFormaat.ClieopDatum, new TextVal("ddMMyy", null) },
+			{ DatumFormaat.MT940Datum, new TextVal("yyMMdd", null) },
+			{ DatumFormaat.VerwInfoDatum, new TextVal("yyMMdd", null) },
+			{ DatumFormaat.ISODate, new TextVal("yyyy-MM-dd", null) },
+			{ DatumFormaat.ISODateTime, new TextVal("yyyy-MM-ddTHH:mm:ss", null) },
 		};
 		static readonly DateTime dtWithManyDigits = new DateTime(2000, 1, 1) - TimeSpan.FromDays(1) - TimeSpan.FromHours(1) - TimeSpan.FromMinutes(1) - TimeSpan.FromSeconds(1) - TimeSpan.FromMilliseconds(1) - TimeSpan.FromTicks(1);
-		static readonly Dictionary<DatumFormaat, int> formaatLengte = DATE_FORMATS.Keys.ToDictionary(k => k, k => new[] { Taal.NL, Taal.EN, Taal.DU }.Select(t => dtWithManyDigits.ToString(DATE_FORMATS[k].Item1, Translator.GetCulture(t)).Length).Max());
+		static readonly Dictionary<DatumFormaat, int> formaatLengte = DATE_FORMATS.Keys.ToDictionary(
+			k => k,
+			k => EnumHelpers.GetValues<Taal>().Where(t => t != Taal.None).Max(taal => {
+				var formatString = DATE_FORMATS[k].Text;
+				return dtWithManyDigits.ToString(formatString, taal.GetCulture()).Length;
+			}));
 
-		public static int DateTimeStringLengthForFormat(DatumFormaat formaat) { return formaatLengte[formaat]; }
+
+		public static TextVal DateFormatStrings(DatumFormaat formaat)
+		{
+			return DATE_FORMATS[formaat];
+		}
+		public static int DateTimeStringLengthForFormat(DatumFormaat formaat)
+		{
+			return formaatLengte[formaat];
+		}
 
 		static readonly IDictionary<NummerFormaat, string> DECIMAL_FORMATS = new Dictionary<NummerFormaat, string>
 		{
@@ -78,7 +90,6 @@ namespace ProgressOnderwijsUtils
 			{ NummerFormaat.GeldEuroGrootboek, "#,##0.00 D;#,##0.00 C;0.00  "}
 		};
 
-		#endregion
 
 		#region ToString
 
@@ -102,7 +113,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static string ToString(DateTime? dt, DatumFormaat format, Taal language = Taal.NL)
 		{
-			return ConverteerHelper.ToStringDynamic(dt, DATE_FORMATS[format].Item1)(language);
+			return ConverteerHelper.ToStringDynamic(dt, DATE_FORMATS[format].Text)(language);
 		}
 
 		#endregion
@@ -147,7 +158,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static ITranslatable ToText(DateTime? dt, DatumFormaat format)
 		{
-			return ToText(dt, DATE_FORMATS[format].Item1, DATE_FORMATS[format].Item2);
+			return ToText(dt, DATE_FORMATS[format].Text, DATE_FORMATS[format].ExtraText);
 		}
 
 
