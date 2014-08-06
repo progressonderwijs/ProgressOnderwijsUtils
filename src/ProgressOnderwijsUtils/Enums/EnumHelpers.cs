@@ -5,7 +5,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -62,20 +61,21 @@ namespace ProgressOnderwijsUtils
 		}
 
 
-		struct HelperMethods
+		struct FlagOperationMethods
 		{
-			public static HelperMethods Get<T>(Func<T, T, T> or, Func<T, T, bool> hasFlag, Func<T, T, bool> overlaps)
+			public static FlagOperationMethods Get<T>(Func<T, T, T> or, Func<T, T, bool> hasFlag, Func<T, T, bool> overlaps)
 			{
-				return new HelperMethods { Or = or.Method, HasFlag = hasFlag.Method, HasFlagOverlap = overlaps.Method };
+				return new FlagOperationMethods { Or = or.Method, HasFlag = hasFlag.Method, HasFlagOverlap = overlaps.Method };
 			}
 
 			public MethodInfo Or, HasFlag, HasFlagOverlap;
 		}
 
 
-		static readonly Dictionary<Type, HelperMethods> HelperMethodses = new Dictionary<Type, HelperMethods> {
-			{ typeof(int), HelperMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap) }, {
-				typeof(long), HelperMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap)
+		static readonly Dictionary<Type, FlagOperationMethods> FlagOperationMethodsByType = new Dictionary<Type, FlagOperationMethods>
+		{
+			{ typeof(int), FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap) },
+			{ typeof(long), FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap)
 			},
 		};
 
@@ -106,9 +106,9 @@ namespace ProgressOnderwijsUtils
 				//((TEnum[])Enum.GetValues(typeof(TEnum))).Distinct().ToArray();
 				if (IsFlags)
 				{
-					if (HelperMethodses.ContainsKey(underlying))
+					if (FlagOperationMethodsByType.ContainsKey(underlying))
 					{
-						var fastpathHelpers = HelperMethodses.GetOrDefault(underlying);
+						var fastpathHelpers = FlagOperationMethodsByType.GetOrDefault(underlying);
 						CreateDelegate(out HasFlag, fastpathHelpers.HasFlag);
 						CreateDelegate(out FlagsOverlap, fastpathHelpers.HasFlagOverlap);
 						CreateDelegate(out AddFlag, fastpathHelpers.Or);
@@ -122,6 +122,7 @@ namespace ProgressOnderwijsUtils
 					EnumInOverlapOrder = EnumValues.OrderBy(val => EnumValues.Count(flag => HasFlag(val, flag))).ToArray();
 				}
 			}
+
 			static void CreateDelegate<TFunc>(out TFunc func, MethodInfo method)
 			{
 				func = (TFunc)(object)Delegate.CreateDelegate(typeof(TFunc), method);
@@ -279,7 +280,8 @@ namespace ProgressOnderwijsUtils
 				if (taal == Taal.None)
 					throw new ArgumentOutOfRangeException("taal", "Taal is niet gezet.  (== Taal.None)");
 				return !EnumMetaCache<TEnum>.IsFlags ? ParseLabels[taal][s.Trim()] :
-					new[] {
+					new[]
+					{
 						s.Split(',')
 							.Select(sub => sub.Trim())
 							.Where(sub => sub.Length > 0)
@@ -424,10 +426,10 @@ namespace ProgressOnderwijsUtils
 			return Enum.IsDefined(typeof(TEnum), enumval);
 		}
 
-		public static IEnumerable<T> AllCombinations<T>() where T : struct
+		public static IEnumerable<T> AllCombinations<T>() where T : struct, IConvertible
 		{
 			// Construct a function for OR-ing together two enums
-			var orFunction = OrFunction<T>.OrFunc;
+			var orFunction = AddFlagsFunc<T>();
 
 			var initalValues = (T[])Enum.GetValues(typeof(T));
 			var discoveredCombinations = new HashSet<T>(initalValues);
@@ -446,49 +448,6 @@ namespace ProgressOnderwijsUtils
 			}
 
 			return discoveredCombinations;
-		}
-
-
-		static class OrFunction<T> where T : struct
-		{
-			public static readonly Func<T, T, T> OrFunc;
-
-			static OrFunction()
-			{
-				var type = typeof(T);
-				var underlyingType = type.GetEnumUnderlyingType();
-				OrFunc = FastPath(underlyingType) ?? GetFlagOrFunction(type, underlyingType);
-			}
-
-			static Func<T, T, T> GetFlagOrFunction(Type type, Type underlyingType)
-			{
-				var param1 = Expression.Parameter(type);
-				var param2 = Expression.Parameter(type);
-				var orFunction = Expression.Lambda<Func<T, T, T>>(
-					Expression.Convert(
-						Expression.Or(
-							Expression.Convert(param1, underlyingType),
-							Expression.Convert(param2, underlyingType)),
-						type), param1, param2).Compile();
-				return orFunction;
-			}
-
-			static Func<T, T, T> FastPath(Type underlyingType)
-			{
-				if (underlyingType == typeof(int))
-				{
-					//fastpath for most common enum type; relevant for unit-test discovery.
-					Func<int, int, int> f = Or;
-					return (Func<T, T, T>)Delegate.CreateDelegate(typeof(Func<T, T, T>), null, f.Method);
-				}
-				return null;
-			}
-		}
-
-
-		static int Or(int a, int b)
-		{
-			return a | b;
 		}
 	}
 }
