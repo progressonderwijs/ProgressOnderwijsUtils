@@ -1,5 +1,5 @@
-﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
-
+﻿using System.Data.SqlTypes;
+// ReSharper disable PossiblyMistakenUseOfParamsMethod
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -110,7 +110,27 @@ namespace ProgressOnderwijsUtils
 			using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess))
 			{
 				var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.GetDataReaderUnpacker(reader, fieldMappingMode);
-				return unpacker(reader);
+				try
+				{
+					return unpacker(reader);
+				}
+				catch (SqlNullValueException snve)
+				{
+					int fieldCount = reader.FieldCount;
+					var mps = MetaObject.GetMetaProperties<T>();
+					for (int i = 0; i < fieldCount; i++)
+					{
+						try
+						{
+							string name = reader.GetName(i);
+							var mp = mps[name];
+							if (!mp.AllowNull && reader.IsDBNull(i))
+								throw new InvalidOperationException("Cannot unpack column " + name + " into type " + mp.DataType + "; the value NULL was received, yet " + typeof(T).Name + "." + mp.Name + " is non=nullable", snve);
+						}
+						catch { } //due to SequentialAccess expect many errors.
+					}
+					throw;
+				}
 			}
 		}
 
@@ -196,7 +216,7 @@ namespace ProgressOnderwijsUtils
 			return mappings.SelectMany(
 				map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
 				.ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
-		}	
+		}
 		static readonly AssemblyBuilder assemblyBuilder;
 		static readonly ModuleBuilder moduleBuilder;
 		static int counter;
@@ -222,7 +242,7 @@ namespace ProgressOnderwijsUtils
 			static bool SupportsType(Type type)
 			{
 				var underlyingType = type.GetNonNullableUnderlyingType();
-				return GetterMethodsByType.ContainsKey(underlyingType) || 
+				return GetterMethodsByType.ContainsKey(underlyingType) ||
 					(isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset) || typeof(IIdentifier).IsAssignableFrom(underlyingType)));
 			}
 
