@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -41,7 +42,7 @@ namespace ProgressOnderwijsUtils
 				throw new ArgumentException("Cannot determine metaproperties on abstract type " + typeof(T));
 			else
 			{
-				var nonAbstractBaseTypes = typeof(T).BaseTypes().Where(bt => !bt.IsAbstract && typeof(IMetaObject).IsAssignableFrom(bt));
+				var nonAbstractBaseTypes = NonAbstractMetaObjectBaseTypes();
 				if (nonAbstractBaseTypes.Any())
 					throw new ArgumentException("Cannot determine metaproperties on type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " with non-abstract base type(s) : " + String.Join(", ", nonAbstractBaseTypes.Select(ObjectToCode.GetCSharpFriendlyTypeName)));
 				else if (!typeof(T).GetProperties().Any())
@@ -54,6 +55,12 @@ namespace ProgressOnderwijsUtils
 			ByName = MetaProperties.ToDictionary(mp => mp.Name, StringComparer.OrdinalIgnoreCase);
 		}
 
+		static IEnumerable<Type> NonAbstractMetaObjectBaseTypes()
+		{
+			foreach (Type bt in typeof(T).BaseTypes())
+				if (!bt.IsAbstract && typeof(IMetaObject).IsAssignableFrom(bt))
+					yield return bt;
+		}
 
 		IReadOnlyList<IMetaProperty> IMetaPropCache.Properties { get { return MetaProperties; } }
 
@@ -66,11 +73,16 @@ namespace ProgressOnderwijsUtils
 
 		static IMetaProperty<T>[] GetMetaPropertiesImpl()
 		{
-			return typeof(T).GetProperties()
-				.Where(pi => !pi.GetCustomAttributes(typeof(MpNotMappedAttribute), true).Any())
-				.OrderBy(pi => pi.MetadataToken)
-				.Select((info, i) => (IMetaProperty<T>)new MetaProperty.Impl<T>(info, i))
-				.ToArray();
+			var list = FastArrayBuilder<IMetaProperty<T>>.Create();
+			int i = 0;
+			foreach (PropertyInfo info in typeof(T).GetProperties())
+			{
+				if (info.GetCustomAttributes(typeof(MpNotMappedAttribute), true).Length == 0)
+					list.Add(new MetaProperty.Impl<T>(info, i++));
+			}
+			var array = list.ToArray();
+			Array.Sort(array, (a, b) => a.PropertyInfo.MetadataToken.CompareTo(b.PropertyInfo.MetadataToken));
+			return array;
 		}
 
 		public IEnumerator<IMetaProperty<T>> GetEnumerator() { return ReadOnlyView.GetEnumerator(); }

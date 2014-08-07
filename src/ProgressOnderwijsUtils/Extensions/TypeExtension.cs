@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
@@ -100,5 +101,17 @@ namespace ProgressOnderwijsUtils
 		{
 			return ObjectToCode.GetCSharpFriendlyTypeName(type);
 		}
+
+		public static T Attr<T>(this MemberInfo mi) where T : Attribute
+		{
+			var customAttributes = mi.GetCustomAttributes(typeof(T), true);
+			if (customAttributes.Length == 0)
+				return null;
+			else if (customAttributes.Length > 1)
+				throw new InvalidOperationException("Expected zero or one " + typeof(T) + ", found " + customAttributes.Length);
+			else
+				return (T)customAttributes[0];
+		}
+
 	}
 }
