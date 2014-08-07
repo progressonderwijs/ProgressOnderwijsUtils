@@ -116,18 +116,23 @@ namespace ProgressOnderwijsUtils
 				}
 				catch (SqlNullValueException snve)
 				{
+
 					int fieldCount = reader.FieldCount;
 					var mps = MetaObject.GetMetaProperties<T>();
 					for (int i = 0; i < fieldCount; i++)
 					{
+						bool hasNullInNonNullableColumn = false;
+						IMetaProperty<T> mp = null;
+						string name = null;
 						try
 						{
-							string name = reader.GetName(i);
-							var mp = mps[name];
-							if (!mp.AllowNull && reader.IsDBNull(i))
-								throw new InvalidOperationException("Cannot unpack column " + name + " into type " + mp.DataType + "; the value NULL was received, yet " + typeof(T).Name + "." + mp.Name + " is non=nullable", snve);
+							name = reader.GetName(i);
+							mp = mps[name];
+							hasNullInNonNullableColumn = !mp.AllowNull && reader.IsDBNull(i);
 						}
 						catch { } //due to SequentialAccess expect many errors.
+						if (hasNullInNonNullableColumn)
+							throw new InvalidOperationException("Cannot unpack column " + name + " into type " + mp.DataType + "; the value NULL was received, yet " + typeof(T).Name + "." + mp.Name + " is non=nullable", snve);
 					}
 					throw;
 				}
