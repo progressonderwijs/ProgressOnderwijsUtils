@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
 		{
 			public string Node { get; set; }
 			public DateTime Date { get; set; }
-			public string Branches { get; set; }
+			public string Branch { get; set; }
 			public string Tags { get; set; }
 
 			public string ComputerName { get; set; }
@@ -70,28 +70,27 @@ namespace ProgressOnderwijsUtils
 
 			if (lines == null)
 			{
-				Current = new Data { Node = "unknown!" };
+				Current = new Data { Node = "unknown" };
 				return;
 			}
 
 			var nodeId = lines.First().Trim();
-			var svninfo =
+			var buildInfo =
 				lines.Skip(1)
 					.Select(s => s.Trim())
 					.Where(s => s.Length > 0)
 					.ToDictionary(s => s.Substring(0, s.IndexOf(':')), s => s.Substring(s.IndexOf(':') + 1));
 
-			Current = new Data
-			{
+			Current = new Data {
 				Node = nodeId,
 				Date = AssemblyCreationDate,
-				Branches = svninfo["branches"],
-				Tags = svninfo["tags"],
+				Branch = buildInfo["branch"],
+				Tags = buildInfo["tags"],
 
-				ComputerName = svninfo["ComputerName"].Trim(),
-				BuildTag = svninfo["BuildTag"].Trim(),
-				BuildUrl = svninfo["BuildUrl"].Trim(),
-				BuildConfiguration = svninfo["Configuration"].Trim(),
+				ComputerName = buildInfo["ComputerName"].Trim(),
+				BuildTag = buildInfo["BuildTag"].Trim(),
+				BuildUrl = buildInfo["BuildUrl"].Trim(),
+				BuildConfiguration = buildInfo["Configuration"].Trim(),
 			};
 		}
 
@@ -123,5 +122,5 @@ namespace ProgressOnderwijsUtils
 		}
 
 		static string AssemblyPath(Type t) { return t.Assembly.Location; }
-		}
+	}
 }
