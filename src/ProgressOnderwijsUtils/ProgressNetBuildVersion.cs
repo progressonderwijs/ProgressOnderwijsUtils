@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtils
 			Current = new Data {
 				Node = nodeId,
 				Date = AssemblyCreationDate,
-				Branch = buildInfo["branch"],
+				Branch = buildInfo["branches"],
 				Tags = buildInfo["tags"],
 
 				ComputerName = buildInfo["ComputerName"].Trim(),
