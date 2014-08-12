@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
 		 * Nodig build scriptje ergens in de applicatie:
 		 * 
   <Target Name="AfterBuild">
-	<Exec Command="hg id --encoding utf8 -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branches:{branches}\ntags:{tags}\ndate:{date|isodate}\n&quot; &gt;&gt; ProgressVersion.Info.Generated " />
+	<Exec Command="hg id --encoding utf8 -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branch:{branches}\ntags:{tags}\ndate:{date|isodate}\n&quot; &gt;&gt; ProgressVersion.Info.Generated " />
 	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="ComputerName:$(COMPUTERNAME)" Overwrite="false" Encoding="UTF-8" />
 	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildTag:$(BUILD_TAG)" Overwrite="false" Encoding="UTF-8" />
 	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildJob:$(BUILD_URL)" Overwrite="false" Encoding="UTF-8" />
@@ -40,7 +40,6 @@ namespace ProgressOnderwijsUtils
 			//public DateTime WcDateUtc { get; set; }
 		}
 		public static readonly Data Current;
-
 
 		static ProgressNetBuildVersion()
 		{
@@ -84,7 +83,7 @@ namespace ProgressOnderwijsUtils
 			Current = new Data {
 				Node = nodeId,
 				Date = AssemblyCreationDate,
-				Branch = buildInfo["branches"],
+				Branch = buildInfo["branch"],
 				Tags = buildInfo["tags"],
 
 				ComputerName = buildInfo["ComputerName"].Trim(),
