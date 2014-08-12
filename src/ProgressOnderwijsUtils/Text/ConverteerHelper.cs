@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
 			yield return TryToString<string>(obj, o => language =>
 				o);
 			yield return TryToString<int>(obj, o => language =>
-				((long)o).ToString(format ?? "D", language.GetCulture()));
+				o.ToString(format ?? "D", language.GetCulture()));
 			yield return TryToString<Enum>(obj, o => language =>
 				Converteer.TranslateEnum(o).Translate(language).Text);
 			yield return TryToString<decimal>(obj, o => language =>
@@ -46,7 +46,19 @@ namespace ProgressOnderwijsUtils
 				o.ContainsFile ? string.Format("{0} ({1} KB)", o.FileName, o.Content.Length / 1000m) : "");
 			yield return TryToString<double>(obj, o => language =>
 				o.ToString(format ?? "0.##", language.GetCulture()));
+			yield return TryToString<float>(obj, o => language =>
+				o.ToString(format ?? "0.##", language.GetCulture()));
 			yield return TryToString<long>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<ushort>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<uint>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<short>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<sbyte>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<byte>(obj, o => language =>
 				o.ToString(format ?? "D", language.GetCulture()));
 			yield return TryToString<bool>(obj, o => language => {
 				switch (language)
