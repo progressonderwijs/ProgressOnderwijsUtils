@@ -12,8 +12,6 @@ namespace ProgressOnderwijsUtils
 	public static class ConverteerHelper
 	{
 		public const string GELD_EURO = "N02";
-		public const string ALLEEN_DATUM = "dd-MM-yyyy";
-		public const string DATUM_EN_TIJD_IN_MINUTEN = "dd-MM-yyyy HH:mm";
 
 		static TranslateFunction TryToString<T>(object obj, Func<T, TranslateFunction> translator)
 		{
@@ -33,7 +31,9 @@ namespace ProgressOnderwijsUtils
 			yield return TryToString<decimal>(obj, o => language =>
 				o.ToString(format ?? GELD_EURO, language.GetCulture()));
 			yield return TryToString<DateTime>(obj, o => language =>
-				o.ToString(format ?? (o == o.Date ? ALLEEN_DATUM : DATUM_EN_TIJD_IN_MINUTEN), language.GetCulture()));
+				o.ToString(format ?? (o == o.Date
+					? Converteer.DateFormatStrings(DatumFormaat.AlleenDatum, language).Text
+					: Converteer.DateFormatStrings(DatumFormaat.DatumEnTijdInMinuten, language).Text), language.GetCulture()));
 			yield return TryToString<TimeSpan>(obj, o => language =>
 				o.ToString(format ?? "g", language.GetCulture()));
 			yield return TryToString<char>(obj, o => language =>

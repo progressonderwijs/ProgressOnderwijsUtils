@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using ProgressOnderwijsUtils.Text;
 
 namespace ProgressOnderwijsUtils
 {
@@ -44,9 +43,9 @@ namespace ProgressOnderwijsUtils
 	{
 		static readonly Dictionary<DatumFormaat, TextVal> DATE_FORMATS = new Dictionary<DatumFormaat, TextVal>
 		{
-			{ DatumFormaat.AlleenDatum, new TextVal(ConverteerHelper.ALLEEN_DATUM, null) },
+			{ DatumFormaat.AlleenDatum, new TextVal("dd-MM-yyyy", null) },
 			{ DatumFormaat.AlleenTijd, new TextVal("HH:mm", null) },
-			{ DatumFormaat.DatumEnTijdInMinuten, new TextVal(ConverteerHelper.DATUM_EN_TIJD_IN_MINUTEN, null) },
+			{ DatumFormaat.DatumEnTijdInMinuten, new TextVal("dd-MM-yyyy HH:mm", null) },
 			{ DatumFormaat.DatumEnTijdInSeconden, new TextVal("dd-MM-yyyy HH:mm:ss", null) },
 			{ DatumFormaat.DatumEnTijdInMilliseconden, new TextVal("dd-MM-yyyy HH:mm:ss.fff", null) },
 			{ DatumFormaat.DatumToolTipTijd, new TextVal("dd-MM-yyyy", "dd-MM-yyyy HH:mm:ss.fff") },
@@ -82,12 +81,13 @@ namespace ProgressOnderwijsUtils
 			{ Tuple.Create(Taal.DU, DatumFormaat.DatumZonderJaar), new TextVal("dd.MM", "dd.MM.yyyy") },
 		};
 
-		static readonly DateTime dtWithManyDigits = new DateTime(2000, 1, 1) - TimeSpan.FromDays(1) - TimeSpan.FromHours(1) - TimeSpan.FromMinutes(1) - TimeSpan.FromSeconds(1) - TimeSpan.FromMilliseconds(1) - TimeSpan.FromTicks(1);
-		static readonly Dictionary<DatumFormaat, int> formaatLengte = DATE_FORMATS.Keys.ToDictionary(
+		static readonly DateTime DT_WITH_MANY_DIGITS = new DateTime(2000, 1, 1) - TimeSpan.FromDays(1) - TimeSpan.FromHours(1) - TimeSpan.FromMinutes(1) - TimeSpan.FromSeconds(1) - TimeSpan.FromMilliseconds(1) - TimeSpan.FromTicks(1);
+		
+		static readonly Dictionary<DatumFormaat, int> FORMAAT_LENGTE = DATE_FORMATS.Keys.ToDictionary(
 			k => k,
 			k => EnumHelpers.GetValues<Taal>().Where(t => t != Taal.None).Max(taal => {
 				var formatString = DateFormatStrings(k, taal).Text;
-				return dtWithManyDigits.ToString(formatString, taal.GetCulture()).Length;
+				return DT_WITH_MANY_DIGITS.ToString(formatString, taal.GetCulture()).Length;
 			}));
 
 
@@ -98,7 +98,7 @@ namespace ProgressOnderwijsUtils
 
 		public static int DateTimeStringLengthForFormat(DatumFormaat formaat)
 		{
-			return formaatLengte[formaat];
+			return FORMAAT_LENGTE[formaat];
 		}
 
 		static readonly IDictionary<NummerFormaat, string> DECIMAL_FORMATS = new Dictionary<NummerFormaat, string>
@@ -178,8 +178,12 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static ITranslatable ToText(DateTime? dt, DatumFormaat format)
 		{
-			// TODO format string voor taal
-			return ToText(dt, DATE_FORMATS[format].Text, DATE_FORMATS[format].ExtraText);
+			if (string.IsNullOrEmpty(DATE_FORMATS[format].ExtraText))
+				return Translatable.CreateTranslatable(taal => ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, taal).Text)(taal));
+			else
+				return Translatable.CreateTranslatable(
+					taal => ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, taal).Text)(taal),
+					taal => ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, taal).ExtraText)(taal));
 		}
 
 
