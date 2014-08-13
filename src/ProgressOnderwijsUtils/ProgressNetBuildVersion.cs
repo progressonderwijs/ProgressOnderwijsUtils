@@ -13,18 +13,6 @@ namespace ProgressOnderwijsUtils
 	/// </summary>
 	public static class ProgressNetBuildVersion
 	{
-		/* 
-		 * Nodig build scriptje ergens in de applicatie:
-		 * 
-  <Target Name="AfterBuild">
-	<Exec Command="hg id --encoding utf8 -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branch:{branches}\ntags:{tags}\ndate:{date|isodate}\n&quot; &gt;&gt; ProgressVersion.Info.Generated " />
-	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="ComputerName:$(COMPUTERNAME)" Overwrite="false" Encoding="UTF-8" />
-	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildTag:$(BUILD_TAG)" Overwrite="false" Encoding="UTF-8" />
-	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildJob:$(BUILD_URL)" Overwrite="false" Encoding="UTF-8" />
-	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="Configuration:$(Configuration)" Overwrite="false" Encoding="UTF-8" />
-  </Target>
-
-		*/
 		[Serializable]
 		public struct Data : IMetaObject
 		{
@@ -61,7 +49,7 @@ namespace ProgressOnderwijsUtils
 			var lines =
 				dirsWithAncestors
 				.Where(Directory.Exists)
-				.Select(dir => Path.Combine(dir, "ProgressVersion.Info.Generated"))
+				.Select(dir => Path.Combine(dir, "ProgressVersion.Info"))
 				.Where(File.Exists)
 				.OrderByDescending(File.GetLastWriteTimeUtc) //try newest one first
 				.Select(File.ReadAllLines)
