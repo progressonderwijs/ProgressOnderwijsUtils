@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
@@ -138,7 +139,25 @@ namespace ProgressOnderwijsUtils
 				bulkCopy.DestinationTableName = tableName;
 				foreach (var mapEntry in mapping)
 					bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
-				bulkCopy.WriteToServer(objectReader);
+				
+				try
+				{
+					bulkCopy.WriteToServer(objectReader);
+				}
+				catch (SqlException ex)
+				{
+					var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid (\d+).");
+					var match = colid_message.Match(ex.Message);
+					if (match.Success)
+					{
+						var col_id = int.Parse(match.Groups[1].Value);
+						throw new Exception(string.Format(
+							"Received an invalid column length from the bcp client for column name {0}",
+							clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id-1].SrcIndex].Name
+						), ex);
+					}
+					throw;
+				}
 			}
 		}
 
