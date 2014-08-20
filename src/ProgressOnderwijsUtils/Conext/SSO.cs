@@ -49,7 +49,8 @@ namespace ProgressOnderwijsUtils.Conext
 
 		public override string ToString()
 		{
-			return "uid='"+uid+"'; domain='"+domain+"'; emails='"+StringUtils.ToFlatDebugString(email)+"'; roles='"+StringUtils.ToFlatDebugString(roles)+"'";
+			return string.Format("uid='{0}'; domain='{1}'; emails='{2}'; roles='{3}'",
+				uid, domain, StringUtils.ToFlatDebugString(email), StringUtils.ToFlatDebugString(roles));
 		}
 	}
 
@@ -134,7 +135,7 @@ namespace ProgressOnderwijsUtils.Conext
 			if (response.Descendants(SchemaSet.SAMLP_NS + "StatusCode").Single().Attribute("Value").Value == "urn:oasis:names:tc:SAML:2.0:status:Success")
 			{
 				var result = response.Descendants(SchemaSet.SAML_NS + "Assertion").Single();
-				MetaDataFactory.Validate(result, MetaDataFactory.GetIdentityProvider(idp).certificate);
+				// TODO: MetaDataFactory.Validate(result, MetaDataFactory.GetIdentityProvider(idp).certificate);
 				return result;
 			}
 
@@ -146,7 +147,7 @@ namespace ProgressOnderwijsUtils.Conext
 		{
 			LOG.Debug(() => string.Format("GetAttributes(assertion='{0}')", assertion));
 
-			MetaDataFactory.Validate(assertion, MetaDataFactory.GetIdentityProvider(idp).certificate);
+			// TODO: MetaDataFactory.Validate(assertion, MetaDataFactory.GetIdentityProvider(idp).certificate);
 			return new Attributes
 			{
 				uid = GetAttribute(assertion, UID),
