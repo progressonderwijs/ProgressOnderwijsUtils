@@ -47,11 +47,6 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public static T Create(int? value)
-		{
-			return (value == null) ? null : Create(value.Value);
-		}
-
 		public static T Create(int value)
 		{
 			return new T { Value = value };
