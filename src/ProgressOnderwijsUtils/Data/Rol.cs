@@ -68,10 +68,10 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Student wijzig personalia")]
 		StudentWijzigPersonalia = 32,
 
-		[MpLabel("Opleidingen bekijken")]
+		[MpLabel("Opleidingen bekijken"), Implies(NietReguliereOpleidingenBekijken)]
 		OpleidingenBekijken = 35,
 
-		[MpLabel("Opleidingen toevoegen verwijderen wijzigen")]
+		[MpLabel("Opleidingen toevoegen verwijderen wijzigen"), Implies(Rol.NietReguliereOpleidingenWijzigen)]
 		OpleidingenToevoegenVerwijderenWijzigen = 36,
 
 		[MpLabel("Student tabblad")]
@@ -267,7 +267,7 @@ namespace ProgressOnderwijsUtils
 		BekijkenKengetallen = 119,
 
 		[MpLabel("Bekijken studievolg"), Toekenbaar,
-		 Implies(StudentOnderwijsTabblad, VolgOnderwijsInzien, BekijkenInschrijvingen, BsaStatusBekijken)]
+		 Implies(StudentOnderwijsTabblad, VolgOnderwijsInzien)]
 		BekijkenStudievolg = 121,
 
 		[MpLabel("Bekijken studielinkberichten"), Toekenbaar,
@@ -310,7 +310,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Invoer niet-reguliere inschrijvingen"), Toekenbaar,
 		 Implies(NietReguliereInschrijvingenWijzigenVerwijderen, NietReguliereInschrijvingenToevoegen, StudentToevoegen,
-			 StudentAdresWijzigenBeperkt, BekijkenInschrijvingen, StudentWijzigPersonaliaBeperkt)]
+			 StudentAdresWijzigenBeperkt, StudentWijzigPersonaliaBeperkt)]
 		InvoerNietReguliereInschrijvingen = 129,
 
 		[MpLabel("Wijzigen financieel"), Toekenbaar,
@@ -352,8 +352,8 @@ namespace ProgressOnderwijsUtils
 		BeheerStudievolg = 140,
 
 		[MpLabel("Bekijken inschrijvingen"), Toekenbaar,
-		 Implies(StudentBekijkPersonalia, StudentTabblad, StudentPersoonTabblad, StudentInschrijvingenTabblad, VooropleidingenBekijken,
-			 AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, StudentAdresBekijken)]
+		 Implies(BekijkenStudentBasis, StudentInschrijvingenTabblad, VooropleidingenBekijken,
+			 AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken)]
 		BekijkenInschrijvingen = 160,
 
 		[MpLabel("Bekijken inschrijvingen uitgebreid"), Toekenbaar,
@@ -566,5 +566,30 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Wijzigen Matching"), Toekenbaar, Implies(Rol.BekijkenInschrijvingen)]
 		WijzigenMatching = 235,
 
-	}
+        [MpLabel("Bekijken student basis"),
+         Implies(StudentTabblad, StudentBekijkPersonalia, StudentPersoonTabblad, StudentAdresBekijken)]
+        BekijkenStudentBasis = 236,
+
+        [MpLabel("Raapleeg Curacao"), Toekenbaar, Implies(BekijkenStudentBasis, StudentInschrijvingenTabblad, NietReguliereInschrijvingenBekijken,
+            VooropleidingenBekijken,StudentCommunicatieTabblad,InschrijvingNotitiesBekijken,
+            StudentKenmerkenTabblad, StudentOnderwijsTabblad, StudentIdentificatieBekijken, VolgOnderwijsInzien)]
+        RaadpleegCuracao = 237,
+
+        [MpLabel("Wijzig Curacao"), Toekenbaar, Implies(RaadpleegCuracao, InvoerNietReguliereInschrijvingen,
+           WijzigenStudentKenmerken, StudentPasfotoToevoegenVerwijderen, InschrijvingNotitiesToevoegenWijzigenVerwijderen,
+            StudentWijzigPersonalia, StudentAdresWijzigenVerwijderen
+           )]
+        WijzigCuracao = 238,
+
+        [MpLabel("Beheer Curacao"), Toekenbaar, Implies(WijzigCuracao, BeheerAccountsEnRollen, StudentenSamenvoegen, OrganisatieToevoegenVerwijderenWijzigen,
+            NietReguliereOpleidingenWijzigen
+            )]
+        BeheerCuracao = 239,
+
+        [MpLabel("Niet-reguliere opleidingen bekijken")]
+        NietReguliereOpleidingenBekijken = 240,
+
+        [MpLabel("Niet-reguliere opleidingen wijzigen"), Implies(NietReguliereOpleidingenBekijken)]
+        NietReguliereOpleidingenWijzigen = 241,
+    }
 }
