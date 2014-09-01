@@ -4,7 +4,6 @@ using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils.Test
 {
