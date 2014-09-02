@@ -83,22 +83,47 @@ namespace ProgressOnderwijsUtils
 		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible
 		{
 			public static readonly TEnum[] EnumValues;
-			public static readonly ILookup<TEnum, MemberInfo> EnumMembers;
 			public static readonly bool IsFlags;
 			public static readonly Func<TEnum, TEnum, bool> HasFlag;
 			public static readonly Func<TEnum, TEnum, TEnum> AddFlag;
 			public static readonly Func<TEnum, TEnum, bool> FlagsOverlap;
 			static readonly Type underlying;
 			static readonly TEnum[] EnumInOverlapOrder;
+			static readonly FieldInfo[] enumFields;
+
 
 			static EnumMetaCache()
 			{
 				if (!typeof(TEnum).IsEnum)
 					throw new InvalidOperationException("EnumMetaCache werkt alleen met enums");
 
-				EnumValues = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static).Select(f => (TEnum)f.GetValue(null)).Distinct().ToArray();
+				enumFields = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static);
 
-				EnumMembers = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static).ToLookup(f => (TEnum)f.GetValue(null), f => (MemberInfo)f);
+				//The following linq-based computation of EnumValues is several times slower:
+				//EnumValues = enumFields.Select(f => (TEnum)f.GetValue(null)).Distinct().ToArray();
+
+				EnumValues = new TEnum[enumFields.Length];
+				int nextIndex = 0;
+				foreach (var fieldInfo in enumFields)
+				{
+					bool duplicate = false;
+					var value = (TEnum)fieldInfo.GetValue(null);
+					for (int i = 0; i < nextIndex; i++)
+						if (EnumValues[i].Equals(value))
+						{
+							duplicate = true;
+							break;
+						}
+					if (!duplicate)
+					{
+						EnumValues[nextIndex] = value;
+						nextIndex++;
+					}
+				}
+				if (nextIndex != EnumValues.Length)
+					Array.Resize(ref EnumValues, nextIndex);
+					
+
 
 				underlying = Enum.GetUnderlyingType(typeof(TEnum));
 				IsFlags = typeof(TEnum).GetCustomAttributes(typeof(FlagsAttribute)).Any();
@@ -181,10 +206,10 @@ namespace ProgressOnderwijsUtils
 			{
 				public static readonly ILookup<TEnum, TAttr> EnumMemberAttributes =
 					(
-						from g in EnumMembers
-						from memb in g
+						from memb in enumFields
+						let value = (TEnum)memb.GetValue(null)
 						from attr in memb.GetCustomAttributes<TAttr>()
-						select new { EnumValue = g.Key, Attr = attr }
+						select new { EnumValue = value, Attr = attr }
 						).ToLookup(x => x.EnumValue, x => x.Attr);
 			}
 
