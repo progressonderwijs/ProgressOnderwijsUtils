@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
@@ -133,30 +134,62 @@ namespace ProgressOnderwijsUtils
 		[Pure]
 		public static QueryBuilder TableParam(IEnumerable<double> o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
 		[Pure]
-		public static QueryBuilder TableParamDynamic(Array o) { return new SingleComponent(QueryComponent.ToTableParameter((dynamic)o)); }
+		public static QueryBuilder TableParamDynamic(Array o) { return new SingleComponent(QueryComponent.ToTableParameter(o)); }
 		// ReSharper restore UnusedMember.Global
 
 		[Pure]
 		public static QueryBuilder Create(string str, params object[] parms)
 		{
-			IQueryComponent[] parValues = parms.Select(QueryComponent.CreateParam).ToArray();
+			if(str ==null)
+				throw new ArgumentNullException("str");
 
+			IQueryComponent[] parValues = parms.Select(QueryComponent.CreateParam).ToArray();
 			QueryBuilder query = Empty;
 
-			foreach (Match paramRefMatch in paramsRegex.Matches(str))
+			int pos = 0;
+			foreach (var paramRefMatch in ParamRefMatches(str))
 			{
-				if (paramRefMatch.Groups["paramRef"].Success)
-					query = Concat(query, parValues[Int32.Parse(paramRefMatch.Groups["paramRef"].Value)]);
-				else
-				{
-					Debug.Assert(paramRefMatch.Groups["queryText"].Success);
-					query = Concat(query, QueryComponent.CreateString(paramRefMatch.Groups["queryText"].Value));
-				}
+				query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.Index - pos)));
+				query = Concat(query, parValues[Int32.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2))]);
+				pos = paramRefMatch.Index + paramRefMatch.Length;
 			}
+			query = Concat(query, QueryComponent.CreateString(str.Substring(pos, str.Length - pos)));
+
 			return query;
 		}
+		public struct SubstringPosition
+		{
+			public int Index, Length;
+		}
 
-		static readonly Regex paramsRegex = new Regex(@"\{(?<paramRef>\d+)\}|(?<queryText>((?!\{\d+\}).)+)", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
+
+		static IEnumerable<SubstringPosition> ParamRefMatches(string query)
+		{
+			for (int pos = 0; pos < query.Length; pos++)
+			{
+				char c = query[pos];
+				if (c == '{')
+				{
+					for (int pI = pos + 1; pI < query.Length; pI++)
+					{
+						if (query[pI] >= '0' && query[pI] <= '9')
+							continue;
+						else if (query[pI] == '}' && pI >= pos + 2) //{} testen
+						{
+							yield return new SubstringPosition { Index = pos, Length = pI - pos + 1 };
+							pos = pI;
+							break;
+						}
+						else
+						{
+							break;
+						}
+					}
+				}
+			}
+		}
+
+
 		private static readonly string[] AllColumns = new[] { "*" };
 
 		[Pure]

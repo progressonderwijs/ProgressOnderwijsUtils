@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
+using System.Data.Entity.Core;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -9,8 +9,10 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using MoreLinq;
+using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
+using EntityException = System.Data.Entity.Core.EntityException;
 
 namespace ProgressOnderwijsUtils
 {
@@ -42,6 +44,10 @@ namespace ProgressOnderwijsUtils
 
 	public static class Utils
 	{
+		public static Lazy<T> Lazy<T>(Func<T> factory)
+		{
+			return new Lazy<T>(factory, LazyThreadSafetyMode.PublicationOnly);
+		}
 
 		public static bool ElfProef(int getal)
 		{
@@ -165,23 +171,41 @@ namespace ProgressOnderwijsUtils
 		public static Expression<Func<T, TR>> E<T, TR>(Expression<Func<T, TR>> v) { return v; } //purely for delegate type inference
 		public static Expression<Func<T1, T2, TR>> E<T1, T2, TR>(Expression<Func<T1, T2, TR>> v) { return v; } //purely for delegate type inference
 
-
-		public static Func<T, TR> MemoizeConcurrent<T, TR>(this Func<T, TR> v)
-		{
-			var cache = new ConcurrentDictionary<T, TR>();
-			return arg => cache.GetOrAdd(arg, v);
-		}
-
-		public static Func<TContext, TKey, TR> MemoizeConcurrent<TContext, TKey, TR>(this Func<TContext, TKey, TR> v) where TContext : IDisposable
-		{
-			var cache = new ConcurrentDictionary<TKey, TR>();
-			return (ctx, arg) => cache.GetOrAdd(arg, _ => v(ctx, arg));
-		}
-
 		public static string GetSqlExceptionDetailsString(Exception exception)
 		{
 			SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
 			return sql == null ? null : String.Format("[code='{0:x}'; number='{1}'; state='{2}']", sql.ErrorCode, sql.Number, sql.State);
+		}
+
+		/// <summary>
+		/// Executes a test body, marking a test as inconclusive rather than failed when a timeout occurs.
+		/// </summary>
+		public static void IgnoreTimeouts(Action test)
+		{
+			//Ideally, we'd retry the test, however, since lots of test are in a complex inheritance chain
+			//we can't really seperate the test body from the side-effects in the setup/teardown.
+			//In particuarly, a retry wouldn't run in its own environment.
+
+			try { test(); }
+			catch (Exception e)
+			{
+				if (IsTimeoutException(e))
+					Assert.Inconclusive("TIMEOUT DETECETD\n\n" + e);
+				throw;
+			}
+		}
+
+		static bool IsTimeoutException(Exception e)
+		{
+			for (var current = e; current != null; current = current.InnerException)
+			{
+				var sqlE = current as SqlException;
+				if (sqlE != null && sqlE.Number == -2)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		public static bool IsInTestSession()
@@ -302,7 +326,7 @@ namespace ProgressOnderwijsUtils
 	public class ComparisonComparer<T> : IComparer<T>
 	{
 		readonly Comparison<T> comparer;
- 
+
 		public ComparisonComparer(Comparison<T> comparer)
 		{
 			this.comparer = comparer;
@@ -321,7 +345,7 @@ namespace ProgressOnderwijsUtils
 	public class EqualsEqualityComparer<T> : IEqualityComparer<T>
 	{
 		readonly Func<T, T, bool> equals;
-		readonly Func<T, int> hashCode; 
+		readonly Func<T, int> hashCode;
 
 		public EqualsEqualityComparer(Func<T, T, bool> equals, Func<T, int> hashCode = null)
 		{
@@ -335,7 +359,7 @@ namespace ProgressOnderwijsUtils
 		{
 			return equals(x, y);
 		}
-		
+
 		public int GetHashCode(T obj)
 		{
 			return hashCode == null ? obj.GetHashCode() : hashCode(obj);

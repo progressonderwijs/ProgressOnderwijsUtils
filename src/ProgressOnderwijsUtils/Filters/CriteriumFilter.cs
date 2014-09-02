@@ -35,7 +35,8 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.EndsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
-		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn, BooleanComparer.HasFlag,  }; } }
+		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn, BooleanComparer.HasFlag, }; } }
+		public static BooleanComparer[] BooleanComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.NotEqual, }; } }
 
 		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde)
 		{
@@ -48,7 +49,7 @@ namespace ProgressOnderwijsUtils
 			{
 				try
 				{
-					QueryComponent.ToTableParameter((dynamic)(Array)Waarde);
+					QueryComponent.ToTableParameter((Array)Waarde);
 				}
 				catch (Exception e)
 				{
@@ -302,14 +303,14 @@ namespace ProgressOnderwijsUtils
 		// ReSharper disable MemberCanBePrivate.Global
 		//not private due to access via Expression trees.
 		public static bool StartsWithHelper(string val, string with) { return val != null && with != null && val.StartsWith(with, StringComparison.OrdinalIgnoreCase); }
-		static readonly MethodInfo stringStartsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
 		public static bool EndsWithHelper(string val, string with) { return val != null && with != null && val.EndsWith(with, StringComparison.OrdinalIgnoreCase); }
-		static readonly MethodInfo stringEndsWithMethod = ((Func<string, string, bool>)EndsWithHelper).Method;
 		public static bool ContainsHelper(string val, string needle) { return val != null && needle != null && -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase); }
-		static readonly MethodInfo stringContainsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
 		public static bool HasFlagHelper(long val, long flag) { return (val & flag) == flag; }
-		public readonly MethodInfo hasFlagMethod = ((Func<long, long, bool>)HasFlagHelper).Method;
 		// ReSharper restore MemberCanBePrivate.Global
+		static readonly MethodInfo stringStartsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
+		static readonly MethodInfo stringEndsWithMethod = ((Func<string, string, bool>)EndsWithHelper).Method;
+		static readonly MethodInfo stringContainsMethod = ((Func<string, string, bool>)ContainsHelper).Method;
+		static readonly MethodInfo hasFlagMethod = ((Func<long, long, bool>)HasFlagHelper).Method;
 
 		protected internal override Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr, Expression dateTimeNowTokenValue, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier)
 		{
@@ -330,19 +331,25 @@ namespace ProgressOnderwijsUtils
 		{
 			var waardeExpr = ConvertedWaardeExpr(objParamExpr, dateTimeNowTokenValue, ref coreExpr);
 
-			switch (Comparer)
+			return ConstructComparerExpressionTree(coreExpr, waardeExpr, Comparer);
+		}
+
+		static Expression ConstructComparerExpressionTree(Expression coreExpr, Expression waardeExpr, BooleanComparer comparer)
+		{
+			switch (comparer)
 			{
 				case BooleanComparer.LessThan:
 					return Expression.LessThan(coreExpr, waardeExpr);
 				case BooleanComparer.LessThanOrEqual:
 					return Expression.LessThanOrEqual(coreExpr, waardeExpr);
-				case BooleanComparer.IsNull:
-				case BooleanComparer.Equal:
-					return Expression.Equal(coreExpr, waardeExpr);
 				case BooleanComparer.GreaterThanOrEqual:
 					return Expression.GreaterThanOrEqual(coreExpr, waardeExpr);
 				case BooleanComparer.GreaterThan:
 					return Expression.GreaterThan(coreExpr, waardeExpr);
+
+				case BooleanComparer.IsNull:
+				case BooleanComparer.Equal:
+					return Expression.Equal(coreExpr, waardeExpr);
 
 				case BooleanComparer.IsNotNull:
 				case BooleanComparer.NotEqual:
@@ -371,15 +378,21 @@ namespace ProgressOnderwijsUtils
 					: Waarde == null ? Expression.Default(coreExpr.Type.MakeNullableType() ?? coreExpr.Type)
 						: (Expression)Expression.Constant(Waarde);
 
-			var waardeNullable = waardeExpr.Type.IfNullableGetNonNullableType() != null;
-			var colNullable = coreExpr.Type.IfNullableGetNonNullableType() != null;
-			if (waardeNullable != colNullable)
-				if (waardeNullable)
+			if (ComparerUsesUnderlyingType(Comparer))
+				coreExpr = CastAwayEnum(coreExpr);
+
+			var waardeIsNullable = waardeExpr.Type.IfNullableGetNonNullableType() != null;
+			var colIsNullable = coreExpr.Type.IfNullableGetNonNullableType() != null;
+
+
+			if (waardeIsNullable != colIsNullable)
+				if (waardeIsNullable)
 					coreExpr = Expression.Convert(coreExpr, coreExpr.Type.MakeNullableType());
 				else
 					waardeExpr = Expression.Convert(waardeExpr, waardeExpr.Type.MakeNullableType());
 
-			bool isNullable = colNullable || waardeNullable;
+			bool isNullable = colIsNullable || waardeIsNullable;
+
 			if (waardeExpr.Type != coreExpr.Type) //e.g. enums
 				if (waardeExpr.Type.GetNonNullableUnderlyingType() == coreExpr.Type.GetNonNullableUnderlyingType())
 				{
@@ -393,6 +406,28 @@ namespace ProgressOnderwijsUtils
 				else
 					throw new InvalidOperationException("cannot find conversion for column " + KolomNaam + " type " + ObjectToCode.GetCSharpFriendlyTypeName(coreExpr.Type) + " and value '" + ObjectToCode.ComplexObjectToPseudoCode(Waarde) + "'of type " + ObjectToCode.GetCSharpFriendlyTypeName(waardeExpr.Type));
 			return waardeExpr;
+		}
+
+		static Expression CastAwayEnum(Expression expr)
+		{
+			var type = expr.Type;
+			var underlyingType = type.GetUnderlyingType();
+			return type == underlyingType
+				? expr
+				: Expression.Convert(expr, underlyingType);
+		}
+
+		static Expression AddPrecondition(Expression precondition, Expression expr)
+		{
+			return precondition == null ? expr : Expression.AndAlso(precondition, expr);
+		}
+
+		static bool ComparerUsesUnderlyingType(BooleanComparer comparer)
+		{
+			return comparer == BooleanComparer.GreaterThan
+				|| comparer == BooleanComparer.GreaterThanOrEqual
+				|| comparer == BooleanComparer.LessThan
+				|| comparer == BooleanComparer.LessThanOrEqual;
 		}
 
 		Expression ArrayMembershipExpression(Expression coreExpr)

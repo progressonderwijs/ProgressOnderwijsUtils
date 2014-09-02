@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
@@ -6,63 +7,92 @@ using MoreLinq;
 namespace ProgressOnderwijsUtils
 {
 	public delegate string TranslateFunction(Taal taal = Taal.NL);
+
+
 	public static class ConverteerHelper
 	{
-		#region ToString implementations for use from dynamic code
-		// ReSharper disable MemberCanBePrivate.Global
-		// ReSharper disable UnusedParameter.Global
-		//used in dynamic code:
-		public static TranslateFunction ToString(IIdentifier i, string format) { return language => i.Value.ToString(format ?? "D", language.GetCulture()); }
-		public static TranslateFunction ToString(long l, string format) { return language => l.ToString(format ?? "D", language.GetCulture()); }
-		public static TranslateFunction ToString(double d, string format) { return language => d.ToString(format ?? "0.##", language.GetCulture()); }
-		public static TranslateFunction ToString(decimal d, string format) { return language => d.ToString(format ?? GELD_EURO, language.GetCulture()); }
-		public static TranslateFunction ToString(TimeSpan ts, string format) { return language => ts.ToString(format ?? "g", language.GetCulture()); }
-		public static TranslateFunction ToString(DateTime dt, string format) { return language => dt.ToString(format ?? (dt == dt.Date ? ALLEEN_DATUM : DATUM_EN_TIJD_IN_MINUTEN), language.GetCulture()); }
-		public static TranslateFunction ToString(FileData obj, string format) { return language => obj.ContainsFile ? string.Format("{0} ({1} KB)", obj.FileName, obj.Content.Length / 1000m) : ""; }
-		public static TranslateFunction ToString(VariantData obj, string format) { return language => obj.ToUiString(); }
-		public static TranslateFunction ToString(string str, string format) { return language => str; }
-		public static TranslateFunction ToString(char c, string format) { return language => new string(c, 1); }
-		public static TranslateFunction ToString(XhtmlData obj, string format) { return language => obj.ToUiString(); }
-		public static TranslateFunction ToString(ITranslatable obj, string format) { return language => obj.Translate(language).Text; }
-		public static TranslateFunction ToString(Enum obj, string format) { return ToString(Converteer.TranslateEnum(obj), format); }
-		public static TranslateFunction ToString<T>(T[] arr, string format)
-		{
-			var subtrans = arr.Select(obj => (TranslateFunction)ConverteerHelper.ToString((dynamic)obj, format)).ToArray();
+		public const string GELD_EURO = "N02";
 
-			return language => subtrans.Select(f => f(language)).JoinStrings("\n");
+		static TranslateFunction TryToString<T>(object obj, Func<T, TranslateFunction> translator)
+		{
+			return obj is T ? translator((T)obj) : null;
 		}
 
-
-		public static TranslateFunction ToString(bool b, string format)
+		static IEnumerable<TranslateFunction> ResolveTranslator(object obj, string format)
 		{
-			return language => {
+			yield return TryToString<ITranslatable>(obj, o => language =>
+				o.Translate(language).Text);
+			yield return TryToString<string>(obj, o => language =>
+				o);
+			yield return TryToString<int>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<Enum>(obj, o => language =>
+				Converteer.TranslateEnum(o).Translate(language).Text);
+			yield return TryToString<decimal>(obj, o => language =>
+				o.ToString(format ?? GELD_EURO, language.GetCulture()));
+			yield return TryToString<DateTime>(obj, o => language =>
+				o.ToString(format ?? (o == o.Date
+					? Converteer.DateFormatStrings(DatumFormaat.AlleenDatum, language).Text
+					: Converteer.DateFormatStrings(DatumFormaat.DatumEnTijdInMinuten, language).Text), language.GetCulture()));
+			yield return TryToString<TimeSpan>(obj, o => language =>
+				o.ToString(format ?? "g", language.GetCulture()));
+			yield return TryToString<char>(obj, o => language =>
+				new string(o, 1));
+			yield return TryToString<XhtmlData>(obj, o => language =>
+				o.ToUiString());
+			yield return TryToString<VariantData>(obj, o => language =>
+				o.ToUiString());
+			yield return TryToString<FileData>(obj, o => language =>
+				o.ContainsFile ? string.Format("{0} ({1} KB)", o.FileName, o.Content.Length / 1000m) : "");
+			yield return TryToString<double>(obj, o => language =>
+				o.ToString(format ?? "0.##", language.GetCulture()));
+			yield return TryToString<float>(obj, o => language =>
+				o.ToString(format ?? "0.##", language.GetCulture()));
+			yield return TryToString<long>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<ushort>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<uint>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<short>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<sbyte>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<byte>(obj, o => language =>
+				o.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<bool>(obj, o => language => {
 				switch (language)
 				{
-					case Taal.NL: return b ? "Ja" : "Nee";
-					case Taal.EN: return b ? "Yes" : "No";
-					case Taal.DU: return b ? "Ja" : "Nein";
+					case Taal.NL: return o ? "Ja" : "Nee";
+					case Taal.EN: return o ? "Yes" : "No";
+					case Taal.DU: return o ? "Ja" : "Nein";
 					default: throw new ArgumentOutOfRangeException("language", "Taal niet bekend: " + language);
 				}
-			};
+			});
+			yield return TryToString<IIdentifier>(obj, o => language =>
+				o.Value.ToString(format ?? "D", language.GetCulture()));
+			yield return TryToString<IEnumerable>(obj, o =>
+				ArrayToStringHelper(o, format));
 		}
-		// ReSharper restore UnusedParameter.Global
-		// ReSharper restore MemberCanBePrivate.Global
-		#endregion
-		public const string GELD_EURO = "N02";
-		public const string ALLEEN_DATUM = "dd-MM-yyyy";
-		public const string DATUM_EN_TIJD_IN_MINUTEN = "dd-MM-yyyy HH:mm";
 
 		public static TranslateFunction ToStringDynamic(object obj, string format = null)
 		{
-			if (obj == null || obj == DBNull.Value) return language => "";
-			try
-			{
-				return ConverteerHelper.ToString((dynamic)obj, format);
-			}
-			catch (Exception e)
-			{
-				throw new ConverteerException("unknown type " + obj.GetType() + " to stringify", e);
-			}
+			if (obj == null || obj == DBNull.Value)
+				return language => "";
+
+			foreach (var func in ResolveTranslator(obj, format))
+				if (func != null)
+					return func;
+
+			throw new ConverteerException("unknown type " + obj.GetType() + " to stringify");
+		}
+
+		static TranslateFunction ArrayToStringHelper(IEnumerable o, string format)
+		{
+			var subtrans = o.Cast<object>().Select(elem =>
+				ToStringDynamic(elem, format)).ToArray();
+
+			return language => subtrans.Select(f => f(language)).JoinStrings("\n");
 		}
 	}
 }

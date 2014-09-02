@@ -11,6 +11,19 @@ namespace ProgressOnderwijsUtils.Log4Net
 			if (log.IsDebugEnabled) log.Debug(msg());
 		}
 
+		public static void Debug(this Lazy<ILog> log, Func<object> msg)
+		{
+			log.Value.Debug(msg);
+		}
+		public static void Debug(this Lazy<ILog> log, object msg)
+		{
+			log.Value.Debug(msg);
+		}
+		public static void DebugFormat(this Lazy<ILog> log, string format, params object[] args)
+		{
+			log.Value.DebugFormat(format, args);
+		}
+
 		public static void Debug(this ILog log, Func<object> msg, Exception exception)
 		{
 			if (log.IsDebugEnabled) log.Debug(msg(), exception);
@@ -19,6 +32,14 @@ namespace ProgressOnderwijsUtils.Log4Net
 		public static void Info(this ILog log, Func<object> msg)
 		{
 			if (log.IsInfoEnabled) log.Info(msg());
+		}
+		public static void Info(this Lazy<ILog> log, object msg)
+		{
+			log.Value.Info(msg);
+		}
+		public static void Info(this Lazy<ILog> log, Func<object> msg)
+		{
+			log.Value.Info(msg);
 		}
 
 		public static void Info(this ILog log, Func<object> msg, Exception exception)
@@ -35,6 +56,19 @@ namespace ProgressOnderwijsUtils.Log4Net
 		{
 			if (log.IsWarnEnabled) log.Warn(msg(), exception);
 		}
+		public static void Warn(this Lazy<ILog> log, Func<object> msg)
+		{
+			log.Value.Warn(msg);
+		}
+		public static void Warn(this Lazy<ILog> log, object msg)
+		{
+			log.Value.Warn(msg);
+		}
+		public static void WarnFormat(this Lazy<ILog> log, string format, params object[] args)
+		{
+			log.Value.WarnFormat(format, args);
+		}
+
 
 		public static void Error(this ILog log, Func<object> msg)
 		{
@@ -45,6 +79,19 @@ namespace ProgressOnderwijsUtils.Log4Net
 		{
 			if (log.IsErrorEnabled) log.Error(msg(), exception);
 		}
+		public static void Error(this Lazy<ILog> log, Func<object> msg)
+		{
+			log.Value.Error(msg);
+		}
+		public static void Error(this Lazy<ILog> log, object msg)
+		{
+			log.Value.Error(msg);
+		}
+		public static void ErrorFormat(this Lazy<ILog> log, string format, params object[] args)
+		{
+			log.Value.ErrorFormat(format, args);
+		}
+
 
 		public static void Fatal(this ILog log, Func<object> msg)
 		{

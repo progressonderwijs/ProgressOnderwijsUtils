@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -27,7 +29,8 @@ namespace ProgressOnderwijsUtils
 		}
 
 		/// <summary>
-		/// For enums, nullable types and nullable enums, return non-nullable underlying type; otherwise return original type.
+		/// For enums, nullable types and nullable enums, return non-nullable underlying type;
+		/// otherwise return original type.
 		/// e.g. typeof(MyEnum?) => typeof(int)
 		/// e.g. typeof(string) => typeof(string)
 		/// 
@@ -42,6 +45,21 @@ namespace ProgressOnderwijsUtils
 			return nonNullableType;
 		}
 
+		/// <summary>
+		/// Find (nullable) underlying type corresponding to a (nullable) enum.
+		/// Nullability is unaltered; Non-enum types are unaltered.
+		/// </summary>
+		public static Type GetUnderlyingType(this Type type)
+		{
+			var maybeNonNullable = type.IfNullableGetNonNullableType();
+			if (!(maybeNonNullable ?? type).IsEnum)
+				return type;
+			else if(maybeNonNullable == null)
+				return type.GetEnumUnderlyingType();
+			else
+				return maybeNonNullable.GetEnumUnderlyingType().MakeNullableType();
+
+		}
 
 		public static bool CanBeNull(this Type type)
 		{
@@ -78,5 +96,22 @@ namespace ProgressOnderwijsUtils
 			// ReSharper restore PossibleNullReferenceException
 			return backtickIdx == -1 ? typename : typename.Substring(0, backtickIdx);
 		}
+
+		public static string FriendlyName(this Type type)
+		{
+			return ObjectToCode.GetCSharpFriendlyTypeName(type);
+		}
+
+		public static T Attr<T>(this MemberInfo mi) where T : Attribute
+		{
+			var customAttributes = mi.GetCustomAttributes(typeof(T), true);
+			if (customAttributes.Length == 0)
+				return null;
+			else if (customAttributes.Length > 1)
+				throw new InvalidOperationException("Expected zero or one " + typeof(T) + ", found " + customAttributes.Length);
+			else
+				return (T)customAttributes[0];
+		}
+
 	}
 }

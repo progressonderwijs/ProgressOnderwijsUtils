@@ -1,5 +1,5 @@
-﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
-
+﻿using System.Data.SqlTypes;
+// ReSharper disable PossiblyMistakenUseOfParamsMethod
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -110,7 +110,32 @@ namespace ProgressOnderwijsUtils
 			using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess))
 			{
 				var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.GetDataReaderUnpacker(reader, fieldMappingMode);
-				return unpacker(reader);
+				try
+				{
+					return unpacker(reader);
+				}
+				catch (SqlNullValueException snve)
+				{
+
+					int fieldCount = reader.FieldCount;
+					var mps = MetaObject.GetMetaProperties<T>();
+					for (int i = 0; i < fieldCount; i++)
+					{
+						bool hasNullInNonNullableColumn = false;
+						IMetaProperty<T> mp = null;
+						string name = null;
+						try
+						{
+							name = reader.GetName(i);
+							mp = mps[name];
+							hasNullInNonNullableColumn = !mp.AllowNull && reader.IsDBNull(i);
+						}
+						catch { } //due to SequentialAccess expect many errors.
+						if (hasNullInNonNullableColumn)
+							throw new InvalidOperationException("Cannot unpack column " + name + " into type " + mp.DataType + "; the value NULL was received, yet " + typeof(T).Name + "." + mp.Name + " is non=nullable", snve);
+					}
+					throw;
+				}
 			}
 		}
 
@@ -196,7 +221,7 @@ namespace ProgressOnderwijsUtils
 			return mappings.SelectMany(
 				map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
 				.ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
-		}	
+		}
 		static readonly AssemblyBuilder assemblyBuilder;
 		static readonly ModuleBuilder moduleBuilder;
 		static int counter;
@@ -222,7 +247,7 @@ namespace ProgressOnderwijsUtils
 			static bool SupportsType(Type type)
 			{
 				var underlyingType = type.GetNonNullableUnderlyingType();
-				return GetterMethodsByType.ContainsKey(underlyingType) || 
+				return GetterMethodsByType.ContainsKey(underlyingType) ||
 					(isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset) || typeof(IIdentifier).IsAssignableFrom(underlyingType)));
 			}
 
@@ -421,16 +446,6 @@ namespace ProgressOnderwijsUtils
 				{
 					if (!type.IsSealed || !type.IsPublic)
 						throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor must be a public, sealed type.");
-
-#if false
-					if (!type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery"))
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor must have a public static method DbQuery that returns a QueryBuilder");
-					if (type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery" && mi.ReturnType != typeof(QueryBuilder)))
-						throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor's DbQuery does not return QueryBuilder");
-#endif
-
-					//if (type.GetMethods(BindingFlags.Static | BindingFlags.Public).Any(mi => mi.Name == "DbQuery" && !mi.GetParameters().All(SupportsParameter)))
-					//	throw new ArgumentException(FriendlyName + " : ILoadFromDbByConstructor's DbQuery may only have simple types as parameters (" + GetterMethodsByType.Keys.Select(t => ObjectToCode.GetCSharpFriendlyTypeName(t)).JoinStrings(", ") + ")");
 
 					var constructors = type.GetConstructors().Where(ci => ci.GetParameters().Any()).ToArray();
 					if (constructors.Length != 1)

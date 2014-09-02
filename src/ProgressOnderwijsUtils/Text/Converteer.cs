@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using ProgressOnderwijsUtils.Text;
 
 namespace ProgressOnderwijsUtils
 {
@@ -42,32 +41,65 @@ namespace ProgressOnderwijsUtils
 	/// </summary>
 	public static class Converteer
 	{
-		public static readonly CultureInfo CultureNL = new CultureInfo("nl-NL", false) { DateTimeFormat = { ShortDatePattern = "dd-MM-yyyy" } };
-
-		#region Configuration
-
-		public static readonly IDictionary<DatumFormaat, Tuple<string, string>> DATE_FORMATS = new Dictionary<DatumFormaat, Tuple<string, string>>
+		static readonly Dictionary<DatumFormaat, TextVal> DATE_FORMATS = new Dictionary<DatumFormaat, TextVal>
 		{
-			{ DatumFormaat.AlleenDatum, Tuple.Create(ConverteerHelper.ALLEEN_DATUM, (string)null) },
-			{ DatumFormaat.AlleenTijd, Tuple.Create("HH:mm", (string)null) },
-			{ DatumFormaat.DatumEnTijdInMinuten, Tuple.Create(ConverteerHelper.DATUM_EN_TIJD_IN_MINUTEN, (string)null) },
-			{ DatumFormaat.DatumEnTijdInSeconden, Tuple.Create("dd-MM-yyyy HH:mm:ss", (string)null) },
-			{ DatumFormaat.DatumEnTijdInMilliseconden, Tuple.Create("dd-MM-yyyy HH:mm:ss.fff", (string)null) },
-			{ DatumFormaat.DatumToolTipTijd, Tuple.Create("dd-MM-yyyy", "dd-MM-yyyy HH:mm:ss.fff") },
-			{ DatumFormaat.JaarToolTipDatum, Tuple.Create("yyyy", "dd-MM-yyyy") },
-			{ DatumFormaat.DatumZonderJaar, Tuple.Create("dd-MM", "dd-MM-yyyy") },
-			{ DatumFormaat.SMDatum, Tuple.Create("yyyyMMdd", (string)null) },
-			{ DatumFormaat.SMDatumTijd, Tuple.Create("yyyyMMddHHmmss", (string)null) },
-			{ DatumFormaat.ClieopDatum, Tuple.Create("ddMMyy", (string)null) },
-			{ DatumFormaat.MT940Datum, Tuple.Create("yyMMdd", (string)null) },
-			{ DatumFormaat.VerwInfoDatum, Tuple.Create("yyMMdd", (string)null) },
-			{ DatumFormaat.ISODate, Tuple.Create("yyyy-MM-dd", (string)null) },
-			{ DatumFormaat.ISODateTime, Tuple.Create("yyyy-MM-ddTHH:mm:ss", (string)null) },
+			{ DatumFormaat.AlleenDatum, new TextVal("dd-MM-yyyy", null) },
+			{ DatumFormaat.AlleenTijd, new TextVal("HH:mm", null) },
+			{ DatumFormaat.DatumEnTijdInMinuten, new TextVal("dd-MM-yyyy HH:mm", null) },
+			{ DatumFormaat.DatumEnTijdInSeconden, new TextVal("dd-MM-yyyy HH:mm:ss", null) },
+			{ DatumFormaat.DatumEnTijdInMilliseconden, new TextVal("dd-MM-yyyy HH:mm:ss.fff", null) },
+			{ DatumFormaat.DatumToolTipTijd, new TextVal("dd-MM-yyyy", "dd-MM-yyyy HH:mm:ss.fff") },
+			{ DatumFormaat.JaarToolTipDatum, new TextVal("yyyy", "dd-MM-yyyy") },
+			{ DatumFormaat.DatumZonderJaar, new TextVal("dd-MM", "dd-MM-yyyy") },
+			{ DatumFormaat.SMDatum, new TextVal("yyyyMMdd", null) },
+			{ DatumFormaat.SMDatumTijd, new TextVal("yyyyMMddHHmmss", null) },
+			{ DatumFormaat.ClieopDatum, new TextVal("ddMMyy", null) },
+			{ DatumFormaat.MT940Datum, new TextVal("yyMMdd", null) },
+			{ DatumFormaat.VerwInfoDatum, new TextVal("yyMMdd", null) },
+			{ DatumFormaat.ISODate, new TextVal("yyyy-MM-dd", null) },
+			{ DatumFormaat.ISODateTime, new TextVal("yyyy-MM-ddTHH:mm:ss", null) },
 		};
-		static readonly DateTime dtWithManyDigits = new DateTime(2000, 1, 1) - TimeSpan.FromDays(1) - TimeSpan.FromHours(1) - TimeSpan.FromMinutes(1) - TimeSpan.FromSeconds(1) - TimeSpan.FromMilliseconds(1) - TimeSpan.FromTicks(1);
-		static readonly Dictionary<DatumFormaat, int> formaatLengte = DATE_FORMATS.Keys.ToDictionary(k => k, k => new[] { Taal.NL, Taal.EN, Taal.DU }.Select(t => dtWithManyDigits.ToString(DATE_FORMATS[k].Item1, Translator.GetCulture(t)).Length).Max());
 
-		public static int DateTimeStringLengthForFormat(DatumFormaat formaat) { return formaatLengte[formaat]; }
+		static readonly Dictionary<Tuple<Taal, DatumFormaat>, TextVal> DATE_FORMATS_PER_LANGUAGE = new Dictionary<Tuple<Taal, DatumFormaat>, TextVal>
+		{
+			{ Tuple.Create(Taal.EN, DatumFormaat.AlleenDatum), new TextVal("dd/MM/yyyy", null) },
+			{ Tuple.Create(Taal.EN, DatumFormaat.AlleenTijd), new TextVal("HH:mm", null) },
+			{ Tuple.Create(Taal.EN, DatumFormaat.DatumEnTijdInMinuten), new TextVal("dd/MM/yyyy HH:mm", null) },
+			{ Tuple.Create(Taal.EN, DatumFormaat.DatumEnTijdInSeconden), new TextVal("dd/MM/yyyy HH:mm:ss", null) },
+			{ Tuple.Create(Taal.EN, DatumFormaat.DatumEnTijdInMilliseconden), new TextVal("dd/MM/yyyy HH:mm:ss.fff", null) },
+			{ Tuple.Create(Taal.EN, DatumFormaat.DatumToolTipTijd), new TextVal("dd/MM/yyyy", "dd/MM/yyyy HH:mm:ss.fff") },
+			{ Tuple.Create(Taal.EN, DatumFormaat.JaarToolTipDatum), new TextVal("yyyy", "dd/MM/yyyy") },
+			{ Tuple.Create(Taal.EN, DatumFormaat.DatumZonderJaar), new TextVal("dd/MM", "dd/MM/yyyy") },
+
+			{ Tuple.Create(Taal.DU, DatumFormaat.AlleenDatum), new TextVal("dd.MM.yyyy", null) },
+			{ Tuple.Create(Taal.DU, DatumFormaat.AlleenTijd), new TextVal("HH:mm", null) },
+			{ Tuple.Create(Taal.DU, DatumFormaat.DatumEnTijdInMinuten), new TextVal("dd.MM.yyyy HH:mm", null) },
+			{ Tuple.Create(Taal.DU, DatumFormaat.DatumEnTijdInSeconden), new TextVal("dd.MM.yyyy HH:mm:ss", null) },
+			{ Tuple.Create(Taal.DU, DatumFormaat.DatumEnTijdInMilliseconden), new TextVal("dd.MM.yyyy HH:mm:ss.fff", null) },
+			{ Tuple.Create(Taal.DU, DatumFormaat.DatumToolTipTijd), new TextVal("dd.MM.yyyy", "dd.MM.yyyy HH:mm:ss.fff") },
+			{ Tuple.Create(Taal.DU, DatumFormaat.JaarToolTipDatum), new TextVal("yyyy", "dd.MM.yyyy") },
+			{ Tuple.Create(Taal.DU, DatumFormaat.DatumZonderJaar), new TextVal("dd.MM", "dd.MM.yyyy") },
+		};
+
+		static readonly DateTime DT_WITH_MANY_DIGITS = new DateTime(2000, 1, 1) - TimeSpan.FromDays(1) - TimeSpan.FromHours(1) - TimeSpan.FromMinutes(1) - TimeSpan.FromSeconds(1) - TimeSpan.FromMilliseconds(1) - TimeSpan.FromTicks(1);
+		
+		static readonly Dictionary<DatumFormaat, int> FORMAAT_LENGTE = DATE_FORMATS.Keys.ToDictionary(
+			k => k,
+			k => EnumHelpers.GetValues<Taal>().Where(t => t != Taal.None).Max(taal => {
+				var formatString = DateFormatStrings(k, taal).Text;
+				return DT_WITH_MANY_DIGITS.ToString(formatString, taal.GetCulture()).Length;
+			}));
+
+
+		public static TextVal DateFormatStrings(DatumFormaat formaat, Taal taal = Taal.NL)
+		{
+			return DATE_FORMATS_PER_LANGUAGE.GetOrDefault(Tuple.Create(taal, formaat), DATE_FORMATS[formaat]);
+		}
+
+		public static int DateTimeStringLengthForFormat(DatumFormaat formaat)
+		{
+			return FORMAAT_LENGTE[formaat];
+		}
 
 		static readonly IDictionary<NummerFormaat, string> DECIMAL_FORMATS = new Dictionary<NummerFormaat, string>
 		{
@@ -78,7 +110,6 @@ namespace ProgressOnderwijsUtils
 			{ NummerFormaat.GeldEuroGrootboek, "#,##0.00 D;#,##0.00 C;0.00  "}
 		};
 
-		#endregion
 
 		#region ToString
 
@@ -102,7 +133,7 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static string ToString(DateTime? dt, DatumFormaat format, Taal language = Taal.NL)
 		{
-			return ConverteerHelper.ToStringDynamic(dt, DATE_FORMATS[format].Item1)(language);
+			return ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, language).Text)(language);
 		}
 
 		#endregion
@@ -147,7 +178,12 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		public static ITranslatable ToText(DateTime? dt, DatumFormaat format)
 		{
-			return ToText(dt, DATE_FORMATS[format].Item1, DATE_FORMATS[format].Item2);
+			if (string.IsNullOrEmpty(DATE_FORMATS[format].ExtraText))
+				return Translatable.CreateTranslatable(taal => ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, taal).Text)(taal));
+			else
+				return Translatable.CreateTranslatable(
+					taal => ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, taal).Text)(taal),
+					taal => ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, taal).ExtraText)(taal));
 		}
 
 
@@ -166,18 +202,11 @@ namespace ProgressOnderwijsUtils
 		}
 		private const int YearMinimum = 1900, YearMaximum = 2100;
 
-		static DateTime ParseDateTime(string s)
-		{
-			var retval = DateTime.Parse(DateStringCheck(s), CultureNL);
-			if (retval.Year < YearMinimum || retval.Year >= YearMaximum) throw new ArgumentOutOfRangeException("Suspicious date " + retval + " not accepted as input.");
-			return retval;
-		}
-
 		static decimal ParseDecimal(string s)
 		{
 			return s.LastIndexOf(',') < s.LastIndexOf('.') //when true, either only decimal point, or thousand sep commas with decimal point
 								? decimal.Parse(s, CultureInfo.InvariantCulture)
-								: decimal.Parse(s, CultureNL);
+								: decimal.Parse(s, Taal.NL.GetCulture());
 		}
 
 
@@ -268,7 +297,7 @@ namespace ProgressOnderwijsUtils
 					throw new InvalidOperationException("Cannot set error: OK is not an error");
 				return new ParseResult(state, error);
 			}
-			public static ParseResult Malformed(Type type, string s) { return CreateError(ParseState.Malformed, Texts.GenericEdit.MalformedData(Texts.ClrTypeNames.UserReadable(type, false)).Append(Translatable.Literal(" niet ", " not ", " nicht "), Converteer.ToText(" niet \"" + s + "\"."))); }
+			public static ParseResult Malformed(Type type, string s) { return CreateError(ParseState.Malformed, Texts.GenericEdit.MalformedData(Texts.ClrTypeNames.UserReadable(type, false)).Append(Translatable.Literal(" niet ", " not ", " nicht "), Converteer.ToText("\"" + s + "\"."))); }
 			public static ParseResult Overflow { get { return CreateError(ParseState.Overflow, Texts.GenericEdit.Overflow); } }
 			public static ParseResult Geendata { get { return CreateError(ParseState.Geendata, Texts.GenericEdit.GeenData); } }
 			public static ParseResult Datumfout { get { return CreateError(ParseState.Datumfout, Texts.GenericEdit.FoutDatumFormaat); } }
@@ -297,7 +326,7 @@ namespace ProgressOnderwijsUtils
 			else if (fundamentalType == typeof(DateTime))
 			{
 				DateTime parsedDate;
-				bool canParse = DateTime.TryParse(DateStringCheck(s), CultureNL, DateTimeStyles.None, out parsedDate);
+				bool canParse = DateTime.TryParse(DateStringCheck(s), Taal.NL.GetCulture(), DateTimeStyles.None, out parsedDate);
 				return !canParse ? ParseResult.Datumfout
 					: parsedDate.Year < YearMinimum || parsedDate.Year >= YearMaximum ? ParseResult.Overflow
 					: ParseResult.Ok(parsedDate);
@@ -305,7 +334,7 @@ namespace ProgressOnderwijsUtils
 			else if (fundamentalType == typeof(TimeSpan))
 			{
 				TimeSpan result;
-				return TimeSpan.TryParse(s, CultureNL, out result) ? ParseResult.Ok(result) : ParseResult.TijdFout;
+				return TimeSpan.TryParse(s, Taal.NL.GetCulture(), out result) ? ParseResult.Ok(result) : ParseResult.TijdFout;
 			}
 			else if (fundamentalType == typeof(long))
 				try { return ParseResult.Ok(long.Parse(s)); }

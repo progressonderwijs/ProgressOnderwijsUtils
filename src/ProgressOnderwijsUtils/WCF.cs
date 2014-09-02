@@ -1,9 +1,5 @@
 ﻿using System;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.ServiceModel.Dispatcher;
-using ProgressOnderwijsUtils.Log4Net;
-using log4net;
 
 namespace ProgressOnderwijsUtils
 {
@@ -178,32 +174,6 @@ namespace ProgressOnderwijsUtils
 				// could be timeout on the channel, retry
 				return call(client);
 			}
-		}
-
-		#endregion
-	}
-
-	public abstract class AService : IErrorHandler
-	{
-		protected ILog Log { get; private set; }
-
-		protected AService()
-		{
-			Log = LogManager.GetLogger(GetType());
-			Log.Info(() => string.Format("Created service '{0}'", this));
-		}
-
-		#region Implementation of IErrorHandler
-
-		public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
-		{
-			// do nothing
-		}
-
-		public bool HandleError(Exception error)
-		{
-			Log.Error(() => "unhandled exception", error);
-			return false;
 		}
 
 		#endregion

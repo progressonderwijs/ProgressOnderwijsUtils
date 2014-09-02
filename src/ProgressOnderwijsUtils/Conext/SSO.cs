@@ -96,7 +96,7 @@ namespace ProgressOnderwijsUtils.Conext
 		private const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
 		private const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
 
-		private static readonly ILog LOG = LogManager.GetLogger(typeof(SSO));
+		static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SSO));
 
 		public static void Request(HttpResponse response, ServiceProvider sp, DatabaseVersion db, IdentityProvider idp, Entity entity, string relayState = null)
 		{
@@ -135,7 +135,7 @@ namespace ProgressOnderwijsUtils.Conext
 			if (response.Descendants(SchemaSet.SAMLP_NS + "StatusCode").Single().Attribute("Value").Value == "urn:oasis:names:tc:SAML:2.0:status:Success")
 			{
 				var result = response.Descendants(SchemaSet.SAML_NS + "Assertion").Single();
-				MetaDataFactory.Validate(result, MetaDataFactory.GetIdentityProvider(idp).certificate);
+				// TODO: MetaDataFactory.Validate(result, MetaDataFactory.GetIdentityProvider(idp).certificate);
 				return result;
 			}
 
@@ -147,7 +147,7 @@ namespace ProgressOnderwijsUtils.Conext
 		{
 			LOG.Debug(() => string.Format("GetAttributes(assertion='{0}')", assertion));
 
-			MetaDataFactory.Validate(assertion, MetaDataFactory.GetIdentityProvider(idp).certificate);
+			// TODO: MetaDataFactory.Validate(assertion, MetaDataFactory.GetIdentityProvider(idp).certificate);
 			return new Attributes
 			{
 				uid = GetAttribute(assertion, UID),

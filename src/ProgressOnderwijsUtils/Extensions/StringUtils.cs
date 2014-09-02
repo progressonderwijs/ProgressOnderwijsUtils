@@ -25,23 +25,47 @@ namespace ProgressOnderwijsUtils
 					).Normalize(NormalizationForm.FormC);
 		}
 
-		static readonly Regex whiteSpaceSequence = new Regex(@"[ \t_]+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
-		static readonly Regex capLetter = new Regex(@"(?<=[a-zA-Z])[0-9]+|(?<![A-Z])[A-Z][a-z]*|(?<=[A-Z])[A-Z]([a-rt-z]|s[a-z])[a-z]*", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+		const RegexOptions CommonOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace;
+
+
+		static class PrettyPrintValues
+		{
+			//perf: put this in a seperate class so usage of stringutils doesn't imply loading (and compiling) these just yet.
+			public static readonly Regex
+				whiteSpaceSequence = new Regex(@"[ \t_]+", CommonOptions),
+				 capLetter = new Regex(@"
+						(?<=[a-zA-Z])[0-9]+
+						|(?<![A-Z])[A-Z][a-z]*
+						|(?<=[A-Z])[A-Z]
+							(
+								[a-rt-z]
+								|s[a-z]
+							)[a-z]*", CommonOptions);
+		}
+		static class SepaStripperRegexes
+		{
+			//perf: put this in a seperate class so usage of stringutils doesn't imply loading (and compiling) these just yet.
+			public static readonly Regex
+				sepaStripper = new Regex(@"[^a-zA-z0-9 /-?:().,'+]+", CommonOptions);
+		}
+
+
+
 		public static string PrettyPrintCamelCased(string rawString)
 		{
 			var withSpace =
-				capLetter.Replace(rawString,
+				PrettyPrintValues.capLetter.Replace(rawString,
 				m => (m.Index == 0 ? "" : " ") + (m.Value.ToUpperInvariant() == m.Value ? m.Value : m.Value.ToLowerInvariant())
 				);
-			return whiteSpaceSequence.Replace(withSpace, " ");
+			return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
 		}
 		public static string PrettyCapitalizedPrintCamelCased(string rawString)
 		{
 			var withSpace =
-				capLetter.Replace(rawString,
+				PrettyPrintValues.capLetter.Replace(rawString,
 				m => (m.Index == 0 ? m.Value : " " + (m.Value.ToUpperInvariant() == m.Value ? m.Value : m.Value.ToLowerInvariant()))
 				);
-			return whiteSpaceSequence.Replace(withSpace, " ");
+			return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
 		}
 
 		public static string VervangRingelS(string str, bool upper)
@@ -49,18 +73,18 @@ namespace ProgressOnderwijsUtils
 			return str.Replace("ß", upper ? "SS" : "ss");
 		}
 
-        public static string SepaTekenset(string s)
-        {
-            return Regex.Replace(s, @"[^a-zA-z0-9 /-?:().,'+]+", "");
-        }
+		public static string SepaTekenset(string s)
+		{
+			return SepaStripperRegexes.sepaStripper.Replace(s, "");
+		}
 
-        public static string SepaTekensetEnModificaties(string s)
-        {
-            s = VerwijderDiakrieten(s);
-            s = VervangRingelS(s, false);
-            s = SepaTekenset(s);
-            return s;
-        }
+		public static string SepaTekensetEnModificaties(string s)
+		{
+			s = VerwijderDiakrieten(s);
+			s = VervangRingelS(s, false);
+			s = SepaTekenset(s);
+			return s;
+		}
 
 		public static string Capitalize(string name)
 		{
@@ -172,6 +196,5 @@ namespace ProgressOnderwijsUtils
 			else
 				return pluralstring;
 		}
-
 	}
 }

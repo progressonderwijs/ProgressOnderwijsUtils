@@ -13,24 +13,12 @@ namespace ProgressOnderwijsUtils
 	/// </summary>
 	public static class ProgressNetBuildVersion
 	{
-		/* 
-		 * Nodig build scriptje ergens in de applicatie:
-		 * 
-  <Target Name="AfterBuild">
-	<Exec Command="hg id --encoding utf8 -i &gt; ProgressVersion.Info.Generated &amp;&amp; hg log -r . --template &quot;branches:{branches}\ntags:{tags}\ndate:{date|isodate}\n&quot; &gt;&gt; ProgressVersion.Info.Generated " />
-	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="ComputerName:$(COMPUTERNAME)" Overwrite="false" Encoding="UTF-8" />
-	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildTag:$(BUILD_TAG)" Overwrite="false" Encoding="UTF-8" />
-	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="BuildJob:$(BUILD_URL)" Overwrite="false" Encoding="UTF-8" />
-	<WriteLinesToFile File="ProgressVersion.Info.Generated" Lines="Configuration:$(Configuration)" Overwrite="false" Encoding="UTF-8" />
-  </Target>
-
-		*/
 		[Serializable]
-		public sealed class Data : IMetaObject
+		public struct Data : IMetaObject
 		{
 			public string Node { get; set; }
 			public DateTime Date { get; set; }
-			public string Branches { get; set; }
+			public string Branch { get; set; }
 			public string Tags { get; set; }
 
 			public string ComputerName { get; set; }
@@ -41,21 +29,27 @@ namespace ProgressOnderwijsUtils
 		}
 		public static readonly Data Current;
 
-
 		static ProgressNetBuildVersion()
 		{
-			var assemblies = new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() }.Where(ass => ass != null);
+			var assemblies =
+				new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() }.Where(ass => ass != null);
 			var httpRuntimePath = default(string);
-			try { httpRuntimePath = HttpRuntime.AppDomainAppPath; }
+			// ReSharper disable once EmptyGeneralCatchClause
+			try
+			{
+				httpRuntimePath = HttpRuntime.AppDomainAppPath;
+			}
 			catch { }
 
 			var dirs = new[] { httpRuntimePath }.Concat(assemblies.Select(ass => ass.Location));
 
-			var dirsWithAncestors = Utils.TransitiveClosure(dirs, currentDirSet => currentDirSet.Where(Directory.Exists).Select(Path.GetDirectoryName));//find all ancestor paths
+			var dirsWithAncestors = Utils.TransitiveClosure(dirs,
+				currentDirSet => currentDirSet.Where(Directory.Exists).Select(Path.GetDirectoryName));
+			//find all ancestor paths
 			var lines =
 				dirsWithAncestors
 				.Where(Directory.Exists)
-				.Select(dir => Path.Combine(dir, "ProgressVersion.Info.Generated"))
+				.Select(dir => Path.Combine(dir, "ProgressVersion.Info"))
 				.Where(File.Exists)
 				.OrderByDescending(File.GetLastWriteTimeUtc) //try newest one first
 				.Select(File.ReadAllLines)
@@ -63,42 +57,36 @@ namespace ProgressOnderwijsUtils
 
 			if (lines == null)
 			{
-				Current = new Data { Node = "unknown!" };
+				Current = new Data { Node = "unknown" };
 				return;
 			}
 
 			var nodeId = lines.First().Trim();
-			var svninfo = lines.Skip(1).Select(s => s.Trim()).Where(s => s.Length > 0).ToDictionary(s => s.Substring(0, s.IndexOf(':')), s => s.Substring(s.IndexOf(':') + 1));
+			var buildInfo =
+				lines.Skip(1)
+					.Select(s => s.Trim())
+					.Where(s => s.Length > 0)
+					.ToDictionary(s => s.Substring(0, s.IndexOf(':')), s => s.Substring(s.IndexOf(':') + 1));
 
 			Current = new Data {
 				Node = nodeId,
 				Date = AssemblyCreationDate,
-				Branches = svninfo["branches"],
-				Tags = svninfo["tags"],
+				Branch = buildInfo["branch"],
+				Tags = buildInfo["tags"],
 
-				ComputerName = svninfo["ComputerName"].Trim(),
-				BuildTag = svninfo["BuildTag"].Trim(),
-				BuildUrl = svninfo["BuildUrl"].Trim(),
-				BuildConfiguration = svninfo["Configuration"].Trim(),
+				ComputerName = buildInfo["ComputerName"].Trim(),
+				BuildTag = buildInfo["BuildTag"].Trim(),
+				BuildUrl = buildInfo["BuildUrl"].Trim(),
+				BuildConfiguration = buildInfo["Configuration"].Trim(),
 			};
 		}
 
 		static DateTime AssemblyCreationDate
 		{
-			get
-			{
-				return RetrieveLinkerTimestamp(typeof(ProgressNetBuildVersion));
-			}
+			get { return RetrieveLinkerTimestamp(typeof(ProgressNetBuildVersion)); }
 		}
 
-		private static DateTime FileCreationDate(Type t)
-		{
-			var fi = new FileInfo(AssemblyPath(t));
- 			fi.Refresh();
-			return fi.LastWriteTime;
-		}
-
-		private static DateTime RetrieveLinkerTimestamp(Type t)
+		static DateTime RetrieveLinkerTimestamp(Type t)
 		{
 			const int peHeaderOffset = 60;
 			const int linkerTimestampOffset = 8;
@@ -114,13 +102,12 @@ namespace ProgressOnderwijsUtils
 				if (s != null)
 					s.Close();
 			}
-			var dt = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(BitConverter.ToInt32(b, BitConverter.ToInt32(b, peHeaderOffset) + linkerTimestampOffset));
+			var dt =
+				new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(BitConverter.ToInt32(b,
+					BitConverter.ToInt32(b, peHeaderOffset) + linkerTimestampOffset));
 			return dt.AddHours(TimeZone.CurrentTimeZone.GetUtcOffset(dt).Hours);
 		}
 
-		private static string AssemblyPath(Type t)
-		{
-			return Assembly.GetAssembly(t).Location;
-		}
+		static string AssemblyPath(Type t) { return t.Assembly.Location; }
 	}
 }

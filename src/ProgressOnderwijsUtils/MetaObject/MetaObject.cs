@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
@@ -15,6 +14,8 @@ namespace ProgressOnderwijsUtils
 {
 	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
 	public interface IMetaObject { }
+
+	[UsedImplicitly(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature, ImplicitUseTargetFlags.Members)]
 	public interface IReadByConstructor { }
 
 
@@ -53,7 +54,7 @@ namespace ProgressOnderwijsUtils
 					if (getterIdx == -1)
 						throw new InvalidOperationException("The metaobject " + typeof(TMetaObject) + " does not implement method " + getter.Name);
 					var mpGetter = interfacemap.TargetMethods[getterIdx];
-					return MetaInfo<TMetaObject>.Instance.Single(mp => mp.PropertyInfo is PropertyInfo && ((PropertyInfo)mp.PropertyInfo).GetGetMethod() == mpGetter);
+					return MetaInfo<TMetaObject>.Instance.Single(mp => mp.PropertyInfo.GetGetMethod() == mpGetter);
 				}
 				else throw new InvalidOperationException("Impossible: parent " + typeof(TParent) + " is neither the metaobject type " + typeof(TMetaObject) + " itself, nor a (base) class, nor a base interface.");
 			}
@@ -130,13 +131,33 @@ namespace ProgressOnderwijsUtils
 			{
 				ColumnDefinition[] clrColumns = ColumnDefinition.GetFromReader(objectReader);
 
+				// ReSharper disable CoVariantArrayConversion
 				var mapping = FieldMapping.VerifyAndCreate(clrColumns, ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)), dataColumns, "table " + tableName, FieldMappingMode.IgnoreExtraDestinationFields);
+				// ReSharper restore CoVariantArrayConversion
 
 				bulkCopy.BulkCopyTimeout = 3600;
 				bulkCopy.DestinationTableName = tableName;
 				foreach (var mapEntry in mapping)
 					bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
-				bulkCopy.WriteToServer(objectReader);
+				
+				try
+				{
+					bulkCopy.WriteToServer(objectReader);
+				}
+				catch (SqlException ex)
+				{
+					var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid (\d+).");
+					var match = colid_message.Match(ex.Message);
+					if (match.Success)
+					{
+						var col_id = int.Parse(match.Groups[1].Value);
+						throw new Exception(string.Format(
+							"Received an invalid column length from the bcp client for column name {0}",
+							clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id-1].SrcIndex].Name
+						), ex);
+					}
+					throw;
+				}
 			}
 		}
 

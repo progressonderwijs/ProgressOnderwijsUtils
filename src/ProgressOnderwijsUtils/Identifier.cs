@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
 
 	[Serializable]
 	[DebuggerStepThrough]
-	public class Identifier<T> : IIdentifier where T : Identifier<T>, new()
+	public class Identifier<T> : IIdentifier, IComparable<T> where T : Identifier<T>, new()
 	{
 		#region "  Constructor"
 		public Identifier() { }
@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils
 			Value = value;
 		}
 
-		public string DbPrimaryKeyName
+		public virtual string DbPrimaryKeyName
 		{
 			get
 			{
@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		public string DbForeignKeyName
+		public virtual string DbForeignKeyName
 		{
 			get
 			{
@@ -79,6 +79,15 @@ namespace ProgressOnderwijsUtils
 			return Value.GetHashCode();
 		}
 
+		public int CompareTo(T other) 
+		{
+			return Value.CompareTo(other.Value);
+		}
+
+		/// <summary>
+		/// De waarde van de identifier als string
+		/// </summary>
+		/// <returns></returns>
 		public override string ToString()
 		{
 			return Value.ToString(CultureInfo.InvariantCulture);

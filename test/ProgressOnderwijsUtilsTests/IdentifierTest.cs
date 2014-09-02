@@ -116,9 +116,9 @@ namespace ProgressOnderwijsUtilsTests
 
 		public sealed class TestLijstMpConfig : LijstMpConfig<TestLijstRij>
 		{
-			protected override LijstDescriptionBuilder StaticLijstDescription()
+			protected override DataSourceMetaDataBuilder<TestLijstRij> BuildMetaData()
 			{
-				return LijstDescriptionBuilder.Build("test");
+				return Build("test");
 			}
 		}
 

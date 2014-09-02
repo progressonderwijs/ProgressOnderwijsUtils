@@ -13,6 +13,7 @@ namespace ProgressOnderwijsUtils
 	/// Instantiated types must be sealed and pass themselves as the type parameter T.
 	/// </summary>
 	/// <typeparam name="T">The derived type; must be sealed</typeparam>
+	[Serializable]
 	public abstract class ValueBase<T> : IEquatable<T> where T : ValueBase<T>
 	{
 
@@ -126,6 +127,8 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
+
+	//TODO: this class is buggy; it doesn't support struct members, for one.  I should probably import the ValueUtils sometime.
 	public static class EqualsByMembers<T>
 	{
 		public static Func<T, T, bool> Func = EqualsFunc();

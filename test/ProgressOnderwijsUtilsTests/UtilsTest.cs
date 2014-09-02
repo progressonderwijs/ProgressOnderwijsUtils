@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
+using System.Data.Entity.Core;
 using System.Linq;
 using ExpressionToCodeLib;
 using MoreLinq;
@@ -69,7 +69,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Continuous]
 		public void NUnitSession() { Assert.That(Utils.IsInTestSession()); }
 
-		IEnumerable<TestCaseData> MaandSpan()
+		static IEnumerable<TestCaseData> MaandSpan()
 		{
 			yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)).Returns(0);
 			yield return new TestCaseData(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)).Returns(4);

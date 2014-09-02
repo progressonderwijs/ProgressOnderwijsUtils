@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using JetBrains.Annotations;
+using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
 
@@ -119,6 +121,24 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public static Dictionary<TKey, TValue> Clone<TKey, TValue>(this Dictionary<TKey, TValue> old) { return old == null ? null : new Dictionary<TKey, TValue>(old, old.Comparer); }
+
+		/// <summary>
+		/// Merges two dictionaries. When both dictionaries contain the same key, the last value is used
+		/// </summary>
+		/// <param name="old">This dictionary</param>
+		/// <param name="other">The dictionary which should be merged into this array</param>
+		/// <returns></returns>
+		public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old, params Dictionary<TKey, TValue>[] others)
+		{
+			if (old == null)
+				throw new ArgumentNullException("old");
+
+			var merged = old.Clone();
+			others.SelectMany(other => other)
+				.ForEach(kv => merged[kv.Key] = kv.Value);
+			
+			return merged;
+		}
 
 		public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dict) { return new ReadOnlyDictionary<TKey, TValue>(dict); }
 
