@@ -1,5 +1,6 @@
 ﻿//#define ENABLE_GDI_MEASUREMENT
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 using ExpressionToCodeLib;
@@ -45,11 +46,13 @@ namespace ProgressOnderwijsUtils
 		{
 			GlyphTypeface gFont;
 			new Typeface("Verdana").TryGetGlyphTypeface(out gFont);
-			char_to_width = (
-					from c in Enumerable.Range(0, char.MaxValue + 1)
-					let characterHasSymbol = gFont.CharacterToGlyphMap.ContainsKey(c)
-					select characterHasSymbol ? gFont.AdvanceWidths[gFont.CharacterToGlyphMap[c]] : 0.0
-				).ToArray();
+			char_to_width = new double[char.MaxValue + 1];
+			for (int i = 0; i < char_to_width.Length; i++)
+			{
+				var c = (char)i;
+				if (gFont.CharacterToGlyphMap.ContainsKey(c))
+					char_to_width[i] = gFont.AdvanceWidths[gFont.CharacterToGlyphMap[c]];
+			}
 			ellipsis_ems = Measure(ellipsis);
 		}
 		static int CanFitChars(string str, double ems)
