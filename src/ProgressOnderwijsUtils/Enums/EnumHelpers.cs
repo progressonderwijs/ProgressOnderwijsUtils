@@ -75,7 +75,8 @@ namespace ProgressOnderwijsUtils
 		static readonly Dictionary<Type, FlagOperationMethods> FlagOperationMethodsByType = new Dictionary<Type, FlagOperationMethods>
 		{
 			{ typeof(int), FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap) },
-			{ typeof(long), FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap)
+			{
+				typeof(long), FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap)
 			},
 		};
 
@@ -90,7 +91,6 @@ namespace ProgressOnderwijsUtils
 			static readonly Type underlying;
 			static readonly TEnum[] EnumInOverlapOrder;
 			static readonly FieldInfo[] enumFields;
-
 
 			static EnumMetaCache()
 			{
@@ -122,8 +122,6 @@ namespace ProgressOnderwijsUtils
 				}
 				if (nextIndex != EnumValues.Length)
 					Array.Resize(ref EnumValues, nextIndex);
-					
-
 
 				underlying = Enum.GetUnderlyingType(typeof(TEnum));
 				IsFlags = typeof(TEnum).GetCustomAttributes(typeof(FlagsAttribute)).Any();
@@ -392,22 +390,31 @@ namespace ProgressOnderwijsUtils
 			return SelectItem.Create(f, GetLabel(f));
 		}
 
-		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal, string format = "{0}", bool sortTekst = false)
+		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal)
 			where TEnum : struct, IConvertible
 		{
-			var dt = new DataTable { Columns = { { "id", typeof(int) }, { "tekst", typeof(string) } } };
-			foreach (var item in values.Select(GetSelectItem))
-			{
-				var tekst = item.Label.Translate(taal);
-				dt.Rows.Add(item.Value.ToInt32(null), string.Format(format, tekst.Text, tekst.ExtraText));
-			}
-			if (sortTekst)
-			{
-				var dv = dt.DefaultView;
-				dv.Sort = "tekst";
-				return dv.ToTable();
-			}
-			return dt;
+			return values.Select(v =>
+				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).Text }
+				).ToDataTable();
+		}
+
+		public static DataTable ToIntKoppelTabel_OrderedByText<TEnum>(IEnumerable<TEnum> values, Taal taal)
+			where TEnum : struct, IConvertible
+		{
+			return values.Select(v =>
+				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).Text }
+				)
+				.OrderBy(entry => entry.Tekst)
+				.ToDataTable();
+		}
+
+		public static DataTable ToIntKoppelTabelExpandedText<TEnum>(IEnumerable<TEnum> values, Taal taal)
+			where TEnum : struct, IConvertible
+		{
+			return values.Select(v =>
+				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).ExtraText }
+				)
+				.ToDataTable();
 		}
 
 		public static SelectItem<TEnum?> GetSelectItem<TEnum>(TEnum? f)
