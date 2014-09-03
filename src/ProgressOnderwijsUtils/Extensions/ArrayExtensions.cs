@@ -29,5 +29,16 @@ namespace ProgressOnderwijsUtils
 		/// Return an empty array if it's null
 		/// </summary>
 		public static T[] EmptyIfNull<T>(this T[] array) { return array ?? Helper<T>.EmptyArray; }
+
+		public static T[] ToArrayFast<T>(this IReadOnlyList<T> list)
+		{
+			if (list is T[]) return (T[])((T[])list).Clone();
+			var retval = new T[list.Count];
+			for (int i = 0; i < retval.Length; i++)
+			{
+				retval[i] = list[i];
+			}
+			return retval;
+		}
 	}
 }
