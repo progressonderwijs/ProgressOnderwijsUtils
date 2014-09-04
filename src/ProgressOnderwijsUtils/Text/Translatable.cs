@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtils
 
 		public static LiteralTranslatable Empty()
 		{ 
-			return new LiteralTranslatable("", null, null);
+			return new LiteralTranslatable("", "", "");
 		}
 
 		public static ITranslatable EmptyWithTooltip(ITranslatable tooltipnl)
