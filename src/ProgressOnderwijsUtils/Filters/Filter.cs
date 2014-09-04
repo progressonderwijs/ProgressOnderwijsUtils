@@ -119,7 +119,7 @@ namespace ProgressOnderwijsUtils
 				foreach (var f1 in combined.FilterLijst)
 					if (!(f1 is CriteriumFilter) || ((CriteriumFilter)f1).Comparer != BooleanComparer.Equal)
 						yield break;
-				
+
 				foreach (CriteriumFilter f1 in combined.FilterLijst)
 					yield return Tuple.Create(f1.KolomNaam, f1.Waarde);
 			}
@@ -164,8 +164,12 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		static readonly Dictionary<string, BooleanComparer> niceStringValues = EnumHelpers.GetValues<BooleanComparer>().ToDictionary(NiceString);
-		public static BooleanComparer? ParseComparerNiceString(string s) { return niceStringValues.GetOrDefaultR(s, default(BooleanComparer?)); }
+		static class ComparerLookup
+		{
+			public static readonly Dictionary<string, BooleanComparer> ComparerByString = EnumHelpers.GetValues<BooleanComparer>().ToDictionary(NiceString, StringComparer.Ordinal);
+		}
+
+		public static BooleanComparer? ParseComparerNiceString(string s) { return ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?)); }
 		public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, Type> typeIfPresent) { return filter != null && filter.IsFilterValid(typeIfPresent) ? filter : null; }
 
 		public static FilterBase ClearFilterWhenItContainsInvalidColumns<T>(this FilterBase filter)
