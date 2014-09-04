@@ -50,11 +50,11 @@ namespace ProgressOnderwijsUtils
 			{ DatumFormaat.DatumEnTijdInMilliseconden, new TextVal("dd-MM-yyyy HH:mm:ss.fff", null) },
 			{ DatumFormaat.DatumToolTipTijd, new TextVal("dd-MM-yyyy", "dd-MM-yyyy HH:mm:ss.fff") },
 			{ DatumFormaat.JaarToolTipDatum, new TextVal("yyyy", "dd-MM-yyyy") },
-			{ DatumFormaat.DatumZonderJaar, new TextVal("dd-MM", "dd-MM-yyyy") },
 			{ DatumFormaat.SMDatum, new TextVal("yyyyMMdd", null) },
 			{ DatumFormaat.SMDatumTijd, new TextVal("yyyyMMddHHmmss", null) },
 			{ DatumFormaat.ClieopDatum, new TextVal("ddMMyy", null) },
 			{ DatumFormaat.MT940Datum, new TextVal("yyMMdd", null) },
+			{ DatumFormaat.DatumZonderJaar, new TextVal("dd-MM", "dd-MM-yyyy") },
 			{ DatumFormaat.VerwInfoDatum, new TextVal("yyMMdd", null) },
 			{ DatumFormaat.ISODate, new TextVal("yyyy-MM-dd", null) },
 			{ DatumFormaat.ISODateTime, new TextVal("yyyy-MM-ddTHH:mm:ss", null) },
@@ -108,16 +108,6 @@ namespace ProgressOnderwijsUtils
 		{
 			return FORMAAT_LENGTE[formaat];
 		}
-
-		static readonly IDictionary<NummerFormaat, string> DECIMAL_FORMATS = new SortedList<NummerFormaat, string>
-		{
-			{ NummerFormaat.GeldEuro, ConverteerHelper.GELD_EURO },
-			{ NummerFormaat.Afgerond, "#" },
-			{ NummerFormaat.AfgerondOp1Decimaal, "#.#" },
-			{ NummerFormaat.AfgerondOp2Decimaal,  "#.##" },
-			{ NummerFormaat.GeldEuroGrootboek, "#,##0.00 D;#,##0.00 C;0.00  "}
-		};
-
 
 		#region ToString
 
@@ -179,7 +169,18 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Utility functie die de NummerFormaat enum vertaald naar de overeenkomstige format string.
 		/// </summary>
-		public static ITranslatable ToText(decimal? d, NummerFormaat format) { return ToText(d, DECIMAL_FORMATS[format]); }
+		public static ITranslatable ToText(decimal? d, NummerFormaat format)
+		{
+			string formatString;
+			if (format == NummerFormaat.GeldEuro) formatString = ConverteerHelper.GELD_EURO;
+			else if (format == NummerFormaat.Afgerond) formatString = "#";
+			else if (format == NummerFormaat.AfgerondOp1Decimaal) formatString = "#.#";
+			else if (format == NummerFormaat.AfgerondOp2Decimaal) formatString = "#.##";
+			else if (format == NummerFormaat.GeldEuroGrootboek) formatString = "#,##0.00 D;#,##0.00 C;0.00  ";
+			else throw new ArgumentException("Unknown format " + format);
+
+			return ToText(d, formatString);
+		}
 
 		/// <summary>
 		/// Utility functie die de DatumFormaat enum vertaald naar de overeenkomstige format string.
