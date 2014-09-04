@@ -416,12 +416,20 @@ namespace ProgressOnderwijsUtils
 						CreateLoadRowsMethod<T>(readerParamExpr =>
 							Expression.MemberInit(
 								Expression.New(type),
-								orderingP.Cols.Select((colName, i) => {
-									IMetaProperty<T> member;
-									if (!metadata.TryGetValue(colName, out member))
-										throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
-									return Expression.Bind(member.PropertyInfo, GetColValueExpr(readerParamExpr, i, member.DataType));
-								}))));
+								createColumnBindings(orderingP, readerParamExpr))));
+				}
+
+				static IEnumerable<MemberAssignment> createColumnBindings(ColumnOrdering orderingP, ParameterExpression readerParamExpr)
+				{
+					var cols = orderingP.Cols;
+					for (int i = 0; i < cols.Length; i++)
+					{
+						var colName = cols[i];
+						IMetaProperty<T> member;
+						if (!metadata.TryGetValue(colName, out member))
+							throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
+						yield return Expression.Bind(member.PropertyInfo, GetColValueExpr(readerParamExpr, i, member.DataType));
+					};
 				}
 			}
 
