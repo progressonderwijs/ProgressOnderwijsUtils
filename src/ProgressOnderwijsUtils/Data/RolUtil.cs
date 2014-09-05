@@ -34,28 +34,17 @@ namespace ProgressOnderwijsUtils
 
 		public static readonly ILookup<Rol, Rol> ChildrenOf;
 		public static readonly ILookup<Rol, Rol> ParentsOf;
-
 		static RolUtil()
 		{
-			//var koppelUp =
-			//	from kind in EnumHelpers.GetValues<ToegangsRol>()
-			//	from ouderAttr in EnumHelpers.GetAttrs<ImpliedByAttribute>.On(kind)
-			//	from ouder in ouderAttr.Ouders
-			//	orderby ouder, kind//not strictly necessary
-			//	select new { ouder, kind };
+
 
 			var koppelDown =
 				from ouder in EnumHelpers.GetValues<Rol>()
 				from kindAttr in EnumHelpers.GetAttrs<ImpliesAttribute>.On(ouder)
 				from kind in kindAttr.Kinderen
-				orderby ouder, kind//not strictly necessary
 				select new { ouder, kind };
 
-			//var autoKoppelDown = EnumHelpers.GetValues<Rol>().Where(rol => rol != Rol.Iedereen).Select(rol => new { ouder = rol, kind = Rol.Iedereen });
-
 			var koppelingen = koppelDown
-				//.Concat(autoKoppelDown)
-				//.Concat(koppelUp)
 						.Distinct().OrderBy(r => r.kind);
 
 			ChildrenOf = koppelingen.ToLookup(rel => rel.ouder, rel => rel.kind);

@@ -113,7 +113,9 @@ namespace ProgressOnderwijsUtils
 			  e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested);
 		}
 
-		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup) { return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup)); }
+		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup) {
+			return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup)); 
+		}
 
 		public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
 		{
