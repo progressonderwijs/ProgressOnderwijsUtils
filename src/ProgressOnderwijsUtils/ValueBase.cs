@@ -63,14 +63,14 @@ namespace ProgressOnderwijsUtils
 
 			var toStringExpr =
 				Expression.Call(concatMethod,
-					type.GetFields(BindingFlags.Instance | BindingFlags.Public).Concat(
-						type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(pi => pi.CanRead && pi.GetGetMethod() != null)
+					type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Concat(
+						type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(pi => pi.CanRead && pi.GetGetMethod() != null)
 							.Cast<MemberInfo>()
 						)
 						.Select(fi =>
 							Expression.Call(concatMethod,
 								Expression.Call(concatMethod,
-									Expression.Constant(fi.Name + " = "),
+									Expression.Constant(FriendlyMemberName(fi) + " = "),
 									Expression.Condition(
 										Expression.Call(null, refEqMethod, Expression.Convert(MemberAccessExpression(parA, fi), typeof(object)), Expression.Default(typeof(object))),
 										Expression.Constant("<NULL>"),
@@ -86,6 +86,19 @@ namespace ProgressOnderwijsUtils
 			return Expression.Lambda<Func<T, string>>(toStringExpr, parA).Compile();
 		}
 
+		static string FriendlyMemberName(MemberInfo fi)
+		{
+			bool isPublic;
+			if (fi is FieldInfo){
+				var fieldinfo = (FieldInfo)fi;
+				isPublic = fieldinfo.Attributes.HasFlag(FieldAttributes.Public);
+			} else {
+				var propertyinfo = (PropertyInfo)fi;
+				isPublic = propertyinfo.GetGetMethod(false) != null;
+			}
+			
+			return isPublic ? fi.Name : "*" + fi.Name;
+		}
 	}
 
 	public static class GetHashCodeByMembers<T>
