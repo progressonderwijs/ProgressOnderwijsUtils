@@ -52,7 +52,10 @@ namespace ProgressOnderwijsUtils
 
 			MetaProperties = GetMetaPropertiesImpl();
 			ReadOnlyView = MetaProperties.AsReadView();
-			ByName = MetaProperties.ToDictionary(mp => mp.Name, StringComparer.OrdinalIgnoreCase);
+			var dictionary = new Dictionary<string, IMetaProperty<T>>(StringComparer.OrdinalIgnoreCase);
+			foreach (var property in MetaProperties)//perf:avoid LINQ.
+				dictionary.Add(property.Name, property);
+			ByName = dictionary;
 		}
 
 		static IEnumerable<Type> NonAbstractMetaObjectBaseTypes()
