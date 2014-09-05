@@ -394,10 +394,25 @@ namespace ProgressOnderwijsUtils
 
 				static ByMetaObjectImpl()
 				{
-					ColHashPrimes = Utils.Primes().Take(metadata.Count(mp => mp.CanWrite && SupportsType(mp.DataType))).Select(i => (uint)i).ToArray();
+					int writablePropCount = 0;
+					foreach (var mp in metadata)//perf:no LINQ
+						if (mp.CanWrite && SupportsType(mp.DataType))
+							writablePropCount++;
+
+					ColHashPrimes = new uint[writablePropCount];
+
+					using (var pGen = Utils.Primes().GetEnumerator())
+						for (int i = 0; i < ColHashPrimes.Length && pGen.MoveNext(); i++)
+							ColHashPrimes[i] = (uint)pGen.Current;
 					if (ColHashPrimes.Length == 0)
 						throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
-					hasUnsupportedColumns = metadata.Any(mp => mp.CanWrite && !SupportsType(mp.DataType));
+					hasUnsupportedColumns = false;
+					foreach (var mp in metadata)//perf:no LINQ
+						if (mp.CanWrite && !SupportsType(mp.DataType))
+						{
+							hasUnsupportedColumns = true;
+							break;
+						}
 
 					LoadRows = new ConcurrentDictionary<ColumnOrdering, Func<TReader, T[]>>();
 				}
