@@ -267,7 +267,7 @@ namespace ProgressOnderwijsUtils
 		BekijkenKengetallen = 119,
 
 		[MpLabel("Bekijken studievolg"), Toekenbaar,
-         Implies(StudentOnderwijsTabblad, VolgOnderwijsInzien, StudievoortgangNotitiesBekijken)]
+		 Implies(StudentOnderwijsTabblad, VolgOnderwijsInzien, StudievoortgangNotitiesBekijken, BsaStatusBekijken)]
 		BekijkenStudievolg = 121,
 
 		[MpLabel("Bekijken studielinkberichten"), Toekenbaar,
