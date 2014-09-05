@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils
 		};
 
 
-		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible
+		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible, IComparable
 		{
 			public static readonly TEnum[] EnumValues;
 			public static readonly bool IsFlags;
@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
 								if (HasFlag(b, v))
 									diff--;
 							}
-							return diff;
+							return diff == 0 ? a.CompareTo(b) : diff;
 						});
 					}
 				}
@@ -305,7 +305,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 
-		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct, IConvertible
+		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct, IConvertible,IComparable
 		{
 			static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().Where(t => t != Taal.None).ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text.Trim(), e => e, StringComparer.OrdinalIgnoreCase));
 
@@ -333,12 +333,12 @@ namespace ProgressOnderwijsUtils
 
 		public static class GetAttrs<TAttr> where TAttr : Attribute
 		{
-			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible
+			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible, IComparable
 			{
 				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal];
 			}
 
-			public static IEnumerable<T> From<T>(Func<TAttr, bool> pred) where T : struct, IConvertible
+			public static IEnumerable<T> From<T>(Func<TAttr, bool> pred) where T : struct, IConvertible, IComparable
 			{
 				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes.Where(grp => grp.Any(pred)).Select(grp => grp.Key);
 			}
@@ -356,7 +356,7 @@ namespace ProgressOnderwijsUtils
 			return null;
 		}
 
-		public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible
+		public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable
 		{
 			return EnumMetaCache<T>.EnumValues;
 		}
@@ -369,17 +369,17 @@ namespace ProgressOnderwijsUtils
 			return values.Values();
 		}
 
-		public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible
+		public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
 		{
 			return EnumMetaCache<TEnum>.FlagEnumHelpers.AddFlag;
 		}
 
-		public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible
+		public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
 		{
 			return EnumMetaCache<TEnum>.FlagEnumHelpers.HasFlag;
 		}
 
-		public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible
+		public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible, IComparable
 		{
 			return EnumMetaCache<TEnum>.GetLabel(f);
 		}
@@ -396,13 +396,13 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
-			where TEnum : struct, IConvertible
+			where TEnum : struct, IConvertible, IComparable
 		{
 			return SelectItem.Create(f, GetLabel(f));
 		}
 
 		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal)
-			where TEnum : struct, IConvertible
+			where TEnum : struct, IConvertible, IComparable
 		{
 			return values.Select(v =>
 				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).Text }
@@ -410,7 +410,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public static DataTable ToIntKoppelTabel_OrderedByText<TEnum>(IEnumerable<TEnum> values, Taal taal)
-			where TEnum : struct, IConvertible
+			where TEnum : struct, IConvertible, IComparable
 		{
 			return values.Select(v =>
 				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).Text }
@@ -420,7 +420,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public static DataTable ToIntKoppelTabelExpandedText<TEnum>(IEnumerable<TEnum> values, Taal taal)
-			where TEnum : struct, IConvertible
+			where TEnum : struct, IConvertible, IComparable
 		{
 			return values.Select(v =>
 				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).ExtraText }
@@ -429,7 +429,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public static SelectItem<TEnum?> GetSelectItem<TEnum>(TEnum? f)
-			where TEnum : struct, IConvertible
+			where TEnum : struct, IConvertible, IComparable
 		{
 			return SelectItem.Create(f, f == null ? TextDefSimple.EmptyText : GetLabel(f.Value));
 		}
@@ -451,7 +451,7 @@ namespace ProgressOnderwijsUtils
 			return Enum.TryParse(s, true, out retval) ? retval : default(TEnum?);
 		}
 
-		public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible
+		public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible, IComparable
 		{
 			return EnumLabelLookup<TEnum>.Lookup(s, taal);
 		}
@@ -464,12 +464,12 @@ namespace ProgressOnderwijsUtils
 			return parser.Lookup(s, taal);
 		}
 
-		public static bool IsDefined<TEnum>(TEnum enumval) where TEnum : struct, IConvertible
+		public static bool IsDefined<TEnum>(TEnum enumval) where TEnum : struct, IConvertible, IComparable
 		{
 			return Enum.IsDefined(typeof(TEnum), enumval);
 		}
 
-		public static IEnumerable<T> AllCombinations<T>() where T : struct, IConvertible
+		public static IEnumerable<T> AllCombinations<T>() where T : struct, IConvertible, IComparable
 		{
 			// Construct a function for OR-ing together two enums
 			var orFunction = AddFlagsFunc<T>();
