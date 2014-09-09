@@ -123,7 +123,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		static ITranslatable translatableComma= TextDefSimple.Create(", ");
+		static ITranslatable translatableComma = TextDefSimple.Create(", ");
 
 		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible, IComparable
 		{
