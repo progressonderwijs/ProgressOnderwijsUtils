@@ -469,8 +469,6 @@ namespace ProgressOnderwijsUtils
 					throw new Exception("Cannot define both an untranslated and a translated label on the same enum: " + f);
 
 				var tooltip = attrs.OfType<MpTooltipAttribute>().SingleOrDefault();
-				//if (translatedlabel == null && untranslatedlabel == null && tooltip == null && !EnumMembers.Contains(f))
-				//throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
 
 				var translatable =
 					translatedlabel != null ? translatedlabel.ToTranslatable()
