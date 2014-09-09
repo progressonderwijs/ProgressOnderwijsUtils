@@ -298,7 +298,7 @@ namespace ProgressOnderwijsUtils
 			struct AttrEntry
 			{
 				public TEnum Value;
-				public Attribute[] Attrs;
+				public object[] Attrs;
 			}
 
 
@@ -327,14 +327,14 @@ namespace ProgressOnderwijsUtils
 				return end;
 			}
 
-			public static Attribute[] Attributes(TEnum value)
+			public static object[] Attributes(TEnum value)
 			{
 				if (sortedAttrs == null)
 					InitAttrCache();
 				int idx = IdxAfterLastLtNode(value);
 				if (idx < sortedAttrs.Length && comp(sortedAttrs[idx].Value, value) == 0)
 					return sortedAttrs[idx].Attrs;
-				else return ArrayExtensions.Empty<Attribute>();
+				else return ArrayExtensions.Empty<object>();
 			}
 
 			static void InitAttrCache()
@@ -367,14 +367,12 @@ namespace ProgressOnderwijsUtils
 						}
 						else if (comparison == 0)
 						{
+							
 							var oldLength = entries[insertIdx].Attrs.Length;
-							var newArr = new Attribute[oldLength + customAttributes.Length];
-							int i = 0;
-							foreach (var attr in entries[insertIdx].Attrs)
-								newArr[i++] = attr;
-							foreach (Attribute attr in customAttributes)
-								newArr[i++] = attr;
-							entries[insertIdx].Attrs = newArr;
+							Array.Resize(ref entries[insertIdx].Attrs, oldLength + customAttributes.Length);
+							int i = oldLength;
+							foreach (var attr in customAttributes)
+								entries[insertIdx].Attrs[i++] = attr;
 							break;
 						}
 						else
@@ -382,13 +380,10 @@ namespace ProgressOnderwijsUtils
 							insertIdx++;
 							for (int j = nextIdx - 1; j >= insertIdx; j--)
 								entries[j + 1] = entries[j];
-							var typedAttributes = new Attribute[customAttributes.Length];
-							for (int j = 0; j < typedAttributes.Length; j++)
-								typedAttributes[j] = (Attribute)customAttributes[j];
 							entries[insertIdx] = new AttrEntry
 							{
 								Value = value,
-								Attrs = typedAttributes
+								Attrs = customAttributes
 							};
 							nextIdx++;
 							break;
@@ -399,112 +394,6 @@ namespace ProgressOnderwijsUtils
 					Array.Resize(ref entries, nextIdx);
 				sortedAttrs = entries;
 			}
-
-#if false
-			//old type-specific attribute cache
-			static class AttrCache<TAttr> where TAttr : Attribute
-			{
-				struct Entry
-				{
-					public TEnum Value;
-					public TAttr[] Attr;
-				}
-
-
-				//public static readonly ILookup<TEnum, TAttr> EnumMemberAttributes;
-				static readonly Entry[] sortedAttrs;
-				static readonly Comparison<TEnum> comp;
-
-
-				static int IdxAfterLastLtNode(TEnum needle)
-				{
-					int start = 0, end = sortedAttrs.Length;
-					//invariant: only LT nodes before start
-					//invariant: only GTE nodes at or past end
-					while (end != start)
-					{
-						int midpoint = end + start >> 1;
-						// start <= midpoint < end
-						if (comp(sortedAttrs[midpoint].Value, needle) < 0)
-						{
-							start = midpoint + 1;//i.e. midpoint < start1 so start0 < start1
-						}
-						else
-						{
-							end = midpoint;//i.e end1 = midpoint so end1 < end0
-						}
-					}
-					return end;
-				}
-
-				public static IEnumerable<TAttr> Attributes(TEnum value)
-				{
-					int idx = IdxAfterLastLtNode(value);
-					if (idx < sortedAttrs.Length && comp(sortedAttrs[idx].Value, value) == 0)
-						return sortedAttrs[idx].Attr;
-					else return ArrayExtensions.Empty<TAttr>();
-				}
-				static AttrCache()
-				{
-					var entries = new Entry[EnumValues.Length];
-					int nextIdx = 0;
-					foreach (var field in enumFields)
-					{
-						var customAttributes = field.GetCustomAttributes(typeof(TAttr), false);
-						if (customAttributes.Length == 0)
-							continue;
-						var value = (TEnum)field.GetValue(null);
-						int insertIdx = nextIdx - 1;
-						while (insertIdx >= 0)
-						{
-							var comparison = comp(value, entries[insertIdx].Value);
-							if (comparison < 0)
-							{
-								insertIdx--;
-							}
-							else if (comparison == 0)
-							{
-								var newArr = new TAttr[entries[insertIdx].Attr.Length + customAttributes.Length];
-								int i = 0;
-								foreach (var attr in entries[insertIdx].Attr)
-									newArr[i++] = attr;
-								foreach (TAttr attr in customAttributes)
-									newArr[i++] = attr;
-								entries[insertIdx].Attr = newArr;
-								break;
-							}
-							else
-							{
-								insertIdx++;
-								for (int j = nextIdx - 1; j >= insertIdx; j--)
-									entries[j + 1] = entries[j];
-								var typedAttributes = new TAttr[customAttributes.Length];
-								for (int j = 0; j < typedAttributes.Length; j++)
-									typedAttributes[j] = (TAttr)customAttributes[j];
-								entries[insertIdx] = new Entry
-								{
-									Value = value,
-									Attr = typedAttributes
-								};
-								nextIdx++;
-								break;
-							}
-						}
-					}
-					if (nextIdx < entries.Length)
-						Array.Resize(ref entries, nextIdx);
-					sortedAttrs = entries;
-					if (typeof(int) == underlying)
-					{
-						CreateDelegate(out comp, forInt.Compare);
-					}
-					else
-					{
-						comp = (a, b) => a.CompareTo(b);
-					}
-				}
-			}
-#endif
 
 			public IReadOnlyList<Enum> Values()
 			{
@@ -562,6 +451,7 @@ namespace ProgressOnderwijsUtils
 
 			static ITranslatable GetSingleLabel(TEnum f)
 			{
+
 				var translatedlabel = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
 				var untranslatedlabel = GetAttrs<MpLabelUntranslatedAttribute>.On(f).SingleOrDefault();
 				if (translatedlabel != null && untranslatedlabel != null)
