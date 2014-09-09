@@ -203,18 +203,40 @@ namespace ProgressOnderwijsUtils
 						}
 
 						ValuesInOverlapOrder = (TEnum[])EnumValues.Clone();
-						Array.Sort(ValuesInOverlapOrder, (a, b) =>
+						var overlapCount = new int[ValuesInOverlapOrder.Length];
+
+
+						for (int i = 0; i < overlapCount.Length; i++)
 						{
-							int diff = 0;
-							foreach (var v in EnumValues)
+							foreach (var val in ValuesInOverlapOrder)
 							{
-								if (HasFlag(a, v))
-									diff++;
-								if (HasFlag(b, v))
-									diff--;
+								if (HasFlag(ValuesInOverlapOrder[i], val))
+									overlapCount[i]++;
 							}
-							return diff == 0 ? a.CompareTo(b) : diff;
-						});
+						}
+
+						var n = overlapCount.Length;
+						while (true)
+						{
+							bool swapped = false;
+							for (int i = 1; i < n; i++)
+							{
+								if (overlapCount[i - 1] > overlapCount[i])
+								{
+									swapped = true;
+									var tmp = overlapCount[i];
+									overlapCount[i] = overlapCount[i - 1];
+									overlapCount[i - 1] = tmp;
+									var tmp2 = ValuesInOverlapOrder[i];
+									ValuesInOverlapOrder[i] = ValuesInOverlapOrder[i - 1];
+									ValuesInOverlapOrder[i - 1] = tmp2;
+								}
+							}
+							if (swapped)
+								n--;
+							else
+								break;
+						}
 					}
 				}
 
