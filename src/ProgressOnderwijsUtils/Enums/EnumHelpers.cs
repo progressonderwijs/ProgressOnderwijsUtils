@@ -299,6 +299,7 @@ namespace ProgressOnderwijsUtils
 			{
 				public TEnum Value;
 				public object[] Attrs;
+				public ITranslatable Label;
 			}
 
 
@@ -367,7 +368,7 @@ namespace ProgressOnderwijsUtils
 						}
 						else if (comparison == 0)
 						{
-							
+
 							var oldLength = entries[insertIdx].Attrs.Length;
 							Array.Resize(ref entries[insertIdx].Attrs, oldLength + customAttributes.Length);
 							int i = oldLength;
@@ -451,13 +452,23 @@ namespace ProgressOnderwijsUtils
 
 			static ITranslatable GetSingleLabel(TEnum f)
 			{
+				if (sortedAttrs == null)
+					InitAttrCache();
+				var idx = IdxAfterLastLtNode(f);
+				bool validIdx = idx < sortedAttrs.Length && comp(sortedAttrs[idx].Value, f) == 0;
 
-				var translatedlabel = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
-				var untranslatedlabel = GetAttrs<MpLabelUntranslatedAttribute>.On(f).SingleOrDefault();
+
+				if (validIdx && sortedAttrs[idx].Label != null)
+					return sortedAttrs[idx].Label;
+
+				var attrs = validIdx ? sortedAttrs[idx].Attrs : ArrayExtensions.Empty<object>();
+
+				var translatedlabel = attrs.OfType<MpLabelAttribute>().SingleOrDefault();
+				var untranslatedlabel = attrs.OfType<MpLabelUntranslatedAttribute>().SingleOrDefault();
 				if (translatedlabel != null && untranslatedlabel != null)
 					throw new Exception("Cannot define both an untranslated and a translated label on the same enum: " + f);
 
-				var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
+				var tooltip = attrs.OfType<MpTooltipAttribute>().SingleOrDefault();
 				//if (translatedlabel == null && untranslatedlabel == null && tooltip == null && !EnumMembers.Contains(f))
 				//throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
 
@@ -469,6 +480,8 @@ namespace ProgressOnderwijsUtils
 				if (tooltip != null)
 					translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
 
+				if (validIdx)
+					sortedAttrs[idx].Label = translatable;
 				return translatable;
 			}
 		}
