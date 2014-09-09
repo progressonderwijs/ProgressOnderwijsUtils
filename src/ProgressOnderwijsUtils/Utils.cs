@@ -192,7 +192,7 @@ namespace ProgressOnderwijsUtils
 			catch (Exception e)
 			{
 				if (IsTimeoutException(e))
-					Assert.Inconclusive("TIMEOUT DETECETD\n\n" + e);
+					Assert.Inconclusive("TIMEOUT DETECTED\n\n" + e);
 				throw;
 			}
 		}
