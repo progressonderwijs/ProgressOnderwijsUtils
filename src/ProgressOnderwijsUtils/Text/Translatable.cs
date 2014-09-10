@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MoreLinq;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Text;
 
 namespace ProgressOnderwijsUtils
@@ -14,10 +15,39 @@ namespace ProgressOnderwijsUtils
 		public static ITranslatable Append(this ITranslatable a, ITranslatable b) { return new ConcatTranslatable(a, b); }
 		public static ITranslatable Append(this ITranslatable a, ITranslatable b, ITranslatable c) { return new ConcatTranslatable(a, b, c); }
 		public static ITranslatable Append(this ITranslatable a, params ITranslatable[] rest) { return new ConcatTranslatable(new[] { a }.Concat(rest).ToArray()); }
-		public static ITranslatable AppendAuto(this ITranslatable a, params object[] objects) { return new ConcatTranslatable(new[] { a }.Concat(objects.Select(o => Converteer.ToText(o))).ToArray()); }
-		public static ITranslatable AppendTooltipAuto(this ITranslatable a, params object[] objects) { return new ConcatTranslatable(new[] { a }.Concat(objects.Select(o => Converteer.ToText(o).TextToTooltip())).ToArray()); }
+		public static ITranslatable AppendAuto(this ITranslatable a, params object[] objects) {
+			var args = new ITranslatable[objects.Length + 1];
+			int i = 1;
+			args[0] = a;
+			foreach (var obj in objects) //perf: no LINQ
+				args[i++] = Converteer.ToText(obj);
 
-		public static ITranslatable JoinTexts(this IEnumerable<ITranslatable> a, ITranslatable splitter) { return new ConcatTranslatable(a.SelectMany((t, i) => i == 0 ? new[] { t } : new[] { splitter, t }).ToArray()); }
+			return new ConcatTranslatable(args); 
+		}
+		public static ITranslatable AppendTooltipAuto(this ITranslatable a, params object[] objects) {
+			var args = new ITranslatable[objects.Length + 1];
+			int i = 1;
+			args[0] = a;
+			foreach (var obj in objects) //perf: no LINQ
+				args[i++] = Converteer.ToText(obj).TextToTooltip();
+
+			return new ConcatTranslatable(args);
+		}
+
+		public static ITranslatable JoinTexts(this IEnumerable<ITranslatable> a, ITranslatable splitter) {
+			var builder = FastArrayBuilder<ITranslatable>.Create();
+			using (var iter = a.GetEnumerator())
+			{
+				if(iter.MoveNext())
+					builder.Add(iter.Current);
+				while (iter.MoveNext())
+				{
+					builder.Add(splitter);
+					builder.Add(iter.Current);//perf:no LINQ
+				}
+			}
+			return new ConcatTranslatable(builder.ToArray()); 
+		}
 
 		public static ITranslatable LimitLength(this ITranslatable translatable, int maxwidth)
 		{
