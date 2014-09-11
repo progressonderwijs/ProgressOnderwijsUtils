@@ -10,6 +10,7 @@ namespace ProgressOnderwijsUtils
 		public static TextDefSimple EmptyText { get { return emptyText; } }
 
 		public TextDefSimple(string text, string extratext) { tv = new TextVal(text, extratext); }
+		public TextDefSimple(string text) { tv = new TextVal(text, ""); }
 		//TODO: make new constructor with default extratext
 		//Should default be null or empty string?
 
