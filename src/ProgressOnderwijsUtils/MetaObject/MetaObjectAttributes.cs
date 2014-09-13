@@ -21,6 +21,7 @@ namespace ProgressOnderwijsUtils
 	{
 		public static string JoinedClasses(this ColumnCss columnCss, string prefix)
 		{
+			//TODO: optimize: do some perf testing here, this is called very very often.
 			return EnumHelpers.GetValues<ColumnCss>().Where(css => css != ColumnCss.None && columnCss.HasFlag(css)).Select(css => prefix + css.ToString() + " ").JoinStrings();
 		}
 	}

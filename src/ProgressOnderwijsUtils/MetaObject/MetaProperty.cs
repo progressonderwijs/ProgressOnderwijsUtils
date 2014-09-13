@@ -111,7 +111,9 @@ namespace ProgressOnderwijsUtils
 						: setter != null;
 				}
 			}
-
+			//TODO:optimize: investigate whether its worth using a generic method in an outer scope
+			//TODO:optimize: or whether it's worth using a nulltoken rather than an uninitialized token
+			//TODO:optimize: or whether it's better to just use a bool (but thread safety...).
 			Func<TOwner, object> getter = UninitializedTGetter;
 			public Func<TOwner, object> Getter
 			{
@@ -169,17 +171,10 @@ namespace ProgressOnderwijsUtils
 
 			public Impl(PropertyInfo pi, int implicitOrder)
 			{
-				// first define the getters/setters, they are used below
-				//getter = MkGetter(pi);
-				//untypedGetter = getter == null ? default(Func<object, object>) : o => getter((TOwner)o);
-
-				//setter = MkSetter(pi);
-				//untypedSetter = setter == null ? default(Action<object, object>) : (o, v) => setter((TOwner)o, v);
-
 				propertyInfo = pi;
 				name = pi.Name;
 				index = implicitOrder;
-
+				//TODO:optimize: get attributes once, then filter by attr type myself
 
 				koppelTabelNaam = OrDefault(propertyInfo.Attr<MpKoppelTabelAttribute>(),
 					mkAttr => mkAttr.KoppelTabelNaam ?? propertyInfo.Name);
@@ -209,6 +204,8 @@ namespace ProgressOnderwijsUtils
 
 			LiteralTranslatable LabelNoTt(MemberInfo memberInfo)
 			{
+
+				//TODO:optimize: use those stored attributes mentioned in the constructor.
 				var labelNoTt = OrDefault(memberInfo.Attr<MpLabelAttribute>(), mkAttr => mkAttr.ToTranslatable());
 				var untranslatedLabelNoTt = OrDefault(memberInfo.Attr<MpLabelUntranslatedAttribute>(),
 					mkAttr => mkAttr.ToTranslatable());
@@ -254,6 +251,7 @@ namespace ProgressOnderwijsUtils
 
 			static Func<TOwner, object> MkGetter(PropertyInfo pi)
 			{
+				//TODO:optimize: this is still a hotspot :-(
 				var getterMethod = pi.GetGetMethod();
 				if (getterMethod == null)
 					return null;

@@ -68,6 +68,7 @@ namespace ProgressOnderwijsUtils
 
 		public static HashSet<Rol> OnderliggendeToegangsRollen(this IEnumerable<Rol> roots)
 		{
+			//TODO: optimize, this is called a lot.
 			return Utils.TransitiveClosure(roots, rol => ChildrenOf[rol]);
 		}
 	}

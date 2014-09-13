@@ -164,6 +164,8 @@ namespace ProgressOnderwijsUtils
 				return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format), ConverteerHelper.ToStringDynamic(obj, extraformat));
 		}
 
+
+		//TODO:optimize: investigate how to make this faster; reflection is slow and it's called a a lot.
 		public static ITranslatable TranslateEnum(Enum obj) { return (ITranslatable)enumToTranslatableGeneric.MakeGenericMethod(obj.GetType()).Invoke(null, new object[] { obj }); }
 
 		/// <summary>
