@@ -151,11 +151,11 @@ namespace ProgressOnderwijsUtils
 		public static ITranslatable ToText(object obj, string format = null, string extraformat = null)
 		{
 			if (obj == null || obj == DBNull.Value)
-				return TextDefSimple.EmptyText;
+				return Translatable.Empty;
 			else if (obj is ITranslatable)
 				return (ITranslatable)obj;
 			else if (obj is TextVal)
-				return new TextDefSimple((TextVal)obj);
+				return Translatable.Raw((TextVal)obj);
 			else if (obj is Enum)
 				return TranslateEnum((Enum)obj);
 			else if (string.IsNullOrEmpty(extraformat))
@@ -164,6 +164,8 @@ namespace ProgressOnderwijsUtils
 				return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format), ConverteerHelper.ToStringDynamic(obj, extraformat));
 		}
 
+
+		//TODO:optimize: investigate how to make this faster; reflection is slow and it's called a a lot.
 		public static ITranslatable TranslateEnum(Enum obj) { return (ITranslatable)enumToTranslatableGeneric.MakeGenericMethod(obj.GetType()).Invoke(null, new object[] { obj }); }
 
 		/// <summary>

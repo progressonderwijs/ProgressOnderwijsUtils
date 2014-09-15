@@ -16,6 +16,11 @@ namespace ProgressOnderwijsUtils
 		{
 			return Create(new[] { addnullitem }.Concat(collection));
 		}
+		public static IReadOnlyList<SelectItem<T?>> CreateWithLeeg<T>(SelectItem<T?> addnullitem, IEnumerable<SelectItem<T>> collection) where T : struct
+		{
+			return Create(new[] { addnullitem }.Concat(collection.Select(item=> SelectItem.Create((T?)item.Value,item.Label) )));
+		}
+
 
 		public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(DataTable dt)
 		{
@@ -39,12 +44,12 @@ namespace ProgressOnderwijsUtils
 
 		static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
 		{
-			return dt == null ? DbToEnumerable<T>(null, null, null): DbToEnumerable<T>(dt, dt.Columns[0], dt.Columns[1]);
+			return dt == null ? DbToEnumerable<T>(null, null, null) : DbToEnumerable<T>(dt, dt.Columns[0], dt.Columns[1]);
 		}
 
 		static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt, DataColumn idColumn, DataColumn textColumn)
 		{
-			return dt == null ? Enumerable.Empty<SelectItem<T>>() : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)dr[idColumn], new TextDefSimple(dr[textColumn].ToString(), "")));
+			return dt == null ? Enumerable.Empty<SelectItem<T>>() : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)dr[idColumn], Translatable.Raw(dr[textColumn].ToString(), "")));
 		}
 
 		public static SelectItem<T> GetItem<T>(this IReadOnlyList<SelectItem<T>> list, T value)

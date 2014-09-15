@@ -123,7 +123,7 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		static ITranslatable translatableComma = TextDefSimple.Create(", ");
+		static ITranslatable translatableComma = Translatable.Raw(", ");
 
 		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible, IComparable
 		{
@@ -618,7 +618,7 @@ namespace ProgressOnderwijsUtils
 		public static SelectItem<TEnum?> GetSelectItem<TEnum>(TEnum? f)
 			where TEnum : struct, IConvertible, IComparable
 		{
-			return SelectItem.Create(f, f == null ? TextDefSimple.EmptyText : GetLabel(f.Value));
+			return SelectItem.Create(f, f == null ? Translatable.Empty : GetLabel(f.Value));
 		}
 
 		public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
