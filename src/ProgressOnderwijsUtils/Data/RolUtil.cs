@@ -34,10 +34,9 @@ namespace ProgressOnderwijsUtils
 
 		public static readonly ILookup<Rol, Rol> ChildrenOf;
 		public static readonly ILookup<Rol, Rol> ParentsOf;
+
 		static RolUtil()
 		{
-
-
 			var koppelDown =
 				from ouder in EnumHelpers.GetValues<Rol>()
 				from kindAttr in EnumHelpers.GetAttrs<ImpliesAttribute>.On(ouder)
@@ -68,7 +67,7 @@ namespace ProgressOnderwijsUtils
 
 		public static HashSet<Rol> OnderliggendeToegangsRollen(this IEnumerable<Rol> roots)
 		{
-			//TODO: optimize, this is called a lot.
+			//TODO:optimize, this is called a lot.
 			return Utils.TransitiveClosure(roots, rol => ChildrenOf[rol]);
 		}
 	}
@@ -76,15 +75,6 @@ namespace ProgressOnderwijsUtils
 	namespace ToegangsRolInternal
 	{
 		public sealed class ToekenbaarAttribute : Attribute { }
-
-		//internal sealed class ImpliedByAttribute : Attribute
-		//{
-		//	public readonly IReadOnlyList<ToegangsRol> Ouders;
-		//	public ImpliedByAttribute(params ToegangsRol[] ouders)
-		//	{
-		//		Ouders = ouders;
-		//	}
-		//}
 
 		public sealed class ImpliesAttribute : Attribute
 		{
