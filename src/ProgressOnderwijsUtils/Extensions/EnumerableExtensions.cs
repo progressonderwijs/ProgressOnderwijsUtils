@@ -52,6 +52,8 @@ namespace ProgressOnderwijsUtils
 		[Pure]
 		public static HashSet<T> ToSet<T>(this IEnumerable<T> list) { return new HashSet<T>(list); }
 		[Pure]
+		public static HashSet<T> ToSet<T>(this IEnumerable<T> list, IEqualityComparer<T> comparer) { return new HashSet<T>(list, comparer); }
+		[Pure]
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> list) { return list ?? Enumerable.Empty<T>(); }
 
 		public static int GetSequenceHashCode<T>(IEnumerable<T> list, IEqualityComparer<T> elementComparer = null)

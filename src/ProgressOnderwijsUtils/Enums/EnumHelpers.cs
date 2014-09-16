@@ -309,6 +309,7 @@ namespace ProgressOnderwijsUtils
 
 			static int IdxAfterLastLtNode(TEnum needle)
 			{
+				//based on https://github.com/EamonNerbonne/a-vs-an/blob/master/A-vs-An/A-vs-An-DotNet/Internals/Node.cs
 				int start = 0, end = sortedAttrs.Length;
 				//invariant: only LT nodes before start
 				//invariant: only GTE nodes at or past end
