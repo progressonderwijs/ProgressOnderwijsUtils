@@ -138,7 +138,6 @@ namespace ProgressOnderwijsUtils
 
 		#region ToText
 
-		static readonly MethodInfo enumToTranslatableGeneric = ((Func<DatabaseVersion, ITranslatable>)EnumHelpers.GetLabel).Method.GetGenericMethodDefinition();
 		/// <summary>
 		/// Generieke text-efy functie die de default Progress.NET formatering en culture-info gebruikt om een waarde een vertaalbare string representatie te geven.
 		/// </summary>
@@ -157,16 +156,13 @@ namespace ProgressOnderwijsUtils
 			else if (obj is TextVal)
 				return Translatable.Raw((TextVal)obj);
 			else if (obj is Enum)
-				return TranslateEnum((Enum)obj);
+				return EnumHelpers.GetLabel((Enum)obj);// TranslateEnum((Enum)obj);
 			else if (string.IsNullOrEmpty(extraformat))
 				return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format));
 			else
 				return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format), ConverteerHelper.ToStringDynamic(obj, extraformat));
 		}
 
-
-		//TODO:optimize: investigate how to make this faster; reflection is slow and it's called a a lot.
-		public static ITranslatable TranslateEnum(Enum obj) { return (ITranslatable)enumToTranslatableGeneric.MakeGenericMethod(obj.GetType()).Invoke(null, new object[] { obj }); }
 
 		/// <summary>
 		/// Utility functie die de NummerFormaat enum vertaald naar de overeenkomstige format string.

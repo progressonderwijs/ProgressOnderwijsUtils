@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace ProgressOnderwijsUtils.Collections
 {
@@ -20,6 +21,7 @@ namespace ProgressOnderwijsUtils.Collections
 
 		public static FastArrayBuilder<T> Create() { return new FastArrayBuilder<T> { current = new T[InitSize] }; }
 
+		[MethodImpl(MethodImplOptions.AggressiveInlining)]
 		public void Add(T item)
 		{
 			if (idx < current.Length)

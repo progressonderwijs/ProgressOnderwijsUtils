@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -6,13 +7,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
 	public static class EnumHelpers
 	{
-		interface IEnumValues
+		interface IEnumMetaCache
 		{
 			IReadOnlyList<Enum> Values();
 			ITranslatable GetEnumLabel(Enum val);
@@ -34,17 +34,9 @@ namespace ProgressOnderwijsUtils
 			{
 				return (a & b) != 0;
 			}
-			public static bool Equals(int a, int b)
-			{
-				return (a == b);
-			}
-			public static int GetHashcode(int a)
+			public static long ToInt64(int a)
 			{
 				return a;
-			}
-			public static int Compare(int a, int b)
-			{
-				return a < b ? -1 : a == b ? 0 : 1;
 			}
 		}
 
@@ -65,67 +57,41 @@ namespace ProgressOnderwijsUtils
 			{
 				return (a & b) != 0L;
 			}
-			public static bool Equals(long a, long b)
+			public static long ToInt64(long a)
 			{
-				return (a == b);
-			}
-			public static int GetHashcode(long a)
-			{
-				return (int)(a >> 32) ^ (int)a;
-			}
-			public static int Compare(long a, long b)
-			{
-				return a < b ? -1 : a == b ? 0 : 1;
+				return a;
 			}
 		}
 
 
 		struct FlagOperationMethods
 		{
-			public static FlagOperationMethods Get<T>(Func<T, T, T> or, Func<T, T, bool> hasFlag, Func<T, T, bool> overlaps, Func<T, T, bool> equals, Func<T, int> getHashcode, Func<T, T, int> compare)
+			public static FlagOperationMethods Get<T>(Func<T, T, T> or, Func<T, T, bool> hasFlag, Func<T, T, bool> overlaps, Func<T, long> toInt64)
 			{
 				return new FlagOperationMethods
 				{
 					Or = or.Method,
 					HasFlag = hasFlag.Method,
 					HasFlagOverlap = overlaps.Method,
-					EqualsMethod = equals.Method,
-					GetHashcode = getHashcode.Method,
-					Compare = compare.Method,
+					ToInt64 = toInt64.Method,
 				};
 			}
 
-			public MethodInfo Or, HasFlag, HasFlagOverlap, EqualsMethod, GetHashcode, Compare;
+			public MethodInfo Or, HasFlag, HasFlagOverlap,   ToInt64;
 		}
 
-		static FlagOperationMethods forInt = FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap, Int32Helpers.Equals, Int32Helpers.GetHashcode, Int32Helpers.Compare)
+		static readonly FlagOperationMethods forInt = FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap, Int32Helpers.ToInt64)
 
-			, forLong = FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap, Int64Helpers.Equals, Int64Helpers.GetHashcode, Int64Helpers.Compare);
+			, forLong = FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap, Int64Helpers.ToInt64);
 
-		class LambdaEqualityComparer<T> : IEqualityComparer<T>
+		static readonly ITranslatable translatableComma = Translatable.Raw(", ");
+		static readonly ConcurrentDictionary<Type, IEnumMetaCache> enumMetaCache = new ConcurrentDictionary<Type, IEnumMetaCache>();
+		static IEnumMetaCache GetEnumMetaCache(Type enumType)
 		{
-			readonly Func<T, T, bool> equals;
-			readonly Func<T, int> hash;
-			public LambdaEqualityComparer(Func<T, T, bool> equals, Func<T, int> hash)
-			{
-				this.equals = equals;
-				this.hash = hash;
-			}
-
-			public bool Equals(T x, T y)
-			{
-				return equals(x, y);
-			}
-
-			public int GetHashCode(T obj)
-			{
-				return hash(obj);
-			}
+			return enumMetaCache.GetOrAdd(enumType, type => (IEnumMetaCache)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(type)));
 		}
 
-		static ITranslatable translatableComma = Translatable.Raw(", ");
-
-		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible, IComparable
+		struct EnumMetaCache<TEnum> : IEnumMetaCache where TEnum : struct, IConvertible, IComparable
 		{
 			public static readonly TEnum[] EnumValues;
 			public static readonly bool IsFlags;
@@ -297,18 +263,19 @@ namespace ProgressOnderwijsUtils
 
 			struct AttrEntry
 			{
-				public TEnum Value;
+				public long Value;
 				public object[] Attrs;
 				public ITranslatable Label;
 			}
 
 
 			static AttrEntry[] sortedAttrs;
-			static Comparison<TEnum> comp;
+			static Func<TEnum, long> toInt64;
 
 
-			static int IdxAfterLastLtNode(TEnum needle)
+			static int IdxAfterLastLtNode(long needle)
 			{
+				//based on https://github.com/EamonNerbonne/a-vs-an/blob/master/A-vs-An/A-vs-An-DotNet/Internals/Node.cs
 				int start = 0, end = sortedAttrs.Length;
 				//invariant: only LT nodes before start
 				//invariant: only GTE nodes at or past end
@@ -316,7 +283,7 @@ namespace ProgressOnderwijsUtils
 				{
 					int midpoint = end + start >> 1;
 					// start <= midpoint < end
-					if (comp(sortedAttrs[midpoint].Value, needle) < 0)
+					if (sortedAttrs[midpoint].Value < needle)
 					{
 						start = midpoint + 1;//i.e. midpoint < start1 so start0 < start1
 					}
@@ -332,8 +299,9 @@ namespace ProgressOnderwijsUtils
 			{
 				if (sortedAttrs == null)
 					InitAttrCache();
-				int idx = IdxAfterLastLtNode(value);
-				if (idx < sortedAttrs.Length && comp(sortedAttrs[idx].Value, value) == 0)
+				long key = toInt64(value);
+				int idx = IdxAfterLastLtNode(key);
+				if (idx < sortedAttrs.Length && sortedAttrs[idx].Value == key)
 					return sortedAttrs[idx].Attrs;
 				else return ArrayExtensions.Empty<object>();
 			}
@@ -342,11 +310,11 @@ namespace ProgressOnderwijsUtils
 			{
 				if (typeof(int) == underlying)
 				{
-					CreateDelegate(out comp, forInt.Compare);
+					CreateDelegate(out toInt64, forInt.ToInt64);
 				}
 				else
 				{
-					comp = (a, b) => a.CompareTo(b);
+					toInt64 = a => a.ToInt64(null);
 				}
 
 				var entries = new AttrEntry[EnumValues.Length];
@@ -357,18 +325,25 @@ namespace ProgressOnderwijsUtils
 					if (customAttributes.Length == 0)
 						continue;
 					var value = (TEnum)field.GetValue(null);
+					long key = toInt64(value);
 					int insertIdx = nextIdx - 1;
 					while (true)
 					{
-
-						var comparison = insertIdx == -1 ? 1 : comp(value, entries[insertIdx].Value);
-						if (comparison < 0)
+						if (insertIdx == -1 || key > entries[insertIdx].Value)
 						{
-							insertIdx--;
+							insertIdx++;
+							for (int j = nextIdx - 1; j >= insertIdx; j--)
+								entries[j + 1] = entries[j];
+							entries[insertIdx] = new AttrEntry
+							{
+								Value = key,
+								Attrs = customAttributes
+							};
+							nextIdx++;
+							break;
 						}
-						else if (comparison == 0)
+						else if (key == entries[insertIdx].Value)
 						{
-
 							var oldLength = entries[insertIdx].Attrs.Length;
 							Array.Resize(ref entries[insertIdx].Attrs, oldLength + customAttributes.Length);
 							int i = oldLength;
@@ -378,16 +353,7 @@ namespace ProgressOnderwijsUtils
 						}
 						else
 						{
-							insertIdx++;
-							for (int j = nextIdx - 1; j >= insertIdx; j--)
-								entries[j + 1] = entries[j];
-							entries[insertIdx] = new AttrEntry
-							{
-								Value = value,
-								Attrs = customAttributes
-							};
-							nextIdx++;
-							break;
+							insertIdx--;
 						}
 					}
 				}
@@ -454,8 +420,9 @@ namespace ProgressOnderwijsUtils
 			{
 				if (sortedAttrs == null)
 					InitAttrCache();
-				var idx = IdxAfterLastLtNode(f);
-				bool validIdx = idx < sortedAttrs.Length && comp(sortedAttrs[idx].Value, f) == 0;
+				var key = toInt64(f);
+				var idx = IdxAfterLastLtNode(key);
+				bool validIdx = idx < sortedAttrs.Length && sortedAttrs[idx].Value == key;
 
 
 				if (validIdx && sortedAttrs[idx].Label != null)
@@ -550,10 +517,7 @@ namespace ProgressOnderwijsUtils
 
 		public static IReadOnlyList<Enum> GetValues(Type enumType)
 		{
-			if (!enumType.IsEnum)
-				throw new ArgumentException("enumType must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(enumType));
-			var values = (IEnumValues)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(enumType));
-			return values.Values();
+			return GetEnumMetaCache(enumType).Values();
 		}
 
 		public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
@@ -573,14 +537,12 @@ namespace ProgressOnderwijsUtils
 
 		public static ITranslatable GetLabel(Enum enumVal)
 		{
-			if (enumVal == null)
-				throw new ArgumentNullException("enumVal");
-			var type = enumVal.GetType();
-			if (!type.IsEnum)
-				throw new ArgumentException("enumVal must be an enum value, not of type " + ObjectToCode.GetCSharpFriendlyTypeName(type));
-			var labeller = (IEnumValues)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(type));
-			return labeller.GetEnumLabel(enumVal);
+			//if (enumVal == null)
+			//	throw new ArgumentNullException("enumVal");
+			return GetEnumMetaCache(enumVal.GetType())
+				.GetEnumLabel(enumVal);
 		}
+
 
 		public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
 			where TEnum : struct, IConvertible, IComparable
