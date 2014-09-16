@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
@@ -12,7 +13,7 @@ namespace ProgressOnderwijsUtils
 {
 	public static class EnumHelpers
 	{
-		interface IEnumValues
+		interface IEnumMetaCache
 		{
 			IReadOnlyList<Enum> Values();
 			ITranslatable GetEnumLabel(Enum val);
@@ -123,9 +124,14 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		static ITranslatable translatableComma = Translatable.Raw(", ");
+		static readonly ITranslatable translatableComma = Translatable.Raw(", ");
+		static readonly ConcurrentDictionary<Type, IEnumMetaCache> enumMetaCache = new ConcurrentDictionary<Type, IEnumMetaCache>();
+		static IEnumMetaCache GetEnumMetaCache(Type enumType)
+		{
+			return enumMetaCache.GetOrAdd(enumType, type => (IEnumMetaCache)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(type)));
+		}
 
-		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible, IComparable
+		struct EnumMetaCache<TEnum> : IEnumMetaCache where TEnum : struct, IConvertible, IComparable
 		{
 			public static readonly TEnum[] EnumValues;
 			public static readonly bool IsFlags;
@@ -551,10 +557,7 @@ namespace ProgressOnderwijsUtils
 
 		public static IReadOnlyList<Enum> GetValues(Type enumType)
 		{
-			if (!enumType.IsEnum)
-				throw new ArgumentException("enumType must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(enumType));
-			var values = (IEnumValues)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(enumType));
-			return values.Values();
+			return GetEnumMetaCache(enumType).Values();
 		}
 
 		public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
@@ -574,14 +577,12 @@ namespace ProgressOnderwijsUtils
 
 		public static ITranslatable GetLabel(Enum enumVal)
 		{
-			if (enumVal == null)
-				throw new ArgumentNullException("enumVal");
-			var type = enumVal.GetType();
-			if (!type.IsEnum)
-				throw new ArgumentException("enumVal must be an enum value, not of type " + ObjectToCode.GetCSharpFriendlyTypeName(type));
-			var labeller = (IEnumValues)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(type));
-			return labeller.GetEnumLabel(enumVal);
+			//if (enumVal == null)
+			//	throw new ArgumentNullException("enumVal");
+			return GetEnumMetaCache(enumVal.GetType())
+				.GetEnumLabel(enumVal);
 		}
+
 
 		public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
 			where TEnum : struct, IConvertible, IComparable
