@@ -41,6 +41,7 @@ namespace ProgressOnderwijsUtils
 								[a-rt-z]
 								|s[a-z]
 							)[a-z]*", CommonOptions);
+
 		}
 		static class SepaStripperRegexes
 		{
@@ -55,15 +56,31 @@ namespace ProgressOnderwijsUtils
 		{
 			var withSpace =
 				PrettyPrintValues.capLetter.Replace(rawString,
-				m => (m.Index == 0 ? "" : " ") + (m.Value.ToUpperInvariant() == m.Value ? m.Value : m.Value.ToLowerInvariant())
+				m => (m.Index == 0 ? "" : " ") + (IsUpperAscii(m.Value) ? m.Value :DecapitalizeAscii(m.Value))
 				);
 			return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
 		}
+
+		static bool IsUpperAscii(string str)
+		{
+			foreach(var c in str)
+				if(c<'A' || c>'Z')
+					return false;
+			return true;
+		}
+
+		static string DecapitalizeAscii(string str)
+		{
+			if (str[0] >= 'A' && str[0] <= 'Z')
+				return (char)(str[0] + ('a' - 'A')) + str.Substring(1);
+			else return str;
+		}
+
 		public static string PrettyCapitalizedPrintCamelCased(string rawString)
 		{
 			var withSpace =
 				PrettyPrintValues.capLetter.Replace(rawString,
-				m => (m.Index == 0 ? m.Value : " " + (m.Value.ToUpperInvariant() == m.Value ? m.Value : m.Value.ToLowerInvariant()))
+				m => (m.Index == 0 ? m.Value : " " + (IsUpperAscii(m.Value) ? m.Value : DecapitalizeAscii(m.Value)))
 				);
 			return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
 		}

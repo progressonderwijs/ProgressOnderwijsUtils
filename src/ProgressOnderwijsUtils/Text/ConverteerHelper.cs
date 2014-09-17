@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 			yield return TryToString<int>(obj, o => language =>
 				o.ToString(format ?? "D", language.GetCulture()));
 			yield return TryToString<Enum>(obj, o => language =>
-				Converteer.TranslateEnum(o).Translate(language).Text);
+				EnumHelpers.GetLabel(o).Translate(language).Text);
 			yield return TryToString<decimal>(obj, o => language =>
 				o.ToString(format ?? GELD_EURO, language.GetCulture()));
 			yield return TryToString<DateTime>(obj, o => language =>
