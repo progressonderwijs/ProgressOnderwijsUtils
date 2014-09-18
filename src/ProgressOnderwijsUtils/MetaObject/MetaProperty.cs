@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
 		Action<object, object> UntypedSetter { get; }
 		int Index { get; }
 		bool Required { get; }
-		bool AllowNull { get; }
+		bool AllowNullInEditor { get; }
 		int? Length { get; }
 		string Regex { get; }
 		DatumFormaat? DatumTijd { get; }
@@ -58,8 +58,8 @@ namespace ProgressOnderwijsUtils
 			public bool Required { get { return required; } }
 			readonly bool hide;
 			public bool Hide { get { return hide; } }
-			readonly bool allowNull;
-			public bool AllowNull { get { return allowNull; } }
+			readonly bool allowNullInEditor;
+			public bool AllowNullInEditor { get { return allowNullInEditor; } }
 			readonly int? length;
 			public int? Length { get { return length; } }
 			readonly string regex;
@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
 				htmlMode = mpHtmlEditModeAttribute == null ? default(HtmlEditMode) : mpHtmlEditModeAttribute.HtmlMode;
 				required = attrs.AttrH<MpVerplichtAttribute>() != null;
 				hide = attrs.AttrH<HideAttribute>() != null;
-				allowNull = attrs.AttrH<MpAllowNullAttribute>() != null;
+				allowNullInEditor = attrs.AttrH<MpAllowNullInEditorAttribute>() != null;
 				isKey = attrs.AttrH<KeyAttribute>() != null;
 				var mpShowDefaultOnNewAttribute = attrs.AttrH<MpShowDefaultOnNewAttribute>();
 				showDefaultOnNew = mpShowDefaultOnNewAttribute != null;

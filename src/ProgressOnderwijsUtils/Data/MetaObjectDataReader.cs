@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils
 
 			for (int i = 0; i < fields.Length; i++)
 			{
-				dt.Rows.Add(fields[i].Name, i, -1, null, null, fields[i].DataType, null, false, fields[i].AllowNull, true, false, fields[i].IsKey && fields.Count(mp => mp.IsKey) == 1, fields[i].IsKey, false, null, null, null, "val");
+				dt.Rows.Add(fields[i].Name, i, -1, null, null, fields[i].DataType, null, false, fields[i].AllowNullInEditor, true, false, fields[i].IsKey && fields.Count(mp => mp.IsKey) == 1, fields[i].IsKey, false, null, null, null, "val");
 			}
 			return dt;
 
