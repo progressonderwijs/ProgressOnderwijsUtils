@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Data.Entity.Core;
 using System.Collections.Generic;
 using System.Data;
@@ -192,13 +193,18 @@ namespace ProgressOnderwijsUtils
 			catch (Exception e)
 			{
 				if (IsTimeoutException(e))
-					Assert.Inconclusive("TIMEOUT DETECETD\n\n" + e);
+					Assert.Inconclusive("TIMEOUT DETECTED\n\n" + e);
 				throw;
 			}
 		}
 
 		static bool IsTimeoutException(Exception e)
 		{
+			if (e is AggregateException)
+			{
+				return (e as AggregateException).InnerExceptions.All(IsTimeoutException);
+			}
+
 			for (var current = e; current != null; current = current.InnerException)
 			{
 				var sqlE = current as SqlException;
