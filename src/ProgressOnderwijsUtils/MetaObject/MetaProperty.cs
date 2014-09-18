@@ -135,17 +135,13 @@ namespace ProgressOnderwijsUtils
 				return Expression.Property(paramExpr, propertyInfo);
 			}
 
-			public Impl(PropertyInfo pi, int implicitOrder)
+			public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
 			{
 				propertyInfo = pi;
 				name = pi.Name;
 				index = implicitOrder;
 				getterMethod = pi.GetGetMethod();
 				setterMethod = pi.GetSetMethod();
-
-
-				//TODO:optimize: get attributes once, then filter by attr type myself
-				var attrs = pi.GetCustomAttributes(true);
 
 				var mpKoppelTabelAttribute = attrs.AttrH<MpKoppelTabelAttribute>();
 				koppelTabelNaam = mpKoppelTabelAttribute == null ? null : (mpKoppelTabelAttribute.KoppelTabelNaam ?? propertyInfo.Name);

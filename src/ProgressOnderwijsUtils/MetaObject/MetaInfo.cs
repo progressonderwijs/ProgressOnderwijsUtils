@@ -72,16 +72,27 @@ namespace ProgressOnderwijsUtils
 
 		static IMetaProperty<T>[] GetMetaPropertiesImpl()
 		{
-			var list = FastArrayBuilder<IMetaProperty<T>>.Create();
-			int i = 0;
-			foreach (PropertyInfo info in typeof(T).GetProperties())
+			int index = 0;
+			var propertyInfos = typeof(T).GetProperties();
+			var metaProperties = new IMetaProperty<T>[propertyInfos.Length];
+			foreach (PropertyInfo propertyInfo in propertyInfos)
 			{
-				if (info.GetCustomAttributes(typeof(MpNotMappedAttribute), true).Length == 0)
-					list.Add(new MetaProperty.Impl<T>(info, i++));
+				var customAttributes = propertyInfo.GetCustomAttributes(true);
+				bool isMapped = true;
+				foreach (var attr in customAttributes)
+					if (attr is MpNotMappedAttribute)
+					{
+						isMapped = false;
+						break;
+					}
+				if (isMapped)
+				{
+					metaProperties[index] = new MetaProperty.Impl<T>(propertyInfo, index, customAttributes);
+					index++;
+				}
 			}
-			var array = list.ToArray();
-			Array.Sort(array, (a, b) => a.PropertyInfo.MetadataToken.CompareTo(b.PropertyInfo.MetadataToken));
-			return array;
+			Array.Resize(ref metaProperties, index);
+			return metaProperties;
 		}
 
 		public IEnumerator<IMetaProperty<T>> GetEnumerator() { return ReadOnlyView.GetEnumerator(); }
