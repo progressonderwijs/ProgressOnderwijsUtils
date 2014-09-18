@@ -65,21 +65,8 @@ namespace ProgressOnderwijsUtils
 			public string Regex { get { return regex; } }
 			readonly DatumFormaat? datumtijd;
 			public DatumFormaat? DatumTijd { get { return datumtijd; } }
-			ITranslatable label;
-			public ITranslatable Label
-			{
-				get
-				{
-					if (label == null)
-					{
-						var labelNoTt = LabelNoTt(propertyInfo);
-						label = OrDefault(propertyInfo.Attr<MpTooltipAttribute>()
-							, mkAttr => labelNoTt.WithTooltip(mkAttr.NL, mkAttr.EN, mkAttr.DE)
-							, labelNoTt);
-					}
-					return label;
-				}
-			}
+			readonly ITranslatable label;
+			public ITranslatable Label { get { return label; } }
 
 			readonly string koppelTabelNaam;
 			public string KoppelTabelNaam { get { return koppelTabelNaam; } }
@@ -177,19 +164,29 @@ namespace ProgressOnderwijsUtils
 				//TODO:optimize: get attributes once, then filter by attr type myself
 				var attrs = pi.GetCustomAttributes(true);
 
-				koppelTabelNaam = OrDefault(attrs.AttrH<MpKoppelTabelAttribute>(),
-					mkAttr => mkAttr.KoppelTabelNaam ?? propertyInfo.Name);
-				lijstCssClass = OrDefault(attrs.AttrH<MpColumnCssAttribute>(), mkAttr => mkAttr.CssClass);
-				htmlMode = OrDefault(attrs.AttrH<MpHtmlEditModeAttribute>(), mkAttr => mkAttr.HtmlMode);
-				required = OrDefault(attrs.AttrH<MpVerplichtAttribute>(), mkAttr => true);
-				hide = OrDefault(attrs.AttrH<HideAttribute>(), mkAttr => true);
-				allowNull = OrDefault(attrs.AttrH<MpAllowNullAttribute>(), mkAttr => true);
-				isKey = OrDefault(attrs.AttrH<KeyAttribute>(), mkAttr => true);
-				showDefaultOnNew = OrDefault(attrs.AttrH<MpShowDefaultOnNewAttribute>(), mkAttr => true);
-				isReadonly = !pi.CanWrite || OrDefault(attrs.AttrH<MpReadonlyAttribute>(), mkAttr => true);
-				length = OrDefault(attrs.AttrH<MpLengteAttribute>(), mkAttr => mkAttr.Lengte, default(int?));
-				regex = OrDefault(attrs.AttrH<MpRegexAttribute>(), mkAttr => mkAttr.Regex);
-				datumtijd = OrDefault(attrs.AttrH<MpDatumFormaatAttribute>(), mkAttr => mkAttr.Formaat, default(DatumFormaat?));
+				var mpKoppelTabelAttribute = attrs.AttrH<MpKoppelTabelAttribute>();
+				koppelTabelNaam = mpKoppelTabelAttribute == null ? null : (mpKoppelTabelAttribute.KoppelTabelNaam ?? propertyInfo.Name);
+				var mpColumnCssAttribute = attrs.AttrH<MpColumnCssAttribute>();
+				lijstCssClass = mpColumnCssAttribute == null ? default(ColumnCss) : mpColumnCssAttribute.CssClass;
+				var mpHtmlEditModeAttribute = attrs.AttrH<MpHtmlEditModeAttribute>();
+				htmlMode = mpHtmlEditModeAttribute == null ? default(HtmlEditMode) : mpHtmlEditModeAttribute.HtmlMode;
+				required = attrs.AttrH<MpVerplichtAttribute>() != null;
+				hide = attrs.AttrH<HideAttribute>() != null;
+				allowNull = attrs.AttrH<MpAllowNullAttribute>() != null;
+				isKey = attrs.AttrH<KeyAttribute>() != null;
+				var mpShowDefaultOnNewAttribute = attrs.AttrH<MpShowDefaultOnNewAttribute>();
+				showDefaultOnNew = mpShowDefaultOnNewAttribute != null;
+				isReadonly = !pi.CanWrite || (attrs.AttrH<MpReadonlyAttribute>() != null);
+				var mpLengteAttribute = attrs.AttrH<MpLengteAttribute>();
+				length = mpLengteAttribute == null ? default(int?) : mpLengteAttribute.Lengte;
+				var mpRegexAttribute = attrs.AttrH<MpRegexAttribute>();
+				regex = mpRegexAttribute == null ? null : mpRegexAttribute.Regex;
+				var mpDatumFormaatAttribute = attrs.AttrH<MpDatumFormaatAttribute>();
+				datumtijd = mpDatumFormaatAttribute == null ? default(DatumFormaat?) : mpDatumFormaatAttribute.Formaat;
+
+				var labelNoTt = LabelNoTt(attrs);
+				var mpTooltipAttribute = attrs.AttrH<MpTooltipAttribute>();
+				label = mpTooltipAttribute == null ? labelNoTt : labelNoTt.WithTooltip(mpTooltipAttribute.NL, mpTooltipAttribute.EN, mpTooltipAttribute.DE);
 
 				if (KoppelTabelNaam != null && DataType.GetNonNullableUnderlyingType() != typeof(int))
 					throw new ProgressNetException(typeof(TOwner) + " heeft Kolom " + Name + " heeft koppeltabel " +
@@ -203,27 +200,30 @@ namespace ProgressOnderwijsUtils
 			}
 
 
-			LiteralTranslatable LabelNoTt(MemberInfo memberInfo)
+			LiteralTranslatable LabelNoTt(object[] attrs)
 			{
 
 				//TODO:optimize: use those stored attributes mentioned in the constructor.
-				var labelNoTt = OrDefault(memberInfo.Attr<MpLabelAttribute>(), mkAttr => mkAttr.ToTranslatable());
-				var untranslatedLabelNoTt = OrDefault(memberInfo.Attr<MpLabelUntranslatedAttribute>(),
-					mkAttr => mkAttr.ToTranslatable());
+				var mpLabelAttribute = attrs.AttrH<MpLabelAttribute>();
+				var labelNoTt = mpLabelAttribute == null ? null : mpLabelAttribute.ToTranslatable();
+				var mpLabelUntranslatedAttribute = attrs.AttrH<MpLabelUntranslatedAttribute>();
+				var untranslatedLabelNoTt = mpLabelUntranslatedAttribute == null ? null : mpLabelUntranslatedAttribute.ToTranslatable();
 				if (untranslatedLabelNoTt != null)
 					if (labelNoTt != null)
 						throw new Exception(
 							"Cannot define both an untranslated and a translated label on the same property " +
-								ObjectToCode.GetCSharpFriendlyTypeName(memberInfo.DeclaringType) + "." + Name);
+								ObjectToCode.GetCSharpFriendlyTypeName(propertyInfo.DeclaringType) + "." + Name);
 					else
 						labelNoTt = untranslatedLabelNoTt;
 
-				if (labelNoTt == null && memberInfo.DeclaringType.Attr<MpLabelsRequiredAttribute>() != null)
+#if DEBUG
+				if (labelNoTt == null && propertyInfo.DeclaringType.Attr<MpLabelsRequiredAttribute>() != null)
 					throw new ArgumentException("You must specify an MpLabel on " + Name + ", since the class " +
-						ObjectToCode.GetCSharpFriendlyTypeName(memberInfo.DeclaringType) + " is marked MpLabelsRequired");
+						ObjectToCode.GetCSharpFriendlyTypeName(propertyInfo.DeclaringType) + " is marked MpLabelsRequired");
+#endif
 				if (labelNoTt == null)
 				{
-					var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(memberInfo.Name);
+					var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(propertyInfo.Name);
 					labelNoTt = Translatable.Literal(prettyName, prettyName, prettyName);
 				}
 				return labelNoTt;
@@ -328,8 +328,9 @@ namespace ProgressOnderwijsUtils
 		static readonly Action<object, object> UninitializedSetter = (o, v) => { };
 
 		static T MkDelegate<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
-		static TR OrDefault<T, TR>(T val, Func<T, TR> project, TR defaultVal = default(TR)) { return Equals(val, default(T)) ? defaultVal : project(val); }
-		static T AttrH<T>(this object[] attrs) where T:class{
+
+		static T AttrH<T>(this object[] attrs) where T : class
+		{
 			foreach (var obj in attrs)
 				if (obj is T)
 					return (T)obj;

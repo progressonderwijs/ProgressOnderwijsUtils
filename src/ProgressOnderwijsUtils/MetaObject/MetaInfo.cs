@@ -23,8 +23,7 @@ namespace ProgressOnderwijsUtils
 		new IMetaProperty<T> this[string name] { get; }
 	}
 
-	public sealed class MetaInfo<T> : IMetaPropCache<T>, IEnumerable<IMetaProperty<T>>
-		where T : IMetaObject
+	public sealed class MetaInfo<T> : IMetaPropCache<T>, IReadOnlyList<IMetaProperty<T>> where T : IMetaObject
 	{
 		readonly IMetaProperty<T>[] MetaProperties;
 		readonly IReadOnlyList<IMetaProperty<T>> ReadOnlyView;
@@ -42,27 +41,24 @@ namespace ProgressOnderwijsUtils
 				throw new ArgumentException("Cannot determine metaproperties on abstract type " + typeof(T));
 			else
 			{
-				var nonAbstractBaseTypes = NonAbstractMetaObjectBaseTypes();
-				if (nonAbstractBaseTypes.Any())
-					throw new ArgumentException("Cannot determine metaproperties on type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " with non-abstract base type(s) : " + String.Join(", ", nonAbstractBaseTypes.Select(ObjectToCode.GetCSharpFriendlyTypeName)));
-				else if (!typeof(T).GetProperties().Any())
+				AssertAllMetaObjectBaseTypesAreAbstract();
+				if (typeof(T).GetProperties().Length == 0)
 					Console.WriteLine("Warning: attempting to load metaproperties on type " + typeof(T) + " without properties.");
-				//throw new ArgumentException("Cannot determine metaproperties on type " + typeof(T) + " without properties");
 			}
 
 			MetaProperties = GetMetaPropertiesImpl();
-			ReadOnlyView = MetaProperties.AsReadView();
+			ReadOnlyView = new ArrayView<IMetaProperty<T>>(MetaProperties);
 			var dictionary = new Dictionary<string, IMetaProperty<T>>(StringComparer.OrdinalIgnoreCase);
 			foreach (var property in MetaProperties)//perf:avoid LINQ.
 				dictionary.Add(property.Name, property);
 			ByName = dictionary;
 		}
 
-		static IEnumerable<Type> NonAbstractMetaObjectBaseTypes()
+		static void AssertAllMetaObjectBaseTypesAreAbstract()
 		{
-			foreach (Type bt in typeof(T).BaseTypes())
+			foreach (var bt in typeof(T).BaseTypes())
 				if (!bt.IsAbstract && typeof(IMetaObject).IsAssignableFrom(bt))
-					yield return bt;
+					throw new ArgumentException("Cannot determine metaproperties on type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " with non-abstract base type : " + ObjectToCode.GetCSharpFriendlyTypeName(bt));
 		}
 
 		IReadOnlyList<IMetaProperty> IMetaPropCache.Properties { get { return MetaProperties; } }
@@ -103,5 +99,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		public bool TryGetValue(string colName, out IMetaProperty<T> metaProperty) { return ByName.TryGetValue(colName, out metaProperty); }
+
+		IMetaProperty<T> IReadOnlyList<IMetaProperty<T>>.this[int index] { get { return MetaProperties[index]; } }
 	}
 }
