@@ -193,11 +193,6 @@ namespace ProgressOnderwijsUtils
 					else
 						labelNoTt = untranslatedLabelNoTt;
 
-#if DEBUG
-				if (labelNoTt == null && propertyInfo.DeclaringType.Attr<MpLabelsRequiredAttribute>() != null)
-					throw new ArgumentException("You must specify an MpLabel on " + Name + ", since the class " +
-						ObjectToCode.GetCSharpFriendlyTypeName(propertyInfo.DeclaringType) + " is marked MpLabelsRequired");
-#endif
 				if (labelNoTt == null)
 				{
 					var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(propertyInfo.Name);
