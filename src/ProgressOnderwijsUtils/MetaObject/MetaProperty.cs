@@ -175,26 +175,27 @@ namespace ProgressOnderwijsUtils
 				name = pi.Name;
 				index = implicitOrder;
 				//TODO:optimize: get attributes once, then filter by attr type myself
+				var attrs = pi.GetCustomAttributes(true);
 
-				koppelTabelNaam = OrDefault(propertyInfo.Attr<MpKoppelTabelAttribute>(),
+				koppelTabelNaam = OrDefault(attrs.AttrH<MpKoppelTabelAttribute>(),
 					mkAttr => mkAttr.KoppelTabelNaam ?? propertyInfo.Name);
-				lijstCssClass = OrDefault(propertyInfo.Attr<MpColumnCssAttribute>(), mkAttr => mkAttr.CssClass);
-				htmlMode = OrDefault(propertyInfo.Attr<MpHtmlEditModeAttribute>(), mkAttr => mkAttr.HtmlMode);
-				required = OrDefault(propertyInfo.Attr<MpVerplichtAttribute>(), mkAttr => true);
-				hide = OrDefault(propertyInfo.Attr<HideAttribute>(), mkAttr => true);
-				allowNull = OrDefault(propertyInfo.Attr<MpAllowNullAttribute>(), mkAttr => true);
-				isKey = OrDefault(propertyInfo.Attr<KeyAttribute>(), mkAttr => true);
-				showDefaultOnNew = OrDefault(propertyInfo.Attr<MpShowDefaultOnNewAttribute>(), mkAttr => true);
-				isReadonly = !pi.CanWrite || OrDefault(propertyInfo.Attr<MpReadonlyAttribute>(), mkAttr => true);
-				length = OrDefault(propertyInfo.Attr<MpLengteAttribute>(), mkAttr => mkAttr.Lengte, default(int?));
-				regex = OrDefault(propertyInfo.Attr<MpRegexAttribute>(), mkAttr => mkAttr.Regex);
-				datumtijd = OrDefault(propertyInfo.Attr<MpDatumFormaatAttribute>(), mkAttr => mkAttr.Formaat, default(DatumFormaat?));
+				lijstCssClass = OrDefault(attrs.AttrH<MpColumnCssAttribute>(), mkAttr => mkAttr.CssClass);
+				htmlMode = OrDefault(attrs.AttrH<MpHtmlEditModeAttribute>(), mkAttr => mkAttr.HtmlMode);
+				required = OrDefault(attrs.AttrH<MpVerplichtAttribute>(), mkAttr => true);
+				hide = OrDefault(attrs.AttrH<HideAttribute>(), mkAttr => true);
+				allowNull = OrDefault(attrs.AttrH<MpAllowNullAttribute>(), mkAttr => true);
+				isKey = OrDefault(attrs.AttrH<KeyAttribute>(), mkAttr => true);
+				showDefaultOnNew = OrDefault(attrs.AttrH<MpShowDefaultOnNewAttribute>(), mkAttr => true);
+				isReadonly = !pi.CanWrite || OrDefault(attrs.AttrH<MpReadonlyAttribute>(), mkAttr => true);
+				length = OrDefault(attrs.AttrH<MpLengteAttribute>(), mkAttr => mkAttr.Lengte, default(int?));
+				regex = OrDefault(attrs.AttrH<MpRegexAttribute>(), mkAttr => mkAttr.Regex);
+				datumtijd = OrDefault(attrs.AttrH<MpDatumFormaatAttribute>(), mkAttr => mkAttr.Formaat, default(DatumFormaat?));
 
 				if (KoppelTabelNaam != null && DataType.GetNonNullableUnderlyingType() != typeof(int))
 					throw new ProgressNetException(typeof(TOwner) + " heeft Kolom " + Name + " heeft koppeltabel " +
 						KoppelTabelNaam + " maar is van type " + DataType + "!");
-
 			}
+
 
 			public override string ToString()
 			{
@@ -328,5 +329,11 @@ namespace ProgressOnderwijsUtils
 
 		static T MkDelegate<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
 		static TR OrDefault<T, TR>(T val, Func<T, TR> project, TR defaultVal = default(TR)) { return Equals(val, default(T)) ? defaultVal : project(val); }
+		static T AttrH<T>(this object[] attrs) where T:class{
+			foreach (var obj in attrs)
+				if (obj is T)
+					return (T)obj;
+			return null;
+		}
 	}
 }
