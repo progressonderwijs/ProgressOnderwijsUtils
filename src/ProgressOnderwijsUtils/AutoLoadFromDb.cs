@@ -128,7 +128,7 @@ namespace ProgressOnderwijsUtils
 						{
 							name = reader.GetName(i);
 							mp = mps[name];
-							hasNullInNonNullableColumn = !mp.AllowNull && reader.IsDBNull(i);
+							hasNullInNonNullableColumn = !mp.DataType.CanBeNull() && reader.IsDBNull(i);
 						}
 						catch { } //due to SequentialAccess expect many errors.
 						if (hasNullInNonNullableColumn)
