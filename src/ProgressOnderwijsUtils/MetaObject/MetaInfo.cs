@@ -5,29 +5,20 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-
-	public interface IMetaPropCache
+	public interface IMetaPropCache<out T> : IReadOnlyList<T> where T : IMetaProperty
 	{
-		IReadOnlyList<IMetaProperty> Properties { get; }
-		IMetaProperty this[string name] { get; }
-		int Count { get; }
-
-	}
-	public interface IMetaPropCache<in T> : IMetaPropCache
-	{
-		new IReadOnlyList<IMetaProperty<T>> Properties { get; }
-		new IMetaProperty<T> this[string name] { get; }
+		IReadOnlyDictionary<string, int> IndexByName { get; }
 	}
 
-	public sealed class MetaInfo<T> : IMetaPropCache<T>, IReadOnlyList<IMetaProperty<T>> where T : IMetaObject
+	public sealed class MetaInfo<T> : IMetaPropCache<IMetaProperty<T>> where T : IMetaObject
 	{
 		readonly IMetaProperty<T>[] MetaProperties;
-		readonly IReadOnlyList<IMetaProperty<T>> ReadOnlyView;
-		readonly Dictionary<string, IMetaProperty<T>> ByName;
+
+		readonly IReadOnlyDictionary<string, int> indexByName;
+		public IReadOnlyDictionary<string, int> IndexByName { get { return indexByName; } }
 
 		public readonly static MetaInfo<T> Instance = new MetaInfo<T>();
 
@@ -39,36 +30,16 @@ namespace ProgressOnderwijsUtils
 				throw new ArgumentException("Cannot determine metaproperties on interface type " + typeof(T));
 			else if (typeof(T).IsAbstract)
 				throw new ArgumentException("Cannot determine metaproperties on abstract type " + typeof(T));
-			else
-			{
-				AssertAllMetaObjectBaseTypesAreAbstract();
-				if (typeof(T).GetProperties().Length == 0)
-					Console.WriteLine("Warning: attempting to load metaproperties on type " + typeof(T) + " without properties.");
-			}
 
 			MetaProperties = GetMetaPropertiesImpl();
-			ReadOnlyView = new ArrayView<IMetaProperty<T>>(MetaProperties);
-			var dictionary = new Dictionary<string, IMetaProperty<T>>(StringComparer.OrdinalIgnoreCase);
+			var dictionary = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 			foreach (var property in MetaProperties)//perf:avoid LINQ.
-				dictionary.Add(property.Name, property);
-			ByName = dictionary;
+				dictionary.Add(property.Name, property.Index);
+			indexByName = dictionary;
 		}
 
-		static void AssertAllMetaObjectBaseTypesAreAbstract()
-		{
-			foreach (var bt in typeof(T).BaseTypes())
-				if (!bt.IsAbstract && typeof(IMetaObject).IsAssignableFrom(bt))
-					throw new ArgumentException("Cannot determine metaproperties on type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " with non-abstract base type : " + ObjectToCode.GetCSharpFriendlyTypeName(bt));
-		}
-
-		IReadOnlyList<IMetaProperty> IMetaPropCache.Properties { get { return MetaProperties; } }
-
-		IMetaProperty IMetaPropCache.this[string name] { get { return ByName[name]; } }
-		public IMetaProperty<T> this[string name] { get { return ByName[name]; } }
-		public bool HasColumn(string name) { return ByName.ContainsKey(name); }
-
+		public IMetaProperty<T> GetByName(string name) { return MetaProperties[indexByName[name]]; }
 		public int Count { get { return MetaProperties.Length; } }
-		IReadOnlyList<IMetaProperty<T>> IMetaPropCache<T>.Properties { get { return ReadOnlyView; } }
 
 		static IMetaProperty<T>[] GetMetaPropertiesImpl()
 		{
@@ -95,9 +66,6 @@ namespace ProgressOnderwijsUtils
 			return metaProperties;
 		}
 
-		public IEnumerator<IMetaProperty<T>> GetEnumerator() { return ReadOnlyView.GetEnumerator(); }
-
-		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 
 		public IMetaProperty<T> GetByExpression<TProp>(Expression<Func<T, TProp>> propertyExpression)
 		{
@@ -109,8 +77,18 @@ namespace ProgressOnderwijsUtils
 			return retval;
 		}
 
-		public bool TryGetValue(string colName, out IMetaProperty<T> metaProperty) { return ByName.TryGetValue(colName, out metaProperty); }
+		public IMetaProperty<T> GetByNameOrNull(string colName)
+		{
+			int index;
+			return indexByName.TryGetValue(colName, out index) ? MetaProperties[index] : null;
+		}
 
-		IMetaProperty<T> IReadOnlyList<IMetaProperty<T>>.this[int index] { get { return MetaProperties[index]; } }
+		public IEnumerator<IMetaProperty<T>> GetEnumerator()
+		{
+			foreach (var mp in MetaProperties)
+				yield return mp;
+		}
+		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+		public IMetaProperty<T> this[int index] { get { return MetaProperties[index]; } }
 	}
 }

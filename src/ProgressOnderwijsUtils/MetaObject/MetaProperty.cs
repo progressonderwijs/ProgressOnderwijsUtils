@@ -181,8 +181,6 @@ namespace ProgressOnderwijsUtils
 
 			LiteralTranslatable LabelNoTt(object[] attrs)
 			{
-
-				//TODO:optimize: use those stored attributes mentioned in the constructor.
 				var mpLabelAttribute = attrs.AttrH<MpLabelAttribute>();
 				var labelNoTt = mpLabelAttribute == null ? null : mpLabelAttribute.ToTranslatable();
 				var mpLabelUntranslatedAttribute = attrs.AttrH<MpLabelUntranslatedAttribute>();
