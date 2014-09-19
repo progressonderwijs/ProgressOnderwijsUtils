@@ -5,7 +5,6 @@ using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -123,7 +122,6 @@ namespace ProgressOnderwijsUtilsTests
 			PAssert.That(() => colSort == colSort.ThenSortBy(acolA));
 			PAssert.That(() => colSort == colSort.ThenSortBy(ziggyD));
 			//check ThenBy for null
-			PAssert.That(() => colSort == colSort.ThenSortBy(null));
 		}
 
 		[Test]
