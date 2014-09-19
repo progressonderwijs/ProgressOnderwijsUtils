@@ -63,7 +63,6 @@ namespace ProgressOnderwijsUtils
 
 		public static MemberInfo GetMemberInfo<TObject, TProperty>(Expression<Func<TObject, TProperty>> property)
 		{
-			var paramExpr = property.Parameters.Single();
 			var bodyExpr = property.Body;
 
 			var innerExpr = UnwrapCast(bodyExpr);
@@ -73,11 +72,16 @@ namespace ProgressOnderwijsUtils
 					"The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
 			var membExpr = ((MemberExpression)innerExpr);
 
+			//*
 			var targetExpr = UnwrapCast(membExpr.Expression);
 
+			//expensive:
+			var paramExpr = property.Parameters[0];
 			if (targetExpr != paramExpr)
 				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
 					"A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
+			//*/
+
 			var memberInfo = membExpr.Member;
 			if (memberInfo is PropertyInfo || memberInfo is FieldInfo)
 				return memberInfo;
