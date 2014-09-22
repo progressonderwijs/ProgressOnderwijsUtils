@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtilsTests
 		public void ReturnsSameMetaProperties()
 		{
 			var mps = MetaObject.GetMetaProperties<SimpleObject>();
-			var mpsAlt = new SimpleObject().GetMetaProperties().Properties;
+			var mpsAlt = new SimpleObject().GetMetaProperties();
 			PAssert.That(() => mps.SequenceEqual(mpsAlt));
 		}
 
@@ -100,11 +100,11 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			var o = new SimpleObject { Property = "foo", LabelledProperty = "bar" };
 			var moDef = MetaObject.GetMetaProperties<SimpleObject>();
-			PAssert.That(() => (string)moDef["Property"].Getter(o) == "foo");
-			PAssert.That(() => (string)moDef["labelledProperty"].Getter(o) == "bar");
+			PAssert.That(() => (string)moDef.GetByName("Property").Getter(o) == "foo");
+			PAssert.That(() => (string)moDef.GetByName("labelledProperty").Getter(o) == "bar");
 
-			moDef["property"].Setter(o, "aha");
-			moDef["LabelledProperty"].Setter(o, "really");
+			moDef.GetByName("property").Setter(o, "aha");
+			moDef.GetByName("LabelledProperty").Setter(o, "really");
 
 			PAssert.That(() => o.Equals(new SimpleObject { Property = "aha", LabelledProperty = "really" }));
 		}

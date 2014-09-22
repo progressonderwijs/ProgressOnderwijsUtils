@@ -31,7 +31,8 @@ namespace ProgressOnderwijsUtils
 		public static DataTable ReadDataTable(this QueryBuilder builder, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
 		{
 			return builder.CreateSqlCommand(conn).Using(
-					command => {
+					command =>
+					{
 						try
 						{
 							using (var adapter = new SqlDataAdapter(command))
@@ -52,7 +53,8 @@ namespace ProgressOnderwijsUtils
 		public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
 			return builder.CreateSqlCommand(commandCreationContext).Using(
-				command => {
+				command =>
+				{
 					try
 					{
 						return command.ExecuteNonQuery();
@@ -127,8 +129,8 @@ namespace ProgressOnderwijsUtils
 						try
 						{
 							name = reader.GetName(i);
-							mp = mps[name];
-							hasNullInNonNullableColumn = !mp.AllowNull && reader.IsDBNull(i);
+							mp = mps.GetByName(name);
+							hasNullInNonNullableColumn = !mp.DataType.CanBeNull() && reader.IsDBNull(i);
 						}
 						catch { } //due to SequentialAccess expect many errors.
 						if (hasNullInNonNullableColumn)
@@ -440,8 +442,8 @@ namespace ProgressOnderwijsUtils
 					for (int i = 0; i < cols.Length; i++)
 					{
 						var colName = cols[i];
-						IMetaProperty<T> member;
-						if (!metadata.TryGetValue(colName, out member))
+						IMetaProperty<T> member = metadata.GetByNameOrNull(colName);
+						if (member == null)
 							throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
 						yield return Expression.Bind(member.PropertyInfo, GetColValueExpr(readerParamExpr, i, member.DataType));
 					};

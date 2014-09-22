@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
 
 	public static class MetaObject
 	{
-		public static IMetaPropCache GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()); }
+		public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()); }
 		//public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
 		public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject { return MetaInfo<T>.Instance; }
 
@@ -63,7 +63,6 @@ namespace ProgressOnderwijsUtils
 
 		public static MemberInfo GetMemberInfo<TObject, TProperty>(Expression<Func<TObject, TProperty>> property)
 		{
-			var paramExpr = property.Parameters.Single();
 			var bodyExpr = property.Body;
 
 			var innerExpr = UnwrapCast(bodyExpr);
@@ -73,11 +72,16 @@ namespace ProgressOnderwijsUtils
 					"The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
 			var membExpr = ((MemberExpression)innerExpr);
 
+			//*
 			var targetExpr = UnwrapCast(membExpr.Expression);
 
+			//expensive:
+			var paramExpr = property.Parameters[0];
 			if (targetExpr != paramExpr)
 				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
 					"A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
+			//*/
+
 			var memberInfo = membExpr.Member;
 			if (memberInfo is PropertyInfo || memberInfo is FieldInfo)
 				return memberInfo;
@@ -167,12 +171,11 @@ namespace ProgressOnderwijsUtils
 				throw new InvalidOperationException("Can't get meta-properties from type " + t + ", it's not a " + typeof(IMetaObject));
 			while (t.BaseType != null && !t.BaseType.IsAbstract && typeof(IMetaObject).IsAssignableFrom(t.BaseType))
 				t = t.BaseType;
-			IMetaPropCache cache = GetCache(t);
-			return cache.Properties;
+			return GetCache(t);
 		}
 
 
 		static readonly MethodInfo genGetCache = Utils.F(GetMetaProperties<IMetaObject>).Method.GetGenericMethodDefinition();
-		static IMetaPropCache GetCache(Type t) { return (IMetaPropCache)genGetCache.MakeGenericMethod(t).Invoke(null, null); }
+		static IMetaPropCache<IMetaProperty> GetCache(Type t) { return (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null); }
 	}
 }

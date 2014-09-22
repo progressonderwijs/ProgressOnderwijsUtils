@@ -65,7 +65,7 @@ namespace ProgressOnderwijsUtils
 	public sealed class MpReadonlyAttribute : Attribute { }
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	public sealed class MpAllowNullAttribute : Attribute { }
+	public sealed class MpAllowNullInEditorAttribute : Attribute { }
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class MpShowDefaultOnNewAttribute : Attribute { }
