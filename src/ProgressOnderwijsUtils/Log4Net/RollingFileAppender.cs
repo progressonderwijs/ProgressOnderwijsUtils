@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -46,8 +47,8 @@ namespace ProgressOnderwijsUtils.Log4Net
 		{
 			get
 			{
-				var byDeploymentDirectory = ApplicationVersionAuto.ByDeploymentDirectory();
-				return byDeploymentDirectory == null ? "." : byDeploymentDirectory.Value.ToString();
+				var byDeploymentDirectory = DatabaseVersionAuto.ByDeploymentDirectory();
+				return byDeploymentDirectory == DatabaseVersion.Undefined ? "." : byDeploymentDirectory.ToString();
 			}
 		}
 	}

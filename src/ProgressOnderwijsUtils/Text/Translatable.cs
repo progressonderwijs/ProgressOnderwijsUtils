@@ -1,23 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using log4net.Util;
 using MoreLinq;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Text;
 
 namespace ProgressOnderwijsUtils
 {
 	public static class Translatable
 	{
-		public static ITranslatable WithReplacement(this ITranslatable textdef, params ITranslatable[] toreplace) { return new TextDefReplacing(textdef, toreplace); }
+		public static ITranslatable WithReplacement(this ITranslatable textdef, params ITranslatable[] toreplace) { return new ReplacingTranslatable(textdef, toreplace); }
 
 		public static ITranslatable Append(this ITranslatable a, ITranslatable b) { return new ConcatTranslatable(a, b); }
 		public static ITranslatable Append(this ITranslatable a, ITranslatable b, ITranslatable c) { return new ConcatTranslatable(a, b, c); }
 		public static ITranslatable Append(this ITranslatable a, params ITranslatable[] rest) { return new ConcatTranslatable(new[] { a }.Concat(rest).ToArray()); }
-		public static ITranslatable AppendAuto(this ITranslatable a, params object[] objects) { return new ConcatTranslatable(new[] { a }.Concat(objects.Select(o => Converteer.ToText(o))).ToArray()); }
-		public static ITranslatable AppendTooltipAuto(this ITranslatable a, params object[] objects) { return new ConcatTranslatable(new[] { a }.Concat(objects.Select(o => Converteer.ToText(o).TextToTooltip())).ToArray()); }
+		public static ITranslatable AppendAuto(this ITranslatable a, params object[] objects)
+		{
+			var args = new ITranslatable[objects.Length + 1];
+			int i = 1;
+			args[0] = a;
+			foreach (var obj in objects) //perf: no LINQ
+				args[i++] = Converteer.ToText(obj);
 
-		public static ITranslatable JoinTexts(this IEnumerable<ITranslatable> a, ITranslatable splitter) { return new ConcatTranslatable(a.SelectMany((t, i) => i == 0 ? new[] { t } : new[] { splitter, t }).ToArray()); }
+			return new ConcatTranslatable(args);
+		}
+		public static ITranslatable AppendTooltipAuto(this ITranslatable a, params object[] objects)
+		{
+			var args = new ITranslatable[objects.Length + 1];
+			int i = 1;
+			args[0] = a;
+			foreach (var obj in objects) //perf: no LINQ
+				args[i++] = Converteer.ToText(obj).TextToTooltip();
+
+			return new ConcatTranslatable(args);
+		}
+
+		public static ITranslatable JoinTexts(this IEnumerable<ITranslatable> a, ITranslatable splitter)
+		{
+			var builder = FastArrayBuilder<ITranslatable>.Create();
+			using (var iter = a.GetEnumerator())
+			{
+				if (iter.MoveNext())
+					builder.Add(iter.Current);
+				while (iter.MoveNext())
+				{
+					builder.Add(splitter);
+					builder.Add(iter.Current);//perf:no LINQ
+				}
+			}
+			return new ConcatTranslatable(builder.ToArray());
+		}
 
 		public static ITranslatable LimitLength(this ITranslatable translatable, int maxwidth)
 		{
@@ -48,30 +82,10 @@ namespace ProgressOnderwijsUtils
 			return new LazyTranslatable(lazyCreator);
 		}
 
-		//public static LiteralTranslatable Literal(string nl, string en = null, string du = null)
-		//{
-		//	return new LiteralTranslatable(nl, en, du);
-		//}
+		static readonly LiteralTranslatable empty = new LiteralTranslatable("", "", "");
+		public static ITranslatable Empty { get { return empty; } }
 
-		public static LiteralTranslatable Empty()
-		{ 
-			return new LiteralTranslatable("", null, null);
-		}
-
-		public static ITranslatable EmptyWithTooltip(ITranslatable tooltipnl)
-		{
-			return Translatable.Empty().AppendTooltipAuto(tooltipnl);
-		}
-
-		public static ITranslatable EmptyWithTooltip(ITranslatable tooltipnl, ITranslatable tooltipen)
-		{
-			return Translatable.Empty().AppendTooltipAuto(tooltipnl, tooltipen);
-		}
-
-		public static ITranslatable EmptyWithTooltip(ITranslatable tooltipnl, ITranslatable tooltipen, ITranslatable tooltipdu)
-		{
-			return Translatable.Empty().AppendTooltipAuto(tooltipnl, tooltipen, tooltipdu);
-		}
+		public static ITranslatable EmptyWithNLTooltip(string tooltipnl) { return empty.WithTooltip(tooltipnl); }
 
 		public static LiteralTranslatable Literal(string nl)
 		{
@@ -85,6 +99,11 @@ namespace ProgressOnderwijsUtils
 		{
 			return new LiteralTranslatable(nl, en, du);
 		}
+
+		public static ITranslatable Raw(string text) { return Raw(text, null); }
+		public static ITranslatable Raw(string text, string extratext) { return Raw(TextVal.Create(text, extratext)); }
+		public static ITranslatable Raw(TextVal tv) { return new RawTranslatable(tv); }
+
 
 		public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable, ITranslatable tt)
 		{
@@ -158,6 +177,17 @@ namespace ProgressOnderwijsUtils
 			public string GenerateUid() { return underlying.GenerateUid(); }
 			public TextVal Translate(Taal lang) { return underlying.Translate(taal); }
 			public override string ToString() { return GenerateUid(); }
+		}
+		
+		sealed class RawTranslatable : ITranslatable
+		{
+			readonly TextVal tv;
+			public RawTranslatable(TextVal tv) { this.tv = tv; }
+
+			public string GenerateUid() { return "TV:" + tv.Text + "\n" + tv.ExtraText; }
+			public override string ToString() { return GenerateUid(); }
+
+			public TextVal Translate(Taal taal) { return tv; }
 		}
 	}
 }

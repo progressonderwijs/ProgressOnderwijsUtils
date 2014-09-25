@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -83,19 +84,28 @@ namespace ProgressOnderwijsUtils
 
 		public static FilterBase CreateCombined(BooleanOperator andor, IEnumerable<FilterBase> condities)
 		{
-			var conditiesArr = condities.Where(f => f != null).ToArray();
+			var list = FastArrayBuilder<FilterBase>.Create();
+			foreach (var f in condities)
+				if (f != null)
+					list.Add(f);
+			var conditiesArr = list.ToArray();
+
 			if (conditiesArr.Length == 0)
 				return null;
 			else if (conditiesArr.Length == 1)
 				return conditiesArr[0];
 			else
-				return new CombinedFilter(andor,
-					conditiesArr.SelectMany(conditie =>
-						conditie is CombinedFilter && ((CombinedFilter)conditie).AndOr == andor
-							? ((CombinedFilter)conditie).FilterLijst
-							: new[] { conditie }
-						).ToArray()
-					);
+			{
+				var list1 = FastArrayBuilder<FilterBase>.Create();
+				foreach (var conditie in conditiesArr)
+					if (conditie is CombinedFilter && ((CombinedFilter)conditie).AndOr == andor)
+						foreach (var f in ((CombinedFilter)conditie).FilterLijst)
+							list1.Add(f);
+					else
+						list1.Add(conditie);
+
+				return new CombinedFilter(andor, list1.ToArray());
+			}
 		}
 
 		public static IEnumerable<Tuple<string, object>> ExtractInsertWaarden(this FilterBase filter)
@@ -106,12 +116,12 @@ namespace ProgressOnderwijsUtils
 				yield return Tuple.Create(crit.KolomNaam, crit.Waarde);
 			else if (combined != null && combined.AndOr == BooleanOperator.And)
 			{
-				bool alleenGeldigeCriteriums =
-					combined.FilterLijst.All(f1 => f1 is CriteriumFilter && ((CriteriumFilter)f1).Comparer == BooleanComparer.Equal);
+				foreach (var f1 in combined.FilterLijst)
+					if (!(f1 is CriteriumFilter) || ((CriteriumFilter)f1).Comparer != BooleanComparer.Equal)
+						yield break;
 
-				if (alleenGeldigeCriteriums)
-					foreach (CriteriumFilter f1 in combined.FilterLijst)
-						yield return Tuple.Create(f1.KolomNaam, f1.Waarde);
+				foreach (CriteriumFilter f1 in combined.FilterLijst)
+					yield return Tuple.Create(f1.KolomNaam, f1.Waarde);
 			}
 		}
 
@@ -154,8 +164,12 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		static readonly Dictionary<string, BooleanComparer> niceStringValues = EnumHelpers.GetValues<BooleanComparer>().ToDictionary(NiceString);
-		public static BooleanComparer? ParseComparerNiceString(string s) { return niceStringValues.GetOrDefaultR(s, default(BooleanComparer?)); }
+		static class ComparerLookup
+		{
+			public static readonly Dictionary<string, BooleanComparer> ComparerByString = EnumHelpers.GetValues<BooleanComparer>().ToDictionary(NiceString, StringComparer.Ordinal);
+		}
+
+		public static BooleanComparer? ParseComparerNiceString(string s) { return ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?)); }
 		public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, Type> typeIfPresent) { return filter != null && filter.IsFilterValid(typeIfPresent) ? filter : null; }
 
 		public static FilterBase ClearFilterWhenItContainsInvalidColumns<T>(this FilterBase filter)

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -10,18 +12,11 @@ namespace ProgressOnderwijsUtils
 {
 	public static class EnumHelpers
 	{
-		interface IEnumValues
+		interface IEnumMetaCache
 		{
 			IReadOnlyList<Enum> Values();
-			ITranslatable GetLabel(Enum val);
+			ITranslatable GetEnumLabel(Enum val);
 		}
-
-
-		static bool HasFlagHelper(long val, long flag)
-		{
-			return (val & flag) == flag;
-		}
-
 
 		static class Int32Helpers
 		{
@@ -38,6 +33,10 @@ namespace ProgressOnderwijsUtils
 			public static bool HasFlagOverlap(int a, int b)
 			{
 				return (a & b) != 0;
+			}
+			public static long ToInt64(int a)
+			{
+				return a;
 			}
 		}
 
@@ -58,143 +57,317 @@ namespace ProgressOnderwijsUtils
 			{
 				return (a & b) != 0L;
 			}
+			public static long ToInt64(long a)
+			{
+				return a;
+			}
 		}
 
 
 		struct FlagOperationMethods
 		{
-			public static FlagOperationMethods Get<T>(Func<T, T, T> or, Func<T, T, bool> hasFlag, Func<T, T, bool> overlaps)
+			public static FlagOperationMethods Get<T>(Func<T, T, T> or, Func<T, T, bool> hasFlag, Func<T, T, bool> overlaps, Func<T, long> toInt64)
 			{
-				return new FlagOperationMethods { Or = or.Method, HasFlag = hasFlag.Method, HasFlagOverlap = overlaps.Method };
+				return new FlagOperationMethods
+				{
+					Or = or.Method,
+					HasFlag = hasFlag.Method,
+					HasFlagOverlap = overlaps.Method,
+					ToInt64 = toInt64.Method,
+				};
 			}
 
-			public MethodInfo Or, HasFlag, HasFlagOverlap;
+			public MethodInfo Or, HasFlag, HasFlagOverlap,   ToInt64;
 		}
 
+		static readonly FlagOperationMethods forInt = FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap, Int32Helpers.ToInt64)
 
-		static readonly Dictionary<Type, FlagOperationMethods> FlagOperationMethodsByType = new Dictionary<Type, FlagOperationMethods>
+			, forLong = FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap, Int64Helpers.ToInt64);
+
+		static readonly ITranslatable translatableComma = Translatable.Raw(", ");
+		static readonly ConcurrentDictionary<Type, IEnumMetaCache> enumMetaCache = new ConcurrentDictionary<Type, IEnumMetaCache>();
+		static IEnumMetaCache GetEnumMetaCache(Type enumType)
 		{
-			{ typeof(int), FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap) },
-			{ typeof(long), FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap)
-			},
-		};
+			return enumMetaCache.GetOrAdd(enumType, type => (IEnumMetaCache)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(type)));
+		}
 
-
-		struct EnumMetaCache<TEnum> : IEnumValues where TEnum : struct, IConvertible
+		struct EnumMetaCache<TEnum> : IEnumMetaCache where TEnum : struct, IConvertible, IComparable
 		{
 			public static readonly TEnum[] EnumValues;
-			public static readonly ILookup<TEnum, MemberInfo> EnumMembers;
 			public static readonly bool IsFlags;
-			public static readonly Func<TEnum, TEnum, bool> HasFlag;
-			public static readonly Func<TEnum, TEnum, TEnum> AddFlag;
-			public static readonly Func<TEnum, TEnum, bool> FlagsOverlap;
+			static readonly FieldInfo[] enumFields;
 			static readonly Type underlying;
-			static readonly TEnum[] EnumInOverlapOrder;
 
 			static EnumMetaCache()
 			{
 				if (!typeof(TEnum).IsEnum)
 					throw new InvalidOperationException("EnumMetaCache werkt alleen met enums");
+				underlying = typeof(TEnum).GetEnumUnderlyingType();
 
-				EnumValues = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static).Select(f => (TEnum)f.GetValue(null)).Distinct().ToArray();
+				enumFields = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static);
 
-				EnumMembers = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static).ToLookup(f => (TEnum)f.GetValue(null), f => (MemberInfo)f);
+				//The following linq-based computation of EnumValues is several times slower:
+				//EnumValues = enumFields.Select(f => (TEnum)f.GetValue(null)).Distinct().ToArray();
 
-				underlying = Enum.GetUnderlyingType(typeof(TEnum));
+				EnumValues = new TEnum[enumFields.Length];
+				int nextIndex = 0;
+				foreach (var fieldInfo in enumFields)
+				{
+					bool duplicate = false;
+					var value = (TEnum)fieldInfo.GetValue(null);
+					for (int i = 0; i < nextIndex; i++)
+						if (EnumValues[i].Equals(value))
+						{
+							duplicate = true;
+							break;
+						}
+					if (!duplicate)
+					{
+						EnumValues[nextIndex] = value;
+						nextIndex++;
+					}
+				}
+				if (nextIndex != EnumValues.Length)
+					Array.Resize(ref EnumValues, nextIndex);
+
 				IsFlags = typeof(TEnum).GetCustomAttributes(typeof(FlagsAttribute)).Any();
 
-				//((TEnum[])Enum.GetValues(typeof(TEnum))).Distinct().ToArray();
-				if (IsFlags)
-				{
-					if (FlagOperationMethodsByType.ContainsKey(underlying))
-					{
-						var fastpathHelpers = FlagOperationMethodsByType.GetOrDefault(underlying);
-						CreateDelegate(out HasFlag, fastpathHelpers.HasFlag);
-						CreateDelegate(out FlagsOverlap, fastpathHelpers.HasFlagOverlap);
-						CreateDelegate(out AddFlag, fastpathHelpers.Or);
-					}
-					else
-					{
-						HasFlag = MakeHasFlag();
-						FlagsOverlap = MakeFlagsOverlap();
-						AddFlag = MakeAddFlag();
-					}
-					EnumInOverlapOrder = EnumValues.OrderBy(val => EnumValues.Count(flag => HasFlag(val, flag))).ToArray();
-				}
 			}
 
+			public static class FlagEnumHelpers
+			{
+				public static readonly TEnum[] ValuesInOverlapOrder;
+				public static readonly Func<TEnum, TEnum, TEnum> AddFlag;
+				public static readonly Func<TEnum, TEnum, bool> HasFlag;
+				public static readonly Func<TEnum, TEnum, bool> FlagsOverlap;
+				static FlagEnumHelpers()
+				{
+					if (IsFlags)
+					{
+
+						FlagOperationMethods fastpathHelpers = default(FlagOperationMethods);
+						if (typeof(int) == underlying)
+						{
+							fastpathHelpers = forInt;
+						}
+						else if (typeof(long) == underlying)
+						{
+							fastpathHelpers = forLong;
+						}
+
+						if (fastpathHelpers.Or != null)
+						{
+							CreateDelegate(out HasFlag, fastpathHelpers.HasFlag);
+							CreateDelegate(out FlagsOverlap, fastpathHelpers.HasFlagOverlap);
+							CreateDelegate(out AddFlag, fastpathHelpers.Or);
+						}
+						else
+						{
+							HasFlag = MakeHasFlag();
+							FlagsOverlap = MakeFlagsOverlap();
+							AddFlag = MakeAddFlag();
+						}
+
+						ValuesInOverlapOrder = (TEnum[])EnumValues.Clone();
+						var overlapCount = new int[ValuesInOverlapOrder.Length];
+
+
+						for (int i = 0; i < overlapCount.Length; i++)
+						{
+							foreach (var val in ValuesInOverlapOrder)
+							{
+								if (HasFlag(ValuesInOverlapOrder[i], val))
+									overlapCount[i]++;
+							}
+						}
+
+						var n = overlapCount.Length;
+						while (true)
+						{
+							bool swapped = false;
+							for (int i = 1; i < n; i++)
+							{
+								if (overlapCount[i - 1] > overlapCount[i])
+								{
+									swapped = true;
+									var tmp = overlapCount[i];
+									overlapCount[i] = overlapCount[i - 1];
+									overlapCount[i - 1] = tmp;
+									var tmp2 = ValuesInOverlapOrder[i];
+									ValuesInOverlapOrder[i] = ValuesInOverlapOrder[i - 1];
+									ValuesInOverlapOrder[i - 1] = tmp2;
+								}
+							}
+							if (swapped)
+								n--;
+							else
+								break;
+						}
+					}
+				}
+
+
+				static Func<TEnum, TEnum, bool> MakeHasFlag()
+				{
+					ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
+					ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
+
+					return Expression.Lambda<Func<TEnum, TEnum, bool>>(
+						Expression.Equal(
+							flagExpr,
+							Expression.ConvertChecked(Expression.And(
+								Expression.ConvertChecked(flagExpr, underlying),
+								Expression.ConvertChecked(valExpr, underlying)
+								), typeof(TEnum))
+							),
+						valExpr, flagExpr
+						).Compile();
+				}
+
+				static Func<TEnum, TEnum, bool> MakeFlagsOverlap()
+				{
+					ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
+					ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
+
+					return Expression.Lambda<Func<TEnum, TEnum, bool>>(
+						Expression.NotEqual(
+							Expression.Default(underlying),
+							Expression.And(
+								Expression.ConvertChecked(flagExpr, underlying),
+								Expression.ConvertChecked(valExpr, underlying)
+								)
+							),
+						valExpr, flagExpr
+						).Compile();
+				}
+
+				static Func<TEnum, TEnum, TEnum> MakeAddFlag()
+				{
+					ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
+					ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
+
+					return Expression.Lambda<Func<TEnum, TEnum, TEnum>>(
+						Expression.ConvertChecked(
+							Expression.Or(
+								Expression.ConvertChecked(flagExpr, underlying),
+								Expression.ConvertChecked(valExpr, underlying)
+								), typeof(TEnum)
+							), valExpr, flagExpr).Compile();
+				}
+			}
 			static void CreateDelegate<TFunc>(out TFunc func, MethodInfo method)
 			{
 				func = (TFunc)(object)Delegate.CreateDelegate(typeof(TFunc), method);
 			}
 
-			static Func<TEnum, TEnum, bool> MakeHasFlag()
-			{
-				ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
-				ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
 
-				return Expression.Lambda<Func<TEnum, TEnum, bool>>(
-					Expression.Equal(
-						flagExpr,
-						Expression.ConvertChecked(Expression.And(
-							Expression.ConvertChecked(flagExpr, underlying),
-							Expression.ConvertChecked(valExpr, underlying)
-							), typeof(TEnum))
-						),
-					valExpr, flagExpr
-					).Compile();
+			struct AttrEntry
+			{
+				public long Value;
+				public object[] Attrs;
+				public ITranslatable Label;
 			}
 
-			static Func<TEnum, TEnum, bool> MakeFlagsOverlap()
-			{
-				ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
-				ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
 
-				return Expression.Lambda<Func<TEnum, TEnum, bool>>(
-					Expression.NotEqual(
-						Expression.Default(underlying),
-						Expression.And(
-							Expression.ConvertChecked(flagExpr, underlying),
-							Expression.ConvertChecked(valExpr, underlying)
-							)
-						),
-					valExpr, flagExpr
-					).Compile();
+			static AttrEntry[] sortedAttrs;
+			static Func<TEnum, long> toInt64;
+
+
+			static int IdxAfterLastLtNode(long needle)
+			{
+				//based on https://github.com/EamonNerbonne/a-vs-an/blob/master/A-vs-An/A-vs-An-DotNet/Internals/Node.cs
+				int start = 0, end = sortedAttrs.Length;
+				//invariant: only LT nodes before start
+				//invariant: only GTE nodes at or past end
+				while (end != start)
+				{
+					int midpoint = end + start >> 1;
+					// start <= midpoint < end
+					if (sortedAttrs[midpoint].Value < needle)
+					{
+						start = midpoint + 1;//i.e. midpoint < start1 so start0 < start1
+					}
+					else
+					{
+						end = midpoint;//i.e end1 = midpoint so end1 < end0
+					}
+				}
+				return end;
 			}
 
-			static Func<TEnum, TEnum, TEnum> MakeAddFlag()
+			public static object[] Attributes(TEnum value)
 			{
-				ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
-				ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
-
-				return Expression.Lambda<Func<TEnum, TEnum, TEnum>>(
-					Expression.ConvertChecked(
-						Expression.Or(
-							Expression.ConvertChecked(flagExpr, underlying),
-							Expression.ConvertChecked(valExpr, underlying)
-							), typeof(TEnum)
-						), valExpr, flagExpr).Compile();
+				if (sortedAttrs == null)
+					InitAttrCache();
+				long key = toInt64(value);
+				int idx = IdxAfterLastLtNode(key);
+				if (idx < sortedAttrs.Length && sortedAttrs[idx].Value == key)
+					return sortedAttrs[idx].Attrs;
+				else return ArrayExtensions.Empty<object>();
 			}
 
-			//
-			public static class AttrCache<TAttr> where TAttr : Attribute
+			static void InitAttrCache()
 			{
-				public static readonly ILookup<TEnum, TAttr> EnumMemberAttributes =
-					(
-						from g in EnumMembers
-						from memb in g
-						from attr in memb.GetCustomAttributes<TAttr>()
-						select new { EnumValue = g.Key, Attr = attr }
-						).ToLookup(x => x.EnumValue, x => x.Attr);
-			}
+				if (typeof(int) == underlying)
+				{
+					CreateDelegate(out toInt64, forInt.ToInt64);
+				}
+				else
+				{
+					toInt64 = a => a.ToInt64(null);
+				}
 
+				var entries = new AttrEntry[EnumValues.Length];
+				int nextIdx = 0;
+				foreach (var field in enumFields)
+				{
+					var customAttributes = field.GetCustomAttributes(typeof(Attribute), false);
+					if (customAttributes.Length == 0)
+						continue;
+					var value = (TEnum)field.GetValue(null);
+					long key = toInt64(value);
+					int insertIdx = nextIdx - 1;
+					while (true)
+					{
+						if (insertIdx == -1 || key > entries[insertIdx].Value)
+						{
+							insertIdx++;
+							for (int j = nextIdx - 1; j >= insertIdx; j--)
+								entries[j + 1] = entries[j];
+							entries[insertIdx] = new AttrEntry
+							{
+								Value = key,
+								Attrs = customAttributes
+							};
+							nextIdx++;
+							break;
+						}
+						else if (key == entries[insertIdx].Value)
+						{
+							var oldLength = entries[insertIdx].Attrs.Length;
+							Array.Resize(ref entries[insertIdx].Attrs, oldLength + customAttributes.Length);
+							int i = oldLength;
+							foreach (var attr in customAttributes)
+								entries[insertIdx].Attrs[i++] = attr;
+							break;
+						}
+						else
+						{
+							insertIdx--;
+						}
+					}
+				}
+				if (nextIdx < entries.Length)
+					Array.Resize(ref entries, nextIdx);
+				sortedAttrs = entries;
+			}
 
 			public IReadOnlyList<Enum> Values()
 			{
 				return EnumValues.SelectIndexable(e => (Enum)(object)e);
 			}
 
-			public ITranslatable GetLabel(Enum val)
+			public ITranslatable GetEnumLabel(Enum val)
 			{
 				return GetLabel((TEnum)(object)val);
 			}
@@ -209,57 +382,71 @@ namespace ProgressOnderwijsUtils
 
 			static ITranslatable GetFlagsLabel(TEnum val)
 			{
-				var matched = new List<TEnum>(EnumInOverlapOrder.Length);
+				var values = FlagEnumHelpers.ValuesInOverlapOrder;
+				var matched = new List<TEnum>(values.Length);
 				TEnum covered = default(TEnum);
 
-				int i = EnumInOverlapOrder.Length;
+				int i = values.Length;
 				while (i != 0)
 				{
 					i--;
-					var flag = EnumInOverlapOrder[i];
-					if (!FlagsOverlap(covered, flag) && HasFlag(val, flag) && !Equals(flag, default(TEnum)))
+					var flag = values[i];
+					if (!FlagEnumHelpers.FlagsOverlap(covered, flag) && FlagEnumHelpers.HasFlag(val, flag) && !Equals(flag, default(TEnum)))
 					{
-						covered = AddFlag(covered, flag);
+						covered = FlagEnumHelpers.AddFlag(covered, flag);
 						matched.Add(flag);
 					}
 				}
 
 				if (!Equals(covered, val))
 				{
-					foreach (var flag in EnumInOverlapOrder)
+					foreach (var flag in values)
 					{
-						if (!HasFlag(covered, flag) && HasFlag(val, flag))
+						if (!FlagEnumHelpers.HasFlag(covered, flag) && FlagEnumHelpers.HasFlag(val, flag))
 						{
-							covered = AddFlag(covered, flag);
+							covered = FlagEnumHelpers.AddFlag(covered, flag);
 							matched.Add(flag);
 						}
 					}
 					if (!Equals(covered, val))
 						throw new ArgumentOutOfRangeException("Enum Value " + val + " is not a combination of flags in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
 				}
-
-				return matched.Select(GetSingleLabel).Reverse().JoinTexts(TextDefSimple.Create(", "));
+				if (matched.Count == 1)
+					return GetSingleLabel(matched[0]);
+				return matched.Select(GetSingleLabel).Reverse().JoinTexts(translatableComma);
 			}
 
 			static ITranslatable GetSingleLabel(TEnum f)
 			{
-				var translatedlabel = GetAttrs<MpLabelAttribute>.On(f).SingleOrDefault();
-				var untranslatedlabel = GetAttrs<MpLabelUntranslatedAttribute>.On(f).SingleOrDefault();
+				if (sortedAttrs == null)
+					InitAttrCache();
+				var key = toInt64(f);
+				var idx = IdxAfterLastLtNode(key);
+				bool validIdx = idx < sortedAttrs.Length && sortedAttrs[idx].Value == key;
+
+
+				if (validIdx && sortedAttrs[idx].Label != null)
+					return sortedAttrs[idx].Label;
+
+				var attrs = validIdx ? sortedAttrs[idx].Attrs : ArrayExtensions.Empty<object>();
+
+				var translatedlabel = attrs.OfType<MpLabelAttribute>().SingleOrDefault();
+				var untranslatedlabel = attrs.OfType<MpLabelUntranslatedAttribute>().SingleOrDefault();
 				if (translatedlabel != null && untranslatedlabel != null)
 					throw new Exception("Cannot define both an untranslated and a translated label on the same enum: " + f);
 
-				var tooltip = GetAttrs<MpTooltipAttribute>.On(f).SingleOrDefault();
-				//if (translatedlabel == null && untranslatedlabel == null && tooltip == null && !EnumMembers.Contains(f))
-				//throw new ArgumentOutOfRangeException("Enum Value " + f + " does not exist in type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+				var tooltip = attrs.OfType<MpTooltipAttribute>().SingleOrDefault();
 
 				var translatable =
 					translatedlabel != null ? translatedlabel.ToTranslatable()
 						: untranslatedlabel != null ? untranslatedlabel.ToTranslatable()
-							: Converteer.ToText(StringUtils.PrettyCapitalizedPrintCamelCased(f.ToString()));
+							: Converteer.ToText(StringUtils.PrettyCapitalizedPrintCamelCased(f.ToString(CultureInfo.InvariantCulture)));
 
 				if (tooltip != null)
 					translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
 
+				if (validIdx)
+					sortedAttrs[idx].Label = translatable;
 				return translatable;
 			}
 		}
@@ -271,9 +458,9 @@ namespace ProgressOnderwijsUtils
 		}
 
 
-		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct, IConvertible
+		struct EnumLabelLookup<TEnum> : ILabelLookup where TEnum : struct, IConvertible, IComparable
 		{
-			public static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().Where(t => t != Taal.None).ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text.Trim(), e => e, StringComparer.OrdinalIgnoreCase));
+			static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>().Where(t => t != Taal.None).ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text.Trim(), e => e, StringComparer.OrdinalIgnoreCase));
 
 			public static IEnumerable<TEnum> Lookup(string s, Taal taal)
 			{
@@ -286,7 +473,7 @@ namespace ProgressOnderwijsUtils
 							.Select(sub => sub.Trim())
 							.Where(sub => sub.Length > 0)
 							.Select(sub => ParseLabels[taal][sub].Single())
-							.Aggregate(default(TEnum), EnumMetaCache<TEnum>.AddFlag)
+							.Aggregate(default(TEnum), EnumMetaCache<TEnum>.FlagEnumHelpers.AddFlag)
 					};
 			}
 
@@ -299,14 +486,15 @@ namespace ProgressOnderwijsUtils
 
 		public static class GetAttrs<TAttr> where TAttr : Attribute
 		{
-			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible
+			public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible, IComparable
 			{
-				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal];
+				return EnumMetaCache<T>.Attributes(enumVal).OfType<TAttr>();
+				//return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal];
 			}
 
-			public static IEnumerable<T> From<T>(Func<TAttr, bool> pred) where T : struct, IConvertible
+			public static IEnumerable<T> From<T>(Func<TAttr, bool> pred) where T : struct, IConvertible, IComparable
 			{
-				return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes.Where(grp => grp.Any(pred)).Select(grp => grp.Key);
+				return EnumMetaCache<T>.EnumValues.Where(v => On(v).Any(pred));
 			}
 		}
 
@@ -322,80 +510,84 @@ namespace ProgressOnderwijsUtils
 			return null;
 		}
 
-		public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible
+		public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable
 		{
 			return EnumMetaCache<T>.EnumValues;
 		}
 
 		public static IReadOnlyList<Enum> GetValues(Type enumType)
 		{
-			if (!enumType.IsEnum)
-				throw new ArgumentException("enumType must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(enumType));
-			var values = (IEnumValues)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(enumType));
-			return values.Values();
+			return GetEnumMetaCache(enumType).Values();
 		}
 
-		public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible
+		public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
 		{
-			return EnumMetaCache<TEnum>.AddFlag;
+			return EnumMetaCache<TEnum>.FlagEnumHelpers.AddFlag;
 		}
 
-		public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible
+		public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
 		{
-			return EnumMetaCache<TEnum>.HasFlag;
+			return EnumMetaCache<TEnum>.FlagEnumHelpers.HasFlag;
 		}
 
-		public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible
+		public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible, IComparable
 		{
 			return EnumMetaCache<TEnum>.GetLabel(f);
 		}
 
 		public static ITranslatable GetLabel(Enum enumVal)
 		{
-			if (enumVal == null)
-				throw new ArgumentNullException("enumVal");
-			var type = enumVal.GetType();
-			if (!type.IsEnum)
-				throw new ArgumentException("enumVal must be an enum value, not of type " + ObjectToCode.GetCSharpFriendlyTypeName(type));
-			var labeller = (IEnumValues)Activator.CreateInstance(typeof(EnumMetaCache<>).MakeGenericType(type));
-			return labeller.GetLabel(enumVal);
+			//if (enumVal == null)
+			//	throw new ArgumentNullException("enumVal");
+			return GetEnumMetaCache(enumVal.GetType())
+				.GetEnumLabel(enumVal);
 		}
 
+
 		public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
-			where TEnum : struct, IConvertible
+			where TEnum : struct, IConvertible, IComparable
 		{
 			return SelectItem.Create(f, GetLabel(f));
 		}
 
-		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal, string format = "{0}", bool sortTekst = false)
-			where TEnum : struct, IConvertible
+		public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal)
+			where TEnum : struct, IConvertible, IComparable
 		{
-			var dt = new DataTable { Columns = { { "id", typeof(int) }, { "tekst", typeof(string) } } };
-			foreach (var item in values.Select(GetSelectItem))
-			{
-				var tekst = item.Label.Translate(taal);
-				dt.Rows.Add(item.Value.ToInt32(null), string.Format(format, tekst.Text, tekst.ExtraText));
-			}
-			if (sortTekst)
-			{
-				var dv = dt.DefaultView;
-				dv.Sort = "tekst";
-				return dv.ToTable();
-			}
-			return dt;
+			return values.Select(v =>
+				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).Text }
+				).ToDataTable();
+		}
+
+		public static DataTable ToIntKoppelTabel_OrderedByText<TEnum>(IEnumerable<TEnum> values, Taal taal)
+			where TEnum : struct, IConvertible, IComparable
+		{
+			return values.Select(v =>
+				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).Text }
+				)
+				.OrderBy(entry => entry.Tekst)
+				.ToDataTable();
+		}
+
+		public static DataTable ToIntKoppelTabelExpandedText<TEnum>(IEnumerable<TEnum> values, Taal taal)
+			where TEnum : struct, IConvertible, IComparable
+		{
+			return values.Select(v =>
+				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).ExtraText }
+				)
+				.ToDataTable();
 		}
 
 		public static SelectItem<TEnum?> GetSelectItem<TEnum>(TEnum? f)
-			where TEnum : struct, IConvertible
+			where TEnum : struct, IConvertible, IComparable
 		{
-			return SelectItem.Create(f, f == null ? TextDefSimple.EmptyText : GetLabel(f.Value));
+			return SelectItem.Create(f, f == null ? Translatable.Empty : GetLabel(f.Value));
 		}
 
 		public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
 			this IEnumerable<SelectItem<TEnum?>> enumSelectItemList)
 			where TEnum : struct, IConvertible
 		{
-			return enumSelectItemList.Select(item => SelectItem.Create(item.Value.HasValue ? (int?)item.Value.Value.ToInt32(null) : default(int?), item.Label))
+			return enumSelectItemList.Select(item => SelectItem.Create(item.Value.HasValue ? item.Value.Value.ToInt32(null) : default(int?), item.Label))
 				.ToArray();
 		}
 
@@ -408,7 +600,7 @@ namespace ProgressOnderwijsUtils
 			return Enum.TryParse(s, true, out retval) ? retval : default(TEnum?);
 		}
 
-		public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible
+		public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible, IComparable
 		{
 			return EnumLabelLookup<TEnum>.Lookup(s, taal);
 		}
@@ -421,12 +613,12 @@ namespace ProgressOnderwijsUtils
 			return parser.Lookup(s, taal);
 		}
 
-		public static bool IsDefined<TEnum>(TEnum enumval) where TEnum : struct, IConvertible
+		public static bool IsDefined<TEnum>(TEnum enumval) where TEnum : struct, IConvertible, IComparable
 		{
 			return Enum.IsDefined(typeof(TEnum), enumval);
 		}
 
-		public static IEnumerable<T> AllCombinations<T>() where T : struct, IConvertible
+		public static IEnumerable<T> AllCombinations<T>() where T : struct, IConvertible, IComparable
 		{
 			// Construct a function for OR-ing together two enums
 			var orFunction = AddFlagsFunc<T>();

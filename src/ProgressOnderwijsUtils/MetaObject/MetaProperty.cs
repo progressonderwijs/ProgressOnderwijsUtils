@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace ProgressOnderwijsUtils
 		Action<object, object> UntypedSetter { get; }
 		int Index { get; }
 		bool Required { get; }
-		bool AllowNull { get; }
+		bool AllowNullInEditor { get; }
 		int? Length { get; }
 		string Regex { get; }
 		DatumFormaat? DatumTijd { get; }
@@ -57,29 +58,16 @@ namespace ProgressOnderwijsUtils
 			public bool Required { get { return required; } }
 			readonly bool hide;
 			public bool Hide { get { return hide; } }
-			readonly bool allowNull;
-			public bool AllowNull { get { return allowNull; } }
+			readonly bool allowNullInEditor;
+			public bool AllowNullInEditor { get { return allowNullInEditor; } }
 			readonly int? length;
 			public int? Length { get { return length; } }
 			readonly string regex;
 			public string Regex { get { return regex; } }
 			readonly DatumFormaat? datumtijd;
 			public DatumFormaat? DatumTijd { get { return datumtijd; } }
-			ITranslatable label;
-			public ITranslatable Label
-			{
-				get
-				{
-					if (label == null)
-					{
-						var labelNoTt = LabelNoTt(propertyInfo);
-						label = OrDefault(propertyInfo.Attr<MpTooltipAttribute>()
-							, mkAttr => labelNoTt.WithTooltip(mkAttr.NL, mkAttr.EN, mkAttr.DE)
-							, labelNoTt);
-					}
-					return label;
-				}
-			}
+			readonly ITranslatable label;
+			public ITranslatable Label { get { return label; } }
 
 			readonly string koppelTabelNaam;
 			public string KoppelTabelNaam { get { return koppelTabelNaam; } }
@@ -93,53 +81,33 @@ namespace ProgressOnderwijsUtils
 			readonly bool isKey;
 			public bool IsKey { get { return isKey; } }
 
-			public bool CanRead
-			{
-				get
-				{
-					return getter == UninitializedTGetter
-						? propertyInfo.GetGetMethod() != null
-						: getter != null;
-				}
-			}
-			public bool CanWrite
-			{
-				get
-				{
-					return setter == UninitializedTSetter
-						? propertyInfo.GetSetMethod() != null
-						: setter != null;
-				}
-			}
+			public bool CanRead { get { return getterMethod != null; } }
+			public bool CanWrite { get { return setterMethod != null; } }
 
-			Func<TOwner, object> getter = UninitializedTGetter;
+			Func<TOwner, object> getter;
 			public Func<TOwner, object> Getter
 			{
 				get
 				{
-					if (getter == UninitializedTGetter)
-						getter = MkGetter(propertyInfo);
-					return getter;
+					return getter ?? (getter = MkGetter(getterMethod, propertyInfo.PropertyType));
 				}
 			}
 
-			Action<TOwner, object> setter = UninitializedTSetter;
+			Action<TOwner, object> setter;
 			public Action<TOwner, object> Setter
 			{
 				get
 				{
-					if (setter == UninitializedTSetter)
-						setter = MkSetter(propertyInfo);
-					return setter;
+					return setter ?? (setter = MkSetter(setterMethod, propertyInfo.PropertyType));
 				}
 			}
 
-			Func<object, object> untypedGetter = UninitializedGetter;
+			Func<object, object> untypedGetter;
 			public Func<object, object> UntypedGetter
 			{
 				get
 				{
-					if (untypedGetter == UninitializedGetter)
+					if (untypedGetter == null)
 					{
 						var localGetter = Getter;
 						untypedGetter = localGetter == null ? default(Func<object, object>) : o => localGetter((TOwner)o);
@@ -148,12 +116,12 @@ namespace ProgressOnderwijsUtils
 				}
 			}
 
-			Action<object, object> untypedSetter = UninitializedSetter;
+			Action<object, object> untypedSetter;
 			public Action<object, object> UntypedSetter
 			{
 				get
 				{
-					if (untypedSetter == UninitializedSetter)
+					if (untypedSetter == null)
 					{
 						var localSetter = Setter;
 						untypedSetter = localSetter == null ? default(Action<object, object>) : (o, v) => localSetter((TOwner)o, v);
@@ -167,39 +135,43 @@ namespace ProgressOnderwijsUtils
 				return Expression.Property(paramExpr, propertyInfo);
 			}
 
-			public Impl(PropertyInfo pi, int implicitOrder)
+			public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
 			{
-				// first define the getters/setters, they are used below
-				//getter = MkGetter(pi);
-				//untypedGetter = getter == null ? default(Func<object, object>) : o => getter((TOwner)o);
-
-				//setter = MkSetter(pi);
-				//untypedSetter = setter == null ? default(Action<object, object>) : (o, v) => setter((TOwner)o, v);
-
 				propertyInfo = pi;
 				name = pi.Name;
 				index = implicitOrder;
+				getterMethod = pi.GetGetMethod();
+				setterMethod = pi.GetSetMethod();
 
+				var mpKoppelTabelAttribute = attrs.AttrH<MpKoppelTabelAttribute>();
+				koppelTabelNaam = mpKoppelTabelAttribute == null ? null : (mpKoppelTabelAttribute.KoppelTabelNaam ?? propertyInfo.Name);
+				var mpColumnCssAttribute = attrs.AttrH<MpColumnCssAttribute>();
+				lijstCssClass = mpColumnCssAttribute == null ? default(ColumnCss) : mpColumnCssAttribute.CssClass;
+				var mpHtmlEditModeAttribute = attrs.AttrH<MpHtmlEditModeAttribute>();
+				htmlMode = mpHtmlEditModeAttribute == null ? default(HtmlEditMode) : mpHtmlEditModeAttribute.HtmlMode;
+				required = attrs.AttrH<MpVerplichtAttribute>() != null;
+				hide = attrs.AttrH<HideAttribute>() != null;
+				allowNullInEditor = attrs.AttrH<MpAllowNullInEditorAttribute>() != null;
+				isKey = attrs.AttrH<KeyAttribute>() != null;
+				var mpShowDefaultOnNewAttribute = attrs.AttrH<MpShowDefaultOnNewAttribute>();
+				showDefaultOnNew = mpShowDefaultOnNewAttribute != null;
+				isReadonly = !pi.CanWrite || (attrs.AttrH<MpReadonlyAttribute>() != null);
+				var mpLengteAttribute = attrs.AttrH<MpLengteAttribute>();
+				length = mpLengteAttribute == null ? default(int?) : mpLengteAttribute.Lengte;
+				var mpRegexAttribute = attrs.AttrH<MpRegexAttribute>();
+				regex = mpRegexAttribute == null ? null : mpRegexAttribute.Regex;
+				var mpDatumFormaatAttribute = attrs.AttrH<MpDatumFormaatAttribute>();
+				datumtijd = mpDatumFormaatAttribute == null ? default(DatumFormaat?) : mpDatumFormaatAttribute.Formaat;
 
-				koppelTabelNaam = OrDefault(propertyInfo.Attr<MpKoppelTabelAttribute>(),
-					mkAttr => mkAttr.KoppelTabelNaam ?? propertyInfo.Name);
-				lijstCssClass = OrDefault(propertyInfo.Attr<MpColumnCssAttribute>(), mkAttr => mkAttr.CssClass);
-				htmlMode = OrDefault(propertyInfo.Attr<MpHtmlEditModeAttribute>(), mkAttr => mkAttr.HtmlMode);
-				required = OrDefault(propertyInfo.Attr<MpVerplichtAttribute>(), mkAttr => true);
-				hide = OrDefault(propertyInfo.Attr<HideAttribute>(), mkAttr => true);
-				allowNull = OrDefault(propertyInfo.Attr<MpAllowNullAttribute>(), mkAttr => true);
-				isKey = OrDefault(propertyInfo.Attr<KeyAttribute>(), mkAttr => true);
-				showDefaultOnNew = OrDefault(propertyInfo.Attr<MpShowDefaultOnNewAttribute>(), mkAttr => true);
-				isReadonly = !pi.CanWrite || OrDefault(propertyInfo.Attr<MpReadonlyAttribute>(), mkAttr => true);
-				length = OrDefault(propertyInfo.Attr<MpLengteAttribute>(), mkAttr => mkAttr.Lengte, default(int?));
-				regex = OrDefault(propertyInfo.Attr<MpRegexAttribute>(), mkAttr => mkAttr.Regex);
-				datumtijd = OrDefault(propertyInfo.Attr<MpDatumFormaatAttribute>(), mkAttr => mkAttr.Formaat, default(DatumFormaat?));
+				var labelNoTt = LabelNoTt(attrs);
+				var mpTooltipAttribute = attrs.AttrH<MpTooltipAttribute>();
+				label = mpTooltipAttribute == null ? labelNoTt : labelNoTt.WithTooltip(mpTooltipAttribute.NL, mpTooltipAttribute.EN, mpTooltipAttribute.DE);
 
 				if (KoppelTabelNaam != null && DataType.GetNonNullableUnderlyingType() != typeof(int))
 					throw new ProgressNetException(typeof(TOwner) + " heeft Kolom " + Name + " heeft koppeltabel " +
 						KoppelTabelNaam + " maar is van type " + DataType + "!");
-
 			}
+
 
 			public override string ToString()
 			{
@@ -207,39 +179,36 @@ namespace ProgressOnderwijsUtils
 			}
 
 
-			LiteralTranslatable LabelNoTt(MemberInfo memberInfo)
+			LiteralTranslatable LabelNoTt(object[] attrs)
 			{
-				var labelNoTt = OrDefault(memberInfo.Attr<MpLabelAttribute>(), mkAttr => mkAttr.ToTranslatable());
-				var untranslatedLabelNoTt = OrDefault(memberInfo.Attr<MpLabelUntranslatedAttribute>(),
-					mkAttr => mkAttr.ToTranslatable());
+				var mpLabelAttribute = attrs.AttrH<MpLabelAttribute>();
+				var labelNoTt = mpLabelAttribute == null ? null : mpLabelAttribute.ToTranslatable();
+				var mpLabelUntranslatedAttribute = attrs.AttrH<MpLabelUntranslatedAttribute>();
+				var untranslatedLabelNoTt = mpLabelUntranslatedAttribute == null ? null : mpLabelUntranslatedAttribute.ToTranslatable();
 				if (untranslatedLabelNoTt != null)
 					if (labelNoTt != null)
 						throw new Exception(
 							"Cannot define both an untranslated and a translated label on the same property " +
-								ObjectToCode.GetCSharpFriendlyTypeName(memberInfo.DeclaringType) + "." + Name);
+								ObjectToCode.GetCSharpFriendlyTypeName(propertyInfo.DeclaringType) + "." + Name);
 					else
 						labelNoTt = untranslatedLabelNoTt;
 
-				if (labelNoTt == null && memberInfo.DeclaringType.Attr<MpLabelsRequiredAttribute>() != null)
-					throw new ArgumentException("You must specify an MpLabel on " + Name + ", since the class " +
-						ObjectToCode.GetCSharpFriendlyTypeName(memberInfo.DeclaringType) + " is marked MpLabelsRequired");
 				if (labelNoTt == null)
 				{
-					var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(memberInfo.Name);
+					var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(propertyInfo.Name);
 					labelNoTt = Translatable.Literal(prettyName, prettyName, prettyName);
 				}
 				return labelNoTt;
 			}
 
-			static Action<TOwner, object> MkSetter(PropertyInfo pi)
+			static Action<TOwner, object> MkSetter(MethodInfo setterMethod, Type propertyType)
 			{
-				var setterMethod = pi.GetSetMethod();
 				if (setterMethod == null)
 					return null;
 				if (typeof(TOwner).IsValueType)
-					return (Action<TOwner, object>)StructSetterM().MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { setterMethod });
+					return GetCaster(propertyType).StructSetterChecked<TOwner>(setterMethod);
 				else
-					return (Action<TOwner, object>)ClassSetterM().MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { setterMethod });
+					return GetCaster(propertyType).SetterChecked<TOwner>(setterMethod);
 
 				//faster code, slower startup:				
 				//var valParamExpr = Expression.Parameter(typeof(object), "newValue");
@@ -252,83 +221,83 @@ namespace ProgressOnderwijsUtils
 				//		).Compile();
 			}
 
-			static Func<TOwner, object> MkGetter(PropertyInfo pi)
+			static Func<TOwner, object> MkGetter(MethodInfo getterMethod, Type propertyType)
 			{
-				var getterMethod = pi.GetGetMethod();
+				//TODO:optimize: this is still a hotspot :-(
 				if (getterMethod == null)
 					return null;
-				else if (pi.PropertyType.IsValueType)
+				else if (propertyType.IsValueType)
 				{
 					if (typeof(TOwner).IsValueType)
-						return (Func<TOwner, object>)StructStructGetterM().MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { getterMethod });
+						return GetCaster(propertyType).StructGetterBoxed<TOwner>(getterMethod);
 					else
-						return (Func<TOwner, object>)ClassStructGetterM().MakeGenericMethod(pi.PropertyType).Invoke(null, new[] { getterMethod });
+						return GetCaster(propertyType).GetterBoxed<TOwner>(getterMethod);
 				}
 				else
 				{
 					if (typeof(TOwner).IsValueType)
-						return StructClassGetter(getterMethod);
+						return outCasterObject.StructGetterBoxed<TOwner>(getterMethod);
 					else
 						return MkDelegate<Func<TOwner, object>>(getterMethod);
 				}
-
-				//faster code, slower startup:				
-				//var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
-				//var typedPropExpr = Expression.Property(typedParamExpr, pi);
-				//return Expression.Lambda<Func<TOwner, object>>(
-				//		Expression.Convert(typedPropExpr, typeof(object)), typedParamExpr
-				//		).Compile();
 			}
 
-			static MethodInfo MkGenGetter(Func<MethodInfo, Func<TOwner, object>> f) { return f.Method.GetGenericMethodDefinition(); }
-			static MethodInfo MkGenSetter(Func<MethodInfo, Action<TOwner, object>> f) { return f.Method.GetGenericMethodDefinition(); }
-
-			static MethodInfo ClassStructGetterM() { return classStructGetterM ?? (classStructGetterM = MkGenGetter(ClassStructGetter<object>)); }
-
-			static MethodInfo StructStructGetterM() { return structStructGetterM ?? (structStructGetterM = MkGenGetter(StructStructGetter<object>)); }
-			static MethodInfo ClassSetterM() { return classSetterM ?? (classSetterM = MkGenSetter(ClassSetter<object>)); }
-			static MethodInfo StructSetterM() { return structSetterM ?? (structSetterM = MkGenSetter(StructSetter<object>)); }
-
-
-			static MethodInfo classStructGetterM, structStructGetterM, classSetterM, structSetterM;
-
-			internal static Func<TOwner, object> StructClassGetter(MethodInfo mi)
-			{
-				var del = MkDelegate<StructGetterDel<object>>(mi);
-				return o => del(ref o);
-			}
-			internal static Func<TOwner, object> ClassStructGetter<TVal>(MethodInfo mi)
-			{
-				var del = MkDelegate<Func<TOwner, TVal>>(mi);
-				return o => del(o);
-			}
-			internal static Func<TOwner, object> StructStructGetter<TVal>(MethodInfo mi)
-			{
-				var del = MkDelegate<StructGetterDel<TVal>>(mi);
-				return o => del(ref o);
-			}
-
-			internal static Action<TOwner, object> ClassSetter<TVal>(MethodInfo mi)
-			{
-				var del = MkDelegate<Action<TOwner, TVal>>(mi);
-				return (o, v) => del(o, (TVal)v);
-			}
-			internal static Action<TOwner, object> StructSetter<TVal>(MethodInfo mi)
-			{
-				var del = MkDelegate<StructSetterDel<TVal>>(mi);
-				return (o, v) => del(ref o, (TVal)v);
-			}
-
-			delegate TVal StructGetterDel<out TVal>(ref TOwner obj);
-			delegate void StructSetterDel<in TVal>(ref TOwner obj, TVal val);
-			static readonly Func<TOwner, object> UninitializedTGetter = o => o;
-			static readonly Action<TOwner, object> UninitializedTSetter = (o, v) => { };
+			readonly MethodInfo setterMethod;
+			readonly MethodInfo getterMethod;
 		}
 
-		static readonly Func<object, object> UninitializedGetter = o => o;
-		static readonly Action<object, object> UninitializedSetter = (o, v) => { };
-
 		static T MkDelegate<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
-		static TR OrDefault<T, TR>(T val, Func<T, TR> project, TR defaultVal = default(TR)) { return Equals(val, default(T)) ? defaultVal : project(val); }
+
+		static T AttrH<T>(this object[] attrs) where T : class
+		{
+			foreach (var obj in attrs)
+				if (obj is T)
+					return (T)obj;
+			return null;
+		}
+
+
+		interface IOutCaster
+		{
+			Func<TObj, object> GetterBoxed<TObj>(MethodInfo method);
+			Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method);
+			Action<TObj, object> SetterChecked<TObj>(MethodInfo method);
+			Action<TObj, object> StructSetterChecked<TObj>(MethodInfo method);
+		}
+
+		delegate TVal StructGetterDel<TOwner, out TVal>(ref TOwner obj);
+		delegate void StructSetterDel<TOwner, in TVal>(ref TOwner obj, TVal val);
+
+		class OutCaster<TOut> : IOutCaster
+		{
+			public Func<TObj, object> GetterBoxed<TObj>(MethodInfo method)
+			{
+				var f = MkDelegate<Func<TObj, TOut>>(method);
+				return o => f(o);
+			}
+			public Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method)
+			{
+				var f = MkDelegate<StructGetterDel<TObj, TOut>>(method);
+				return o => f(ref o);
+			}
+
+			public Action<TObj, object> SetterChecked<TObj>(MethodInfo method)
+			{
+				var f = MkDelegate<Action<TObj, TOut>>(method);
+				return (o, v) => f(o, (TOut)v);
+			}
+
+			public Action<TObj, object> StructSetterChecked<TObj>(MethodInfo method)
+			{
+				var f = MkDelegate<StructSetterDel<TObj, TOut>>(method);
+				return (o, v) => f(ref o, (TOut)v);
+			}
+		}
+		static readonly OutCaster<object> outCasterObject = new OutCaster<object>();
+		static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new ConcurrentDictionary<Type, IOutCaster>();
+		static IOutCaster GetCaster(Type propType)
+		{
+			return CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
+		}
 	}
 }

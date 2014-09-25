@@ -5,12 +5,12 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
-	public sealed class TextDefReplacing : ITranslatable
+	public sealed class ReplacingTranslatable : ITranslatable
 	{
 		readonly ITranslatable[] toreplace;
 		readonly ITranslatable core;
 
-		public TextDefReplacing(ITranslatable core, params ITranslatable[] toreplace)
+		internal ReplacingTranslatable(ITranslatable core, params ITranslatable[] toreplace)
 		{
 			this.core = core;
 			this.toreplace = toreplace;

@@ -74,5 +74,35 @@ namespace ProgressOnderwijsUtilsTests
 			QueryBuilder.Create(q).ReadPlain<string>(conn).ForEach(i => sb.AppendLine(i));
 			Assert.That(sb.ToString(), Is.EqualTo(string.Empty), "Ontbrekende foreign key relatie.");
 		}
+
+		[Test]
+		public void AlleSqlObjectenInVersiebeheer()
+		{
+			const string q = @"
+				declare
+				  @l_date date
+
+				select top ( 1 )
+				  @l_date = cast( o.modify_date as date )
+				from sys.objects o 
+				join sys.sql_modules m on m.object_id = o.object_id
+				where o.is_ms_shipped = 0
+				  and o.name not like 'sp@_%' escape '@' -- Microsoft functionaliteit voor database diagrams
+				  and o.name not like 'fn@_%' escape '@' -- Microsoft functionaliteit voor database diagrams
+
+				select 
+				  o.type_desc
+				 ,o.name
+				 ,modify_date = cast( o.modify_date as date )
+				 ,expected_modify_date = @l_date
+				from sys.objects o 
+				join sys.sql_modules m on m.object_id = o.object_id
+				where o.is_ms_shipped = 0
+				  and cast( o.modify_date as date ) != @l_date
+				  and o.name not like 'sp@_%' escape '@' -- Microsoft functionaliteit voor database diagrams
+				  and o.name not like 'fn@_%' escape '@' -- Microsoft functionaliteit voor database diagrams
+				";
+			Assert.That(QueryBuilder.Create(q).ReadDataTable(conn).Rows.Count, Is.EqualTo(0));
+		}
 	}
 }

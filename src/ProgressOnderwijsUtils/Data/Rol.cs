@@ -267,7 +267,7 @@ namespace ProgressOnderwijsUtils
 		BekijkenKengetallen = 119,
 
 		[MpLabel("Bekijken studievolg"), Toekenbaar,
-         Implies(StudentOnderwijsTabblad, VolgOnderwijsInzien, StudievoortgangNotitiesBekijken)]
+		 Implies(StudentOnderwijsTabblad, VolgOnderwijsInzien, StudievoortgangNotitiesBekijken, BsaStatusBekijken,Rol.BekijkenInschrijvingen)]
 		BekijkenStudievolg = 121,
 
 		[MpLabel("Bekijken studielinkberichten"), Toekenbaar,
@@ -341,7 +341,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Superuser"), Implies(BeheerFinancieel, BeheerInschrijvingen,
 			 BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
 			 WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften,
-			 WijzigenDocumentenVooropleidingen)]
+			 WijzigenDocumentenVooropleidingen,RapportenTabblad)]
 		Superuser = 138,
 
 		[MpLabel("Wijzigen studievolg"), Toekenbaar,
@@ -594,5 +594,8 @@ namespace ProgressOnderwijsUtils
 
         [MpLabel("Studievoortgang notities bekijken")]
         StudievoortgangNotitiesBekijken = 242,
+
+        [MpLabel("Rapporten bekijken"), Toekenbaar]
+        RapportenTabblad = 243,
     }
 }

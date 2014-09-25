@@ -1,5 +1,6 @@
 ﻿//#define ENABLE_GDI_MEASUREMENT
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 using ExpressionToCodeLib;
@@ -31,7 +32,15 @@ namespace ProgressOnderwijsUtils
 		}
 		const double pix_per_char = 7.0;
 #endif
-		public static double Measure(string str) { return str == null ? 0.0 : str.Sum(c => char_to_width[c]); }
+		public static double Measure(string str)
+		{
+			double sum = 0;
+			if (str != null)
+				foreach (char c in str)
+					sum += char_to_width[c];
+			return sum;
+		}
+
 		public static string LimitDisplayLength(string s, int maxWidth) { return LimitTextLength(s, maxWidth).Item1; }
 		public static Tuple<string, bool> LimitTextLength(string s, int maxWidth) { return ElideIfNecessary(s, maxWidth * ems_per_char); }
 		static Tuple<string, bool> ElideIfNecessary(string s, double ems) { return Measure(s) < ems ? Tuple.Create(s, false) : Tuple.Create(TrimToEms(s, ems - ellipsis_ems) + ellipsis, true); }
@@ -45,11 +54,13 @@ namespace ProgressOnderwijsUtils
 		{
 			GlyphTypeface gFont;
 			new Typeface("Verdana").TryGetGlyphTypeface(out gFont);
-			char_to_width = (
-					from c in Enumerable.Range(0, char.MaxValue + 1)
-					let characterHasSymbol = gFont.CharacterToGlyphMap.ContainsKey(c)
-					select characterHasSymbol ? gFont.AdvanceWidths[gFont.CharacterToGlyphMap[c]] : 0.0
-				).ToArray();
+			char_to_width = new double[char.MaxValue + 1];
+			for (int i = 0; i < char_to_width.Length; i++)
+			{
+				var c = (char)i;
+				if (gFont.CharacterToGlyphMap.ContainsKey(c))
+					char_to_width[i] = gFont.AdvanceWidths[gFont.CharacterToGlyphMap[c]];
+			}
 			ellipsis_ems = Measure(ellipsis);
 		}
 		static int CanFitChars(string str, double ems)

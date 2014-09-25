@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
 
 		public static BooleanComparer[] StringComparers { get { return new[] { BooleanComparer.Contains, BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.StartsWith, BooleanComparer.EndsWith, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn }; } }
 		public static BooleanComparer[] NumericComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.GreaterThan, BooleanComparer.GreaterThanOrEqual, BooleanComparer.LessThan, BooleanComparer.LessThanOrEqual, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, BooleanComparer.In, BooleanComparer.NotIn, BooleanComparer.HasFlag, }; } }
-		public static BooleanComparer[] BooleanComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.NotEqual, }; } }
+		public static BooleanComparer[] BooleanComparers { get { return new[] { BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, }; } }
 
 		internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde)
 		{

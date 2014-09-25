@@ -31,7 +31,8 @@ namespace ProgressOnderwijsUtils
 		public static DataTable ReadDataTable(this QueryBuilder builder, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
 		{
 			return builder.CreateSqlCommand(conn).Using(
-					command => {
+					command =>
+					{
 						try
 						{
 							using (var adapter = new SqlDataAdapter(command))
@@ -52,7 +53,8 @@ namespace ProgressOnderwijsUtils
 		public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
 			return builder.CreateSqlCommand(commandCreationContext).Using(
-				command => {
+				command =>
+				{
 					try
 					{
 						return command.ExecuteNonQuery();
@@ -127,8 +129,8 @@ namespace ProgressOnderwijsUtils
 						try
 						{
 							name = reader.GetName(i);
-							mp = mps[name];
-							hasNullInNonNullableColumn = !mp.AllowNull && reader.IsDBNull(i);
+							mp = mps.GetByName(name);
+							hasNullInNonNullableColumn = !mp.DataType.CanBeNull() && reader.IsDBNull(i);
 						}
 						catch { } //due to SequentialAccess expect many errors.
 						if (hasNullInNonNullableColumn)
@@ -394,10 +396,25 @@ namespace ProgressOnderwijsUtils
 
 				static ByMetaObjectImpl()
 				{
-					ColHashPrimes = Utils.Primes().Take(metadata.Count(mp => mp.CanWrite && SupportsType(mp.DataType))).Select(i => (uint)i).ToArray();
+					int writablePropCount = 0;
+					foreach (var mp in metadata)//perf:no LINQ
+						if (mp.CanWrite && SupportsType(mp.DataType))
+							writablePropCount++;
+
+					ColHashPrimes = new uint[writablePropCount];
+
+					using (var pGen = Utils.Primes().GetEnumerator())
+						for (int i = 0; i < ColHashPrimes.Length && pGen.MoveNext(); i++)
+							ColHashPrimes[i] = (uint)pGen.Current;
 					if (ColHashPrimes.Length == 0)
 						throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
-					hasUnsupportedColumns = metadata.Any(mp => mp.CanWrite && !SupportsType(mp.DataType));
+					hasUnsupportedColumns = false;
+					foreach (var mp in metadata)//perf:no LINQ
+						if (mp.CanWrite && !SupportsType(mp.DataType))
+						{
+							hasUnsupportedColumns = true;
+							break;
+						}
 
 					LoadRows = new ConcurrentDictionary<ColumnOrdering, Func<TReader, T[]>>();
 				}
@@ -416,12 +433,20 @@ namespace ProgressOnderwijsUtils
 						CreateLoadRowsMethod<T>(readerParamExpr =>
 							Expression.MemberInit(
 								Expression.New(type),
-								orderingP.Cols.Select((colName, i) => {
-									IMetaProperty<T> member;
-									if (!metadata.TryGetValue(colName, out member))
-										throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
-									return Expression.Bind(member.PropertyInfo, GetColValueExpr(readerParamExpr, i, member.DataType));
-								}))));
+								createColumnBindings(orderingP, readerParamExpr))));
+				}
+
+				static IEnumerable<MemberAssignment> createColumnBindings(ColumnOrdering orderingP, ParameterExpression readerParamExpr)
+				{
+					var cols = orderingP.Cols;
+					for (int i = 0; i < cols.Length; i++)
+					{
+						var colName = cols[i];
+						IMetaProperty<T> member = metadata.GetByNameOrNull(colName);
+						if (member == null)
+							throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
+						yield return Expression.Bind(member.PropertyInfo, GetColValueExpr(readerParamExpr, i, member.DataType));
+					};
 				}
 			}
 
