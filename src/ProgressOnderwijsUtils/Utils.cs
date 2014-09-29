@@ -229,12 +229,34 @@ namespace ProgressOnderwijsUtils
 			//we can't really seperate the test body from the side-effects in the setup/teardown.
 			//In particuarly, a retry wouldn't run in its own environment.
 
-			try { test(); }
+			try 
+			{
+				test();
+			}
 			catch (Exception e)
 			{
 				if (IsTimeoutException(e))
+				{
 					Assert.Inconclusive("TIMEOUT DETECTED\n\n" + e);
-				throw;
+				}
+				else if (e is AggregateException)
+				{
+					// re-order de inner-exceptions zodat we tenminste de eerste non-timeout exceptie te zien krijgen
+					var ae = e as AggregateException;
+					throw new AggregateException(ae.InnerExceptions.OrderBy(x => x, new ComparisonComparer<Exception>((a, b) =>
+					{
+						if (IsTimeoutException(b))
+							return 1;
+						else if (IsTimeoutException(a))
+							return -1;
+						else
+							return 0;
+					})));
+				}
+				else
+				{
+					throw;
+				}
 			}
 		}
 

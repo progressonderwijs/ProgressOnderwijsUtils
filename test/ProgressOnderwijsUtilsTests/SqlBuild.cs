@@ -10,18 +10,16 @@ namespace ProgressOnderwijsUtilsTests
 {
 	public class SqlBuild : TestSuiteBase
 	{
-
 		[Test]
 		public void EenmaligeScripts()
 		{
-			var names = QueryBuilder
-				.Create(@"
-					select Naam
-					from SqlBuild.EenmaligScript
-					where DatumControle > DatumUitvoerProductie")
-				.ReadPlain<string>(conn);
+			var names = QueryBuilder.Create(@"
+				select Naam
+				from SqlBuild.EenmaligScript
+				where DatumControle > DatumUitvoerProductie")
+			.ReadPlain<string>(conn);
 
-			Assert.That(string.Join("\r\n", names), Is.EqualTo(string.Empty), "Eenmalige scripts die op productie zijn uitgevoerd waarvan de scripts nog steeds draaien.");
+			Assert.That(names, Is.Empty, "Eenmalige scripts die op productie zijn uitgevoerd waarvan de scripts nog steeds draaien.");
 		}
 	}
 }
