@@ -27,9 +27,7 @@ namespace ProgressOnderwijsUtilsTests
 				where ic.object_id is null
 				";
 
-			var sb = new StringBuilder();
-			QueryBuilder.Create(q).ReadPlain<string>(conn).ForEach(i => sb.AppendLine(i));
-			Assert.That(sb.ToString(), Is.EqualTo(string.Empty), "Geen index op FK-kolom.");
+			Assert.That(QueryBuilder.Create(q).ReadPlain<string>(conn), Is.Empty, "Geen index op FK-kolom.");
 		}
 
 		[Test]
@@ -70,9 +68,7 @@ namespace ProgressOnderwijsUtilsTests
 				  and tc.name not like 'conversie%'
 				";
 
-			var sb = new StringBuilder();
-			QueryBuilder.Create(q).ReadPlain<string>(conn).ForEach(i => sb.AppendLine(i));
-			Assert.That(sb.ToString(), Is.EqualTo(string.Empty), "Ontbrekende foreign key relatie.");
+			Assert.That(QueryBuilder.Create(q).ReadPlain<string>(conn), Is.Empty, "Ontbrekende foreign key relatie.");
 		}
 
 		[Test]

@@ -304,11 +304,11 @@ namespace ProgressOnderwijsUtils
 					throw new InvalidOperationException("Cannot set error: OK is not an error");
 				return new ParseResult(state, error);
 			}
-			public static ParseResult Malformed(Type type, string s) { return CreateError(ParseState.Malformed, Texts.GenericEdit.MalformedData(Texts.ClrTypeNames.UserReadable(type, false)).Append(Translatable.Literal(" niet ", " not ", " nicht "), Converteer.ToText("\"" + s + "\"."))); }
-			public static ParseResult Overflow { get { return CreateError(ParseState.Overflow, Texts.GenericEdit.Overflow); } }
-			public static ParseResult Geendata { get { return CreateError(ParseState.Geendata, Texts.GenericEdit.GeenData); } }
-			public static ParseResult Datumfout { get { return CreateError(ParseState.Datumfout, Texts.GenericEdit.FoutDatumFormaat); } }
-			public static ParseResult TijdFout { get { return CreateError(ParseState.TijdFout, Texts.GenericEdit.FoutTijdFormaat); } }
+			public static ParseResult Malformed(Type type, string s) { return CreateError(ParseState.Malformed, GenericEditText.MalformedData(ClrTypeNamesText.UserReadable(type, false)).Append(Translatable.Literal(" niet ", " not ", " nicht "), Converteer.ToText("\"" + s + "\"."))); }
+			public static ParseResult Overflow { get { return CreateError(ParseState.Overflow, GenericEditText.Overflow); } }
+			public static ParseResult Geendata { get { return CreateError(ParseState.Geendata, GenericEditText.GeenData); } }
+			public static ParseResult Datumfout { get { return CreateError(ParseState.Datumfout, GenericEditText.FoutDatumFormaat); } }
+			public static ParseResult TijdFout { get { return CreateError(ParseState.TijdFout, GenericEditText.FoutTijdFormaat); } }
 		}
 
 
