@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business.Database;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
