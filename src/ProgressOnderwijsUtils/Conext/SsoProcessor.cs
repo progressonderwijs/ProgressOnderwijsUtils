@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils.Conext
 	}
 
 
-	public static class SSO
+	public static class SsoProcessor
 	{
 		struct AuthnRequest
 		{
@@ -99,7 +99,7 @@ namespace ProgressOnderwijsUtils.Conext
 		const string MAIL = "urn:mace:dir:attribute-def:mail";
 		const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
 		const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
-		static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SSO));
+		static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
 		public static void Request(HttpResponse response, ServiceProvider sp, DatabaseVersion db, IdentityProvider idp, Entity entity, string relayState = null)
 		{
