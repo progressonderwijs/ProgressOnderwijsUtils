@@ -17,15 +17,15 @@ namespace ProgressOnderwijsUtils
 	public abstract class ValueBase<T> : IEquatable<T> where T : ValueBase<T>
 	{
 
-		protected ValueBase() { if (!(this is T)) throw new InvalidOperationException("Only T can subclass ValueBase<T>."); }
+		protected ValueBase() { if(!(this is T)) throw new InvalidOperationException("Only T can subclass ValueBase<T>."); }
 		static ValueBase()
 		{
 			try
 			{
-				if (!typeof(T).IsSealed)
+				if(!typeof(T).IsSealed)
 					throw new InvalidOperationException("Value Classes must be sealed.");
 			}
-			catch (Exception e)
+			catch(Exception e)
 			{
 				throw new Exception("Failed to create ValueBase for " + ExpressionToCodeLib.ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)), e);
 			}
@@ -67,6 +67,7 @@ namespace ProgressOnderwijsUtils
 						type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(pi => pi.CanRead && pi.GetGetMethod() != null)
 							.Cast<MemberInfo>()
 						)
+						.Where(fi => !fi.Name.StartsWith("<"))
 						.Select(fi =>
 							Expression.Call(concatMethod,
 								Expression.Call(concatMethod,
@@ -89,14 +90,17 @@ namespace ProgressOnderwijsUtils
 		static string FriendlyMemberName(MemberInfo fi)
 		{
 			bool isPublic;
-			if (fi is FieldInfo){
+			if(fi is FieldInfo)
+			{
 				var fieldinfo = (FieldInfo)fi;
 				isPublic = fieldinfo.Attributes.HasFlag(FieldAttributes.Public);
-			} else {
+			}
+			else
+			{
 				var propertyinfo = (PropertyInfo)fi;
 				isPublic = propertyinfo.GetGetMethod(false) != null;
 			}
-			
+
 			return isPublic ? fi.Name : "*" + fi.Name;
 		}
 	}
@@ -110,7 +114,8 @@ namespace ProgressOnderwijsUtils
 			var parA = Expression.Parameter(typeof(T), "a");
 			var accumulatorVar = Expression.Variable(typeof(ulong), "hashcodeAccumulator");
 			var accumulateHashExpr =
-				fields.Select((fi, n) => {
+				fields.Select((fi, n) =>
+				{
 					MemberExpression fieldExpr = Expression.Field(parA, fi);
 					UnaryExpression ulongHashCodeExpr =
 						Expression.Convert(
