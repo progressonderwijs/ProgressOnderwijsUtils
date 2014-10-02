@@ -8,23 +8,24 @@ namespace ProgressOnderwijsUtils
 	[OdsTable]
 	public enum Rol
 	{
-		[MpLabel("Studentadministratie alleen lezen, met accorderen toelatingseisen en kenmerken"),
+#pragma warning disable 612
+		[Obsolete, MpLabel("Studentadministratie alleen lezen, met accorderen toelatingseisen en kenmerken"),
 		 Implies(StudentadministratieAlleenInkijken, AanmeldingToelatingseisenAccorderen, WijzigenStudentKenmerken)]
 		StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken = -24,
 
-		[MpLabel("Financiële administratie alleen inkijken"), Implies(StudentFinancieelTabblad, FinancieelBetalingsinformatieBekijken,
+		[Obsolete, MpLabel("Financiële administratie alleen inkijken"), Implies(StudentFinancieelTabblad, FinancieelBetalingsinformatieBekijken,
 			 FinancieelCollegegeldBekijken, FinancieelMachtigingBekijken, FinancieelNotitiesBekijken)]
 		FinanciëleAdministratieAlleenInkijken = -23,
 
-		[MpLabel("Financiële administratie"), Implies(FinanciëleAdministratieAlleenInkijken, FinancieelClieopToevoegenVerwijderenWijzigen,
+		[Obsolete, MpLabel("Financiële administratie"), Implies(FinanciëleAdministratieAlleenInkijken, FinancieelClieopToevoegenVerwijderenWijzigen,
 			 FinancieelClieopBekijken, FinancieelBetalingenToevoegenVerwijderenWijzigen, FinancieelCollegegeldToevoegenVerwijderenWijzigen,
 			 FinancieelMachtingToevoegenVerwijderenWijzigen, FinancieelNotitiesToevoegenWijzigenVerwijderen)]
 		FinanciëleAdministratie = -22,
 
-		[MpLabel("Studentadministratie alleen inkijken"), Implies(StudentCommunicatieToevoegenVerwijderenWijzigen, InschrijvingNotitiesBekijken)]
+		[Obsolete, MpLabel("Studentadministratie alleen inkijken"), Implies(StudentCommunicatieToevoegenVerwijderenWijzigen, InschrijvingNotitiesBekijken)]
 		StudentadministratieAlleenInkijken = -21,
 
-		[MpLabel("Studentadministratie"),
+		[Obsolete, MpLabel("Studentadministratie"),
 		 Implies(StudentadministratieAlleenLezenMetAccorderenToelatingseisenEnKenmerken,
 			 StudentWijzigPersonalia, OpleidingenBekijken, BekijkenFinancieelUitgebreid,
 			 StudentIdentificatieToevoegenVerwijderenWijzigen,
@@ -42,7 +43,7 @@ namespace ProgressOnderwijsUtils
 			 NietReguliereInschrijvingenWijzigenVerwijderen)]
 		Studentadministratie = -18,
 
-		[MpLabel("Studentadministratie beheerder"),
+		[Obsolete, MpLabel("Studentadministratie beheerder"),
 		 Implies(FinanciëleAdministratie, StudentadministratieExtra,
 			 OrganisatieToevoegenVerwijderenWijzigen,
 			 OpleidingenToevoegenVerwijderenWijzigen,
@@ -52,12 +53,13 @@ namespace ProgressOnderwijsUtils
 			 TakenBekijkenWijzigen)]
 		StudentadministratieBeheerder = -5,
 
-		[MpLabel("Studentadministratie extra"),
+		[Obsolete, MpLabel("Studentadministratie extra"),
 		 Implies(Studentadministratie, BekijkenKengetallen, StudentOverledenVerifieeren,
 			 NegatiefBindendStudieadviesToevoegenWijzigenVerwijderen,
 			 BlokkeerInschrijvingToevoegenWijzigenVerwijderen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen)]
 		StudentadministratieExtra = -4,
+#pragma warning restore 612
 
 		[MpLabel("Student bekijk personalia")]
 		StudentBekijkPersonalia = 2,
@@ -341,8 +343,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Superuser"), Implies(BeheerFinancieel, BeheerInschrijvingen,
 			BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
 			WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften,
-			WijzigenDocumentenVooropleidingen,RapportenTabblad, Combi_BeheerAlles, Studentadministratie, StudentadministratieExtra,
-			FinanciëleAdministratie, StudentadministratieBeheerder, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
+			WijzigenDocumentenVooropleidingen,RapportenTabblad, Combi_BeheerAlles, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
 			RaadpleegCuracao, WijzigCuracao, BeheerCuracao,
 			Combi_FontysBeheerFO, Combi_FontysMuteerFO
 		)]
