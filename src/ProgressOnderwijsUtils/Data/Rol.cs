@@ -31,14 +31,13 @@ namespace ProgressOnderwijsUtils
 			 StudentIdentificatieToevoegenVerwijderenWijzigen,
 			 StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen,
 			 StudentPasfotoToevoegenVerwijderen,
-			 StudentFinancieelTabblad, StudentOnderwijsTabblad,
+			 StudentOnderwijsTabblad,
 			 VooropleidingenToevoegenVerwijderenWijzigen, VooropleidingenVerifieeren,
 			 AanmeldingenToevoegenWijzigen,
 			 AanmeldingDefinitiefInschrijven, AanmeldingInschrijvingIntrekken,
 			 InschrijvingUitschrijven, InschrijvingExamenToevoegenVerwijderenWijzigen,
 			 BlokkeerInschrijvingBekijken,
 			 SMMutatiesBekijken,
-			 FinancieelBetalingsinformatieBekijken,
 			 FinancieelBetalingsinformatieToevoegenWijzigenVerwijderen,
 			 NietReguliereInschrijvingenWijzigenVerwijderen)]
 		Studentadministratie = -18,
@@ -340,11 +339,9 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Wijzigen accorderen toelatingseisen"), Toekenbaar, Implies(AanmeldingToelatingseisenAccorderen, BekijkenInschrijvingen)]
 		WijzigenAccorderenToelatingseisen = 136,
 
-		[MpLabel("Superuser"), Implies(BeheerFinancieel, BeheerInschrijvingen,
-			BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
-			WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften,
-			WijzigenDocumentenVooropleidingen,RapportenTabblad, Combi_BeheerAlles, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
-			RaadpleegCuracao, WijzigCuracao, BeheerCuracao,
+		[MpLabel("Superuser"), Implies(Combi_BeheerAlles, BeheerStudievolg, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
+			WijzigenAlumniNetwerk,  WijzigenDocumentenVooropleidingen,RapportenTabblad, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
+			BeheerCuracao,
 			Combi_FontysBeheerFO, Combi_FontysMuteerFO
 		)]
 		Superuser = 138,
