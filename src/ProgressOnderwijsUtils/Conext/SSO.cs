@@ -22,22 +22,24 @@ namespace ProgressOnderwijsUtils.Conext
 		StudentOAuth,
 	}
 
+
 	public enum IdentityProvider
 	{
 		Conext,
 		ConextWayf,
 	}
 
+
 	public enum Entity
 	{
 		Unknown,
-
 		Fontys,
 		Stenden,
 		UvA,
 		VU,
 		RuG,
 	}
+
 
 	[Serializable]
 	public struct Attributes
@@ -54,9 +56,10 @@ namespace ProgressOnderwijsUtils.Conext
 		}
 	}
 
+
 	public static class SSO
 	{
-		private struct AuthnRequest
+		struct AuthnRequest
 		{
 			public string Destination { get; set; }
 			public string Issuer { private get; set; }
@@ -64,9 +67,9 @@ namespace ProgressOnderwijsUtils.Conext
 			public string Encode()
 			{
 				byte[] xml = Encoding.UTF8.GetBytes(ToXml().ToString());
-				using (MemoryStream stream = new MemoryStream())
+				using (var stream = new MemoryStream())
 				{
-					using (DeflateStream deflate = new DeflateStream(stream, CompressionMode.Compress))
+					using (var deflate = new DeflateStream(stream, CompressionMode.Compress))
 					{
 						deflate.Write(xml, 0, xml.Length);
 					}
@@ -74,7 +77,7 @@ namespace ProgressOnderwijsUtils.Conext
 				}
 			}
 
-			private XElement ToXml()
+			XElement ToXml()
 			{
 				return new XElement(SchemaSet.SAMLP_NS + "AuthnRequest",
 					new XAttribute(XNamespace.Xmlns + "saml", SchemaSet.SAML_NS.NamespaceName),
@@ -87,15 +90,15 @@ namespace ProgressOnderwijsUtils.Conext
 					new XAttribute("IsPassive", "false"),
 					new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
 					new XElement(SchemaSet.SAML_NS + "Issuer", Issuer)
-				);
+					);
 			}
 		}
 
-		private const string UID = "urn:mace:dir:attribute-def:uid";
-		private const string MAIL = "urn:mace:dir:attribute-def:mail";
-		private const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
-		private const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
 
+		const string UID = "urn:mace:dir:attribute-def:uid";
+		const string MAIL = "urn:mace:dir:attribute-def:mail";
+		const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
+		const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
 		static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SSO));
 
 		public static void Request(HttpResponse response, ServiceProvider sp, DatabaseVersion db, IdentityProvider idp, Entity entity, string relayState = null)
@@ -107,7 +110,7 @@ namespace ProgressOnderwijsUtils.Conext
 			IDictionary<Entity, string> entities = MetaDataFactory.GetEntities(idp, sp, db);
 
 			Saml20MetaData md = MetaDataFactory.GetMetaData(server, client);
-			AuthnRequest request = new AuthnRequest
+			var request = new AuthnRequest
 			{
 				Destination = md.SingleSignOnService(entities[entity]),
 				Issuer = client.entity,
@@ -157,14 +160,14 @@ namespace ProgressOnderwijsUtils.Conext
 			};
 		}
 
-		private static void SendSamlRequest(HttpResponse response, AuthnRequest req, string relayState, X509Certificate2 cer)
+		static void SendSamlRequest(HttpResponse response, AuthnRequest req, string relayState, X509Certificate2 cer)
 		{
 			var qs = CreateQueryString(req, relayState, cer);
 			var url = CreateUrl(req, qs);
 			response.Redirect(url);
 		}
 
-		private static XElement ReceiveSamlResponse(HttpRequest request, out string relayState)
+		static XElement ReceiveSamlResponse(HttpRequest request, out string relayState)
 		{
 			relayState = request.Form["RelayState"];
 			var response = request.Form["SAMLResponse"];
@@ -177,7 +180,7 @@ namespace ProgressOnderwijsUtils.Conext
 			return null;
 		}
 
-		private static string CreateUrl(AuthnRequest req, NameValueCollection qs)
+		static string CreateUrl(AuthnRequest req, NameValueCollection qs)
 		{
 			UriBuilder builder = new UriBuilder(req.Destination);
 			if (string.IsNullOrEmpty(builder.Query))
@@ -191,7 +194,7 @@ namespace ProgressOnderwijsUtils.Conext
 			return builder.ToString();
 		}
 
-		private static NameValueCollection CreateQueryString(AuthnRequest req, string relayState, X509Certificate2 cer)
+		static NameValueCollection CreateQueryString(AuthnRequest req, string relayState, X509Certificate2 cer)
 		{
 			NameValueCollection result = new NameValueCollection();
 			result.Add("SAMLRequest", req.Encode());
@@ -204,14 +207,14 @@ namespace ProgressOnderwijsUtils.Conext
 			return result;
 		}
 
-		private static string Signature(NameValueCollection qs, AsymmetricAlgorithm key)
+		static string Signature(NameValueCollection qs, AsymmetricAlgorithm key)
 		{
 			byte[] data = Encoding.UTF8.GetBytes(ToQueryString(qs));
 			byte[] result = ((RSACryptoServiceProvider)key).SignData(data, new SHA1CryptoServiceProvider());
 			return Convert.ToBase64String(result);
 		}
 
-		private static string ToQueryString(NameValueCollection qs)
+		static string ToQueryString(NameValueCollection qs)
 		{
 			StringBuilder result = new StringBuilder();
 			foreach (string key in qs.Keys)
@@ -225,27 +228,28 @@ namespace ProgressOnderwijsUtils.Conext
 			return result.ToString();
 		}
 
-		private static string GetAttribute(XElement assertion, string key)
+		static string GetAttribute(XElement assertion, string key)
 		{
 			string result = GetNullableAttribute(assertion, key);
-			if (result == null) throw new InvalidOperationException("Sequence contains no elements");
+			if (result == null)
+				throw new InvalidOperationException("Sequence contains no elements");
 			return result;
 		}
 
-		private static string GetNullableAttribute(XElement assertion, string key)
+		static string GetNullableAttribute(XElement assertion, string key)
 		{
 			//LOG.Debug(() => string.Format("GetAttribute(assertion='{0}', key='{1}'", assertion, key));
 
 			return (from attribute in assertion.Descendants(SchemaSet.SAML_NS + "AttributeValue")
-			        where attribute.Parent.Attribute("Name").Value == key
-			        select attribute.Value).SingleOrDefault();
+				where attribute.Parent.Attribute("Name").Value == key
+				select attribute.Value).SingleOrDefault();
 		}
 
-		private static IEnumerable<string> GetAttributes(XElement assertion, string key)
+		static IEnumerable<string> GetAttributes(XElement assertion, string key)
 		{
 			return (from attribute in assertion.Descendants(SchemaSet.SAML_NS + "AttributeValue")
-			        where attribute.Parent.Attribute("Name").Value == key
-			        select attribute.Value).ToArray();
+				where attribute.Parent.Attribute("Name").Value == key
+				select attribute.Value).ToArray();
 		}
 	}
 }
