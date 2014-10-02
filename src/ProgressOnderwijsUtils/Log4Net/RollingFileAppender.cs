@@ -11,8 +11,8 @@ namespace ProgressOnderwijsUtils.Log4Net
 {
 
 	[UsedImplicitly]//dynamically loaded as per log4net.config
-	public sealed class RollingFileAppender : log4net.Appender.RollingFileAppender 
-		//TODO:this isn't best practice code; the logging config is hardcoded and deployment dependant.
+	public sealed class RollingFileAppender : log4net.Appender.RollingFileAppender
+	//TODO:this isn't best practice code; the logging config is hardcoded and deployment dependant.
 	{
 		const string PATH = @"C:\inetpub\logs\Progress.NET";
 
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils.Log4Net
 			set
 			{
 				string path = PATH;
-				if (Path.IsPathRooted(value))
+				if(Path.IsPathRooted(value))
 				{
 					path = Path.GetDirectoryName(value);
 				}
@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils.Log4Net
 		{
 			get
 			{
-				var byDeploymentDirectory = DatabaseVersionAuto.ByDeploymentDirectory();
+				var byDeploymentDirectory = DatabaseVersionAuto.ByDeploymentDirectory(DatabaseVersion.Undefined);
 				return byDeploymentDirectory == DatabaseVersion.Undefined ? "." : byDeploymentDirectory.ToString();
 			}
 		}

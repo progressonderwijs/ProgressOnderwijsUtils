@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void DatabaseCanProcessTableValuedParameters()
 		{
-			MercurialBranchDetector.PreferredTestDb.ExecuteNonQuery(conn =>
+			DevelopmentDbSelector.PreferredDevDb.ExecuteNonQuery(conn =>
 			{
 				QueryBuilder q = @"select sum(val) from " + QueryBuilder.TableParam(Enumerable.Range(1, 100));
 				int sum = q.ReadScalar<int>(conn);
@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtilsTests
 		{
 			QueryBuilder q = QueryBuilder.Create(@"select sum(val) from {0}", Enumerable.Range(1, 100));
 
-			MercurialBranchDetector.PreferredTestDb.ExecuteNonQuery(conn =>
+			DevelopmentDbSelector.PreferredDevDb.ExecuteNonQuery(conn =>
 			{
 				int sum = q.ReadScalar<int>(conn);
 				Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
