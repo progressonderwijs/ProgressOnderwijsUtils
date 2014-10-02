@@ -12,8 +12,6 @@ namespace ProgressOnderwijsUtils
 		/// 04-05-2009 -> 2008
 		/// 01-09-2008 -> 2008
 		/// </summary>
-		/// <param name="datetime"></param>
-		/// <returns></returns>
 		public static int CollegeJaar(this DateTime datetime)
 		{
 			//Als startdatum januari t/m augustus dan is het collegejaar een jaar eerder

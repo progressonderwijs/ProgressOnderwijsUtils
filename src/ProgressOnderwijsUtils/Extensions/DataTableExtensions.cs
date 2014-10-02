@@ -48,8 +48,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Delegate declaration to determine which record must be chosen.
 		/// </summary>
-		/// <param name="one"></param>
-		/// <param name="other"></param>
 		/// <param name="data">Extra data object passed to the MakeUnique method.</param>
 		/// <returns>The chosen record.</returns>
 		public delegate DataRow Comparator(DataRow one, DataRow other, object data);
@@ -57,7 +55,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Delete all duplicate records from this table that have the same key.
 		/// </summary>
-		/// <param name="table"></param>
 		/// <param name="key">The primary key of the tabel is set to this then unique key.</param>
 		/// <param name="comparator">Optional delegate to choose the records to delete.</param>
 		/// <param name="data">Optional object passed transparently to the comparator when called.</param>

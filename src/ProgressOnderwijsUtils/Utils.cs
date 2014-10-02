@@ -294,9 +294,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Geeft het verschil in maanden tussen twee datums
 		/// </summary>
-		/// <param name="d1"></param>
-		/// <param name="d2"></param>
-		/// <returns></returns>
 		public static int MaandSpan(DateTime d1, DateTime d2) { return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month); }
 
 		/// <summary>
@@ -304,8 +301,6 @@ namespace ProgressOnderwijsUtils
 		/// waarbij nulwaarden voor datum of maand worden omgezet naar de waarde 1
 		/// Alleen voor KVA4
 		/// </summary>
-		/// <param name="incompleteDate"></param>
-		/// <returns></returns>
 		public static DateTime? SLMaybeIncompleteDateConversion(string incompleteDate)
 		{
 			if (incompleteDate != null)

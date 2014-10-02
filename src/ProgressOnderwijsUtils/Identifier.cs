@@ -87,7 +87,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// De waarde van de identifier als string
 		/// </summary>
-		/// <returns></returns>
 		public override string ToString()
 		{
 			return Value.ToString(CultureInfo.InvariantCulture);

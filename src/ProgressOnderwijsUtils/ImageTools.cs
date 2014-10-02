@@ -22,7 +22,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Sets a graphics object to use high quality primitives (mostly for various scaling/blending operations)
 		/// </summary>
-		/// <param name="g"></param>
 		public static void setHQ(Graphics g)
 		{
 			g.SmoothingMode = SmoothingMode.HighQuality;
