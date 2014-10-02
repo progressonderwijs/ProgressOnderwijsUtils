@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtilsTests
 
 		[Test]
 		[Continuous]
-		public void NUnitSession() { Assert.That(Utils.IsInTestSession()); }
+		public void NUnitSession() { Assert.That(Utils.IsInUnitTest()); }
 
 		static IEnumerable<TestCaseData> MaandSpan()
 		{

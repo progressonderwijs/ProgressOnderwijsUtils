@@ -278,9 +278,9 @@ namespace ProgressOnderwijsUtils
 			return false;
 		}
 
-		public static bool IsInTestSession()
+		public static bool IsInUnitTest()
 		{
-			return RegisterTestingProgressTools.ShouldUseTestLocking;
+			return RegisterTestingProgressTools.IsInUnitTest;
 			//string procname = Process.GetCurrentProcess().ProcessName;
 			//return procname.StartsWith("nunit") || procname.StartsWith("pnunit"); //also supports nunit-agent, nunit-console, nunit-x86, etc.
 		}
