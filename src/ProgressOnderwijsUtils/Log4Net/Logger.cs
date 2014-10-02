@@ -3,12 +3,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using log4net;
-using log4net.Core;
 
 namespace ProgressOnderwijsUtils.Log4Net
 {
