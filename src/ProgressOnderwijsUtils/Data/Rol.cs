@@ -339,9 +339,13 @@ namespace ProgressOnderwijsUtils
 		WijzigenAccorderenToelatingseisen = 136,
 
 		[MpLabel("Superuser"), Implies(BeheerFinancieel, BeheerInschrijvingen,
-			 BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
-			 WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften,
-			 WijzigenDocumentenVooropleidingen,RapportenTabblad)]
+			BeheerStudievolg, BeheerAccountsEnRollen, BeheerStudielink, BeheerUitwisselingDuo, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
+			WijzigenAlumniNetwerk, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, WijzigenCursusdeelnames, BeheerGetuigschriften,
+			WijzigenDocumentenVooropleidingen,RapportenTabblad, Combi_BeheerAlles, Studentadministratie, StudentadministratieExtra,
+			FinanciëleAdministratie, StudentadministratieBeheerder, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
+			RaadpleegCuracao, WijzigCuracao, BeheerCuracao,
+			Combi_FontysBeheerFO, Combi_FontysMuteerFO
+		)]
 		Superuser = 138,
 
 		[MpLabel("Wijzigen studievolg"), Toekenbaar,
