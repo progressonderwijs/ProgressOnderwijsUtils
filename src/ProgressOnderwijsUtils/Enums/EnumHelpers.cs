@@ -572,9 +572,10 @@ namespace ProgressOnderwijsUtils
 			where TEnum : struct, IConvertible, IComparable
 		{
 			return values.Select(v =>
-				new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).ExtraText }
-				)
-				.ToDataTable();
+			{
+				var tv = GetLabel(v).Translate(taal);
+				return new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = tv.Text + ": " + tv.ExtraText };
+			}).ToDataTable();
 		}
 
 		public static SelectItem<TEnum?> GetSelectItem<TEnum>(TEnum? f)
