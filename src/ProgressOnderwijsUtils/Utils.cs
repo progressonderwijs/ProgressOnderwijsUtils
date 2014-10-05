@@ -245,10 +245,12 @@ namespace ProgressOnderwijsUtils
 					var ae = e as AggregateException;
 					throw new AggregateException(ae.InnerExceptions.OrderBy(x => x, new ComparisonComparer<Exception>((a, b) =>
 					{
-						if (IsTimeoutException(b))
-							return 1;
-						else if (IsTimeoutException(a))
+						if (IsTimeoutException(a) && IsTimeoutException(b))
+							return 0;
+						else if (IsTimeoutException(b))
 							return -1;
+						else if (IsTimeoutException(a))
+							return 1;
 						else
 							return 0;
 					})));
