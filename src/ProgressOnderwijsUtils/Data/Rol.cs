@@ -341,7 +341,6 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Superuser"), Implies(Combi_BeheerAlles, BeheerStudievolg, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
 			WijzigenAlumniNetwerk,  WijzigenDocumentenVooropleidingen,RapportenTabblad, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
-			BeheerCuracao,
 			Combi_FontysBeheerFO, Combi_FontysMuteerFO
 		)]
 		Superuser = 138,
