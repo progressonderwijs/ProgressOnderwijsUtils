@@ -572,22 +572,6 @@ namespace ProgressOnderwijsUtils
          Implies(StudentTabblad, StudentBekijkPersonalia, StudentPersoonTabblad, StudentAdresBekijken)]
         BekijkenStudentBasis = 236,
 
-        [MpLabel("Raapleeg Curacao"), Toekenbaar, Implies(BekijkenStudentBasis, StudentInschrijvingenTabblad, NietReguliereInschrijvingenBekijken,
-            VooropleidingenBekijken,StudentCommunicatieTabblad,InschrijvingNotitiesBekijken,
-            StudentKenmerkenTabblad, StudentOnderwijsTabblad, StudentIdentificatieBekijken, VolgOnderwijsInzien)]
-        RaadpleegCuracao = 237,
-
-        [MpLabel("Wijzig Curacao"), Toekenbaar, Implies(RaadpleegCuracao, InvoerNietReguliereInschrijvingen,
-           WijzigenStudentKenmerken, StudentPasfotoToevoegenVerwijderen, InschrijvingNotitiesToevoegenWijzigenVerwijderen,
-            StudentWijzigPersonalia, StudentAdresWijzigenVerwijderen
-           )]
-        WijzigCuracao = 238,
-
-        [MpLabel("Beheer Curacao"), Toekenbaar, Implies(WijzigCuracao, BeheerAccountsEnRollen, StudentenSamenvoegen, OrganisatieToevoegenVerwijderenWijzigen,
-            NietReguliereOpleidingenWijzigen
-            )]
-        BeheerCuracao = 239,
-
         [MpLabel("Niet-reguliere opleidingen bekijken")]
         NietReguliereOpleidingenBekijken = 240,
 
