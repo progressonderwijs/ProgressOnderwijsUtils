@@ -169,8 +169,6 @@ namespace ProgressOnderwijsUtils
 		/// tussenvoegsels zouden ook uit database kunnen worden gehaald:
 		/// [SELECT voorvoegsels FROM student group by voorvoegsels]
 		/// </remarks>
-		/// <param name="inp"></param>
-		/// <returns></returns>
 		public static string Name2UpperCasedName(string inp)
 		{
 			//string wat opschonen

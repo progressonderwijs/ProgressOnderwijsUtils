@@ -71,6 +71,24 @@ namespace ProgressOnderwijsUtilsTests
 			Assert.That(QueryBuilder.Create(q).ReadPlain<string>(conn), Is.Empty, "Ontbrekende foreign key relatie.");
 		}
 
+		struct SqlObject : IMetaObject
+		{
+			public string Type { get; set; }
+			public string Name { get; set; }
+			public DateTime ModifyDate { get; set; }
+			public DateTime ExpectedModifyDate { get; set; }
+
+			#region Overrides of ValueType
+
+			public override string ToString()
+			{
+				return string.Format("{0}: type={1}, name={2}, modifyDate={3}, expectedModifyDate={4}",
+					base.ToString(), Type, Name, ModifyDate, ExpectedModifyDate);
+			}
+
+			#endregion
+		}
+
 		[Test]
 		public void AlleSqlObjectenInVersiebeheer()
 		{
@@ -86,11 +104,10 @@ namespace ProgressOnderwijsUtilsTests
 				  and o.name not like 'sp@_%' escape '@' -- Microsoft functionaliteit voor database diagrams
 				  and o.name not like 'fn@_%' escape '@' -- Microsoft functionaliteit voor database diagrams
 
-				select 
-				  o.type_desc
-				 ,o.name
-				 ,modify_date = cast( o.modify_date as date )
-				 ,expected_modify_date = @l_date
+				select  type = o.type_desc,
+					o.name,
+					modifydate = cast( o.modify_date as date ),
+					expectedmodifydate = @l_date
 				from sys.objects o 
 				join sys.sql_modules m on m.object_id = o.object_id
 				where o.is_ms_shipped = 0
@@ -98,7 +115,7 @@ namespace ProgressOnderwijsUtilsTests
 				  and o.name not like 'sp@_%' escape '@' -- Microsoft functionaliteit voor database diagrams
 				  and o.name not like 'fn@_%' escape '@' -- Microsoft functionaliteit voor database diagrams
 				";
-			Assert.That(QueryBuilder.Create(q).ReadDataTable(conn).Rows.Count, Is.EqualTo(0));
+			Assert.That(QueryBuilder.Create(q).ReadMetaObjects<SqlObject>(conn), Is.Empty);
 		}
 	}
 }

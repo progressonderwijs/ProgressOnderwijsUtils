@@ -13,8 +13,6 @@ namespace ProgressOnderwijsUtils.Barcode
 		/// <summary>
 		/// Geeft de hoogste exponent mogelijk voor val
 		/// </summary>
-		/// <param name="val"></param>
-		/// <returns></returns>
 		internal static int HighestExponent(int val)
 		{
 			var i = 0;
@@ -33,8 +31,6 @@ namespace ProgressOnderwijsUtils.Barcode
 		/// <summary>
 		/// Voorberekende waardes voor AANTAL_KARAKTERS^value
 		/// </summary>
-		/// <param name="value"></param>
-		/// <returns></returns>
 		public static long Pow(int value)
 		{
 			// De waardes vantevoren uitrekenen scheelt performance
@@ -54,8 +50,6 @@ namespace ProgressOnderwijsUtils.Barcode
 		/// <summary>
 		/// Geeft het getal bij een barcodewaarde
 		/// </summary>
-		/// <param name="c"></param>
-		/// <returns></returns>
 		public static int Get(char c)
 		{
 			switch (c)
@@ -103,8 +97,6 @@ namespace ProgressOnderwijsUtils.Barcode
 		/// <summary>
 		/// De barcode-waarde voor het type
 		/// </summary>
-		/// <param name="type"></param>
-		/// <returns></returns>
 		internal static char Get(BarcodeType type)
 		{
 			return Get((int)type);
@@ -113,8 +105,6 @@ namespace ProgressOnderwijsUtils.Barcode
 		/// <summary>
 		/// Geeft de barcodewaarde voor een getal
 		/// </summary>
-		/// <param name="i"></param>
-		/// <returns></returns>
 		public static char Get(int i)
 		{
 			switch (i)
