@@ -127,7 +127,6 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <param name="old">This dictionary</param>
 		/// <param name="other">The dictionary which should be merged into this array</param>
-		/// <returns></returns>
 		public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old, params Dictionary<TKey, TValue>[] others)
 		{
 			if (old == null)

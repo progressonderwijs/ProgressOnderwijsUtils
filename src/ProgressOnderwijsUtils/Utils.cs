@@ -245,10 +245,12 @@ namespace ProgressOnderwijsUtils
 					var ae = e as AggregateException;
 					throw new AggregateException(ae.InnerExceptions.OrderBy(x => x, new ComparisonComparer<Exception>((a, b) =>
 					{
-						if (IsTimeoutException(b))
-							return 1;
-						else if (IsTimeoutException(a))
+						if (IsTimeoutException(a) && IsTimeoutException(b))
+							return 0;
+						else if (IsTimeoutException(b))
 							return -1;
+						else if (IsTimeoutException(a))
+							return 1;
 						else
 							return 0;
 					})));
@@ -278,9 +280,9 @@ namespace ProgressOnderwijsUtils
 			return false;
 		}
 
-		public static bool IsInTestSession()
+		public static bool IsInUnitTest()
 		{
-			return RegisterTestingProgressTools.ShouldUseTestLocking;
+			return RegisterTestingProgressTools.IsInUnitTest;
 			//string procname = Process.GetCurrentProcess().ProcessName;
 			//return procname.StartsWith("nunit") || procname.StartsWith("pnunit"); //also supports nunit-agent, nunit-console, nunit-x86, etc.
 		}
@@ -294,9 +296,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Geeft het verschil in maanden tussen twee datums
 		/// </summary>
-		/// <param name="d1"></param>
-		/// <param name="d2"></param>
-		/// <returns></returns>
 		public static int MaandSpan(DateTime d1, DateTime d2) { return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month); }
 
 		/// <summary>
@@ -304,8 +303,6 @@ namespace ProgressOnderwijsUtils
 		/// waarbij nulwaarden voor datum of maand worden omgezet naar de waarde 1
 		/// Alleen voor KVA4
 		/// </summary>
-		/// <param name="incompleteDate"></param>
-		/// <returns></returns>
 		public static DateTime? SLMaybeIncompleteDateConversion(string incompleteDate)
 		{
 			if (incompleteDate != null)

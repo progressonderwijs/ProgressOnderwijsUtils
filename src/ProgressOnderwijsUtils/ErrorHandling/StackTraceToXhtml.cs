@@ -15,21 +15,28 @@ namespace ProgressOnderwijsUtils.ErrorHandling
 		public static XhtmlData ToXhtml(string stacktrace)
 		{
 			return XhtmlData.Create(
-				new XElement("div", new XAttribute("class", "stacktrace"),
-					new XElement("table", decompose(stacktrace))
-					)
+				stacktrace == null ? new XElement("h3", "Stacktrace missing!")
+				: StacktraceTable(stacktrace)
 				);
+		}
+
+		static XElement StacktraceTable(string stacktrace)
+		{
+			return new XElement("div",
+				new XAttribute("class", "stacktrace"),
+				new XElement("table", decompose(stacktrace))
+			);
 		}
 
 		static IEnumerable<XNode> decompose(string trace)
 		{
-			if (trace == null)
+			if(trace == null)
 				throw new ArgumentNullException("trace");
 			int lastIndex = 0;
-			foreach (Match m in stackLine.Matches(trace))
+			foreach(Match m in stackLine.Matches(trace))
 			{
-				if (m.Index > lastIndex)
-					foreach (var plaintoken in NewlineToTr(trace.Substring(lastIndex, m.Index - lastIndex)))
+				if(m.Index > lastIndex)
+					foreach(var plaintoken in NewlineToTr(trace.Substring(lastIndex, m.Index - lastIndex)))
 						yield return plaintoken;
 
 				lastIndex = m.Index + m.Length;
@@ -55,18 +62,18 @@ namespace ProgressOnderwijsUtils.ErrorHandling
 					);
 			}
 
-			if (trace.Length > lastIndex)
-				foreach (var plaintoken in NewlineToTr(trace.Substring(lastIndex, trace.Length - lastIndex)))
+			if(trace.Length > lastIndex)
+				foreach(var plaintoken in NewlineToTr(trace.Substring(lastIndex, trace.Length - lastIndex)))
 					yield return plaintoken;
 		}
 
 		static IEnumerable<XElement> NewlineToTr(string substring)
 		{
 			int at = 0;
-			while (at < substring.Length)
+			while(at < substring.Length)
 			{
 				int next = substring.IndexOf('\n', at);
-				if (next < 0)
+				if(next < 0)
 					next = substring.Length;
 				var trim = next > 0 && substring[next - 1] == '\r' ? -1 : 0;
 				var str = substring.Substring(at, next - at + trim);

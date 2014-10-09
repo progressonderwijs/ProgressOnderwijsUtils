@@ -9,8 +9,6 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Pseudo 'in' operation (someObj.In([values])
 		/// </summary>
-		/// <param name="obj"></param>
-		/// <param name="values"></param>
 		/// <returns>true/false</returns>
 		/// <remarks>
 		/// **voorbeelden
