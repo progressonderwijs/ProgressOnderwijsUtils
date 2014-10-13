@@ -406,8 +406,6 @@ namespace ProgressOnderwijsUtils
 					using (var pGen = Utils.Primes().GetEnumerator())
 						for (int i = 0; i < ColHashPrimes.Length && pGen.MoveNext(); i++)
 							ColHashPrimes[i] = (uint)pGen.Current;
-					if (ColHashPrimes.Length == 0)
-						throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
 					hasUnsupportedColumns = false;
 					foreach (var mp in metadata)//perf:no LINQ
 						if (mp.CanWrite && !SupportsType(mp.DataType))
@@ -427,6 +425,8 @@ namespace ProgressOnderwijsUtils
 						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; property count = " + ColHashPrimes.Length + "\n" +
 							"datareader: " + Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).JoinStrings(", ") + "\n" +
 							FriendlyName + ": " + metadata.Where(mp => mp.CanWrite).Select(mp => mp.Name).JoinStrings(", "));
+					if(ColHashPrimes.Length == 0)
+						throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
 					var ordering = new ColumnOrdering(reader);
 
 					return LoadRows.GetOrAdd(ordering, orderingP =>
