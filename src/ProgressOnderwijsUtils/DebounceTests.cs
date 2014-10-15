@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 
-namespace Progress.Business.Documenten
+namespace ProgressOnderwijsUtils
 {
 	public class DebounceTests
 	{

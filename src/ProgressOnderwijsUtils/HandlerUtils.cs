@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Progress.Business.Documenten
+namespace ProgressOnderwijsUtils
 {
 	public static class HandlerUtils
 	{
