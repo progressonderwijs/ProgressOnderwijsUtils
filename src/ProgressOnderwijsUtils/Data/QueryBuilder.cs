@@ -374,5 +374,10 @@ namespace ProgressOnderwijsUtils
 		{
 			Connection.Dispose();
 		}
+		
+		public static implicit operator SqlCommandCreationContext(SqlConnection conn)
+		{
+			return new SqlCommandCreationContext(conn, 0, null);
+		}
 	}
 }

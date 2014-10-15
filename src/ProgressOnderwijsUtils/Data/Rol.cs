@@ -311,7 +311,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Invoer niet-reguliere inschrijvingen"), Toekenbaar,
 		 Implies(NietReguliereInschrijvingenWijzigenVerwijderen, NietReguliereInschrijvingenToevoegen, StudentToevoegen,
-			 StudentAdresWijzigenBeperkt, StudentWijzigPersonaliaBeperkt)]
+			 StudentAdresWijzigenBeperkt, StudentWijzigPersonaliaBeperkt, BekijkenInschrijvingen)]
 		InvoerNietReguliereInschrijvingen = 129,
 
 		[MpLabel("Wijzigen financieel"), Toekenbaar,
