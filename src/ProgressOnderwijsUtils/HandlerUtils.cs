@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Progress.Business.Documenten
 {
-	static class HandlerUtils
+	public static class HandlerUtils
 	{
 		/// <summary>
 		/// Debounces an event handler (action).  The provided handler no earlier than "delay" after any call to the generated handler.
