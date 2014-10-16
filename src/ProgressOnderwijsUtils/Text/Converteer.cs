@@ -201,11 +201,11 @@ namespace ProgressOnderwijsUtils
 		//Deze functie gebruiken om gebruikersinvoer in vrije textvelden te converteren naar de juiste types, eerste TryParse uitvoeren!
 		public static object Parse(string s, Type t, Taal taal)
 		{
-			return TryParse(s, t, taal).Value;
+			return TryParse(s, t, taal).GetValue();
 		}
 		public static T Parse<T>(string s, Taal taal)
 		{
-			return (T)TryParse(s, typeof(T), taal).Value;
+			return (T)TryParse(s, typeof(T), taal).GetValue();
 		}
 		private const int YearMinimum = 1900, YearMaximum = 2100;
 
@@ -261,33 +261,33 @@ namespace ProgressOnderwijsUtils
 
 			ParseResult parseResult = TryParse(datum, typeof(DateTime), taal);
 			if (parseResult.IsOk)
-				return (DateTime)parseResult.Value;
+				return (DateTime)parseResult.GetValue();
 			return null;
 		}
 
 		public struct ParseResult
 		{
-			static readonly object Nonsense = new object();
 			public readonly ParseState State;
 			readonly object value;
 
 			public bool IsOk { get { return State == ParseState.Ok; } }
-			public object Value
+
+			/// <summary>
+			/// Gets the value as parsed by parse if the parse was successful.  Throws an exception if used in a non-OK state.
+			/// </summary>
+			public object GetValue()
 			{
-				get
+				if (!IsOk)
 				{
-					if (!IsOk)
-					{
-						if (State == ParseState.Geendata)
-							throw new ArgumentNullException("Parse mislukt met status " + State);
-						if (State == ParseState.Malformed || State == ParseState.Datumfout)
-							throw new FormatException("Parse mislukt met status " + State);
-						if (State == ParseState.Overflow)
-							throw new OverflowException("Parse mislukt met status " + State);
-						throw new InvalidOperationException("Parse mislukt met status " + State);
-					}
-					return value;
+					if (State == ParseState.Geendata)
+						throw new ArgumentNullException("Parse mislukt met status " + State);
+					if (State == ParseState.Malformed || State == ParseState.Datumfout)
+						throw new FormatException("Parse mislukt met status " + State);
+					if (State == ParseState.Overflow)
+						throw new OverflowException("Parse mislukt met status " + State);
+					throw new InvalidOperationException("Parse mislukt met status " + State);
 				}
+				return value;
 			}
 
 			public ITranslatable ErrorMessage { get { if (IsOk)return null; else return (ITranslatable)value; } }
@@ -385,7 +385,7 @@ namespace ProgressOnderwijsUtils
 				{
 					var elementParseResult = TryParse(components[i], elementType, taal);
 					if (elementParseResult.IsOk)
-						retval.SetValue(elementParseResult.Value, i);
+						retval.SetValue(elementParseResult.GetValue(), i);
 					else
 						return elementParseResult;
 				}

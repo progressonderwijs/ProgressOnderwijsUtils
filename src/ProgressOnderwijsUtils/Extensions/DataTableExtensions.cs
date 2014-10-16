@@ -11,6 +11,7 @@ namespace ProgressOnderwijsUtils
 	/// <summary>
 	/// Extensions for System.Data.DataTable.
 	/// </summary>
+	[Obsolete("This code is very slow and subtly buggy if a row value's ToString isn't identity preserving")]
 	public static class DataTableExtensions
 	{
 		sealed class Key : IEquatable<Key>
@@ -45,21 +46,14 @@ namespace ProgressOnderwijsUtils
 			}
 		}
 
-		/// <summary>
-		/// Delegate declaration to determine which record must be chosen.
-		/// </summary>
-		/// <param name="data">Extra data object passed to the MakeUnique method.</param>
-		/// <returns>The chosen record.</returns>
-		public delegate DataRow Comparator(DataRow one, DataRow other, object data);
 
 		/// <summary>
 		/// Delete all duplicate records from this table that have the same key.
 		/// </summary>
 		/// <param name="key">The primary key of the tabel is set to this then unique key.</param>
-		/// <param name="comparator">Optional delegate to choose the records to delete.</param>
-		/// <param name="data">Optional object passed transparently to the comparator when called.</param>
+		/// <param name="comparator">Optional delegate to choose the records to keep.</param>
 		/// <param name="primary">Optional flag denoting whether to set the primary key to the key specified or not.</param>
-		public static void MakeUnique(this DataTable table, DataColumn[] key, Comparator comparator = null, object data = null, bool primary = true)
+		public static void DeleteDuplicates(this DataTable table, DataColumn[] key, Func<DataRow, DataRow,DataRow> comparator = null, bool primary = true)
 		{
 			var duplicates =
 				from row in table.Rows.Cast<DataRow>()
@@ -77,7 +71,7 @@ namespace ProgressOnderwijsUtils
 					}
 					else if (comparator != null)
 					{
-						DataRow tmp = comparator(final, candidate, data);
+						DataRow tmp = comparator(final, candidate);
 						if (ReferenceEquals(tmp, final))
 						{
 							candidate.Delete();
@@ -119,24 +113,23 @@ namespace ProgressOnderwijsUtils
 			sut.Columns.Add(col2);
 		}
 
-		void SetUpRows(IEnumerable<int[]> rows)
+		static void SetUpRows(IEnumerable<int[]> rows, DataTable dataTable)
 		{
-			foreach (int[] data in rows)
+			foreach (var data in rows)
 			{
-				DataRow row = sut.NewRow();
+				var row = dataTable.NewRow();
 				for (int i = 0; i < data.Length; ++i)
 				{
 					row[i] = data[i];
 				}
-				sut.Rows.Add(row);
+				dataTable.Rows.Add(row);
 			}
 		}
 
-		IEnumerable<object[]> MakeUniqueData()
+		static IEnumerable<object[]> MakeUniqueData()
 		{
 			yield return new object[] { 0, new int[][] { } };
-			yield return new object[] { 1, new[]
-			{ 
+			yield return new object[] { 1, new[]{ 
 				new[] { 1, 1 },
 			} };
 			yield return new object[] { 2, new[]
@@ -154,30 +147,24 @@ namespace ProgressOnderwijsUtils
 		[Test, TestCaseSource("MakeUniqueData")]
 		public void MakeUnique(int count, int[][] rows)
 		{
-			SetUpRows(rows);
-			sut.MakeUnique(new[] { col1, col2 }, null);
+			SetUpRows(rows, sut);
+			sut.DeleteDuplicates(new[] { col1, col2 });
 			Assert.That(sut.Rows.Count, Is.EqualTo(count));
 		}
 
 		[Test]
 		public void MakeUniqueCompareOne()
 		{
-			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } });
-			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data) {
-				Assert.That(data, Is.Null);
-				return one;
-			});
+			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } }, sut);
+			sut.DeleteDuplicates(new[] { col1 }, (one, other) => one);
 			Assert.That(sut.Rows[0][1], Is.EqualTo(1));
 		}
 
 		[Test]
 		public void MakeUniqueCompareOther()
 		{
-			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } });
-			sut.MakeUnique(new[] { col1 }, delegate(DataRow one, DataRow other, object data) {
-				Assert.That((int)data == 1);
-				return other;
-			}, 1);
+			SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } }, sut);
+			sut.DeleteDuplicates(new[] { col1 }, (one, other) => other);
 			Assert.That(sut.Rows[0][1], Is.EqualTo(2));
 		}
 	}
