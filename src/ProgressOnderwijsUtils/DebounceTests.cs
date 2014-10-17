@@ -6,9 +6,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
+	[Continuous]
 	public class DebounceTests
 	{
 		[Test]
@@ -29,8 +31,8 @@ namespace ProgressOnderwijsUtils
 			var task = new TaskCompletionSource<int>();
 			var handler = HandlerUtils.Debounce(TimeSpan.FromMilliseconds(35), () =>
 				task.SetResult(0));
-			handler();
 			var sw = Stopwatch.StartNew();
+			handler();
 			task.Task.Wait(500);
 
 			var elapsedMS = sw.Elapsed.TotalMilliseconds;
@@ -54,8 +56,7 @@ namespace ProgressOnderwijsUtils
 			var sw = Stopwatch.StartNew();
 			task.Task.Wait(500);
 
-			var elapsedMS = sw.Elapsed.TotalMilliseconds;
-			PAssert.That(() => elapsedMS >= 35 && elapsedMS < 100);
+			PAssert.That(() => counts.All(i=>i==1));
 		}
 
 		[Test]
