@@ -6,11 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
-	[Continuous]
 	public class DebounceTests
 	{
 		[Test]
