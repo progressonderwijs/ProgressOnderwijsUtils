@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
 			task.Task.Wait(500);
 
 			var elapsedMS = sw.Elapsed.TotalMilliseconds;
-			PAssert.That(() => elapsedMS >= 35 && elapsedMS < 100);
+			PAssert.That(() => elapsedMS >= 34 && elapsedMS < 100);
 		}
 
 		[Test]
@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
 				Assert.Fail("debounced handler failed to run even 100 ms after the last");
 
 			var elapsedMS = task.Task.Result.TotalMilliseconds;
-			PAssert.That(() => elapsedMS >= 435 && elapsedMS < 600);
+			PAssert.That(() => elapsedMS >= 434 && elapsedMS < 600);
 		}
 	}
 }
