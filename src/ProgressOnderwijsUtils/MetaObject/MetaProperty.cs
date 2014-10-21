@@ -18,7 +18,8 @@ namespace ProgressOnderwijsUtils
 		int Index { get; }
 		bool Required { get; }
 		bool AllowNullInEditor { get; }
-		int? Length { get; }
+		int? MaxLength { get; }
+		int? DisplayLength { get; }
 		string Regex { get; }
 		DatumFormaat? DatumTijd { get; }
 		ITranslatable Label { get; }
@@ -60,8 +61,10 @@ namespace ProgressOnderwijsUtils
 			public bool Hide { get { return hide; } }
 			readonly bool allowNullInEditor;
 			public bool AllowNullInEditor { get { return allowNullInEditor; } }
-			readonly int? length;
-			public int? Length { get { return length; } }
+			readonly int? maxLength;
+			public int? MaxLength { get { return maxLength; } }
+			readonly int? displayLength;
+			public int? DisplayLength { get { return displayLength; } }
 			readonly string regex;
 			public string Regex { get { return regex; } }
 			readonly DatumFormaat? datumtijd;
@@ -156,8 +159,10 @@ namespace ProgressOnderwijsUtils
 				var mpShowDefaultOnNewAttribute = attrs.AttrH<MpShowDefaultOnNewAttribute>();
 				showDefaultOnNew = mpShowDefaultOnNewAttribute != null;
 				isReadonly = !pi.CanWrite || (attrs.AttrH<MpReadonlyAttribute>() != null);
-				var mpLengteAttribute = attrs.AttrH<MpLengteAttribute>();
-				length = mpLengteAttribute == null ? default(int?) : mpLengteAttribute.Lengte;
+				var mpLengteAttribute = attrs.AttrH<MpMaxLengthAttribute>();
+				maxLength = mpLengteAttribute == null ? default(int?) : mpLengteAttribute.MaxLength;
+				var mpDisplayLengthAttribute = attrs.AttrH<MpDisplayLengthAttribute>();
+				displayLength = mpDisplayLengthAttribute == null ? maxLength : mpDisplayLengthAttribute.DisplayLength;
 				var mpRegexAttribute = attrs.AttrH<MpRegexAttribute>();
 				regex = mpRegexAttribute == null ? null : mpRegexAttribute.Regex;
 				var mpDatumFormaatAttribute = attrs.AttrH<MpDatumFormaatAttribute>();
