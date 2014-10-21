@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		static readonly LiteralTranslatable empty = new LiteralTranslatable("", "", "");
-		public static ITranslatable Empty { get { return empty; } }
+		public static LiteralTranslatable Empty { get { return empty; } }
 
 		public static ITranslatable EmptyWithNLTooltip(string tooltipnl) { return empty.WithTooltip(tooltipnl); }
 

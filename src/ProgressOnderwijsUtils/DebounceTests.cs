@@ -29,12 +29,12 @@ namespace ProgressOnderwijsUtils
 			var task = new TaskCompletionSource<int>();
 			var handler = HandlerUtils.Debounce(TimeSpan.FromMilliseconds(35), () =>
 				task.SetResult(0));
-			handler();
 			var sw = Stopwatch.StartNew();
+			handler();
 			task.Task.Wait(500);
 
 			var elapsedMS = sw.Elapsed.TotalMilliseconds;
-			PAssert.That(() => elapsedMS >= 35 && elapsedMS < 100);
+			PAssert.That(() => elapsedMS >= 34 && elapsedMS < 100);
 		}
 
 		[Test]
@@ -54,8 +54,7 @@ namespace ProgressOnderwijsUtils
 			var sw = Stopwatch.StartNew();
 			task.Task.Wait(500);
 
-			var elapsedMS = sw.Elapsed.TotalMilliseconds;
-			PAssert.That(() => elapsedMS >= 35 && elapsedMS < 100);
+			PAssert.That(() => counts.All(i=>i==1));
 		}
 
 		[Test]
@@ -84,7 +83,7 @@ namespace ProgressOnderwijsUtils
 				Assert.Fail("debounced handler failed to run even 100 ms after the last");
 
 			var elapsedMS = task.Task.Result.TotalMilliseconds;
-			PAssert.That(() => elapsedMS >= 435 && elapsedMS < 600);
+			PAssert.That(() => elapsedMS >= 434 && elapsedMS < 600);
 		}
 	}
 }
