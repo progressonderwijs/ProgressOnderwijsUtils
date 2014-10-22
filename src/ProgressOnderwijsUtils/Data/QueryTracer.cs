@@ -48,10 +48,16 @@ namespace ProgressOnderwijsUtils
 
 		public IDisposable StartQueryTimer(SqlCommand sqlCommand)
 		{
-			string prefix = !IncludeSensitiveInfo ? "" :
-	CommandParamString(sqlCommand);
+			return StartQueryTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
+		}
+
+		public static string DebugFriendlyCommandText(SqlCommand sqlCommand, bool includeSensitiveInfo)
+		{
+			string prefix = !includeSensitiveInfo ? "" :
+				CommandParamString(sqlCommand);
 			//when machine is in LAN, we're not running on the production server: assume it's OK to include potentially confidential info like passwords in debug output.
-			return StartQueryTimer(prefix + sqlCommand.CommandText);
+			var commandText = prefix + sqlCommand.CommandText;
+			return commandText;
 		}
 
 		public static string CommandParamString(SqlCommand sqlCommand)

@@ -20,65 +20,11 @@ namespace ProgressOnderwijsUtils.Collections
 		}
 
 		SList(Impl list) { this.list = list; }
+		public SList(T head, SList<T> tail) : this(new Impl(head, tail.list)) { }
 		readonly Impl list;
 		public static SList<T> Empty { get { return default(SList<T>); } }
 
 		public bool IsEmpty { get { return list == null; } }
-		[Pure]
-		public SList<T> Prepend(T head) { return new SList<T>(new Impl(head, list)); }
-
-		[Pure]
-		public SList<T> Prepend(SList<T> heads)
-		{
-			var retval = this;
-			for (var cur = heads.Reverse(); !cur.IsEmpty; cur = cur.Tail)
-				retval = retval.Prepend(cur.Head);
-			return retval;
-		}
-
-		[Pure]
-		public SList<T> Reverse()
-		{
-			var retval = Empty;
-			for (var cur = this; !cur.IsEmpty; cur = cur.Tail)
-				retval = retval.Prepend(cur.Head);
-			return retval;
-		}
-
-		[Pure]
-		public SList<TR> SelectEager<TR>(Func<T, TR> map)
-		{
-			return SelectReverse(map).Reverse();
-		}
-
-		[Pure]
-		public SList<TR> SelectReverse<TR>(Func<T, TR> map)
-		{
-			var retval = SList<TR>.Empty;
-			for (var cur = this; !cur.IsEmpty; cur = cur.Tail)
-				retval = retval.Prepend(map(cur.Head));
-			return retval;
-		}
-
-		[Pure]
-		public SList<T> WhereReverse(Func<T, bool> filter)
-		{
-			var retval = Empty;
-			for (var cur = this; !cur.IsEmpty; cur = cur.Tail)
-				if (filter(cur.Head))
-					retval = retval.Prepend(cur.Head);
-			return retval;
-		}
-
-		[Pure]
-		public SList<T> Skip(int count)
-		{
-			var retval = this;
-			for (int i = 0; !retval.IsEmpty && i < count; i++)
-				retval = retval.Tail;
-			return retval;
-		}
-
 		public T Head { get { return list.Head; } }
 		public SList<T> Tail { get { return new SList<T>(list.Tail); } }
 
@@ -100,7 +46,7 @@ namespace ProgressOnderwijsUtils.Collections
 		public override bool Equals(object obj) { return obj is SList<T> && Equals((SList<T>)obj); }
 		public override int GetHashCode()
 		{
-			ulong hash = (ulong)(typeHash + 1);
+			var hash = (ulong)(typeHash + 1);
 			for (var current = list; current != null; current = current.Tail)
 				hash = hash * 137ul + (ulong)elemEquality.GetHashCode(current.Head);
 			return (int)hash ^ (int)(hash >> 32);
@@ -128,23 +74,80 @@ namespace ProgressOnderwijsUtils.Collections
 
 	public static class SList
 	{
+		[Pure]
+		public static SList<T> Prepend<T>(this SList<T> self, T head) { return new SList<T>(head, self); }
+
+		[Pure]
+		public static SList<T> Prepend<T>(this SList<T> self, SList<T> heads)
+		{
+			var retval = self;
+			for(var cur = heads.Reverse(); !cur.IsEmpty; cur = cur.Tail)
+				retval = retval.Prepend(cur.Head);
+			return retval;
+		}
+
+		[Pure]
+		public static SList<T> Reverse<T>(this SList<T> self)
+		{
+			var retval =SList<T>.Empty;
+			for(var cur = self; !cur.IsEmpty; cur = cur.Tail)
+				retval = retval.Prepend(cur.Head);
+			return retval;
+		}
+
+		[Pure]
+		public static SList<TR> SelectEager<T, TR>(this SList<T> self, Func<T, TR> map)
+		{
+			return self.SelectReverse(map).Reverse();
+		}
+
+		[Pure]
+		public static SList<TR> SelectReverse<T, TR>(this SList<T> self, Func<T, TR> map)
+		{
+			var retval = SList<TR>.Empty;
+			for(var cur = self; !cur.IsEmpty; cur = cur.Tail)
+				retval = retval.Prepend(map(cur.Head));
+			return retval;
+		}
+
+		[Pure]
+		public static SList<T> WhereReverse<T>(this SList<T> self, Func<T, bool> filter)
+		{
+			var retval = SList<T>.Empty;
+			for(var cur = self; !cur.IsEmpty; cur = cur.Tail)
+				if(filter(cur.Head))
+					retval = retval.Prepend(cur.Head);
+			return retval;
+		}
+
+		[Pure]
+		public static SList<T> Skip<T>(this SList<T> self, int count)
+		{
+			var retval = self;
+			for(var i = 0; !retval.IsEmpty && i < count; i++)
+				retval = retval.Tail;
+			return retval;
+		}
+
 		public static SList<T> Create<T>(IEnumerable<T> list)
 		{
 			if (list is IList<T>) return Create((IList<T>)list);//use IList interface for reverse iterability
 			else return Create(list.ToArray());//can't help but iterate forwards, so at least stick to it with the fastest possible path.
 		}
+		
 		public static SList<T> Create<T>(IList<T> list)
 		{
 			if (list is T[]) return Create((T[])list);
 			var retval = SList<T>.Empty;
-			for (int i = list.Count - 1; i >= 0; i--)
+			for (var i = list.Count - 1; i >= 0; i--)
 				retval = retval.Prepend(list[i]);
 			return retval;
 		}
+
 		public static SList<T> Create<T>(T[] list)
 		{
 			var retval = SList<T>.Empty;
-			for (int i = list.Length - 1; i >= 0; i--)
+			for (var i = list.Length - 1; i >= 0; i--)
 				retval = retval.Prepend(list[i]);
 			return retval;
 		}
