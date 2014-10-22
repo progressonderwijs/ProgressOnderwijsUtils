@@ -1,33 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	public sealed class ProgressDateTimeTest
+	public sealed class ProgressDateTimeTest : TestSuiteBase
 	{
-
-		[TearDown]
-		public void TearDown()
-		{
-			ProgressDateTime.Reset();
-		}
 
 		[Test]
 		public void DateShiftWithDays([Values(-100, -12, 0, 17, 537)] int daysToAdd)
 		{
-			ProgressDateTime.DaysToAdd = daysToAdd;
-			Assert.That(ProgressDateTime.Now.Subtract(DateTime.Now).Days, Is.EqualTo(daysToAdd));
+			conn.Cache.ProgressDateTime.SetDate( DateTime.Now + TimeSpan.FromDays(daysToAdd));
+			Assert.That(conn.Cache.ProgressDateTime.Now.Subtract(DateTime.Now).Days, Is.EqualTo(daysToAdd));
 		}
 
 		[Test]
 		public void DateShiftWithDate([Values(-100, -12, 0, 17, 537)] int daysToAdd)
 		{
-			ProgressDateTime.SetDate(DateTime.Now.AddDays(daysToAdd));
-			Assert.That(ProgressDateTime.Now.Subtract(DateTime.Now).Days, Is.EqualTo(daysToAdd));
+			conn.Cache.ProgressDateTime.SetDate(DateTime.Now.AddDays(daysToAdd));
+			Assert.That(conn.Cache.ProgressDateTime.Now.Subtract(DateTime.Now).Days, Is.EqualTo(daysToAdd));
 		}
 
+		[Test]
+		public void DateUnshiftedByDefault()
+		{
+			Assert.AreEqual(conn.Cache.ProgressDateTime.Now, DateTime.Now);
+			Assert.AreEqual(conn.Cache.ProgressDateTime.Today, DateTime.Today);
+		}
 	}
 }

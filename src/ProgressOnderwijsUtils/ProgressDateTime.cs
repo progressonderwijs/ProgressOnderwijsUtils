@@ -12,13 +12,13 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Het aantal dagen dat de tijd terug of vooruit moet worden gezet
 		/// </summary>
-		public static int DaysToAdd { get; set; }
+		public int DaysToAdd { get; set; }
 
 		/// <summary>
 		/// De datum die vanaf nu als huidige datum moet gelden 
 		/// (de Datetime wordt afgerond naar hele dagen)
 		/// </summary>
-		public static void SetDate(DateTime value)
+		public void SetDate(DateTime value)
 		{
 			// Als het nu 21-9 is en value is 21-8 dan is DaysToAdd -31
 			DaysToAdd = value.Date.Subtract(DateTime.Now.Date).Days;
@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// Zet de datum weer terug naar vandaag
 		/// </summary>
-		public static void Reset()
+		public void Reset()
 		{
 			DaysToAdd = 0;
 		}
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// De (voor de software) huidige datumtijd
 		/// </summary>
-		public static DateTime Now
+		public DateTime Now
 		{
 			get
 			{
@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
 		/// <summary>
 		/// De (voor de software) huidige datum
 		/// </summary>
-		public static DateTime Today
+		public DateTime Today
 		{
 			get
 			{
