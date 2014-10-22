@@ -77,9 +77,8 @@ namespace ProgressOnderwijsUtilsTests
 				PAssert.That(() => !oldfile.Exists && t.Data == null);
 				File.WriteAllText(oldfile.FullName, "Hello World!");
 				var sw = Stopwatch.StartNew();
-				while (t.Data == null && sw.ElapsedMilliseconds < 500)
-					Thread.Sleep(1);
-				Thread.Sleep(1);
+				while(t.Data == null && sw.ElapsedMilliseconds < 500)
+					Thread.Sleep(20);
 				PAssert.That(() => t.Data == "Hello World!");
 				oldfile.Refresh();
 				PAssert.That(() => oldfile.Exists);
@@ -95,7 +94,9 @@ namespace ProgressOnderwijsUtilsTests
 			{
 				PAssert.That(() => t.file.Exists && t.Data == "");
 				File.WriteAllText(t.file.FullName, "1, 2, 3, 4");
-				Thread.Sleep(1);
+				var sw = Stopwatch.StartNew();
+				while(t.Data == "" && sw.ElapsedMilliseconds < 500)
+					Thread.Sleep(20);
 				PAssert.That(() => t.file.Exists && t.Data == "1, 2, 3, 4");
 			}
 		}
