@@ -268,7 +268,7 @@ namespace ProgressOnderwijsUtils
 		BekijkenKengetallen = 119,
 
 		[MpLabel("Bekijken studievolg"), Toekenbaar,
-		 Implies(StudentOnderwijsTabblad, VolgOnderwijsInzien, StudievoortgangNotitiesBekijken, BsaStatusBekijken,Rol.BekijkenInschrijvingen)]
+		 Implies(StudentOnderwijsTabblad, VolgOnderwijsInzien, StudievoortgangNotitiesBekijken, BsaStatusBekijken, BekijkenInschrijvingen)]
 		BekijkenStudievolg = 121,
 
 		[MpLabel("Bekijken studielinkberichten"), Toekenbaar,
@@ -311,7 +311,7 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Invoer niet-reguliere inschrijvingen"), Toekenbaar,
 		 Implies(NietReguliereInschrijvingenWijzigenVerwijderen, NietReguliereInschrijvingenToevoegen, StudentToevoegen,
-			 StudentAdresWijzigenBeperkt, StudentWijzigPersonaliaBeperkt)]
+			 StudentAdresWijzigenBeperkt, StudentWijzigPersonaliaBeperkt, BekijkenInschrijvingen)]
 		InvoerNietReguliereInschrijvingen = 129,
 
 		[MpLabel("Wijzigen financieel"), Toekenbaar,

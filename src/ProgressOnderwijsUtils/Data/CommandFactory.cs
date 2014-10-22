@@ -30,6 +30,7 @@ namespace ProgressOnderwijsUtils
 			return query.GenerateCommandText();
 		}
 
+		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
 		static SqlCommand CreateCommand(SqlConnection sqlconn, int commandTimeout, string commandText, SqlParameter[] parameters)
 		{
 			bool finishedOk = false;

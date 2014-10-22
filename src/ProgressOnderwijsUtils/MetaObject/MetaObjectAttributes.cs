@@ -48,10 +48,16 @@ namespace ProgressOnderwijsUtils
 
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	public sealed class MpLengteAttribute : Attribute
+	public sealed class MpMaxLengthAttribute : Attribute
 	{
-		public MpLengteAttribute(int lengte) { Lengte = lengte; }
-		public readonly int Lengte;
+		public MpMaxLengthAttribute(int maxLength) { MaxLength = maxLength; }
+		public readonly int MaxLength;
+	}
+	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+	public sealed class MpDisplayLengthAttribute : Attribute
+	{
+		public MpDisplayLengthAttribute(int displayLength) { DisplayLength = displayLength; }
+		public readonly int DisplayLength;
 	}
 
 	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
