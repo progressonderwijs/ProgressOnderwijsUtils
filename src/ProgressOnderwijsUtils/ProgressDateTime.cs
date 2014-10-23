@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
 		/// De datum die vanaf nu als huidige datum moet gelden 
 		/// (de Datetime wordt afgerond naar hele dagen)
 		/// </summary>
-		public void SetDate(DateTime value)
+		public void TimeTravelToDate(DateTime value)
 		{
 			// Als het nu 21-9 is en value is 21-8 dan is DaysToAdd -31
 			DaysToAdd = value.Date.Subtract(DateTime.Now.Date).Days;
