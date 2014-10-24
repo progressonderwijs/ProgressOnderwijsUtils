@@ -601,6 +601,20 @@ namespace ProgressOnderwijsUtils
 			return Enum.TryParse(s, true, out retval) ? retval : default(TEnum?);
 		}
 
+		public static TEnum ParseCaseSensitively<TEnum>(string s) where TEnum : struct, IConvertible
+		{
+
+			if(!typeof(TEnum).IsEnum)
+				throw new ArgumentException("type must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
+
+			TEnum retval;
+
+			if(Enum.TryParse(s, false, out retval))
+				return retval;
+			else
+				throw new ArgumentException("Could not parse string as " + typeof(TEnum).Name);
+		}
+
 		public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible, IComparable
 		{
 			return EnumLabelLookup<TEnum>.Lookup(s, taal);
@@ -642,5 +656,6 @@ namespace ProgressOnderwijsUtils
 
 			return discoveredCombinations;
 		}
+
 	}
 }
