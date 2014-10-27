@@ -8,10 +8,9 @@ namespace ProgressOnderwijsUtils
 	[Serializable]
 	public class ProgressNetException : Exception
 	{ //TODO: this exception type might provide for TextDef integration such that throwing code can indicate the text-based error to show users.
-		public ProgressNetException() : base() { }
-		public ProgressNetException(string debugMessage) : base(debugMessage) { }
-		public ProgressNetException(string debugMessage, Exception innerException) : base(debugMessage,innerException) { }
-		protected ProgressNetException(SerializationInfo info,StreamingContext context) : base(info,context) { }
+		public ProgressNetException() { }
+		public ProgressNetException(string debugMessage, Exception innerException = null) : base(debugMessage, innerException) { }
+		protected ProgressNetException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 	}
 
 	/// <summary>
@@ -19,10 +18,9 @@ namespace ProgressOnderwijsUtils
 	/// </summary>
 	[Serializable]
 	public class PNAssertException : ProgressNetException
-	{ 
-		public PNAssertException() : base() { }
-		public PNAssertException(string debugMessage) : base(debugMessage) { }
-		public PNAssertException(string debugMessage, Exception innerException) : base(debugMessage, innerException) { }
+	{
+		public PNAssertException() { }
+		public PNAssertException(string debugMessage, Exception innerException = null) : base(debugMessage, innerException) { }
 		protected PNAssertException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 	}
 }
