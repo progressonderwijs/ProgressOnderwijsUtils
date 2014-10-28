@@ -290,7 +290,7 @@ namespace ProgressOnderwijsUtils
 			 StudentCommunicatieToevoegenVerwijderenWijzigen, WijzigenCorrespondentieadressen,
 			 InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
 			 InschrijvingNotitiesToevoegenWijzigenVerwijderen, WijzigenVerblijfsvergunningVnummer, WijzigenPasfoto,
-			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel, 
+			 StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel,
 			 WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen, WijzigenMatching)]
 		WijzigenInschrijvingenEnAanmeldingen = 125,
 
@@ -318,7 +318,7 @@ namespace ProgressOnderwijsUtils
 		 Implies(FinancieelBetalingsinformatieToevoegenWijzigenVerwijderen,
 			 FinancieelBetalingenToevoegenVerwijderenWijzigen, FinancieelCollegegeldToevoegenVerwijderenWijzigen,
 			 FinancieelMachtingToevoegenVerwijderenWijzigen, WijzigenToevoegenAfdrukkenBbc,
-			 BekijkenFinancieelUitgebreid, FinancieelNotitiesToevoegenWijzigenVerwijderen, 
+			 BekijkenFinancieelUitgebreid, FinancieelNotitiesToevoegenWijzigenVerwijderen,
 			 WijzigenCommunicatieFinancieel)]
 		WijzigenFinancieel = 132,
 
@@ -340,13 +340,14 @@ namespace ProgressOnderwijsUtils
 		WijzigenAccorderenToelatingseisen = 136,
 
 		[MpLabel("Superuser"), Implies(Combi_BeheerAlles, BeheerStudievolg, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
-			WijzigenAlumniNetwerk,  WijzigenDocumentenVooropleidingen,RapportenTabblad, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
+			WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenTabblad, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
 			Combi_FontysBeheerFO, Combi_FontysMuteerFO
 		)]
 		Superuser = 138,
 
 		[MpLabel("Wijzigen studievolg"), Toekenbaar,
-		 Implies(VolgOnderwijsBeheerBeperkt, WijzigenBsaBijzondereOmstandighedenStudiebegeleiding, StudievoortgangNotitiesToevoegenWijzigenVerwijderen, WijzigenCommunicatieStudievolg,StudievoortgangNotitiesToevoegenWijzigenVerwijderen)]
+		 Implies(VolgOnderwijsBeheerBeperkt, WijzigenBsaBijzondereOmstandighedenStudiebegeleiding,
+			  WijzigenCommunicatieStudievolg, StudievoortgangNotitiesToevoegenWijzigenVerwijderen)]
 		WijzigenStudievolg = 139,
 
 		[MpLabel("Beheer studievolg"), Toekenbaar, Implies(WijzigenStudentKenmerken, VolgOnderwijsBeheerAlles, WijzigenStudievolg)]
@@ -358,7 +359,7 @@ namespace ProgressOnderwijsUtils
 		BekijkenInschrijvingen = 160,
 
 		[MpLabel("Bekijken inschrijvingen uitgebreid"), Toekenbaar,
-		 Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad, 
+		 Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad,
 			 Uitschrijvingentabblad, StudentCommunicatieTabblad, BekijkenInschrijvingen, InschrijvingNotitiesBekijken, ExamenWaardepapierBekijken)]
 		BekijkenInschrijvingenUitgebreid = 161,
 
@@ -535,7 +536,7 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(Rol.BekijkenInschrijvingen, Rol.StudentCommunicatieTabblad)]
 		WijzigenDocumentenVooropleidingen = 225,
 
-		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften, 
+		[MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften,
 			Rol.StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
 		Combi_FontysBeheerFO = 226,
 
@@ -567,20 +568,20 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Wijzigen Matching"), Toekenbaar, Implies(Rol.BekijkenInschrijvingen)]
 		WijzigenMatching = 235,
 
-        [MpLabel("Bekijken student basis"),
-         Implies(StudentTabblad, StudentBekijkPersonalia, StudentPersoonTabblad, StudentAdresBekijken)]
-        BekijkenStudentBasis = 236,
+		[MpLabel("Bekijken student basis"),
+		 Implies(StudentTabblad, StudentBekijkPersonalia, StudentPersoonTabblad, StudentAdresBekijken)]
+		BekijkenStudentBasis = 236,
 
-        [MpLabel("Niet-reguliere opleidingen bekijken")]
-        NietReguliereOpleidingenBekijken = 240,
+		[MpLabel("Niet-reguliere opleidingen bekijken")]
+		NietReguliereOpleidingenBekijken = 240,
 
-        [MpLabel("Niet-reguliere opleidingen wijzigen"), Implies(NietReguliereOpleidingenBekijken)]
-        NietReguliereOpleidingenWijzigen = 241,
+		[MpLabel("Niet-reguliere opleidingen wijzigen"), Implies(NietReguliereOpleidingenBekijken)]
+		NietReguliereOpleidingenWijzigen = 241,
 
-        [MpLabel("Studievoortgang notities bekijken")]
-        StudievoortgangNotitiesBekijken = 242,
+		[MpLabel("Studievoortgang notities bekijken")]
+		StudievoortgangNotitiesBekijken = 242,
 
-        [MpLabel("Rapporten bekijken"), Toekenbaar]
-        RapportenTabblad = 243,
-    }
+		[MpLabel("Rapporten bekijken"), Toekenbaar]
+		RapportenTabblad = 243,
+	}
 }
