@@ -179,7 +179,6 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void ServiceTest()
 		{
-			AutomaticClassTest(new ServiceOnderwijs());
 			AutomaticClassTest(new ServiceOrganisatie());
 			AutomaticClassTest(new ServiceVakInformatie());
 			AutomaticClassTest(new VakPeriode());

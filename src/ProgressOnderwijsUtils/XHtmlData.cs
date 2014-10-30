@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
 			if (xml == null)
 				return null;
 
-			return XhtmlCleaner.Sanitize(xml.Value);
+			return xml.Value.Sanitize();
 		}
 
 
@@ -74,7 +74,7 @@ namespace ProgressOnderwijsUtils
 
 		public override bool Equals(object obj)
 		{
-			return obj is XhtmlData && this.Equals((XhtmlData)obj);
+			return obj is XhtmlData && Equals((XhtmlData)obj);
 		}
 
 		public override int GetHashCode()
@@ -89,8 +89,8 @@ namespace ProgressOnderwijsUtils
 
 		public string ToUiString()
 		{
-			using (StringWriter writer = new StringWriter())
-			using (XmlWriter inner = XmlWriter.Create(writer, new XmlWriterSettings
+			using (var writer = new StringWriter())
+			using (var inner = XmlWriter.Create(writer, new XmlWriterSettings
 			{
 				ConformanceLevel = ConformanceLevel.Fragment,
 			}))
