@@ -276,6 +276,8 @@ namespace ProgressOnderwijsUtils
 					Expression ifNotDbNull;
 					if (typeof(IIdentifier).IsAssignableFrom(type))
 					{
+						//TODO: this makes it impossible to create overloads for the method "Create" on an IIdentifier.
+						//A redesign would be better here.
 						var conversionMethod = type.BaseType.GetMethod("Create");
 						ifNotDbNull = Expression.Convert(castExpr, type, conversionMethod);
 					}
