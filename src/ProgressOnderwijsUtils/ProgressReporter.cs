@@ -46,8 +46,8 @@ namespace ProgressOnderwijsUtils
 		public void Step()
 		{
 			int newProgressVal = Interlocked.Increment(ref stepsDone); //stepsDone++; is thread unsafe.
-			var percentProgress = 100 * newProgressVal / TotalSteps;
-			if(percentProgress > 100 * (newProgressVal - 1) / TotalSteps)
+			var percentProgress = PercentProgress(newProgressVal);
+			if (percentProgress/5 > PercentProgress(newProgressVal-1)/5)
 			{
 				var elapsed = sw.Elapsed;
 				double elapsedMS = elapsed.TotalMilliseconds;
@@ -58,6 +58,11 @@ namespace ProgressOnderwijsUtils
 				DateTime eta = start + scaled;
 				report(new ProgressReport(start, now, eta, newProgressVal, percentProgress, leftOver));
 			}
+		}
+
+		int PercentProgress(int newProgressVal)
+		{
+			return 100 * newProgressVal / TotalSteps;
 		}
 	}
 }
