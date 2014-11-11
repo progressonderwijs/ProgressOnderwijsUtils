@@ -14,13 +14,15 @@ namespace ProgressOnderwijsUtils
 		[Test]
 		public void DebounceEventuallyCalls()
 		{
-			bool called = false;
+			var taskCS = new TaskCompletionSource<int>();
+			var task = taskCS.Task;
 			var handler = HandlerUtils.Debounce(TimeSpan.FromMilliseconds(10), () =>
-				called = true);
+				taskCS.SetResult(0));
+
 			handler();
-			Assert.That(called, Is.False);
-			Thread.Sleep(20);
-			Assert.That(called, Is.True);
+			Assert.AreNotEqual(TaskStatus.RanToCompletion, task.Status);
+			task.Wait(1000);
+			Assert.AreEqual(TaskStatus.RanToCompletion, task.Status);
 		}
 
 		[Test]
