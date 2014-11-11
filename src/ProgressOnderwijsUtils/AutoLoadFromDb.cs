@@ -1,5 +1,4 @@
-﻿using System.Data.SqlTypes;
-// ReSharper disable PossiblyMistakenUseOfParamsMethod
+﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -262,8 +261,8 @@ namespace ProgressOnderwijsUtils
 				Type underlyingType = type.GetNonNullableUnderlyingType();
 				bool needsCast = ((underlyingType != type.GetNonNullableType()) && (!typeof(IIdentifier).IsAssignableFrom(type.BaseType)));
 				var iConstant = Expression.Constant(i);
-				var callExpr = underlyingType == typeof(byte[]) 
-					? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant) 
+				var callExpr = underlyingType == typeof(byte[])
+					? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant)
 					: Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
 				var castExpr = !needsCast ? (Expression)callExpr : Expression.Convert(callExpr, type.GetNonNullableType());
 				Expression colValueExpr;
@@ -421,7 +420,7 @@ namespace ProgressOnderwijsUtils
 						throw new InvalidOperationException("Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; property count = " + ColHashPrimes.Length + "\n" +
 							"datareader: " + Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).JoinStrings(", ") + "\n" +
 							FriendlyName + ": " + metadata.Where(mp => mp.CanWrite).Select(mp => mp.Name).JoinStrings(", "));
-					if(ColHashPrimes.Length == 0)
+					if (ColHashPrimes.Length == 0)
 						throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
 					var ordering = new ColumnOrdering(reader);
 
@@ -441,7 +440,7 @@ namespace ProgressOnderwijsUtils
 						IMetaProperty<T> member = metadata.GetByNameOrNull(colName);
 						if (member == null)
 							throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
-						yield return Expression.Bind(member.PropertyInfo,  
+						yield return Expression.Bind(member.PropertyInfo,
 							Expression.Block(
 								Expression.Assign(lastColumnReadParameter,Expression.Constant(i)),
 								GetColValueExpr(readerParamExpr, i, member.DataType)
@@ -465,8 +464,8 @@ namespace ProgressOnderwijsUtils
 				static Impl()
 				{
 					constructor = VerifyTypeValidityAndGetConstructor();
-					LoadRows = CreateLoadRowsMethod<T>((readerParamExpr, lastReadExpr) => Expression.New(constructor, ConstructorParameters.Select((ci, i) => 
-						Expression.Block( Expression.Assign(lastReadExpr, Expression.Constant(i)), GetColValueExpr(readerParamExpr, i, ci.ParameterType)))));
+					LoadRows = CreateLoadRowsMethod<T>((readerParamExpr, lastReadExpr) => Expression.New(constructor, ConstructorParameters.Select((ci, i) =>
+						Expression.Block(Expression.Assign(lastReadExpr, Expression.Constant(i)), GetColValueExpr(readerParamExpr, i, ci.ParameterType)))));
 				}
 
 				static ConstructorInfo VerifyTypeValidityAndGetConstructor()
