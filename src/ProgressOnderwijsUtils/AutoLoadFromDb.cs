@@ -17,9 +17,26 @@ namespace ProgressOnderwijsUtils
 {
 	public static class AutoLoadFromDb
 	{
+		public static T ExecuteQuery<T>(QueryBuilder builder, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, Func<SqlCommand, T> action)
+		{
+			using (var cmd = builder.CreateSqlCommand(commandCreationContext))
+			{
+				try
+				{
+					return action(cmd);
+				}
+				catch (Exception e)
+				{
+					throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + QueryTracer.DebugFriendlyCommandText(cmd, true), e);
+				}
+			}
+		}
+
 		public static T ReadScalar<T>(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
-			return builder.CreateSqlCommand(commandCreationContext).Using(command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
+			return ExecuteQuery(builder, commandCreationContext,
+				() => "ReadScalar<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
+				command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
 		}
 
 		/// <summary>
@@ -29,40 +46,24 @@ namespace ProgressOnderwijsUtils
 		/// <param name="conn">De database om tegen te query-en</param>
 		public static DataTable ReadDataTable(this QueryBuilder builder, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
 		{
-			return builder.CreateSqlCommand(conn).Using(
-					command =>
-					{
-						try
+			return ExecuteQuery(builder, conn,
+				() => "ReadDataTable failed",
+					command => {
+						using (var adapter = new SqlDataAdapter(command))
 						{
-							using (var adapter = new SqlDataAdapter(command))
-							{
-								adapter.MissingSchemaAction = missingSchemaAction;
-								var dt = new DataTable();
-								adapter.Fill(dt);
-								return dt;
-							}
-						}
-						catch (Exception e)
-						{
-							throw new QueryException("Query failed: " + command.CommandText, e);
+							adapter.MissingSchemaAction = missingSchemaAction;
+							var dt = new DataTable();
+							adapter.Fill(dt);
+							return dt;
 						}
 					});
 		}
 
 		public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
 		{
-			return builder.CreateSqlCommand(commandCreationContext).Using(
-				command =>
-				{
-					try
-					{
-						return command.ExecuteNonQuery();
-					}
-					catch (Exception ex)
-					{
-						throw new NietZoErgeException("Non-query failed " + command.CommandText, ex);
-					}
-				});
+			return ExecuteQuery(builder, commandCreationContext,
+				() => "Non-query failed",
+				command => command.ExecuteNonQuery());
 		}
 
 
@@ -73,12 +74,14 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <typeparam name="T">The type to unpack each record into</typeparam>
 		/// <param name="q">The query to execute</param>
-		/// <param name="conn">The database connection</param>
+		/// <param name="qCommandCreationContext">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
 		public static T[] ReadByConstructor<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IReadByConstructor
 		{
-			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
-				return ReadByConstructorUnpacker<T>(cmd);
+			return ExecuteQuery(q, qCommandCreationContext,
+				() => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
+				ReadByConstructorUnpacker<T>
+				);
 		}
 
 		public static T[] ReadByConstructorUnpacker<T>(SqlCommand cmd) where T : IReadByConstructor
@@ -99,12 +102,14 @@ namespace ProgressOnderwijsUtils
 		/// </summary>
 		/// <typeparam name="T">The type to unpack each record into</typeparam>
 		/// <param name="q">The query to execute</param>
-		/// <param name="conn">The database connection</param>
+		/// <param name="qCommandCreationContext">The database connection</param>
 		/// <returns>An array of strongly-typed objects; never null</returns>
 		public static T[] ReadMetaObjects<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
 		{
-			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
-				return ReadMetaObjectsUnpacker<T>(cmd);
+			return ExecuteQuery(q, qCommandCreationContext,
+				() => "ReadMetaObjects<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
+				cmd => ReadMetaObjectsUnpacker<T>(cmd)
+				);
 		}
 
 		public static T[] ReadMetaObjectsUnpacker<T>(SqlCommand cmd, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
@@ -137,8 +142,10 @@ namespace ProgressOnderwijsUtils
 		/// <returns>An array of strongly-typed objects; never null</returns>
 		public static T[] ReadPlain<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext)
 		{
-			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
-				return ReadPlainUnpacker<T>(cmd);
+			return ExecuteQuery(q, qCommandCreationContext,
+				() => "ReadPlain<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
+				ReadPlainUnpacker<T>
+				);
 		}
 
 		public static T[] ReadPlainUnpacker<T>(SqlCommand cmd)
@@ -159,8 +166,10 @@ namespace ProgressOnderwijsUtils
 			where T1 : IReadByConstructor
 			where T2 : IReadByConstructor
 		{
-			using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
-				return ReadByConstructor<T1, T2>(cmd);
+			return ExecuteQuery(q, qCommandCreationContext,
+				() => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T1)) + ", " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T2)) + ">() failed.",
+				ReadByConstructor<T1, T2>
+				);
 		}
 
 		public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(SqlCommand cmd)
@@ -442,7 +451,7 @@ namespace ProgressOnderwijsUtils
 							throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
 						yield return Expression.Bind(member.PropertyInfo,
 							Expression.Block(
-								Expression.Assign(lastColumnReadParameter, Expression.Constant(i)),
+								Expression.Assign(lastColumnReadParameter,Expression.Constant(i)),
 								GetColValueExpr(readerParamExpr, i, member.DataType)
 							)
 							);
