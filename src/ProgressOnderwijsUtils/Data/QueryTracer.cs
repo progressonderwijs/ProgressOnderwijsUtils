@@ -84,7 +84,16 @@ namespace ProgressOnderwijsUtils
 			else if (p is Enum)
 				return Convert.ToInt64(p) + "/*" + p + "*/";
 			else
-				return p.ToString();
+			{
+				try
+				{
+					return p.ToString();
+				}
+				catch (Exception e)
+				{
+					return "[[Exception in QueryTracer.SqlValueString: " + e.Message + "]]";
+				}
+			}
 		}
 
 
