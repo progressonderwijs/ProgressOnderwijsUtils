@@ -442,7 +442,7 @@ namespace ProgressOnderwijsUtils
 							throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
 						yield return Expression.Bind(member.PropertyInfo,
 							Expression.Block(
-								Expression.Assign(lastColumnReadParameter, Expression.Constant(i)),
+								Expression.Assign(lastColumnReadParameter,Expression.Constant(i)),
 								GetColValueExpr(readerParamExpr, i, member.DataType)
 							)
 							);
