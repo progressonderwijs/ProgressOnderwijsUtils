@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
@@ -109,6 +110,41 @@ namespace ProgressOnderwijsUtils
 			foreach(var group in groups)
 				retval.Add(group.Key, groupMap(group.Key, group.Value));
 			return retval;
+		}
+
+		public static string ToCsv<T>(this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", bool useQuotesForStrings = false)
+            where T : class
+        {
+            var csvBuilder = new StringBuilder();
+            var properties = typeof(T).GetProperties();
+
+            if (useHeader)
+	            csvBuilder.AppendLine(string.Join(delimiter, properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings)).ToArray()));
+            foreach (var item in items)
+            {
+                var line = string.Join(delimiter, properties.Select(p => p.GetValue(item, null).ToCsvValue(delimiter, useQuotesForStrings)).ToArray());
+                csvBuilder.AppendLine(line);
+            }
+            return csvBuilder.ToString();
+        }
+ 
+        private static string ToCsvValue<T>(this T item, string delimiter, bool useQuotesForStrings)
+        {
+			if (string.Format("{0}", item).Contains(delimiter) && !useQuotesForStrings) throw new ArgumentException("item contains illegal characters, use useQuotesForStrings=true");
+
+			if (!useQuotesForStrings)
+				return string.Format("{0}", item);
+
+            if(item == null) return "\"\"";
+ 
+            if (item is string)
+            {
+                return string.Format("\"{0}\"", item.ToString().Replace("\"", "\\\""));
+            }
+			else
+			{ 
+				return string.Format("{0}", item);
+			}
 		}
 	}
 }
