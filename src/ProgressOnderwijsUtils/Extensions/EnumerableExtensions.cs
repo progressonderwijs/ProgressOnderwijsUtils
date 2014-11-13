@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
@@ -17,11 +18,11 @@ namespace ProgressOnderwijsUtils
 		/// <remarks>If you just want to test existance the native "Contains" would be sufficient</remarks>
 		public static int IndexOf<T>(this IEnumerable<T> list, T elem)
 		{
-			if (list == null) throw new ArgumentNullException("list");
+			if(list == null) throw new ArgumentNullException("list");
 			int retval = 0;
-			foreach (T item in list)
+			foreach(T item in list)
 			{
-				if (Equals(elem, item))
+				if(Equals(elem, item))
 					return retval;
 				retval++;
 			}
@@ -30,12 +31,12 @@ namespace ProgressOnderwijsUtils
 
 		public static int IndexOf<T>(this IEnumerable<T> list, Func<T, bool> matcher)
 		{
-			if (list == null) throw new ArgumentNullException("list");
-			if (matcher == null) throw new ArgumentNullException("matcher");
+			if(list == null) throw new ArgumentNullException("list");
+			if(matcher == null) throw new ArgumentNullException("matcher");
 			int retval = 0;
-			foreach (T item in list)
+			foreach(var item in list)
 			{
-				if (matcher(item))
+				if(matcher(item))
 					return retval;
 				retval++;
 			}
@@ -53,6 +54,13 @@ namespace ProgressOnderwijsUtils
 		public static HashSet<T> ToSet<T>(this IEnumerable<T> list) { return new HashSet<T>(list); }
 		[Pure]
 		public static HashSet<T> ToSet<T>(this IEnumerable<T> list, IEqualityComparer<T> comparer) { return new HashSet<T>(list, comparer); }
+
+		[Pure]
+		public static bool SetEqual<T>(this IEnumerable<T> list, IEnumerable<T> other) { return list.ToSet().SetEquals(other); }
+		[Pure]
+		public static bool SetEqual<T>(this IEnumerable<T> list, IEnumerable<T> other, IEqualityComparer<T> comparer) { return list.ToSet(comparer).SetEquals(other); }
+
+
 		[Pure]
 		public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> list) { return list ?? Enumerable.Empty<T>(); }
 
@@ -60,7 +68,7 @@ namespace ProgressOnderwijsUtils
 		{
 			var elemEquality = elementComparer ?? EqualityComparer<T>.Default;
 			ulong hash = 3;
-			foreach (var item in list)
+			foreach(var item in list)
 				hash = hash * 137ul + (ulong)elemEquality.GetHashCode(item);
 			return (int)hash ^ (int)(hash >> 32);
 		}
@@ -80,7 +88,7 @@ namespace ProgressOnderwijsUtils
 		public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(this IEnumerable<T> list, Func<T, TKey> keySelector, Func<T, TVal> valSelector, IComparer<TKey> keyComparer)
 		{
 			var retval = new SortedList<TKey, TVal>(keyComparer);
-			foreach (var item in list.OrderBy(keySelector, keyComparer))
+			foreach(var item in list.OrderBy(keySelector, keyComparer))
 				retval.Add(keySelector(item), valSelector(item));
 			return retval;
 		}
@@ -90,18 +98,53 @@ namespace ProgressOnderwijsUtils
 			)
 		{
 			var groups = new Dictionary<TKey, List<TElem>>();
-			foreach (var elem in list)
+			foreach(var elem in list)
 			{
 				var key = keyLookup(elem);
 				List<TElem> group;
-				if (!groups.TryGetValue(key, out group))
+				if(!groups.TryGetValue(key, out group))
 					groups.Add(key, group = new List<TElem>());
 				group.Add(elem);
 			}
 			var retval = new Dictionary<TKey, TValue>(groups.Count);
-			foreach (var group in groups)
+			foreach(var group in groups)
 				retval.Add(group.Key, groupMap(group.Key, group.Value));
 			return retval;
+		}
+
+		public static string ToCsv<T>(this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", bool useQuotesForStrings = false)
+            where T : class
+        {
+            var csvBuilder = new StringBuilder();
+            var properties = typeof(T).GetProperties();
+
+            if (useHeader)
+	            csvBuilder.AppendLine(string.Join(delimiter, properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings)).ToArray()));
+            foreach (var item in items)
+            {
+                var line = string.Join(delimiter, properties.Select(p => p.GetValue(item, null).ToCsvValue(delimiter, useQuotesForStrings)).ToArray());
+                csvBuilder.AppendLine(line);
+            }
+            return csvBuilder.ToString();
+        }
+ 
+        private static string ToCsvValue<T>(this T item, string delimiter, bool useQuotesForStrings)
+        {
+			if (string.Format("{0}", item).Contains(delimiter) && !useQuotesForStrings) throw new ArgumentException("item contains illegal characters, use useQuotesForStrings=true");
+
+			if (!useQuotesForStrings)
+				return string.Format("{0}", item);
+
+            if(item == null) return "\"\"";
+ 
+            if (item is string)
+            {
+                return string.Format("\"{0}\"", item.ToString().Replace("\"", "\\\""));
+            }
+			else
+			{ 
+				return string.Format("{0}", item);
+			}
 		}
 	}
 }

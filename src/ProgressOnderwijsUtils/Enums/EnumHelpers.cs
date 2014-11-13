@@ -146,7 +146,7 @@ namespace ProgressOnderwijsUtils
 					if (IsFlags)
 					{
 
-						FlagOperationMethods fastpathHelpers = default(FlagOperationMethods);
+						var fastpathHelpers = default(FlagOperationMethods);
 						if (typeof(int) == underlying)
 						{
 							fastpathHelpers = forInt;
@@ -173,7 +173,7 @@ namespace ProgressOnderwijsUtils
 						var overlapCount = new int[ValuesInOverlapOrder.Length];
 
 
-						for (int i = 0; i < overlapCount.Length; i++)
+						for (var i = 0; i < overlapCount.Length; i++)
 						{
 							foreach (var val in ValuesInOverlapOrder)
 							{
@@ -185,8 +185,8 @@ namespace ProgressOnderwijsUtils
 						var n = overlapCount.Length;
 						while (true)
 						{
-							bool swapped = false;
-							for (int i = 1; i < n; i++)
+							var swapped = false;
+							for (var i = 1; i < n; i++)
 							{
 								if (overlapCount[i - 1] > overlapCount[i])
 								{
@@ -210,8 +210,8 @@ namespace ProgressOnderwijsUtils
 
 				static Func<TEnum, TEnum, bool> MakeHasFlag()
 				{
-					ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
-					ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
+					var valExpr = Expression.Parameter(typeof(TEnum));
+					var flagExpr = Expression.Parameter(typeof(TEnum));
 
 					return Expression.Lambda<Func<TEnum, TEnum, bool>>(
 						Expression.Equal(
@@ -227,8 +227,8 @@ namespace ProgressOnderwijsUtils
 
 				static Func<TEnum, TEnum, bool> MakeFlagsOverlap()
 				{
-					ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
-					ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
+					var valExpr = Expression.Parameter(typeof(TEnum));
+					var flagExpr = Expression.Parameter(typeof(TEnum));
 
 					return Expression.Lambda<Func<TEnum, TEnum, bool>>(
 						Expression.NotEqual(
@@ -244,8 +244,8 @@ namespace ProgressOnderwijsUtils
 
 				static Func<TEnum, TEnum, TEnum> MakeAddFlag()
 				{
-					ParameterExpression valExpr = Expression.Parameter(typeof(TEnum));
-					ParameterExpression flagExpr = Expression.Parameter(typeof(TEnum));
+					var valExpr = Expression.Parameter(typeof(TEnum));
+					var flagExpr = Expression.Parameter(typeof(TEnum));
 
 					return Expression.Lambda<Func<TEnum, TEnum, TEnum>>(
 						Expression.ConvertChecked(
@@ -282,7 +282,7 @@ namespace ProgressOnderwijsUtils
 				//invariant: only GTE nodes at or past end
 				while (end != start)
 				{
-					int midpoint = end + start >> 1;
+					var midpoint = end + start >> 1;
 					// start <= midpoint < end
 					if (sortedAttrs[midpoint].Value < needle)
 					{
@@ -300,8 +300,8 @@ namespace ProgressOnderwijsUtils
 			{
 				if (sortedAttrs == null)
 					InitAttrCache();
-				long key = toInt64(value);
-				int idx = IdxAfterLastLtNode(key);
+				var key = toInt64(value);
+				var idx = IdxAfterLastLtNode(key);
 				if (idx < sortedAttrs.Length && sortedAttrs[idx].Value == key)
 					return sortedAttrs[idx].Attrs;
 				else return ArrayExtensions.Empty<object>();
@@ -319,21 +319,21 @@ namespace ProgressOnderwijsUtils
 				}
 
 				var entries = new AttrEntry[EnumValues.Length];
-				int nextIdx = 0;
+				var nextIdx = 0;
 				foreach (var field in enumFields)
 				{
 					var customAttributes = field.GetCustomAttributes(typeof(Attribute), false);
 					if (customAttributes.Length == 0)
 						continue;
 					var value = (TEnum)field.GetValue(null);
-					long key = toInt64(value);
-					int insertIdx = nextIdx - 1;
+					var key = toInt64(value);
+					var insertIdx = nextIdx - 1;
 					while (true)
 					{
 						if (insertIdx == -1 || key > entries[insertIdx].Value)
 						{
 							insertIdx++;
-							for (int j = nextIdx - 1; j >= insertIdx; j--)
+							for (var j = nextIdx - 1; j >= insertIdx; j--)
 								entries[j + 1] = entries[j];
 							entries[insertIdx] = new AttrEntry
 							{
@@ -347,7 +347,7 @@ namespace ProgressOnderwijsUtils
 						{
 							var oldLength = entries[insertIdx].Attrs.Length;
 							Array.Resize(ref entries[insertIdx].Attrs, oldLength + customAttributes.Length);
-							int i = oldLength;
+							var i = oldLength;
 							foreach (var attr in customAttributes)
 								entries[insertIdx].Attrs[i++] = attr;
 							break;
@@ -385,9 +385,9 @@ namespace ProgressOnderwijsUtils
 			{
 				var values = FlagEnumHelpers.ValuesInOverlapOrder;
 				var matched = new List<TEnum>(values.Length);
-				TEnum covered = default(TEnum);
+				var covered = default(TEnum);
 
-				int i = values.Length;
+				var i = values.Length;
 				while (i != 0)
 				{
 					i--;
@@ -423,7 +423,7 @@ namespace ProgressOnderwijsUtils
 					InitAttrCache();
 				var key = toInt64(f);
 				var idx = IdxAfterLastLtNode(key);
-				bool validIdx = idx < sortedAttrs.Length && sortedAttrs[idx].Value == key;
+				var validIdx = idx < sortedAttrs.Length && sortedAttrs[idx].Value == key;
 
 
 				if (validIdx && sortedAttrs[idx].Label != null)
@@ -646,7 +646,7 @@ namespace ProgressOnderwijsUtils
 			// Try OR-ing every inital value to each value in the queue
 			while (queue.Count > 0)
 			{
-				T a = queue.Dequeue();
+				var a = queue.Dequeue();
 				foreach (T b in initalValues)
 				{
 					T combo = orFunction(a, b);

@@ -21,18 +21,32 @@ namespace ProgressOnderwijsUtils
 			where T : struct, IConvertible, IComparable
 		{ return values.Contains(obj); }
 
+		public static bool In<T>(this T obj, T value)
+			where T : struct, IConvertible, IComparable
+		{ return value.Equals(obj); }
+		public static bool In<T>(this T? obj, T? value)
+			where T : struct, IConvertible, IComparable
+		{ return value.Equals(obj); }
+
+		public static bool In<T>(this T obj, T a, T b)
+			where T : struct, IConvertible, IComparable
+		{ return a.Equals(obj) || b.Equals(obj); }
+		public static bool In<T>(this T? obj, T? a, T? b)
+			where T : struct, IConvertible, IComparable
+		{ return a.Equals(obj) || b.Equals(obj); }
+
+		public static bool In<T>(this T obj, T a, T b, T c)
+			where T : struct, IConvertible, IComparable
+		{ return a.Equals(obj) || b.Equals(obj) || c.Equals(obj); }
+		public static bool In<T>(this T? obj, T? a, T? b, T? c)
+			where T : struct, IConvertible, IComparable
+		{ return a.Equals(obj) || b.Equals(obj) || c.Equals(obj); }
+
 		public static bool In(this string obj, params string[] values)
 		{ return values.Contains(obj); }
 
 		public static bool In<T>(this T? obj, params T?[] values)
 			where T : struct, IConvertible, IComparable
 		{ return values.Contains(obj); }
-
-		public static bool Between(this int num, int lower, int upper, bool inclusive = false)
-		{
-			return inclusive
-				? lower <= num && num <= upper
-				: lower < num && num < upper;
-		}
 	}
 }

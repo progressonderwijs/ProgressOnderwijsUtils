@@ -13,17 +13,25 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtils
 {
 	[UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
-	public interface IMetaObject { }
+	public interface IMetaObject {}
+
 
 	[UsedImplicitly(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature, ImplicitUseTargetFlags.Members)]
-	public interface IReadByConstructor { }
+	public interface IReadByConstructor {}
 
 
 	public static class MetaObject
 	{
-		public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()); }
+		public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj)
+		{
+			return GetCache(metaobj.GetType());
+		}
+
 		//public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
-		public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject { return MetaInfo<T>.Instance; }
+		public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject
+		{
+			return MetaInfo<T>.Instance;
+		}
 
 		public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
 			where TMetaObject : IMetaObject
@@ -31,35 +39,37 @@ namespace ProgressOnderwijsUtils
 			return MetaInfo<TMetaObject>.Instance.GetByExpression(propertyExpression);
 		}
 
+
 		public static class GetByInheritedExpression<TMetaObject>
 			where TMetaObject : IMetaObject
 		{
 			public static IMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
 			{
 				var memberInfo = GetMemberInfo(propertyExpression);
-				if (typeof(TParent).IsClass || typeof(TParent) == typeof(TMetaObject))
+				if(typeof(TParent).IsClass || typeof(TParent) == typeof(TMetaObject))
 				{
 					var retval = MetaInfo<TMetaObject>.Instance.SingleOrDefault(mp => mp.PropertyInfo == memberInfo);
-					if (retval == null)
+					if(retval == null)
 						throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-								"The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
+							"The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
 					return retval;
 				}
-				else if (typeof(TParent).IsInterface && typeof(TParent).IsAssignableFrom(typeof(TMetaObject)))
+				else if(typeof(TParent).IsInterface && typeof(TParent).IsAssignableFrom(typeof(TMetaObject)))
 				{
 					var pi = (PropertyInfo)memberInfo;
 					var getter = pi.GetGetMethod();
 					var interfacemap = typeof(TMetaObject).GetInterfaceMap(typeof(TParent));
 					var getterIdx = Array.IndexOf(interfacemap.InterfaceMethods, getter);
-					if (getterIdx == -1)
+					if(getterIdx == -1)
 						throw new InvalidOperationException("The metaobject " + typeof(TMetaObject) + " does not implement method " + getter.Name);
 					var mpGetter = interfacemap.TargetMethods[getterIdx];
 					return MetaInfo<TMetaObject>.Instance.Single(mp => mp.PropertyInfo.GetGetMethod() == mpGetter);
 				}
-				else throw new InvalidOperationException("Impossible: parent " + typeof(TParent) + " is neither the metaobject type " + typeof(TMetaObject) + " itself, nor a (base) class, nor a base interface.");
+				else
+					throw new InvalidOperationException("Impossible: parent " + typeof(TParent) + " is neither the metaobject type " + typeof(TMetaObject) + " itself, nor a (base) class, nor a base interface.");
 			}
-
 		}
+
 
 		public static MemberInfo GetMemberInfo<TObject, TProperty>(Expression<Func<TObject, TProperty>> property)
 		{
@@ -67,7 +77,7 @@ namespace ProgressOnderwijsUtils
 
 			var innerExpr = UnwrapCast(bodyExpr);
 
-			if (!(innerExpr is MemberExpression))
+			if(!(innerExpr is MemberExpression))
 				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
 					"The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
 			var membExpr = ((MemberExpression)innerExpr);
@@ -77,19 +87,22 @@ namespace ProgressOnderwijsUtils
 
 			//expensive:
 			var paramExpr = property.Parameters[0];
-			if (targetExpr != paramExpr)
+			if(targetExpr != paramExpr)
 				throw new ArgumentException("To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
 					"A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
 			//*/
 
 			var memberInfo = membExpr.Member;
-			if (memberInfo is PropertyInfo || memberInfo is FieldInfo)
+			if(memberInfo is PropertyInfo || memberInfo is FieldInfo)
 				return memberInfo;
 			throw new ArgumentException("To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
 				"The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property or field");
 		}
 
-		static Expression UnwrapCast(Expression bodyExpr) { return bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr; }
+		static Expression UnwrapCast(Expression bodyExpr)
+		{
+			return bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr;
+		}
 
 		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
 		{
@@ -97,15 +110,18 @@ namespace ProgressOnderwijsUtils
 			var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
 			dt.Columns.AddRange(properties.Select(mp => new DataColumn(mp.Name, mp.DataType.GetNonNullableType()) { AllowDBNull = !mp.Required && mp.DataType.CanBeNull() }).ToArray());
 
-			foreach (var obj in objs)
+			foreach(var obj in objs)
 				dt.Rows.Add(properties.Select(mp => mp.Getter(obj) ?? DBNull.Value).ToArray());
 
-			if (primaryKey != null)
+			if(primaryKey != null)
 				dt.PrimaryKey = primaryKey.Select(name => dt.Columns[name]).ToArray();
 			return dt;
 		}
 
-		public static MetaObjectDataReader<T> CreateDataReader<T>(IEnumerable<T> entities) where T : IMetaObject { return new MetaObjectDataReader<T>(entities); }
+		public static MetaObjectDataReader<T> CreateDataReader<T>(IEnumerable<T> entities) where T : IMetaObject
+		{
+			return new MetaObjectDataReader<T>(entities);
+		}
 
 		/// <summary>
 		/// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout.
@@ -118,20 +134,20 @@ namespace ProgressOnderwijsUtils
 		/// <param name="options">The SqlBulkCopyOptions to use.  If unspecified, uses SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction which is NOT SqlBulkCopyOptions.Default</param>
 		public static void SqlBulkCopy<T>(IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
 		{
-			if (metaObjects == null)
+			if(metaObjects == null)
 				throw new ArgumentNullException("metaObjects");
-			if (tableName.Contains('[') || tableName.Contains(']'))
+			if(tableName.Contains('[') || tableName.Contains(']'))
 				throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, "tableName");
-			if (sqlconn == null)
+			if(sqlconn == null)
 				throw new ArgumentNullException("sqlconn");
-			if (sqlconn.State != ConnectionState.Open)
+			if(sqlconn.State != ConnectionState.Open)
 				throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
 
 			SqlBulkCopyOptions effectiveOptions = options ?? (SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction);
 			ColumnDefinition[] dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
 
-			using (var objectReader = CreateDataReader(metaObjects))
-			using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null))
+			using(var objectReader = CreateDataReader(metaObjects))
+			using(var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null))
 			{
 				ColumnDefinition[] clrColumns = ColumnDefinition.GetFromReader(objectReader);
 
@@ -141,24 +157,24 @@ namespace ProgressOnderwijsUtils
 
 				bulkCopy.BulkCopyTimeout = 3600;
 				bulkCopy.DestinationTableName = tableName;
-				foreach (var mapEntry in mapping)
+				foreach(var mapEntry in mapping)
 					bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
-				
+
 				try
 				{
 					bulkCopy.WriteToServer(objectReader);
 				}
-				catch (SqlException ex)
+				catch(SqlException ex)
 				{
 					var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid (\d+).");
 					var match = colid_message.Match(ex.Message);
-					if (match.Success)
+					if(match.Success)
 					{
 						var col_id = int.Parse(match.Groups[1].Value);
 						throw new Exception(string.Format(
 							"Received an invalid column length from the bcp client for column name {0}",
-							clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id-1].SrcIndex].Name
-						), ex);
+							clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name
+							), ex);
 					}
 					throw;
 				}
@@ -167,15 +183,18 @@ namespace ProgressOnderwijsUtils
 
 		public static IReadOnlyList<IMetaProperty> GetMetaProperties(Type t)
 		{
-			if (!typeof(IMetaObject).IsAssignableFrom(t))
+			if(!typeof(IMetaObject).IsAssignableFrom(t))
 				throw new InvalidOperationException("Can't get meta-properties from type " + t + ", it's not a " + typeof(IMetaObject));
-			while (t.BaseType != null && !t.BaseType.IsAbstract && typeof(IMetaObject).IsAssignableFrom(t.BaseType))
+			while(t.BaseType != null && !t.BaseType.IsAbstract && typeof(IMetaObject).IsAssignableFrom(t.BaseType))
 				t = t.BaseType;
 			return GetCache(t);
 		}
 
-
 		static readonly MethodInfo genGetCache = Utils.F(GetMetaProperties<IMetaObject>).Method.GetGenericMethodDefinition();
-		static IMetaPropCache<IMetaProperty> GetCache(Type t) { return (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null); }
+
+		static IMetaPropCache<IMetaProperty> GetCache(Type t)
+		{
+			return (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
+		}
 	}
 }
