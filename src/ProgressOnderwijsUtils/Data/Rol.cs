@@ -257,8 +257,12 @@ namespace ProgressOnderwijsUtils
 		[MpLabel("Volg onderwijs beheer alles")]
 		VolgOnderwijsBeheerAlles = 114,
 
-		[MpLabel("Volg onderwijs beheer beperkt")]
+		[MpLabel("Volg onderwijs beheer beperkt"),
+		  Implies(VolgOnderwijsBeheerBeperkt, VolgOnderwijsGenereerCijferlijst)]
 		VolgOnderwijsBeheerBeperkt = 115,
+
+		[MpLabel("Genereren cijferlijsten voor bullen")]
+		VolgOnderwijsGenereerCijferlijst = 115,
 
 		[MpLabel("Volg onderwijs inzien")]
 		VolgOnderwijsInzien = 116,
