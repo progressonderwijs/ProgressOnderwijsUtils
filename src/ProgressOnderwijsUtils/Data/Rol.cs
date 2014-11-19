@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils.ToegangsRolInternal;
 
 namespace ProgressOnderwijsUtils
@@ -262,7 +263,7 @@ namespace ProgressOnderwijsUtils
 		VolgOnderwijsBeheerBeperkt = 115,
 
 		[MpLabel("Genereren cijferlijsten voor bullen")]
-		VolgOnderwijsGenereerCijferlijst = 115,
+		VolgOnderwijsGenereerCijferlijst = 244,
 
 		[MpLabel("Volg onderwijs inzien")]
 		VolgOnderwijsInzien = 116,
@@ -587,5 +588,8 @@ namespace ProgressOnderwijsUtils
 
 		[MpLabel("Rapporten bekijken"), Toekenbaar]
 		RapportenTabblad = 243,
+
+		[Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
+		META_EerstVolgendVrijRolId = 245
 	}
 }
