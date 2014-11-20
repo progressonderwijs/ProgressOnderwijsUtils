@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 		}
 
 		[Pure]
-		public static QueryBuilder AppendIf(this QueryBuilder source, Boolean condition, string str, params object[] parms)
+		public static QueryBuilder AppendIf(this QueryBuilder source, bool condition, string str, params object[] parms)
 		{
 			return condition ? source.Append(str, parms) : source;
 		}
