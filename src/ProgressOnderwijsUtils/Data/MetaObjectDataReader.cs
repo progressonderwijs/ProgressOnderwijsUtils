@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 			var parExpr = Expression.Parameter(typeof(T));
 			var arrExpr = Expression.Parameter(typeof(object[]));
 
-			var arrFiller = Expression.Lambda<Action<T, object[]>>(Expression.Block(fields.Select((field, i) => 
+			var arrFiller = Expression.Lambda<Action<T, object[]>>(Expression.Block(fields.Select((field, i) =>
 				Expression.Assign(Expression.ArrayAccess(arrExpr, Expression.Constant(i)), Expression.Convert(field.GetterExpression(parExpr), typeof(object)))
 				)), parExpr, arrExpr);
 
@@ -71,21 +71,25 @@ namespace ProgressOnderwijsUtils
 			dt.Columns.Add("BaseTableName", typeof(string));
 			dt.Columns.Add("BaseColumnName", typeof(string));
 
-			for (int i = 0; i < fields.Length; i++)
+			for(int i = 0; i < fields.Length; i++)
 			{
 				dt.Rows.Add(fields[i].Name, i, -1, null, null, fields[i].DataType, null, false, fields[i].AllowNullInEditor, true, false, fields[i].IsKey && fields.Count(mp => mp.IsKey) == 1, fields[i].IsKey, false, null, null, null, "val");
 			}
 			return dt;
 
 		}
-		
+
 		public override void Close() { metaObjects.Dispose(); isClosed = true; }
-		public MetaObjectDataReader(IEnumerable<T> objects) { metaObjects = objects.GetEnumerator(); }
+		public MetaObjectDataReader(IEnumerable<T> objects)
+		{
+			metaObjects = objects.GetEnumerator();
+		}
+
 		object[] cache;
 		protected override bool ReadImpl()
 		{
 			bool hasnext = metaObjects.MoveNext();
-			if (hasnext)
+			if(hasnext)
 			{
 				cache = cache ?? new object[fields.Length];
 				ReadValues(metaObjects.Current, cache);

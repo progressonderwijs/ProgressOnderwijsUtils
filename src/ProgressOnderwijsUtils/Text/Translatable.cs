@@ -79,7 +79,11 @@ namespace ProgressOnderwijsUtils
 		}
 		public static ITranslatable CreateLazyTranslatable(Func<ITranslatable> lazyCreator)
 		{
-			return new LazyTranslatable(lazyCreator);
+			return new SimpleTranslatable(taal => lazyCreator().Translate(taal));
+		}
+		public static ITranslatable CreateLazyTranslatable(Func<Taal, TextVal> translator)
+		{
+			return new SimpleTranslatable(translator);
 		}
 
 		static readonly LiteralTranslatable empty = new LiteralTranslatable("", "", "");
@@ -158,16 +162,16 @@ namespace ProgressOnderwijsUtils
 			public override string ToString() { return GenerateUid(); }
 
 		}
-		sealed class LazyTranslatable : ITranslatable
+		sealed class SimpleTranslatable : ITranslatable
 		{
-			readonly Func<ITranslatable> currentText;
-			readonly string uid;
-			public LazyTranslatable(Func<ITranslatable> currentText) { this.currentText = currentText; uid = "LZ:" + currentText().GenerateUid(); }
-			public string GenerateUid() { return uid; }
-			public TextVal Translate(Taal lang) { return currentText().Translate(lang); }
+			readonly Func<Taal, TextVal> translator;
+			public SimpleTranslatable(Func<Taal, TextVal> translator) { this.translator = translator; }
+			public string GenerateUid() { return Translate(Taal.NL).ToString(); }
+			public TextVal Translate(Taal lang) { return translator(lang); }
 			public override string ToString() { return GenerateUid(); }
 
 		}
+
 
 		sealed class ForcedLanguageTranslatable : ITranslatable
 		{
@@ -178,7 +182,7 @@ namespace ProgressOnderwijsUtils
 			public TextVal Translate(Taal lang) { return underlying.Translate(taal); }
 			public override string ToString() { return GenerateUid(); }
 		}
-		
+
 		sealed class RawTranslatable : ITranslatable
 		{
 			readonly TextVal tv;
