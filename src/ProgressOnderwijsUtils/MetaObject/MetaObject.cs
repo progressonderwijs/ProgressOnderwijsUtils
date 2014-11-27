@@ -104,7 +104,7 @@ namespace ProgressOnderwijsUtils
 			return bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr;
 		}
 
-		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] primaryKey) where T : IMetaObject
+		public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] optionalPrimaryKey) where T : IMetaObject
 		{
 			var dt = new DataTable();
 			var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
@@ -113,8 +113,8 @@ namespace ProgressOnderwijsUtils
 			foreach(var obj in objs)
 				dt.Rows.Add(properties.Select(mp => mp.Getter(obj) ?? DBNull.Value).ToArray());
 
-			if(primaryKey != null)
-				dt.PrimaryKey = primaryKey.Select(name => dt.Columns[name]).ToArray();
+			if(optionalPrimaryKey != null)
+				dt.PrimaryKey = optionalPrimaryKey.Select(name => dt.Columns[name]).ToArray();
 			return dt;
 		}
 
