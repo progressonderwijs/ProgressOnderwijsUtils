@@ -19,15 +19,16 @@ namespace ProgressOnderwijsUtils
 
 				while (todo.Count > 0)
 				{
-					var current = todo.Peek();
-					if (current.MoveNext())
+					var children = todo.Peek();
+					if (children.MoveNext())
 					{
-						yield return current.Current;
-						todo.Push(current.Current.Children.GetEnumerator());
+						var currentNode = children.Current;
+						yield return currentNode;
+						todo.Push(currentNode.Children.GetEnumerator());
 					}
 					else
 					{
-						current.Dispose();
+						children.Dispose();
 						todo.Pop();
 					}
 				}
