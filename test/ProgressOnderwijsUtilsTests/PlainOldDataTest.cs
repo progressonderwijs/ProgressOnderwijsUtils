@@ -54,18 +54,10 @@ namespace ProgressOnderwijsUtilsTests
 		[Test]
 		public void SanityCheck()
 		{
-			Assert.Throws<AssertionException>(() => ComparePod(new LabelCode("abc", false), new { waarde = "abc", Vrijveld = false }));//case-sensitive
-			Assert.Throws<AssertionException>(() => ComparePod(new LabelCode("abc", false), new { Waarde = "Abc", Vrijveld = false }));//value-sensitive
-			Assert.Throws<AssertionException>(() => ComparePod(new LabelCode(null, false), new { Waarde = "", Vrijveld = false }));//no weirdness
-		}
-
-		[Test]
-		public void LabelCodeTest()
-		{
-			ComparePod(new LabelCode("abc", false), new { Waarde = "abc", Vrijveld = false });
-			ComparePod(new LabelCode(null, true), new { Waarde = default(string), Vrijveld = true });
-			ComparePod(new LabelCode("", true), new { Waarde = "", Vrijveld = true });
-			AutomaticClassTest(new LabelCode("ha", false));
+			Assert.Throws<AssertionException>(() => ComparePod(Tuple.Create("abc", false), new { item1 = "abc", item2 = false }));//case-sensitive
+			Assert.Throws<AssertionException>(() => ComparePod(Tuple.Create("abc", false), new { Item1 = "Abc", Item2 = false }));//value-sensitive
+			Assert.Throws<AssertionException>(() => ComparePod(Tuple.Create(default(string), false), new { Item1 = "", Item2 = false }));//no weirdness
+			ComparePod(Tuple.Create(default(string), false), new { Item1 = default(string), Item2 = false });
 		}
 
 		[Test]
