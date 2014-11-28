@@ -5,15 +5,14 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-	interface IQueryComponent : IEquatable<IQueryComponent>
-	{
-		string ToSqlString(CommandFactory qnum);
+    interface IQueryComponent : IEquatable<IQueryComponent>
+    {
+        string ToSqlString(CommandFactory qnum);
+        string ToDebugText(Taal? taalOrNull);
+    }
 
-		string ToDebugText(Taal? taalOrNull);
-	}
-
-	interface IQueryParameter : IQueryComponent
-	{
-		SqlParameter ToSqlParameter(int paramNum);
-	}
+    interface IQueryParameter : IQueryComponent
+    {
+        SqlParameter ToSqlParameter(int paramNum);
+    }
 }

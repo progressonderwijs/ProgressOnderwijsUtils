@@ -7,144 +7,108 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ProgressOnderwijsUtils
 {
-	public struct FileData : IEquatable<FileData>, IMetaObject
-	{
-		const int MAX_FILE_NAME = 64;
+    public struct FileData : IEquatable<FileData>, IMetaObject
+    {
+        const int MAX_FILE_NAME = 64;
+        string fileName;
+        public byte[] Content { get; set; }
+        public string ContentType { get; set; }
 
-		string fileName;
+        public string FileName
+        {
+            get { return fileName; }
+            set
+            {
+                if (value != null && value.Length > MAX_FILE_NAME) {
+                    if (Path.HasExtension(value)) {
+                        fileName = string.Format(
+                            "{0}{1}",
+                            Path.GetFileNameWithoutExtension(value).Substring(0, MAX_FILE_NAME - Path.GetExtension(value).Length),
+                            Path.GetExtension(value));
+                    } else {
+                        fileName = value.Substring(0, MAX_FILE_NAME);
+                    }
+                } else {
+                    fileName = value;
+                }
+            }
+        }
 
-		public byte[] Content { get; set; }
-		public string ContentType { get; set; }
-		public string FileName
-		{
-			get { return fileName; }
-			set
-			{
-				if (value != null && value.Length > MAX_FILE_NAME)
-				{
-					if (Path.HasExtension(value))
-					{
-						fileName = string.Format("{0}{1}",
-							Path.GetFileNameWithoutExtension(value).Substring(0, MAX_FILE_NAME - Path.GetExtension(value).Length),
-							Path.GetExtension(value));
-					}
-					else
-					{
-						fileName = value.Substring(0, MAX_FILE_NAME);	
-					}
-				}
-				else
-				{
-					fileName = value;
-				}
-			}
-		}
+        [MpNotMapped]
+        public bool ContainsFile { get { return Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0); } }
 
-		[MpNotMapped]
-		public bool ContainsFile 
-		{
-			get 
-			{
-				return Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0); 
-			}
-		}
+        public override string ToString() { return ContainsFile ? string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m) : ""; }
 
-		public override string ToString()
-		{
-			return ContainsFile ? string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m) : "";
-		}
+        #region IEquality implementation
+        public override bool Equals(object other) { return other is FileData && Equals((FileData)other); }
 
-		#region IEquality implementation
+        public override int GetHashCode()
+        {
+            unchecked {
+                int result = Content == null || Content.Length < 1
+                    ? 0
+                    : Content[0] +
+                        (Content[Content.Length / 3] << 8) +
+                        (Content[Content.Length * 2 / 3] << 16) +
+                        (Content[Content.Length - 1] << 24) +
+                        Content.Length;
+                result = (result * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
+                result = (result * 397) ^ (FileName != null ? FileName.GetHashCode() : 0);
+                return result;
+            }
+        }
 
-		public override bool Equals(object other)
-		{
-			return other is FileData && Equals((FileData)other);
-		}
+        public bool Equals(FileData other)
+        {
+            return Equals(other.ContentType, ContentType) &&
+                Equals(other.FileName, FileName) &&
+                ContentEqual(other);
+        }
 
-		public override int GetHashCode()
-		{
-			unchecked
-			{
-				int result = Content == null || Content.Length < 1 
-					? 0
-					: Content[0] + 
-					  (Content[Content.Length / 3] << 8) + 
-					  (Content[Content.Length * 2 / 3] << 16) + 
-					  (Content[Content.Length - 1] << 24) +
-					  Content.Length;
-				result = (result * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
-				result = (result * 397) ^ (FileName != null ? FileName.GetHashCode() : 0);
-				return result;
-			}
-		}
+        bool ContentEqual(FileData other)
+        {
+            return Content == other.Content ||
+                (Content != null && other.Content != null && Content.SequenceEqual(other.Content));
+        }
 
-		public bool Equals(FileData other)
-		{
-			return Equals(other.ContentType, ContentType) &&
-				Equals(other.FileName, FileName) &&
-				ContentEqual(other);
-		}
+        public static bool operator ==(FileData left, FileData right) { return left.Equals(right); }
+        public static bool operator !=(FileData left, FileData right) { return !left.Equals(right); }
+        #endregion
 
-		bool ContentEqual(FileData other)
-		{
-			return Content == other.Content ||
-				(Content != null && other.Content != null && Content.SequenceEqual(other.Content));
-		}
+        #region Serialization
+        public static FileData Serialize<T>(T obj, string fileName = null)
+        {
+            using (var stream = new MemoryStream()) {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(stream, obj);
+                return new FileData {
+                    Content = stream.ToArray(),
+                    ContentType = MediaTypeNames.Application.Octet,
+                    FileName = fileName ?? GetFileName<T>(),
+                };
+            }
+        }
 
-		public static bool operator ==(FileData left, FileData right)
-		{
-			return left.Equals(right);
-		}
+        public static T Deserialize<T>(FileData file)
+        {
+            if (file.ContainsFile) {
+                using (var stream = new MemoryStream(file.Content)) {
+                    var formatter = new BinaryFormatter();
+                    return (T)formatter.Deserialize(stream);
+                }
+            } else {
+                return default(T);
+            }
+        }
 
-		public static bool operator !=(FileData left, FileData right)
-		{
-			return !left.Equals(right);
-		}
-
-		#endregion
-
-		#region Serialization
-
-		public static FileData Serialize<T>(T obj, string fileName = null)
-		{
-			using (var stream = new MemoryStream())
-			{
-				var formatter = new BinaryFormatter();
-				formatter.Serialize(stream, obj);
-				return new FileData
-				{
-					Content = stream.ToArray(),
-					ContentType = MediaTypeNames.Application.Octet,
-					FileName = fileName ?? GetFileName<T>(),
-				};
-			}
-		}
-
-		public static T Deserialize<T>(FileData file)
-		{
-			if (file.ContainsFile)
-			{
-				using (var stream = new MemoryStream(file.Content))
-				{
-					var formatter = new BinaryFormatter();
-					return (T)formatter.Deserialize(stream);
-				}
-			}
-			else
-			{
-				return default(T);
-			}
-		}
-
-		private static string GetFileName<T>()
-		{
-			Type type = typeof(T);
-			string result = type.Name;
-			result = type.IsGenericType ? result.Substring(0, result.IndexOf("`", StringComparison.InvariantCulture)) : result;
-			result += ".bin";
-			return result;
-		}
-
-		#endregion
-	}
+        static string GetFileName<T>()
+        {
+            Type type = typeof(T);
+            string result = type.Name;
+            result = type.IsGenericType ? result.Substring(0, result.IndexOf("`", StringComparison.InvariantCulture)) : result;
+            result += ".bin";
+            return result;
+        }
+        #endregion
+    }
 }

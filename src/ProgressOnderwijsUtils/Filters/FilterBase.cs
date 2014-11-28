@@ -5,23 +5,27 @@ using System.Linq.Expressions;
 
 namespace ProgressOnderwijsUtils
 {
-	[Serializable]
-	public abstract class FilterBase : IEquatable<FilterBase>
-	{
-		protected internal abstract QueryBuilder ToQueryBuilderImpl();
-		protected internal abstract FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith);
-		protected internal abstract FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c);
-		protected internal abstract bool IsFilterValid(Func<string, Type> colTypeLookup);
-		protected internal abstract Expression ToMetaObjectFilterExpr<T>(Expression objParamExpr, Expression DateTimeNowToken, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier);//where T : IMetaObject;
-		public override string ToString() { return ToQueryBuilderImpl().DebugText(null); }
-		public abstract string SerializeToString();
-		public abstract bool Equals(FilterBase other);
+    [Serializable]
+    public abstract class FilterBase : IEquatable<FilterBase>
+    {
+        protected internal abstract QueryBuilder ToQueryBuilderImpl();
+        protected internal abstract FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith);
+        protected internal abstract FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c);
+        protected internal abstract bool IsFilterValid(Func<string, Type> colTypeLookup);
 
-		public ITranslatable ToText()
-		{
-			var q = ToQueryBuilderImpl();
+        protected internal abstract Expression ToMetaObjectFilterExpr<T>(
+            Expression objParamExpr,
+            Expression DateTimeNowToken,
+            Func<int, Func<int, bool>> getStaticGroupContainmentVerifier); //where T : IMetaObject;
+        public override string ToString() { return ToQueryBuilderImpl().DebugText(null); }
+        public abstract string SerializeToString();
+        public abstract bool Equals(FilterBase other);
 
-			return Translatable.CreateTranslatable(taal => q.DebugText(taal));
-		}
-	}
+        public ITranslatable ToText()
+        {
+            var q = ToQueryBuilderImpl();
+
+            return Translatable.CreateTranslatable(taal => q.DebugText(taal));
+        }
+    }
 }

@@ -9,30 +9,30 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[Continuous]
-	public class TableValuedParameterTest
-	{
-		[Test]
-		public void DatabaseCanProcessTableValuedParameters()
-		{
-			DevelopmentDbSelector.PreferredDevDb.ReadWriteNoTransaction(conn =>
-			{
-				QueryBuilder q = @"select sum(val) from " + QueryBuilder.TableParam(Enumerable.Range(1, 100));
-				int sum = q.ReadScalar<int>(conn);
-				Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
-			});
-		}
+    [Continuous]
+    public class TableValuedParameterTest
+    {
+        [Test]
+        public void DatabaseCanProcessTableValuedParameters()
+        {
+            DevelopmentDbSelector.PreferredDevDb.ReadWriteNoTransaction(
+                conn => {
+                    QueryBuilder q = @"select sum(val) from " + QueryBuilder.TableParam(Enumerable.Range(1, 100));
+                    int sum = q.ReadScalar<int>(conn);
+                    Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
+                });
+        }
 
-		[Test]
-		public void QueryBuildersCanIncludeTvps()
-		{
-			QueryBuilder q = QueryBuilder.Create(@"select sum(val) from {0}", Enumerable.Range(1, 100));
+        [Test]
+        public void QueryBuildersCanIncludeTvps()
+        {
+            QueryBuilder q = QueryBuilder.Create(@"select sum(val) from {0}", Enumerable.Range(1, 100));
 
-			DevelopmentDbSelector.PreferredDevDb.ReadWriteNoTransaction(conn =>
-			{
-				int sum = q.ReadScalar<int>(conn);
-				Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
-			});
-		}
-	}
+            DevelopmentDbSelector.PreferredDevDb.ReadWriteNoTransaction(
+                conn => {
+                    int sum = q.ReadScalar<int>(conn);
+                    Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
+                });
+        }
+    }
 }
