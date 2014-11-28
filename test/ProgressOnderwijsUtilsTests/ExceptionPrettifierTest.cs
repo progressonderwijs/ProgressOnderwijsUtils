@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
-//using ApprovalTests;//using ApprovalTests.Reporters;
-using ExpressionToCodeLib;
+using ApprovalTests;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.ErrorHandling;
 using ProgressOnderwijsUtils.Test;
@@ -15,9 +14,11 @@ namespace ProgressOnderwijsUtilsTests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static void CausesError() { throw new Exception("This is an exception"); }
 
-        [MethodImpl(MethodImplOptions.NoInlining)] // ReSharper disable once MemberCanBeMadeStatic.Global
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        // ReSharper disable UnusedParameter.Global
         public void IndirectErrorViaInterface<T>(T param, string arg2 = "bla") { ((IExampleTestInterface)new NestedClass()).SomeMethod(); }
 
+        // ReSharper restore UnusedParameter.Global
         interface IExampleTestInterface
         {
             void SomeMethod();
@@ -29,7 +30,6 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 
-    //[UseReporter(typeof(DiffReporter))]
     public class ExceptionPrettifierTest
     {
         [Test, MethodImpl(MethodImplOptions.NoInlining), Continuous]
@@ -38,10 +38,7 @@ namespace ProgressOnderwijsUtilsTests
             try {
                 ExampleTestClass.CausesError();
             } catch (Exception e) {
-                PAssert.That(
-                    () =>
-                        ExceptionPrettifier.PrettyPrintException(e) ==
-                            "This is an exception\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.CausesError() in test\\Tools\\ExceptionPrettifierTest.cs:line 18\n   at ProgressOnderwijsUtilsTests.ExceptionPrettifierTest.TrivialStackTraceWorks() in test\\Tools\\ExceptionPrettifierTest.cs:line 49\n");
+                Approvals.Verify(ExceptionPrettifier.PrettyPrintException(e));
             }
         }
 
@@ -51,10 +48,7 @@ namespace ProgressOnderwijsUtilsTests
             try {
                 new ExampleTestClass().IndirectErrorViaInterface(42);
             } catch (Exception e) {
-                PAssert.That(
-                    () =>
-                        ExceptionPrettifier.PrettyPrintException(e) ==
-                            "The method or operation is not implemented.\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.NestedClass.SomeMethod() in test\\Tools\\ExceptionPrettifierTest.cs:line 36\n   at ProgressOnderwijsUtilsTests.ExampleTestClass.IndirectErrorViaInterface<T>(T param, string arg2) in test\\Tools\\ExceptionPrettifierTest.cs:line 24\n   at ProgressOnderwijsUtilsTests.ExceptionPrettifierTest.ExplicitInterfaceImplementationInNestedClass() in test\\Tools\\ExceptionPrettifierTest.cs:line 64\n");
+                Approvals.Verify(ExceptionPrettifier.PrettyPrintException(e));
             }
         }
     }
