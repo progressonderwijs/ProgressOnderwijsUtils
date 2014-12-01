@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Linq;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
 	[Flags]
 	public enum ColumnCss
 	{
-		[ExcludeFromTest]
 		None = 0,
 
 		Fout = 1 << 0,

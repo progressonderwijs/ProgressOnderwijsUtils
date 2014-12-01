@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtilsTests
 				where DatumControle > DatumUitvoerProductie")
 			.ReadPlain<string>(conn);
 
-			Assert.That(names, Is.Empty, "Eenmalige scripts die op productie zijn uitgevoerd waarvan de scripts nog steeds draaien.");
+			Assert.That(names, Is.Empty, "Er zijn eenmalige scripts die op productie zijn uitgevoerd waarvan de scripts nog steeds draaien.");
 		}
 	}
 }

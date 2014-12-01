@@ -14,13 +14,15 @@ namespace ProgressOnderwijsUtils
 		[Test]
 		public void DebounceEventuallyCalls()
 		{
-			bool called = false;
+			var taskCS = new TaskCompletionSource<int>();
+			var task = taskCS.Task;
 			var handler = HandlerUtils.Debounce(TimeSpan.FromMilliseconds(10), () =>
-				called = true);
+				taskCS.SetResult(0));
+
 			handler();
-			Assert.That(called, Is.False);
-			Thread.Sleep(20);
-			Assert.That(called, Is.True);
+			Assert.AreNotEqual(TaskStatus.RanToCompletion, task.Status);
+			task.Wait(1000);
+			Assert.AreEqual(TaskStatus.RanToCompletion, task.Status);
 		}
 
 		[Test]
@@ -42,7 +44,6 @@ namespace ProgressOnderwijsUtils
 		{
 			int inCriticalSection = 0;
 			var counts = new BlockingCollection<int>();
-			var task = new TaskCompletionSource<int>();
 			var handler = HandlerUtils.Debounce(TimeSpan.FromMilliseconds(35), () =>
 			{
 				var count = Interlocked.Increment(ref inCriticalSection);
@@ -50,11 +51,20 @@ namespace ProgressOnderwijsUtils
 				Thread.Sleep(100);
 				Interlocked.Decrement(ref inCriticalSection);
 			});
-			handler();
-			var sw = Stopwatch.StartNew();
-			task.Task.Wait(500);
+			for (int n = 0; n < 5; n++)
+			{
+				int runs = counts.Count;
+				handler();
+				handler();
 
+
+				var sw = Stopwatch.StartNew();
+				while (counts.Count == runs && sw.Elapsed.TotalMilliseconds<300.0)
+					Thread.Sleep(5);
+			}
+			
 			PAssert.That(() => counts.All(i=>i==1));
+			PAssert.That(() => counts.Count == 5);
 		}
 
 		[Test]
