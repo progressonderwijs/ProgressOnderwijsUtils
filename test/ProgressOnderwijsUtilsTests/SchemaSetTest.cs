@@ -7,36 +7,38 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	[Continuous]
-	public class SchemaSetTest
-	{
-		static readonly XElement VALID = new XElement(SchemaSet.SAMLP_NS + "AuthnRequest",
-			new XAttribute(XNamespace.Xmlns + "saml", SchemaSet.SAML_NS.NamespaceName),
-			new XAttribute(XNamespace.Xmlns + "sampl", SchemaSet.SAMLP_NS.NamespaceName),
-			new XAttribute("ID", "_" + Guid.NewGuid()),
-			new XAttribute("Version", "2.0"),
-			new XAttribute("IssueInstant", DateTime.UtcNow),
-			new XAttribute("Destination", "Naar"),
-			new XAttribute("ForceAuthn", "false"),
-			new XAttribute("IsPassive", "false"),
-			new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
-			new XElement(SchemaSet.SAML_NS + "Issuer", "Iemand")
-		);
+    [Continuous]
+    public class SchemaSetTest
+    {
+        static readonly XElement VALID = new XElement(
+            SchemaSet.SAMLP_NS + "AuthnRequest",
+            new XAttribute(XNamespace.Xmlns + "saml", SchemaSet.SAML_NS.NamespaceName),
+            new XAttribute(XNamespace.Xmlns + "sampl", SchemaSet.SAMLP_NS.NamespaceName),
+            new XAttribute("ID", "_" + Guid.NewGuid()),
+            new XAttribute("Version", "2.0"),
+            new XAttribute("IssueInstant", DateTime.UtcNow),
+            new XAttribute("Destination", "Naar"),
+            new XAttribute("ForceAuthn", "false"),
+            new XAttribute("IsPassive", "false"),
+            new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
+            new XElement(SchemaSet.SAML_NS + "Issuer", "Iemand")
+            );
 
-		static readonly XElement INVALID = new XElement(SchemaSet.SAMLP_NS + "AuthnRequest",
-			new XAttribute(XNamespace.Xmlns + "saml", SchemaSet.SAML_NS.NamespaceName),
-			new XAttribute(XNamespace.Xmlns + "sampl", SchemaSet.SAMLP_NS.NamespaceName),
-			new XAttribute("ID", "_" + Guid.NewGuid()),
-			new XAttribute("Version", "2.0"),
-			new XAttribute("IssueInstant", DateTime.UtcNow),
-			new XAttribute("Destination", "Naar"),
-			new XAttribute("ForceAuthn", "false"),
-			new XAttribute("IsPassive", "false"),
-			new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
-			new XElement(SchemaSet.SAML_NS + "Issuers", "Iemand")
-		);
+        static readonly XElement INVALID = new XElement(
+            SchemaSet.SAMLP_NS + "AuthnRequest",
+            new XAttribute(XNamespace.Xmlns + "saml", SchemaSet.SAML_NS.NamespaceName),
+            new XAttribute(XNamespace.Xmlns + "sampl", SchemaSet.SAMLP_NS.NamespaceName),
+            new XAttribute("ID", "_" + Guid.NewGuid()),
+            new XAttribute("Version", "2.0"),
+            new XAttribute("IssueInstant", DateTime.UtcNow),
+            new XAttribute("Destination", "Naar"),
+            new XAttribute("ForceAuthn", "false"),
+            new XAttribute("IsPassive", "false"),
+            new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
+            new XElement(SchemaSet.SAML_NS + "Issuers", "Iemand")
+            );
 
-		const string VALID_NESTED = @"
+        const string VALID_NESTED = @"
 <EntitiesDescriptor xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"" Name=""http://www.uocgmarket.nl"" ID=""_12bae828-bc3d-4cd7-a935-2b640b9fb927"" validUntil=""2012-12-14T19:35:13.665039Z"" xmlns=""urn:oasis:names:tc:SAML:2.0:metadata"">
 	<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
 		<SignedInfo>
@@ -72,8 +74,7 @@ namespace ProgressOnderwijsUtilsTests
 	</EntityDescriptor>
 </EntitiesDescriptor>
 ";
-
-		const string INVALID_NESTED = @"
+        const string INVALID_NESTED = @"
 <EntitiesDescriptor xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"" Name=""http://www.uocgmarket.nl"" ID=""_12bae828-bc3d-4cd7-a935-2b640b9fb927"" validUntil=""2012-12-14T19:35:13.665039Z"" xmlns=""urn:oasis:names:tc:SAML:2.0:metadata"">
 	<Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">
 		<SignedInfo>
@@ -110,18 +111,18 @@ namespace ProgressOnderwijsUtilsTests
 </EntitiesDescriptor>
 ";
 
-		[Test]
-		public void ValidateXDocument()
-		{
-			Assert.That(() => new XDocument(VALID).Validate(null), Throws.Nothing);
-			Assert.That(() => new XDocument(INVALID).Validate(null), Throws.InstanceOf<XmlSchemaValidationException>());
-		}
+        [Test]
+        public void ValidateXDocument()
+        {
+            Assert.That(() => new XDocument(VALID).Validate(null), Throws.Nothing);
+            Assert.That(() => new XDocument(INVALID).Validate(null), Throws.InstanceOf<XmlSchemaValidationException>());
+        }
 
-		[Test]
-		public void ValidateNested()
-		{
-			Assert.That(() => XDocument.Parse(VALID_NESTED).Validate(null), Throws.Nothing);
-			Assert.That(() => XDocument.Parse(INVALID_NESTED).Validate(null), Throws.InstanceOf<XmlSchemaValidationException>());
-		}
-	}
+        [Test]
+        public void ValidateNested()
+        {
+            Assert.That(() => XDocument.Parse(VALID_NESTED).Validate(null), Throws.Nothing);
+            Assert.That(() => XDocument.Parse(INVALID_NESTED).Validate(null), Throws.InstanceOf<XmlSchemaValidationException>());
+        }
+    }
 }

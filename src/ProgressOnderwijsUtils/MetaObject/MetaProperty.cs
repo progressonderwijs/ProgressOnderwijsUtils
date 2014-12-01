@@ -10,299 +10,281 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
-	public interface IMetaProperty : IColumnDefinition
-	{
-		ColumnCss LijstCssClass { get; }
-		Func<object, object> UntypedGetter { get; }
-		Action<object, object> UntypedSetter { get; }
-		int Index { get; }
-		bool Required { get; }
-		bool AllowNullInEditor { get; }
-		int? MaxLength { get; }
-		int? DisplayLength { get; }
-		string Regex { get; }
-		DatumFormaat? DatumTijd { get; }
-		ITranslatable Label { get; }
-		string KoppelTabelNaam { get; }
-		bool IsReadonly { get; }
-		bool IsKey { get; }
-		bool Hide { get; }
-		bool ShowDefaultOnNew { get; }
-		bool CanRead { get; }
-		bool CanWrite { get; }
-		PropertyInfo PropertyInfo { get; }
-		Expression GetterExpression(Expression paramExpr);
-		HtmlEditMode HtmlMode { get; }
-	}
+    public interface IMetaProperty : IColumnDefinition
+    {
+        ColumnCss LijstCssClass { get; }
+        Func<object, object> UntypedGetter { get; }
+        Action<object, object> UntypedSetter { get; }
+        int Index { get; }
+        bool Required { get; }
+        bool AllowNullInEditor { get; }
+        int? MaxLength { get; }
+        int? DisplayLength { get; }
+        string Regex { get; }
+        DatumFormaat? DatumTijd { get; }
+        ITranslatable Label { get; }
+        string KoppelTabelNaam { get; }
+        bool IsReadonly { get; }
+        bool IsKey { get; }
+        bool Hide { get; }
+        bool ShowDefaultOnNew { get; }
+        bool CanRead { get; }
+        bool CanWrite { get; }
+        PropertyInfo PropertyInfo { get; }
+        Expression GetterExpression(Expression paramExpr);
+        HtmlEditMode HtmlMode { get; }
+    }
 
+    public interface IMetaProperty<in TOwner> : IMetaProperty
+    {
+        Func<TOwner, object> Getter { get; }
+        Action<TOwner, object> Setter { get; }
+    }
 
-	public interface IMetaProperty<in TOwner> : IMetaProperty
-	{
-		Func<TOwner, object> Getter { get; }
-		Action<TOwner, object> Setter { get; }
-	}
+    public static class MetaProperty
+    {
+        public sealed class Impl<TOwner> : IMetaProperty<TOwner>
+        {
+            readonly string name;
+            public string Name { get { return name; } }
+            readonly ColumnCss lijstCssClass;
+            public ColumnCss LijstCssClass { get { return lijstCssClass; } }
+            readonly HtmlEditMode htmlMode;
+            public HtmlEditMode HtmlMode { get { return htmlMode; } }
+            readonly int index;
+            public int Index { get { return index; } }
+            readonly bool required;
+            public bool Required { get { return required; } }
+            readonly bool hide;
+            public bool Hide { get { return hide; } }
+            readonly bool allowNullInEditor;
+            public bool AllowNullInEditor { get { return allowNullInEditor; } }
+            readonly int? maxLength;
+            public int? MaxLength { get { return maxLength; } }
+            readonly int? displayLength;
+            public int? DisplayLength { get { return displayLength; } }
+            readonly string regex;
+            public string Regex { get { return regex; } }
+            readonly DatumFormaat? datumtijd;
+            public DatumFormaat? DatumTijd { get { return datumtijd; } }
+            readonly ITranslatable label;
+            public ITranslatable Label { get { return label; } }
+            readonly string koppelTabelNaam;
+            public string KoppelTabelNaam { get { return koppelTabelNaam; } }
+            readonly bool isReadonly;
+            public bool IsReadonly { get { return isReadonly; } }
+            readonly bool showDefaultOnNew;
+            public bool ShowDefaultOnNew { get { return showDefaultOnNew; } }
+            public Type DataType { get { return propertyInfo.PropertyType; } }
+            readonly PropertyInfo propertyInfo;
+            public PropertyInfo PropertyInfo { get { return propertyInfo; } }
+            readonly bool isKey;
+            public bool IsKey { get { return isKey; } }
+            public bool CanRead { get { return getterMethod != null; } }
+            public bool CanWrite { get { return setterMethod != null; } }
+            Func<TOwner, object> getter;
+            public Func<TOwner, object> Getter { get { return getter ?? (getter = MkGetter(getterMethod, propertyInfo.PropertyType)); } }
+            Action<TOwner, object> setter;
+            public Action<TOwner, object> Setter { get { return setter ?? (setter = MkSetter(setterMethod, propertyInfo.PropertyType)); } }
+            Func<object, object> untypedGetter;
 
-	public static class MetaProperty
-	{
+            public Func<object, object> UntypedGetter
+            {
+                get
+                {
+                    if (untypedGetter == null) {
+                        var localGetter = Getter;
+                        untypedGetter = localGetter == null ? default(Func<object, object>) : o => localGetter((TOwner)o);
+                    }
+                    return untypedGetter;
+                }
+            }
 
-		public sealed class Impl<TOwner> : IMetaProperty<TOwner>
-		{
-			readonly string name;
-			public string Name { get { return name; } }
-			readonly ColumnCss lijstCssClass;
-			public ColumnCss LijstCssClass { get { return lijstCssClass; } }
-			readonly HtmlEditMode htmlMode;
-			public HtmlEditMode HtmlMode { get { return htmlMode; } }
-			readonly int index;
-			public int Index { get { return index; } }
-			readonly bool required;
-			public bool Required { get { return required; } }
-			readonly bool hide;
-			public bool Hide { get { return hide; } }
-			readonly bool allowNullInEditor;
-			public bool AllowNullInEditor { get { return allowNullInEditor; } }
-			readonly int? maxLength;
-			public int? MaxLength { get { return maxLength; } }
-			readonly int? displayLength;
-			public int? DisplayLength { get { return displayLength; } }
-			readonly string regex;
-			public string Regex { get { return regex; } }
-			readonly DatumFormaat? datumtijd;
-			public DatumFormaat? DatumTijd { get { return datumtijd; } }
-			readonly ITranslatable label;
-			public ITranslatable Label { get { return label; } }
+            Action<object, object> untypedSetter;
 
-			readonly string koppelTabelNaam;
-			public string KoppelTabelNaam { get { return koppelTabelNaam; } }
-			readonly bool isReadonly;
-			public bool IsReadonly { get { return isReadonly; } }
-			readonly bool showDefaultOnNew;
-			public bool ShowDefaultOnNew { get { return showDefaultOnNew; } }
-			public Type DataType { get { return propertyInfo.PropertyType; } }
-			readonly PropertyInfo propertyInfo;
-			public PropertyInfo PropertyInfo { get { return propertyInfo; } }
-			readonly bool isKey;
-			public bool IsKey { get { return isKey; } }
+            public Action<object, object> UntypedSetter
+            {
+                get
+                {
+                    if (untypedSetter == null) {
+                        var localSetter = Setter;
+                        untypedSetter = localSetter == null ? default(Action<object, object>) : (o, v) => localSetter((TOwner)o, v);
+                    }
+                    return untypedSetter;
+                }
+            }
 
-			public bool CanRead { get { return getterMethod != null; } }
-			public bool CanWrite { get { return setterMethod != null; } }
+            public Expression GetterExpression(Expression paramExpr) { return Expression.Property(paramExpr, propertyInfo); }
 
-			Func<TOwner, object> getter;
-			public Func<TOwner, object> Getter
-			{
-				get
-				{
-					return getter ?? (getter = MkGetter(getterMethod, propertyInfo.PropertyType));
-				}
-			}
+            public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
+            {
+                propertyInfo = pi;
+                name = pi.Name;
+                index = implicitOrder;
+                getterMethod = pi.GetGetMethod();
+                setterMethod = pi.GetSetMethod();
 
-			Action<TOwner, object> setter;
-			public Action<TOwner, object> Setter
-			{
-				get
-				{
-					return setter ?? (setter = MkSetter(setterMethod, propertyInfo.PropertyType));
-				}
-			}
+                var mpKoppelTabelAttribute = attrs.AttrH<MpKoppelTabelAttribute>();
+                koppelTabelNaam = mpKoppelTabelAttribute == null ? null : (mpKoppelTabelAttribute.KoppelTabelNaam ?? propertyInfo.Name);
+                var mpColumnCssAttribute = attrs.AttrH<MpColumnCssAttribute>();
+                lijstCssClass = mpColumnCssAttribute == null ? default(ColumnCss) : mpColumnCssAttribute.CssClass;
+                var mpHtmlEditModeAttribute = attrs.AttrH<MpHtmlEditModeAttribute>();
+                htmlMode = mpHtmlEditModeAttribute == null ? default(HtmlEditMode) : mpHtmlEditModeAttribute.HtmlMode;
+                required = attrs.AttrH<MpVerplichtAttribute>() != null;
+                hide = attrs.AttrH<HideAttribute>() != null;
+                allowNullInEditor = attrs.AttrH<MpAllowNullInEditorAttribute>() != null;
+                isKey = attrs.AttrH<KeyAttribute>() != null;
+                var mpShowDefaultOnNewAttribute = attrs.AttrH<MpShowDefaultOnNewAttribute>();
+                showDefaultOnNew = mpShowDefaultOnNewAttribute != null;
+                isReadonly = !pi.CanWrite || (attrs.AttrH<MpReadonlyAttribute>() != null);
+                var mpLengteAttribute = attrs.AttrH<MpMaxLengthAttribute>();
+                maxLength = mpLengteAttribute == null ? default(int?) : mpLengteAttribute.MaxLength;
+                var mpDisplayLengthAttribute = attrs.AttrH<MpDisplayLengthAttribute>();
+                displayLength = mpDisplayLengthAttribute == null ? maxLength : mpDisplayLengthAttribute.DisplayLength;
+                var mpRegexAttribute = attrs.AttrH<MpRegexAttribute>();
+                regex = mpRegexAttribute == null ? null : mpRegexAttribute.Regex;
+                var mpDatumFormaatAttribute = attrs.AttrH<MpDatumFormaatAttribute>();
+                datumtijd = mpDatumFormaatAttribute == null ? default(DatumFormaat?) : mpDatumFormaatAttribute.Formaat;
 
-			Func<object, object> untypedGetter;
-			public Func<object, object> UntypedGetter
-			{
-				get
-				{
-					if (untypedGetter == null)
-					{
-						var localGetter = Getter;
-						untypedGetter = localGetter == null ? default(Func<object, object>) : o => localGetter((TOwner)o);
-					}
-					return untypedGetter;
-				}
-			}
+                var labelNoTt = LabelNoTt(attrs);
+                var mpTooltipAttribute = attrs.AttrH<MpTooltipAttribute>();
+                label = mpTooltipAttribute == null ? labelNoTt : labelNoTt.WithTooltip(mpTooltipAttribute.NL, mpTooltipAttribute.EN, mpTooltipAttribute.DE);
 
-			Action<object, object> untypedSetter;
-			public Action<object, object> UntypedSetter
-			{
-				get
-				{
-					if (untypedSetter == null)
-					{
-						var localSetter = Setter;
-						untypedSetter = localSetter == null ? default(Action<object, object>) : (o, v) => localSetter((TOwner)o, v);
-					}
-					return untypedSetter;
-				}
-			}
+                if (KoppelTabelNaam != null && DataType.GetNonNullableUnderlyingType() != typeof(int)) {
+                    throw new ProgressNetException(
+                        typeof(TOwner) + " heeft Kolom " + Name + " heeft koppeltabel " +
+                            KoppelTabelNaam + " maar is van type " + DataType + "!");
+                }
+            }
 
-			public Expression GetterExpression(Expression paramExpr)
-			{
-				return Expression.Property(paramExpr, propertyInfo);
-			}
+            public override string ToString() { return ObjectToCode.GetCSharpFriendlyTypeName(typeof(TOwner)) + "." + name; }
 
-			public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
-			{
-				propertyInfo = pi;
-				name = pi.Name;
-				index = implicitOrder;
-				getterMethod = pi.GetGetMethod();
-				setterMethod = pi.GetSetMethod();
+            LiteralTranslatable LabelNoTt(object[] attrs)
+            {
+                var mpLabelAttribute = attrs.AttrH<MpLabelAttribute>();
+                var labelNoTt = mpLabelAttribute == null ? null : mpLabelAttribute.ToTranslatable();
+                var mpLabelUntranslatedAttribute = attrs.AttrH<MpLabelUntranslatedAttribute>();
+                var untranslatedLabelNoTt = mpLabelUntranslatedAttribute == null ? null : mpLabelUntranslatedAttribute.ToTranslatable();
+                if (untranslatedLabelNoTt != null) {
+                    if (labelNoTt != null) {
+                        throw new Exception(
+                            "Cannot define both an untranslated and a translated label on the same property " +
+                                ObjectToCode.GetCSharpFriendlyTypeName(propertyInfo.DeclaringType) + "." + Name);
+                    } else {
+                        labelNoTt = untranslatedLabelNoTt;
+                    }
+                }
 
-				var mpKoppelTabelAttribute = attrs.AttrH<MpKoppelTabelAttribute>();
-				koppelTabelNaam = mpKoppelTabelAttribute == null ? null : (mpKoppelTabelAttribute.KoppelTabelNaam ?? propertyInfo.Name);
-				var mpColumnCssAttribute = attrs.AttrH<MpColumnCssAttribute>();
-				lijstCssClass = mpColumnCssAttribute == null ? default(ColumnCss) : mpColumnCssAttribute.CssClass;
-				var mpHtmlEditModeAttribute = attrs.AttrH<MpHtmlEditModeAttribute>();
-				htmlMode = mpHtmlEditModeAttribute == null ? default(HtmlEditMode) : mpHtmlEditModeAttribute.HtmlMode;
-				required = attrs.AttrH<MpVerplichtAttribute>() != null;
-				hide = attrs.AttrH<HideAttribute>() != null;
-				allowNullInEditor = attrs.AttrH<MpAllowNullInEditorAttribute>() != null;
-				isKey = attrs.AttrH<KeyAttribute>() != null;
-				var mpShowDefaultOnNewAttribute = attrs.AttrH<MpShowDefaultOnNewAttribute>();
-				showDefaultOnNew = mpShowDefaultOnNewAttribute != null;
-				isReadonly = !pi.CanWrite || (attrs.AttrH<MpReadonlyAttribute>() != null);
-				var mpLengteAttribute = attrs.AttrH<MpMaxLengthAttribute>();
-				maxLength = mpLengteAttribute == null ? default(int?) : mpLengteAttribute.MaxLength;
-				var mpDisplayLengthAttribute = attrs.AttrH<MpDisplayLengthAttribute>();
-				displayLength = mpDisplayLengthAttribute == null ? maxLength : mpDisplayLengthAttribute.DisplayLength;
-				var mpRegexAttribute = attrs.AttrH<MpRegexAttribute>();
-				regex = mpRegexAttribute == null ? null : mpRegexAttribute.Regex;
-				var mpDatumFormaatAttribute = attrs.AttrH<MpDatumFormaatAttribute>();
-				datumtijd = mpDatumFormaatAttribute == null ? default(DatumFormaat?) : mpDatumFormaatAttribute.Formaat;
+                if (labelNoTt == null) {
+                    var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(propertyInfo.Name);
+                    labelNoTt = Translatable.Literal(prettyName, prettyName, prettyName);
+                }
+                return labelNoTt;
+            }
 
-				var labelNoTt = LabelNoTt(attrs);
-				var mpTooltipAttribute = attrs.AttrH<MpTooltipAttribute>();
-				label = mpTooltipAttribute == null ? labelNoTt : labelNoTt.WithTooltip(mpTooltipAttribute.NL, mpTooltipAttribute.EN, mpTooltipAttribute.DE);
+            static Action<TOwner, object> MkSetter(MethodInfo setterMethod, Type propertyType)
+            {
+                if (setterMethod == null) {
+                    return null;
+                }
+                if (typeof(TOwner).IsValueType) {
+                    return GetCaster(propertyType).StructSetterChecked<TOwner>(setterMethod);
+                } else {
+                    return GetCaster(propertyType).SetterChecked<TOwner>(setterMethod);
+                }
 
-				if (KoppelTabelNaam != null && DataType.GetNonNullableUnderlyingType() != typeof(int))
-					throw new ProgressNetException(typeof(TOwner) + " heeft Kolom " + Name + " heeft koppeltabel " +
-						KoppelTabelNaam + " maar is van type " + DataType + "!");
-			}
+                //faster code, slower startup:				
+                //var valParamExpr = Expression.Parameter(typeof(object), "newValue");
+                //var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
+                //var typedPropExpr = Expression.Property(typedParamExpr, pi);
 
+                //return Expression.Lambda<Action<TOwner, object>>(
+                //		Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)),
+                //		typedParamExpr, valParamExpr
+                //		).Compile();
+            }
 
-			public override string ToString()
-			{
-				return ObjectToCode.GetCSharpFriendlyTypeName(typeof(TOwner)) + "." + name;
-			}
+            static Func<TOwner, object> MkGetter(MethodInfo getterMethod, Type propertyType)
+            {
+                //TODO:optimize: this is still a hotspot :-(
+                if (getterMethod == null) {
+                    return null;
+                } else if (propertyType.IsValueType) {
+                    if (typeof(TOwner).IsValueType) {
+                        return GetCaster(propertyType).StructGetterBoxed<TOwner>(getterMethod);
+                    } else {
+                        return GetCaster(propertyType).GetterBoxed<TOwner>(getterMethod);
+                    }
+                } else {
+                    if (typeof(TOwner).IsValueType) {
+                        return outCasterObject.StructGetterBoxed<TOwner>(getterMethod);
+                    } else {
+                        return MkDelegate<Func<TOwner, object>>(getterMethod);
+                    }
+                }
+            }
 
+            readonly MethodInfo setterMethod;
+            readonly MethodInfo getterMethod;
+        }
 
-			LiteralTranslatable LabelNoTt(object[] attrs)
-			{
-				var mpLabelAttribute = attrs.AttrH<MpLabelAttribute>();
-				var labelNoTt = mpLabelAttribute == null ? null : mpLabelAttribute.ToTranslatable();
-				var mpLabelUntranslatedAttribute = attrs.AttrH<MpLabelUntranslatedAttribute>();
-				var untranslatedLabelNoTt = mpLabelUntranslatedAttribute == null ? null : mpLabelUntranslatedAttribute.ToTranslatable();
-				if (untranslatedLabelNoTt != null)
-					if (labelNoTt != null)
-						throw new Exception(
-							"Cannot define both an untranslated and a translated label on the same property " +
-								ObjectToCode.GetCSharpFriendlyTypeName(propertyInfo.DeclaringType) + "." + Name);
-					else
-						labelNoTt = untranslatedLabelNoTt;
+        static T MkDelegate<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
 
-				if (labelNoTt == null)
-				{
-					var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(propertyInfo.Name);
-					labelNoTt = Translatable.Literal(prettyName, prettyName, prettyName);
-				}
-				return labelNoTt;
-			}
+        static T AttrH<T>(this object[] attrs) where T : class
+        {
+            foreach (var obj in attrs) {
+                if (obj is T) {
+                    return (T)obj;
+                }
+            }
+            return null;
+        }
 
-			static Action<TOwner, object> MkSetter(MethodInfo setterMethod, Type propertyType)
-			{
-				if (setterMethod == null)
-					return null;
-				if (typeof(TOwner).IsValueType)
-					return GetCaster(propertyType).StructSetterChecked<TOwner>(setterMethod);
-				else
-					return GetCaster(propertyType).SetterChecked<TOwner>(setterMethod);
+        interface IOutCaster
+        {
+            Func<TObj, object> GetterBoxed<TObj>(MethodInfo method);
+            Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method);
+            Action<TObj, object> SetterChecked<TObj>(MethodInfo method);
+            Action<TObj, object> StructSetterChecked<TObj>(MethodInfo method);
+        }
 
-				//faster code, slower startup:				
-				//var valParamExpr = Expression.Parameter(typeof(object), "newValue");
-				//var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
-				//var typedPropExpr = Expression.Property(typedParamExpr, pi);
+        delegate TVal StructGetterDel<TOwner, out TVal>(ref TOwner obj);
 
-				//return Expression.Lambda<Action<TOwner, object>>(
-				//		Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)),
-				//		typedParamExpr, valParamExpr
-				//		).Compile();
-			}
+        delegate void StructSetterDel<TOwner, in TVal>(ref TOwner obj, TVal val);
 
-			static Func<TOwner, object> MkGetter(MethodInfo getterMethod, Type propertyType)
-			{
-				//TODO:optimize: this is still a hotspot :-(
-				if (getterMethod == null)
-					return null;
-				else if (propertyType.IsValueType)
-				{
-					if (typeof(TOwner).IsValueType)
-						return GetCaster(propertyType).StructGetterBoxed<TOwner>(getterMethod);
-					else
-						return GetCaster(propertyType).GetterBoxed<TOwner>(getterMethod);
-				}
-				else
-				{
-					if (typeof(TOwner).IsValueType)
-						return outCasterObject.StructGetterBoxed<TOwner>(getterMethod);
-					else
-						return MkDelegate<Func<TOwner, object>>(getterMethod);
-				}
-			}
+        class OutCaster<TOut> : IOutCaster
+        {
+            public Func<TObj, object> GetterBoxed<TObj>(MethodInfo method)
+            {
+                var f = MkDelegate<Func<TObj, TOut>>(method);
+                return o => f(o);
+            }
 
-			readonly MethodInfo setterMethod;
-			readonly MethodInfo getterMethod;
-		}
+            public Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method)
+            {
+                var f = MkDelegate<StructGetterDel<TObj, TOut>>(method);
+                return o => f(ref o);
+            }
 
-		static T MkDelegate<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
+            public Action<TObj, object> SetterChecked<TObj>(MethodInfo method)
+            {
+                var f = MkDelegate<Action<TObj, TOut>>(method);
+                return (o, v) => f(o, (TOut)v);
+            }
 
-		static T AttrH<T>(this object[] attrs) where T : class
-		{
-			foreach (var obj in attrs)
-				if (obj is T)
-					return (T)obj;
-			return null;
-		}
+            public Action<TObj, object> StructSetterChecked<TObj>(MethodInfo method)
+            {
+                var f = MkDelegate<StructSetterDel<TObj, TOut>>(method);
+                return (o, v) => f(ref o, (TOut)v);
+            }
+        }
 
+        static readonly OutCaster<object> outCasterObject = new OutCaster<object>();
+        static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new ConcurrentDictionary<Type, IOutCaster>();
 
-		interface IOutCaster
-		{
-			Func<TObj, object> GetterBoxed<TObj>(MethodInfo method);
-			Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method);
-			Action<TObj, object> SetterChecked<TObj>(MethodInfo method);
-			Action<TObj, object> StructSetterChecked<TObj>(MethodInfo method);
-		}
-
-		delegate TVal StructGetterDel<TOwner, out TVal>(ref TOwner obj);
-		delegate void StructSetterDel<TOwner, in TVal>(ref TOwner obj, TVal val);
-
-		class OutCaster<TOut> : IOutCaster
-		{
-			public Func<TObj, object> GetterBoxed<TObj>(MethodInfo method)
-			{
-				var f = MkDelegate<Func<TObj, TOut>>(method);
-				return o => f(o);
-			}
-			public Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method)
-			{
-				var f = MkDelegate<StructGetterDel<TObj, TOut>>(method);
-				return o => f(ref o);
-			}
-
-			public Action<TObj, object> SetterChecked<TObj>(MethodInfo method)
-			{
-				var f = MkDelegate<Action<TObj, TOut>>(method);
-				return (o, v) => f(o, (TOut)v);
-			}
-
-			public Action<TObj, object> StructSetterChecked<TObj>(MethodInfo method)
-			{
-				var f = MkDelegate<StructSetterDel<TObj, TOut>>(method);
-				return (o, v) => f(ref o, (TOut)v);
-			}
-		}
-		static readonly OutCaster<object> outCasterObject = new OutCaster<object>();
-		static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new ConcurrentDictionary<Type, IOutCaster>();
-		static IOutCaster GetCaster(Type propType)
-		{
-			return CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
-		}
-	}
+        static IOutCaster GetCaster(Type propType)
+        {
+            return CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
+        }
+    }
 }

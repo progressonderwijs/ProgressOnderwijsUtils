@@ -3,41 +3,35 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-	public static class TreeExtensions
-	{
-		public static RootedTree<T> RootHere<T>(this Tree<T> tree) { return RootedTree<T>.RootTree(tree); }
+    public static class TreeExtensions
+    {
+        public static RootedTree<T> RootHere<T>(this Tree<T> tree) { return RootedTree<T>.RootTree(tree); }
 
-		public static IEnumerable<T> PreorderTraversal<T>(this T tree) where T : IRecursiveStructure<T>
-		{
-			yield return tree;
+        public static IEnumerable<T> PreorderTraversal<T>(this T tree) where T : IRecursiveStructure<T>
+        {
+            yield return tree;
 
-			var todo = new Stack<IEnumerator<T>>(16);
+            var todo = new Stack<IEnumerator<T>>(16);
 
-			try
-			{
-				todo.Push(tree.Children.GetEnumerator());
+            try {
+                todo.Push(tree.Children.GetEnumerator());
 
-				while (todo.Count > 0)
-				{
-					var children = todo.Peek();
-					if (children.MoveNext())
-					{
-						var currentNode = children.Current;
-						yield return currentNode;
-						todo.Push(currentNode.Children.GetEnumerator());
-					}
-					else
-					{
-						children.Dispose();
-						todo.Pop();
-					}
-				}
-			}
-			finally
-			{
-				while (todo.Count > 0)
-					todo.Pop().Dispose();
-			}
-		}
-	}
+                while (todo.Count > 0) {
+                    var children = todo.Peek();
+                    if (children.MoveNext()) {
+                        var currentNode = children.Current;
+                        yield return currentNode;
+                        todo.Push(currentNode.Children.GetEnumerator());
+                    } else {
+                        children.Dispose();
+                        todo.Pop();
+                    }
+                }
+            } finally {
+                while (todo.Count > 0) {
+                    todo.Pop().Dispose();
+                }
+            }
+        }
+    }
 }

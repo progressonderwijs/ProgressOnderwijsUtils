@@ -8,37 +8,41 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
-	sealed class QueryTableValuedParameterComponent<T> : IQueryParameter where T : IMetaObject
-	{
-		readonly IEnumerable<T> objs;
-		readonly string DbTypeName;
-		internal QueryTableValuedParameterComponent(string dbTypeName, IEnumerable<T> list) { objs = list; DbTypeName = dbTypeName; }
+    sealed class QueryTableValuedParameterComponent<T> : IQueryParameter
+        where T : IMetaObject
+    {
+        readonly IEnumerable<T> objs;
+        readonly string DbTypeName;
 
-		public string ToSqlString(CommandFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
+        internal QueryTableValuedParameterComponent(string dbTypeName, IEnumerable<T> list)
+        {
+            objs = list;
+            DbTypeName = dbTypeName;
+        }
 
-		public SqlParameter ToSqlParameter(int paramnum)
-		{
-			return new SqlParameter {
-				IsNullable = false,
-				ParameterName = "@par" + paramnum,
-				Value = MetaObject.CreateDataReader(objs),
-				SqlDbType = SqlDbType.Structured,
-				TypeName = DbTypeName
-			};
-		}
+        public string ToSqlString(CommandFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
 
-		public string ToDebugText(Taal? taalOrNull)
-		{
-			return "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")";
-		}
+        public SqlParameter ToSqlParameter(int paramnum)
+        {
+            return new SqlParameter {
+                IsNullable = false,
+                ParameterName = "@par" + paramnum,
+                Value = MetaObject.CreateDataReader(objs),
+                SqlDbType = SqlDbType.Structured,
+                TypeName = DbTypeName
+            };
+        }
 
+        public string ToDebugText(Taal? taalOrNull) { return "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")"; }
+        public bool Equals(IQueryComponent other) { return Equals((object)other); }
 
-		public bool Equals(IQueryComponent other) { return Equals((object)other); }
-		public override bool Equals(object other)
-		{
-			return ReferenceEquals(this, other) || (other is QueryTableValuedParameterComponent<T>) && Equals(DbTypeName, ((QueryTableValuedParameterComponent<T>)other).DbTypeName)
-				&& (ReferenceEquals(objs, ((QueryTableValuedParameterComponent<T>)other).objs) || objs.SequenceEqual(((QueryTableValuedParameterComponent<T>)other).objs));
-		}
-		public override int GetHashCode() { return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200; }//paramval never null!
-	}
+        public override bool Equals(object other)
+        {
+            return ReferenceEquals(this, other)
+                || (other is QueryTableValuedParameterComponent<T>) && Equals(DbTypeName, ((QueryTableValuedParameterComponent<T>)other).DbTypeName)
+                    && (ReferenceEquals(objs, ((QueryTableValuedParameterComponent<T>)other).objs) || objs.SequenceEqual(((QueryTableValuedParameterComponent<T>)other).objs));
+        }
+
+        public override int GetHashCode() { return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200; } //paramval never null!
+    }
 }
