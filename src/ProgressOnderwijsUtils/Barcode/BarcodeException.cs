@@ -4,12 +4,10 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils.Barcode
 {
-	[Serializable]
-	public class BarcodeException : NietZoErgeException
-	{
-		public BarcodeException(string message)
-			: base(message)
-		{
-		}
-	}
+    [Serializable]
+    public class BarcodeException : NietZoErgeException
+    {
+        public BarcodeException(string message)
+            : base(message) { }
+    }
 }
