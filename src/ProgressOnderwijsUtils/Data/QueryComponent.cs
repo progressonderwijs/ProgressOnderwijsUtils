@@ -8,69 +8,72 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
-	static class QueryComponent
-	{
-		public static IQueryComponent CreateString(string val)
-		{
-			if (val == "")
-				return null;
-			else
-				return new QueryStringComponent(val);
-		}
+    static class QueryComponent
+    {
+        public static IQueryComponent CreateString(string val)
+        {
+            if (val == "") {
+                return null;
+            } else {
+                return new QueryStringComponent(val);
+            }
+        }
 
-		public static IQueryComponent CreateParam(object o)
-		{
-			if (o is QueryBuilder)
-				throw new ArgumentException("Cannot pass a querybuilder as a parameter");
-			if (o is IQueryParameter)
-				return (IQueryComponent)o;
-			else if (o is LiteralSqlInt)
-				return new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant());
-			else if (o is IEnumerable && !(o is string) && !(o is byte[]))
-				return ToTableParameter((IEnumerable)o);
-			else
-				return new QueryScalarParameterComponent(o);
-		}
+        public static IQueryComponent CreateParam(object o)
+        {
+            if (o is QueryBuilder) {
+                throw new ArgumentException("Cannot pass a querybuilder as a parameter");
+            }
+            if (o is IQueryParameter) {
+                return (IQueryComponent)o;
+            } else if (o is LiteralSqlInt) {
+                return new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant());
+            } else if (o is IEnumerable && !(o is string) && !(o is byte[])) {
+                return ToTableParameter((IEnumerable)o);
+            } else {
+                return new QueryScalarParameterComponent(o);
+            }
+        }
 
-		public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
-		{
-			return new QueryTableValuedParameterComponent<T>(tableTypeName, set);
-		}
+        public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
+        {
+            return new QueryTableValuedParameterComponent<T>(tableTypeName, set);
+        }
 
-		static IQueryComponent TryToTableParameter<T>(string tableTypeName, IEnumerable set)
-			where T : IComparable, IComparable<T>, IEquatable<T>
-		{
-			if (set is IEnumerable<T>)
-			{
-				var typedSet = ((IEnumerable<T>)set);
-				var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { val = i });
-				return ToTableParameter(tableTypeName, projectedSet);
-			}
-			else
-				return null;
-		}
+        static IQueryComponent TryToTableParameter<T>(string tableTypeName, IEnumerable set)
+            where T : IComparable, IComparable<T>, IEquatable<T>
+        {
+            if (set is IEnumerable<T>) {
+                var typedSet = ((IEnumerable<T>)set);
+                var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { val = i });
+                return ToTableParameter(tableTypeName, projectedSet);
+            } else {
+                return null;
+            }
+        }
 
-		public static IQueryComponent ToTableParameter(IEnumerable set)
-		{
-			var retval = null
-				?? TryToTableParameter<int>("TVar_Int", set)
-					?? TryToTableParameter<string>("TVar_NVarcharMax", set)
-						?? TryToTableParameter<DateTime>("TVar_DateTime2", set)
-							?? TryToTableParameter<TimeSpan>("TVar_Time", set)
-								?? TryToTableParameter<decimal>("TVar_Decimal", set)
-									?? TryToTableParameter<char>("TVar_NChar1", set)
-										?? TryToTableParameter<bool>("TVar_Bit", set)
-											?? TryToTableParameter<byte>("TVar_Tinyint", set)
-												?? TryToTableParameter<short>("TVar_Smallint", set)
-													?? TryToTableParameter<long>("TVar_Bigint", set)
-														?? TryToTableParameter<double>("TVar_Float", set)
-				;
-			if (retval == null)
-				throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(set.GetType()) + " as a table valued parameter", "set");
-			return retval;
-		}
+        public static IQueryComponent ToTableParameter(IEnumerable set)
+        {
+            var retval = null
+                ?? TryToTableParameter<int>("TVar_Int", set)
+                    ?? TryToTableParameter<string>("TVar_NVarcharMax", set)
+                        ?? TryToTableParameter<DateTime>("TVar_DateTime2", set)
+                            ?? TryToTableParameter<TimeSpan>("TVar_Time", set)
+                                ?? TryToTableParameter<decimal>("TVar_Decimal", set)
+                                    ?? TryToTableParameter<char>("TVar_NChar1", set)
+                                        ?? TryToTableParameter<bool>("TVar_Bit", set)
+                                            ?? TryToTableParameter<byte>("TVar_Tinyint", set)
+                                                ?? TryToTableParameter<short>("TVar_Smallint", set)
+                                                    ?? TryToTableParameter<long>("TVar_Bigint", set)
+                                                        ?? TryToTableParameter<double>("TVar_Float", set)
+                ;
+            if (retval == null) {
+                throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(set.GetType()) + " as a table valued parameter", "set");
+            }
+            return retval;
+        }
 
-		/*
+        /*
 		CREATE TYPE TVar_Int AS TABLE (val int NOT NULL)
 		CREATE TYPE TVar_NVarcharMax AS TABLE (val nvarchar(max) NOT NULL)
 		CREATE TYPE TVar_DateTime2 AS TABLE (val datetime2 NOT NULL)
@@ -97,21 +100,17 @@ namespace ProgressOnderwijsUtils
 		 
 
 		 */
-	}
+    }
 
+    namespace Internal
+    {
+        //public needed for auto-mapping
+        public struct DbTableValuedParameterWrapper<T> : IMetaObject
+        {
+            [Key]
+            public T val { get; set; }
 
-	namespace Internal
-	{
-		//public needed for auto-mapping
-		public struct DbTableValuedParameterWrapper<T> : IMetaObject
-		{
-			[Key]
-			public T val { get; set; }
-
-			public override string ToString()
-			{
-				return val == null ? "NULL" : val.ToString();
-			}
-		}
-	}
+            public override string ToString() { return val == null ? "NULL" : val.ToString(); }
+        }
+    }
 }

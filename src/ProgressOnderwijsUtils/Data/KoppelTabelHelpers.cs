@@ -5,18 +5,14 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-	public static class KoppelTabelHelpers
-	{
-		public static DataTable ToDataTable(this IEnumerable<KoppelTabelEntry> entries)
-		{
-			return MetaObject.ToDataTable(entries, null);
-		}
+    public static class KoppelTabelHelpers
+    {
+        public static DataTable ToDataTable(this IEnumerable<KoppelTabelEntry> entries) { return MetaObject.ToDataTable(entries, null); }
+    }
 
-	}
-	public struct KoppelTabelEntry : IMetaObject
-	{
-		public int Id { get; set; }
-		public string Tekst { get; set; }
-	}
-
+    public struct KoppelTabelEntry : IMetaObject
+    {
+        public int Id { get; set; }
+        public string Tekst { get; set; }
+    }
 }
