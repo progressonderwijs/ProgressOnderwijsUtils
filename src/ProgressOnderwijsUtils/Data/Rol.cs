@@ -427,6 +427,12 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Psycholoognotities wijzigen"), Toekenbaar, Implies(PsycholoogNotitiesAlleenBekijken)]
         PsycholoogNotities = 248,
 
+        [MpLabel("StudiekeuzeAdviseurnotities bekijken")]
+        StudiekeuzeAdviseurNotitiesAlleenBekijken = 249,
+
+        [MpLabel("StudiekeuzeAdviseurnotities wijzigen"), Toekenbaar, Implies(StudiekeuzeAdviseurNotitiesAlleenBekijken)]
+        StudiekeuzeAdviseurNotities = 250,
+
         [MpLabel("BSA status bekijken")]
         BsaStatusBekijken = 182,
 
@@ -601,6 +607,6 @@ namespace ProgressOnderwijsUtils
         RapportenTabblad = 243,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 249,
+        META_EerstVolgendVrijRolId = 251,
     }
 }
