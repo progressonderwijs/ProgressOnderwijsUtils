@@ -415,6 +415,12 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Studievoortgang notities toevoegen wijzigen verwijderen"), Toekenbaar, Implies(StudievoortgangNotitiesAlleenBekijken)]
         StudievoortgangNotities = 181,
 
+        [MpLabel("Studentdecanaatnotities bekijken")]
+        StudentDecanaatNotitiesAlleenBekijken = 245,
+
+        [MpLabel("Studentdecanaatnotities wijzigen"), Toekenbaar, Implies(StudentDecanaatNotitiesAlleenBekijken)]
+        StudentDecanaatNotities = 246,
+
         [MpLabel("BSA status bekijken")]
         BsaStatusBekijken = 182,
 
@@ -589,6 +595,6 @@ namespace ProgressOnderwijsUtils
         RapportenTabblad = 243,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 245
+        META_EerstVolgendVrijRolId = 247,
     }
 }
