@@ -21,7 +21,12 @@ namespace ProgressOnderwijsUtils.Collections
         // ReSharper restore MethodOverloadWithOptionalParameter
         public static Tree<T> Node<T>(T value) { return new Tree<T>(value, null); }
         public static Tree<T> BuildRecusively<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
-        public static Tree<T> BuildRecusively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) { return BuildRecusively(root, id => kidLookup.GetOrDefaultR(id)); }
+
+        public static Tree<T> BuildRecusively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
+        {
+            return BuildRecusively(root, id => kidLookup.GetOrDefaultR(id));
+        }
+
         public static Tree<T> BuildRecusively<T>(T root, ILookup<T, T> kidLookup) { return BuildRecusively(root, id => kidLookup[id]); }
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
 
@@ -34,14 +39,17 @@ namespace ProgressOnderwijsUtils.Collections
             while (todo.Count > 0) {
                 var next = todo.Pop();
                 reconstruct.Push(next);
-                foreach (var kid in next.Children)
-                    todo.Push(kid);
+                var children = next.Children;
+                for (var i = children.Count - 1; i >= 0; i--) {
+                    todo.Push(children[i]);
+                }
             }
             while (reconstruct.Count > 0) {
                 var next = reconstruct.Pop();
                 var mappedChildren = new Tree<TR>[next.Children.Count];
-                for (int i = mappedChildren.Length - 1; i >= 0; i--)
+                for (int i = 0; i < mappedChildren.Length; i++) {
                     mappedChildren[i] = output.Pop();
+                }
                 output.Push(Node(mapper(next.NodeValue), mappedChildren));
             }
             return output.Pop();
@@ -84,12 +92,16 @@ namespace ProgressOnderwijsUtils.Collections
             readonly IEqualityComparer<T> ValueComparer;
             public Comparer(IEqualityComparer<T> valueComparer) { ValueComparer = valueComparer; }
 
-            struct NodePair { public Tree<T> A, B;}
+            struct NodePair
+            {
+                public Tree<T> A, B;
+            }
+
             public bool Equals(Tree<T> a, Tree<T> b)
             {
                 var todo = new Stack<NodePair>(16);
                 todo.Push(new NodePair { A = a, B = b });
-                while(todo.Count >0) {
+                while (todo.Count > 0) {
                     var pair = todo.Pop();
                     var x = pair.A;
                     var y = pair.B;
@@ -97,11 +109,13 @@ namespace ProgressOnderwijsUtils.Collections
                         !ReferenceEquals(x, null) && !ReferenceEquals(y, null)
                             && x.Children.Count == y.Children.Count
                             && ValueComparer.Equals(x.NodeValue, y.NodeValue)
-                            )
-                        for (int i = 0; i < x.Children.Count; i++)
+                        ) {
+                        for (int i = 0; i < x.Children.Count; i++) {
                             todo.Push(new NodePair { A = x.Children[i], B = y.Children[i] });
-                    else
+                        }
+                    } else {
                         return false;
+                    }
                 }
                 return true;
             }
@@ -128,8 +142,9 @@ namespace ProgressOnderwijsUtils.Collections
 
         string ToString(string indent)
         {
-            if (indent.Length > 80)
+            if (indent.Length > 80) {
                 return "<<TOO DEEP>>";
+            }
             return indent + nodeValue.ToString().Replace("\n", "\n" + indent) + " "
                 + (Children.Count == 0
                     ? "."
@@ -137,10 +152,11 @@ namespace ProgressOnderwijsUtils.Collections
                     );
         }
 
-        public int Height() {
+        public int Height()
+        {
             int height = 1;
             var nextSet = Children.ToArray();
-            while (nextSet.Length>0) {
+            while (nextSet.Length > 0) {
                 height++;
                 nextSet = nextSet.SelectMany(o => o.Children).ToArray();
             }
