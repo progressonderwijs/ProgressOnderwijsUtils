@@ -84,22 +84,34 @@ namespace ProgressOnderwijsUtils.Collections
             readonly IEqualityComparer<T> ValueComparer;
             public Comparer(IEqualityComparer<T> valueComparer) { ValueComparer = valueComparer; }
 
-            public bool Equals(Tree<T> x, Tree<T> y)
+            struct NodePair { public Tree<T> A, B;}
+            public bool Equals(Tree<T> a, Tree<T> b)
             {
-                return
-                    ReferenceEquals(x, y) ||
+                var todo = new Stack<NodePair>(16);
+                todo.Push(new NodePair { A = a, B = b });
+                while(todo.Count >0) {
+                    var pair = todo.Pop();
+                    var x = pair.A;
+                    var y = pair.B;
+                    if (ReferenceEquals(x, y) ||
                         !ReferenceEquals(x, null) && !ReferenceEquals(y, null)
                             && x.Children.Count == y.Children.Count
                             && ValueComparer.Equals(x.NodeValue, y.NodeValue)
-                            && x.Children.SequenceEqual(y.Children, this);
+                            )
+                        for (int i = 0; i < x.Children.Count; i++)
+                            todo.Push(new NodePair { A = x.Children[i], B = y.Children[i] });
+                    else
+                        return false;
+                }
+                return true;
             }
 
             ulong InternalHash(Tree<T> obj)
             {
                 ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
                 ulong offset = 1;
-                foreach (var kid in obj.Children) {
-                    hash += offset * InternalHash(kid);
+                foreach (var node in obj.PreorderTraversal()) {
+                    hash += offset * ((uint)ValueComparer.GetHashCode(node.NodeValue) + ((ulong)node.Children.Count << 32));
                     offset += 2;
                 }
                 return hash;
@@ -122,6 +134,8 @@ namespace ProgressOnderwijsUtils.Collections
 
         string ToString(string indent)
         {
+            if (indent.Length > 80)
+                return "<<TOO DEEP>>";
             return indent + nodeValue.ToString().Replace("\n", "\n" + indent) + " "
                 + (Children.Count == 0
                     ? "."
@@ -129,6 +143,14 @@ namespace ProgressOnderwijsUtils.Collections
                     );
         }
 
-        public int Height() { return Children.Count > 0 ? Children.Max(sub => sub.Height()) + 1 : 1; }
+        public int Height() {
+            int height = 1;
+            var nextSet = Children.ToArray();
+            while (nextSet.Length>0) {
+                height++;
+                nextSet = nextSet.SelectMany(o => o.Children).ToArray();
+            }
+            return height;
+        }
     }
 }
