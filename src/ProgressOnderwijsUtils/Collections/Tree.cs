@@ -22,19 +22,34 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> Node<T>(T value) { return new Tree<T>(value, null); }
         public static Tree<T> Build<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
         public static Tree<T> Build<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) { return Build(root, id => kidLookup.GetOrDefaultR(id)); }
-        //public static Tree<T> Build<T>(T root, Dictionary<T, T[]> kidLookup) { return Build(root, id => kidLookup.GetOrDefault(id)); }
         public static Tree<T> Build<T>(T root, ILookup<T, T> kidLookup) { return Build(root, id => kidLookup[id]); }
-
-        public static Tree<T>[] Build<T>(T[] roots, Func<T, IEnumerable<T>> kidLookup)
-        {
-            var builder = new CachedTreeBuilder<T>(kidLookup);
-            return roots.Select(builder.Resolve).ToArray();
-        }
-
-        public static Tree<T>[] Build<T>(T[] roots, Dictionary<T, IEnumerable<T>> kidLookup) { return Build(roots, id => kidLookup.GetOrDefault(id)); }
-        public static Tree<T>[] Build<T>(T[] roots, Dictionary<T, T[]> kidLookup) { return Build(roots, id => kidLookup.GetOrDefault(id)); }
-        public static Tree<T>[] Build<T>(T[] roots, ILookup<T, T> kidLookup) { return Build(roots, id => kidLookup[id]); }
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
+
+        public static Tree<TR> Select0<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
+        {
+            return Node(mapper(tree.NodeValue), tree.Children.Select(subtree => subtree.Select(mapper)).ToArray());
+        }
+        public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
+        {
+            var todo = new Stack<Tree<T>>(16);
+            var reconstruct = new Stack<Tree<T>>(16);
+            var output = new Stack<Tree<TR>>(16);
+            todo.Push(tree);
+            while (todo.Count > 0) {
+                var next = todo.Pop();
+                reconstruct.Push(next);
+                foreach (var kid in next.Children)
+                    todo.Push(kid);
+            }
+            while (reconstruct.Count > 0) {
+                var next = reconstruct.Pop();
+                var mappedChildren = new Tree<TR>[next.Children.Count];
+                for (int i = mappedChildren.Length - 1; i >= 0; i--)
+                    mappedChildren[i] = output.Pop();
+                output.Push(Node(mapper(next.NodeValue), mappedChildren));
+            }
+            return output.Pop();
+        }
     }
 
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
