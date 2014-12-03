@@ -20,9 +20,9 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> Node<T>(T value, params Tree<T>[] kids) { return new Tree<T>(value, kids); }
         // ReSharper restore MethodOverloadWithOptionalParameter
         public static Tree<T> Node<T>(T value) { return new Tree<T>(value, null); }
-        public static Tree<T> Build<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
-        public static Tree<T> Build<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) { return Build(root, id => kidLookup.GetOrDefaultR(id)); }
-        public static Tree<T> Build<T>(T root, ILookup<T, T> kidLookup) { return Build(root, id => kidLookup[id]); }
+        public static Tree<T> BuildRecusively<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
+        public static Tree<T> BuildRecusively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) { return BuildRecusively(root, id => kidLookup.GetOrDefaultR(id)); }
+        public static Tree<T> BuildRecusively<T>(T root, ILookup<T, T> kidLookup) { return BuildRecusively(root, id => kidLookup[id]); }
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
 
         public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
