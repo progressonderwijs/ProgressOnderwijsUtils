@@ -25,10 +25,6 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> Build<T>(T root, ILookup<T, T> kidLookup) { return Build(root, id => kidLookup[id]); }
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
 
-        public static Tree<TR> Select0<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
-        {
-            return Node(mapper(tree.NodeValue), tree.Children.Select(subtree => subtree.Select(mapper)).ToArray());
-        }
         public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
         {
             var todo = new Stack<Tree<T>>(16);
@@ -133,6 +129,6 @@ namespace ProgressOnderwijsUtils.Collections
                     );
         }
 
-        public int MaxDepth() { return Children.Any() ? Children.Max(sub => sub.MaxDepth()) + 1 : 0; }
+        public int Height() { return Children.Count > 0 ? Children.Max(sub => sub.Height()) + 1 : 1; }
     }
 }
