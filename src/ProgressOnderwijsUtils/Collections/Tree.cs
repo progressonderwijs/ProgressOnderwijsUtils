@@ -106,23 +106,17 @@ namespace ProgressOnderwijsUtils.Collections
                 return true;
             }
 
-            ulong InternalHash(Tree<T> obj)
+            public int GetHashCode(Tree<T> obj)
             {
+                if (obj == null) {
+                    return typeHash;
+                }
                 ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
                 ulong offset = 1;
                 foreach (var node in obj.PreorderTraversal()) {
                     hash += offset * ((uint)ValueComparer.GetHashCode(node.NodeValue) + ((ulong)node.Children.Count << 32));
                     offset += 2;
                 }
-                return hash;
-            }
-
-            public int GetHashCode(Tree<T> obj)
-            {
-                if (obj == null) {
-                    return typeHash;
-                }
-                var hash = InternalHash(obj);
                 return (int)((uint)(hash >> 32) + (uint)hash);
             }
         }
