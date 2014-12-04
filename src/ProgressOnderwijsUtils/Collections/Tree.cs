@@ -135,7 +135,7 @@ namespace ProgressOnderwijsUtils.Collections
                     return typeHash;
                 }
                 ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
-                ulong offset = 1;
+                ulong offset = 1;//keep offset odd to ensure no bits are lost in scaling.
                 foreach (var node in obj.PreorderTraversal()) {
                     hash += offset * ((uint)ValueComparer.GetHashCode(node.NodeValue) + ((ulong)node.Children.Count << 32));
                     offset += 2;
