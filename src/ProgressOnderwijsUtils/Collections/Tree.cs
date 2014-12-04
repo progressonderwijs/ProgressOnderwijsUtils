@@ -107,21 +107,26 @@ namespace ProgressOnderwijsUtils.Collections
                 todo.Push(new NodePair { A = a, B = b });
                 while (todo.Count > 0) {
                     var pair = todo.Pop();
-                    var x = pair.A;
-                    var y = pair.B;
-                    if (ReferenceEquals(x, y) ||
-                        !ReferenceEquals(x, null) && !ReferenceEquals(y, null)
-                            && x.Children.Count == y.Children.Count
-                            && ValueComparer.Equals(x.NodeValue, y.NodeValue)
-                        ) {
-                        for (int i = 0; i < x.Children.Count; i++) {
-                            todo.Push(new NodePair { A = x.Children[i], B = y.Children[i] });
+                    if (ShallowEquals(pair)) {
+                        for (int i = 0; i < pair.A.Children.Count; i++) {
+                            todo.Push(new NodePair { A = pair.A.Children[i], B = pair.B.Children[i] });
                         }
                     } else {
                         return false;
                     }
                 }
                 return true;
+            }
+
+            bool ShallowEquals(NodePair pair)
+            {
+                // ReSharper disable RedundantCast
+                //workaround resharper issue: object comparison is by reference, and faster than ReferenceEquals
+                return (object)pair.A == (object)pair.B ||
+                    (object)pair.A != null && (object)pair.B != null
+                        && pair.A.Children.Count == pair.B.Children.Count
+                        && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
+                // ReSharper restore RedundantCast
             }
 
             public int GetHashCode(Tree<T> obj)
