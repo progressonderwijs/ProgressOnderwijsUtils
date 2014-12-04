@@ -20,21 +20,44 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> Node<T>(T value, params Tree<T>[] kids) { return new Tree<T>(value, kids); }
         // ReSharper restore MethodOverloadWithOptionalParameter
         public static Tree<T> Node<T>(T value) { return new Tree<T>(value, null); }
-        public static Tree<T> Build<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
-        public static Tree<T> Build<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) { return Build(root, id => kidLookup.GetOrDefaultR(id)); }
-        //public static Tree<T> Build<T>(T root, Dictionary<T, T[]> kidLookup) { return Build(root, id => kidLookup.GetOrDefault(id)); }
-        public static Tree<T> Build<T>(T root, ILookup<T, T> kidLookup) { return Build(root, id => kidLookup[id]); }
+        public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
 
-        public static Tree<T>[] Build<T>(T[] roots, Func<T, IEnumerable<T>> kidLookup)
+        public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
         {
-            var builder = new CachedTreeBuilder<T>(kidLookup);
-            return roots.Select(builder.Resolve).ToArray();
+            return BuildRecursively(root, id => kidLookup.GetOrDefaultR(id));
         }
 
-        public static Tree<T>[] Build<T>(T[] roots, Dictionary<T, IEnumerable<T>> kidLookup) { return Build(roots, id => kidLookup.GetOrDefault(id)); }
-        public static Tree<T>[] Build<T>(T[] roots, Dictionary<T, T[]> kidLookup) { return Build(roots, id => kidLookup.GetOrDefault(id)); }
-        public static Tree<T>[] Build<T>(T[] roots, ILookup<T, T> kidLookup) { return Build(roots, id => kidLookup[id]); }
+        public static Tree<T> BuildRecursively<T>(T root, ILookup<T, T> kidLookup) { return BuildRecursively(root, id => kidLookup[id]); }
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
+
+        /// <summary>
+        /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
+        /// mapper is called in a preorder traversal (i.e. a node before its children, and the descendents of the first child before the second).
+        /// </summary>
+        public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
+        {
+            var todo = new Stack<Tree<T>>(16);
+            var reconstruct = new Stack<Tree<T>>(16);
+            var output = new Stack<Tree<TR>>(16);
+            todo.Push(tree);
+            while (todo.Count > 0) {
+                var next = todo.Pop();
+                reconstruct.Push(next);
+                var children = next.Children;
+                for (var i = children.Count - 1; i >= 0; i--) {
+                    todo.Push(children[i]);
+                }
+            }
+            while (reconstruct.Count > 0) {
+                var next = reconstruct.Pop();
+                var mappedChildren = new Tree<TR>[next.Children.Count];
+                for (int i = 0; i < mappedChildren.Length; i++) {
+                    mappedChildren[i] = output.Pop();
+                }
+                output.Push(Node(mapper(next.NodeValue), mappedChildren));
+            }
+            return output.Pop();
+        }
     }
 
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
@@ -73,25 +96,37 @@ namespace ProgressOnderwijsUtils.Collections
             readonly IEqualityComparer<T> ValueComparer;
             public Comparer(IEqualityComparer<T> valueComparer) { ValueComparer = valueComparer; }
 
-            public bool Equals(Tree<T> x, Tree<T> y)
+            struct NodePair
             {
-                return
-                    ReferenceEquals(x, y) ||
-                        !ReferenceEquals(x, null) && !ReferenceEquals(y, null)
-                            && x.Children.Count == y.Children.Count
-                            && ValueComparer.Equals(x.NodeValue, y.NodeValue)
-                            && x.Children.SequenceEqual(y.Children, this);
+                public Tree<T> A, B;
             }
 
-            ulong InternalHash(Tree<T> obj)
+            public bool Equals(Tree<T> a, Tree<T> b)
             {
-                ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
-                ulong offset = 1;
-                foreach (var kid in obj.Children) {
-                    hash += offset * InternalHash(kid);
-                    offset += 2;
+                var todo = new Stack<NodePair>(16);
+                todo.Push(new NodePair { A = a, B = b });
+                while (todo.Count > 0) {
+                    var pair = todo.Pop();
+                    if (ShallowEquals(pair)) {
+                        for (int i = 0; i < pair.A.Children.Count; i++) {
+                            todo.Push(new NodePair { A = pair.A.Children[i], B = pair.B.Children[i] });
+                        }
+                    } else {
+                        return false;
+                    }
                 }
-                return hash;
+                return true;
+            }
+
+            bool ShallowEquals(NodePair pair)
+            {
+                // ReSharper disable RedundantCast
+                //workaround resharper issue: object comparison is by reference, and faster than ReferenceEquals
+                return (object)pair.A == (object)pair.B ||
+                    (object)pair.A != null && (object)pair.B != null
+                        && pair.A.Children.Count == pair.B.Children.Count
+                        && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
+                // ReSharper restore RedundantCast
             }
 
             public int GetHashCode(Tree<T> obj)
@@ -99,7 +134,12 @@ namespace ProgressOnderwijsUtils.Collections
                 if (obj == null) {
                     return typeHash;
                 }
-                var hash = InternalHash(obj);
+                ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
+                ulong offset = 1;//keep offset odd to ensure no bits are lost in scaling.
+                foreach (var node in obj.PreorderTraversal()) {
+                    hash += offset * ((uint)ValueComparer.GetHashCode(node.NodeValue) + ((ulong)node.Children.Count << 32));
+                    offset += 2;
+                }
                 return (int)((uint)(hash >> 32) + (uint)hash);
             }
         }
@@ -111,6 +151,9 @@ namespace ProgressOnderwijsUtils.Collections
 
         string ToString(string indent)
         {
+            if (indent.Length > 80) {
+                return "<<TOO DEEP>>";
+            }
             return indent + nodeValue.ToString().Replace("\n", "\n" + indent) + " "
                 + (Children.Count == 0
                     ? "."
@@ -118,6 +161,15 @@ namespace ProgressOnderwijsUtils.Collections
                     );
         }
 
-        public int MaxDepth() { return Children.Any() ? Children.Max(sub => sub.MaxDepth()) + 1 : 0; }
+        public int Height()
+        {
+            int height = 1;
+            var nextSet = Children.ToArray();
+            while (nextSet.Length > 0) {
+                height++;
+                nextSet = nextSet.SelectMany(o => o.Children).ToArray();
+            }
+            return height;
+        }
     }
 }
