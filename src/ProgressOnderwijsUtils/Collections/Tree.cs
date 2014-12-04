@@ -65,7 +65,6 @@ namespace ProgressOnderwijsUtils.Collections
             kidArray = children ?? EmptyArray;
         }
 
-        #region Equality implementation
         public static readonly Comparer DefaultComparer = new Comparer(EqualityComparer<T>.Default);
 
         public sealed class Comparer : IEqualityComparer<Tree<T>>
@@ -108,8 +107,16 @@ namespace ProgressOnderwijsUtils.Collections
         public override bool Equals(object obj) { return DefaultComparer.Equals(this, obj as Tree<T>); }
         public bool Equals(Tree<T> other) { return DefaultComparer.Equals(this, other); }
         public override int GetHashCode() { return DefaultComparer.GetHashCode(this); }
-        public override string ToString() { return "{ " + nodeValue.ToString() + ": " + Children.Select(t => t.ToString()).JoinStrings(", ") + " }"; }
-        #endregion
+        public override string ToString() { return "TREE:\n" + ToString(""); }
+
+        string ToString(string indent)
+        {
+            return indent + nodeValue.ToString().Replace("\n", "\n" + indent) + " "
+                + (Children.Count == 0
+                    ? "."
+                    : ":\n" + Children.Select(t => t.ToString(indent + "    ")).JoinStrings("\n")
+                    );
+        }
 
         public int MaxDepth() { return Children.Any() ? Children.Max(sub => sub.MaxDepth()) + 1 : 0; }
     }
