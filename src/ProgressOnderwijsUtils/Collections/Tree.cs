@@ -20,16 +20,20 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> Node<T>(T value, params Tree<T>[] kids) { return new Tree<T>(value, kids); }
         // ReSharper restore MethodOverloadWithOptionalParameter
         public static Tree<T> Node<T>(T value) { return new Tree<T>(value, null); }
-        public static Tree<T> BuildRecusively<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
+        public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
 
-        public static Tree<T> BuildRecusively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
+        public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
         {
-            return BuildRecusively(root, id => kidLookup.GetOrDefaultR(id));
+            return BuildRecursively(root, id => kidLookup.GetOrDefaultR(id));
         }
 
-        public static Tree<T> BuildRecusively<T>(T root, ILookup<T, T> kidLookup) { return BuildRecusively(root, id => kidLookup[id]); }
+        public static Tree<T> BuildRecursively<T>(T root, ILookup<T, T> kidLookup) { return BuildRecursively(root, id => kidLookup[id]); }
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
 
+        /// <summary>
+        /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
+        /// mapper is called in a preorder traversal (i.e. a node before its children, and the descendents of the first child before the second).
+        /// </summary>
         public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
         {
             var todo = new Stack<Tree<T>>(16);
@@ -103,15 +107,9 @@ namespace ProgressOnderwijsUtils.Collections
                 todo.Push(new NodePair { A = a, B = b });
                 while (todo.Count > 0) {
                     var pair = todo.Pop();
-                    var x = pair.A;
-                    var y = pair.B;
-                    if (ReferenceEquals(x, y) ||
-                        !ReferenceEquals(x, null) && !ReferenceEquals(y, null)
-                            && x.Children.Count == y.Children.Count
-                            && ValueComparer.Equals(x.NodeValue, y.NodeValue)
-                        ) {
-                        for (int i = 0; i < x.Children.Count; i++) {
-                            todo.Push(new NodePair { A = x.Children[i], B = y.Children[i] });
+                    if (ShallowEquals(pair)) {
+                        for (int i = 0; i < pair.A.Children.Count; i++) {
+                            todo.Push(new NodePair { A = pair.A.Children[i], B = pair.B.Children[i] });
                         }
                     } else {
                         return false;
@@ -120,13 +118,24 @@ namespace ProgressOnderwijsUtils.Collections
                 return true;
             }
 
+            bool ShallowEquals(NodePair pair)
+            {
+                // ReSharper disable RedundantCast
+                //workaround resharper issue: object comparison is by reference, and faster than ReferenceEquals
+                return (object)pair.A == (object)pair.B ||
+                    (object)pair.A != null && (object)pair.B != null
+                        && pair.A.Children.Count == pair.B.Children.Count
+                        && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
+                // ReSharper restore RedundantCast
+            }
+
             public int GetHashCode(Tree<T> obj)
             {
                 if (obj == null) {
                     return typeHash;
                 }
                 ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
-                ulong offset = 1;
+                ulong offset = 1;//keep offset odd to ensure no bits are lost in scaling.
                 foreach (var node in obj.PreorderTraversal()) {
                     hash += offset * ((uint)ValueComparer.GetHashCode(node.NodeValue) + ((ulong)node.Children.Count << 32));
                     offset += 2;
