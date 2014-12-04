@@ -30,6 +30,10 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> BuildRecursively<T>(T root, ILookup<T, T> kidLookup) { return BuildRecursively(root, id => kidLookup[id]); }
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
 
+        /// <summary>
+        /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
+        /// mapper is called in a preorder traversal (i.e. a node before its children, and the descendents of the first child before the second).
+        /// </summary>
         public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
         {
             var todo = new Stack<Tree<T>>(16);
