@@ -8,18 +8,18 @@ using Progress.Business;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	public class SqlBuild : TestSuiteBase
-	{
-		[Test]
-		public void EenmaligeScripts()
-		{
-			var names = QueryBuilder.Create(@"
+    public class SqlBuild : TestSuiteBase
+    {
+        [Test]
+        public void EenmaligeScripts()
+        {
+            var names = QueryBuilder.Create(@"
 				select Naam
 				from SqlBuild.EenmaligScript
 				where DatumControle > DatumUitvoerProductie")
-			.ReadPlain<string>(conn);
+                .ReadPlain<string>(conn);
 
-			Assert.That(names, Is.Empty, "Er zijn eenmalige scripts die op productie zijn uitgevoerd waarvan de scripts nog steeds draaien.");
-		}
-	}
+            Assert.That(names, Is.Empty, "Er zijn eenmalige scripts die op productie zijn uitgevoerd waarvan de scripts nog steeds draaien.");
+        }
+    }
 }
