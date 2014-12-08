@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils
     public abstract class Maybe<T>
     {
         /// <summary>
-        /// Use this sparingly!  Usually "WhenOk",  "WhenOkTry" and "ExtracToValue" result in clearer code.
+        /// Use this sparingly!  Often "WhenOk",  "WhenOkTry" and "ExtractToValue" result in clearer code.
         /// 
         /// Value: whether this Maybe is in the OK state.
         /// </summary>
