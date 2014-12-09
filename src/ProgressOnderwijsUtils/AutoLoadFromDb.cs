@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.IO;
 using log4net;
 using ProgressOnderwijsUtils.Log4Net;
 // ReSharper disable PossiblyMistakenUseOfParamsMethod
@@ -63,7 +64,6 @@ namespace ProgressOnderwijsUtils
                 });
         }
 
-        static readonly Lazy<ILog> LOG = LazyLog.For(typeof(AutoLoadFromDb));
         static readonly ConcurrentDictionary<string, string> metaObjectProposals = new ConcurrentDictionary<string, string>();
 
         [Conditional("DEBUG")]
@@ -79,9 +79,25 @@ namespace ProgressOnderwijsUtils
                     return dt.DataTableToMetaObjectClassDef();
                 });
             if (wasAdded) {
-                LOG.Info("\n" + commandText + "\n\n" + metaObjectClass);
+                Log().Write("=======================\r\n" + commandText + "\r\n\r\n" + metaObjectClass + "\r\n\r\n");
             }
             tracer.FinishDisposableTimer(() => "METAOBJECT proposed for next query:\n" + metaObjectClass, TimeSpan.Zero);
+        }
+
+        static volatile StreamWriter writer;
+
+        static StreamWriter Log()
+        {
+            if (writer != null)
+                return writer;
+
+            lock (metaObjectProposals) {
+                if (writer != null) {
+                    return writer;
+                }
+
+                return writer = new StreamWriter(Path.Combine("C:\\temp", "MetaObjectProposals.txt"), false);
+            }
         }
 
         /// <summary>
