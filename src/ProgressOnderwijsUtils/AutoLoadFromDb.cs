@@ -96,7 +96,7 @@ namespace ProgressOnderwijsUtils
                     return writer;
                 }
 
-                return writer = new StreamWriter(Path.Combine("C:\\temp", "MetaObjectProposals.txt"), false);
+                return writer = new StreamWriter(Path.Combine("C:\\temp", string.Format("MetaObjectProposals_{0:yyyyMMdd_hhmm}.txt", DateTime.Now)), false);
             }
         }
 
