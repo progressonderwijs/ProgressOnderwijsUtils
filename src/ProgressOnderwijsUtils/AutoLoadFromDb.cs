@@ -45,6 +45,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="conn">De database om tegen te query-en</param>
         public static DataTable ReadDataTable(this QueryBuilder builder, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
         {
+
+            
             return ExecuteQuery(
                 builder,
                 conn,
@@ -54,9 +56,20 @@ namespace ProgressOnderwijsUtils
                         adapter.MissingSchemaAction = missingSchemaAction;
                         var dt = new DataTable();
                         adapter.Fill(dt);
+
                         return dt;
                     }
                 });
+        }
+
+        /// <summary>
+        /// Leest DataTable op basis van het huidige commando met de huidige parameters; neemt ook schema informatie in de DataTable op.
+        /// </summary>
+        /// <param name="builder">De uit-te-voeren query</param>
+        /// <param name="conn">De database om tegen te query-en</param>
+        public static DataTable ReadDataTableWithSqlMetadata(QueryBuilder builder, SqlCommandCreationContext conn)
+        {
+            return builder.ReadDataTable(conn, MissingSchemaAction.AddWithKey);
         }
 
         public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
@@ -83,8 +96,7 @@ namespace ProgressOnderwijsUtils
                 q,
                 qCommandCreationContext,
                 () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
-                ReadByConstructorUnpacker<T>
-                );
+                ReadByConstructorUnpacker<T>);
         }
 
         public static T[] ReadByConstructorUnpacker<T>(SqlCommand cmd) where T : IReadByConstructor
@@ -149,8 +161,7 @@ namespace ProgressOnderwijsUtils
                 q,
                 qCommandCreationContext,
                 () => "ReadPlain<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
-                ReadPlainUnpacker<T>
-                );
+                ReadPlainUnpacker<T>);
         }
 
         public static T[] ReadPlainUnpacker<T>(SqlCommand cmd)
@@ -174,8 +185,7 @@ namespace ProgressOnderwijsUtils
                 q,
                 qCommandCreationContext,
                 () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T1)) + ", " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T2)) + ">() failed.",
-                ReadByConstructor<T1, T2>
-                );
+                ReadByConstructor<T1, T2>);
         }
 
         public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(SqlCommand cmd)
