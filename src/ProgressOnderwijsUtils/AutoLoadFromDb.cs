@@ -1,5 +1,7 @@
-﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
-
+﻿using System.Diagnostics;
+using log4net;
+using ProgressOnderwijsUtils.Log4Net;
+// ReSharper disable PossiblyMistakenUseOfParamsMethod
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -45,8 +47,6 @@ namespace ProgressOnderwijsUtils
         /// <param name="conn">De database om tegen te query-en</param>
         public static DataTable ReadDataTable(this QueryBuilder builder, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
         {
-
-            
             return ExecuteQuery(
                 builder,
                 conn,
@@ -57,9 +57,31 @@ namespace ProgressOnderwijsUtils
                         var dt = new DataTable();
                         adapter.Fill(dt);
 
+                        LogMetaObjectProposal(command, dt, conn.Tracer);
                         return dt;
                     }
                 });
+        }
+
+        static readonly Lazy<ILog> LOG = LazyLog.For(typeof(AutoLoadFromDb));
+        static readonly ConcurrentDictionary<string, string> metaObjectProposals = new ConcurrentDictionary<string, string>();
+
+        [Conditional("DEBUG")]
+        static void LogMetaObjectProposal(SqlCommand command, DataTable dt, QueryTracer tracer)
+        {
+            var commandText = QueryTracer.DebugFriendlyCommandText(command, false);
+            bool wasAdded = false;
+
+            var metaObjectClass = metaObjectProposals.GetOrAdd(
+                commandText,
+                _ => {
+                    wasAdded = true;
+                    return dt.DataTableToMetaObjectClassDef();
+                });
+            if (wasAdded) {
+                LOG.Info("\n" + commandText + "\n\n" + metaObjectClass);
+            }
+            tracer.FinishDisposableTimer(() => "METAOBJECT proposed for next query:\n" + metaObjectClass, TimeSpan.Zero);
         }
 
         /// <summary>
