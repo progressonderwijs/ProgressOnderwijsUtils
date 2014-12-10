@@ -90,39 +90,6 @@ namespace ProgressOnderwijsUtils
                         ) + "}\n"
                 ).Replace("\n", "\r\n");
         }
-
-        public static string GetRowClassDef(DataTable dt, string name = null)
-        {
-            var columns = dt.Columns.Cast<DataColumn>().Select(ColumnDefinition.Create).ToArray();
-            var primes = Utils.Primes().Skip(1).Take(columns.Length).ToArray();
-            name = name ?? (String.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName);
-            return (
-                "public sealed class " + name + " : IEquatable<" + name + "> {\n"
-                    + "\treadonly int _hashcode_auto_cached;\n"
-                    + String.Join("", columns.Select(col => "\tpublic readonly " + ObjectToCode.GetCSharpFriendlyTypeName(col.DataType) + " " + col.Name + ";\n"))
-                    + "\tpublic " + name + "(DataRow dr) {\n"
-                    + "\t\tulong _hashcode_auto_building=0;\n"
-                    + String.Join(
-                        "",
-                        columns.Select(
-                            (col, i) => "\t\t" + col.Name + " = dr.Field<" + ObjectToCode.GetCSharpFriendlyTypeName(col.DataType) + ">(\"" + col.Name + "\");\n"
-                                + "\t\t_hashcode_auto_building += " + (
-                                    col.DataType.IsValueType
-                                        ? "(ulong)" + col.Name + ".GetHashCode()"
-                                        : col.Name + " == null ? " + i + " : (ulong)" + col.Name + ".GetHashCode() *  " + primes[i] + "UL"
-                                    ) + ";\n")
-                        )
-                    + "\t\t_hashcode_auto_cached = (int)(uint)(_hashcode_auto_building ^ (_hashcode_auto_building >> 32));\n"
-                    + "\t}\n"
-                    + "\tpublic bool Equals(" + name + " that) {\n"
-                    + "\t\treturn "
-                    + String.Join("\n\t\t\t&& ", columns.Select(col => "Equals(" + col.Name + ", that." + col.Name + ")")) + ";\n"
-                    + "\t}\n"
-                    + "\tpublic override int GetHashCode() { return _hashcode_auto_cached; }\n"
-                    + "\tpublic override bool Equals(object that) { return that is " + name + " && Equals((" + name + ")that); }\n"
-                    + "}\n"
-                ).Replace("\n", "\r\n");
-        }
     }
 
 #if false
