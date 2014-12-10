@@ -58,45 +58,53 @@ namespace ProgressOnderwijsUtils
                         var dt = new DataTable();
                         adapter.Fill(dt);
 
-                        LogMetaObjectProposal(command, dt, conn.Tracer);
+                        MetaObjectProposalLogger.LogMetaObjectProposal(command, dt, conn.Tracer);
                         return dt;
                     }
                 });
         }
 
-        static readonly ConcurrentDictionary<string, string> metaObjectProposals = new ConcurrentDictionary<string, string>();
-
-        [Conditional("DEBUG")]
-        static void LogMetaObjectProposal(SqlCommand command, DataTable dt, QueryTracer tracer)
+        static class MetaObjectProposalLogger
         {
-            var commandText = QueryTracer.DebugFriendlyCommandText(command, false);
-            bool wasAdded = false;
+            static readonly ConcurrentDictionary<string, string> metaObjectProposals = new ConcurrentDictionary<string, string>();
+            static readonly object sync = new object();
+            static Action<string> writer;
 
-            var metaObjectClass = metaObjectProposals.GetOrAdd(
-                commandText,
-                _ => {
-                    wasAdded = true;
-                    return dt.DataTableToMetaObjectClassDef();
-                });
-            if (wasAdded) {
-                Log().Write("=======================\r\n" + commandText + "\r\n\r\n" + metaObjectClass + "\r\n\r\n");
-            }
-            tracer.FinishDisposableTimer(() => "METAOBJECT proposed for next query:\n" + metaObjectClass, TimeSpan.Zero);
-        }
+            [Conditional("DEBUG")]
+            public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, QueryTracer tracer)
+            {
+                var commandText = QueryTracer.DebugFriendlyCommandText(command, false);
+                bool wasAdded = false;
 
-        static volatile StreamWriter writer;
+                var metaObjectClass = metaObjectProposals.GetOrAdd(
+                    commandText,
+                    _ => {
+                        wasAdded = true;
+                        return dt.DataTableToMetaObjectClassDef();
+                    });
+                if (wasAdded) {
+                    lock (sync) {
 
-        static StreamWriter Log()
-        {
-            if (writer != null)
-                return writer;
-
-            lock (metaObjectProposals) {
-                if (writer != null) {
-                    return writer;
+                    }
+                    Log("=======================\r\n" + commandText + "\r\n\r\n" + metaObjectClass + "\r\n\r\n");
                 }
+                tracer.FinishDisposableTimer(() => "METAOBJECT proposed for next query:\n" + metaObjectClass, TimeSpan.Zero);
+            }
 
-                return writer = new StreamWriter(Path.Combine("C:\\temp", string.Format("MetaObjectProposals_{0:yyyyMMdd_hhmm}.txt", DateTime.Now)), false);
+            static void Log(string text)
+            {
+                lock (sync) {
+                    if (writer == null) {
+                        try {
+                            writer = new StreamWriter(String.Format(@"C:\\temp\\MetaObjectProposals_{0}.txt", DateTime.Now.ToString("yyyy-MM-dd_HHmm_ss"))) {
+                                AutoFlush = true
+                            }.Write;
+                        } catch {
+                            writer = s => { };
+                        }
+                    }
+                    writer(text);
+                }
             }
         }
 
