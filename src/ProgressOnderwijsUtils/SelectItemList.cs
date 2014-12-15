@@ -7,7 +7,17 @@ namespace ProgressOnderwijsUtils
 {
     public static class SelectItemList
     {
+        public static IReadOnlyList<SelectItem<T>> Create<T>(IEnumerable<IToSelectItem<T>> collection)
+        {
+            return Create(collection.Select(i => i.ToSelectItem()));
+        }
+
         public static IReadOnlyList<SelectItem<T>> Create<T>(IEnumerable<SelectItem<T>> collection) { return collection.ToArray(); }
+
+        public static IReadOnlyList<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<IToSelectItem<T>> collection)
+        {
+            return CreateWithLeeg(addnullitem, Create(collection));
+        }
 
         public static IReadOnlyList<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<SelectItem<T>> collection)
         {
@@ -64,6 +74,11 @@ namespace ProgressOnderwijsUtils
     {
         T Value { get; }
         ITranslatable Label { get; }
+    }
+
+    public interface IToSelectItem<T>
+    {
+        SelectItem<T> ToSelectItem();
     }
 
     public struct SelectItem<T> : ISelectItem<T>
