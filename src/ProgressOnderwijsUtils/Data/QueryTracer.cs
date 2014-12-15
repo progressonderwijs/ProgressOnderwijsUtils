@@ -95,7 +95,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)
+        public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)
         {
             lock (Sync) {
                 var entry = Tuple.Create(duration, commandText);
