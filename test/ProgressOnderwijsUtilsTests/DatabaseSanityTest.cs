@@ -10,12 +10,12 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-	public sealed class DatabaseSanityTest : TestSuiteBase
-	{
-		[Test]
-		public void OntbrekendeForeignKeyIndexes()
-		{
-			const string q = @"
+    public sealed class DatabaseSanityTest : TestSuiteBase
+    {
+        [Test]
+        public void OntbrekendeForeignKeyIndexes()
+        {
+            const string q = @"
 				select
 					'Geen index op kolom ['  + c.name + '] in tabel [' + s.name + '.' + pt.name + '], gebruikt in [' + k.name
 				from sys.foreign_keys k
@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtilsTests
 				where ic.object_id is null
 				";
 
-			Assert.That(QueryBuilder.Create(q).ReadPlain<string>(conn), Is.Empty, "Geen index op FK-kolom.");
-		}
-	}
+            Assert.That(QueryBuilder.Create(q).ReadPlain<string>(conn), Is.Empty, "Geen index op FK-kolom.");
+        }
+    }
 }

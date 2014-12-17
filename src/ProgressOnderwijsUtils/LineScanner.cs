@@ -5,31 +5,20 @@ using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
 {
-	public class LineScanner
-	{
-		readonly string[] lines;
-		int position;
+    public class LineScanner
+    {
+        readonly string[] lines;
+        int position;
+        public LineScanner(string s) { lines = Regex.Split(s, "\r\n|\n"); }
+        public string GetLine() { return position != lines.Length ? lines[position++] : null; }
 
-		public LineScanner(string s)
-		{
-			lines = Regex.Split(s, "\r\n|\n");
-		}
+        public void PushBack()
+        {
+            if (position != 0) {
+                --position;
+            }
+        }
 
-		public string GetLine()
-		{
-			return position != lines.Length ? lines[position++] : null;
-		}
-
-		public void PushBack()
-		{
-			if (position != 0)
-				--position;
-		}
-
-		public bool Eof()
-		{
-			return position == lines.Length;
-		}
-	}
-
+        public bool Eof() { return position == lines.Length; }
+    }
 }
