@@ -183,16 +183,18 @@ namespace ProgressOnderwijsUtils
                 try {
                     return unpacker(reader, out lastColumnRead);
                 } catch (Exception ex) {
-                    var name = reader.GetName(lastColumnRead);
+                    var mps = MetaObject.GetMetaProperties<T>();
+                    var metaObjectTypeName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T));
+
+                    var sqlColName = reader.GetName(lastColumnRead);
+                    var mp = mps.GetByName(sqlColName);
+
                     var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
                     var expectedCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(reader.GetFieldType(lastColumnRead));
-
-                    var mps = MetaObject.GetMetaProperties<T>();
-                    var mp = mps.GetByName(name);
-                    var metaObjectTypeName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T));
                     var actualCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(mp.DataType);
+
                     throw new InvalidOperationException(
-                        "Cannot unpack column " + reader.GetName(lastColumnRead) + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name + " of type " + actualCsTypeName,
+                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name + " of type " + actualCsTypeName,
                         ex);
                 }
             }
