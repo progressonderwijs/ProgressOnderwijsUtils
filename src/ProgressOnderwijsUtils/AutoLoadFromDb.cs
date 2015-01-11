@@ -183,11 +183,18 @@ namespace ProgressOnderwijsUtils
                 try {
                     return unpacker(reader, out lastColumnRead);
                 } catch (Exception ex) {
-                    var name = reader.GetName(lastColumnRead);
                     var mps = MetaObject.GetMetaProperties<T>();
-                    var mp = mps.GetByName(name);
+                    var metaObjectTypeName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T));
+
+                    var sqlColName = reader.GetName(lastColumnRead);
+                    var mp = mps.GetByName(sqlColName);
+
+                    var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
+                    var expectedCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(reader.GetFieldType(lastColumnRead));
+                    var actualCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(mp.DataType);
+
                     throw new InvalidOperationException(
-                        "Cannot unpack column " + reader.GetName(lastColumnRead) + " into type " + mp.DataType + "; (" + typeof(T).Name + "." + mp.Name + ")",
+                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name + " of type " + actualCsTypeName,
                         ex);
                 }
             }
@@ -393,7 +400,7 @@ namespace ProgressOnderwijsUtils
                         typeof(T[]),
                         new[] { listVarExpr },
                         listAssignment,
-                        //listInit,
+                    //listInit,
                         rowLoopExpr,
                         listToArrayExpr
                         ),
@@ -496,7 +503,7 @@ namespace ProgressOnderwijsUtils
 
                 // ReSharper disable UnusedParameter.Local
                 public static TRowReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
-                    // ReSharper restore UnusedParameter.Local
+                // ReSharper restore UnusedParameter.Local
                 {
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
