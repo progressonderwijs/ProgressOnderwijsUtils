@@ -3,10 +3,8 @@ using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
-using Progress.Business.AppVersion;
-using Progress.Business.Conext;
+using Progress.Sso;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 using Progress.WebApp.RequestRouting;
 
 namespace ProgressOnderwijsUtilsTests
