@@ -261,8 +261,11 @@ namespace ProgressOnderwijsUtils
          Implies(VolgOnderwijsCijferlijst)]
         VolgOnderwijsBeheerBeperkt = 115,
 
-        [MpLabel("Genereren cijferlijsten voor bullen")]
+        [MpLabel("Genereren cijferlijsten voor bullen"), Implies(VolgOnderwijsCijferlijstBekijken)]
         VolgOnderwijsCijferlijst = 244,
+
+        [MpLabel("Bekijken cijferlijsten voor bullen"), Toekenbaar]
+        VolgOnderwijsCijferlijstBekijken = 251,
 
         [MpLabel("Volg onderwijs inzien")]
         VolgOnderwijsInzien = 116,
@@ -607,6 +610,6 @@ namespace ProgressOnderwijsUtils
         RapportenTabblad = 243,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 251,
+        META_EerstVolgendVrijRolId = 252,
     }
 }
