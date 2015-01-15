@@ -56,7 +56,6 @@ namespace ProgressOnderwijsUtils
             { DatumFormaat.VerwInfoDatum, new TextVal("yyMMdd", null) },
             { DatumFormaat.ISODate, new TextVal("yyyy-MM-dd", null) },
             { DatumFormaat.ISODateTime, new TextVal("yyyy-MM-ddTHH:mm:ss", null) },
-            { DatumFormaat.AlleenMaandVoluit, new TextVal("MMMM", null) },
         };
 
         static readonly DateTime DT_WITH_MANY_DIGITS = new DateTime(2000, 1, 1) - TimeSpan.FromDays(1) - TimeSpan.FromHours(1) - TimeSpan.FromMinutes(1)
