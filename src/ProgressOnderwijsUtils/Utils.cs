@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils
 
     public static class Utils
     {
-        public static Lazy<T> Lazy<T>(Func<T> factory) { return new Lazy<T>(factory, LazyThreadSafetyMode.PublicationOnly); }
+        public static Lazy<T> Lazy<T>(Func<T> factory) { return new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication); }
 
         public static bool ElfProef(int getal)
         {
