@@ -159,8 +159,8 @@ namespace ProgressOnderwijsUtils
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
         {
-            var distinctNewlyReachable = elems.ToArray();
-            var set = distinctNewlyReachable.ToSet();
+            var set = elems.ToSet();
+            var distinctNewlyReachable = set.ToArray();
             while (distinctNewlyReachable.Length > 0) {
                 distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
             }
