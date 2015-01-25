@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -362,6 +363,49 @@ namespace ProgressOnderwijsUtils
         }
 
         static char MapToBase36Char(int digit) { return (char)((digit < 10 ? '0' : 'a' - 10) + digit); }
+
+
+        /// <summary>
+        /// This is equivalent to num.ToString("f"+precision), but around 10 times faster.
+        /// </summary>
+        public static string ToFixedPointString(double number, CultureInfo culture, int precision)
+        {
+            //TODO:add tests
+            var fI = culture.NumberFormat;
+            var str = new char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
+            int idx = 0;
+            bool isNeg = number < 0;
+            if (isNeg) {
+                number = -number;
+            }
+
+            ulong mult = 1;
+            for (int i = 0; i < precision; i++)
+                mult *= 10;
+            ulong x = (ulong)(number * mult + 0.5);
+            if (precision > 0) {
+                int i = 0;
+                do {
+                    str[idx++] = (char)('0' + x % 10);
+                    x = x / 10;
+                    i++;
+                } while (i < precision);
+                str[idx++] = fI.PercentDecimalSeparator[0];
+            }
+            do {
+                str[idx++] = (char)('0' + x % 10);
+                x = x / 10;
+            } while (x != 0);
+            if (isNeg)
+                str[idx++] = '-';
+            for (int i = 0, j = idx - 1; i < j; i++, j--) {
+                var tmp = str[i];
+                str[i] = str[j];
+                str[j] = tmp;
+            }
+            return new string(str, 0, idx);
+        }
+
 
         public static DateTime? DateMax(DateTime? d1, DateTime? d2)
         {
