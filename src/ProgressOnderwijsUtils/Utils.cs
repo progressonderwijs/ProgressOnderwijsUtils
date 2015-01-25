@@ -338,6 +338,8 @@ namespace ProgressOnderwijsUtils
 
         public static string ToSortableShortString(long value)
         {
+            //This function is used on a hot-path in Programma and Resultaten export - it needs to be fast.
+
             char[] buffer = new char[14]; // log(2^31)/log(36) < 6 char; +1 for length+sign.
             int index = 0;
             bool isNeg = value < 0;
@@ -358,7 +360,12 @@ namespace ProgressOnderwijsUtils
             int encodedLength = (isNeg ? -index : index) + 13; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
             buffer[index++] = MapToBase36Char(encodedLength);
 
-            Array.Reverse(buffer, 0, index);
+            for (int i = 0, j = index - 1; i < j; i++, j--) {
+                var tmp = buffer[i];
+                buffer[i] = buffer[j];
+                buffer[j] = tmp;
+            }
+                
             return new string(buffer, 0, index);
         }
 
