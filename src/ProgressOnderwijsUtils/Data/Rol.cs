@@ -261,8 +261,11 @@ namespace ProgressOnderwijsUtils
          Implies(VolgOnderwijsCijferlijst)]
         VolgOnderwijsBeheerBeperkt = 115,
 
-        [MpLabel("Genereren cijferlijsten voor bullen")]
+        [MpLabel("Genereren cijferlijsten voor bullen"), Implies(VolgOnderwijsCijferlijstBekijken)]
         VolgOnderwijsCijferlijst = 244,
+
+        [MpLabel("Bekijken cijferlijsten voor bullen"), Toekenbaar]
+        VolgOnderwijsCijferlijstBekijken = 251,
 
         [MpLabel("Volg onderwijs inzien")]
         VolgOnderwijsInzien = 116,
@@ -345,8 +348,8 @@ namespace ProgressOnderwijsUtils
 
         [MpLabel("Superuser"), Implies(Combi_BeheerAlles, BeheerStudievolg, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
             WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenTabblad, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
-            Combi_FontysBeheerFO, Combi_FontysMuteerFO
-            , StudiebegeleidingNotities, StudievoortgangNotities, DecaanNotities, FinancieelNotities, InschrijvingNotities
+            Combi_FontysBeheerFO, Combi_FontysMuteerFO, StudiebegeleidingNotities, StudievoortgangNotities, DecaanNotities, FinancieelNotities, InschrijvingNotities,
+            StudentDecanaatNotities, PsycholoogNotities, StudiekeuzeAdviseurNotities
             )]
         Superuser = 138,
 
@@ -360,13 +363,15 @@ namespace ProgressOnderwijsUtils
 
         [MpLabel("Bekijken inschrijvingen"), Toekenbaar,
          Implies(BekijkenStudentBasis, StudentInschrijvingenTabblad, VooropleidingenBekijken,
-             AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken)]
+             AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, InloggenWebsite)]
         BekijkenInschrijvingen = 160,
 
         [MpLabel("Bekijken inschrijvingen uitgebreid"), Toekenbaar,
          Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad,
              Uitschrijvingentabblad, StudentCommunicatieTabblad, BekijkenInschrijvingen, ExamenWaardepapierBekijken)]
         BekijkenInschrijvingenUitgebreid = 161,
+
+        InloggenWebsite = 252,
 
         [MpLabel("Bekijken financieel"), Toekenbaar, Implies(StudentFinancieelTabblad, FinancieelBetalingsinformatieBekijken, FinancieelCollegegeldBekijken,
             FinancieelMachtigingBekijken, BbcBekijken, BekijkenInschrijvingen)]
@@ -414,6 +419,24 @@ namespace ProgressOnderwijsUtils
 
         [MpLabel("Studievoortgang notities toevoegen wijzigen verwijderen"), Toekenbaar, Implies(StudievoortgangNotitiesAlleenBekijken)]
         StudievoortgangNotities = 181,
+
+        [MpLabel("Studentdecanaatnotities bekijken")]
+        StudentDecanaatNotitiesAlleenBekijken = 245,
+
+        [MpLabel("Studentdecanaatnotities wijzigen"), Toekenbaar, Implies(StudentDecanaatNotitiesAlleenBekijken)]
+        StudentDecanaatNotities = 246,
+
+        [MpLabel("Psycholoognotities bekijken")]
+        PsycholoogNotitiesAlleenBekijken = 247,
+
+        [MpLabel("Psycholoognotities wijzigen"), Toekenbaar, Implies(PsycholoogNotitiesAlleenBekijken)]
+        PsycholoogNotities = 248,
+
+        [MpLabel("StudiekeuzeAdviseurnotities bekijken")]
+        StudiekeuzeAdviseurNotitiesAlleenBekijken = 249,
+
+        [MpLabel("StudiekeuzeAdviseurnotities wijzigen"), Toekenbaar, Implies(StudiekeuzeAdviseurNotitiesAlleenBekijken)]
+        StudiekeuzeAdviseurNotities = 250,
 
         [MpLabel("BSA status bekijken")]
         BsaStatusBekijken = 182,
@@ -589,6 +612,7 @@ namespace ProgressOnderwijsUtils
         RapportenTabblad = 243,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 245
+        META_EerstVolgendVrijRolId = 253,
+
     }
 }

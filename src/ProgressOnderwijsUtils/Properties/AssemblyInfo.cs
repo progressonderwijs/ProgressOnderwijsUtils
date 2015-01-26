@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ProgressOnderwijsUtils")]
 [assembly: AssemblyCompany("RuG")]
 [assembly: AssemblyProduct("ProgressOnderwijsUtils")]
-[assembly: AssemblyCopyright("RuG 2012")]
+[assembly: AssemblyCopyright("RuG 2014")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
@@ -27,5 +27,3 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 
-[assembly: AssemblyVersion("1.0.0.12311")]
-[assembly: AssemblyDescription("Progress rev 12311 @ 2012/07/11 20:51:33")]
