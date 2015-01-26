@@ -363,13 +363,15 @@ namespace ProgressOnderwijsUtils
 
         [MpLabel("Bekijken inschrijvingen"), Toekenbaar,
          Implies(BekijkenStudentBasis, StudentInschrijvingenTabblad, VooropleidingenBekijken,
-             AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken)]
+             AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, InloggenWebsite)]
         BekijkenInschrijvingen = 160,
 
         [MpLabel("Bekijken inschrijvingen uitgebreid"), Toekenbaar,
          Implies(StudentKenmerkenTabblad, NegatiefBindenStudieadviesBekijken, BlokkeerInschrijvingBekijken, StudentIdentificatieBekijken, StudentEisenTabblad,
              Uitschrijvingentabblad, StudentCommunicatieTabblad, BekijkenInschrijvingen, ExamenWaardepapierBekijken)]
         BekijkenInschrijvingenUitgebreid = 161,
+
+        InloggenWebsite = 252,
 
         [MpLabel("Bekijken financieel"), Toekenbaar, Implies(StudentFinancieelTabblad, FinancieelBetalingsinformatieBekijken, FinancieelCollegegeldBekijken,
             FinancieelMachtigingBekijken, BbcBekijken, BekijkenInschrijvingen)]
@@ -610,6 +612,7 @@ namespace ProgressOnderwijsUtils
         RapportenTabblad = 243,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 252,
+        META_EerstVolgendVrijRolId = 253,
+
     }
 }
