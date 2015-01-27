@@ -365,15 +365,18 @@ namespace ProgressOnderwijsUtils
                 buffer[i] = buffer[j];
                 buffer[j] = tmp;
             }
-                
+
             return new string(buffer, 0, index);
         }
 
         static char MapToBase36Char(int digit) { return (char)((digit < 10 ? '0' : 'a' - 10) + digit); }
 
-
         /// <summary>
-        /// This is equivalent to num.ToString("f"+precision), but around 10 times faster.
+        /// This is almost equivalent to num.ToString("f"+precision), but around 10 times faster.
+        /// 
+        /// Differences: 
+        ///   - rounding differences may exist for doubles like 1.005 which are not precisely representable.
+        ///   - numbers over (2^64 - 2^10)/(2^precision) are slow.
         /// </summary>
         public static string ToFixedPointString(double number, CultureInfo culture, int precision)
         {
@@ -387,24 +390,41 @@ namespace ProgressOnderwijsUtils
             }
 
             ulong mult = 1;
-            for (int i = 0; i < precision; i++)
+            for (int i = 0; i < precision; i++) {
                 mult *= 10;
-            ulong x = (ulong)(number * mult + 0.5);
+            }
+            var rounded = number * mult + 0.5;
+            if (!(rounded <= ulong.MaxValue - 1024)) {
+                if (double.IsNaN(number)) {
+                    return "NaN";
+                }
+                if (double.IsInfinity(number)) {
+                    return isNeg ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
+                }
+                return number.ToString("f" + precision, culture);
+            }
+            var x = (ulong)rounded;
+
+            isNeg = isNeg && x > 0;
+
             if (precision > 0) {
-                int i = 0;
                 do {
-                    str[idx++] = (char)('0' + x % 10);
+                    var tmp = x;
                     x = x / 10;
-                    i++;
-                } while (i < precision);
+                    str[idx++] = (char)('0' + (tmp - x * 10));
+                }
+                while (idx < precision);
                 str[idx++] = fI.PercentDecimalSeparator[0];
             }
             do {
-                str[idx++] = (char)('0' + x % 10);
+                var tmp = x;
                 x = x / 10;
-            } while (x != 0);
-            if (isNeg)
-                str[idx++] = '-';
+                str[idx++] = (char)('0' + (tmp - x * 10));
+            }
+            while (x != 0);
+            if (isNeg) {
+                str[idx++] = fI.NegativeSign[0];
+            }
             for (int i = 0, j = idx - 1; i < j; i++, j--) {
                 var tmp = str[i];
                 str[i] = str[j];
@@ -412,7 +432,6 @@ namespace ProgressOnderwijsUtils
             }
             return new string(str, 0, idx);
         }
-
 
         public static DateTime? DateMax(DateTime? d1, DateTime? d2)
         {
