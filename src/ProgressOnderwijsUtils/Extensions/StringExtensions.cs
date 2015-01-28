@@ -69,5 +69,14 @@ namespace ProgressOnderwijsUtils
         {
             return replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
         }
+
+        public static string NullIfEmpty(this string str)
+        {
+            if (str != null && str.Trim() == String.Empty) {
+                return null;
+            } else {
+                return str;
+            }
+        }
     }
 }
