@@ -17,6 +17,15 @@ namespace ProgressOnderwijsUtils
             return s == null || s.Trim().Length == 0;
         }
 
+        public static string NullIfWhiteSpace(this string str)
+        {
+            if (string.IsNullOrWhiteSpace(str)) {
+                return null;
+            } else {
+                return str;
+            }
+        }
+
         static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
 
         /// <summary>
@@ -68,15 +77,6 @@ namespace ProgressOnderwijsUtils
         public static string Replace(this string s, IEnumerable<KeyValuePair<string, string>> replacements)
         {
             return replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
-        }
-
-        public static string NullIfEmpty(this string str)
-        {
-            if (str != null && str.Trim() == String.Empty) {
-                return null;
-            } else {
-                return str;
-            }
         }
     }
 }
