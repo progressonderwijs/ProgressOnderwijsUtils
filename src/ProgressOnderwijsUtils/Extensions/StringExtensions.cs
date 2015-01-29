@@ -12,9 +12,18 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="s">string to check</param>
         /// <returns>true if string is empty or is null, false otherwise</returns>
-        public static bool IsNullOrEmpty(this string s)
+        public static bool IsNullOrWhiteSpace(this string s)
         {
-            return s == null || s.Trim().Length == 0;
+            return string.IsNullOrWhiteSpace(s);
+        }
+
+        public static string NullIfWhiteSpace(this string str)
+        {
+            if (string.IsNullOrWhiteSpace(str)) {
+                return null;
+            } else {
+                return str;
+            }
         }
 
         static readonly Regex COLLAPSE_WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
