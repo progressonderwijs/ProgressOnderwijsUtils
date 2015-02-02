@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ProgressOnderwijsUtils
 {
+    [Serializable]
     public struct FileData : IEquatable<FileData>, IMetaObject
     {
         const int MAX_FILE_NAME = 64;

@@ -1,5 +1,8 @@
-﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
-
+﻿using System.Diagnostics;
+using System.IO;
+using log4net;
+using ProgressOnderwijsUtils.Log4Net;
+// ReSharper disable PossiblyMistakenUseOfParamsMethod
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -54,9 +57,65 @@ namespace ProgressOnderwijsUtils
                         adapter.MissingSchemaAction = missingSchemaAction;
                         var dt = new DataTable();
                         adapter.Fill(dt);
+
+                        MetaObjectProposalLogger.LogMetaObjectProposal(command, dt, conn.Tracer);
                         return dt;
                     }
                 });
+        }
+
+        static class MetaObjectProposalLogger
+        {
+            static readonly ConcurrentDictionary<string, string> metaObjectProposals = new ConcurrentDictionary<string, string>();
+            static readonly object sync = new object();
+            static Action<string> writer;
+
+            [Conditional("DEBUG")]
+            public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, QueryTracer tracer)
+            {
+                var commandText = QueryTracer.DebugFriendlyCommandText(command, false);
+                bool wasAdded = false;
+
+                var metaObjectClass = metaObjectProposals.GetOrAdd(
+                    commandText,
+                    _ => {
+                        wasAdded = true;
+                        return dt.DataTableToMetaObjectClassDef();
+                    });
+                if (wasAdded) {
+                    lock (sync) {
+
+                    }
+                    Log("=======================\r\n" + commandText + "\r\n\r\n" + metaObjectClass + "\r\n\r\n");
+                }
+                tracer.FinishDisposableTimer(() => "METAOBJECT proposed for next query:\n" + metaObjectClass, TimeSpan.Zero);
+            }
+
+            static void Log(string text)
+            {
+                lock (sync) {
+                    if (writer == null) {
+                        try {
+                            writer = new StreamWriter(String.Format(@"C:\\temp\\MetaObjectProposals_{0}.txt", DateTime.Now.ToString("yyyy-MM-dd_HHmm_ss"))) {
+                                AutoFlush = true
+                            }.Write;
+                        } catch {
+                            writer = s => { };
+                        }
+                    }
+                    writer(text);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Leest DataTable op basis van het huidige commando met de huidige parameters; neemt ook schema informatie in de DataTable op.
+        /// </summary>
+        /// <param name="builder">De uit-te-voeren query</param>
+        /// <param name="conn">De database om tegen te query-en</param>
+        public static DataTable ReadDataTableWithSqlMetadata(QueryBuilder builder, SqlCommandCreationContext conn)
+        {
+            return builder.ReadDataTable(conn, MissingSchemaAction.AddWithKey);
         }
 
         public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
@@ -83,8 +142,7 @@ namespace ProgressOnderwijsUtils
                 q,
                 qCommandCreationContext,
                 () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
-                ReadByConstructorUnpacker<T>
-                );
+                ReadByConstructorUnpacker<T>);
         }
 
         public static T[] ReadByConstructorUnpacker<T>(SqlCommand cmd) where T : IReadByConstructor
@@ -125,11 +183,18 @@ namespace ProgressOnderwijsUtils
                 try {
                     return unpacker(reader, out lastColumnRead);
                 } catch (Exception ex) {
-                    var name = reader.GetName(lastColumnRead);
                     var mps = MetaObject.GetMetaProperties<T>();
-                    var mp = mps.GetByName(name);
+                    var metaObjectTypeName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T));
+
+                    var sqlColName = reader.GetName(lastColumnRead);
+                    var mp = mps.GetByName(sqlColName);
+
+                    var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
+                    var expectedCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(reader.GetFieldType(lastColumnRead));
+                    var actualCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(mp.DataType);
+
                     throw new InvalidOperationException(
-                        "Cannot unpack column " + reader.GetName(lastColumnRead) + " into type " + mp.DataType + "; (" + typeof(T).Name + "." + mp.Name + ")",
+                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name + " of type " + actualCsTypeName,
                         ex);
                 }
             }
@@ -149,8 +214,7 @@ namespace ProgressOnderwijsUtils
                 q,
                 qCommandCreationContext,
                 () => "ReadPlain<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
-                ReadPlainUnpacker<T>
-                );
+                ReadPlainUnpacker<T>);
         }
 
         public static T[] ReadPlainUnpacker<T>(SqlCommand cmd)
@@ -174,8 +238,7 @@ namespace ProgressOnderwijsUtils
                 q,
                 qCommandCreationContext,
                 () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T1)) + ", " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T2)) + ">() failed.",
-                ReadByConstructor<T1, T2>
-                );
+                ReadByConstructor<T1, T2>);
         }
 
         public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(SqlCommand cmd)
@@ -337,7 +400,7 @@ namespace ProgressOnderwijsUtils
                         typeof(T[]),
                         new[] { listVarExpr },
                         listAssignment,
-                        //listInit,
+                    //listInit,
                         rowLoopExpr,
                         listToArrayExpr
                         ),
@@ -440,7 +503,7 @@ namespace ProgressOnderwijsUtils
 
                 // ReSharper disable UnusedParameter.Local
                 public static TRowReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
-                    // ReSharper restore UnusedParameter.Local
+                // ReSharper restore UnusedParameter.Local
                 {
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
