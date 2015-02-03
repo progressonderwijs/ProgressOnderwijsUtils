@@ -347,7 +347,7 @@ namespace ProgressOnderwijsUtils
         WijzigenAccorderenToelatingseisen = 136,
 
         [MpLabel("Superuser"), Implies(Combi_BeheerAlles, BeheerStudievolg, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
-            WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenTabblad, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
+            WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenBekijken, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
             Combi_FontysBeheerFO, Combi_FontysMuteerFO, StudiebegeleidingNotities, StudievoortgangNotities, DecaanNotities, FinancieelNotities, InschrijvingNotities,
             StudentDecanaatNotities, PsycholoogNotities, StudiekeuzeAdviseurNotities
             )]
@@ -609,7 +609,7 @@ namespace ProgressOnderwijsUtils
         StudievoortgangNotitiesAlleenBekijken = 242,
 
         [MpLabel("Rapporten bekijken"), Toekenbaar]
-        RapportenTabblad = 243,
+        RapportenBekijken = 243,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
         META_EerstVolgendVrijRolId = 253,
