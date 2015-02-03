@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.ToegangsRolInternal;
 
@@ -611,8 +609,12 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Rapporten bekijken"), Toekenbaar]
         RapportenBekijken = 243,
 
+        [MpLabel("Opvoeren student"), Toekenbaar,
+         Implies(StudentToevoegen, StudentWijzigPersonaliaBeperkt, StudentWijzigPersonalia)]
+        OpvoerenStudent = 253,
+
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 253,
+        META_EerstVolgendVrijRolId = 254,
 
     }
 }
