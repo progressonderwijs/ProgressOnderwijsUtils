@@ -315,7 +315,7 @@ namespace ProgressOnderwijsUtils
 
         [MpLabel("Invoer niet-reguliere inschrijvingen"), Toekenbaar,
          Implies(NietReguliereInschrijvingenWijzigenVerwijderen, NietReguliereInschrijvingenToevoegen, StudentToevoegen,
-             StudentAdresWijzigenBeperkt, StudentWijzigPersonaliaBeperkt, BekijkenInschrijvingen)]
+             StudentAdresWijzigenBeperkt, StudentWijzigPersonalia, BekijkenInschrijvingen)]
         InvoerNietReguliereInschrijvingen = 129,
 
         [MpLabel("Wijzigen financieel"), Toekenbaar,
@@ -473,11 +473,11 @@ namespace ProgressOnderwijsUtils
          Implies(BekijkenInschrijvingen, AlumniNetwerkToevoegenWijzigenVerwijderen)]
         WijzigenAlumniNetwerk = 195,
 
-        [MpLabel("Student wijzig personalia beperkt")]
+        [Obsolete("Is samengevoegd in de StudentWijzigPersonalia", true), MpLabel("Student wijzig personalia beperkt")]
         StudentWijzigPersonaliaBeperkt = 196,
 
         [MpLabel("Wijzigen verblijfsvergunning/Vnummer"), Toekenbaar,
-         Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning, StudentWijzigPersonaliaBeperkt)]
+         Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning, StudentWijzigPersonalia)]
         WijzigenVerblijfsvergunningVnummer = 197,
 
         [MpLabel("Student wijzig verblijfsvergunning")]
@@ -610,7 +610,7 @@ namespace ProgressOnderwijsUtils
         RapportenBekijken = 243,
 
         [MpLabel("Opvoeren student"), Toekenbaar,
-         Implies(StudentToevoegen, StudentWijzigPersonaliaBeperkt, StudentWijzigPersonalia)]
+         Implies(StudentToevoegen, StudentWijzigPersonalia)]
         OpvoerenStudent = 253,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
