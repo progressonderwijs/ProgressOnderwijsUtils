@@ -284,7 +284,7 @@ namespace ProgressOnderwijsUtils
         BekijkenUitwisselingDuo = 124,
 
         [MpLabel("Wijzigen inschrijvingen en aanmeldingen"), Toekenbaar,
-         Implies(StudentWijzigPersonalia, StudentIdentificatieToevoegenVerwijderenWijzigen,
+         Implies(StudentIdentificatieToevoegenVerwijderenWijzigen,
              StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen,
              StudentOverledenVerifieeren, VooropleidingenToevoegenVerwijderenWijzigen, VooropleidingenVerifieeren,
              AanmeldingenToevoegenWijzigen, AanmeldingDefinitiefInschrijven, AanmeldingInschrijvingIntrekken,
