@@ -249,9 +249,6 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Student communicatie toevoegen verwijderen wijzigen")]
         StudentCommunicatieToevoegenVerwijderenWijzigen = 112,
 
-        [MpLabel("Communicatie template toevoegen verwijderen wijzigen")]
-        CommunicatieTemplateToevoegenVerwijderenWijzigen = 113,
-
         [MpLabel("Volg onderwijs beheer alles")]
         VolgOnderwijsBeheerAlles = 114,
 
@@ -345,7 +342,7 @@ namespace ProgressOnderwijsUtils
         WijzigenAccorderenToelatingseisen = 136,
 
         [MpLabel("Superuser"), Implies(Combi_BeheerAlles, BeheerStudievolg, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
-            WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenBekijken, CommunicatieTemplateToevoegenVerwijderenWijzigen, Student, WijzigenGroepen,
+            WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenBekijken, Student, WijzigenGroepen,
             Combi_FontysBeheerFO, Combi_FontysMuteerFO, StudiebegeleidingNotities, StudievoortgangNotities, DecaanNotities, FinancieelNotities, InschrijvingNotities,
             StudentDecanaatNotities, PsycholoogNotities, StudiekeuzeAdviseurNotities
             )]
