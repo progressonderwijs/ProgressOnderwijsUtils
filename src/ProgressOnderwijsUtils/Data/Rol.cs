@@ -610,7 +610,7 @@ namespace ProgressOnderwijsUtils
         RapportenBekijken = 243,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 254,
+        META_EerstVolgendVrijRolId = 253,
 
     }
 }
