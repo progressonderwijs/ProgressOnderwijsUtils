@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Organisatie toevoegen verwijderen wijzigen")]
         OrganisatieToevoegenVerwijderenWijzigen = 4,
 
-        [MpLabel("Student wijzig personalia")]
+        [MpLabel("Student wijzig personalia"), Toekenbaar]
         StudentWijzigPersonalia = 32,
 
         [MpLabel("Opleidingen bekijken"), Implies(NietReguliereOpleidingenBekijken)]
@@ -198,7 +198,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Niet reguliere inschrijvingen toevoegen")]
         NietReguliereInschrijvingenToevoegen = 91,
 
-        [Obsolete("Vervangen door StudentWijzigPersonalia"), MpLabel("Student toevoegen")]
+        [Obsolete("Vervangen door StudentWijzigPersonalia"),  MpLabel("Student toevoegen")]
         StudentToevoegen = 92,
 
         [MpLabel("Student adres bekijken")]
