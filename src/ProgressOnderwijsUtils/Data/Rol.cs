@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.ToegangsRolInternal;
 
@@ -65,7 +63,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Organisatie toevoegen verwijderen wijzigen")]
         OrganisatieToevoegenVerwijderenWijzigen = 4,
 
-        [MpLabel("Student wijzig personalia")]
+        [MpLabel("Student wijzig personalia"), Toekenbaar]
         StudentWijzigPersonalia = 32,
 
         [MpLabel("Opleidingen bekijken"), Implies(NietReguliereOpleidingenBekijken)]
@@ -200,7 +198,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Niet reguliere inschrijvingen toevoegen")]
         NietReguliereInschrijvingenToevoegen = 91,
 
-        [MpLabel("Student toevoegen")]
+        [Obsolete("Vervangen door StudentWijzigPersonalia"),  MpLabel("Student toevoegen")]
         StudentToevoegen = 92,
 
         [MpLabel("Student adres bekijken")]
@@ -286,7 +284,7 @@ namespace ProgressOnderwijsUtils
         BekijkenUitwisselingDuo = 124,
 
         [MpLabel("Wijzigen inschrijvingen en aanmeldingen"), Toekenbaar,
-         Implies(StudentWijzigPersonalia, StudentIdentificatieToevoegenVerwijderenWijzigen,
+         Implies(StudentIdentificatieToevoegenVerwijderenWijzigen,
              StudentIdentificatieVerifieeren, StudentoverledenToevoegenVerwijderenWijzigen,
              StudentOverledenVerifieeren, VooropleidingenToevoegenVerwijderenWijzigen, VooropleidingenVerifieeren,
              AanmeldingenToevoegenWijzigen, AanmeldingDefinitiefInschrijven, AanmeldingInschrijvingIntrekken,
@@ -312,12 +310,12 @@ namespace ProgressOnderwijsUtils
         WijzigenExamens = 127,
 
         [MpLabel("Wijzigen correspondentieadressen"), Toekenbaar,
-         Implies(StudentToevoegen, StudentAdresWijzigenBeperkt, BekijkenInschrijvingen)]
+         Implies(StudentWijzigPersonalia, StudentAdresWijzigenBeperkt, BekijkenInschrijvingen)]
         WijzigenCorrespondentieadressen = 128,
 
         [MpLabel("Invoer niet-reguliere inschrijvingen"), Toekenbaar,
-         Implies(NietReguliereInschrijvingenWijzigenVerwijderen, NietReguliereInschrijvingenToevoegen, StudentToevoegen,
-             StudentAdresWijzigenBeperkt, StudentWijzigPersonaliaBeperkt, BekijkenInschrijvingen)]
+         Implies(NietReguliereInschrijvingenWijzigenVerwijderen, NietReguliereInschrijvingenToevoegen,
+             StudentAdresWijzigenBeperkt, StudentWijzigPersonalia, BekijkenInschrijvingen)]
         InvoerNietReguliereInschrijvingen = 129,
 
         [MpLabel("Wijzigen financieel"), Toekenbaar,
@@ -475,11 +473,11 @@ namespace ProgressOnderwijsUtils
          Implies(BekijkenInschrijvingen, AlumniNetwerkToevoegenWijzigenVerwijderen)]
         WijzigenAlumniNetwerk = 195,
 
-        [MpLabel("Student wijzig personalia beperkt")]
+        [Obsolete("Is samengevoegd in de StudentWijzigPersonalia", true), MpLabel("Student wijzig personalia beperkt")]
         StudentWijzigPersonaliaBeperkt = 196,
 
         [MpLabel("Wijzigen verblijfsvergunning/Vnummer"), Toekenbaar,
-         Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning, StudentWijzigPersonaliaBeperkt)]
+         Implies(BekijkenInschrijvingenUitgebreid, StudentWijzigVerblijfsvergunning, StudentWijzigPersonalia)]
         WijzigenVerblijfsvergunningVnummer = 197,
 
         [MpLabel("Student wijzig verblijfsvergunning")]
