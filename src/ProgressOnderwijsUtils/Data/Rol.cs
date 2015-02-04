@@ -198,7 +198,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Niet reguliere inschrijvingen toevoegen")]
         NietReguliereInschrijvingenToevoegen = 91,
 
-        [MpLabel("Student toevoegen")]
+        [Obsolete("Vervangen door StudentWijzigPersonalia"), MpLabel("Student toevoegen")]
         StudentToevoegen = 92,
 
         [MpLabel("Student adres bekijken")]
@@ -310,11 +310,11 @@ namespace ProgressOnderwijsUtils
         WijzigenExamens = 127,
 
         [MpLabel("Wijzigen correspondentieadressen"), Toekenbaar,
-         Implies(StudentToevoegen, StudentAdresWijzigenBeperkt, BekijkenInschrijvingen)]
+         Implies(StudentWijzigPersonalia, StudentAdresWijzigenBeperkt, BekijkenInschrijvingen)]
         WijzigenCorrespondentieadressen = 128,
 
         [MpLabel("Invoer niet-reguliere inschrijvingen"), Toekenbaar,
-         Implies(NietReguliereInschrijvingenWijzigenVerwijderen, NietReguliereInschrijvingenToevoegen, StudentToevoegen,
+         Implies(NietReguliereInschrijvingenWijzigenVerwijderen, NietReguliereInschrijvingenToevoegen,
              StudentAdresWijzigenBeperkt, StudentWijzigPersonalia, BekijkenInschrijvingen)]
         InvoerNietReguliereInschrijvingen = 129,
 
@@ -608,10 +608,6 @@ namespace ProgressOnderwijsUtils
 
         [MpLabel("Rapporten bekijken"), Toekenbaar]
         RapportenBekijken = 243,
-
-        [MpLabel("Opvoeren student"), Toekenbaar,
-         Implies(StudentToevoegen, StudentWijzigPersonalia)]
-        OpvoerenStudent = 253,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
         META_EerstVolgendVrijRolId = 254,
