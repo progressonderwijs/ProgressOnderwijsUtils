@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
                 ParameterName = "@par" + paramnum,
                 Value = MetaObject.CreateDataReader(objs),
                 SqlDbType = SqlDbType.Structured,
-                TypeName = DbTypeName
+                TypeName = DbTypeName,
             };
         }
 

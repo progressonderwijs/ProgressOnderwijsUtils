@@ -471,6 +471,32 @@ namespace ProgressOnderwijsUtils
                     GetType().FullName + ": Query may not use * as that might cause runtime exceptions in productie when DB changes:\n" + commandText);
             }
         }
+
+        internal class SubQueryComponent : IQueryComponent
+        {
+            readonly QueryBuilder SubQuery;
+            public SubQueryComponent(QueryBuilder subQuery) { SubQuery = subQuery; }
+            public bool Equals(IQueryComponent other) { return Equals2(other as SubQueryComponent); }
+
+            bool Equals2(SubQueryComponent subQueryComponent)
+            {
+                return this == (object)subQueryComponent ||
+                    subQueryComponent != null
+                        && SubQuery.Equals(subQueryComponent.SubQuery);
+            }
+
+            public string ToSqlString(CommandFactory qnum)
+            {
+                foreach (var component in SubQuery.CanonicalReverseComponents.Reverse()) {
+                    qnum.AppendQueryComponent(component);
+                }
+                return "";
+            }
+
+            public override bool Equals(object obj) { return Equals2(obj as SubQueryComponent); }
+            public override int GetHashCode() { return SubQuery != null ? SubQuery.GetHashCode() : -34567; }
+            public string ToDebugText(Taal? taalOrNull) { return SubQuery.DebugText(taalOrNull); }
+        }
     }
 
     public class SqlCommandCreationContext : IDisposable
