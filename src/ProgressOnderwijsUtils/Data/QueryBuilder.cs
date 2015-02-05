@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -220,19 +221,32 @@ namespace ProgressOnderwijsUtils
 
         // ReSharper restore UnusedMember.Global
         [Pure]
-        public static QueryBuilder Create(string str, params object[] parms)
+        public static QueryBuilder Create(string str, params object[] arguments)
         {
             if (str == null) {
                 throw new ArgumentNullException("str");
             }
 
-            IQueryComponent[] parValues = parms.Select(QueryComponent.CreateParam).ToArray();
-            QueryBuilder query = Empty;
+            //null if argument is already a QueryBuilder and no new component needs to be created
+            var paramObjOrNullByIdx = new IQueryComponent[arguments.Length];
 
-            int pos = 0;
+            for (var i = 0; i < arguments.Length; i++) {
+                if (!(arguments[i] is QueryBuilder)) {
+                    paramObjOrNullByIdx[i] = QueryComponent.CreateParam(arguments[i]);
+                }
+            }
+            var query = Empty;
+
+            var pos = 0;
             foreach (var paramRefMatch in ParamRefMatches(str)) {
                 query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.Index - pos)));
-                query = Concat(query, parValues[Int32.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2))]);
+                var argIdx = int.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2), NumberStyles.None, CultureInfo.InvariantCulture);
+                var queryComponent = paramObjOrNullByIdx[argIdx];
+                if (queryComponent == null) {
+                    query = Concat(query, (QueryBuilder)arguments[argIdx]);
+                } else {
+                    query = Concat(query, queryComponent);
+                }
                 pos = paramRefMatch.Index + paramRefMatch.Length;
             }
             query = Concat(query, QueryComponent.CreateString(str.Substring(pos, str.Length - pos)));
@@ -470,32 +484,6 @@ namespace ProgressOnderwijsUtils
                 throw new InvalidOperationException(
                     GetType().FullName + ": Query may not use * as that might cause runtime exceptions in productie when DB changes:\n" + commandText);
             }
-        }
-
-        internal class SubQueryComponent : IQueryComponent
-        {
-            readonly QueryBuilder SubQuery;
-            public SubQueryComponent(QueryBuilder subQuery) { SubQuery = subQuery; }
-            public bool Equals(IQueryComponent other) { return Equals2(other as SubQueryComponent); }
-
-            bool Equals2(SubQueryComponent subQueryComponent)
-            {
-                return this == (object)subQueryComponent ||
-                    subQueryComponent != null
-                        && SubQuery.Equals(subQueryComponent.SubQuery);
-            }
-
-            public string ToSqlString(CommandFactory qnum)
-            {
-                foreach (var component in SubQuery.CanonicalReverseComponents.Reverse()) {
-                    qnum.AppendQueryComponent(component);
-                }
-                return "";
-            }
-
-            public override bool Equals(object obj) { return Equals2(obj as SubQueryComponent); }
-            public override int GetHashCode() { return SubQuery != null ? SubQuery.GetHashCode() : -34567; }
-            public string ToDebugText(Taal? taalOrNull) { return SubQuery.DebugText(taalOrNull); }
         }
     }
 
