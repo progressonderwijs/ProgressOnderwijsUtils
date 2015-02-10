@@ -228,11 +228,11 @@ namespace ProgressOnderwijsUtils
             }
 
             //null if argument is already a QueryBuilder and no new component needs to be created
-            var paramObjOrNullByIdx = new IQueryComponent[arguments.Length];
+            var queryComponents = new IQueryComponent[arguments.Length];
 
             for (var i = 0; i < arguments.Length; i++) {
                 if (!(arguments[i] is QueryBuilder)) {
-                    paramObjOrNullByIdx[i] = QueryComponent.CreateParam(arguments[i]);
+                    queryComponents[i] = QueryComponent.CreateParam(arguments[i]);
                 }
             }
             var query = Empty;
@@ -240,10 +240,10 @@ namespace ProgressOnderwijsUtils
             var pos = 0;
             foreach (var paramRefMatch in ParamRefMatches(str)) {
                 query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.Index - pos)));
-                var argIdx = int.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2), NumberStyles.None, CultureInfo.InvariantCulture);
-                var queryComponent = paramObjOrNullByIdx[argIdx];
+                var componentIdx = int.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2), NumberStyles.None, CultureInfo.InvariantCulture);
+                var queryComponent = queryComponents[componentIdx];
                 if (queryComponent == null) {
-                    query = Concat(query, (QueryBuilder)arguments[argIdx]);
+                    query = Concat(query, (QueryBuilder)arguments[componentIdx]);
                 } else {
                     query = Concat(query, queryComponent);
                 }
