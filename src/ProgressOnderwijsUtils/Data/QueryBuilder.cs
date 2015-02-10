@@ -240,10 +240,10 @@ namespace ProgressOnderwijsUtils
             var pos = 0;
             foreach (var paramRefMatch in ParamRefMatches(str)) {
                 query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.Index - pos)));
-                var componentIdx = int.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2), NumberStyles.None, CultureInfo.InvariantCulture);
-                var queryComponent = queryComponents[componentIdx];
+                var componentIndex = int.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2), NumberStyles.None, CultureInfo.InvariantCulture);
+                var queryComponent = queryComponents[componentIndex];
                 if (queryComponent == null) {
-                    query = Concat(query, (QueryBuilder)arguments[componentIdx]);
+                    query = Concat(query, (QueryBuilder)arguments[componentIndex]);
                 } else {
                     query = Concat(query, queryComponent);
                 }
