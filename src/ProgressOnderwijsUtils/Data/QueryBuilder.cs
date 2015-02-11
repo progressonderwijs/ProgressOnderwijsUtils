@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics.Contracts;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -220,19 +221,32 @@ namespace ProgressOnderwijsUtils
 
         // ReSharper restore UnusedMember.Global
         [Pure]
-        public static QueryBuilder Create(string str, params object[] parms)
+        public static QueryBuilder Create(string str, params object[] arguments)
         {
             if (str == null) {
                 throw new ArgumentNullException("str");
             }
 
-            IQueryComponent[] parValues = parms.Select(QueryComponent.CreateParam).ToArray();
-            QueryBuilder query = Empty;
+            //null if argument is already a QueryBuilder and no new component needs to be created
+            var queryComponents = new IQueryComponent[arguments.Length];
 
-            int pos = 0;
+            for (var i = 0; i < arguments.Length; i++) {
+                if (!(arguments[i] is QueryBuilder)) {
+                    queryComponents[i] = QueryComponent.CreateParam(arguments[i]);
+                }
+            }
+            var query = Empty;
+
+            var pos = 0;
             foreach (var paramRefMatch in ParamRefMatches(str)) {
                 query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.Index - pos)));
-                query = Concat(query, parValues[Int32.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2))]);
+                var componentIndex = int.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2), NumberStyles.None, CultureInfo.InvariantCulture);
+                var queryComponent = queryComponents[componentIndex];
+                if (queryComponent == null) {
+                    query = Concat(query, (QueryBuilder)arguments[componentIndex]);
+                } else {
+                    query = Concat(query, queryComponent);
+                }
                 pos = paramRefMatch.Index + paramRefMatch.Length;
             }
             query = Concat(query, QueryComponent.CreateString(str.Substring(pos, str.Length - pos)));
