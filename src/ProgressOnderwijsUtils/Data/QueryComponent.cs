@@ -23,8 +23,7 @@ namespace ProgressOnderwijsUtils
         {
             if (o is QueryBuilder) {
                 throw new ArgumentException("Cannot pass a querybuilder as a parameter");
-            }
-            if (o is IQueryParameter) {
+            } else if (o is IQueryParameter) {
                 return (IQueryComponent)o;
             } else if (o is LiteralSqlInt) {
                 return new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant());
@@ -99,6 +98,15 @@ namespace ProgressOnderwijsUtils
 		GRANT EXECUTE ON TYPE::dbo.TVar_Float TO public;
 		 
 
+        TODO: once we're using Sql2014, the following types appear to be considerably faster:
+         CREATE TYPE TVar_Int AS TABLE ( 
+             val int NOT NULL, 
+             PRIMARY KEY NONCLUSTERED (val ASC)
+         )
+         WITH ( MEMORY_OPTIMIZED = ON )
+         
+         Memory optimized types also need a new MEMORY_OPTIMIZED_DATA filegroup, even if we're not going to store anything in that filegroup.
+         
 		 */
     }
 
