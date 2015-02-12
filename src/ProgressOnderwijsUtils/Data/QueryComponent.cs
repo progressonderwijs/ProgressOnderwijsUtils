@@ -23,8 +23,7 @@ namespace ProgressOnderwijsUtils
         {
             if (o is QueryBuilder) {
                 throw new ArgumentException("Cannot pass a querybuilder as a parameter");
-            }
-            if (o is IQueryParameter) {
+            } else if (o is IQueryParameter) {
                 return (IQueryComponent)o;
             } else if (o is LiteralSqlInt) {
                 return new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant());
