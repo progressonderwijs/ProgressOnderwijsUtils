@@ -466,8 +466,6 @@ namespace ProgressOnderwijsUtils
 
         public static ITranslatable GetLabel(Enum enumVal)
         {
-            //if (enumVal == null)
-            //	throw new ArgumentNullException("enumVal");
             return GetEnumMetaCache(enumVal.GetType())
                 .GetEnumLabel(enumVal);
         }
