@@ -108,7 +108,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Student kenmerken tabblad")]
         StudentKenmerkenTabblad = 55,
 
-        [MpLabel("Studielinkvragen bekijken"), Toekenbaar]
+        [MpLabel("Studielinkvragen bekijken"), Toekenbaar, Implies(StudielinkvragenBekijken)]
         StudielinkvragenBekijken = 253,
 
         [MpLabel("Vooropleidingen toevoegen verwijderen wijzigen")]
