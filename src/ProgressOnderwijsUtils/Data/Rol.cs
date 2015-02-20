@@ -108,6 +108,9 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Student kenmerken tabblad")]
         StudentKenmerkenTabblad = 55,
 
+        [MpLabel("Studielinkvragen bekijken"), Toekenbaar]
+        StudielinkvragenBekijken = 253,
+
         [MpLabel("Vooropleidingen toevoegen verwijderen wijzigen")]
         VooropleidingenToevoegenVerwijderenWijzigen = 58,
 
@@ -335,7 +338,7 @@ namespace ProgressOnderwijsUtils
          Implies(OrganisatieToevoegenVerwijderenWijzigen, OpleidingenBekijken, OpleidingenToevoegenVerwijderenWijzigen, DocumentTemplates,
              BekijkenKengetallen, WijzigenInschrijvingenEnAanmeldingen, WijzigenUitschrijvingen, WijzigenExamens, WijzigenCrm, TakenBekijkenWijzigen,
              StatischeGroepenAanmakenWijzigenVerwijderen,
-             StatischeGroepenGebruiken, KenmerkenToevoegenWijzigenVerwijderen, BatchesToevoegenWijzigenVerwijderen, StudentenSamenvoegen)]
+             StatischeGroepenGebruiken, KenmerkenToevoegenWijzigenVerwijderen, BatchesToevoegenWijzigenVerwijderen, StudentenSamenvoegen, StudielinkvragenBekijken)]
         BeheerInschrijvingen = 135,
 
         [MpLabel("Wijzigen accorderen toelatingseisen"), Toekenbaar, Implies(AanmeldingToelatingseisenAccorderen, BekijkenInschrijvingen)]
@@ -603,6 +606,6 @@ namespace ProgressOnderwijsUtils
         RapportenBekijken = 243,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 253,
+        META_EerstVolgendVrijRolId = 254,
     }
 }
