@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Student onderwijs tabblad")]
         StudentOnderwijsTabblad = 54,
 
-        [MpLabel("Student kenemerken tabblad")]
+        [MpLabel("Student kenmerken tabblad")]
         StudentKenmerkenTabblad = 55,
 
         [MpLabel("Vooropleidingen toevoegen verwijderen wijzigen")]
