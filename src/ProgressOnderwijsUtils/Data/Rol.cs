@@ -393,13 +393,13 @@ namespace ProgressOnderwijsUtils
             BsaBijzondereOmstandighedenToevoegenWijzigenVerwijderen)]
         WijzigenBsaBijzondereOmstandighedenStudiebegeleiding = 172,
 
-        [MpLabel("Inschrijving notities bekijken")]
+        [MpLabel("Inschrijving notities bekijken"), Toekenbaar]
         InschrijvingNotitiesAlleenBekijken = 174,
 
         [MpLabel("Inschrijving notities toevoegen wijzigen verwijderen"), Toekenbaar, Implies(InschrijvingNotitiesAlleenBekijken)]
         InschrijvingNotities = 175,
 
-        [MpLabel("Financieel notities bekijken")]
+        [MpLabel("Financieel notities bekijken"), Toekenbaar]
         FinancieelNotitiesAlleenBekijken = 176,
 
         [MpLabel("Financieel notities toevoegen wijzigen verwijderen"), Toekenbaar, Implies(FinancieelNotitiesAlleenBekijken)]
