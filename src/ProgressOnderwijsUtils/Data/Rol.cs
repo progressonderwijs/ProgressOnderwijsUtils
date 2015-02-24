@@ -105,8 +105,11 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Student onderwijs tabblad")]
         StudentOnderwijsTabblad = 54,
 
-        [MpLabel("Student kenemerken tabblad")]
+        [MpLabel("Student kenmerken tabblad")]
         StudentKenmerkenTabblad = 55,
+
+        [MpLabel("Studielinkvragen bekijken"), Toekenbaar, Implies(StudentKenmerkenTabblad)]
+        StudielinkvragenBekijken = 253,
 
         [MpLabel("Vooropleidingen toevoegen verwijderen wijzigen")]
         VooropleidingenToevoegenVerwijderenWijzigen = 58,
@@ -335,7 +338,7 @@ namespace ProgressOnderwijsUtils
          Implies(OrganisatieToevoegenVerwijderenWijzigen, OpleidingenBekijken, OpleidingenToevoegenVerwijderenWijzigen, DocumentTemplates,
              BekijkenKengetallen, WijzigenInschrijvingenEnAanmeldingen, WijzigenUitschrijvingen, WijzigenExamens, WijzigenCrm, TakenBekijkenWijzigen,
              StatischeGroepenAanmakenWijzigenVerwijderen,
-             StatischeGroepenGebruiken, KenmerkenToevoegenWijzigenVerwijderen, BatchesToevoegenWijzigenVerwijderen, StudentenSamenvoegen)]
+             StatischeGroepenGebruiken, KenmerkenToevoegenWijzigenVerwijderen, BatchesToevoegenWijzigenVerwijderen, StudentenSamenvoegen, StudielinkvragenBekijken)]
         BeheerInschrijvingen = 135,
 
         [MpLabel("Wijzigen accorderen toelatingseisen"), Toekenbaar, Implies(AanmeldingToelatingseisenAccorderen, BekijkenInschrijvingen)]
@@ -393,13 +396,13 @@ namespace ProgressOnderwijsUtils
             BsaBijzondereOmstandighedenToevoegenWijzigenVerwijderen)]
         WijzigenBsaBijzondereOmstandighedenStudiebegeleiding = 172,
 
-        [MpLabel("Inschrijving notities bekijken")]
+        [MpLabel("Inschrijving notities bekijken"), Toekenbaar]
         InschrijvingNotitiesAlleenBekijken = 174,
 
         [MpLabel("Inschrijving notities toevoegen wijzigen verwijderen"), Toekenbaar, Implies(InschrijvingNotitiesAlleenBekijken)]
         InschrijvingNotities = 175,
 
-        [MpLabel("Financieel notities bekijken")]
+        [MpLabel("Financieel notities bekijken"), Toekenbaar]
         FinancieelNotitiesAlleenBekijken = 176,
 
         [MpLabel("Financieel notities toevoegen wijzigen verwijderen"), Toekenbaar, Implies(FinancieelNotitiesAlleenBekijken)]
@@ -603,6 +606,6 @@ namespace ProgressOnderwijsUtils
         RapportenBekijken = 243,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 253,
+        META_EerstVolgendVrijRolId = 254,
     }
 }
