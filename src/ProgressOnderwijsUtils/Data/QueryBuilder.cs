@@ -299,7 +299,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public SqlCommand CreateSqlCommand(SqlCommandCreationContext commandCreationContext)
         {
-            var cmd = CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), commandCreationContext.Connection, commandCreationContext.CommandTimeout);
+            var cmd = CommandFactory.BuildQuery(ComponentsInReverseOrder.Reverse(), commandCreationContext.Connection, commandCreationContext.CommandTimeoutInS);
             if (commandCreationContext.Tracer != null) {
                 try {
                     var timer = commandCreationContext.Tracer.StartQueryTimer(cmd);
@@ -491,13 +491,13 @@ namespace ProgressOnderwijsUtils
     {
         public SqlConnection Connection { get; private set; }
         public QueryTracer Tracer { get; private set; }
-        public int CommandTimeout { get; private set; }
+        public int CommandTimeoutInS { get; private set; }
         public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) { return new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer); }
 
-        public SqlCommandCreationContext(SqlConnection conn, int defaultTimeout, QueryTracer tracer)
+        public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, QueryTracer tracer)
         {
             Connection = conn;
-            CommandTimeout = defaultTimeout;
+            CommandTimeoutInS = defaultTimeoutInS;
             Tracer = tracer;
         }
 
