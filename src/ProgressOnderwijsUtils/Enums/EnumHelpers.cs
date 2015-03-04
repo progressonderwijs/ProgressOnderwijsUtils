@@ -520,6 +520,14 @@ namespace ProgressOnderwijsUtils
                 .ToArray();
         }
 
+        public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
+            this IEnumerable<SelectItem<TEnum>> enumSelectItemList)
+            where TEnum : struct, IConvertible
+        {
+            return enumSelectItemList.Select(item => SelectItem.Create((int?)item.Value.ToInt32(null), item.Label))
+                .ToArray();
+        }
+
         public static TEnum? TryParse<TEnum>(string s) where TEnum : struct, IConvertible
         {
             if (!typeof(TEnum).IsEnum) {
