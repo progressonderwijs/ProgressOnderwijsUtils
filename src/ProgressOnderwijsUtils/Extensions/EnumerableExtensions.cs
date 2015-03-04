@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace ProgressOnderwijsUtils
 {
@@ -180,6 +181,14 @@ namespace ProgressOnderwijsUtils
                 return string.Format("\"{0}\"", item.ToString().Replace("\"", "\\\""));
             } else {
                 return string.Format("{0}", item);
+            }
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> list, CancellationToken cancel, Action<T> action)
+        {
+            foreach (var item in list) {
+                cancel.ThrowIfCancellationRequested();
+                action(item);
             }
         }
     }
