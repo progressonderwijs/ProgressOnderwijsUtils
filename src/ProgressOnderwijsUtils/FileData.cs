@@ -40,7 +40,6 @@ namespace ProgressOnderwijsUtils
 
         public override string ToString() { return ContainsFile ? string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m) : ""; }
 
-        #region IEquality implementation
         public override bool Equals(object other) { return other is FileData && Equals((FileData)other); }
 
         public override int GetHashCode()
@@ -74,9 +73,7 @@ namespace ProgressOnderwijsUtils
 
         public static bool operator ==(FileData left, FileData right) { return left.Equals(right); }
         public static bool operator !=(FileData left, FileData right) { return !left.Equals(right); }
-        #endregion
 
-        #region Serialization
         public static FileData Serialize<T>(T obj, string fileName = null)
         {
             using (var stream = new MemoryStream()) {
@@ -110,6 +107,5 @@ namespace ProgressOnderwijsUtils
             result += ".bin";
             return result;
         }
-        #endregion
     }
 }

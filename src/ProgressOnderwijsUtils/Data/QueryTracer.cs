@@ -12,7 +12,6 @@ namespace ProgressOnderwijsUtils
 {
     public sealed class QueryTracer
     {
-        #region Mutable Members
         public int QueryActiveNesting { get { return QueryCount - QueriesCompleted; } }
         public int QueryCount { get { return queryCount; } }
         public int QueriesCompleted { get { return queriesCompleted; } }
@@ -27,7 +26,6 @@ namespace ProgressOnderwijsUtils
         public TimeSpan SlowestQueryDuration { get { return slowest.Item1; } }
         public IEnumerable<Tuple<string, TimeSpan>> AllQueries { get { return allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1)); } }
         public TimeSpan AllQueryDurations { get; private set; }
-        #endregion
 
         public IDisposable StartQueryTimer(Func<string> commandText)
         {

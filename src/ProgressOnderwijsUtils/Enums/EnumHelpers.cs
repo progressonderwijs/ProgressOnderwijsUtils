@@ -466,8 +466,6 @@ namespace ProgressOnderwijsUtils
 
         public static ITranslatable GetLabel(Enum enumVal)
         {
-            //if (enumVal == null)
-            //	throw new ArgumentNullException("enumVal");
             return GetEnumMetaCache(enumVal.GetType())
                 .GetEnumLabel(enumVal);
         }
@@ -519,6 +517,14 @@ namespace ProgressOnderwijsUtils
             where TEnum : struct, IConvertible
         {
             return enumSelectItemList.Select(item => SelectItem.Create(item.Value.HasValue ? item.Value.Value.ToInt32(null) : default(int?), item.Label))
+                .ToArray();
+        }
+
+        public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
+            this IEnumerable<SelectItem<TEnum>> enumSelectItemList)
+            where TEnum : struct, IConvertible
+        {
+            return enumSelectItemList.Select(item => SelectItem.Create((int?)item.Value.ToInt32(null), item.Label))
                 .ToArray();
         }
 
