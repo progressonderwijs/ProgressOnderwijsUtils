@@ -23,13 +23,11 @@ namespace ProgressOnderwijsUtils
     public class Identifier<T> : IIdentifier, IComparable<T>
         where T : Identifier<T>, new()
     {
-        #region "  Constructor"
         public Identifier() { }
         public Identifier(int value) { Value = value; }
         public virtual string DbPrimaryKeyName { get { return typeof(T).Name.ToLower(CultureInfo.InvariantCulture) + "id"; } }
         public virtual string DbForeignKeyName { get { return typeof(T).Name.ToLower(CultureInfo.InvariantCulture); } }
         public static T Create(int value) { return new T { Value = value }; }
-        #endregion
 
         bool valueSet = false;
         int _value;
@@ -51,7 +49,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        #region " Comparison"
         public override int GetHashCode() { return Value.GetHashCode(); }
         public int CompareTo(T other) { return Value.CompareTo(other.Value); }
 
@@ -86,9 +83,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public static bool operator !=(Identifier<T> a, Identifier<T> b) { return (!(a == b)); }
-        #endregion
 
-        #region " Boxing"
         //
         // These are called by the JIT
         //
@@ -102,6 +97,5 @@ namespace ProgressOnderwijsUtils
         [UsedImplicitly]
         static int Unbox(object o) { return (int)o; }
 #pragma warning restore 169
-        #endregion
     }
 }
