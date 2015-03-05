@@ -259,7 +259,6 @@ namespace ProgressOnderwijsUtils
 			return " \t\r\n".IndexOf(c) != -1;
 		}
 	}
-#region Tests
 	public class ExpressionParserTest
 	{
 		[Test]
@@ -329,6 +328,5 @@ namespace ProgressOnderwijsUtils
 		}
 	}
 
-#endregion
 }
 #endif

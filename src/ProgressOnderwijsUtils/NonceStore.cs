@@ -24,7 +24,6 @@ namespace ProgressOnderwijsUtils
         public DateTime Timestamp { get; private set; }
         public string Nonce { get; private set; }
 
-        #region Implementation of IEquatable<NonceStoreItem>
         public bool Equals(NonceStoreItem other)
         {
             return !ReferenceEquals(other, null) &&
@@ -45,7 +44,6 @@ namespace ProgressOnderwijsUtils
 
         public static bool operator ==(NonceStoreItem left, NonceStoreItem right) { return Equals(left, right); }
         public static bool operator !=(NonceStoreItem left, NonceStoreItem right) { return !(left == right); }
-        #endregion
     }
 
     public interface INonceStore

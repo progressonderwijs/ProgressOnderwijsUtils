@@ -134,7 +134,6 @@ namespace ProgressOnderwijsUtils
 
         public static int DateTimeStringLengthForFormat(DatumFormaat formaat) { return FORMAAT_LENGTE[formaat]; }
 
-        #region ToString
         /// <summary>
         /// Generieke string-efy functie die de default Progress.NET formatering en culture-info gebruikt.
         /// </summary>
@@ -158,9 +157,7 @@ namespace ProgressOnderwijsUtils
         {
             return ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, language).Text)(language);
         }
-        #endregion
 
-        #region ToText
         /// <summary>
         /// Generieke text-efy functie die de default Progress.NET formatering en culture-info gebruikt om een waarde een vertaalbare string representatie te geven.
         /// </summary>
@@ -223,9 +220,7 @@ namespace ProgressOnderwijsUtils
                     taal => ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, taal).ExtraText)(taal));
             }
         }
-        #endregion
 
-        #region Parse
 
         //Deze functie gebruiken om gebruikersinvoer in vrije textvelden te converteren naar de juiste types, eerste TryParse uitvoeren!
         public static object Parse(string s, Type t, Taal taal) { return TryParse(s, t, taal).GetValue(); }
@@ -487,6 +482,5 @@ namespace ProgressOnderwijsUtils
                     datum.Substring(4, datum.Length - 4)
                 : datum;
         }
-        #endregion
     }
 }
