@@ -6,16 +6,16 @@ using JetBrains.Annotations;
 namespace ProgressOnderwijsUtils
 {
     public static class IdentifierTools {
-        public static string DbPrimaryKeyName(Type enumType)
+        public static string DbPrimaryKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible
         {
             //
-            return enumType.Name + "id";
+            return typeof(T).Name + "id";
         }
 
-        public static string DbForeignKeyName(Type enumType)
+        public static string DbForeignKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible
         {
             //
-            return enumType.Name;
+            return typeof(T).Name;
         }
     }
 
