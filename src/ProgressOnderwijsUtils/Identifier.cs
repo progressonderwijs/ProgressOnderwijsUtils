@@ -5,6 +5,20 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
+    public static class IdentifierTools {
+        public static string DbPrimaryKeyName(Enum enm)
+        {
+            //
+            return enm.GetType().Name + "id";
+        }
+
+        public static string DbForeignKeyName(Enum enm)
+        {
+            //
+            return enm.GetType().Name;
+        }
+    }
+
     // de IIdentifier wordt met name in de AutoLoadFromDb gebruikt om de mapping van Sql Server naar .Net uit te voeren
     public interface IIdentifier
     {
