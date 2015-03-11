@@ -5,7 +5,8 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class IdentifierTools {
+    public static class IdentifierTools
+    {
         public static string DbPrimaryKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible
         {
             //
@@ -23,7 +24,8 @@ namespace ProgressOnderwijsUtils
     public interface IIdentifier
     {
         bool HasValue { get; }
-        int Value { get; set; }
+        void SetValue(int value);
+        int GetValue();
         string DbPrimaryKeyName { get; }
         string DbForeignKeyName { get; }
     }
@@ -38,38 +40,27 @@ namespace ProgressOnderwijsUtils
         where T : Identifier<T>, new()
     {
         public Identifier() { }
-        public Identifier(int value) { Value = value; }
+        public Identifier(int value) { SetValue(value); }
         public virtual string DbPrimaryKeyName { get { return typeof(T).Name.ToLower(CultureInfo.InvariantCulture) + "id"; } }
         public virtual string DbForeignKeyName { get { return typeof(T).Name.ToLower(CultureInfo.InvariantCulture); } }
-        public static T Create(int value) { return new T { Value = value }; }
-
         bool valueSet = false;
         int _value;
         public bool HasValue { get { return valueSet; } }
 
-        public int Value
+        public void SetValue(int value)
         {
-            get
-            {
-                if (!valueSet) {
-                    throw new ArgumentException("De waarde van deze identifier wordt uitgelezen voordat deze is gezet");
-                }
-                return _value;
-            }
-            set
-            {
-                valueSet = true;
-                _value = value;
-            }
+            valueSet = true;
+            _value = value;
         }
 
-        public override int GetHashCode() { return Value.GetHashCode(); }
-        public int CompareTo(T other) { return Value.CompareTo(other.Value); }
+        public int GetValue() { return (int)this; }
+        public override int GetHashCode() { return ((int)this).GetHashCode(); }
+        public int CompareTo(T other) { return GetValue().CompareTo(other.GetValue()); }
 
         /// <summary>
         /// De waarde van de identifier als string
         /// </summary>
-        public override string ToString() { return Value.ToString(CultureInfo.InvariantCulture); }
+        public override string ToString() { return ((int)this).ToString(CultureInfo.InvariantCulture); }
 
         public override bool Equals(object obj)
         {
@@ -77,11 +68,12 @@ namespace ProgressOnderwijsUtils
             return (object)val != null && Equals(val);
         }
 
-        public bool Equals(int value) { return value == Value; }
-        bool Equals(Identifier<T> obj) { return obj.Value == Value; }
+        public bool Equals(int value) { return value == (int)this; }
+        bool Equals(Identifier<T> obj) { return (int)obj == (int)this; }
 
         // Alleen expliciete casts toestaan
-        public static explicit operator Identifier<T>(int value) { return Create(value); }
+        public static explicit operator Identifier<T>(int value) { return (T)value; }
+        public static explicit operator int(Identifier<T> value) { return (int)value; }
 
         public static bool operator ==(Identifier<T> a, Identifier<T> b)
         {
