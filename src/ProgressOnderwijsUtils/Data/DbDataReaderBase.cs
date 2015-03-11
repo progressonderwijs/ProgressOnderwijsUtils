@@ -92,7 +92,7 @@ namespace ProgressOnderwijsUtils
             var r = (T)Activator.CreateInstance(typeof(T), null);
             var identifier = r as IIdentifier;
             // ReSharper disable PossibleNullReferenceException
-            identifier.Value = (int)GetValue(ordinal);
+            identifier.SetValue((int)GetValue(ordinal));
             // ReSharper restore PossibleNullReferenceException}
             return (Identifier<T>)identifier;
         }
