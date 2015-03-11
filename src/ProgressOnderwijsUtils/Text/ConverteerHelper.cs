@@ -112,7 +112,7 @@ namespace ProgressOnderwijsUtils
             yield return TryToString<IIdentifier>(
                 obj,
                 o => language =>
-                    o.Value.ToString(format ?? "D", language.GetCulture()));
+                    (o.GetValue()).ToString(format ?? "D", language.GetCulture()));
             yield return TryToString<IEnumerable>(
                 obj,
                 o =>

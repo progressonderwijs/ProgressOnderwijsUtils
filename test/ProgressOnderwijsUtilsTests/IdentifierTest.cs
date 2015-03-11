@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtilsTests
         public static void EqualityCheck()
         {
             const int value = 12;
-            var id = TestId.Create(value);
+            var id = (TestId)value;
             Assert.That(id == (TestId)value, Is.True);
             // ReSharper disable EqualExpressionComparison
 #pragma warning disable 1718
@@ -40,9 +40,9 @@ namespace ProgressOnderwijsUtilsTests
         public static void Casting()
         {
             const int value = 12;
-            Assert.That(((TestId)value).Value, Is.EqualTo(value));
-            Assert.That(((Identifier<TestId>)value).Value, Is.EqualTo(value));
-            Assert.That((TestId.Create(value)).Value, Is.EqualTo(value));
+            Assert.That((int)((TestId)value), Is.EqualTo(value));
+            Assert.That((int)((Identifier<TestId>)value), Is.EqualTo(value));
+            Assert.That((int)(TestId)value, Is.EqualTo(value));
         }
 
         [Test]
@@ -50,8 +50,8 @@ namespace ProgressOnderwijsUtilsTests
         {
             var value1 = (int?)12;
             var value2 = (int?)12;
-            var id1 = TestId.Create(12);
-            var id2 = TestId.Create(12);
+            var id1 = (TestId)12;
+            var id2 = (TestId)12;
 
             const int steps = 10000000;
             var stopwatch = new Stopwatch();
@@ -164,7 +164,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var be = new GenericBusinessEdit(Session, "student");
             be.ReadNieuw(conn);
-            be.SetId(Id.RootOrganisatie.Create((int)RootOrganisatie.UVH));
+            be.SetId((Id.RootOrganisatie)(int)RootOrganisatie.UVH);
             be.Values["studentnummer"] = 0;
             be.Values["naam"] = "nvt";
             be.Save(conn);
