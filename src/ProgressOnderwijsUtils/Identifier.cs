@@ -21,6 +21,7 @@ namespace ProgressOnderwijsUtils
     }
 
     // de IIdentifier wordt met name in de AutoLoadFromDb gebruikt om de mapping van Sql Server naar .Net uit te voeren
+    // TODO: Deze class uitfaseren
     public interface IIdentifier
     {
         bool HasValue { get; }
