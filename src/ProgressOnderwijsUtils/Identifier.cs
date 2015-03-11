@@ -21,6 +21,7 @@ namespace ProgressOnderwijsUtils
     }
 
     // de IIdentifier wordt met name in de AutoLoadFromDb gebruikt om de mapping van Sql Server naar .Net uit te voeren
+    // TODO: Deze class uitfaseren
     public interface IIdentifier
     {
         bool HasValue { get; }
@@ -43,6 +44,14 @@ namespace ProgressOnderwijsUtils
         public Identifier(int value) { SetValue(value); }
         public virtual string DbPrimaryKeyName { get { return typeof(T).Name.ToLower(CultureInfo.InvariantCulture) + "id"; } }
         public virtual string DbForeignKeyName { get { return typeof(T).Name.ToLower(CultureInfo.InvariantCulture); } }
+
+        public static T Create(int value)
+        {
+            var t = new T();
+            t.SetValue(value);
+            return t;
+        }
+
         bool valueSet = false;
         int _value;
         public bool HasValue { get { return valueSet; } }
@@ -53,14 +62,21 @@ namespace ProgressOnderwijsUtils
             _value = value;
         }
 
-        public int GetValue() { return (int)this; }
-        public override int GetHashCode() { return ((int)this).GetHashCode(); }
+        public int GetValue()
+        {
+            if (!valueSet) {
+                throw new ArgumentException("De waarde van deze identifier wordt uitgelezen voordat deze is gezet");
+            }
+            return _value;
+        }
+
+        public override int GetHashCode() { return GetValue().GetHashCode(); }
         public int CompareTo(T other) { return GetValue().CompareTo(other.GetValue()); }
 
         /// <summary>
         /// De waarde van de identifier als string
         /// </summary>
-        public override string ToString() { return ((int)this).ToString(CultureInfo.InvariantCulture); }
+        public override string ToString() { return GetValue().ToString(CultureInfo.InvariantCulture); }
 
         public override bool Equals(object obj)
         {
@@ -68,12 +84,12 @@ namespace ProgressOnderwijsUtils
             return (object)val != null && Equals(val);
         }
 
-        public bool Equals(int value) { return value == (int)this; }
-        bool Equals(Identifier<T> obj) { return (int)obj == (int)this; }
+        public bool Equals(int value) { return value == GetValue(); }
+        bool Equals(Identifier<T> obj) { return obj.GetValue() == this.GetValue(); }
 
         // Alleen expliciete casts toestaan
-        public static explicit operator Identifier<T>(int value) { return (T)value; }
-        public static explicit operator int(Identifier<T> value) { return (int)value; }
+        public static explicit operator Identifier<T>(int value) { return Create(value); }
+        public static explicit operator int(Identifier<T> value) { return value.GetValue(); }
 
         public static bool operator ==(Identifier<T> a, Identifier<T> b)
         {
