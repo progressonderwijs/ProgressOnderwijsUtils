@@ -53,7 +53,14 @@ namespace ProgressOnderwijsUtils
             _value = value;
         }
 
-        public int GetValue() { return (int)this; }
+        public int GetValue()
+        {
+            if (!valueSet) {
+                throw new ArgumentException("De waarde van deze identifier wordt uitgelezen voordat deze is gezet");
+            }
+            return _value;
+        }
+
         public override int GetHashCode() { return ((int)this).GetHashCode(); }
         public int CompareTo(T other) { return GetValue().CompareTo(other.GetValue()); }
 
@@ -72,8 +79,14 @@ namespace ProgressOnderwijsUtils
         bool Equals(Identifier<T> obj) { return (int)obj == (int)this; }
 
         // Alleen expliciete casts toestaan
-        public static explicit operator Identifier<T>(int value) { return (T)value; }
-        public static explicit operator int(Identifier<T> value) { return (int)value; }
+        public static explicit operator Identifier<T>(int value)
+        {
+            var t = new T();
+            t.SetValue(value);
+            return t;
+        }
+
+        public static explicit operator int(Identifier<T> value) { return value.GetValue(); }
 
         public static bool operator ==(Identifier<T> a, Identifier<T> b)
         {
