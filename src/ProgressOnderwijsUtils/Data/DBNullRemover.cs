@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils
                 var r = (T)Activator.CreateInstance(typeof(T), null);
                 var i = r as IIdentifier;
                 // ReSharper disable PossibleNullReferenceException
-                i.Value = (int)obj;
+                i.SetValue((int)obj);
                 // ReSharper restore PossibleNullReferenceException
 
                 return r;

@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
             if (paramval is Filter.CurrentTimeToken) {
                 value = DateTime.Now;
             } else if (typeof(IIdentifier).IsAssignableFrom(paramval.GetType().BaseType)) {
-                value = paramval == null ? (int?)null : ((IIdentifier)paramval).Value;
+                value = paramval == null ? (int?)null : ((IIdentifier)paramval).GetValue();
             } else {
                 value = paramval;
             }
