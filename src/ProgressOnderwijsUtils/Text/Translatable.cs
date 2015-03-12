@@ -96,6 +96,8 @@ namespace ProgressOnderwijsUtils
 
         public static ITranslatable TextToTooltip(this ITranslatable translatable) { return CreateTranslatable(taal => "", taal => translatable.Translate(taal).Text); }
 
+        public static ITranslatable TooltipToText(this ITranslatable translatable) { return CreateTranslatable(taal => translatable.Translate(taal).ExtraText, taal => ""); }
+
         public static ITranslatable ReplaceTooltipWithTooltip(this ITranslatable translatable, ITranslatable tt)
         {
             return CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).ExtraText);
