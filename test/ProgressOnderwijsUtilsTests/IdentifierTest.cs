@@ -164,7 +164,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var be = new GenericBusinessEdit(Session, "student");
             be.ReadNieuw(conn);
-            be.SetId((Id.RootOrganisatie)(int)RootOrganisatie.UVH);
+            be.SetId2((RootOrganisatie)(int)RootOrganisatie.UVH);
             be.Values["studentnummer"] = 0;
             be.Values["naam"] = "nvt";
             be.Save(conn);

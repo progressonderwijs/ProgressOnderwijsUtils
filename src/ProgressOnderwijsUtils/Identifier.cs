@@ -9,14 +9,18 @@ namespace ProgressOnderwijsUtils
     {
         public static string DbPrimaryKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible
         {
-            //
-            return typeof(T).Name + "id";
+            if (typeof(T).Name == "RootOrganisatie")
+                return "organisatieid";
+            else
+                return typeof(T).Name + "id";
         }
 
         public static string DbForeignKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible
         {
-            //
-            return typeof(T).Name;
+            if (typeof(T).Name == "RootOrganisatie")
+                return "organisatie";
+            else
+                return typeof(T).Name;
         }
     }
 
