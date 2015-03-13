@@ -54,8 +54,6 @@ namespace ProgressOnderwijsUtils
                             typeof(Func<object, T>),
                             typeof(DBNullRemover).GetMethod("ExtractNullableStruct", BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(nullableBase));
                     }
-                } else if (typeof(IIdentifier).IsAssignableFrom(type)) {
-                    Extractor = ExtractIdentifier;
                 } else {
                     Extractor = ExtractClassOrNullableField;
                 }
@@ -64,24 +62,6 @@ namespace ProgressOnderwijsUtils
             static T ExtractClassOrNullableField(object obj) { return obj == DBNull.Value ? default(T) : (T)obj; }
             static T ExtractValueField(object obj) { return (T)obj; }
 
-            static T ExtractIdentifier(object obj)
-            {
-                if (obj == DBNull.Value) {
-                    return default(T);
-                }
-
-                if (obj == null) {
-                    return default(T);
-                }
-
-                var r = (T)Activator.CreateInstance(typeof(T), null);
-                var i = r as IIdentifier;
-                // ReSharper disable PossibleNullReferenceException
-                i.SetValue((int)obj);
-                // ReSharper restore PossibleNullReferenceException
-
-                return r;
-            }
         }
 
         // ReSharper disable UnusedMember.Local

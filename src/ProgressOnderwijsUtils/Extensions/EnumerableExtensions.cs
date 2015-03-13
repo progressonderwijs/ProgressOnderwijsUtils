@@ -22,8 +22,8 @@ namespace ProgressOnderwijsUtils
             if (list == null) {
                 throw new ArgumentNullException("list");
             }
-            int retval = 0;
-            foreach (T item in list) {
+            var retval = 0;
+            foreach (var item in list) {
                 if (Equals(elem, item)) {
                     return retval;
                 }
