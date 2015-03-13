@@ -1,6 +1,4 @@
-﻿using log4net;
-using ProgressOnderwijsUtils.Log4Net;
-// ReSharper disable PossiblyMistakenUseOfParamsMethod
+﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -256,7 +254,6 @@ namespace ProgressOnderwijsUtils
 
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
-        static readonly MethodInfo getIdentifier_SqlDataReader = typeof(SqlDataReader).GetMethod("GetInt32", binding);
 
         static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
@@ -276,7 +273,7 @@ namespace ProgressOnderwijsUtils
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 return GetterMethodsByType.ContainsKey(underlyingType) ||
                     (isSqlDataReader
-                        && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset) || typeof(IIdentifier).IsAssignableFrom(underlyingType)));
+                        && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
             }
 
             static MethodInfo GetterForType(Type underlyingType)
@@ -285,8 +282,6 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (isSqlDataReader && typeof(IIdentifier).IsAssignableFrom(underlyingType)) {
-                    return getIdentifier_SqlDataReader;
                 } else {
                     return InterfaceMap[GetterMethodsByType[underlyingType]];
                 }
@@ -296,7 +291,7 @@ namespace ProgressOnderwijsUtils
             {
                 bool canBeNull = type.CanBeNull();
                 Type underlyingType = type.GetNonNullableUnderlyingType();
-                bool needsCast = ((underlyingType != type.GetNonNullableType()) && (!typeof(IIdentifier).IsAssignableFrom(type.BaseType)));
+                bool needsCast = (underlyingType != type.GetNonNullableType());
                 var iConstant = Expression.Constant(i);
                 var callExpr = underlyingType == typeof(byte[])
                     ? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant)
@@ -308,15 +303,7 @@ namespace ProgressOnderwijsUtils
                 } else {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
-                    Expression ifNotDbNull;
-                    if (typeof(IIdentifier).IsAssignableFrom(type)) {
-                        //TODO: this makes it impossible to create overloads for the method "Create" on an IIdentifier.
-                        //A redesign would be better here.
-                        var conversionMethod = type.BaseType.GetMethod("Create");
-                        ifNotDbNull = Expression.Convert(castExpr, type, conversionMethod);
-                    } else {
-                        ifNotDbNull = Expression.Convert(castExpr, type);
-                    }
+                    var ifNotDbNull = Expression.Convert(castExpr, type);
 
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
                 }
