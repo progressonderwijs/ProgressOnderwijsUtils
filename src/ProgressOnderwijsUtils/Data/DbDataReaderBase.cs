@@ -87,16 +87,6 @@ namespace ProgressOnderwijsUtils
         public override long GetInt64(int ordinal) { return (long)GetValue(ordinal); }
         public override string GetString(int ordinal) { return (string)GetValue(ordinal); }
 
-        public Identifier<T> GetIdentifier<T>(int ordinal) where T : Identifier<T>, new()
-        {
-            var r = (T)Activator.CreateInstance(typeof(T), null);
-            var identifier = r as IIdentifier;
-            // ReSharper disable PossibleNullReferenceException
-            identifier.SetValue((int)GetValue(ordinal));
-            // ReSharper restore PossibleNullReferenceException}
-            return (Identifier<T>)identifier;
-        }
-
         public override int GetValues(object[] values)
         {
             var fieldsTodo = Math.Min(values.Length, FieldCount);
