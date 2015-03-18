@@ -478,9 +478,7 @@ namespace ProgressOnderwijsUtils
         readonly Comparison<T> comparer;
         public ComparisonComparer(Comparison<T> comparer) { this.comparer = comparer; }
 
-        #region Implementation of IComparer<in T>
         public int Compare(T x, T y) { return comparer(x, y); }
-        #endregion
     }
 
     public class EqualsEqualityComparer<T> : IEqualityComparer<T>
@@ -494,9 +492,7 @@ namespace ProgressOnderwijsUtils
             this.hashCode = hashCode;
         }
 
-        #region Implementation of IEqualityComparer<in T>
         public bool Equals(T x, T y) { return equals(x, y); }
         public int GetHashCode(T obj) { return hashCode == null ? obj.GetHashCode() : hashCode(obj); }
-        #endregion
     }
 }
