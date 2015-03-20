@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtilsTests
     public sealed class UtilsTest
     {
         [Test]
-        public void ToSortableStringTest()
+        public void ToSortableString_MaintainsOrder()
         {
             var cmp = StringComparer.Ordinal;
             var samplePoints = MoreEnumerable
@@ -31,6 +31,59 @@ namespace ProgressOnderwijsUtilsTests
                 }
             }
         }
+
+        [Test]
+        public void ToSortableString_ConcatenatedStringsMaintainOrder()
+        {
+            var samplePoints = new long[] {
+                -10000,
+                -1000,
+                -100,
+                -50,
+                -25,
+                -12,
+                -6,
+                0,
+                6,
+                12,
+                25,
+                50,
+                100,
+                1000,
+                10000,
+            };
+
+            var combos = (
+                from a in samplePoints
+                from b in samplePoints
+                select new[] { a, b }
+                ).Concat(
+                    from a in samplePoints
+                    select new[] { a }
+                );
+
+            foreach (var combo1 in combos) {
+                foreach (var combo2 in combos) {
+                    var str1 = combo1.Select(Utils.ToSortableShortString).JoinStrings();
+                    var str2 = combo2.Select(Utils.ToSortableShortString).JoinStrings();
+
+                    var strComparison = Math.Sign(StringComparer.Ordinal.Compare(str1, str2));
+                    var seqComparison = Math.Sign(combo1.Cast<long?>().ZipLongest(combo2.Cast<long?>(), Comparer<long?>.Default.Compare).FirstOrDefault(x => x != 0));
+                    if (strComparison != seqComparison) {
+                        Assert.Fail(
+                            "Comparisons don't match: {0} compared to {1} is {2} but after short string conversion {3}.CompareTo({4}) is {5}",
+                            ObjectToCode.ComplexObjectToPseudoCode(combo1),
+                            ObjectToCode.ComplexObjectToPseudoCode(combo2),
+                            seqComparison,
+                            ObjectToCode.ComplexObjectToPseudoCode(str1),
+                            ObjectToCode.ComplexObjectToPseudoCode(str2),
+                            strComparison
+                            );
+                    }
+                }
+            }
+        }
+
 
         [Test, Continuous]
         public void SwapValue()
@@ -62,7 +115,10 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test, Continuous]
-        public void NUnitSession() { Assert.That(Utils.IsInUnitTest()); }
+        public void NUnitSession()
+        {
+            Assert.That(Utils.IsInUnitTest());
+        }
 
         static IEnumerable<TestCaseData> MaandSpan()
         {
@@ -77,7 +133,10 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test, TestCaseSource("MaandSpan"), Continuous]
-        public int MaandSpanTest(DateTime d1, DateTime d2) { return Utils.MaandSpan(d1, d2); }
+        public int MaandSpanTest(DateTime d1, DateTime d2)
+        {
+            return Utils.MaandSpan(d1, d2);
+        }
 
         IEnumerable<TestCaseData> DateMax()
         {
@@ -163,7 +222,10 @@ namespace ProgressOnderwijsUtilsTests
          TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true),
          TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true),
          TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false), Continuous]
-        public bool GenerateForLanguage(DocumentLanguage doc, Taal language) { return Utils.GenerateForLanguage(doc, language); }
+        public bool GenerateForLanguage(DocumentLanguage doc, Taal language)
+        {
+            return Utils.GenerateForLanguage(doc, language);
+        }
 
         public static IEnumerable<TestCaseData> RoundUpData()
         {
@@ -176,6 +238,9 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test, TestCaseSource("RoundUpData")]
-        public void RoundUp(decimal waarde, int posities, decimal resultaat) { Assert.That(Utils.RoundUp(waarde, posities), Is.EqualTo(resultaat)); }
+        public void RoundUp(decimal waarde, int posities, decimal resultaat)
+        {
+            Assert.That(Utils.RoundUp(waarde, posities), Is.EqualTo(resultaat));
+        }
     }
 }

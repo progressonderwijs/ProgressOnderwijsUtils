@@ -38,7 +38,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        #region Implementation of IDisposable
         public void Dispose()
         {
             try {
@@ -47,9 +46,7 @@ namespace ProgressOnderwijsUtils
                 client.Abort();
             }
         }
-        #endregion
 
-        #region Implementation of IClientHandler<out TU>
         public void Call(Action<TB> call)
         {
             try {
@@ -73,7 +70,6 @@ namespace ProgressOnderwijsUtils
                 return call(client);
             }
         }
-        #endregion
     }
 
     public class ClientFactoryHandle<T> : IClientHandle<T>, IDisposable
@@ -104,7 +100,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        #region Implementation of IDisposable
         public void Dispose()
         {
             try {
@@ -113,9 +108,7 @@ namespace ProgressOnderwijsUtils
                 Client.Abort();
             }
         }
-        #endregion
 
-        #region Implementation of IClientHandler<out TU>
         public void Call(Action<T> call)
         {
             try {
@@ -139,6 +132,5 @@ namespace ProgressOnderwijsUtils
                 return call(client);
             }
         }
-        #endregion
     }
 }

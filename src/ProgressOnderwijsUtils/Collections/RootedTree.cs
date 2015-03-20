@@ -26,7 +26,6 @@ namespace ProgressOnderwijsUtils.Collections
         public bool HasValue { get { return !PathSegments.IsEmpty; } }
         public RootedTree<T> Parent { get { return new RootedTree<T>(PathSegments.Tail); } }
 
-        #region Equality implementation
         public bool Equals(RootedTree<T> other)
         {
             //two rooted trees are identical when their underlying trees are identical and their paths within that tree are identical.
@@ -40,9 +39,8 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         public override bool Equals(object obj) { return obj is RootedTree<T> && Equals((RootedTree<T>)obj); }
-        #endregion
 
-        #region internal details
+        // internal details:
         RootedTree(SList<TreePathSegment> pathSegments) { PathSegments = pathSegments; }
         readonly SList<TreePathSegment> PathSegments;
 
@@ -59,6 +57,5 @@ namespace ProgressOnderwijsUtils.Collections
                 ThisSubTree = node;
             }
         }
-        #endregion
     }
 }
