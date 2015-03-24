@@ -50,8 +50,7 @@ namespace ProgressOnderwijsUtils
             public MethodInfo Or, HasFlag, HasFlagOverlap, ToInt64;
         }
 
-        static readonly FlagOperationMethods forInt = FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap, Int32Helpers.ToInt64)
-            ,
+        static readonly FlagOperationMethods forInt = FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap, Int32Helpers.ToInt64),
             forLong = FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap, Int64Helpers.ToInt64);
 
         static readonly ITranslatable translatableComma = Translatable.Raw(", ");
