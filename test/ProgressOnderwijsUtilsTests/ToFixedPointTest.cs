@@ -64,8 +64,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(
                 () =>
                     approxEqual(
-                        double.Parse(Utils.ToFixedPointString(edgeCase - 1, NL, 0), NumberStyles.AllowDecimalPoint, NL)
-                        ,
+                        double.Parse(Utils.ToFixedPointString(edgeCase - 1, NL, 0), NumberStyles.AllowDecimalPoint, NL),
                         double.Parse(((double)(edgeCase - 1)).ToString("f0"), NumberStyles.AllowDecimalPoint, NL)));
         }
     }
