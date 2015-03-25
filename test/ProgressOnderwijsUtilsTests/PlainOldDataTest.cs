@@ -87,8 +87,7 @@ namespace ProgressOnderwijsUtilsTests
                     StartExmType = OlapStartUitstroomType.StartPropedeuse
                 };
             ComparePod(
-                olapcommon_sample
-                ,
+                olapcommon_sample,
                 new {
                     ExtraRijdimensie = "",
                     GeselecteerdeRijen = "",
