@@ -50,8 +50,7 @@ namespace ProgressOnderwijsUtils
             public MethodInfo Or, HasFlag, HasFlagOverlap, ToInt64;
         }
 
-        static readonly FlagOperationMethods forInt = FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap, Int32Helpers.ToInt64)
-            ,
+        static readonly FlagOperationMethods forInt = FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap, Int32Helpers.ToInt64),
             forLong = FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap, Int64Helpers.ToInt64);
 
         static readonly ITranslatable translatableComma = Translatable.Raw(", ");
@@ -466,8 +465,6 @@ namespace ProgressOnderwijsUtils
 
         public static ITranslatable GetLabel(Enum enumVal)
         {
-            //if (enumVal == null)
-            //	throw new ArgumentNullException("enumVal");
             return GetEnumMetaCache(enumVal.GetType())
                 .GetEnumLabel(enumVal);
         }
@@ -519,6 +516,14 @@ namespace ProgressOnderwijsUtils
             where TEnum : struct, IConvertible
         {
             return enumSelectItemList.Select(item => SelectItem.Create(item.Value.HasValue ? item.Value.Value.ToInt32(null) : default(int?), item.Label))
+                .ToArray();
+        }
+
+        public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
+            this IEnumerable<SelectItem<TEnum>> enumSelectItemList)
+            where TEnum : struct, IConvertible
+        {
+            return enumSelectItemList.Select(item => SelectItem.Create((int?)item.Value.ToInt32(null), item.Label))
                 .ToArray();
         }
 
