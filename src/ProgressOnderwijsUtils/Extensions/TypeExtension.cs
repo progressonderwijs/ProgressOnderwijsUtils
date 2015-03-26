@@ -41,9 +41,6 @@ namespace ProgressOnderwijsUtils
             if (nonNullableType.IsEnum) {
                 return nonNullableType.GetEnumUnderlyingType();
             }
-            if (typeof(IIdentifier).IsAssignableFrom(type.BaseType)) {
-                return Identifier.BaseType;
-            }
             return nonNullableType;
         }
 
