@@ -316,8 +316,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                                 elem.Name,
                                 elem.Attributes().Where(filter.AllowAttribute),
                                 elem.Nodes().Select(childnode => FilterElem(childnode, filter))
-                                )
-                            ,
+                                ),
                             1);
                 } else {
                     throw new ProgressNetException("enum error: " + safety + " is not a legal value");
