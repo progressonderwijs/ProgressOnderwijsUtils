@@ -1,5 +1,4 @@
 ﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -54,9 +53,21 @@ namespace ProgressOnderwijsUtils
                         adapter.MissingSchemaAction = missingSchemaAction;
                         var dt = new DataTable();
                         adapter.Fill(dt);
+
+                        MetaObjectProposalLogger.LogMetaObjectProposal(command, dt, conn.Tracer);
                         return dt;
                     }
                 });
+        }
+
+        /// <summary>
+        /// Leest DataTable op basis van het huidige commando met de huidige parameters; neemt ook schema informatie in de DataTable op.
+        /// </summary>
+        /// <param name="builder">De uit-te-voeren query</param>
+        /// <param name="conn">De database om tegen te query-en</param>
+        public static DataTable ReadDataTableWithSqlMetadata(QueryBuilder builder, SqlCommandCreationContext conn)
+        {
+            return builder.ReadDataTable(conn, MissingSchemaAction.AddWithKey);
         }
 
         public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
@@ -83,8 +94,7 @@ namespace ProgressOnderwijsUtils
                 q,
                 qCommandCreationContext,
                 () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
-                ReadByConstructorUnpacker<T>
-                );
+                ReadByConstructorUnpacker<T>);
         }
 
         public static T[] ReadByConstructorUnpacker<T>(SqlCommand cmd) where T : IReadByConstructor
@@ -125,11 +135,18 @@ namespace ProgressOnderwijsUtils
                 try {
                     return unpacker(reader, out lastColumnRead);
                 } catch (Exception ex) {
-                    var name = reader.GetName(lastColumnRead);
                     var mps = MetaObject.GetMetaProperties<T>();
-                    var mp = mps.GetByName(name);
+                    var metaObjectTypeName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T));
+
+                    var sqlColName = reader.GetName(lastColumnRead);
+                    var mp = mps.GetByName(sqlColName);
+
+                    var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
+                    var expectedCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(reader.GetFieldType(lastColumnRead));
+                    var actualCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(mp.DataType);
+
                     throw new InvalidOperationException(
-                        "Cannot unpack column " + reader.GetName(lastColumnRead) + " into type " + mp.DataType + "; (" + typeof(T).Name + "." + mp.Name + ")",
+                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name + " of type " + actualCsTypeName,
                         ex);
                 }
             }
@@ -149,8 +166,7 @@ namespace ProgressOnderwijsUtils
                 q,
                 qCommandCreationContext,
                 () => "ReadPlain<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
-                ReadPlainUnpacker<T>
-                );
+                ReadPlainUnpacker<T>);
         }
 
         public static T[] ReadPlainUnpacker<T>(SqlCommand cmd)
@@ -174,8 +190,7 @@ namespace ProgressOnderwijsUtils
                 q,
                 qCommandCreationContext,
                 () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T1)) + ", " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T2)) + ">() failed.",
-                ReadByConstructor<T1, T2>
-                );
+                ReadByConstructor<T1, T2>);
         }
 
         public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(SqlCommand cmd)
@@ -239,7 +254,6 @@ namespace ProgressOnderwijsUtils
 
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
-        static readonly MethodInfo getIdentifier_SqlDataReader = typeof(SqlDataReader).GetMethod("GetInt32", binding);
 
         static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
@@ -259,7 +273,7 @@ namespace ProgressOnderwijsUtils
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 return GetterMethodsByType.ContainsKey(underlyingType) ||
                     (isSqlDataReader
-                        && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset) || typeof(IIdentifier).IsAssignableFrom(underlyingType)));
+                        && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
             }
 
             static MethodInfo GetterForType(Type underlyingType)
@@ -268,8 +282,6 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (isSqlDataReader && typeof(IIdentifier).IsAssignableFrom(underlyingType)) {
-                    return getIdentifier_SqlDataReader;
                 } else {
                     return InterfaceMap[GetterMethodsByType[underlyingType]];
                 }
@@ -279,7 +291,7 @@ namespace ProgressOnderwijsUtils
             {
                 bool canBeNull = type.CanBeNull();
                 Type underlyingType = type.GetNonNullableUnderlyingType();
-                bool needsCast = ((underlyingType != type.GetNonNullableType()) && (!typeof(IIdentifier).IsAssignableFrom(type.BaseType)));
+                bool needsCast = (underlyingType != type.GetNonNullableType());
                 var iConstant = Expression.Constant(i);
                 var callExpr = underlyingType == typeof(byte[])
                     ? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant)
@@ -291,15 +303,7 @@ namespace ProgressOnderwijsUtils
                 } else {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
-                    Expression ifNotDbNull;
-                    if (typeof(IIdentifier).IsAssignableFrom(type)) {
-                        //TODO: this makes it impossible to create overloads for the method "Create" on an IIdentifier.
-                        //A redesign would be better here.
-                        var conversionMethod = type.BaseType.GetMethod("Create");
-                        ifNotDbNull = Expression.Convert(castExpr, type, conversionMethod);
-                    } else {
-                        ifNotDbNull = Expression.Convert(castExpr, type);
-                    }
+                    var ifNotDbNull = Expression.Convert(castExpr, type);
 
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
                 }
@@ -337,7 +341,7 @@ namespace ProgressOnderwijsUtils
                         typeof(T[]),
                         new[] { listVarExpr },
                         listAssignment,
-                        //listInit,
+                    //listInit,
                         rowLoopExpr,
                         listToArrayExpr
                         ),
@@ -440,7 +444,7 @@ namespace ProgressOnderwijsUtils
 
                 // ReSharper disable UnusedParameter.Local
                 public static TRowReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
-                    // ReSharper restore UnusedParameter.Local
+                // ReSharper restore UnusedParameter.Local
                 {
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {

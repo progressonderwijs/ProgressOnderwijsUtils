@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -57,7 +58,7 @@ namespace ProgressOnderwijsUtils
 
     public static class Utils
     {
-        public static Lazy<T> Lazy<T>(Func<T> factory) { return new Lazy<T>(factory, LazyThreadSafetyMode.PublicationOnly); }
+        public static Lazy<T> Lazy<T>(Func<T> factory) { return new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication); }
 
         public static bool ElfProef(int getal)
         {
@@ -159,8 +160,8 @@ namespace ProgressOnderwijsUtils
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
         {
-            var distinctNewlyReachable = elems.ToArray();
-            var set = distinctNewlyReachable.ToSet();
+            var set = elems.ToSet();
+            var distinctNewlyReachable = set.ToArray();
             while (distinctNewlyReachable.Length > 0) {
                 distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
             }
@@ -337,6 +338,8 @@ namespace ProgressOnderwijsUtils
 
         public static string ToSortableShortString(long value)
         {
+            //This function is used on a hot-path in Programma and Resultaten export - it needs to be fast.
+
             char[] buffer = new char[14]; // log(2^31)/log(36) < 6 char; +1 for length+sign.
             int index = 0;
             bool isNeg = value < 0;
@@ -357,11 +360,78 @@ namespace ProgressOnderwijsUtils
             int encodedLength = (isNeg ? -index : index) + 13; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
             buffer[index++] = MapToBase36Char(encodedLength);
 
-            Array.Reverse(buffer, 0, index);
+            for (int i = 0, j = index - 1; i < j; i++, j--) {
+                var tmp = buffer[i];
+                buffer[i] = buffer[j];
+                buffer[j] = tmp;
+            }
+
             return new string(buffer, 0, index);
         }
 
         static char MapToBase36Char(int digit) { return (char)((digit < 10 ? '0' : 'a' - 10) + digit); }
+
+        /// <summary>
+        /// This is almost equivalent to num.ToString("f"+precision), but around 10 times faster.
+        /// 
+        /// Differences: 
+        ///   - rounding differences may exist for doubles like 1.005 which are not precisely representable.
+        ///   - numbers over (2^64 - 2^10)/(2^precision) are slow.
+        /// </summary>
+        public static string ToFixedPointString(double number, CultureInfo culture, int precision)
+        {
+            //TODO:add tests
+            var fI = culture.NumberFormat;
+            var str = new char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
+            int idx = 0;
+            bool isNeg = number < 0;
+            if (isNeg) {
+                number = -number;
+            }
+
+            ulong mult = 1;
+            for (int i = 0; i < precision; i++) {
+                mult *= 10;
+            }
+            var rounded = number * mult + 0.5;
+            if (!(rounded <= ulong.MaxValue - 1024)) {
+                if (double.IsNaN(number)) {
+                    return "NaN";
+                }
+                if (double.IsInfinity(number)) {
+                    return isNeg ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
+                }
+                return number.ToString("f" + precision, culture);
+            }
+            var x = (ulong)rounded;
+
+            isNeg = isNeg && x > 0;
+
+            if (precision > 0) {
+                do {
+                    var tmp = x;
+                    x = x / 10;
+                    str[idx++] = (char)('0' + (tmp - x * 10));
+                }
+                while (idx < precision);
+                str[idx++] = fI.PercentDecimalSeparator[0];
+            }
+            do {
+                var tmp = x;
+                x = x / 10;
+                str[idx++] = (char)('0' + (tmp - x * 10));
+            }
+            while (x != 0);
+            if (isNeg) {
+                str[idx++] = fI.NegativeSign[0];
+            }
+            for (int i = 0, j = idx - 1; i < j; i++, j--) {
+                var tmp = str[i];
+                str[i] = str[j];
+                str[j] = tmp;
+            }
+            return new string(str, 0, idx);
+        }
 
         public static DateTime? DateMax(DateTime? d1, DateTime? d2)
         {
@@ -408,9 +478,7 @@ namespace ProgressOnderwijsUtils
         readonly Comparison<T> comparer;
         public ComparisonComparer(Comparison<T> comparer) { this.comparer = comparer; }
 
-        #region Implementation of IComparer<in T>
         public int Compare(T x, T y) { return comparer(x, y); }
-        #endregion
     }
 
     public class EqualsEqualityComparer<T> : IEqualityComparer<T>
@@ -424,9 +492,7 @@ namespace ProgressOnderwijsUtils
             this.hashCode = hashCode;
         }
 
-        #region Implementation of IEqualityComparer<in T>
         public bool Equals(T x, T y) { return equals(x, y); }
         public int GetHashCode(T obj) { return hashCode == null ? obj.GetHashCode() : hashCode(obj); }
-        #endregion
     }
 }
