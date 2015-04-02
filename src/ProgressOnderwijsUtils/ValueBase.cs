@@ -73,9 +73,7 @@ namespace ProgressOnderwijsUtils
         {
             Type type = typeof(T);
             var refEqMethod = ((Func<object, object, bool>)ReferenceEquals).Method;
-            var toStringMethod =
-                typeof(ToStringByMembers<T>).GetMethod("ToString", BindingFlags.Static | BindingFlags.NonPublic);
-            //typeof(object).GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance);
+            var toStringMethod = typeof(ToStringByMembers<T>).GetMethod("ToString", BindingFlags.Static | BindingFlags.NonPublic);
             var concatMethod = ((Func<string, string, string>)string.Concat).Method;
             var parA = Expression.Parameter(type, "a");
 
