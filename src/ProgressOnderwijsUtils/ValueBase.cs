@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using ExpressionToCodeLib;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -64,11 +66,14 @@ namespace ProgressOnderwijsUtils
             return mi is FieldInfo ? Expression.Field(expr, (FieldInfo)mi) : Expression.Property(expr, (PropertyInfo)mi);
         }
 
+        [UsedImplicitly]
+        static string ToString(object o) { return ObjectToCode.ComplexObjectToPseudoCode(o); }
+
         static Func<T, string> byPublicMembers()
         {
             Type type = typeof(T);
             var refEqMethod = ((Func<object, object, bool>)ReferenceEquals).Method;
-            var toStringMethod = typeof(object).GetMethod("ToString", BindingFlags.Public | BindingFlags.Instance);
+            var toStringMethod = typeof(ToStringByMembers<T>).GetMethod("ToString", BindingFlags.Static | BindingFlags.NonPublic);
             var concatMethod = ((Func<string, string, string>)string.Concat).Method;
             var parA = Expression.Parameter(type, "a");
 
@@ -93,13 +98,13 @@ namespace ProgressOnderwijsUtils
                                                 refEqMethod,
                                                 Expression.Convert(MemberAccessExpression(parA, fi), typeof(object)),
                                                 Expression.Default(typeof(object))),
-                                            Expression.Constant("<NULL>"),
-                                            Expression.Call(MemberAccessExpression(parA, fi), toStringMethod)
+                                            Expression.Constant("null"),
+                                            Expression.Call(toStringMethod, Expression.Convert(MemberAccessExpression(parA, fi), typeof(object)))
                                             )
                                         ),
                                     Expression.Constant(", ")
                                     )
-                        ).Aggregate((Expression)Expression.Constant(type.Name + "{ "), (a, b) => Expression.Call(concatMethod, a, b)),
+                        ).Aggregate((Expression)Expression.Constant("new " + type.Name + " { "), (a, b) => Expression.Call(concatMethod, a, b)),
                     Expression.Constant("}")
                     );
 
