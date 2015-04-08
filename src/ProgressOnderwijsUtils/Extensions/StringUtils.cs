@@ -142,18 +142,6 @@ namespace ProgressOnderwijsUtils
                 + "]";
         }
 
-        public static long? ParseInt64(string s)
-        {
-            long val;
-            return Int64.TryParse(s, out val) ? val : default(long?);
-        }
-
-        public static int? ParseInt32(string s)
-        {
-            int val;
-            return Int32.TryParse(s, out val) ? val : default(int?);
-        }
-
         /// <summary>
         /// Vervang in een [naam]string beginletters door hoofdletters,
         /// rekening houdend met tussenvoegsels en interpunctie
