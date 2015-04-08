@@ -280,13 +280,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static readonly string[] AllColumns = new[] { "*" };
-
-        [Pure]
-        public static QueryBuilder CreateFromFilter(FilterBase filter)
-        {
-            return "and " + filter.ToQueryBuilder() + " ";
-        }
+        static readonly string[] AllColumns = { "*" };
 
         [Pure]
         public static QueryBuilder CreateFromSortOrder(OrderByColumns sortOrder)
@@ -472,7 +466,10 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
+        // ReSharper disable UnusedMember.Global
+        //TODO: dit aanzetten voor datasource tests
         public void AssertNoVariableColumns()
+        // ReSharper restore UnusedMember.Global
         {
             var commandText = CommandText();
             var commandTextWithoutComments = Regex.Replace(
@@ -492,7 +489,10 @@ namespace ProgressOnderwijsUtils
         public SqlConnection Connection { get; private set; }
         public QueryTracer Tracer { get; private set; }
         public int CommandTimeoutInS { get; private set; }
+        // ReSharper disable UnusedMember.Global
+        // Handige generieke functionaliteit, maar niet altijd gebruikt
         public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) { return new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer); }
+        // ReSharper restore UnusedMember.Global
 
         public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, QueryTracer tracer)
         {
