@@ -100,7 +100,6 @@ namespace ProgressOnderwijsUtils
         }
 
         public static string Capitalize(string name) { return name.Substring(0, 1).ToUpperInvariant() + name.Substring(1); }
-        public static string CapitalizeFirst(string name) { return name.Substring(0, 1).ToUpperInvariant() + name.Substring(1).ToLowerInvariant(); }
         public static string Uncapitalize(string name) { return name.Substring(0, 1).ToLowerInvariant() + name.Substring(1); }
 
         //modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
