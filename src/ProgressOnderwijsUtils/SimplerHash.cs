@@ -12,12 +12,18 @@ namespace ProgressOnderwijsUtils
 
         public static string MD5ComputeHash(string plainText)
         {
-            using (var md5provider = new MD5CryptoServiceProvider()) {
-                return string.Join(
-                    "",
-                    md5provider.ComputeHash(Encoding.UTF8.GetBytes(plainText))
-                        .Select(byteVal => byteVal.ToString("x2"))
-                        .ToArray());
+            return MakeMD5(Encoding.UTF8.GetBytes(plainText));
+        }
+
+        static string MakeMD5(byte[] data)
+        {
+            using (var md5computer = MD5.Create()) {
+                byte[] md5 = md5computer.ComputeHash(data);
+                var sb = new StringBuilder();
+                for (int i = 0; i < md5.Length; i++) {
+                    sb.Append(md5[i].ToString("x2"));
+                }
+                return sb.ToString();
             }
         }
     }
