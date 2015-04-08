@@ -539,6 +539,17 @@ namespace ProgressOnderwijsUtils
 
         public static TEnum ParseCaseSensitively<TEnum>(string s) where TEnum : struct, IConvertible
         {
+            var parsed = TryParseCaseSensitively<TEnum>(s);
+
+            if (parsed.HasValue) {
+                return parsed.Value;
+            } else {
+                throw new ArgumentException("Could not parse string as " + typeof(TEnum).Name);
+            }
+        }
+
+        public static TEnum? TryParseCaseSensitively<TEnum>(string s) where TEnum : struct, IConvertible
+        {
             if (!typeof(TEnum).IsEnum) {
                 throw new ArgumentException("type must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
             }
@@ -548,9 +559,10 @@ namespace ProgressOnderwijsUtils
             if (Enum.TryParse(s, false, out retval)) {
                 return retval;
             } else {
-                throw new ArgumentException("Could not parse string as " + typeof(TEnum).Name);
+                return null;
             }
         }
+
 
         public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible, IComparable
         {
