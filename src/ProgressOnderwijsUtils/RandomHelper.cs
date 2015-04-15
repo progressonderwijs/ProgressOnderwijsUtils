@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils
         public static string GetStringOfLatinLower(int length) { return GetString(length, 'a', 'z'); }
         public static string GetStringCapitalized(int length) { return GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z'); }
         public static string GetStringOfNumbers(int length) { return GetString(1, '1', '9') + GetString(length - 1, '0', '9'); }
-        public static string GetStringOfLong2Hex() { return GetHexLong(1000000000000, 1000000000000000000, new Random()).ToString("X"); }
+        public static string GetStringOfLong2Hex() { return GetHexLong(Int32.MaxValue, Int64.MaxValue, new Random()).ToString("X"); }
 
         static long GetHexLong(long min, long max, Random rand)
         {
