@@ -119,7 +119,7 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void CheckHex()
         {
-            Assert.That(RandomHelper.GetStringOfLong2Hex(), Is.StringMatching("[0-9A-E]"));
+            Assert.That(RandomHelper.GetStringOfLong2Hex(), Is.StringMatching("[0-9A-F]"));
         }
     }
 }
