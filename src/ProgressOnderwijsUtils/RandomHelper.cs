@@ -129,7 +129,7 @@ namespace ProgressOnderwijsUtils
             Assert.That(RandomHelper.GetStringOfNumbers(10), Is.StringMatching("[0-9]{10}"));
             Assert.That(RandomHelper.GetStringCapitalized(10), Is.StringMatching("[A-Z][a-z]{9}"));
             Assert.That(RandomHelper.GetStringOfLatinLower(7), Is.StringMatching("[a-z]{7}"));
-            Assert.That(RandomHelper.GetStringOfLatinUpperOrLower(10), Is.StringMatching("[a-z]{10}"));
+            Assert.That(RandomHelper.GetStringOfLatinUpperOrLower(10), Is.StringMatching("[a-zA-Z]{10}"));
         }
 
     }
