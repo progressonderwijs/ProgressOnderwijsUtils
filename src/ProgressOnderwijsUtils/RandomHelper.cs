@@ -78,22 +78,14 @@ namespace ProgressOnderwijsUtils
         public static string GetStringUpperAndLower(int length, char min, char max)
         {
             var letters = (uint)max - min + 1;
-            var MIN = 'A';
-            var MAX = 'Z';
-            var LETTERS = (uint)MAX - MIN + 1;
+            var MIN = Char.ToUpper(min);
             var sb = new StringBuilder();
-            for (int i = 0; i < length; i++) {
-                sb.Append( (char)(GetUInt32(letters) + ( GetUInt32(100) < 50 ? min : MIN)) );
+            for (var i = 0; i < length; i++) {
+                sb.Append((char)(GetUInt32(letters) + (GetUInt32(100) < 50 ? min : MIN)));
             }
             return sb.ToString();
         }
 
-        public static string RandomUpperLower(string StringToRandomize)
-        {
-            var strs = StringToRandomize.ToCharArray();
-            var r = new Random();
-            return strs.Aggregate("", (current, s) => current + (r.Next(101) <= 50 ? s.ToString(CultureInfo.InvariantCulture).ToLower() : s.ToString(CultureInfo.InvariantCulture)));
-        }
     }
 
     [Continuous]
