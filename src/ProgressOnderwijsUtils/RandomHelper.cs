@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using MoreLinq;
@@ -61,6 +62,15 @@ namespace ProgressOnderwijsUtils
         public static string GetStringOfLatinLower(int length) { return GetString(length, 'a', 'z'); }
         public static string GetStringCapitalized(int length) { return GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z'); }
         public static string GetStringOfNumbers(int length) { return GetString(1, '1', '9') + GetString(length - 1, '0', '9'); }
+        public static string GetStringOfLong2Hex() { return GetHexLong(1000000000000, 1000000000000000000, new Random()).ToString("X"); }
+
+        static long GetHexLong(long min, long max, Random rand)
+        {
+            var buf = new byte[8];
+            rand.NextBytes(buf);
+            var longRand = BitConverter.ToInt64(buf, 0);
+            return (Math.Abs(longRand % (max - min)) + min);
+        }
 
         public static string GetString(int length, char min, char max)
         {
@@ -104,6 +114,12 @@ namespace ProgressOnderwijsUtils
             Assert.That(RandomHelper.GetStringCapitalized(10), Is.StringMatching("[A-Z][a-z]{9}"));
             Assert.That(RandomHelper.GetStringOfLatinLower(7), Is.StringMatching("[a-z]{7}"));
             //Assert.That(RandomHelper. (10), Is.StringMatching("[0-9]{10}"));
+        }
+
+        [Test]
+        public void CheckHex()
+        {
+            Assert.That(RandomHelper.GetStringOfLong2Hex(), Is.StringMatching("[0-9A-E]"));
         }
     }
 }
