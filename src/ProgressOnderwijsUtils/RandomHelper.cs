@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Sockets;
 using System.Security.Cryptography;
@@ -62,11 +63,12 @@ namespace ProgressOnderwijsUtils
         public static string GetStringOfLatinLower(int length) { return GetString(length, 'a', 'z'); }
         public static string GetStringCapitalized(int length) { return GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z'); }
         public static string GetStringOfNumbers(int length) { return GetString(1, '1', '9') + GetString(length - 1, '0', '9'); }
-        public static string GetStringOfLong2Hex() { return GetHexLong(Int32.MaxValue, Int64.MaxValue, new Random()).ToString("X"); }
+        public static string GetStringOfLong2Hex() { return RandomUpperLower(GetHexLong(Int32.MaxValue, Int64.MaxValue).ToString("X")); }
 
-        static long GetHexLong(long min, long max, Random rand)
+        static long GetHexLong(long min, long max)
         {
             var buf = new byte[8];
+            var rand = new Random();
             rand.NextBytes(buf);
             var longRand = BitConverter.ToInt64(buf, 0);
             return (Math.Abs(longRand % (max - min)) + min);
@@ -80,6 +82,13 @@ namespace ProgressOnderwijsUtils
                 sb.Append((char)(GetUInt32(letters) + min));
             }
             return sb.ToString();
+        }
+
+        public static string RandomUpperLower(string StringToRandomize)
+        {
+            var strs = StringToRandomize.ToCharArray();
+            var r = new Random();
+            return strs.Aggregate("", (current, s) => current + (r.Next(101) <= 50 ? s.ToString(CultureInfo.InvariantCulture).ToLower() : s.ToString(CultureInfo.InvariantCulture)));
         }
     }
 
