@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using MoreLinq;
@@ -27,10 +25,16 @@ namespace ProgressOnderwijsUtils
         public static long GetInt64() { return BitConverter.ToInt64(GetBytes(sizeof(long)), 0); }
 
         [CLSCompliant(false)]
-        public static uint GetUInt32() { return BitConverter.ToUInt32(GetBytes(sizeof(uint)), 0); }
+        public static uint GetUInt32()
+        {
+            return BitConverter.ToUInt32(GetBytes(sizeof(uint)), 0);
+        }
 
         [CLSCompliant(false)]
-        public static ulong GetUInt64() { return BitConverter.ToUInt64(GetBytes(sizeof(ulong)), 0); }
+        public static ulong GetUInt64()
+        {
+            return BitConverter.ToUInt64(GetBytes(sizeof(ulong)), 0);
+        }
 
         [CLSCompliant(false)]
         public static uint GetUInt32(uint bound)
