@@ -126,6 +126,13 @@ namespace ProgressOnderwijsUtils
         public static ErrorValue Error(ITranslatable val) { return new ErrorValue(val); }
 
         /// <summary>
+        /// Create an error message to show to the user describing a failed operation.
+        /// </summary>
+        /// <param name="val">The text of the error message</param>
+        /// <returns>An ErrorValue (this is implicitly cast to whatever type of Maybe&lt;T&gt; you use.</returns>
+        public static ErrorValue Error(string val) { return Error(Translatable.Literal(val)); }
+
+        /// <summary>
         /// Converts an ITranslatable to a Maybe&lt;Unit&gt;.  A null translatable represents success, any other value the error message to display.
         /// </summary>
         public static Maybe<Unit> ErrorWhenNotNull(this ITranslatable val) { return val == null ? Ok() : new ErrorValue(val); }
