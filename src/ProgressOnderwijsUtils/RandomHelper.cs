@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
@@ -134,6 +135,8 @@ namespace ProgressOnderwijsUtils
                 var str = RandomHelper.GetStringOfUriPrintableCharacters(i);
                 var escaped = Uri.EscapeDataString(str);
                 PAssert.That(() => str == escaped);
+                PAssert.That(() => str.Length == i);
+                PAssert.That(() => Regex.IsMatch(str, "^[-_~0-9A-Za-z]*$"));
             }
         }
 
