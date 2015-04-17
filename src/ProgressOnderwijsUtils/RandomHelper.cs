@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
+using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
@@ -90,6 +92,13 @@ namespace ProgressOnderwijsUtils
             return sb.ToString();
         }
 
+        static readonly char[] UriPrintableCharacters =
+            Enumerable.Range('A', 26).Concat(Enumerable.Range('a', 26)).Concat(Enumerable.Range('0', 10)).Select(i => (char)i).Concat("_-~").ToArray();
+
+        public static string GetStringOfUriPrintableCharacters(int length)
+        {
+            return new string(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
+        }
     }
 
     [Continuous]
@@ -120,6 +129,18 @@ namespace ProgressOnderwijsUtils
         }
 
         [Test]
+        public void CheckUriPrintable()
+        {
+            for (var i = 0; i < 50; i++) {
+                var str = RandomHelper.GetStringOfUriPrintableCharacters(i);
+                var escaped = Uri.EscapeDataString(str);
+                PAssert.That(() => str == escaped);
+                PAssert.That(() => str.Length == i);
+                PAssert.That(() => Regex.IsMatch(str, "^[-_~0-9A-Za-z]*$"));
+            }
+        }
+
+        [Test]
         public void CheckStrings()
         {
             Assert.That(RandomHelper.GetStringOfNumbers(10), Is.StringMatching("[0-9]{10}"));
@@ -127,6 +148,5 @@ namespace ProgressOnderwijsUtils
             Assert.That(RandomHelper.GetStringOfLatinLower(7), Is.StringMatching("[a-z]{7}"));
             Assert.That(RandomHelper.GetStringOfLatinUpperOrLower(10), Is.StringMatching("[a-zA-Z]{10}"));
         }
-
     }
 }
