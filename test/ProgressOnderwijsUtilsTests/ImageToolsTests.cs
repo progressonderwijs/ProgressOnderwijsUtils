@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtilsTests
                 select new { x, y, err });
 
             var bitness = 8 * IntPtr.Size;
-            var accuracy = bitness == 32 ? 0.1 : 0.025;
+            var accuracy = bitness == 32 ? 0.1 : 0.025; //for some odd reason, the 32-bit clr has much lower image scaling accuracy...
 
             var badPixels = pixelsDiffs.Where(diff => diff.err > accuracy);
             PAssert.That(() => !badPixels.Any());
