@@ -417,12 +417,12 @@ namespace ProgressOnderwijsUtils
             QueryBuilder topRowsOrNull)
         {
             projectedColumns = projectedColumns ?? AllColumns;
-            filters = filters.EmptyIfNull();
 
-            QueryBuilder filterClause = Filter.CreateCombined(BooleanOperator.And, filters).ToQueryBuilder();
+            QueryBuilder filterClause = filters.ToFilterClause();
+            var topClause = topRowsOrNull != null ? " top (" + topRowsOrNull + ")" : Empty;
             return
-                "select" + (topRowsOrNull != null ? " top (" + topRowsOrNull + ")" : Empty) + " " + projectedColumns.JoinStrings(", ") + " from (\n"
-                    + subquery + "\n) as _g1 where  " + filterClause + "\n"
+                "select" + topClause + " " + projectedColumns.JoinStrings(", ") + " from (\n"
+                    + subquery + "\n) as _g1 where " + filterClause + "\n"
                     + CreateFromSortOrder(sortOrder);
         }
 
@@ -441,7 +441,6 @@ namespace ProgressOnderwijsUtils
                     "Cannot create subquery without any projected columns: at least one column must be projected (are your columns all virtual?)\nQuery:\n"
                         + subQuery.DebugText(null));
             }
-            filters = filters.EmptyIfNull();
 
             var takeRowsParam = Param((long)takeNrows);
             var skipNrowsParam = Param((long)skipNrows);
