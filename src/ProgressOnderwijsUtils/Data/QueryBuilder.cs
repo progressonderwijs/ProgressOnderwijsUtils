@@ -280,8 +280,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static readonly string[] AllColumns = { "*" };
-
         [Pure]
         public static QueryBuilder CreateFromSortOrder(OrderByColumns sortOrder)
         {
@@ -409,20 +407,22 @@ namespace ProgressOnderwijsUtils
             return DebugText(null);
         }
 
+        static readonly string[] AllColumns = { "*" };
+
         static QueryBuilder SubQueryHelper(
             QueryBuilder subquery,
             IEnumerable<string> projectedColumns,
-            IEnumerable<FilterBase> filters,
+            QueryBuilder filterClause,
             OrderByColumns sortOrder,
             QueryBuilder topRowsOrNull)
         {
             projectedColumns = projectedColumns ?? AllColumns;
-            filters = filters.EmptyIfNull();
 
-            QueryBuilder filterClause = Filter.CreateCombined(BooleanOperator.And, filters).ToQueryBuilder();
+            var topClause = topRowsOrNull != null ? " top (" + topRowsOrNull + ")" : Empty;
             return
-                "select" + (topRowsOrNull != null ? " top (" + topRowsOrNull + ")" : Empty) + " " + projectedColumns.JoinStrings(", ") + " from (\n"
-                    + subquery + "\n) as _g1 where  " + filterClause + "\n"
+                "select" + topClause + " " + projectedColumns.JoinStrings(", ") + " from (\n"
+                    + subquery + "\n"
+                    + ") as _g1 where " + filterClause + "\n"
                     + CreateFromSortOrder(sortOrder);
         }
 
@@ -430,7 +430,7 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder CreatePagedSubQuery(
             QueryBuilder subQuery,
             IEnumerable<string> projectedColumns,
-            IEnumerable<FilterBase> filters,
+            QueryBuilder filterClause,
             OrderByColumns sortOrder,
             int skipNrows,
             int takeNrows)
@@ -441,7 +441,6 @@ namespace ProgressOnderwijsUtils
                     "Cannot create subquery without any projected columns: at least one column must be projected (are your columns all virtual?)\nQuery:\n"
                         + subQuery.DebugText(null));
             }
-            filters = filters.EmptyIfNull();
 
             var takeRowsParam = Param((long)takeNrows);
             var skipNrowsParam = Param((long)skipNrows);
@@ -453,23 +452,24 @@ namespace ProgressOnderwijsUtils
                 + "from (select _row=row_number() over (" + orderClause + "),\n"
                 + "      _g2.*\n"
                 + "from (\n\n"
-                + SubQueryHelper(subQuery, projectedColumns, filters, sortOrder, takeRowsParam + "+" + skipNrowsParam)
-                + "\n\n) as _g2) t\n"
+                + SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + "+" + skipNrowsParam)
+                + "\n\n"
+                + ") as _g2) t\n"
                 + "where _row > " + skipNrowsParam + " \n"
                 + "order by _row";
         }
 
         [Pure]
-        public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, IEnumerable<FilterBase> filterBases, OrderByColumns sortOrder)
+        public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, QueryBuilder filterClause, OrderByColumns sortOrder)
         {
-            return SubQueryHelper(subQuery, projectedColumns, filterBases, sortOrder, null);
+            return SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, null);
         }
 
         [Pure]
         // ReSharper disable UnusedMember.Global
         //TODO: dit aanzetten voor datasource tests
         public void AssertNoVariableColumns()
-        // ReSharper restore UnusedMember.Global
+            // ReSharper restore UnusedMember.Global
         {
             var commandText = CommandText();
             var commandTextWithoutComments = Regex.Replace(
@@ -493,7 +493,6 @@ namespace ProgressOnderwijsUtils
         // Handige generieke functionaliteit, maar niet altijd gebruikt
         public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) { return new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer); }
         // ReSharper restore UnusedMember.Global
-
         public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, QueryTracer tracer)
         {
             Connection = conn;
