@@ -280,8 +280,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static readonly string[] AllColumns = { "*" };
-
         [Pure]
         public static QueryBuilder CreateFromSortOrder(OrderByColumns sortOrder)
         {
@@ -408,6 +406,8 @@ namespace ProgressOnderwijsUtils
         {
             return DebugText(null);
         }
+
+        static readonly string[] AllColumns = { "*" };
 
         static QueryBuilder SubQueryHelper(
             QueryBuilder subquery,
