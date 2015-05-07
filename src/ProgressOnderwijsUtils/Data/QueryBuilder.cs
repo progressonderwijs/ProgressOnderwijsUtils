@@ -421,7 +421,8 @@ namespace ProgressOnderwijsUtils
             var topClause = topRowsOrNull != null ? " top (" + topRowsOrNull + ")" : Empty;
             return
                 "select" + topClause + " " + projectedColumns.JoinStrings(", ") + " from (\n"
-                    + subquery + "\n) as _g1 where " + filterClause + "\n"
+                    + subquery + "\n"
+                    + ") as _g1 where " + filterClause + "\n"
                     + CreateFromSortOrder(sortOrder);
         }
 
@@ -452,7 +453,8 @@ namespace ProgressOnderwijsUtils
                 + "      _g2.*\n"
                 + "from (\n\n"
                 + SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + "+" + skipNrowsParam)
-                + "\n\n) as _g2) t\n"
+                + "\n\n"
+                + ") as _g2) t\n"
                 + "where _row > " + skipNrowsParam + " \n"
                 + "order by _row";
         }
