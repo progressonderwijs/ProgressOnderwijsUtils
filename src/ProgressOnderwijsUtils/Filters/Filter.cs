@@ -231,5 +231,7 @@ namespace ProgressOnderwijsUtils
                 return f;
             }
         }
+
+        public static QueryBuilder ToFilterClause(this IEnumerable<FilterBase> filters) { return CreateCombined(BooleanOperator.And, filters.EmptyIfNull()).ToQueryBuilder(); }
     }
 }
