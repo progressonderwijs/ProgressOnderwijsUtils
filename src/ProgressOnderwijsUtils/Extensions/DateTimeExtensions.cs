@@ -77,6 +77,13 @@ namespace ProgressOnderwijsUtils
             AssertOverlapt(periode1, periode2, false);
         }
 
+        [Test]
+        public static void Overlapt_1_is_2()
+        {
+            var periode1 = Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
+            var periode2 = Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
+            AssertOverlapt(periode1, periode2, true);
+        }
         static void AssertOverlapt(Periode periode1, Periode periode2, bool uitkomst) { PAssert.That(() => periode1.Overlapt(periode2) == uitkomst); }
     }
 }
