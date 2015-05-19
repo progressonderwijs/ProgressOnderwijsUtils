@@ -7,7 +7,7 @@ using System.Web;
 
 namespace ProgressOnderwijsUtils
 {
-    public sealed class ProgressBuildInfo :IMetaObject
+    public sealed class ProgressBuildInfo : IMetaObject
     {
         public string CommitHash { get; set; }
         public DateTime? UtcDate { get; set; }
@@ -23,9 +23,9 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public static class ProgressNetBuildVersion
     {
-        public static readonly ProgressBuildInfo Current;
+        public static readonly ProgressBuildInfo Current = DetermineProgressBuildInfo();
 
-        static ProgressNetBuildVersion()
+        static ProgressBuildInfo DetermineProgressBuildInfo()
         {
             var assemblies =
                 new[] { Assembly.GetEntryAssembly(), Assembly.GetExecutingAssembly() }.Where(ass => ass != null);
@@ -49,10 +49,10 @@ namespace ProgressOnderwijsUtils
                 .FirstOrDefault();
 
             if (progressVersionInfoFilePath == null) {
-                Current = new ProgressBuildInfo { CommitHash = "unknown" };
-                return;
+                return new ProgressBuildInfo { CommitHash = "unknown" };
+            } else {
+                return XmlSerializerHelper.Deserialize<ProgressBuildInfo>(File.ReadAllText(progressVersionInfoFilePath, Encoding.UTF8));
             }
-            Current = XmlSerializerHelper.Deserialize<ProgressBuildInfo>(File.ReadAllText(progressVersionInfoFilePath, Encoding.UTF8));
         }
     }
 }
