@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Data.Entity.Core;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -14,21 +12,18 @@ using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
-using ProgressOnderwijsUtils.Test;
 using EntityException = System.Data.Entity.Core.EntityException;
 
 namespace ProgressOnderwijsUtils
 {
     public static class ErrorUtils
     {
-        [ExcludeFromNCover]
         public static string TestErrorStackOverflow(int rounds)
         {
             //This is intended for testing error-handling in case of dramatic errors.
             return TestErrorStackOverflow(rounds + 1);
         }
 
-        [ExcludeFromNCover]
         public static void TestErrorOutOfMemory()
         {
             var memorySlurper = new List<byte[]>();
@@ -40,7 +35,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [ExcludeFromNCover]
         public static void TestErrorNormalException()
         {
             throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
