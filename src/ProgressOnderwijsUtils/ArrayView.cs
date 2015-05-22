@@ -18,8 +18,8 @@ namespace ProgressOnderwijsUtils
         }
 
         IEnumerator IEnumerable.GetEnumerator() { return vals.GetEnumerator(); }
-        public T this[int index] { get { return vals[index]; } }
-        public int Count { get { return vals.Length; } }
+        public T this[int index] => vals[index];
+        public int Count => vals.Length;
     }
 
     public sealed class ListView<T> : IReadOnlyList<T>
@@ -28,8 +28,8 @@ namespace ProgressOnderwijsUtils
         public ListView(IList<T> vals) { this.vals = vals; }
         public IEnumerator<T> GetEnumerator() { return vals.AsEnumerable().GetEnumerator(); }
         IEnumerator IEnumerable.GetEnumerator() { return vals.GetEnumerator(); }
-        public T this[int index] { get { return vals[index]; } }
-        public int Count { get { return vals.Count; } }
+        public T this[int index] => vals[index];
+        public int Count => vals.Count;
     }
 
     public sealed class ReadOnlyCollectionView_Mapped<T, TOut> : IReadOnlyCollection<TOut>
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
             this.map = map;
         }
 
-        public int Count { get { return source.Count; } }
+        public int Count => source.Count;
 
         public IEnumerator<TOut> GetEnumerator()
         {
@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
             this.map = map;
         }
 
-        public int Count { get { return source.Count; } }
+        public int Count => source.Count;
 
         public IEnumerator<TOut> GetEnumerator()
         {
@@ -97,8 +97,8 @@ namespace ProgressOnderwijsUtils
         }
 
         IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
-        public TOut this[int index] { get { return map(source[index]); } }
-        public int Count { get { return source.Count; } }
+        public TOut this[int index] => map(source[index]);
+        public int Count => source.Count;
     }
 
     public sealed class ArrayView_MappedWithIndex<T, TOut> : IReadOnlyList<TOut>
@@ -121,8 +121,8 @@ namespace ProgressOnderwijsUtils
         }
 
         IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
-        public TOut this[int index] { get { return map(source[index], index); } }
-        public int Count { get { return source.Count; } }
+        public TOut this[int index] => map(source[index], index);
+        public int Count => source.Count;
     }
 
     public static class CollectionViewExtensions
