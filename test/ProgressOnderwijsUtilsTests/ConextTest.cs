@@ -114,7 +114,10 @@ namespace ProgressOnderwijsUtilsTests
         {
             var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
             var entities = sut.GetEntities();
-            Assert.That(entities, Is.EquivalentTo(MetaDataFactory.GetEntities(idp, sp, db).Values.Distinct()));
+            Assert.That(entities, Is.EquivalentTo(MetaDataFactory.GetEntities(idp, sp, db).Values.Distinct()
+                .Concat(sp == ServiceProvider.P3W ? new[] { "https://surf-sso.ubvu.vu.nl/simplesaml/saml2/idp/metadata.php" } : new string[0])));
+            // de VU heeft een andere IdP gekregen. Tijdens de transitie bieden ze beide aan.
+            // dus zodra deze test case faalt, dan kan de concat weer verwijderd worden
         }
 
         [TestCase(IdentityProvider.ConextWayf, null, null), TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.ProductieDB),
