@@ -57,23 +57,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static string PaddToLength(this string s, int len, string padder)
-        {
-            if (s == null || s.Length == len) {
-                return s;
-            }
-            return padder.Repeat(len - s.Length) + s;
-        }
-
-        static string Repeat(this string s, int ntimes)
-        {
-            string x = s;
-            for (int i = 0; i < ntimes - 1; i++) {
-                s += x;
-            }
-            return s;
-        }
-
         public static string Replace(this string s, IEnumerable<KeyValuePair<string, string>> replacements)
         {
             return replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
