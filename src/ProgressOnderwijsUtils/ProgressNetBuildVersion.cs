@@ -7,6 +7,7 @@ using System.Web;
 
 namespace ProgressOnderwijsUtils
 {
+    [Serializable]
     public sealed class ProgressBuildInfo : IMetaObject
     {
         public string CommitHash { get; set; }
