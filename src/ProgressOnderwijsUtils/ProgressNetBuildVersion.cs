@@ -7,6 +7,7 @@ using System.Web;
 
 namespace ProgressOnderwijsUtils
 {
+    /// Object needs to be Serializable because it is used in ErrorInfo, which is used as context of the transfer to the ErrorPage.
     [Serializable]
     public sealed class ProgressBuildInfo : IMetaObject
     {
