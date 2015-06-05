@@ -8,20 +8,6 @@ namespace ProgressOnderwijsUtils
 {
     public static class HtmlEntityLookup
     {
-        public static readonly IReadOnlyDictionary<string, string> PredefinedEntities = new Dictionary<string, string> {
-            { @"""", "&quot;" },
-            { @"&", "&amp;" },
-            { @"'", "&apos;" },
-            { @"<", "&lt;" },
-            { @">", "&gt;" },
-        };
-
-        /// <summary>
-        /// All known HTML entities.  Includes xml entities; e.g. "lt", "gt" and "amp".
-        /// The key is the entity name without preceding '&' and terminating ';'.
-        /// </summary>
-        public static IEnumerable<KeyValuePair<string, char>> Entities { get { return lookup; } }
-
         /// <summary>
         /// Looks for the matching character for an html entity.  Also finds xml entities; e.g. "lt", "gt" and "amp"
         /// </summary>
@@ -29,6 +15,10 @@ namespace ProgressOnderwijsUtils
         /// <returns>the character corresponding to the entity, or null if no such entity is defined in HTML</returns>
         public static char? Lookup(string entity) { return lookup.GetOrDefaultR(entity, default(char?)); }
 
+        /// <summary>
+        /// All known HTML entities.  Includes xml entities; e.g. "lt", "gt" and "amp".
+        /// The key is the entity name without preceding '&' and terminating ';'.
+        /// </summary>
         static readonly IReadOnlyDictionary<string, char> lookup = new Dictionary<string, char> {
             { @"Aacute", (char)0x00C1 },
             { @"aacute", (char)0x00E1 },
