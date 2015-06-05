@@ -96,18 +96,4 @@ namespace ProgressOnderwijsUtils
         object IXmlSerializeHelper.DeserializeInst(XmlReader from) { return (T)serializer.Deserialize(from); }
         void IXmlSerializeHelper.SerializeToInst(XmlWriter xw, object val) { serializer.Serialize(xw, val); }
     }
-
-    public abstract class XmlSerializableBase<T>
-        where T : XmlSerializableBase<T>
-    {
-        public static T Deserialize(XDocument from) { return XmlSerializerHelper<T>.Deserialize(from); }
-
-        public XDocument Serialize()
-        {
-            XDocument doc = new XDocument();
-            using (var xw = doc.CreateWriter())
-                XmlSerializerHelper<T>.SerializeTo(xw, (T)this);
-            return doc;
-        }
-    }
 }
