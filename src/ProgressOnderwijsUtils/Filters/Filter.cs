@@ -219,19 +219,6 @@ namespace ProgressOnderwijsUtils
             return parsed != null && parsed.Item2 == "" ? parsed.Item1 : null;
         }
 
-        public static FilterBase ReplaceCurrentTimeToken(FilterBase f, DateTime replacement)
-        {
-            var comb = f as CombinedFilter;
-            var crit = f as CriteriumFilter;
-            if (comb != null) {
-                return CreateCombined(comb.AndOr, comb.FilterLijst.Select(kid => ReplaceCurrentTimeToken(kid, replacement)));
-            } else if (crit != null && crit.Waarde is CurrentTimeToken) {
-                return CreateCriterium(crit.KolomNaam, crit.Comparer, replacement);
-            } else {
-                return f;
-            }
-        }
-
         public static QueryBuilder ToFilterClause(this IEnumerable<FilterBase> filters) { return CreateCombined(BooleanOperator.And, filters.EmptyIfNull()).ToQueryBuilder(); }
     }
 }
