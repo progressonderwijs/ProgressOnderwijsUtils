@@ -486,9 +486,9 @@ namespace ProgressOnderwijsUtils
 
     public class SqlCommandCreationContext : IDisposable
     {
-        public SqlConnection Connection { get; private set; }
-        public QueryTracer Tracer { get; private set; }
-        public int CommandTimeoutInS { get; private set; }
+        public SqlConnection Connection { get; }
+        public QueryTracer Tracer { get; }
+        public int CommandTimeoutInS { get; }
         // ReSharper disable UnusedMember.Global
         // Handige generieke functionaliteit, maar niet altijd gebruikt
         public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) => new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer);
