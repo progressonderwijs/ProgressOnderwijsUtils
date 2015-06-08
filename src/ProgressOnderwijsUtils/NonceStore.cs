@@ -20,9 +20,9 @@ namespace ProgressOnderwijsUtils
             Nonce = nonce;
         }
 
-        public string Context { get; private set; }
-        public DateTime Timestamp { get; private set; }
-        public string Nonce { get; private set; }
+        public string Context { get; }
+        public DateTime Timestamp { get; }
+        public string Nonce { get; }
 
         public bool Equals(NonceStoreItem other)
         {

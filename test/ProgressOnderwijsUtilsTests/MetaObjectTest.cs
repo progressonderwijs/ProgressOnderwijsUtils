@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtilsTests
         [MpReadonly]
         public string MpReadonlyProperty { get; set; }
 
-        string PrivateProperty { get; set; }
+        string PrivateProperty { get; }
 #pragma warning disable 169
         DateTime PrivateField;
 #pragma warning restore 169
@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtilsTests
 #pragma warning restore 649
         public double ReadonlyProperty => 0.0;
         public char WriteonlyProperty { set { } }
-        public object PrivateSetter { get; private set; }
+        public object PrivateSetter { get; }
         public object PrivateGetter { set; private get; }
     }
 
