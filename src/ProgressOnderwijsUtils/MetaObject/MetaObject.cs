@@ -178,10 +178,7 @@ namespace ProgressOnderwijsUtils
                     if (match.Success) {
                         var col_id = int.Parse(match.Groups[1].Value);
                         throw new Exception(
-                            string.Format(
-                                "Received an invalid column length from the bcp client for column name {0}",
-                                clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name
-                                ),
+                            $"Received an invalid column length from the bcp client for column name {clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name}",
                             ex);
                     }
                     throw;
