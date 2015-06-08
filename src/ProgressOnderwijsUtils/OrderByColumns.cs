@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
     public struct OrderByColumns : IEquatable<OrderByColumns>
     {
         static readonly ColumnSort[] EmptyOrder = { };
-        static bool streq(string a, string b) { return string.Equals(a, b, StringComparison.OrdinalIgnoreCase); }
+        static bool streq(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
         readonly ColumnSort[] sortColumns;
 
         [Pure]

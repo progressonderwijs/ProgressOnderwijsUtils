@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils
             return new QueryTimer(this, () => commandText);
         }
 
-        public IDisposable StartQueryTimer(SqlCommand sqlCommand) { return StartQueryTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo)); }
+        public IDisposable StartQueryTimer(SqlCommand sqlCommand) => StartQueryTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
 
         public static string DebugFriendlyCommandText(SqlCommand sqlCommand, bool includeSensitiveInfo)
         {
@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
                     .JoinStrings();
         }
 
-        static string SqlParamTypeString(SqlParameter par) { return par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : ""); }
+        static string SqlParamTypeString(SqlParameter par) => par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
         public static string SqlValueString(object p) // Not Secure, just a debug tool!
         {

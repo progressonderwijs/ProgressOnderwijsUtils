@@ -132,7 +132,7 @@ namespace ProgressOnderwijsUtils
             return DATE_FORMATS[formaat];
         }
 
-        public static int DateTimeStringLengthForFormat(DatumFormaat formaat) { return FORMAAT_LENGTE[formaat]; }
+        public static int DateTimeStringLengthForFormat(DatumFormaat formaat) => FORMAAT_LENGTE[formaat];
 
         /// <summary>
         /// Generieke string-efy functie die de default Progress.NET formatering en culture-info gebruikt.
@@ -147,8 +147,8 @@ namespace ProgressOnderwijsUtils
             return ConverteerHelper.ToStringDynamic(obj, format)(language);
         }
 
-        public static string ToString(object obj) { return ToString(obj, null, Taal.NL); }
-        public static string ToString(object obj, Taal language) { return ToString(obj, null, language); }
+        public static string ToString(object obj) => ToString(obj, null, Taal.NL);
+        public static string ToString(object obj, Taal language) => ToString(obj, null, language);
 
         /// <summary>
         /// Utility functie die de DatumFormaat enum vertaald naar de overeenkomstige format string.
@@ -223,7 +223,7 @@ namespace ProgressOnderwijsUtils
 
 
         //Deze functie gebruiken om gebruikersinvoer in vrije textvelden te converteren naar de juiste types, eerste TryParse uitvoeren!
-        public static object Parse(string s, Type t, Taal taal) { return TryParse(s, t, taal).GetValue(); }
+        public static object Parse(string s, Type t, Taal taal) => TryParse(s, t, taal).GetValue();
         public static T Parse<T>(string s, Taal taal) { return (T)TryParse(s, typeof(T), taal).GetValue(); }
         const int YearMinimum = 1900, YearMaximum = 2100;
 
@@ -331,7 +331,7 @@ namespace ProgressOnderwijsUtils
                 this.value = value;
             }
 
-            public static ParseResult Ok(object value) { return new ParseResult(ParseState.Ok, value); }
+            public static ParseResult Ok(object value) => new ParseResult(ParseState.Ok, value);
 
             public static ParseResult CreateError(ParseState state, ITranslatable error)
             {

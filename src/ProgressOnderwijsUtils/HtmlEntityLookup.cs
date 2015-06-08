@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="entity">an entity reference without the preceding '&' and terminating ';'</param>
         /// <returns>the character corresponding to the entity, or null if no such entity is defined in HTML</returns>
-        public static char? Lookup(string entity) { return lookup.GetOrDefaultR(entity, default(char?)); }
+        public static char? Lookup(string entity) => lookup.GetOrDefaultR(entity, default(char?));
 
         /// <summary>
         /// All known HTML entities.  Includes xml entities; e.g. "lt", "gt" and "amp".

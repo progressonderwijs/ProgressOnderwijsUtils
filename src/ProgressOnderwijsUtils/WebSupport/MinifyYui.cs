@@ -8,8 +8,8 @@ namespace ProgressOnderwijsUtils.WebSupport
     public static class MinifyYui
     {
         //static readonly CssCompressor cssCompressor = new CssCompressor();
-        public static string MinifyCss(string originalCss) { return new CssCompressor().Compress(originalCss); }
+        public static string MinifyCss(string originalCss) => new CssCompressor().Compress(originalCss);
         //static readonly JavaScriptCompressor jsCompressor = new JavaScriptCompressor();
-        public static string MinifyJs(string originalJS) { return new JavaScriptCompressor().Compress(originalJS); }
+        public static string MinifyJs(string originalJS) => new JavaScriptCompressor().Compress(originalJS);
     }
 }

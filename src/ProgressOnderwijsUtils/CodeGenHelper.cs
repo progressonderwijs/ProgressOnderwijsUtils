@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
         }
 
         static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
-        public static string Indent(string str, int indentCount = 1) { return newLine.Replace(str, new string(' ', indentCount * 4)); }
+        public static string Indent(string str, int indentCount = 1) => newLine.Replace(str, new string(' ', indentCount * 4));
 
         public static string GetMetaObjectClassDef(this QueryBuilder q, SqlCommandCreationContext conn, string name = null)
         {

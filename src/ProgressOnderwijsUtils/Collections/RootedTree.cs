@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtils.Collections
 {
     public struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>>
     {
-        public static RootedTree<T> RootTree(Tree<T> rootNode) { return new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode))); }
+        public static RootedTree<T> RootTree(Tree<T> rootNode) => new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode)));
         public IEnumerable<RootedTree<T>> PathSelfToRoot() => PathSegments.NonEmpySuffixes.Select(path => new RootedTree<T>(path));
         public int IndexInParent() => PathSegments.Head.Index;
         public Tree<T> UnrootedSubTree() => PathSegments.Head.ThisSubTree;
@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils.Collections
             return PathSegments.Last().ThisSubTree.GetHashCode() + EnumerableExtensions.GetSequenceHashCode(PathSegments.SelectEager(segment => segment.Index));
         }
 
-        public override bool Equals(object obj) { return obj is RootedTree<T> && Equals((RootedTree<T>)obj); }
+        public override bool Equals(object obj) => obj is RootedTree<T> && Equals((RootedTree<T>)obj);
 
         // internal details:
         RootedTree(SList<TreePathSegment> pathSegments) { PathSegments = pathSegments; }

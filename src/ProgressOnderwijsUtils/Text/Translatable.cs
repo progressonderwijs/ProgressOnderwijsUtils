@@ -11,10 +11,10 @@ namespace ProgressOnderwijsUtils
 {
     public static class Translatable
     {
-        public static ITranslatable WithReplacement(this ITranslatable textdef, params ITranslatable[] toreplace) { return new ReplacingTranslatable(textdef, toreplace); }
-        public static ITranslatable Append(this ITranslatable a, ITranslatable b) { return new ConcatTranslatable(a, b); }
-        public static ITranslatable Append(this ITranslatable a, ITranslatable b, ITranslatable c) { return new ConcatTranslatable(a, b, c); }
-        public static ITranslatable Append(this ITranslatable a, params ITranslatable[] rest) { return new ConcatTranslatable(new[] { a }.Concat(rest).ToArray()); }
+        public static ITranslatable WithReplacement(this ITranslatable textdef, params ITranslatable[] toreplace) => new ReplacingTranslatable(textdef, toreplace);
+        public static ITranslatable Append(this ITranslatable a, ITranslatable b) => new ConcatTranslatable(a, b);
+        public static ITranslatable Append(this ITranslatable a, ITranslatable b, ITranslatable c) => new ConcatTranslatable(a, b, c);
+        public static ITranslatable Append(this ITranslatable a, params ITranslatable[] rest) => new ConcatTranslatable(new[] { a }.Concat(rest).ToArray());
 
         public static ITranslatable AppendAuto(this ITranslatable a, params object[] objects)
         {
@@ -75,28 +75,28 @@ namespace ProgressOnderwijsUtils
             return (translatable as ForcedLanguageTranslatable) ?? new ForcedLanguageTranslatable(translatable, taal);
         }
 
-        public static ITranslatable CreateTranslatable(TranslateFunction text) { return new SingleTranslatable(text); }
-        public static ITranslatable CreateTranslatable(TranslateFunction text, TranslateFunction extratext) { return new DoubleTranslatable(text, extratext); }
-        public static ITranslatable CreateLazyTranslatable(Func<ITranslatable> lazyCreator) { return new SimpleTranslatable(taal => lazyCreator().Translate(taal)); }
-        public static ITranslatable CreateLazyTranslatable(Func<Taal, TextVal> translator) { return new SimpleTranslatable(translator); }
+        public static ITranslatable CreateTranslatable(TranslateFunction text) => new SingleTranslatable(text);
+        public static ITranslatable CreateTranslatable(TranslateFunction text, TranslateFunction extratext) => new DoubleTranslatable(text, extratext);
+        public static ITranslatable CreateLazyTranslatable(Func<ITranslatable> lazyCreator) => new SimpleTranslatable(taal => lazyCreator().Translate(taal));
+        public static ITranslatable CreateLazyTranslatable(Func<Taal, TextVal> translator) => new SimpleTranslatable(translator);
         static readonly LiteralTranslatable empty = new LiteralTranslatable("", "", "");
         public static LiteralTranslatable Empty => empty;
-        public static ITranslatable EmptyWithNLTooltip(string tooltipnl) { return empty.WithTooltip(tooltipnl); }
-        public static LiteralTranslatable Literal(string nl) { return new LiteralTranslatable(nl, null, null); }
-        public static LiteralTranslatable Literal(string nl, string en) { return new LiteralTranslatable(nl, en, null); }
-        public static LiteralTranslatable Literal(string nl, string en, string du) { return new LiteralTranslatable(nl, en, du); }
-        public static ITranslatable Raw(string text) { return Raw(text, null); }
-        public static ITranslatable Raw(string text, string extratext) { return Raw(TextVal.Create(text, extratext)); }
-        public static ITranslatable Raw(TextVal tv) { return new RawTranslatable(tv); }
+        public static ITranslatable EmptyWithNLTooltip(string tooltipnl) => empty.WithTooltip(tooltipnl);
+        public static LiteralTranslatable Literal(string nl) => new LiteralTranslatable(nl, null, null);
+        public static LiteralTranslatable Literal(string nl, string en) => new LiteralTranslatable(nl, en, null);
+        public static LiteralTranslatable Literal(string nl, string en, string du) => new LiteralTranslatable(nl, en, du);
+        public static ITranslatable Raw(string text) => Raw(text, null);
+        public static ITranslatable Raw(string text, string extratext) => Raw(TextVal.Create(text, extratext));
+        public static ITranslatable Raw(TextVal tv) => new RawTranslatable(tv);
 
         public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable, ITranslatable tt)
         {
             return CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).Text);
         }
 
-        public static ITranslatable TextToTooltip(this ITranslatable translatable) { return CreateTranslatable(taal => "", taal => translatable.Translate(taal).Text); }
+        public static ITranslatable TextToTooltip(this ITranslatable translatable) => CreateTranslatable(taal => "", taal => translatable.Translate(taal).Text);
 
-        public static ITranslatable TooltipToText(this ITranslatable translatable) { return CreateTranslatable(taal => translatable.Translate(taal).ExtraText, taal => ""); }
+        public static ITranslatable TooltipToText(this ITranslatable translatable) => CreateTranslatable(taal => translatable.Translate(taal).ExtraText, taal => "");
 
         public static ITranslatable ReplaceTooltipWithTooltip(this ITranslatable translatable, ITranslatable tt)
         {
@@ -136,7 +136,7 @@ namespace ProgressOnderwijsUtils
             readonly TranslateFunction stringify;
             public SingleTranslatable(TranslateFunction stringify) { this.stringify = stringify; }
             public string GenerateUid() => stringify();
-            public TextVal Translate(Taal lang) { return TextVal.Create(stringify(lang)); }
+            public TextVal Translate(Taal lang) => TextVal.Create(stringify(lang));
             public override string ToString() => GenerateUid();
         }
 
@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
             }
 
             public string GenerateUid() => Translate(Taal.NL).ToString();
-            public TextVal Translate(Taal lang) { return TextVal.Create(textF(lang), extratextF(lang)); }
+            public TextVal Translate(Taal lang) => TextVal.Create(textF(lang), extratextF(lang));
             public override string ToString() => GenerateUid();
         }
 
@@ -160,7 +160,7 @@ namespace ProgressOnderwijsUtils
             readonly Func<Taal, TextVal> translator;
             public SimpleTranslatable(Func<Taal, TextVal> translator) { this.translator = translator; }
             public string GenerateUid() => Translate(Taal.NL).ToString();
-            public TextVal Translate(Taal lang) { return translator(lang); }
+            public TextVal Translate(Taal lang) => translator(lang);
             public override string ToString() => GenerateUid();
         }
 
@@ -176,7 +176,7 @@ namespace ProgressOnderwijsUtils
             }
 
             public string GenerateUid() => underlying.GenerateUid();
-            public TextVal Translate(Taal lang) { return underlying.Translate(taal); }
+            public TextVal Translate(Taal lang) => underlying.Translate(taal);
             public override string ToString() => GenerateUid();
         }
 
@@ -186,7 +186,7 @@ namespace ProgressOnderwijsUtils
             public RawTranslatable(TextVal tv) { this.tv = tv; }
             public string GenerateUid() => "TV:" + tv.Text + "\n" + tv.ExtraText;
             public override string ToString() => GenerateUid();
-            public TextVal Translate(Taal taal) { return tv; }
+            public TextVal Translate(Taal taal) => tv;
         }
     }
 }

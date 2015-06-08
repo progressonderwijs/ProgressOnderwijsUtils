@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public override DataTable GetSchemaTable() { throw new NotSupportedException(); }
-        public override string GetDataTypeName(int ordinal) { return GetFieldType(ordinal).ToString(); }
+        public override string GetDataTypeName(int ordinal) => GetFieldType(ordinal).ToString();
         bool hasRows, afterFirstRowPeek;
         protected abstract bool ReadImpl();
 
@@ -74,18 +74,18 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public override bool GetBoolean(int ordinal) { return (bool)GetValue(ordinal); }
-        public override byte GetByte(int ordinal) { return (byte)GetValue(ordinal); }
-        public override char GetChar(int ordinal) { return (char)GetValue(ordinal); }
-        public override DateTime GetDateTime(int ordinal) { return (DateTime)GetValue(ordinal); }
-        public override decimal GetDecimal(int ordinal) { return (decimal)GetValue(ordinal); }
-        public override double GetDouble(int ordinal) { return (double)GetValue(ordinal); }
-        public override float GetFloat(int ordinal) { return (float)GetValue(ordinal); }
-        public override Guid GetGuid(int ordinal) { return (Guid)GetValue(ordinal); }
-        public override short GetInt16(int ordinal) { return (short)GetValue(ordinal); }
-        public override int GetInt32(int ordinal) { return (int)GetValue(ordinal); }
-        public override long GetInt64(int ordinal) { return (long)GetValue(ordinal); }
-        public override string GetString(int ordinal) { return (string)GetValue(ordinal); }
+        public override bool GetBoolean(int ordinal) => (bool)GetValue(ordinal);
+        public override byte GetByte(int ordinal) => (byte)GetValue(ordinal);
+        public override char GetChar(int ordinal) => (char)GetValue(ordinal);
+        public override DateTime GetDateTime(int ordinal) => (DateTime)GetValue(ordinal);
+        public override decimal GetDecimal(int ordinal) => (decimal)GetValue(ordinal);
+        public override double GetDouble(int ordinal) => (double)GetValue(ordinal);
+        public override float GetFloat(int ordinal) => (float)GetValue(ordinal);
+        public override Guid GetGuid(int ordinal) => (Guid)GetValue(ordinal);
+        public override short GetInt16(int ordinal) => (short)GetValue(ordinal);
+        public override int GetInt32(int ordinal) => (int)GetValue(ordinal);
+        public override long GetInt64(int ordinal) => (long)GetValue(ordinal);
+        public override string GetString(int ordinal) => (string)GetValue(ordinal);
 
         public override int GetValues(object[] values)
         {
@@ -96,7 +96,7 @@ namespace ProgressOnderwijsUtils
             return fieldsTodo;
         }
 
-        public override bool IsDBNull(int ordinal) { return GetValue(ordinal) is DBNull; }
+        public override bool IsDBNull(int ordinal) => GetValue(ordinal) is DBNull;
         public override bool NextResult() => false;
         public override int RecordsAffected => -1;
         public override object this[string name] => GetValue(GetOrdinal(name));

@@ -72,6 +72,6 @@ namespace ProgressOnderwijsUtils.Radius
             }
         }
 
-        public static RadiusAttribute NASIPAddress(IPAddress addr) { return new RadiusAttribute(RadiusAttributeType.NASIPAddress, addr.GetAddressBytes()); }
+        public static RadiusAttribute NASIPAddress(IPAddress addr) => new RadiusAttribute(RadiusAttributeType.NASIPAddress, addr.GetAddressBytes());
     }
 }

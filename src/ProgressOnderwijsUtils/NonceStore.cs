@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
                 other.Timestamp.Equals(Timestamp) && Equals(other.Context, Context) && Equals(other.Nonce, Nonce);
         }
 
-        public override bool Equals(object obj) { return Equals(obj as NonceStoreItem); }
+        public override bool Equals(object obj) => Equals(obj as NonceStoreItem);
 
         public override int GetHashCode()
         {
@@ -89,8 +89,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public bool IsOriginal(NonceStoreItem item) { return IsInWindow(item) && IsNotKnown(item); }
-        public bool IsInWindow(NonceStoreItem item) { return (DateTime.UtcNow - item.Timestamp).Duration() <= window; }
+        public bool IsOriginal(NonceStoreItem item) => IsInWindow(item) && IsNotKnown(item);
+        public bool IsInWindow(NonceStoreItem item) => (DateTime.UtcNow - item.Timestamp).Duration() <= window;
 
         public bool IsNotKnown(NonceStoreItem item)
         {

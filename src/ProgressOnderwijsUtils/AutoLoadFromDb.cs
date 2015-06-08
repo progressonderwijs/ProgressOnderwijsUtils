@@ -230,8 +230,8 @@ namespace ProgressOnderwijsUtils
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
             };
 
-        //static bool SupportsType(Type type) { return GetterMethodsByType.ContainsKey(type); }
-        //static MethodInfo GetterForType(Type type) { return GetterMethodsByType[type]; }
+        //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
+        //static MethodInfo GetterForType(Type type) => GetterMethodsByType[type];
 
         //static readonly MethodInfo IsDBNullMethod = typeof(IDataRecord).GetMethod("IsDBNull", binding);
         //static readonly MethodInfo ReadMethod = typeof(IDataReader).GetMethod("Read", binding);
@@ -403,7 +403,7 @@ namespace ProgressOnderwijsUtils
                     }
 
                     public override int GetHashCode() => (int)(uint)((cachedHash >> 32) + cachedHash);
-                    public override bool Equals(object obj) { return obj is ColumnOrdering && Equals((ColumnOrdering)obj); }
+                    public override bool Equals(object obj) => obj is ColumnOrdering && Equals((ColumnOrdering)obj);
                 }
 
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> LoadRows;

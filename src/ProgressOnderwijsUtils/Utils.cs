@@ -201,7 +201,7 @@ namespace ProgressOnderwijsUtils
             return SqlInClauseHelper(values.Select(val => val.ToStringInvariant()));
         }
 
-        static string EscapeSqlString(string val) { return '\'' + val.Replace("'", "''") + '\''; }
+        static string EscapeSqlString(string val) => '\'' + val.Replace("'", "''") + '\'';
 
         static string SqlInClauseHelper(IEnumerable<string> values)
         {
@@ -303,7 +303,7 @@ namespace ProgressOnderwijsUtils
         }
 
         // vergelijk datums zonder milliseconden.
-        public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2) { return d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond); }
+        public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2) => d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond);
 
         /// <summary>
         /// Geeft het verschil in maanden tussen twee datums
@@ -363,7 +363,7 @@ namespace ProgressOnderwijsUtils
             return new string(buffer, 0, index);
         }
 
-        static char MapToBase36Char(int digit) { return (char)((digit < 10 ? '0' : 'a' - 10) + digit); }
+        static char MapToBase36Char(int digit) => (char)((digit < 10 ? '0' : 'a' - 10) + digit);
 
         /// <summary>
         /// This is almost equivalent to num.ToString("f"+precision), but around 10 times faster.
@@ -472,7 +472,7 @@ namespace ProgressOnderwijsUtils
         readonly Comparison<T> comparer;
         public ComparisonComparer(Comparison<T> comparer) { this.comparer = comparer; }
 
-        public int Compare(T x, T y) { return comparer(x, y); }
+        public int Compare(T x, T y) => comparer(x, y);
     }
 
     public class EqualsEqualityComparer<T> : IEqualityComparer<T>
@@ -486,7 +486,7 @@ namespace ProgressOnderwijsUtils
             this.hashCode = hashCode;
         }
 
-        public bool Equals(T x, T y) { return equals(x, y); }
-        public int GetHashCode(T obj) { return hashCode == null ? obj.GetHashCode() : hashCode(obj); }
+        public bool Equals(T x, T y) => equals(x, y);
+        public int GetHashCode(T obj) => hashCode == null ? obj.GetHashCode() : hashCode(obj);
     }
 }

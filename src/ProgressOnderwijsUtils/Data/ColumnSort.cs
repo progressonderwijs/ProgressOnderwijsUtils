@@ -21,15 +21,15 @@ namespace ProgressOnderwijsUtils
         }
 
         public ColumnSort WithReverseDirection() => new ColumnSort(column, FlipDirection(direction));
-        public ColumnSort WithDifferentName(string newColumn) { return new ColumnSort(newColumn, direction); }
-        static SortDirection FlipDirection(SortDirection dir) { return dir == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc; }
+        public ColumnSort WithDifferentName(string newColumn) => new ColumnSort(newColumn, direction);
+        static SortDirection FlipDirection(SortDirection dir) => dir == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc;
 
         public bool Equals(ColumnSort other)
         {
             return string.Equals(ColumnName, other.ColumnName, StringComparison.OrdinalIgnoreCase) && SortDirection == other.SortDirection;
         }
 
-        public override bool Equals(object obj) { return obj is ColumnSort && Equals((ColumnSort)obj); }
+        public override bool Equals(object obj) => obj is ColumnSort && Equals((ColumnSort)obj);
         public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int)direction;
         public static bool operator ==(ColumnSort a, ColumnSort b) { return a.Equals(b); } //ReferenceEquals(a, b) || null != (object)a &&
         public static bool operator !=(ColumnSort a, ColumnSort b) { return !a.Equals(b); } //!ReferenceEquals(a, b) && (null == (object)a || 

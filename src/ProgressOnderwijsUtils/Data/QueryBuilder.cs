@@ -107,7 +107,7 @@ namespace ProgressOnderwijsUtils
             return Create(a);
         }
 
-        static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) { return null == part ? query : new PrefixAndComponent(query, part); }
+        static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) => null == part ? query : new PrefixAndComponent(query, part);
 
         static QueryBuilder Concat(QueryBuilder first, QueryBuilder second)
         {
@@ -491,7 +491,7 @@ namespace ProgressOnderwijsUtils
         public int CommandTimeoutInS { get; private set; }
         // ReSharper disable UnusedMember.Global
         // Handige generieke functionaliteit, maar niet altijd gebruikt
-        public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) { return new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer); }
+        public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) => new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer);
         // ReSharper restore UnusedMember.Global
         public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, QueryTracer tracer)
         {
@@ -501,6 +501,6 @@ namespace ProgressOnderwijsUtils
         }
 
         public void Dispose() { Connection.Dispose(); }
-        public static implicit operator SqlCommandCreationContext(SqlConnection conn) { return new SqlCommandCreationContext(conn, 0, null); }
+        public static implicit operator SqlCommandCreationContext(SqlConnection conn) => new SqlCommandCreationContext(conn, 0, null);
     }
 }

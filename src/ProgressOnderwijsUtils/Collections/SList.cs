@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils.Collections
             return alist == null && blist == null;
         }
 
-        public override bool Equals(object obj) { return obj is SList<T> && Equals((SList<T>)obj); }
+        public override bool Equals(object obj) => obj is SList<T> && Equals((SList<T>)obj);
 
         public override int GetHashCode()
         {

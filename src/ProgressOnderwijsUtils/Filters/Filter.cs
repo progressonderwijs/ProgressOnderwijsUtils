@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static QueryBuilder ToQueryBuilder(this FilterBase filter) { return filter == null ? QueryBuilder.Create("1=1") : filter.ToQueryBuilderImpl(); }
+        public static QueryBuilder ToQueryBuilder(this FilterBase filter) => filter == null ? QueryBuilder.Create("1=1") : filter.ToQueryBuilderImpl();
 
         public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier) //where T : IMetaObject
         {
@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils
                 : filter.AddToImpl(filterInEditMode, booleanOperator, c);
         }
 
-        public static FilterBase Remove(this FilterBase filter, FilterBase filterToRemove) { return filter.ReplaceImpl(filterToRemove, null); }
+        public static FilterBase Remove(this FilterBase filter, FilterBase filterToRemove) => filter.ReplaceImpl(filterToRemove, null);
 
         /// <summary>
         /// Maakt een filter definitie aan.  Om twee kolommen onderling te vergelijken, moet de waarde van type ColumnReference zijn.
@@ -194,7 +194,7 @@ namespace ProgressOnderwijsUtils
                 .ToDictionary(NiceString, StringComparer.Ordinal);
         }
 
-        public static BooleanComparer? ParseComparerNiceString(string s) { return ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?)); }
+        public static BooleanComparer? ParseComparerNiceString(string s) => ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?));
 
         public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, Type> typeIfPresent)
         {
@@ -219,6 +219,6 @@ namespace ProgressOnderwijsUtils
             return parsed != null && parsed.Item2 == "" ? parsed.Item1 : null;
         }
 
-        public static QueryBuilder ToFilterClause(this IEnumerable<FilterBase> filters) { return CreateCombined(BooleanOperator.And, filters.EmptyIfNull()).ToQueryBuilder(); }
+        public static QueryBuilder ToFilterClause(this IEnumerable<FilterBase> filters) => CreateCombined(BooleanOperator.And, filters.EmptyIfNull()).ToQueryBuilder();
     }
 }

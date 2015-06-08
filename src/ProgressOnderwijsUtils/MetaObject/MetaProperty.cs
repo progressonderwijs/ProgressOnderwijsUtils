@@ -114,7 +114,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            public Expression GetterExpression(Expression paramExpr) { return Expression.Property(paramExpr, propertyInfo); }
+            public Expression GetterExpression(Expression paramExpr) => Expression.Property(paramExpr, propertyInfo);
 
             public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
             {

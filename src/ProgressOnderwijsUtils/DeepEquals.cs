@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class DeepEquals
     {
-        public static bool AreEqual(object object1, object object2) { return Compare(new HashSet<ReferencePair>(), object1, object2); }
+        public static bool AreEqual(object object1, object object2) => Compare(new HashSet<ReferencePair>(), object1, object2);
 
         static bool Compare(HashSet<ReferencePair> assumeEquals, object object1, object object2)
         {
@@ -59,8 +59,8 @@ namespace ProgressOnderwijsUtils
                 b = o2;
             }
 
-            public override bool Equals(object obj) { return Equals(obj as ReferencePair); }
-            public bool Equals(ReferencePair other) { return other != null && ReferenceEquals(a, other.a) && ReferenceEquals(b, other.b); }
+            public override bool Equals(object obj) => Equals(obj as ReferencePair);
+            public bool Equals(ReferencePair other) => other != null && ReferenceEquals(a, other.a) && ReferenceEquals(b, other.b);
             public override int GetHashCode() => RuntimeHelpers.GetHashCode(a) + 137 * RuntimeHelpers.GetHashCode(b);
             public static bool operator ==(ReferencePair a, ReferencePair b) { return ReferenceEquals(a, b) || !object.ReferenceEquals(a, null) && a.Equals(b); }
             public static bool operator !=(ReferencePair a, ReferencePair b) { return !(a == b); }
@@ -109,7 +109,7 @@ namespace ProgressOnderwijsUtils
                 : type.GetMethod("Equals", BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.ExactBinding, null, new[] { type }, null);
         }
 
-        static bool CompareWithBuiltinEquals(MethodInfo builtinEquals, object o1_nonnull, object o2) { return (bool)builtinEquals.Invoke(o1_nonnull, new[] { o2 }); }
+        static bool CompareWithBuiltinEquals(MethodInfo builtinEquals, object o1_nonnull, object o2) => (bool)builtinEquals.Invoke(o1_nonnull, new[] { o2 });
 
         static bool CompareDictionaries(HashSet<ReferencePair> assumeEqual, IDictionary iDict1, IDictionary iDict2)
         {

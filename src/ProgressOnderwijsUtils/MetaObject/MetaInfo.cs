@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtils
             indexByName = dictionary;
         }
 
-        public IMetaProperty<T> GetByName(string name) { return MetaProperties[indexByName[name]]; }
+        public IMetaProperty<T> GetByName(string name) => MetaProperties[indexByName[name]];
         public int Count => MetaProperties.Length;
 
         static IMetaProperty<T>[] GetMetaPropertiesImpl()

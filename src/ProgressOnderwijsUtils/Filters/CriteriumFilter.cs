@@ -20,8 +20,8 @@ namespace ProgressOnderwijsUtils
         public string KolomNaam => _KolomNaam;
         public BooleanComparer Comparer => _Comparer;
         public object Waarde => _Waarde;
-        public override bool Equals(object obj) { return Equals(obj as CriteriumFilter); }
-        public override bool Equals(FilterBase other) { return Equals(other as CriteriumFilter); }
+        public override bool Equals(object obj) => Equals(obj as CriteriumFilter);
+        public override bool Equals(FilterBase other) => Equals(other as CriteriumFilter);
 
         public bool Equals(CriteriumFilter other)
         {
@@ -178,8 +178,8 @@ namespace ProgressOnderwijsUtils
 
             public char Code => code;
             public Type Type => typeof(T);
-            public string Serialize(object val) { return serialize((T)val); }
-            object IValSerializer.Deserialize(string s) { return deserialize(s); }
+            public string Serialize(object val) => serialize((T)val);
+            object IValSerializer.Deserialize(string s) => deserialize(s);
         }
 
         static IValSerializer Serializer<T>(char code, Func<string, T> deserialize, Func<T, string> serialize) { return new ValSerializer<T>(serialize, deserialize, code); }
@@ -349,7 +349,7 @@ namespace ProgressOnderwijsUtils
             return secondaryType.GetNonNullableUnderlyingType() == primaryType;
         }
 
-        protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return ReferenceEquals(this, toReplace) ? replaceWith : this; }
+        protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) => ReferenceEquals(this, toReplace) ? replaceWith : this;
 
         protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
         {
@@ -360,10 +360,10 @@ namespace ProgressOnderwijsUtils
 
         // ReSharper disable MemberCanBePrivate.Global
         //not private due to access via Expression trees.
-        public static bool StartsWithHelper(string val, string with) { return val != null && with != null && val.StartsWith(with, StringComparison.OrdinalIgnoreCase); }
-        public static bool EndsWithHelper(string val, string with) { return val != null && with != null && val.EndsWith(with, StringComparison.OrdinalIgnoreCase); }
-        public static bool ContainsHelper(string val, string needle) { return val != null && needle != null && -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase); }
-        public static bool HasFlagHelper(long val, long flag) { return (val & flag) == flag; }
+        public static bool StartsWithHelper(string val, string with) => val != null && with != null && val.StartsWith(with, StringComparison.OrdinalIgnoreCase);
+        public static bool EndsWithHelper(string val, string with) => val != null && with != null && val.EndsWith(with, StringComparison.OrdinalIgnoreCase);
+        public static bool ContainsHelper(string val, string needle) => val != null && needle != null && -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase);
+        public static bool HasFlagHelper(long val, long flag) => (val & flag) == flag;
         // ReSharper restore MemberCanBePrivate.Global
         static readonly MethodInfo stringStartsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
         static readonly MethodInfo stringEndsWithMethod = ((Func<string, string, bool>)EndsWithHelper).Method;
@@ -484,7 +484,7 @@ namespace ProgressOnderwijsUtils
                 : Expression.Convert(expr, underlyingType);
         }
 
-        static Expression AddPrecondition(Expression precondition, Expression expr) { return precondition == null ? expr : Expression.AndAlso(precondition, expr); }
+        static Expression AddPrecondition(Expression precondition, Expression expr) => precondition == null ? expr : Expression.AndAlso(precondition, expr);
 
         static bool ComparerUsesUnderlyingType(BooleanComparer comparer)
         {

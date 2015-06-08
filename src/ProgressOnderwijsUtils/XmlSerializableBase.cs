@@ -74,7 +74,7 @@ namespace ProgressOnderwijsUtils
                 return Deserialize(reader);
         }
 
-        public static T Deserialize(XmlReader from) { return (T)serializer.Deserialize(from); }
+        public static T Deserialize(XmlReader from) => (T)serializer.Deserialize(from);
 
         public static T Deserialize(string from)
         {
@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils
         }
 
         internal XmlSerializerHelper() { }
-        object IXmlSerializeHelper.DeserializeInst(XmlReader from) { return (T)serializer.Deserialize(from); }
+        object IXmlSerializeHelper.DeserializeInst(XmlReader from) => (T)serializer.Deserialize(from);
         void IXmlSerializeHelper.SerializeToInst(XmlWriter xw, object val) { serializer.Serialize(xw, val); }
     }
 }

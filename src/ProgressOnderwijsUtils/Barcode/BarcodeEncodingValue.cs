@@ -143,7 +143,7 @@ namespace ProgressOnderwijsUtils.Barcode
         /// <summary>
         /// De barcode-waarde voor het type
         /// </summary>
-        internal static char Get(BarcodeType type) { return Get((int)type); }
+        internal static char Get(BarcodeType type) => Get((int)type);
 
         /// <summary>
         /// Geeft de barcodewaarde voor een getal
