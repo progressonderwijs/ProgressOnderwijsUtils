@@ -32,12 +32,12 @@ namespace ProgressOnderwijsUtils
 
         public Type Type => type;
         public object Value => value;
-        public T GetValue<T>() { return (T)value; }
-        public override string ToString() { return ToUiString(); }
-        public string ToUiString() { return string.Format(CultureInfo.InvariantCulture, "{0} : {1}", Value, Type); }
+        public T GetValue<T>() => (T)value;
+        public override string ToString() => ToUiString();
+        public string ToUiString() => string.Format(CultureInfo.InvariantCulture, "{0} : {1}", Value, Type);
         public bool Equals(VariantData other) { return other.Type == Type && Equals(other.Value, Value); }
         public override bool Equals(object obj) { return obj is VariantData && Equals((VariantData)obj); }
-        public override int GetHashCode() { return ((Type != null ? Type.GetHashCode() : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0); }
+        public override int GetHashCode() => ((Type != null ? Type.GetHashCode() : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0);
         public static bool operator ==(VariantData left, VariantData right) { return left.Equals(right); }
         public static bool operator !=(VariantData left, VariantData right) { return !left.Equals(right); }
         public static explicit operator string(VariantData data) { return data.ToString(); }

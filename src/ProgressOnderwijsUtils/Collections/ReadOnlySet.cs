@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils.Collections
         public int Count => set.Count;
         public bool IsReadOnly => true;
         public bool Remove(T item) { throw new NotSupportedException(); }
-        public IEnumerator<T> GetEnumerator() { return set.GetEnumerator(); }
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return set.GetEnumerator(); }
+        public IEnumerator<T> GetEnumerator() => set.GetEnumerator();
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => set.GetEnumerator();
     }
 }

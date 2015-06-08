@@ -314,7 +314,7 @@ namespace ProgressOnderwijsUtils
                 sortedAttrs = entries;
             }
 
-            public IReadOnlyList<Enum> Values() { return EnumValues.SelectIndexable(e => (Enum)(object)e); }
+            public IReadOnlyList<Enum> Values() => EnumValues.SelectIndexable(e => (Enum)(object)e);
             public ITranslatable GetEnumLabel(Enum val) { return GetLabel((TEnum)(object)val); }
 
             public static ITranslatable GetLabel(TEnum val)

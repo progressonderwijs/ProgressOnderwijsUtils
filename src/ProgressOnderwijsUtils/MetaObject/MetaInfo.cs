@@ -92,7 +92,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         public IMetaProperty<T> this[int index] => MetaProperties[index];
     }
 }

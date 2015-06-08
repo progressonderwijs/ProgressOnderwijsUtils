@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public override bool IsDBNull(int ordinal) { return GetValue(ordinal) is DBNull; }
-        public override bool NextResult() { return false; }
+        public override bool NextResult() => false;
         public override int RecordsAffected => -1;
         public override object this[string name] => GetValue(GetOrdinal(name));
         public override object this[int ordinal] => GetValue(ordinal);

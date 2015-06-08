@@ -402,7 +402,7 @@ namespace ProgressOnderwijsUtils
                         return true;
                     }
 
-                    public override int GetHashCode() { return (int)(uint)((cachedHash >> 32) + cachedHash); }
+                    public override int GetHashCode() => (int)(uint)((cachedHash >> 32) + cachedHash);
                     public override bool Equals(object obj) { return obj is ColumnOrdering && Equals((ColumnOrdering)obj); }
                 }
 

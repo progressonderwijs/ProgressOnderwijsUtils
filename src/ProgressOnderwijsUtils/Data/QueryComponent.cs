@@ -118,7 +118,7 @@ namespace ProgressOnderwijsUtils
             [Key]
             public T val { get; set; }
 
-            public override string ToString() { return val == null ? "NULL" : val.ToString(); }
+            public override string ToString() => val == null ? "NULL" : val.ToString();
         }
     }
 }

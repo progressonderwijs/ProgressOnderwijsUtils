@@ -11,8 +11,8 @@ namespace ProgressOnderwijsUtils
         readonly SortDirection direction;
         public string ColumnName => column;
         public SortDirection SortDirection => direction;
-        public string SqlSortString() { return column + " " + direction; }
-        public override string ToString() { return "[" + column + " " + direction + "]"; }
+        public string SqlSortString() => column + " " + direction;
+        public override string ToString() => "[" + column + " " + direction + "]";
 
         public ColumnSort(string column, SortDirection direction)
         {
@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
             this.direction = direction;
         }
 
-        public ColumnSort WithReverseDirection() { return new ColumnSort(column, FlipDirection(direction)); }
+        public ColumnSort WithReverseDirection() => new ColumnSort(column, FlipDirection(direction));
         public ColumnSort WithDifferentName(string newColumn) { return new ColumnSort(newColumn, direction); }
         static SortDirection FlipDirection(SortDirection dir) { return dir == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc; }
 
@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public override bool Equals(object obj) { return obj is ColumnSort && Equals((ColumnSort)obj); }
-        public override int GetHashCode() { return StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int)direction; }
+        public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int)direction;
         public static bool operator ==(ColumnSort a, ColumnSort b) { return a.Equals(b); } //ReferenceEquals(a, b) || null != (object)a &&
         public static bool operator !=(ColumnSort a, ColumnSort b) { return !a.Equals(b); } //!ReferenceEquals(a, b) && (null == (object)a || 
     }

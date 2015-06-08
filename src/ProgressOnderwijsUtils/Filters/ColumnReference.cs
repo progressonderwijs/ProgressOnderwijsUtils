@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
 
         public bool Equals(ColumnReference other) { return ColumnName == other.ColumnName; }
         public override bool Equals(object obj) { return obj is ColumnReference && Equals((ColumnReference)obj); }
-        public override int GetHashCode() { return 1 + ColumnName.GetHashCode(); }
+        public override int GetHashCode() => 1 + ColumnName.GetHashCode();
         public static bool operator ==(ColumnReference a, ColumnReference b) { return ReferenceEquals(a, b) || a != null && b != null && a.Equals(b); }
         public static bool operator !=(ColumnReference a, ColumnReference b) { return !ReferenceEquals(a, b) && (a == null || b == null || !a.Equals(b)); }
     }
@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
         public LiteralSqlInt(int val) { Value = val; }
         public bool Equals(LiteralSqlInt other) { return Value == other.Value; }
         public override bool Equals(object obj) { return obj is LiteralSqlInt && Equals((LiteralSqlInt)obj); }
-        public override int GetHashCode() { return 27 + Value.GetHashCode(); }
+        public override int GetHashCode() => 27 + Value.GetHashCode();
         public static bool operator ==(LiteralSqlInt a, LiteralSqlInt b) { return ReferenceEquals(a, b) || a != null && b != null && a.Equals(b); }
         public static bool operator !=(LiteralSqlInt a, LiteralSqlInt b) { return !ReferenceEquals(a, b) && (a == null || b == null || !a.Equals(b)); }
         public static LiteralSqlInt Create(int p) { return new LiteralSqlInt(p); }

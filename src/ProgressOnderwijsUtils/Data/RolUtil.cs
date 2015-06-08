@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils
                 Arr = arr;
             }
 
-            public bool Valid() { return Pos < Arr.Length; }
+            public bool Valid() => Pos < Arr.Length;
             public void MoveNext() { Pos++; }
             public int Value => (int)Arr[Pos];
         }

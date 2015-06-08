@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils
 
             public override bool IsOk => false;
             public override T GetValue() { throw new InvalidOperationException("Cannot get value; in error state: " + error.Translate(Taal.NL)); }
-            public override ITranslatable GetError() { return error; }
+            public override ITranslatable GetError() => error;
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifError(error); }
         }
@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils
             readonly T val;
             public OkValue(T val) { this.val = val; }
             public override bool IsOk => true;
-            public override T GetValue() { return val; }
+            public override T GetValue() => val;
             public override ITranslatable GetError() { throw new InvalidOperationException("No error: cannot get error message!"); }
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifOk(val); }
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Creates a succesful Maybe value without a value.
         /// </summary>
-        public static Maybe<Unit> Ok() { return new Maybe<Unit>.OkValue(Unit.Value); }
+        public static Maybe<Unit> Ok() => new Maybe<Unit>.OkValue(Unit.Value);
 
         /// <summary>
         /// Creates a failed Maybe value with the specified error message.

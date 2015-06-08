@@ -119,7 +119,7 @@ namespace ProgressOnderwijsUtils
                 m_maxwidth = maxwidth;
             }
 
-            public string GenerateUid() { return m_maxwidth + "<" + m_text.GenerateUid(); }
+            public string GenerateUid() => m_maxwidth + "<" + m_text.GenerateUid();
 
             public TextVal Translate(Taal lang)
             {
@@ -128,16 +128,16 @@ namespace ProgressOnderwijsUtils
                 return TextVal.Create(shortened.Item1, string.IsNullOrEmpty(raw.ExtraText) && shortened.Item2 ? raw.Text : raw.ExtraText);
             }
 
-            public override string ToString() { return GenerateUid(); }
+            public override string ToString() => GenerateUid();
         }
 
         sealed class SingleTranslatable : ITranslatable
         {
             readonly TranslateFunction stringify;
             public SingleTranslatable(TranslateFunction stringify) { this.stringify = stringify; }
-            public string GenerateUid() { return stringify(); }
+            public string GenerateUid() => stringify();
             public TextVal Translate(Taal lang) { return TextVal.Create(stringify(lang)); }
-            public override string ToString() { return GenerateUid(); }
+            public override string ToString() => GenerateUid();
         }
 
         sealed class DoubleTranslatable : ITranslatable
@@ -150,18 +150,18 @@ namespace ProgressOnderwijsUtils
                 extratextF = extratextFactory;
             }
 
-            public string GenerateUid() { return Translate(Taal.NL).ToString(); }
+            public string GenerateUid() => Translate(Taal.NL).ToString();
             public TextVal Translate(Taal lang) { return TextVal.Create(textF(lang), extratextF(lang)); }
-            public override string ToString() { return GenerateUid(); }
+            public override string ToString() => GenerateUid();
         }
 
         sealed class SimpleTranslatable : ITranslatable
         {
             readonly Func<Taal, TextVal> translator;
             public SimpleTranslatable(Func<Taal, TextVal> translator) { this.translator = translator; }
-            public string GenerateUid() { return Translate(Taal.NL).ToString(); }
+            public string GenerateUid() => Translate(Taal.NL).ToString();
             public TextVal Translate(Taal lang) { return translator(lang); }
-            public override string ToString() { return GenerateUid(); }
+            public override string ToString() => GenerateUid();
         }
 
         sealed class ForcedLanguageTranslatable : ITranslatable
@@ -175,17 +175,17 @@ namespace ProgressOnderwijsUtils
                 this.taal = taal;
             }
 
-            public string GenerateUid() { return underlying.GenerateUid(); }
+            public string GenerateUid() => underlying.GenerateUid();
             public TextVal Translate(Taal lang) { return underlying.Translate(taal); }
-            public override string ToString() { return GenerateUid(); }
+            public override string ToString() => GenerateUid();
         }
 
         sealed class RawTranslatable : ITranslatable
         {
             readonly TextVal tv;
             public RawTranslatable(TextVal tv) { this.tv = tv; }
-            public string GenerateUid() { return "TV:" + tv.Text + "\n" + tv.ExtraText; }
-            public override string ToString() { return GenerateUid(); }
+            public string GenerateUid() => "TV:" + tv.Text + "\n" + tv.ExtraText;
+            public override string ToString() => GenerateUid();
             public TextVal Translate(Taal taal) { return tv; }
         }
     }

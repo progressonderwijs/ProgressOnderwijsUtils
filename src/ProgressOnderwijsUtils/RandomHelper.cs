@@ -22,9 +22,9 @@ namespace ProgressOnderwijsUtils
             return bytes;
         }
 
-        public static byte GetByte() { return GetBytes(1)[0]; }
-        public static int GetInt32() { return BitConverter.ToInt32(GetBytes(sizeof(int)), 0); }
-        public static long GetInt64() { return BitConverter.ToInt64(GetBytes(sizeof(long)), 0); }
+        public static byte GetByte() => GetBytes(1)[0];
+        public static int GetInt32() => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
+        public static long GetInt64() => BitConverter.ToInt64(GetBytes(sizeof(long)), 0);
 
         [CLSCompliant(false)]
         public static uint GetUInt32()

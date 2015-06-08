@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
                 && StructuralComparisons.StructuralEqualityComparer.Equals(_Waarde, other._Waarde);
         }
 
-        public override int GetHashCode() { return 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode()); }
+        public override int GetHashCode() => 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode());
 
         public static BooleanComparer[] StringComparers
         {

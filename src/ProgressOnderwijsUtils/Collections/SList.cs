@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return ((IEnumerable<T>)this).GetEnumerator(); }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => ((IEnumerable<T>)this).GetEnumerator();
     }
 
     public static class SList
@@ -186,6 +186,6 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         public static SList<T> SingleElement<T>(T element) { return SList<T>.Empty.Prepend(element); }
-        public static SList<T> Empty<T>() { return SList<T>.Empty; }
+        public static SList<T> Empty<T>() => SList<T>.Empty;
     }
 }

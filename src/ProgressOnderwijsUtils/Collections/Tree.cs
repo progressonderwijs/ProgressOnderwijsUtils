@@ -146,8 +146,8 @@ namespace ProgressOnderwijsUtils.Collections
 
         public override bool Equals(object obj) { return DefaultComparer.Equals(this, obj as Tree<T>); }
         public bool Equals(Tree<T> other) { return DefaultComparer.Equals(this, other); }
-        public override int GetHashCode() { return DefaultComparer.GetHashCode(this); }
-        public override string ToString() { return "TREE:\n" + ToString(""); }
+        public override int GetHashCode() => DefaultComparer.GetHashCode(this);
+        public override string ToString() => "TREE:\n" + ToString("");
 
         string ToString(string indent)
         {

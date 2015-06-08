@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils
             //ReadValues = arrFiller.Compile();
         }
 
-        public override DataTable GetSchemaTable() { return schemaTable; }
+        public override DataTable GetSchemaTable() => schemaTable;
 
         static DataTable CreateSchemaTable()
         {

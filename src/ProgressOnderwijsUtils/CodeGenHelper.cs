@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtils
 					isLocked = false;
 				}
 			}
-			public override string ToString() { return text.ToString(); }
+			public override string ToString() => text.ToString();
 		}
 #endif
 

@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils
             this.label = label;
         }
 
-        public override string ToString() { return "{" + v + ": " + label.Translate(Taal.NL).Text + "}"; }
+        public override string ToString() => "{" + v + ": " + label.Translate(Taal.NL).Text + "}";
     }
 
     public static class SelectItem

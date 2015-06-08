@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.Text
             }
         }
 
-        public string GenerateUid() { return parts.Select(it => it.GenerateUid()).JoinStrings(); }
+        public string GenerateUid() => parts.Select(it => it.GenerateUid()).JoinStrings();
 
         public TextVal Translate(Taal taal)
         {

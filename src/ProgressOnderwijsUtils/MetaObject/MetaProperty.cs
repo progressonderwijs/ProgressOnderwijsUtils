@@ -157,7 +157,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            public override string ToString() { return ObjectToCode.GetCSharpFriendlyTypeName(typeof(TOwner)) + "." + name; }
+            public override string ToString() => ObjectToCode.GetCSharpFriendlyTypeName(typeof(TOwner)) + "." + name;
 
             LiteralTranslatable LabelNoTt(object[] attrs)
             {
