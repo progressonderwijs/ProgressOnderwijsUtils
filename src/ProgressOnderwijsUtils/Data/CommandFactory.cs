@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
-        SqlParameter[] GenerateSqlParameters() { return parmetersInOrder.Select(par => par.ToSqlParameter(GetNumberForParam(par))).ToArray(); }
-        string GenerateCommandText() { return queryText.ToString(); }
+        SqlParameter[] GenerateSqlParameters() => parmetersInOrder.Select(par => par.ToSqlParameter(GetNumberForParam(par))).ToArray();
+        string GenerateCommandText() => queryText.ToString();
     }
 }

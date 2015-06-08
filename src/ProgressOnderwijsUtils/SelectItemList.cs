@@ -85,19 +85,19 @@ namespace ProgressOnderwijsUtils
     {
         readonly T v;
         readonly ITranslatable label;
-        public T Value { get { return v; } }
-        public ITranslatable Label { get { return label; } }
+        public T Value => v;
+        public ITranslatable Label => label;
 
         internal SelectItem(T v, ITranslatable label)
         {
             if (label == null) {
-                throw new ArgumentNullException("label");
+                throw new ArgumentNullException(nameof(label));
             }
             this.v = v;
             this.label = label;
         }
 
-        public override string ToString() { return "{" + v + ": " + label.Translate(Taal.NL).Text + "}"; }
+        public override string ToString() => "{" + v + ": " + label.Translate(Taal.NL).Text + "}";
     }
 
     public static class SelectItem

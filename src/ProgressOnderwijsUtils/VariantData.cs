@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
         public VariantData(Type type, object value)
         {
             if (type == null) {
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
             }
             //TODO: this is null-unsafe; however existing code doesn't pass in whether it can be null or not. (i.e. int? is passed as int)
             //if (value == null && !type.CanBeNull())
@@ -30,16 +30,16 @@ namespace ProgressOnderwijsUtils
             this.value = value;
         }
 
-        public Type Type { get { return type; } }
-        public object Value { get { return value; } }
-        public T GetValue<T>() { return (T)value; }
-        public override string ToString() { return ToUiString(); }
-        public string ToUiString() { return string.Format(CultureInfo.InvariantCulture, "{0} : {1}", Value, Type); }
-        public bool Equals(VariantData other) { return other.Type == Type && Equals(other.Value, Value); }
-        public override bool Equals(object obj) { return obj is VariantData && Equals((VariantData)obj); }
-        public override int GetHashCode() { return ((Type != null ? Type.GetHashCode() : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0); }
+        public Type Type => type;
+        public object Value => value;
+        public T GetValue<T>() => (T)value;
+        public override string ToString() => ToUiString();
+        public string ToUiString() => string.Format(CultureInfo.InvariantCulture, "{0} : {1}", Value, Type);
+        public bool Equals(VariantData other) => other.Type == Type && Equals(other.Value, Value);
+        public override bool Equals(object obj) => obj is VariantData && Equals((VariantData)obj);
+        public override int GetHashCode() => ((Type != null ? Type.GetHashCode() : 0) * 397) ^ (Value != null ? Value.GetHashCode() : 0);
         public static bool operator ==(VariantData left, VariantData right) { return left.Equals(right); }
         public static bool operator !=(VariantData left, VariantData right) { return !left.Equals(right); }
-        public static explicit operator string(VariantData data) { return data.ToString(); }
+        public static explicit operator string(VariantData data) => data.ToString();
     }
 }

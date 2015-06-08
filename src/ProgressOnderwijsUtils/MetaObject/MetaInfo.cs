@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
     {
         readonly IMetaProperty<T>[] MetaProperties;
         readonly IReadOnlyDictionary<string, int> indexByName;
-        public IReadOnlyDictionary<string, int> IndexByName { get { return indexByName; } }
+        public IReadOnlyDictionary<string, int> IndexByName => indexByName;
         public static readonly MetaInfo<T> Instance = new MetaInfo<T>();
 
         MetaInfo()
@@ -41,8 +41,8 @@ namespace ProgressOnderwijsUtils
             indexByName = dictionary;
         }
 
-        public IMetaProperty<T> GetByName(string name) { return MetaProperties[indexByName[name]]; }
-        public int Count { get { return MetaProperties.Length; } }
+        public IMetaProperty<T> GetByName(string name) => MetaProperties[indexByName[name]];
+        public int Count => MetaProperties.Length;
 
         static IMetaProperty<T>[] GetMetaPropertiesImpl()
         {
@@ -92,7 +92,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
-        public IMetaProperty<T> this[int index] { get { return MetaProperties[index]; } }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public IMetaProperty<T> this[int index] => MetaProperties[index];
     }
 }

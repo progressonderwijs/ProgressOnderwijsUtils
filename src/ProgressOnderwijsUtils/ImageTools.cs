@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils
         }
 
         const int MAX_IMAGE_DIMENSION = 10000; //10 000 by 10 000 is quite insane ;-)
-        public static Image ToImage(byte[] arr) { return Image.FromStream(new MemoryStream(arr), true, true); }
+        public static Image ToImage(byte[] arr) => Image.FromStream(new MemoryStream(arr), true, true);
 
         /// <summary>
         /// Given a width and a height, and a aspect ratio, computes the clipping rectangle fitting within that width and height but of the right aspect ratio.

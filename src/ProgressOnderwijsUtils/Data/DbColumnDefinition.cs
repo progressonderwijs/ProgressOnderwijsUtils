@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
             return new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName);
         }
 
-        public static ColumnDefinition Create(IMetaProperty col) { return new ColumnDefinition(col.DataType, col.Name); }
+        public static ColumnDefinition Create(IMetaProperty col) => new ColumnDefinition(col.DataType, col.Name);
 
         public static ColumnDefinition[] GetFromReader(IDataRecord reader)
         {
@@ -45,8 +45,8 @@ namespace ProgressOnderwijsUtils
             this.name = name;
         }
 
-        public override string ToString() { return ObjectToCode.GetCSharpFriendlyTypeName(DataType) + " " + Name; }
-        public Type DataType { get { return dataType; } }
-        public string Name { get { return name; } }
+        public override string ToString() => ObjectToCode.GetCSharpFriendlyTypeName(DataType) + " " + Name;
+        public Type DataType => dataType;
+        public string Name => name;
     }
 }

@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils
             return thread.Id != currentId ? default(double?) : (thread.TotalProcessorTime - start).TotalMilliseconds;
         }
 
-        public double WallClockMilliseconds() { return wallclock.Elapsed.TotalMilliseconds; }
-        public static ThreadCpuTimer StartNew() { return new ThreadCpuTimer(); }
+        public double WallClockMilliseconds() => wallclock.Elapsed.TotalMilliseconds;
+        public static ThreadCpuTimer StartNew() => new ThreadCpuTimer();
     }
 }

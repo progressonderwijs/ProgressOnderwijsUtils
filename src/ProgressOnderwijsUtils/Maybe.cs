@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public struct Unit
     {
-        public static Unit Value { get { return default(Unit); } }
+        public static Unit Value => default(Unit);
     }
 
     /// <summary>
@@ -64,14 +64,14 @@ namespace ProgressOnderwijsUtils
             public ErrorValue(ITranslatable error)
             {
                 if (error == null) {
-                    throw new ArgumentNullException("error");
+                    throw new ArgumentNullException(nameof(error));
                 }
                 this.error = error;
             }
 
-            public override bool IsOk { get { return false; } }
+            public override bool IsOk => false;
             public override T GetValue() { throw new InvalidOperationException("Cannot get value; in error state: " + error.Translate(Taal.NL)); }
-            public override ITranslatable GetError() { return error; }
+            public override ITranslatable GetError() => error;
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifError(error); }
         }
@@ -80,8 +80,8 @@ namespace ProgressOnderwijsUtils
         {
             readonly T val;
             public OkValue(T val) { this.val = val; }
-            public override bool IsOk { get { return true; } }
-            public override T GetValue() { return val; }
+            public override bool IsOk => true;
+            public override T GetValue() => val;
             public override ITranslatable GetError() { throw new InvalidOperationException("No error: cannot get error message!"); }
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifOk(val); }
@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils
             public ErrorValue(ITranslatable errorMessage)
             {
                 if (errorMessage == null) {
-                    throw new ArgumentNullException("errorMessage");
+                    throw new ArgumentNullException(nameof(errorMessage));
                 }
                 ErrorMessage = errorMessage;
             }
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Creates a succesful Maybe value without a value.
         /// </summary>
-        public static Maybe<Unit> Ok() { return new Maybe<Unit>.OkValue(Unit.Value); }
+        public static Maybe<Unit> Ok() => new Maybe<Unit>.OkValue(Unit.Value);
 
         /// <summary>
         /// Creates a failed Maybe value with the specified error message.
@@ -123,19 +123,19 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="val">The text of the error message</param>
         /// <returns>An ErrorValue (this is implicitly cast to whatever type of Maybe&lt;T&gt; you use.</returns>
-        public static ErrorValue Error(ITranslatable val) { return new ErrorValue(val); }
+        public static ErrorValue Error(ITranslatable val) => new ErrorValue(val);
 
         /// <summary>
         /// Create an error message to show to the user describing a failed operation.
         /// </summary>
         /// <param name="val">The text of the error message</param>
         /// <returns>An ErrorValue (this is implicitly cast to whatever type of Maybe&lt;T&gt; you use.</returns>
-        public static ErrorValue Error(string val) { return Error(Translatable.Literal(val)); }
+        public static ErrorValue Error(string val) => Error(Translatable.Literal(val));
 
         /// <summary>
         /// Converts an ITranslatable to a Maybe&lt;Unit&gt;.  A null translatable represents success, any other value the error message to display.
         /// </summary>
-        public static Maybe<Unit> ErrorWhenNotNull(this ITranslatable val) { return val == null ? Ok() : new ErrorValue(val); }
+        public static Maybe<Unit> ErrorWhenNotNull(this ITranslatable val) => val == null ? Ok() : new ErrorValue(val);
 
         /// <summary>
         /// Maps a possibly failed value to a new value.

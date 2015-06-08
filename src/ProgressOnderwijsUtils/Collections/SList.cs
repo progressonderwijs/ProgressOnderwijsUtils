@@ -28,10 +28,10 @@ namespace ProgressOnderwijsUtils.Collections
             : this(new Impl(head, tail.list)) { }
 
         readonly Impl list;
-        public static SList<T> Empty { get { return default(SList<T>); } }
-        public bool IsEmpty { get { return list == null; } }
-        public T Head { get { return list.Head; } }
-        public SList<T> Tail { get { return new SList<T>(list.Tail); } }
+        public static SList<T> Empty => default(SList<T>);
+        public bool IsEmpty => list == null;
+        public T Head => list.Head;
+        public SList<T> Tail => new SList<T>(list.Tail);
         static readonly int typeHash = typeof(T).GetHashCode();
         static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
 
@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils.Collections
             return alist == null && blist == null;
         }
 
-        public override bool Equals(object obj) { return obj is SList<T> && Equals((SList<T>)obj); }
+        public override bool Equals(object obj) => obj is SList<T> && Equals((SList<T>)obj);
 
         public override int GetHashCode()
         {
@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return ((IEnumerable<T>)this).GetEnumerator(); }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => ((IEnumerable<T>)this).GetEnumerator();
     }
 
     public static class SList
@@ -186,6 +186,6 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         public static SList<T> SingleElement<T>(T element) { return SList<T>.Empty.Prepend(element); }
-        public static SList<T> Empty<T>() { return SList<T>.Empty; }
+        public static SList<T> Empty<T>() => SList<T>.Empty;
     }
 }
