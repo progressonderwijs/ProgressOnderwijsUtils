@@ -64,8 +64,8 @@ namespace ProgressOnderwijsUtils
             isClosed = true;
         }
 
-        public override bool IsClosed { get { return isClosed; } }
-        public override int Depth { get { return 0; } }
+        public override bool IsClosed => isClosed;
+        public override int Depth => 0;
 
         public override System.Collections.IEnumerator GetEnumerator()
         {
@@ -98,8 +98,8 @@ namespace ProgressOnderwijsUtils
 
         public override bool IsDBNull(int ordinal) { return GetValue(ordinal) is DBNull; }
         public override bool NextResult() { return false; }
-        public override int RecordsAffected { get { return -1; } }
-        public override object this[string name] { get { return GetValue(GetOrdinal(name)); } }
-        public override object this[int ordinal] { get { return GetValue(ordinal); } }
+        public override int RecordsAffected => -1;
+        public override object this[string name] => GetValue(GetOrdinal(name));
+        public override object this[int ordinal] => GetValue(ordinal);
     }
 }

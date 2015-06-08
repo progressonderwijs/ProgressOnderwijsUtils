@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [MpNotMapped]
-        public bool ContainsFile { get { return Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0); } }
+        public bool ContainsFile => Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0);
 
         public override string ToString() { return ContainsFile ? string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m) : ""; }
 

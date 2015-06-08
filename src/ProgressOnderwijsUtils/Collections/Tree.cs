@@ -65,8 +65,8 @@ namespace ProgressOnderwijsUtils.Collections
         static readonly IReadOnlyList<Tree<T>> EmptyArray = new Tree<T>[0]; // cache this since it will be used very commonly.
         readonly T nodeValue;
         readonly IReadOnlyList<Tree<T>> kidArray;
-        public T NodeValue { get { return nodeValue; } }
-        public IReadOnlyList<Tree<T>> Children { get { return kidArray; } }
+        public T NodeValue => nodeValue;
+        public IReadOnlyList<Tree<T>> Children => kidArray;
 
         /// <summary>
         /// Creates a Tree with specified child nodes.  The child node enumeration is materialized using ToArray() before usage.

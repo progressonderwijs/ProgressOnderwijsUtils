@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils
         public static ITranslatable CreateLazyTranslatable(Func<ITranslatable> lazyCreator) { return new SimpleTranslatable(taal => lazyCreator().Translate(taal)); }
         public static ITranslatable CreateLazyTranslatable(Func<Taal, TextVal> translator) { return new SimpleTranslatable(translator); }
         static readonly LiteralTranslatable empty = new LiteralTranslatable("", "", "");
-        public static LiteralTranslatable Empty { get { return empty; } }
+        public static LiteralTranslatable Empty => empty;
         public static ITranslatable EmptyWithNLTooltip(string tooltipnl) { return empty.WithTooltip(tooltipnl); }
         public static LiteralTranslatable Literal(string nl) { return new LiteralTranslatable(nl, null, null); }
         public static LiteralTranslatable Literal(string nl, string en) { return new LiteralTranslatable(nl, en, null); }

@@ -85,8 +85,8 @@ namespace ProgressOnderwijsUtils
     {
         readonly T v;
         readonly ITranslatable label;
-        public T Value { get { return v; } }
-        public ITranslatable Label { get { return label; } }
+        public T Value => v;
+        public ITranslatable Label => label;
 
         internal SelectItem(T v, ITranslatable label)
         {

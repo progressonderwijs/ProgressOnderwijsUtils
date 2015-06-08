@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public struct Unit
     {
-        public static Unit Value { get { return default(Unit); } }
+        public static Unit Value => default(Unit);
     }
 
     /// <summary>
@@ -69,7 +69,7 @@ namespace ProgressOnderwijsUtils
                 this.error = error;
             }
 
-            public override bool IsOk { get { return false; } }
+            public override bool IsOk => false;
             public override T GetValue() { throw new InvalidOperationException("Cannot get value; in error state: " + error.Translate(Taal.NL)); }
             public override ITranslatable GetError() { return error; }
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils
         {
             readonly T val;
             public OkValue(T val) { this.val = val; }
-            public override bool IsOk { get { return true; } }
+            public override bool IsOk => true;
             public override T GetValue() { return val; }
             public override ITranslatable GetError() { throw new InvalidOperationException("No error: cannot get error message!"); }
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }

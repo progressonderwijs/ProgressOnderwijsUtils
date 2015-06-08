@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public override string ToString() { return ObjectToCode.GetCSharpFriendlyTypeName(DataType) + " " + Name; }
-        public Type DataType { get { return dataType; } }
-        public string Name { get { return name; } }
+        public Type DataType => dataType;
+        public string Name => name;
     }
 }

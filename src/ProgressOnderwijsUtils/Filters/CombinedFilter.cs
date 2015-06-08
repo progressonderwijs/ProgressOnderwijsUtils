@@ -11,8 +11,8 @@ namespace ProgressOnderwijsUtils
     {
         readonly BooleanOperator andor;
         readonly FilterBase[] filterLijst;
-        public IEnumerable<FilterBase> FilterLijst { get { return filterLijst; } }
-        public BooleanOperator AndOr { get { return andor; } }
+        public IEnumerable<FilterBase> FilterLijst => filterLijst;
+        public BooleanOperator AndOr => andor;
 
         internal CombinedFilter(BooleanOperator andor, FilterBase[] condities)
         {

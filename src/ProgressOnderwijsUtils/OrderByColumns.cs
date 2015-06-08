@@ -34,8 +34,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        ColumnSort[] DirectAcessColumns { get { return sortColumns ?? EmptyOrder; } }
-        public static OrderByColumns Empty { get { return default(OrderByColumns); } }
+        ColumnSort[] DirectAcessColumns => sortColumns ?? EmptyOrder;
+        public static OrderByColumns Empty => default(OrderByColumns);
 
         public OrderByColumns(IEnumerable<ColumnSort> order)
         {
@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public int ColumnCount { get { return sortColumns == null ? 0 : sortColumns.Length; } }
+        public int ColumnCount => sortColumns == null ? 0 : sortColumns.Length;
 
         [Pure]
         public OrderByColumns ToggleSortDirection(string kolomnaam)

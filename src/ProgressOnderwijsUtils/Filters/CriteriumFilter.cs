@@ -17,9 +17,9 @@ namespace ProgressOnderwijsUtils
         readonly string _KolomNaam;
         readonly BooleanComparer _Comparer;
         readonly object _Waarde;
-        public string KolomNaam { get { return _KolomNaam; } }
-        public BooleanComparer Comparer { get { return _Comparer; } }
-        public object Waarde { get { return _Waarde; } }
+        public string KolomNaam => _KolomNaam;
+        public BooleanComparer Comparer => _Comparer;
+        public object Waarde => _Waarde;
         public override bool Equals(object obj) { return Equals(obj as CriteriumFilter); }
         public override bool Equals(FilterBase other) { return Equals(other as CriteriumFilter); }
 
@@ -176,8 +176,8 @@ namespace ProgressOnderwijsUtils
                 this.code = code;
             }
 
-            public char Code { get { return code; } }
-            public Type Type { get { return typeof(T); } }
+            public char Code => code;
+            public Type Type => typeof(T);
             public string Serialize(object val) { return serialize((T)val); }
             object IValSerializer.Deserialize(string s) { return deserialize(s); }
         }

@@ -21,10 +21,10 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        public T NodeValue { get { return UnrootedSubTree().NodeValue; } }
-        public bool IsRoot { get { return PathSegments.Tail.IsEmpty; } }
-        public bool HasValue { get { return !PathSegments.IsEmpty; } }
-        public RootedTree<T> Parent { get { return new RootedTree<T>(PathSegments.Tail); } }
+        public T NodeValue => UnrootedSubTree().NodeValue;
+        public bool IsRoot => PathSegments.Tail.IsEmpty;
+        public bool HasValue => !PathSegments.IsEmpty;
+        public RootedTree<T> Parent => new RootedTree<T>(PathSegments.Tail);
 
         public bool Equals(RootedTree<T> other)
         {
@@ -48,8 +48,8 @@ namespace ProgressOnderwijsUtils.Collections
         {
             public readonly int Index;
             public readonly Tree<T> ThisSubTree;
-            public T NodeValue { get { return ThisSubTree.NodeValue; } }
-            public IReadOnlyList<Tree<T>> Children { get { return ThisSubTree.Children; } }
+            public T NodeValue => ThisSubTree.NodeValue;
+            public IReadOnlyList<Tree<T>> Children => ThisSubTree.Children;
 
             public TreePathSegment(int index, Tree<T> node)
             {

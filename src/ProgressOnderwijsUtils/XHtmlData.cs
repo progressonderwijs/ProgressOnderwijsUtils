@@ -17,9 +17,9 @@ namespace ProgressOnderwijsUtils
     public struct XhtmlData : IEnumerable<XNode>, IEquatable<XhtmlData>
     {
         readonly XNode[] nodes;
-        public IEnumerable<XNode> Nodes { get { return nodes.EmptyIfNull(); } }
-        public bool IsEmpty { get { return nodes == null || nodes.Length == 0; } }
-        public static XhtmlData Empty { get { return default(XhtmlData); } }
+        public IEnumerable<XNode> Nodes => nodes.EmptyIfNull();
+        public bool IsEmpty => nodes == null || nodes.Length == 0;
+        public static XhtmlData Empty => default(XhtmlData);
         public static XhtmlData Create(IEnumerable<XNode> nodes) { return new XhtmlData(nodes.ToArray()); }
         public static XhtmlData Create(params object[] contents) { return Create(new XElement("x", contents).Nodes()); }
         public static XhtmlData ParseAndSanitize(string s) { return XhtmlCleaner.HeuristicParse(s).Sanitize(); }

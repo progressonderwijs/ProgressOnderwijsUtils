@@ -291,7 +291,7 @@ namespace ProgressOnderwijsUtils
         {
             public readonly ParseState State;
             readonly object value;
-            public bool IsOk { get { return State == ParseState.Ok; } }
+            public bool IsOk => State == ParseState.Ok;
 
             /// <summary>
             /// Gets the value as parsed by parse if the parse was successful.  Throws an exception if used in a non-OK state.
@@ -349,10 +349,10 @@ namespace ProgressOnderwijsUtils
                         .Append(Translatable.Literal(" niet ", " not ", " nicht "), Converteer.ToText("\"" + s + "\".")));
             }
 
-            public static ParseResult Overflow { get { return CreateError(ParseState.Overflow, GenericEditText.Overflow); } }
-            public static ParseResult Geendata { get { return CreateError(ParseState.Geendata, GenericEditText.GeenData); } }
-            public static ParseResult Datumfout { get { return CreateError(ParseState.Datumfout, GenericEditText.FoutDatumFormaat); } }
-            public static ParseResult TijdFout { get { return CreateError(ParseState.TijdFout, GenericEditText.FoutTijdFormaat); } }
+            public static ParseResult Overflow => CreateError(ParseState.Overflow, GenericEditText.Overflow);
+            public static ParseResult Geendata => CreateError(ParseState.Geendata, GenericEditText.GeenData);
+            public static ParseResult Datumfout => CreateError(ParseState.Datumfout, GenericEditText.FoutDatumFormaat);
+            public static ParseResult TijdFout => CreateError(ParseState.TijdFout, GenericEditText.FoutTijdFormaat);
         }
 
         public enum ParseState

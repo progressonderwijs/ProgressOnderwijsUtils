@@ -30,8 +30,8 @@ namespace ProgressOnderwijsUtils
             this.value = value;
         }
 
-        public Type Type { get { return type; } }
-        public object Value { get { return value; } }
+        public Type Type => type;
+        public object Value => value;
         public T GetValue<T>() { return (T)value; }
         public override string ToString() { return ToUiString(); }
         public string ToUiString() { return string.Format(CultureInfo.InvariantCulture, "{0} : {1}", Value, Type); }

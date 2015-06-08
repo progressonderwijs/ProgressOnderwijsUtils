@@ -8,11 +8,11 @@ namespace ProgressOnderwijsUtils
     public struct TextVal
     {
         readonly string m_text, m_helptext;
-        public string Text { get { return m_text; } }
-        public string ExtraText { get { return m_helptext; } }
-        public static string UndefinedExtraText { get { return "Sorry, this text is not available in your language"; } }
-        public bool IsDefined { get { return !(UndefinedExtraText == ExtraText || Text != null && Text.StartsWith("~") && ExtraText != null && ExtraText.StartsWith("~")); } }
-        public bool IsEmpty { get { return string.IsNullOrEmpty(Text) && string.IsNullOrEmpty(ExtraText); } }
+        public string Text => m_text;
+        public string ExtraText => m_helptext;
+        public static string UndefinedExtraText => "Sorry, this text is not available in your language";
+        public bool IsDefined => !(UndefinedExtraText == ExtraText || Text != null && Text.StartsWith("~") && ExtraText != null && ExtraText.StartsWith("~"));
+        public bool IsEmpty => string.IsNullOrEmpty(Text) && string.IsNullOrEmpty(ExtraText);
 
         /// <summary>
         /// Creates a new fully resolved text with help-text.
@@ -33,6 +33,6 @@ namespace ProgressOnderwijsUtils
         public override string ToString() { return "\"" + Text + "\"/\"" + ExtraText + "\""; }
         public static TextVal Create(string text, string helptext) { return new TextVal(text, helptext); }
         public static TextVal Create(string text) { return new TextVal(text, ""); }
-        public static TextVal EmptyText { get { return new TextVal("", ""); } }
+        public static TextVal EmptyText => new TextVal("", "");
     }
 }

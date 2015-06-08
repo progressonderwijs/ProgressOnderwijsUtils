@@ -11,9 +11,9 @@ namespace ProgressOnderwijsUtils
     public abstract class QueryBuilder : IEquatable<QueryBuilder>
     {
         QueryBuilder() { } // only inner classes may inherit
-        protected virtual QueryBuilder PrefixOrNull { get { return null; } }
-        protected virtual QueryBuilder SuffixOrNull { get { return null; } }
-        internal virtual IQueryComponent ValueOrNull { get { return null; } }
+        protected virtual QueryBuilder PrefixOrNull => null;
+        protected virtual QueryBuilder SuffixOrNull => null;
+        internal virtual IQueryComponent ValueOrNull => null;
 
         sealed class EmptyComponent : QueryBuilder
         {
@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils
         sealed class SingleComponent : QueryBuilder
         {
             readonly IQueryComponent value;
-            internal override IQueryComponent ValueOrNull { get { return value; } }
+            internal override IQueryComponent ValueOrNull => value;
 
             public SingleComponent(IQueryComponent singleNode)
             {
@@ -39,8 +39,8 @@ namespace ProgressOnderwijsUtils
         {
             readonly QueryBuilder precedingComponents;
             readonly IQueryComponent value;
-            protected override QueryBuilder PrefixOrNull { get { return precedingComponents; } }
-            internal override IQueryComponent ValueOrNull { get { return value; } }
+            protected override QueryBuilder PrefixOrNull => precedingComponents;
+            internal override IQueryComponent ValueOrNull => value;
 
             public PrefixAndComponent(QueryBuilder prefix, IQueryComponent singleComponent)
             {
@@ -58,8 +58,8 @@ namespace ProgressOnderwijsUtils
         sealed class PrefixAndSuffix : QueryBuilder
         {
             readonly QueryBuilder precedingComponents, next;
-            protected override QueryBuilder PrefixOrNull { get { return precedingComponents; } }
-            protected override QueryBuilder SuffixOrNull { get { return next; } }
+            protected override QueryBuilder PrefixOrNull => precedingComponents;
+            protected override QueryBuilder SuffixOrNull => next;
 
             public PrefixAndSuffix(QueryBuilder prefix, QueryBuilder continuation)
             {
@@ -78,9 +78,9 @@ namespace ProgressOnderwijsUtils
         // IF next != null THEN precedingComponents !=null; conversely IF precedingComponents == null THEN next == null 
         // !(value != null AND next !=null)
         [Pure]
-        public static QueryBuilder Empty { get { return EmptyComponent.Instance; } }
+        public static QueryBuilder Empty => EmptyComponent.Instance;
 
-        bool IsEmpty { get { return this is EmptyComponent; } }
+        bool IsEmpty => this is EmptyComponent;
         bool IsSingleElement { get { return this is SingleComponent; } } //implies ValueOrNull != null
 
         [Pure]

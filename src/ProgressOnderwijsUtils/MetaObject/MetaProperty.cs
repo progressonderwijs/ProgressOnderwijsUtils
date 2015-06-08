@@ -46,46 +46,46 @@ namespace ProgressOnderwijsUtils
         public sealed class Impl<TOwner> : IMetaProperty<TOwner>
         {
             readonly string name;
-            public string Name { get { return name; } }
+            public string Name => name;
             readonly ColumnCss lijstCssClass;
-            public ColumnCss LijstCssClass { get { return lijstCssClass; } }
+            public ColumnCss LijstCssClass => lijstCssClass;
             readonly HtmlEditMode htmlMode;
-            public HtmlEditMode HtmlMode { get { return htmlMode; } }
+            public HtmlEditMode HtmlMode => htmlMode;
             readonly int index;
-            public int Index { get { return index; } }
+            public int Index => index;
             readonly bool required;
-            public bool Required { get { return required; } }
+            public bool Required => required;
             readonly bool hide;
-            public bool Hide { get { return hide; } }
+            public bool Hide => hide;
             readonly bool allowNullInEditor;
-            public bool AllowNullInEditor { get { return allowNullInEditor; } }
+            public bool AllowNullInEditor => allowNullInEditor;
             readonly int? maxLength;
-            public int? MaxLength { get { return maxLength; } }
+            public int? MaxLength => maxLength;
             readonly int? displayLength;
-            public int? DisplayLength { get { return displayLength; } }
+            public int? DisplayLength => displayLength;
             readonly string regex;
-            public string Regex { get { return regex; } }
+            public string Regex => regex;
             readonly DatumFormaat? datumtijd;
-            public DatumFormaat? DatumTijd { get { return datumtijd; } }
+            public DatumFormaat? DatumTijd => datumtijd;
             readonly ITranslatable label;
-            public ITranslatable Label { get { return label; } }
+            public ITranslatable Label => label;
             readonly string koppelTabelNaam;
-            public string KoppelTabelNaam { get { return koppelTabelNaam; } }
+            public string KoppelTabelNaam => koppelTabelNaam;
             readonly bool isReadonly;
-            public bool IsReadonly { get { return isReadonly; } }
+            public bool IsReadonly => isReadonly;
             readonly bool showDefaultOnNew;
-            public bool ShowDefaultOnNew { get { return showDefaultOnNew; } }
-            public Type DataType { get { return propertyInfo.PropertyType; } }
+            public bool ShowDefaultOnNew => showDefaultOnNew;
+            public Type DataType => propertyInfo.PropertyType;
             readonly PropertyInfo propertyInfo;
-            public PropertyInfo PropertyInfo { get { return propertyInfo; } }
+            public PropertyInfo PropertyInfo => propertyInfo;
             readonly bool isKey;
-            public bool IsKey { get { return isKey; } }
-            public bool CanRead { get { return getterMethod != null; } }
-            public bool CanWrite { get { return setterMethod != null; } }
+            public bool IsKey => isKey;
+            public bool CanRead => getterMethod != null;
+            public bool CanWrite => setterMethod != null;
             Func<TOwner, object> getter;
-            public Func<TOwner, object> Getter { get { return getter ?? (getter = MkGetter(getterMethod, propertyInfo.PropertyType)); } }
+            public Func<TOwner, object> Getter => getter ?? (getter = MkGetter(getterMethod, propertyInfo.PropertyType));
             Action<TOwner, object> setter;
-            public Action<TOwner, object> Setter { get { return setter ?? (setter = MkSetter(setterMethod, propertyInfo.PropertyType)); } }
+            public Action<TOwner, object> Setter => setter ?? (setter = MkSetter(setterMethod, propertyInfo.PropertyType));
             Func<object, object> untypedGetter;
 
             public Func<object, object> UntypedGetter

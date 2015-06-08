@@ -407,8 +407,8 @@ namespace ProgressOnderwijsUtils
                 }
 
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> LoadRows;
-                static Type type { get { return typeof(T); } }
-                static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
+                static Type type => typeof(T);
+                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 static readonly uint[] ColHashPrimes;
                 static readonly MetaInfo<T> metadata = MetaInfo<T>.Instance;
                 static readonly bool hasUnsupportedColumns;
@@ -497,10 +497,10 @@ namespace ProgressOnderwijsUtils
                 where T : IReadByConstructor
             {
                 public static readonly TRowReader<T> LoadRows;
-                static Type type { get { return typeof(T); } }
-                static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
+                static Type type => typeof(T);
+                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 static readonly ConstructorInfo constructor;
-                static ParameterInfo[] ConstructorParameters { get { return constructor.GetParameters(); } }
+                static ParameterInfo[] ConstructorParameters => constructor.GetParameters();
 
                 static Impl()
                 {
@@ -562,9 +562,9 @@ namespace ProgressOnderwijsUtils
 
             public static class PlainImpl<T>
             {
-                static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
+                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 public static readonly TRowReader<T> LoadRows;
-                static Type type { get { return typeof(T); } }
+                static Type type => typeof(T);
 
                 static PlainImpl()
                 {

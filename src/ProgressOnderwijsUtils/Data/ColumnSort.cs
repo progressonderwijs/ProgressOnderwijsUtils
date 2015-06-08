@@ -9,8 +9,8 @@ namespace ProgressOnderwijsUtils
     {
         readonly string column;
         readonly SortDirection direction;
-        public string ColumnName { get { return column; } }
-        public SortDirection SortDirection { get { return direction; } }
+        public string ColumnName => column;
+        public SortDirection SortDirection => direction;
         public string SqlSortString() { return column + " " + direction; }
         public override string ToString() { return "[" + column + " " + direction + "]"; }
 

@@ -95,7 +95,7 @@ namespace ProgressOnderwijsUtils
 
             public bool Valid() { return Pos < Arr.Length; }
             public void MoveNext() { Pos++; }
-            public int Value { get { return (int)Arr[Pos]; } }
+            public int Value => (int)Arr[Pos];
         }
 
         static readonly int TotalRolCount = EnumHelpers.GetValues<Rol>().Count;
@@ -157,8 +157,8 @@ namespace ProgressOnderwijsUtils
     {
         public RollenSet(Rol[] sortedRollen) { this.sortedRollen = sortedRollen; }
         readonly Rol[] sortedRollen;
-        public IReadOnlyList<Rol> Rollen { get { return sortedRollen; } }
-        public int Count { get { return sortedRollen.Length; } }
+        public IReadOnlyList<Rol> Rollen => sortedRollen;
+        public int Count => sortedRollen.Length;
         public bool Contains(Rol rol) { return Array.BinarySearch(sortedRollen, rol) >= 0; }
     }
 

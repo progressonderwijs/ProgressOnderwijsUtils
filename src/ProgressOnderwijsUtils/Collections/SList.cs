@@ -28,10 +28,10 @@ namespace ProgressOnderwijsUtils.Collections
             : this(new Impl(head, tail.list)) { }
 
         readonly Impl list;
-        public static SList<T> Empty { get { return default(SList<T>); } }
-        public bool IsEmpty { get { return list == null; } }
-        public T Head { get { return list.Head; } }
-        public SList<T> Tail { get { return new SList<T>(list.Tail); } }
+        public static SList<T> Empty => default(SList<T>);
+        public bool IsEmpty => list == null;
+        public T Head => list.Head;
+        public SList<T> Tail => new SList<T>(list.Tail);
         static readonly int typeHash = typeof(T).GetHashCode();
         static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
 

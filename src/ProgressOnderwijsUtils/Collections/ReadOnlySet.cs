@@ -23,8 +23,8 @@ namespace ProgressOnderwijsUtils.Collections
         public void Clear() { throw new NotSupportedException(); }
         public bool Contains(T item) { return set.Contains(item); }
         public void CopyTo(T[] array, int arrayIndex) { set.CopyTo(array, arrayIndex); }
-        public int Count { get { return set.Count; } }
-        public bool IsReadOnly { get { return true; } }
+        public int Count => set.Count;
+        public bool IsReadOnly => true;
         public bool Remove(T item) { throw new NotSupportedException(); }
         public IEnumerator<T> GetEnumerator() { return set.GetEnumerator(); }
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return set.GetEnumerator(); }
