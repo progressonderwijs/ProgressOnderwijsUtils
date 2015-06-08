@@ -37,7 +37,6 @@ namespace ProgressOnderwijsUtils
 
         public static bool EqualsOrdinalCaseInsensitive(this string a, string b) => StringComparer.OrdinalIgnoreCase.Equals(a, b);
         public static bool Contains(this string str, string value, StringComparison compare) => str.IndexOf(value, compare) >= 0;
-        public static string XFormat(this string s, params object[] p) => string.Format(s, p);
 
         public static string TrimToLength(this string s, int maxlength)
         {
