@@ -216,7 +216,7 @@ namespace ProgressOnderwijsUtils
                             var currentSegment = FindUptoNonDuplicatedTerminatorWithLeftover(remaining, '#');
                             elems.Add(underlying.Deserialize(currentSegment.Item1));
                             if (currentSegment.Item2[0] != ';') {
-                                throw new ArgumentOutOfRangeException("s", "serialized array does not contain ';' where expected, instead" + currentSegment.Item2[0]);
+                                throw new ArgumentOutOfRangeException(nameof(s), "serialized array does not contain ';' where expected, instead" + currentSegment.Item2[0]);
                             }
                             remaining = currentSegment.Item2.Substring(1); //skip ';'
                         }
@@ -245,7 +245,7 @@ namespace ProgressOnderwijsUtils
             if (serializerByCode.TryGetValue(s[0], out serializer)) {
                 return serializer.Deserialize(s.Substring(1));
             } else {
-                throw new ArgumentOutOfRangeException("s", "string starts with unknown letter " + s[0]);
+                throw new ArgumentOutOfRangeException(nameof(s), "string starts with unknown letter " + s[0]);
             }
         }
 
@@ -265,7 +265,7 @@ namespace ProgressOnderwijsUtils
             if (serializerByType.TryGetValue(underlyingType, out serializer)) {
                 return serializer.Code + serializer.Serialize(waarde);
             } else {
-                throw new ArgumentOutOfRangeException("waarde", "waarde is van onbekend type " + waarde.GetType());
+                throw new ArgumentOutOfRangeException(nameof(waarde), "waarde is van onbekend type " + waarde.GetType());
             }
         }
 

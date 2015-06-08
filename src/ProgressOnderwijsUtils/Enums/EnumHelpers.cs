@@ -416,7 +416,7 @@ namespace ProgressOnderwijsUtils
             public static IEnumerable<TEnum> Lookup(string s, Taal taal)
             {
                 if (taal == Taal.None) {
-                    throw new ArgumentOutOfRangeException("taal", "Taal is niet gezet.  (== Taal.None)");
+                    throw new ArgumentOutOfRangeException(nameof(taal), "Taal is niet gezet.  (== Taal.None)");
                 }
                 return !EnumMetaCache<TEnum>.IsFlags
                     ? ParseLabels[taal][s.Trim()]

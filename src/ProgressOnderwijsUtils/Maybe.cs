@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtils
             public ErrorValue(ITranslatable error)
             {
                 if (error == null) {
-                    throw new ArgumentNullException("error");
+                    throw new ArgumentNullException(nameof(error));
                 }
                 this.error = error;
             }
@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils
             public ErrorValue(ITranslatable errorMessage)
             {
                 if (errorMessage == null) {
-                    throw new ArgumentNullException("errorMessage");
+                    throw new ArgumentNullException(nameof(errorMessage));
                 }
                 ErrorMessage = errorMessage;
             }

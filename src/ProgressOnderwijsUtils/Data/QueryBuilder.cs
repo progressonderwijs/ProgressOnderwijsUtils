@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
             public SingleComponent(IQueryComponent singleNode)
             {
                 if (singleNode == null) {
-                    throw new ArgumentNullException("singleNode");
+                    throw new ArgumentNullException(nameof(singleNode));
                 }
                 value = singleNode;
             }
@@ -45,10 +45,10 @@ namespace ProgressOnderwijsUtils
             public PrefixAndComponent(QueryBuilder prefix, IQueryComponent singleComponent)
             {
                 if (null == prefix) {
-                    throw new ArgumentNullException("prefix");
+                    throw new ArgumentNullException(nameof(prefix));
                 }
                 if (null == singleComponent) {
-                    throw new ArgumentNullException("singleComponent");
+                    throw new ArgumentNullException(nameof(singleComponent));
                 }
                 precedingComponents = prefix.IsEmpty ? null : prefix;
                 value = singleComponent;
@@ -64,10 +64,10 @@ namespace ProgressOnderwijsUtils
             public PrefixAndSuffix(QueryBuilder prefix, QueryBuilder continuation)
             {
                 if (null == prefix) {
-                    throw new ArgumentNullException("prefix");
+                    throw new ArgumentNullException(nameof(prefix));
                 }
                 if (null == continuation) {
-                    throw new ArgumentNullException("continuation");
+                    throw new ArgumentNullException(nameof(continuation));
                 }
                 precedingComponents = prefix;
                 next = continuation;
@@ -112,9 +112,9 @@ namespace ProgressOnderwijsUtils
         static QueryBuilder Concat(QueryBuilder first, QueryBuilder second)
         {
             if (null == first) {
-                throw new ArgumentNullException("first");
+                throw new ArgumentNullException(nameof(first));
             } else if (null == second) {
-                throw new ArgumentNullException("second");
+                throw new ArgumentNullException(nameof(second));
             } else if (first.IsEmpty) {
                 return second;
             } else if (second.IsEmpty) {
@@ -224,7 +224,7 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder Create(string str, params object[] arguments)
         {
             if (str == null) {
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             }
 
             //null if argument is already a QueryBuilder and no new component needs to be created

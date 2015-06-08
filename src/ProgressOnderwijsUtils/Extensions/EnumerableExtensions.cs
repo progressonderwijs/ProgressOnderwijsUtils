@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
         public static int IndexOf<T>(this IEnumerable<T> list, T elem)
         {
             if (list == null) {
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(list));
             }
             var retval = 0;
             foreach (var item in list) {
@@ -35,10 +35,10 @@ namespace ProgressOnderwijsUtils
         public static int IndexOf<T>(this IEnumerable<T> list, Func<T, bool> matcher)
         {
             if (list == null) {
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(list));
             }
             if (matcher == null) {
-                throw new ArgumentNullException("matcher");
+                throw new ArgumentNullException(nameof(matcher));
             }
             int retval = 0;
             foreach (var item in list) {

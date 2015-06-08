@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
         public VariantData(Type type, object value)
         {
             if (type == null) {
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
             }
             //TODO: this is null-unsafe; however existing code doesn't pass in whether it can be null or not. (i.e. int? is passed as int)
             //if (value == null && !type.CanBeNull())

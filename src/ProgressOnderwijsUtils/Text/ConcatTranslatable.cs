@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils.Text
             foreach (ITranslatable p in parts) {
                 if (p == null) //Perf: no LINQ
                 {
-                    throw new ArgumentNullException("parts", "element of parts is null");
+                    throw new ArgumentNullException(nameof(parts), "element of parts is null");
                 }
             }
         }

@@ -12,9 +12,9 @@ namespace ProgressOnderwijsUtils
         public ColumnReference(string colname)
         {
             if (colname == null) {
-                throw new ArgumentNullException("colname");
+                throw new ArgumentNullException(nameof(colname));
             } else if (!IsOkName.IsMatch(colname)) {
-                throw new ArgumentException("Geen valide kolomnaam " + colname, "colname");
+                throw new ArgumentException("Geen valide kolomnaam " + colname, nameof(colname));
             }
             ColumnName = colname;
         }

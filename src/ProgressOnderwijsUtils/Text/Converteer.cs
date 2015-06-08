@@ -370,7 +370,7 @@ namespace ProgressOnderwijsUtils
         public static ParseResult TryParse(string s, Type t, Taal taal)
         {
             if (t == null) {
-                throw new ArgumentNullException("t");
+                throw new ArgumentNullException(nameof(t));
             }
             if (s == null) {
                 return ParseResult.Geendata;

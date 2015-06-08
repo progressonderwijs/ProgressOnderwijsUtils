@@ -91,7 +91,7 @@ namespace ProgressOnderwijsUtils
         internal SelectItem(T v, ITranslatable label)
         {
             if (label == null) {
-                throw new ArgumentNullException("label");
+                throw new ArgumentNullException(nameof(label));
             }
             this.v = v;
             this.label = label;

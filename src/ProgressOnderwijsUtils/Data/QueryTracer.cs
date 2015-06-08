@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
         public IDisposable StartQueryTimer(Func<string> commandText)
         {
             if (commandText == null) {
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
             }
 
             return new QueryTimer(this, commandText);
@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
         public IDisposable StartQueryTimer(string commandText)
         {
             if (commandText == null) {
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
             }
 
             return new QueryTimer(this, () => commandText);

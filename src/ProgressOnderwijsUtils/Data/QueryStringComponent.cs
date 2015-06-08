@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
         internal QueryStringComponent(string val)
         {
             if (val == null) {
-                throw new ArgumentNullException("val");
+                throw new ArgumentNullException(nameof(val));
             }
             this.val = val;
         }

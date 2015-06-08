@@ -133,13 +133,13 @@ namespace ProgressOnderwijsUtils
         public static void SqlBulkCopy<T>(IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
         {
             if (metaObjects == null) {
-                throw new ArgumentNullException("metaObjects");
+                throw new ArgumentNullException(nameof(metaObjects));
             }
             if (tableName.Contains('[') || tableName.Contains(']')) {
-                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, "tableName");
+                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, nameof(tableName));
             }
             if (sqlconn == null) {
-                throw new ArgumentNullException("sqlconn");
+                throw new ArgumentNullException(nameof(sqlconn));
             }
             if (sqlconn.State != ConnectionState.Open) {
                 throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
