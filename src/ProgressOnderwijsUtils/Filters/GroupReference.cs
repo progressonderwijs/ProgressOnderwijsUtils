@@ -14,8 +14,8 @@ namespace ProgressOnderwijsUtils
             Name = name;
         }
 
-        public int GroupId { get; private set; }
-        public string Name { get; private set; }
+        public int GroupId { get; }
+        public string Name { get; }
         public bool Equals(GroupReference other) => other != null && other.GroupId == GroupId;
         public override bool Equals(object obj) => obj is GroupReference && Equals(obj as GroupReference);
         public override int GetHashCode() => GroupId;

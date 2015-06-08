@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.Radius
     //see http://tools.ietf.org/html/rfc2138 or http://en.wikipedia.org/wiki/RADIUS
     public sealed class RadiusAttribute
     {
-        public RadiusAttributeType AttributeType { get; private set; }
+        public RadiusAttributeType AttributeType { get; }
         public byte[] AttributeValue { get; set; }
         public byte[] Paket => new[] { (byte)(int)AttributeType, (byte)(AttributeValue.Length + 2) }.Concat(AttributeValue).ToArray();
         public int Length => AttributeValue.Length + 2;
