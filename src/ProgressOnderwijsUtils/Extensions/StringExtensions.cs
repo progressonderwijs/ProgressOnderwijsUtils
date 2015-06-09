@@ -28,12 +28,12 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// HTML-alike whitespace collapsing of this string; however, this method also trims.
         /// </summary>
-        public static string NormalizeWhitespace(this string str) => str == null ? null : str.CollapseWhitespace().Trim();
+        public static string NormalizeWhitespace(this string str) => str.CollapseWhitespace().Trim();
 
         /// <summary>
         /// HTML-alike whitespace collapsing of this string. This method does not trim.
         /// </summary>
-        public static string CollapseWhitespace(this string str) => str == null ? null : COLLAPSE_WHITESPACE.Replace(str, " ");
+        public static string CollapseWhitespace(this string str) => COLLAPSE_WHITESPACE.Replace(str, " ");
 
         public static bool EqualsOrdinalCaseInsensitive(this string a, string b) => StringComparer.OrdinalIgnoreCase.Equals(a, b);
         public static bool Contains(this string str, string value, StringComparison compare) => str.IndexOf(value, compare) >= 0;
