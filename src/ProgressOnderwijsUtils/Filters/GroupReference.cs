@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
             yield return new TestCaseData(new GroupReference(1, "lhs"), new GroupReference(2, "rhs"), false);
         }
 
-        [Test, TestCaseSource("EquatableData")]
+        [Test, TestCaseSource(nameof(EquatableData))]
         public void Equatable(GroupReference lhs, GroupReference rhs, bool equals)
         {
             Assert.That(lhs == rhs, Is.EqualTo(equals));
