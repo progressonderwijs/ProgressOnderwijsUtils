@@ -180,7 +180,7 @@ namespace ProgressOnderwijsUtils
             }
 
             if (item is string) {
-                return $"\"{item.ToString().Replace("\"", "\\\"")}\"";
+                return "\""+item.ToString().Replace("\"", "\\\"")+"\"";
             } else {
                 return item.ToString();
             }
