@@ -12,9 +12,9 @@ namespace ProgressOnderwijsUtils
 {
     public sealed class QueryTracer
     {
-        public int QueryActiveNesting { get { return QueryCount - QueriesCompleted; } }
-        public int QueryCount { get { return queryCount; } }
-        public int QueriesCompleted { get { return queriesCompleted; } }
+        public int QueryActiveNesting => QueryCount - QueriesCompleted;
+        public int QueryCount => queryCount;
+        public int QueriesCompleted => queriesCompleted;
         int queryCount;
         int queriesCompleted;
         public readonly bool IncludeSensitiveInfo;
@@ -22,15 +22,15 @@ namespace ProgressOnderwijsUtils
         public readonly object Sync = new object();
         readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
         Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
-        public Func<string> SlowestQuery { get { return slowest.Item2; } }
-        public TimeSpan SlowestQueryDuration { get { return slowest.Item1; } }
-        public IEnumerable<Tuple<string, TimeSpan>> AllQueries { get { return allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1)); } }
+        public Func<string> SlowestQuery => slowest.Item2;
+        public TimeSpan SlowestQueryDuration => slowest.Item1;
+        public IEnumerable<Tuple<string, TimeSpan>> AllQueries => allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1));
         public TimeSpan AllQueryDurations { get; private set; }
 
         public IDisposable StartQueryTimer(Func<string> commandText)
         {
             if (commandText == null) {
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
             }
 
             return new QueryTimer(this, commandText);
@@ -39,13 +39,13 @@ namespace ProgressOnderwijsUtils
         public IDisposable StartQueryTimer(string commandText)
         {
             if (commandText == null) {
-                throw new ArgumentNullException("commandText");
+                throw new ArgumentNullException(nameof(commandText));
             }
 
             return new QueryTimer(this, () => commandText);
         }
 
-        public IDisposable StartQueryTimer(SqlCommand sqlCommand) { return StartQueryTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo)); }
+        public IDisposable StartQueryTimer(SqlCommand sqlCommand) => StartQueryTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
 
         public static string DebugFriendlyCommandText(SqlCommand sqlCommand, bool includeSensitiveInfo)
         {
@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
                     .JoinStrings();
         }
 
-        static string SqlParamTypeString(SqlParameter par) { return par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : ""); }
+        static string SqlParamTypeString(SqlParameter par) => par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
         public static string SqlValueString(object p) // Not Secure, just a debug tool!
         {

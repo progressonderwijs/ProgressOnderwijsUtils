@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils.Collections
         int idx, sI;
         T[] current;
         T[][] segments;
-        public static FastArrayBuilder<T> Create() { return new FastArrayBuilder<T> { current = new T[InitSize] }; }
+        public static FastArrayBuilder<T> Create() => new FastArrayBuilder<T> { current = new T[InitSize] };
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(T item)

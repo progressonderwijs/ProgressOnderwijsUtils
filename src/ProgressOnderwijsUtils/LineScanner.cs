@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
         readonly string[] lines;
         int position;
         public LineScanner(string s) { lines = Regex.Split(s, "\r\n|\n"); }
-        public string GetLine() { return position != lines.Length ? lines[position++] : null; }
+        public string GetLine() => position != lines.Length ? lines[position++] : null;
 
         public void PushBack()
         {
@@ -19,6 +19,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public bool Eof() { return position == lines.Length; }
+        public bool Eof() => position == lines.Length;
     }
 }

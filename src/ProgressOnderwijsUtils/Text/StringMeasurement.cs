@@ -45,15 +45,15 @@ namespace ProgressOnderwijsUtils
             return sum;
         }
 
-        public static string LimitDisplayLength(string s, int maxWidth) { return LimitTextLength(s, maxWidth).Item1; }
-        public static Tuple<string, bool> LimitTextLength(string s, int maxWidth) { return ElideIfNecessary(s, maxWidth * ems_per_char); }
+        public static string LimitDisplayLength(string s, int maxWidth) => LimitTextLength(s, maxWidth).Item1;
+        public static Tuple<string, bool> LimitTextLength(string s, int maxWidth) => ElideIfNecessary(s, maxWidth * ems_per_char);
 
         static Tuple<string, bool> ElideIfNecessary(string s, double ems)
         {
             return Measure(s) < ems ? Tuple.Create(s, false) : Tuple.Create(TrimToEms(s, ems - ellipsis_ems) + ellipsis, true);
         }
 
-        static string TrimToEms(string s, double ems) { return s.Substring(0, CanFitChars(s, ems)); }
+        static string TrimToEms(string s, double ems) => s.Substring(0, CanFitChars(s, ems));
         const double ems_per_char = 0.638;
         const string ellipsis = "..."; //zou ook … kunnen zijn (unicode ellipsis)
         static readonly double ellipsis_ems;

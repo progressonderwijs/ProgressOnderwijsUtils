@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
     {
         readonly object paramval;
         internal QueryScalarParameterComponent(object o) { paramval = o ?? DBNull.Value; }
-        public string ToSqlString(CommandFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
+        public string ToSqlString(CommandFactory qnum) => "@par" + qnum.GetNumberForParam(this);
 
         public SqlParameter ToSqlParameter(int paramNum)
         {
@@ -46,8 +46,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public bool Equals(IQueryComponent other) { return (other is QueryScalarParameterComponent) && Equals(paramval, ((QueryScalarParameterComponent)other).paramval); }
-        public override bool Equals(object obj) { return (obj is QueryScalarParameterComponent) && Equals((QueryScalarParameterComponent)obj); }
+        public bool Equals(IQueryComponent other) => (other is QueryScalarParameterComponent) && Equals(paramval, ((QueryScalarParameterComponent)other).paramval);
+        public override bool Equals(object obj) => (obj is QueryScalarParameterComponent) && Equals((QueryScalarParameterComponent)obj);
         public override int GetHashCode() { return paramval.GetHashCode() + 37; } //paramval never null!
     }
 }

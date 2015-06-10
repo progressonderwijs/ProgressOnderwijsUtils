@@ -8,7 +8,7 @@ public sealed class RegisterTestingProgressTools //may not be in a namespace!
     // ReSharper restore CheckNamespace
 {
     static int testsLoaded;
-    public static bool IsInUnitTest { get { return testsLoaded > 0; } }
+    public static bool IsInUnitTest => testsLoaded > 0;
 
     [SetUp]
     public static void BeforeTests() { Interlocked.Increment(ref testsLoaded); }

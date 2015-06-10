@@ -55,15 +55,15 @@ namespace ProgressOnderwijsUtils
                 this.filterAttr = filterAttr;
             }
 
-            public TagSafety AllowTag(XElement elem) { return filterTag(elem); }
-            public bool AllowAttribute(XAttribute attr) { return filterAttr(attr); }
+            public TagSafety AllowTag(XElement elem) => filterTag(elem);
+            public bool AllowAttribute(XAttribute attr) => filterAttr(attr);
         }
 
         sealed class SafeStyleFilter : IHtmlFilter
         {
             public static readonly SafeStyleFilter Instance = new SafeStyleFilter();
-            public TagSafety AllowTag(XElement elem) { return TagSafety.Unsafe; }
-            public bool AllowAttribute(XAttribute attr) { return IsSafeStyleAttribute(attr); }
+            public TagSafety AllowTag(XElement elem) => TagSafety.Unsafe;
+            public bool AllowAttribute(XAttribute attr) => IsSafeStyleAttribute(attr);
 
             static readonly Regex
                 SafeStyleRegex = new Regex(@"^
@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils
 		\d+(px|em|cm|mm|)\s*;?\s*
 $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 
-            static bool IsSafeStyleAttribute(XAttribute attr) { return attr.Name.LocalName == "style" && SafeStyleRegex.IsMatch(attr.Value); }
+            static bool IsSafeStyleAttribute(XAttribute attr) => attr.Name.LocalName == "style" && SafeStyleRegex.IsMatch(attr.Value);
         }
 
         sealed class AllowWhenAny : IHtmlFilter
@@ -93,7 +93,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                 return retval;
             }
 
-            public bool AllowAttribute(XAttribute attr) { return filters.Any(filter => filter.AllowAttribute(attr)); }
+            public bool AllowAttribute(XAttribute attr) => filters.Any(filter => filter.AllowAttribute(attr));
         }
 
         sealed class SetBasedHtmlFilter : IHtmlFilter
@@ -107,7 +107,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                 this.safeAttributes = MkSet(safeAttributes);
             }
 
-            static HashSet<string> MkSet(IEnumerable<string> elems) { return new HashSet<string>(elems ?? new string[0], StringComparer.OrdinalIgnoreCase); }
+            static HashSet<string> MkSet(IEnumerable<string> elems) => new HashSet<string>(elems ?? new string[0], StringComparer.OrdinalIgnoreCase);
 
             public TagSafety AllowTag(XElement elem)
             {
@@ -118,7 +118,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                         : TagSafety.Unknown;
             }
 
-            public bool AllowAttribute(XAttribute attr) { return safeAttributes.Contains(attr.Name.LocalName); }
+            public bool AllowAttribute(XAttribute attr) => safeAttributes.Contains(attr.Name.LocalName);
         }
 
         static readonly string[]
@@ -280,13 +280,13 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         /// <summary>
         /// Takes an insecure html fragment and cleans it up.
         /// </summary>
-        public static string SanitizeHtmlString(string input) { return HeuristicParse(input).Sanitize().ToString(); }
+        public static string SanitizeHtmlString(string input) => HeuristicParse(input).Sanitize().ToString();
 
         /// <summary>
         /// Strips xml tags from the string for readability.  The resulting string still needs to be encoded (i.e. it is not disable-output escaping safe.)
         /// This function also decodes xml entities and &amp;nbsp; into readable characters.
         /// </summary>
-        public static string HtmlToTextParser(string str) { return new XElement("x", HeuristicParse(str)).Value; }
+        public static string HtmlToTextParser(string str) => new XElement("x", HeuristicParse(str)).Value;
 
         /// <summary>
         /// Serializes a document fragment as passed by Progress.NET - i.e. all children of a meaningless "&lt;x&gt;" root node.
@@ -338,7 +338,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         /// </summary>
         /// <param name="sourceHtml">The xhtml to sanitize.  The root element is ignored.</param>
         /// <returns>The parsed xhtml fragments without non-validating or unsafe tags.</returns>
-        public static XhtmlData Sanitize(this XhtmlData sourceHtml) { return sourceHtml.Sanitize(HtmlFilter.Default); }
+        public static XhtmlData Sanitize(this XhtmlData sourceHtml) => sourceHtml.Sanitize(HtmlFilter.Default);
 
         /// <summary>This function sanitizes an html tree.
         ///  - Any html that isn't recognized as html is considered content (e.g. a lone ampersand)

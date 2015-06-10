@@ -32,11 +32,11 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// De (voor de software) huidige datumtijd
         /// </summary>
-        public DateTime Now { get { return DateTime.Now.AddDays(DaysToAdd); } }
+        public DateTime Now => DateTime.Now.AddDays(DaysToAdd);
 
         /// <summary>
         /// De (voor de software) huidige datum
         /// </summary>
-        public DateTime Today { get { return DateTime.Today.AddDays(DaysToAdd); } }
+        public DateTime Today => DateTime.Today.AddDays(DaysToAdd);
     }
 }

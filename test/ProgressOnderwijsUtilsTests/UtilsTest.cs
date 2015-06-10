@@ -132,22 +132,10 @@ namespace ProgressOnderwijsUtilsTests
             yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
         }
 
-        [Test, TestCaseSource("MaandSpan"), Continuous]
+        [Test, TestCaseSource(nameof(MaandSpan)), Continuous]
         public int MaandSpanTest(DateTime d1, DateTime d2)
         {
             return Utils.MaandSpan(d1, d2);
-        }
-
-        IEnumerable<TestCaseData> DateMax()
-        {
-            yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)).Returns(0);
-            yield return new TestCaseData(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)).Returns(4);
-            yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2001, 1, 1)).Returns(12);
-            yield return new TestCaseData(new DateTime(2001, 1, 1), new DateTime(2000, 1, 1)).Returns(12);
-            yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 2, 1)).Returns(5);
-            yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 4, 1)).Returns(7);
-            yield return new TestCaseData(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)).Returns(9);
-            yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
         }
 
         [Test, Continuous]
@@ -237,7 +225,7 @@ namespace ProgressOnderwijsUtilsTests
             yield return new TestCaseData(1000001.129m, 2, 1000001.13m);
         }
 
-        [Test, TestCaseSource("RoundUpData")]
+        [Test, TestCaseSource(nameof(RoundUpData))]
         public void RoundUp(decimal waarde, int posities, decimal resultaat)
         {
             Assert.That(Utils.RoundUp(waarde, posities), Is.EqualTo(resultaat));

@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
         public static bool SameContents(this FileInfo one, FileInfo other)
         {
             if (other == null) {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             bool result = true;
