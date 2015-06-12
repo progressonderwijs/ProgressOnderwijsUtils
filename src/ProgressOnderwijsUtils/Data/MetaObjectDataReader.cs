@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils
             //ReadValues = arrFiller.Compile();
         }
 
-        public override DataTable GetSchemaTable() { return schemaTable; }
+        public override DataTable GetSchemaTable() => schemaTable;
 
         static DataTable CreateSchemaTable()
         {
@@ -116,11 +116,11 @@ namespace ProgressOnderwijsUtils
             return hasnext;
         }
 
-        public override int FieldCount { get { return fields.Length; } }
-        public override Type GetFieldType(int ordinal) { return fields[ordinal].DataType; }
-        public override string GetName(int ordinal) { return fields[ordinal].Name; }
-        public IEnumerable<string> FieldNames { get { return fields.Select(field => field.Name); } }
-        public override int GetOrdinal(string name) { return indexLookup[name]; }
-        public override object GetValue(int ordinal) { return cache[ordinal] ?? DBNull.Value; }
+        public override int FieldCount => fields.Length;
+        public override Type GetFieldType(int ordinal) => fields[ordinal].DataType;
+        public override string GetName(int ordinal) => fields[ordinal].Name;
+        public IEnumerable<string> FieldNames => fields.Select(field => field.Name);
+        public override int GetOrdinal(string name) => indexLookup[name];
+        public override object GetValue(int ordinal) => cache[ordinal] ?? DBNull.Value;
     }
 }

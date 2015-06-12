@@ -132,7 +132,7 @@ namespace ProgressOnderwijsUtilsTests
             yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
         }
 
-        [Test, TestCaseSource("MaandSpan"), Continuous]
+        [Test, TestCaseSource(nameof(MaandSpan)), Continuous]
         public int MaandSpanTest(DateTime d1, DateTime d2)
         {
             return Utils.MaandSpan(d1, d2);
@@ -225,7 +225,7 @@ namespace ProgressOnderwijsUtilsTests
             yield return new TestCaseData(1000001.129m, 2, 1000001.13m);
         }
 
-        [Test, TestCaseSource("RoundUpData")]
+        [Test, TestCaseSource(nameof(RoundUpData))]
         public void RoundUp(decimal waarde, int posities, decimal resultaat)
         {
             Assert.That(Utils.RoundUp(waarde, posities), Is.EqualTo(resultaat));

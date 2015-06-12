@@ -376,7 +376,7 @@ namespace ProgressOnderwijsUtilsTests
 
         static readonly IFilterFactory<BlaFilterObject> helper = null;
         Func<int, Func<int, bool>> getStaticGroupContainmentVerifier;
-        IEnumerable<BlaFilterObject> run(FilterBase filter) { return data.Where(filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier)); }
+        IEnumerable<BlaFilterObject> run(FilterBase filter) => data.Where(filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier));
 
         [SetUp]
         public void initGroupLookup() { getStaticGroupContainmentVerifier = InfoStaticGroup.CachedGroupMembershipVerifier(conn); }

@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils
                         case Taal.DU:
                             return o ? "Ja" : "Nein";
                         default:
-                            throw new ArgumentOutOfRangeException("language", "Taal niet bekend: " + language);
+                            throw new ArgumentOutOfRangeException(nameof(language), "Taal niet bekend: " + language);
                     }
                 });
             yield return TryToString<char>(

@@ -59,6 +59,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        int PercentProgress(int newProgressVal) { return 100 * newProgressVal / TotalSteps; }
+        int PercentProgress(int newProgressVal) => 100 * newProgressVal / TotalSteps;
     }
 }

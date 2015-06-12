@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils
         public static bool In<T>(this T? obj, T? a, T? b, T? c)
             where T : struct, IConvertible, IComparable { return a.Equals(obj) || b.Equals(obj) || c.Equals(obj); }
 
-        public static bool In(this string obj, params string[] values) { return values.Contains(obj); }
+        public static bool In(this string obj, params string[] values) => values.Contains(obj);
 
         public static bool In<T>(this T? obj, params T?[] values)
             where T : struct, IConvertible, IComparable { return values.Contains(obj); }

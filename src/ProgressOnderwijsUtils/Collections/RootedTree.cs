@@ -7,10 +7,10 @@ namespace ProgressOnderwijsUtils.Collections
 {
     public struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>>
     {
-        public static RootedTree<T> RootTree(Tree<T> rootNode) { return new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode))); }
-        public IEnumerable<RootedTree<T>> PathSelfToRoot() { return PathSegments.NonEmpySuffixes.Select(path => new RootedTree<T>(path)); }
-        public int IndexInParent() { return PathSegments.Head.Index; }
-        public Tree<T> UnrootedSubTree() { return PathSegments.Head.ThisSubTree; }
+        public static RootedTree<T> RootTree(Tree<T> rootNode) => new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode)));
+        public IEnumerable<RootedTree<T>> PathSelfToRoot() => PathSegments.NonEmpySuffixes.Select(path => new RootedTree<T>(path));
+        public int IndexInParent() => PathSegments.Head.Index;
+        public Tree<T> UnrootedSubTree() => PathSegments.Head.ThisSubTree;
 
         public IReadOnlyList<RootedTree<T>> Children
         {
@@ -21,10 +21,10 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        public T NodeValue { get { return UnrootedSubTree().NodeValue; } }
-        public bool IsRoot { get { return PathSegments.Tail.IsEmpty; } }
-        public bool HasValue { get { return !PathSegments.IsEmpty; } }
-        public RootedTree<T> Parent { get { return new RootedTree<T>(PathSegments.Tail); } }
+        public T NodeValue => UnrootedSubTree().NodeValue;
+        public bool IsRoot => PathSegments.Tail.IsEmpty;
+        public bool HasValue => !PathSegments.IsEmpty;
+        public RootedTree<T> Parent => new RootedTree<T>(PathSegments.Tail);
 
         public bool Equals(RootedTree<T> other)
         {
@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils.Collections
             return PathSegments.Last().ThisSubTree.GetHashCode() + EnumerableExtensions.GetSequenceHashCode(PathSegments.SelectEager(segment => segment.Index));
         }
 
-        public override bool Equals(object obj) { return obj is RootedTree<T> && Equals((RootedTree<T>)obj); }
+        public override bool Equals(object obj) => obj is RootedTree<T> && Equals((RootedTree<T>)obj);
 
         // internal details:
         RootedTree(SList<TreePathSegment> pathSegments) { PathSegments = pathSegments; }
@@ -48,8 +48,8 @@ namespace ProgressOnderwijsUtils.Collections
         {
             public readonly int Index;
             public readonly Tree<T> ThisSubTree;
-            public T NodeValue { get { return ThisSubTree.NodeValue; } }
-            public IReadOnlyList<Tree<T>> Children { get { return ThisSubTree.Children; } }
+            public T NodeValue => ThisSubTree.NodeValue;
+            public IReadOnlyList<Tree<T>> Children => ThisSubTree.Children;
 
             public TreePathSegment(int index, Tree<T> node)
             {

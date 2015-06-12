@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
         public static T Clone<T>(T obj)
         {
             if (!typeof(T).IsSerializable) {
-                throw new ArgumentException("Type " + typeof(T) + " is not serializable and cannot be cloned", "obj");
+                throw new ArgumentException("Type " + typeof(T) + " is not serializable and cannot be cloned", nameof(obj));
             }
             var bf = new BinaryFormatter();
             using (var ms = new MemoryStream()) {

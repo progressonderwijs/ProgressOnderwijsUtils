@@ -11,8 +11,8 @@ namespace ProgressOnderwijsUtils
     {
         readonly BooleanOperator andor;
         readonly FilterBase[] filterLijst;
-        public IEnumerable<FilterBase> FilterLijst { get { return filterLijst; } }
-        public BooleanOperator AndOr { get { return andor; } }
+        public IEnumerable<FilterBase> FilterLijst => filterLijst;
+        public BooleanOperator AndOr => andor;
 
         internal CombinedFilter(BooleanOperator andor, FilterBase[] condities)
         {
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
             filterLijst = condities;
         }
 
-        protected internal override bool IsFilterValid(Func<string, Type> colTypeLookup) { return FilterLijst.All(f => f.IsFilterValid(colTypeLookup)); }
+        protected internal override bool IsFilterValid(Func<string, Type> colTypeLookup) => FilterLijst.All(f => f.IsFilterValid(colTypeLookup));
 
         protected internal override Expression ToMetaObjectFilterExpr<T>(
             Expression objParExpr,
@@ -105,8 +105,8 @@ namespace ProgressOnderwijsUtils
             return (int)((uint)val ^ ((uint)val >> 32));
         }
 
-        public override bool Equals(FilterBase other) { return Equals(other as CombinedFilter); }
-        public override bool Equals(object obj) { return Equals(obj as CombinedFilter); }
-        public bool Equals(CombinedFilter obj) { return obj != null && andor == obj.andor && FilterLijst.SequenceEqual(obj.FilterLijst); }
+        public override bool Equals(FilterBase other) => Equals(other as CombinedFilter);
+        public override bool Equals(object obj) => Equals(obj as CombinedFilter);
+        public bool Equals(CombinedFilter obj) => obj != null && andor == obj.andor && FilterLijst.SequenceEqual(obj.FilterLijst);
     }
 }
