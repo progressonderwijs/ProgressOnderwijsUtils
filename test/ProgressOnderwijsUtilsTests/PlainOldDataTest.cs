@@ -115,15 +115,8 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void ServiceTest()
+        public void SomeTest()
         {
-            AutomaticClassTest(new ServiceVakInformatie());
-            AutomaticClassTest(new VakPeriode());
-            AutomaticClassTest(new EntreeVoorwaarde());
-            AutomaticClassTest(new ToetsVorm());
-            AutomaticClassTest(new OnderwijsVorm());
-            AutomaticClassTest(new OnderwijsNiveau());
-            AutomaticClassTest(new Literatuur());
             AutomaticClassTest(new BSADossierData());
         }
     }
