@@ -22,23 +22,28 @@ namespace ProgressOnderwijsUtils
             return bytes;
         }
 
+        [UsefulToKeep("library method")]
         public static byte GetByte() => GetBytes(1)[0];
+
+        [UsefulToKeep("library method")]
         public static int GetInt32() => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
+
+        [UsefulToKeep("library method")]
         public static long GetInt64() => BitConverter.ToInt64(GetBytes(sizeof(long)), 0);
 
-        [CLSCompliant(false)]
+        [CLSCompliant(false), UsefulToKeep("library method")]
         public static uint GetUInt32()
         {
             return BitConverter.ToUInt32(GetBytes(sizeof(uint)), 0);
         }
 
-        [CLSCompliant(false)]
+        [CLSCompliant(false), UsefulToKeep("library method")]
         public static ulong GetUInt64()
         {
             return BitConverter.ToUInt64(GetBytes(sizeof(ulong)), 0);
         }
 
-        [CLSCompliant(false)]
+        [CLSCompliant(false), UsefulToKeep("library method")]
         public static uint GetUInt32(uint bound)
         {
             uint modErr = (uint.MaxValue % bound + 1) % bound;
@@ -52,7 +57,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [CLSCompliant(false)]
+        [CLSCompliant(false), UsefulToKeep("library method")]
         public static ulong GetUInt64(ulong bound)
         {
             ulong modErr = (ulong.MaxValue % bound + 1) % bound;
