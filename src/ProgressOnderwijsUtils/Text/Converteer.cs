@@ -53,7 +53,6 @@ namespace ProgressOnderwijsUtils
             { DatumFormaat.ClieopDatum, new TextVal("ddMMyy", null) },
             { DatumFormaat.MT940Datum, new TextVal("yyMMdd", null) },
             { DatumFormaat.DatumZonderJaar, new TextVal("dd-MM", "dd-MM-yyyy") },
-            { DatumFormaat.VerwInfoDatum, new TextVal("yyMMdd", null) },
             { DatumFormaat.ISODate, new TextVal("yyyy-MM-dd", null) },
             { DatumFormaat.ISODateTime, new TextVal("yyyy-MM-ddTHH:mm:ss", null) },
         };
@@ -252,7 +251,6 @@ namespace ProgressOnderwijsUtils
                             s.Substring(0, 2);
                     }
                     break;
-                case DatumFormaat.VerwInfoDatum:
                 case DatumFormaat.MT940Datum:
                     if (s.Length == 6) {
                         datum = DateTime.Now.Year.ToStringInvariant().Substring(0, 2) +

@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils
             lock (sync) {
                 if (writer == null) {
                     try {
-                        writer = new StreamWriter(string.Format(@"C:\\temp\\MetaObjectProposals_{0}.txt", DateTime.Now.ToString("yyyy-MM-dd_HHmm_ss"))) {
+                        writer = new StreamWriter($@"C:\\temp\\MetaObjectProposals_{DateTime.Now.ToString("yyyy-MM-dd_HHmm_ss")}.txt") {
                             AutoFlush = true
                         }.Write;
                     } catch {

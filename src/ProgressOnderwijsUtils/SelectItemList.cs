@@ -7,19 +7,19 @@ namespace ProgressOnderwijsUtils
 {
     public static class SelectItemList
     {
-        public static IReadOnlyList<SelectItem<T>> Create<T>(IEnumerable<IToSelectItem<T>> collection)
+        public static SelectItem<T>[] Create<T>(IEnumerable<IToSelectItem<T>> collection)
         {
             return Create(collection.Select(i => i.ToSelectItem()));
         }
 
-        public static IReadOnlyList<SelectItem<T>> Create<T>(IEnumerable<SelectItem<T>> collection) { return collection.ToArray(); }
+        public static SelectItem<T>[] Create<T>(IEnumerable<SelectItem<T>> collection) { return collection.ToArray(); }
 
-        public static IReadOnlyList<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<IToSelectItem<T>> collection)
+        public static SelectItem<T>[] CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<IToSelectItem<T>> collection)
         {
             return CreateWithLeeg(addnullitem, Create(collection));
         }
 
-        public static IReadOnlyList<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<SelectItem<T>> collection)
+        public static SelectItem<T>[] CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<SelectItem<T>> collection)
         {
             return Create(new[] { addnullitem }.Concat(collection));
         }
@@ -29,16 +29,16 @@ namespace ProgressOnderwijsUtils
             return Create(new[] { addnullitem }.Concat(collection.Select(item => SelectItem.Create((T?)item.Value, item.Label))));
         }
 
-        public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(DataTable dt) { return Create(DbToEnumerable<T>(dt)); }
+        public static SelectItem<T>[] CreateFromDb<T>(DataTable dt) { return Create(DbToEnumerable<T>(dt)); }
 
-        public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(DataTable dt, DataColumn idColumn, DataColumn textColumn)
+        public static SelectItem<T>[] CreateFromDb<T>(DataTable dt, DataColumn idColumn, DataColumn textColumn)
         {
             return Create(DbToEnumerable<T>(dt, idColumn, textColumn));
         }
 
-        public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt) { return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt)); }
+        public static SelectItem<T>[] CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt) { return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt)); }
 
-        public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt, DataColumn idColumn, DataColumn textColumn)
+        public static SelectItem<T>[] CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt, DataColumn idColumn, DataColumn textColumn)
         {
             return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt, idColumn, textColumn));
         }

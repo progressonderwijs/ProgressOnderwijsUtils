@@ -22,10 +22,9 @@ namespace ProgressOnderwijsUtils
             {
                 if (value != null && value.Length > MAX_FILE_NAME) {
                     if (Path.HasExtension(value)) {
-                        fileName = string.Format(
-                            "{0}{1}",
-                            Path.GetFileNameWithoutExtension(value).Substring(0, MAX_FILE_NAME - Path.GetExtension(value).Length),
-                            Path.GetExtension(value));
+                        var extension = Path.GetExtension(value);
+                        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(value).Substring(0, MAX_FILE_NAME - extension.Length);
+                        fileName = fileNameWithoutExtension + extension;
                     } else {
                         fileName = value.Substring(0, MAX_FILE_NAME);
                     }
@@ -38,8 +37,7 @@ namespace ProgressOnderwijsUtils
         [MpNotMapped]
         public bool ContainsFile => Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0);
 
-        public override string ToString() => ContainsFile ? string.Format("{0} ({1} KB)", FileName, Content.Length / 1000m) : "";
-
+        public override string ToString() => ContainsFile ? $"{FileName} ({Content.Length / 1000m} KB)" : "";
         public override bool Equals(object other) => other is FileData && Equals((FileData)other);
 
         public override int GetHashCode()

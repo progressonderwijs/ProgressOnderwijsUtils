@@ -239,7 +239,7 @@ namespace ProgressOnderwijsUtils
         public static string GetSqlExceptionDetailsString(Exception exception)
         {
             SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
-            return sql == null ? null : string.Format("[code='{0:x}'; number='{1}'; state='{2}']", sql.ErrorCode, sql.Number, sql.State);
+            return sql == null ? null : $"[code='{sql.ErrorCode:x}'; number='{sql.Number}'; state='{sql.State}']";
         }
 
         /// <summary>

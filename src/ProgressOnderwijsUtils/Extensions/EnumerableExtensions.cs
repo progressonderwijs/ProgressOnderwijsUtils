@@ -165,12 +165,14 @@ namespace ProgressOnderwijsUtils
 
         static string ToCsvValue<T>(this T item, string delimiter, bool useQuotesForStrings)
         {
-            if (string.Format("{0}", item).Contains(delimiter) && !useQuotesForStrings) {
+            string csvValueWithoutQuotes = item?.ToString() ?? "";
+
+            if (csvValueWithoutQuotes.Contains(delimiter) && !useQuotesForStrings) {
                 throw new ArgumentException("item contains illegal characters, use useQuotesForStrings=true");
             }
 
             if (!useQuotesForStrings) {
-                return string.Format("{0}", item);
+                return csvValueWithoutQuotes;
             }
 
             if (item == null) {
@@ -178,9 +180,9 @@ namespace ProgressOnderwijsUtils
             }
 
             if (item is string) {
-                return string.Format("\"{0}\"", item.ToString().Replace("\"", "\\\""));
+                return "\""+item.ToString().Replace("\"", "\\\"")+"\"";
             } else {
-                return string.Format("{0}", item);
+                return item.ToString();
             }
         }
 
