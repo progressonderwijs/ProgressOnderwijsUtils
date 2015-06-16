@@ -20,9 +20,9 @@ namespace ProgressOnderwijsUtils
 
     public static class MetaObject
     {
-        public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()); }
+        public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) => GetCache(metaobj.GetType());
 
-        //public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
+        //public static object DynamicGet(this IMetaObject metaobj, string propertyName) => GetCache(metaobj.GetType()).DynGet(metaobj, propertyName);
         public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject { return MetaInfo<T>.Instance; }
 
         public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
@@ -133,13 +133,13 @@ namespace ProgressOnderwijsUtils
         public static void SqlBulkCopy<T>(IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
         {
             if (metaObjects == null) {
-                throw new ArgumentNullException("metaObjects");
+                throw new ArgumentNullException(nameof(metaObjects));
             }
             if (tableName.Contains('[') || tableName.Contains(']')) {
-                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, "tableName");
+                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, nameof(tableName));
             }
             if (sqlconn == null) {
-                throw new ArgumentNullException("sqlconn");
+                throw new ArgumentNullException(nameof(sqlconn));
             }
             if (sqlconn.State != ConnectionState.Open) {
                 throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
@@ -178,10 +178,7 @@ namespace ProgressOnderwijsUtils
                     if (match.Success) {
                         var col_id = int.Parse(match.Groups[1].Value);
                         throw new Exception(
-                            string.Format(
-                                "Received an invalid column length from the bcp client for column name {0}",
-                                clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name
-                                ),
+                            $"Received an invalid column length from the bcp client for column name {clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name}",
                             ex);
                     }
                     throw;
@@ -201,6 +198,6 @@ namespace ProgressOnderwijsUtils
         }
 
         static readonly MethodInfo genGetCache = Utils.F(GetMetaProperties<IMetaObject>).Method.GetGenericMethodDefinition();
-        static IMetaPropCache<IMetaProperty> GetCache(Type t) { return (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null); }
+        static IMetaPropCache<IMetaProperty> GetCache(Type t) => (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
     }
 }

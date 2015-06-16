@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils
                                                         ?? TryToTableParameter<double>("TVar_Float", set)
                 ;
             if (retval == null) {
-                throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(set.GetType()) + " as a table valued parameter", "set");
+                throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(set.GetType()) + " as a table valued parameter", nameof(set));
             }
             return retval;
         }
@@ -118,7 +118,7 @@ namespace ProgressOnderwijsUtils
             [Key]
             public T val { get; set; }
 
-            public override string ToString() { return val == null ? "NULL" : val.ToString(); }
+            public override string ToString() => val == null ? "NULL" : val.ToString();
         }
     }
 }

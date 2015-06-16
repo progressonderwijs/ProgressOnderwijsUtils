@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
             public static readonly T[] EmptyArray = new T[0];
         }
 
-        public static T[] Empty<T>() { return Helper<T>.EmptyArray; }
+        public static T[] Empty<T>() => Helper<T>.EmptyArray;
 
         /// <summary>
         /// Return an empty array if it's null

@@ -21,18 +21,18 @@ namespace ProgressOnderwijsUtils
 
         static class Int32Helpers
         {
-            public static int Or(int a, int b) { return a | b; }
-            public static bool HasFlag(int val, int flag) { return (val & flag) == flag; }
-            public static bool HasFlagOverlap(int a, int b) { return (a & b) != 0; }
-            public static long ToInt64(int a) { return a; }
+            public static int Or(int a, int b) => a | b;
+            public static bool HasFlag(int val, int flag) => (val & flag) == flag;
+            public static bool HasFlagOverlap(int a, int b) => (a & b) != 0;
+            public static long ToInt64(int a) => a;
         }
 
         static class Int64Helpers
         {
-            public static long Or(long a, long b) { return a | b; }
-            public static bool HasFlag(long val, long flag) { return (val & flag) == flag; }
-            public static bool HasFlagOverlap(long a, long b) { return (a & b) != 0L; }
-            public static long ToInt64(long a) { return a; }
+            public static long Or(long a, long b) => a | b;
+            public static bool HasFlag(long val, long flag) => (val & flag) == flag;
+            public static bool HasFlagOverlap(long a, long b) => (a & b) != 0L;
+            public static long ToInt64(long a) => a;
         }
 
         struct FlagOperationMethods
@@ -314,8 +314,8 @@ namespace ProgressOnderwijsUtils
                 sortedAttrs = entries;
             }
 
-            public IReadOnlyList<Enum> Values() { return EnumValues.SelectIndexable(e => (Enum)(object)e); }
-            public ITranslatable GetEnumLabel(Enum val) { return GetLabel((TEnum)(object)val); }
+            public IReadOnlyList<Enum> Values() => EnumValues.SelectIndexable(e => (Enum)(object)e);
+            public ITranslatable GetEnumLabel(Enum val) => GetLabel((TEnum)(object)val);
 
             public static ITranslatable GetLabel(TEnum val)
             {
@@ -416,7 +416,7 @@ namespace ProgressOnderwijsUtils
             public static IEnumerable<TEnum> Lookup(string s, Taal taal)
             {
                 if (taal == Taal.None) {
-                    throw new ArgumentOutOfRangeException("taal", "Taal is niet gezet.  (== Taal.None)");
+                    throw new ArgumentOutOfRangeException(nameof(taal), "Taal is niet gezet.  (== Taal.None)");
                 }
                 return !EnumMetaCache<TEnum>.IsFlags
                     ? ParseLabels[taal][s.Trim()]
@@ -429,7 +429,7 @@ namespace ProgressOnderwijsUtils
                     };
             }
 
-            IEnumerable<Enum> ILabelLookup.Lookup(string s, Taal taal) { return Lookup(s, taal).Select(e => (Enum)(object)e); }
+            IEnumerable<Enum> ILabelLookup.Lookup(string s, Taal taal) => Lookup(s, taal).Select(e => (Enum)(object)e);
         }
 
         public static class GetAttrs<TAttr>
@@ -458,7 +458,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable { return EnumMetaCache<T>.EnumValues; }
-        public static IReadOnlyList<Enum> GetValues(Type enumType) { return GetEnumMetaCache(enumType).Values(); }
+        public static IReadOnlyList<Enum> GetValues(Type enumType) => GetEnumMetaCache(enumType).Values();
         public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.FlagEnumHelpers.AddFlag; }
         public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.FlagEnumHelpers.HasFlag; }
         public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.GetLabel(f); }

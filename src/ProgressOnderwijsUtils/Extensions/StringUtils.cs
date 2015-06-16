@@ -88,8 +88,8 @@ namespace ProgressOnderwijsUtils
             return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
         }
 
-        public static string VervangRingelS(string str, bool upper) { return str.Replace("ß", upper ? "SS" : "ss"); }
-        public static string SepaTekenset(string s) { return SepaStripperRegexes.sepaStripper.Replace(s, ""); }
+        public static string VervangRingelS(string str, bool upper) => str.Replace("ß", upper ? "SS" : "ss");
+        public static string SepaTekenset(string s) => SepaStripperRegexes.sepaStripper.Replace(s, "");
 
         public static string SepaTekensetEnModificaties(string s)
         {
@@ -99,8 +99,8 @@ namespace ProgressOnderwijsUtils
             return s;
         }
 
-        public static string Capitalize(string name) { return name.Substring(0, 1).ToUpperInvariant() + name.Substring(1); }
-        public static string Uncapitalize(string name) { return name.Substring(0, 1).ToLowerInvariant() + name.Substring(1); }
+        public static string Capitalize(string name) => name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
+        public static string Uncapitalize(string name) => name.Substring(0, 1).ToLowerInvariant() + name.Substring(1);
 
         //modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
         public static int LevenshteinDistance(string s, string t, int? substitutionCost = null)
@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtils
             return d[n, m];
         }
 
-        public static double LevenshteinDistanceScaled(string s, string t) { return LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length)); }
+        public static double LevenshteinDistanceScaled(string s, string t) => LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length));
 
         public static string ToFlatDebugString<T>(IEnumerable<T> self)
         {
@@ -179,7 +179,7 @@ namespace ProgressOnderwijsUtils
                 );
         }
 
-        static bool isVowel(char c) { return c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U'; }
+        static bool isVowel(char c) => c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 
         public static string Depluralize(string pluralstring)
         {

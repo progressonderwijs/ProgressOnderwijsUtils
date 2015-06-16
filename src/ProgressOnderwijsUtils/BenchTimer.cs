@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
         public static TimeSpan MinimumTime(Action a, int numRuns = 5)
         {
             if (numRuns < 1) {
-                throw new ArgumentException("Need to test for at least 1 run", "numRuns");
+                throw new ArgumentException("Need to test for at least 1 run", nameof(numRuns));
             }
             var bestTime = TimeSpan.MaxValue;
             Stopwatch timer = new Stopwatch();

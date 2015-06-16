@@ -17,12 +17,12 @@ namespace ProgressOnderwijsUtils
     public struct XhtmlData : IEnumerable<XNode>, IEquatable<XhtmlData>
     {
         readonly XNode[] nodes;
-        public IEnumerable<XNode> Nodes { get { return nodes.EmptyIfNull(); } }
-        public bool IsEmpty { get { return nodes == null || nodes.Length == 0; } }
-        public static XhtmlData Empty { get { return default(XhtmlData); } }
-        public static XhtmlData Create(IEnumerable<XNode> nodes) { return new XhtmlData(nodes.ToArray()); }
-        public static XhtmlData Create(params object[] contents) { return Create(new XElement("x", contents).Nodes()); }
-        public static XhtmlData ParseAndSanitize(string s) { return XhtmlCleaner.HeuristicParse(s).Sanitize(); }
+        public IEnumerable<XNode> Nodes => nodes.EmptyIfNull();
+        public bool IsEmpty => nodes == null || nodes.Length == 0;
+        public static XhtmlData Empty => default(XhtmlData);
+        public static XhtmlData Create(IEnumerable<XNode> nodes) => new XhtmlData(nodes.ToArray());
+        public static XhtmlData Create(params object[] contents) => Create(new XElement("x", contents).Nodes());
+        public static XhtmlData ParseAndSanitize(string s) => XhtmlCleaner.HeuristicParse(s).Sanitize();
 
         public static XhtmlData? TryParseAndSanitize(string s)
         {
@@ -57,10 +57,10 @@ namespace ProgressOnderwijsUtils
         }
 
         XhtmlData(XNode[] nodes) { this.nodes = nodes; }
-        public bool Equals(XhtmlData other) { return EqualsByMembers<XhtmlData>.Func(this, other); }
-        public override bool Equals(object obj) { return obj is XhtmlData && Equals((XhtmlData)obj); }
-        public override int GetHashCode() { return GetHashCodeByMembers<XhtmlData>.Func(this); }
-        public override string ToString() { return Nodes.Select(x => x.ToString(SaveOptions.DisableFormatting)).JoinStrings(); }
+        public bool Equals(XhtmlData other) => EqualsByMembers<XhtmlData>.Func(this, other);
+        public override bool Equals(object obj) => obj is XhtmlData && Equals((XhtmlData)obj);
+        public override int GetHashCode() => GetHashCodeByMembers<XhtmlData>.Func(this);
+        public override string ToString() => Nodes.Select(x => x.ToString(SaveOptions.DisableFormatting)).JoinStrings();
 
         public string ToUiString()
         {
@@ -85,7 +85,7 @@ namespace ProgressOnderwijsUtils
             // ReSharper restore CoVariantArrayConversion
         }
 
-        public IEnumerator<XNode> GetEnumerator() { return Nodes.GetEnumerator(); }
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        public IEnumerator<XNode> GetEnumerator() => Nodes.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

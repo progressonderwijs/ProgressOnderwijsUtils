@@ -12,10 +12,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="s">string to check</param>
         /// <returns>true if string is empty or is null, false otherwise</returns>
-        public static bool IsNullOrWhiteSpace(this string s)
-        {
-            return string.IsNullOrWhiteSpace(s);
-        }
+        public static bool IsNullOrWhiteSpace(this string s) => string.IsNullOrWhiteSpace(s);
 
         public static string NullIfWhiteSpace(this string str)
         {
@@ -31,22 +28,15 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// HTML-alike whitespace collapsing of this string; however, this method also trims.
         /// </summary>
-        public static string NormalizeWhitespace(this string str)
-        {
-            return str == null ? null : str.CollapseWhitespace().Trim();
-        }
+        public static string NormalizeWhitespace(this string str) => str.CollapseWhitespace().Trim();
 
         /// <summary>
         /// HTML-alike whitespace collapsing of this string. This method does not trim.
         /// </summary>
-        public static string CollapseWhitespace(this string str)
-        {
-            return str == null ? null : COLLAPSE_WHITESPACE.Replace(str, " ");
-        }
+        public static string CollapseWhitespace(this string str) => COLLAPSE_WHITESPACE.Replace(str, " ");
 
-        public static bool EqualsOrdinalCaseInsensitive(this string a, string b) { return StringComparer.OrdinalIgnoreCase.Equals(a, b); }
-        public static bool Contains(this string str, string value, StringComparison compare) { return str.IndexOf(value, compare) >= 0; }
-        public static string XFormat(this string s, params object[] p) { return String.Format(s, p); }
+        public static bool EqualsOrdinalCaseInsensitive(this string a, string b) => StringComparer.OrdinalIgnoreCase.Equals(a, b);
+        public static bool Contains(this string str, string value, StringComparison compare) => str.IndexOf(value, compare) >= 0;
 
         public static string TrimToLength(this string s, int maxlength)
         {
@@ -55,23 +45,6 @@ namespace ProgressOnderwijsUtils
             } else {
                 return s.Remove(maxlength);
             }
-        }
-
-        public static string PaddToLength(this string s, int len, string padder)
-        {
-            if (s == null || s.Length == len) {
-                return s;
-            }
-            return padder.Repeat(len - s.Length) + s;
-        }
-
-        static string Repeat(this string s, int ntimes)
-        {
-            string x = s;
-            for (int i = 0; i < ntimes - 1; i++) {
-                s += x;
-            }
-            return s;
         }
 
         public static string Replace(this string s, IEnumerable<KeyValuePair<string, string>> replacements)

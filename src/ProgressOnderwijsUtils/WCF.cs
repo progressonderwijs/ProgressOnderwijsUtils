@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils
         readonly object monitor;
         readonly ChannelFactory<T> factory;
         T client;
-        ICommunicationObject Client { get { return client as ICommunicationObject; } }
+        ICommunicationObject Client => client as ICommunicationObject;
 
         public ClientFactoryHandle(ChannelFactory<T> factory)
         {

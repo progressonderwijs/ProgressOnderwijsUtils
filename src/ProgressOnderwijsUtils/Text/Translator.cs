@@ -24,6 +24,6 @@ namespace ProgressOnderwijsUtils
             CULTURES[Taal.DU].DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
         }
 
-        public static CultureInfo GetCulture(this Taal language) { return CULTURES[language]; }
+        public static CultureInfo GetCulture(this Taal language) => CULTURES[language];
     }
 }

@@ -11,9 +11,9 @@ namespace ProgressOnderwijsUtils
     public abstract class QueryBuilder : IEquatable<QueryBuilder>
     {
         QueryBuilder() { } // only inner classes may inherit
-        protected virtual QueryBuilder PrefixOrNull { get { return null; } }
-        protected virtual QueryBuilder SuffixOrNull { get { return null; } }
-        internal virtual IQueryComponent ValueOrNull { get { return null; } }
+        protected virtual QueryBuilder PrefixOrNull => null;
+        protected virtual QueryBuilder SuffixOrNull => null;
+        internal virtual IQueryComponent ValueOrNull => null;
 
         sealed class EmptyComponent : QueryBuilder
         {
@@ -24,12 +24,12 @@ namespace ProgressOnderwijsUtils
         sealed class SingleComponent : QueryBuilder
         {
             readonly IQueryComponent value;
-            internal override IQueryComponent ValueOrNull { get { return value; } }
+            internal override IQueryComponent ValueOrNull => value;
 
             public SingleComponent(IQueryComponent singleNode)
             {
                 if (singleNode == null) {
-                    throw new ArgumentNullException("singleNode");
+                    throw new ArgumentNullException(nameof(singleNode));
                 }
                 value = singleNode;
             }
@@ -39,16 +39,16 @@ namespace ProgressOnderwijsUtils
         {
             readonly QueryBuilder precedingComponents;
             readonly IQueryComponent value;
-            protected override QueryBuilder PrefixOrNull { get { return precedingComponents; } }
-            internal override IQueryComponent ValueOrNull { get { return value; } }
+            protected override QueryBuilder PrefixOrNull => precedingComponents;
+            internal override IQueryComponent ValueOrNull => value;
 
             public PrefixAndComponent(QueryBuilder prefix, IQueryComponent singleComponent)
             {
                 if (null == prefix) {
-                    throw new ArgumentNullException("prefix");
+                    throw new ArgumentNullException(nameof(prefix));
                 }
                 if (null == singleComponent) {
-                    throw new ArgumentNullException("singleComponent");
+                    throw new ArgumentNullException(nameof(singleComponent));
                 }
                 precedingComponents = prefix.IsEmpty ? null : prefix;
                 value = singleComponent;
@@ -58,16 +58,16 @@ namespace ProgressOnderwijsUtils
         sealed class PrefixAndSuffix : QueryBuilder
         {
             readonly QueryBuilder precedingComponents, next;
-            protected override QueryBuilder PrefixOrNull { get { return precedingComponents; } }
-            protected override QueryBuilder SuffixOrNull { get { return next; } }
+            protected override QueryBuilder PrefixOrNull => precedingComponents;
+            protected override QueryBuilder SuffixOrNull => next;
 
             public PrefixAndSuffix(QueryBuilder prefix, QueryBuilder continuation)
             {
                 if (null == prefix) {
-                    throw new ArgumentNullException("prefix");
+                    throw new ArgumentNullException(nameof(prefix));
                 }
                 if (null == continuation) {
-                    throw new ArgumentNullException("continuation");
+                    throw new ArgumentNullException(nameof(continuation));
                 }
                 precedingComponents = prefix;
                 next = continuation;
@@ -78,9 +78,9 @@ namespace ProgressOnderwijsUtils
         // IF next != null THEN precedingComponents !=null; conversely IF precedingComponents == null THEN next == null 
         // !(value != null AND next !=null)
         [Pure]
-        public static QueryBuilder Empty { get { return EmptyComponent.Instance; } }
+        public static QueryBuilder Empty => EmptyComponent.Instance;
 
-        bool IsEmpty { get { return this is EmptyComponent; } }
+        bool IsEmpty => this is EmptyComponent;
         bool IsSingleElement { get { return this is SingleComponent; } } //implies ValueOrNull != null
 
         [Pure]
@@ -107,14 +107,14 @@ namespace ProgressOnderwijsUtils
             return Create(a);
         }
 
-        static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) { return null == part ? query : new PrefixAndComponent(query, part); }
+        static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) => null == part ? query : new PrefixAndComponent(query, part);
 
         static QueryBuilder Concat(QueryBuilder first, QueryBuilder second)
         {
             if (null == first) {
-                throw new ArgumentNullException("first");
+                throw new ArgumentNullException(nameof(first));
             } else if (null == second) {
-                throw new ArgumentNullException("second");
+                throw new ArgumentNullException(nameof(second));
             } else if (first.IsEmpty) {
                 return second;
             } else if (second.IsEmpty) {
@@ -224,7 +224,7 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder Create(string str, params object[] arguments)
         {
             if (str == null) {
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
             }
 
             //null if argument is already a QueryBuilder and no new component needs to be created
@@ -486,12 +486,12 @@ namespace ProgressOnderwijsUtils
 
     public class SqlCommandCreationContext : IDisposable
     {
-        public SqlConnection Connection { get; private set; }
-        public QueryTracer Tracer { get; private set; }
-        public int CommandTimeoutInS { get; private set; }
+        public SqlConnection Connection { get; }
+        public QueryTracer Tracer { get; }
+        public int CommandTimeoutInS { get; }
         // ReSharper disable UnusedMember.Global
         // Handige generieke functionaliteit, maar niet altijd gebruikt
-        public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) { return new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer); }
+        public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) => new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer);
         // ReSharper restore UnusedMember.Global
         public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, QueryTracer tracer)
         {
@@ -501,6 +501,6 @@ namespace ProgressOnderwijsUtils
         }
 
         public void Dispose() { Connection.Dispose(); }
-        public static implicit operator SqlCommandCreationContext(SqlConnection conn) { return new SqlCommandCreationContext(conn, 0, null); }
+        public static implicit operator SqlCommandCreationContext(SqlConnection conn) => new SqlCommandCreationContext(conn, 0, null);
     }
 }

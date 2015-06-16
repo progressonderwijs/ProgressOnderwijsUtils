@@ -37,10 +37,10 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public bool Equals(T other) { return other != null && EqualsByMembers<T>.Func((T)this, other); }
-        public override bool Equals(object obj) { return obj is T && Equals((T)obj); }
-        public override int GetHashCode() { return GetHashCodeByMembers<T>.Func((T)this); }
-        public T Copy() { return (T)MemberwiseClone(); }
+        public bool Equals(T other) => other != null && EqualsByMembers<T>.Func((T)this, other);
+        public override bool Equals(object obj) => obj is T && Equals((T)obj);
+        public override int GetHashCode() => GetHashCodeByMembers<T>.Func((T)this);
+        public T Copy() => (T)MemberwiseClone();
 
         public T CopyWith(Action<T> action)
         {
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils
             return copied;
         }
 
-        public override string ToString() { return ToStringByMembers<T>.Func((T)this); }
+        public override string ToString() => ToStringByMembers<T>.Func((T)this);
     }
 
     public static class ToStringByMembers
@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [UsedImplicitly]
-        static string ToString(object o) { return ObjectToCode.ComplexObjectToPseudoCode(o); }
+        static string ToString(object o) => ObjectToCode.ComplexObjectToPseudoCode(o);
 
         static Func<T, string> byPublicMembers()
         {
