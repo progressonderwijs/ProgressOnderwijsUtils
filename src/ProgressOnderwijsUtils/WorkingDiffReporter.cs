@@ -9,9 +9,9 @@ using ApprovalTests.Reporters;
 
 namespace ProgressOnderwijsUtils
 {
-    public class WorkinDiffReporter : FirstWorkingReporter
+    public class WorkingDiffReporter : FirstWorkingReporter
     {
-        public WorkinDiffReporter()
+        public WorkingDiffReporter()
             : base(
                 (IEnvironmentAwareReporter)CodeCompareReporter.INSTANCE,
                 (IEnvironmentAwareReporter)BeyondCompareReporter.INSTANCE,
