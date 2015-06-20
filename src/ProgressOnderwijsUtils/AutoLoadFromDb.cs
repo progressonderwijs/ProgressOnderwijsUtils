@@ -489,7 +489,6 @@ namespace ProgressOnderwijsUtils
                                 )
                             );
                     }
-                    ;
                 }
             }
 
