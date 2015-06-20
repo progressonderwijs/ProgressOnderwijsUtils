@@ -7,8 +7,8 @@ namespace ProgressOnderwijsUtils
 {
     public static class DateTimeShortAgeTag
     {
-        static readonly char[] trimStart = new[] { 'A' };
-        static readonly char[] trimEnd = new[] { '=' };
+        static readonly char[] trimStart = { 'A' };
+        static readonly char[] trimEnd = { '=' };
 
         /// <summary>
         /// The purpose of an AgeTag is to provide an unlikely-to-collide unique token based on modification time.

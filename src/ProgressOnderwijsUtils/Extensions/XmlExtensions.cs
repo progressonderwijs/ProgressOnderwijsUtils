@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtils
     {
         public static IDictionary<string, string> GetAttributes(this XmlReader reader)
         {
-            IDictionary<string, string> result = new Dictionary<string, string>();
+            var result = new Dictionary<string, string>();
             if (reader.HasAttributes) {
                 bool next = reader.MoveToFirstAttribute();
                 while (next) {
