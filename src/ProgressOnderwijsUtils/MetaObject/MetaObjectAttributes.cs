@@ -13,6 +13,7 @@ namespace ProgressOnderwijsUtils
         ExplicitLines = 1 << 3,
         ExtraSpaceRight = 1 << 4,
         LimitedWidth = 1 << 5,
+        ExternalData = 1 << 6,
     }
 
     public static class ColumnCssHelpers
