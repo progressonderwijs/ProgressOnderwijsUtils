@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using ExpressionToCodeLib;
 using MoreLinq;
 
 namespace ProgressOnderwijsUtils
@@ -40,7 +41,7 @@ namespace ProgressOnderwijsUtils
             } else if (paramval is DateTime) {
                 return ((DateTime)paramval).ToString(@"\'yyyy-MM-dd HH:mm:ss.fffffff\'");
             } else if (paramval is Enum) {
-                return Converteer.ToString(paramval, taalOrNull ?? Taal.NL);
+                return ((IConvertible)paramval).ToInt64(null).ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(paramval) + "*/";
             } else {
                 return "{!" + (taalOrNull.HasValue ? Converteer.ToString(paramval, taalOrNull.Value) : paramval.ToString()) + "!}";
             }
