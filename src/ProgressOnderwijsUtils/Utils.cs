@@ -52,6 +52,18 @@ namespace ProgressOnderwijsUtils
 
     public static class Utils
     {
+        /// <summary>
+        /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
+        /// </summary>
+        public static bool FuzzyEquals(double x, double y) {
+            const double relativeEpsilon = 1.0 / (1ul << 32);
+
+            double delta = Math.Abs(x - y);
+            double magnitude = Math.Abs(x) + Math.Abs(y);
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            return x == y || delta / magnitude < relativeEpsilon;
+        }
+
         public static Lazy<T> Lazy<T>(Func<T> factory) { return new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication); }
 
         public static bool ElfProef(int getal)

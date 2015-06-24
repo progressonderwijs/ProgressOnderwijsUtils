@@ -63,14 +63,6 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void RegioTest()
-        {
-            PAssert.That(
-                () => new Regio("wonderland", new[] { "abc", "def", "ghi" }).Member ==
-                    "member [Provincie].[provincie].[wonderland] as Sum({ [Provincie].[provincie].[abc],[Provincie].[provincie].[def],[Provincie].[provincie].[ghi]}) ");
-        }
-
-        [Test]
         public void SLBerichtSamenvattingTest()
         {
             var a = new SLBerichtSamenvatting.Value {

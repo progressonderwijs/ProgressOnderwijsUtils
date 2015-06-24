@@ -64,9 +64,6 @@ namespace ProgressOnderwijsUtils
 
             Assert.That(new ColumnSort("test", SortDirection.Asc) == new ColumnSort("Test", SortDirection.Asc));
             Assert.IsFalse(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("Test", SortDirection.Asc));
-
-            Assert.That(new ColumnSort("test", SortDirection.Asc) != null);
-            Assert.IsFalse(new ColumnSort("test", SortDirection.Asc) == null);
         }
 
         [Test]
