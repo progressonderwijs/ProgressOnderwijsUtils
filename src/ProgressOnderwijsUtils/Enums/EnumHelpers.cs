@@ -459,7 +459,6 @@ namespace ProgressOnderwijsUtils
 
         public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable { return EnumMetaCache<T>.EnumValues; }
         public static IReadOnlyList<Enum> GetValues(Type enumType) => GetEnumMetaCache(enumType).Values();
-        public static bool IsEmpty(Type enumType) => GetEnumMetaCache(enumType).Values().Count == 0;
         public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.FlagEnumHelpers.AddFlag; }
         public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.FlagEnumHelpers.HasFlag; }
         public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.GetLabel(f); }
