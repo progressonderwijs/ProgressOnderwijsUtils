@@ -137,14 +137,21 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static Maybe<Unit> ErrorWhenNotNull(this ITranslatable val) => val == null ? Ok() : new ErrorValue(val);
 
+        public static ITranslatable ErrorOrNull<T>(this Maybe<T> state) { return state.ExtractToValue(v => null, e => e); }
+
         /// <summary>
         /// Maps a possibly failed value to a new value.
         /// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, the output is OK and is mapped
         /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
         public static Maybe<TOut> WhenOk<T, TOut>(this Maybe<T> state, Func<T, TOut> map) { return state.ExtractToValue(v => Ok(map(v)), Error<TOut>); }
-
-        public static ITranslatable ErrorOrNull<T>(this Maybe<T> state) { return state.ExtractToValue(v => null, e => e); }
+        
+        /// <summary>
+        /// Maps a possibly failed value to a new value.
+        /// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, the output is OK and is mapped
+        /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
+        /// </summary>
+        public static Maybe<TOut> WhenOk<TOut>(this Maybe<Unit> state, Func<TOut> map) { return state.ExtractToValue(v => Ok(map()), Error<TOut>); }
 
         /// <summary>
         /// Processes a possibly failed value.  
@@ -156,6 +163,20 @@ namespace ProgressOnderwijsUtils
             return state.ExtractToValue(
                 v => {
                     map(v);
+                    return Ok();
+                },
+                Error<Unit>);
+        }
+
+        /// <summary>
+        /// Processes a possibly failed value.  
+        /// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, the output is OK, but the output
+        /// has no value (value of type Unit).  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
+        /// </summary>
+        public static Maybe<Unit> WhenOk(this Maybe<Unit> state, Action map) {
+            return state.ExtractToValue(
+                v => {
+                    map();
                     return Ok();
                 },
                 Error<Unit>);
