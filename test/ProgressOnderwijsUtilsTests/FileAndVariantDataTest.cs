@@ -44,14 +44,13 @@ namespace ProgressOnderwijsUtilsTests
         {
 
             VariantData empty = default(VariantData),
-                nullint = new VariantData((object)null),
-                //this is OK because we ignore nullability.
-                int1 = new VariantData((object)1),
-                int1b = new VariantData((object)1),
-                str1 = new VariantData((object)"1"),
-                str2 = new VariantData((object)"2"),
-                str2b = new VariantData((object)"2"),
-                strnull = new VariantData((object)null)
+                nullObj = new VariantData(null),
+                int1 = new VariantData(1),
+                int1b = new VariantData(1),
+                str1 = new VariantData("1"),
+                str2 = new VariantData("2"),
+                str2b = new VariantData("2"),
+                nullObjb = new VariantData(null)
                 ;
 
             PAssert.That(() => int1 == int1b && int1b == int1);
@@ -66,8 +65,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => str2b != int1 && int1 != str1);
             PAssert.That(() => str1.GetHashCode() != int1.GetHashCode());
 
-            PAssert.That(() => nullint != strnull && nullint.GetHashCode() != strnull.GetHashCode());
-            PAssert.That(() => !Equals(nullint, strnull) && Equals(int1, int1b));
+            PAssert.That(() => nullObj == nullObjb && nullObj.GetHashCode() == nullObjb.GetHashCode());
+            PAssert.That(() => Equals(nullObj, nullObjb) && Equals(int1, int1b));
 
             //enums are tricky:
             PAssert.That(
