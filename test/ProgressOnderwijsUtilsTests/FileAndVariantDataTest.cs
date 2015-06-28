@@ -42,18 +42,16 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void VariantDataTest()
         {
-            Assert.Throws<ArgumentNullException>(() => new VariantData(null, "abc"));
-            Assert.Throws<ArgumentException>(() => new VariantData(typeof(string), 1));
 
             VariantData empty = default(VariantData),
-                nullint = new VariantData(typeof(int), null),
+                nullint = new VariantData((object)null),
                 //this is OK because we ignore nullability.
-                int1 = new VariantData(typeof(int), 1),
-                int1b = new VariantData(typeof(int), 1),
-                str1 = new VariantData(typeof(string), "1"),
-                str2 = new VariantData(typeof(string), "2"),
-                str2b = new VariantData(typeof(string), "2"),
-                strnull = new VariantData(typeof(string), null)
+                int1 = new VariantData((object)1),
+                int1b = new VariantData((object)1),
+                str1 = new VariantData((object)"1"),
+                str2 = new VariantData((object)"2"),
+                str2b = new VariantData((object)"2"),
+                strnull = new VariantData((object)null)
                 ;
 
             PAssert.That(() => int1 == int1b && int1b == int1);
@@ -73,8 +71,8 @@ namespace ProgressOnderwijsUtilsTests
 
             //enums are tricky:
             PAssert.That(
-                () => new VariantData(typeof(int), DatabaseVersion.Undefined) != new VariantData(typeof(int), 0) &&
-                    new VariantData(typeof(int), DatabaseVersion.Undefined).GetHashCode() == new VariantData(typeof(int), 0).GetHashCode());
+                () => new VariantData((object)DatabaseVersion.Undefined) != new VariantData((object)0) &&
+                    new VariantData((object)DatabaseVersion.Undefined).GetHashCode() == new VariantData((object)0).GetHashCode());
         }
     }
 }
