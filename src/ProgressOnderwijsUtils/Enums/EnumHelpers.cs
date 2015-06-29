@@ -475,12 +475,15 @@ namespace ProgressOnderwijsUtils
             return SelectItem.Create(f, GetLabel(f));
         }
 
+        public static IReadOnlyList<SelectItem<TEnum>> CreateSelectItemList<TEnum>(this IEnumerable<TEnum> values)
+            where TEnum : struct, IConvertible, IComparable { return values.Select(GetSelectItem).ToArray(); }
+
         public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal)
             where TEnum : struct, IConvertible, IComparable
         {
-            return values.Select(
-                v =>
-                    new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).Text }
+            //TODO:EMN:improve this API.
+            return values.CreateSelectItemList()
+                .Select(v =>new KoppelTabelEntry { Id = v.Value.ToInt32(null), Tekst = v.Label.Translate(taal).Text }
                 ).ToDataTable();
         }
 
