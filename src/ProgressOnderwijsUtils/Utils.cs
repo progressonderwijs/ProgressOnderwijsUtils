@@ -402,7 +402,7 @@ namespace ProgressOnderwijsUtils
             var rounded = number * mult + 0.5;
             if (!(rounded <= ulong.MaxValue - 1024)) {
                 if (double.IsNaN(number)) {
-                    return "NaN";
+                    return fI.NaNSymbol;
                 }
                 if (double.IsInfinity(number)) {
                     return isNeg ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;

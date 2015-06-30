@@ -6,6 +6,7 @@ using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -34,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test]
+        [Test, Continuous]
         public void FixedPointOmitsMinusForZero()
         {
             PAssert.That(() => Utils.ToFixedPointString(-0.1, INV, 0) == "0");
@@ -43,15 +44,17 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Utils.ToFixedPointString(-double.Epsilon, INV, 2) == "0.00");
         }
 
-        [Test]
+        [Test,Continuous]
         public void WorksOnNonFiniteNumbers()
         {
-            PAssert.That(() => Utils.ToFixedPointString(double.NaN, NL, 0) == double.NaN.ToString("f0"));
+            var be = CultureInfo.GetCultureInfo("nl-BE");
+            PAssert.That(() => Utils.ToFixedPointString(double.NaN, NL, 0) == double.NaN.ToString("f0",NL));
+            PAssert.That(() => Utils.ToFixedPointString(double.NaN, be, 0) == double.NaN.ToString("f0", be));
             PAssert.That(() => Utils.ToFixedPointString(double.PositiveInfinity, INV, 1) == double.PositiveInfinity.ToString("f0"));
             PAssert.That(() => Utils.ToFixedPointString(double.NegativeInfinity, INV, 2) == double.NegativeInfinity.ToString("f0"));
         }
 
-        [Test]
+        [Test, Continuous]
         public void WorksOnCornerCases()
         {
             ulong edgeCase = ulong.MaxValue - 1024;
