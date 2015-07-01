@@ -15,7 +15,8 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void FileDataTest()
         {
-            FileData empty = default(FileData),
+            FileData 
+                empty = default(FileData),
                 basic = new FileData { Content = new byte[] { 1, 2, 3 }, ContentType = "ab", FileName = "xyz" },
                 same = new FileData { Content = new byte[] { 1, 2, 3 }, ContentType = "aab".Substring(1), FileName = "Xxyz".Substring(1) },
                 diffdata = new FileData { Content = new byte[] { 1, 2, 4 }, ContentType = "ab", FileName = "xyz" },
@@ -42,8 +43,8 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void VariantDataTest()
         {
-
-            VariantData empty = default(VariantData),
+            VariantData
+                empty = default(VariantData),
                 nullObj = new VariantData(null),
                 int1 = new VariantData(1),
                 int1b = new VariantData(1),
