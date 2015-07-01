@@ -67,8 +67,8 @@ namespace ProgressOnderwijsUtilsTests
 
             //enums are tricky:
             PAssert.That(
-                () => new VariantData((object)DatabaseVersion.Undefined) != new VariantData((object)0) &&
-                    new VariantData((object)DatabaseVersion.Undefined).GetHashCode() == new VariantData((object)0).GetHashCode());
+                () => new VariantData(DatabaseVersion.Undefined) != new VariantData(0) &&
+                    new VariantData(DatabaseVersion.Undefined).GetHashCode() == new VariantData(0).GetHashCode());
         }
     }
 }
