@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils
             yield return TryToString<VariantData>(
                 obj,
                 o => language =>
-                    o.ToUiString());
+                    o.ToString());
             yield return TryToString<FileData>(
                 obj,
                 o => language =>
