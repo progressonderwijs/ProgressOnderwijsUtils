@@ -77,8 +77,7 @@ namespace ProgressOnderwijsUtils
             public override ITranslatable GetError() => error;
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifError(error); }
-            public override string ToString() { return base.ToString() + $"({error})"; }
-
+            public override string ToString() => $"Error({error})";
         }
 
         public sealed class OkValue : Maybe<T>
@@ -92,7 +91,7 @@ namespace ProgressOnderwijsUtils
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifOk(val); }
 
-            public override string ToString() { return base.ToString() + $"({val})"; }
+            public override string ToString() => $"Ok({val})";
         }
     }
 
