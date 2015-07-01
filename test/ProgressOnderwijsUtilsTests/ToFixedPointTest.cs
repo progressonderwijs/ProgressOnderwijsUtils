@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtilsTests
     {
         static readonly CultureInfo INV = CultureInfo.InvariantCulture;
         static readonly CultureInfo NL = CultureInfo.GetCultureInfo("nl");
-        static readonly CultureInfo BE = CultureInfo.GetCultureInfo("nl-BE");
+        static readonly CultureInfo BE = CultureInfo.GetCultureInfo("nl-BE"); //in belgie is "NaN" "NaN (geen getal)" dus das een mooie corner case
 
         [Test]
         public void ToFixedPointWorksLikeFormatter()
