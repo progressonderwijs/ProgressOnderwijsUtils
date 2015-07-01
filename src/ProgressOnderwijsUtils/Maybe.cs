@@ -1,7 +1,4 @@
-﻿// ReSharper disable UnusedMember.Global
-
-using System;
-using ProgressOnderwijsUtils;
+﻿using System;
 
 namespace ProgressOnderwijsUtils
 {
@@ -29,6 +26,11 @@ namespace ProgressOnderwijsUtils
         /// Value: whether this Maybe is in the OK state.
         /// </summary>
         public abstract bool IsOk { get; }
+
+        /// <summary>
+        /// Returns whether this maybe contains this value. Returns false if the maybe is not ok
+        /// </summary>
+        public abstract bool Contains(T value);
 
         /// <summary>
         /// Gets the value of this Maybe if it is OK; throws an Exception if called when this Maybe is not OK.
@@ -70,10 +72,13 @@ namespace ProgressOnderwijsUtils
             }
 
             public override bool IsOk => false;
+            public override bool Contains(T value) { return false; }
             public override T GetValue() { throw new InvalidOperationException("Cannot get value; in error state: " + error.Translate(Taal.NL)); }
             public override ITranslatable GetError() => error;
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifError(error); }
+            public override string ToString() { return base.ToString() + $"({error})"; }
+
         }
 
         public sealed class OkValue : Maybe<T>
@@ -81,10 +86,13 @@ namespace ProgressOnderwijsUtils
             readonly T val;
             public OkValue(T val) { this.val = val; }
             public override bool IsOk => true;
+            public override bool Contains(T value) { return Equals(value, val); }
             public override T GetValue() => val;
             public override ITranslatable GetError() { throw new InvalidOperationException("No error: cannot get error message!"); }
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifOk(val); }
+
+            public override string ToString() { return base.ToString() + $"({val})"; }
         }
     }
 
@@ -151,6 +159,7 @@ namespace ProgressOnderwijsUtils
         /// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, the output is OK and is mapped
         /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
+        [UsefulToKeep("Library Function")]
         public static Maybe<TOut> WhenOk<TOut>(this Maybe<Unit> state, Func<TOut> map) { return state.ExtractToValue(v => Ok(map()), Error<TOut>); }
 
         /// <summary>
