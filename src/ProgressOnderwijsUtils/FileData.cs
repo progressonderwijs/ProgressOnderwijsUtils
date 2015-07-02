@@ -14,24 +14,26 @@ namespace ProgressOnderwijsUtils
         string fileName;
         public byte[] Content { get; set; }
         public string ContentType { get; set; }
+        public string FileName { get { return fileName; } set { fileName = TrimNameToLength(value, MAX_FILE_NAME); } }
 
-        public string FileName
+        public static string TrimNameToLength(string filePath, int maxFileNameLength)
         {
-            get { return fileName; }
-            set
-            {
-                if (value != null && value.Length > MAX_FILE_NAME) {
-                    if (Path.HasExtension(value)) {
-                        var extension = Path.GetExtension(value);
-                        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(value).Substring(0, MAX_FILE_NAME - extension.Length);
-                        fileName = fileNameWithoutExtension + extension;
-                    } else {
-                        fileName = value.Substring(0, MAX_FILE_NAME);
-                    }
+            var filename = Path.GetFileName(filePath);
+            if (filename == null) {
+                return null;
+            }
+            if (Path.HasExtension(filename)) {
+                var extension = Path.GetExtension(filename);
+                var basename = Path.GetFileNameWithoutExtension(filename);
+                if (extension.Length + 8 > maxFileNameLength) {
+                    //don't keep extension if it crowds out the name.
+                    return basename.TrimToLength(maxFileNameLength).Replace('.','_');
                 } else {
-                    fileName = value;
+                    var fileNameWithoutExtension = basename.TrimToLength(maxFileNameLength - extension.Length);
+                    return fileNameWithoutExtension + extension;
                 }
             }
+            return filename.TrimToLength(maxFileNameLength);
         }
 
         [MpNotMapped]
