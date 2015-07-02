@@ -5,7 +5,6 @@ using log4net.Util;
 using MoreLinq;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
-using ProgressOnderwijsUtils.Text;
 
 namespace ProgressOnderwijsUtils
 {
