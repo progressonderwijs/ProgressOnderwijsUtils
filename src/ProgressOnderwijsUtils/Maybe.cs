@@ -33,17 +33,12 @@ namespace ProgressOnderwijsUtils
         public abstract bool Contains(T value);
 
         /// <summary>
-        /// Gets the value of this Maybe if it is OK; throws an Exception if called when this Maybe is not OK.
-        /// </summary>
-        public abstract T GetValue();
-
-        /// <summary>
         /// Extracts a value from the Maybe by calling either the ifOk function or the ifError function, depending on the state of the Maybe.
         /// </summary>
-        public abstract TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError);
+        public abstract TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError);
 
         /// <summary>
-        /// 
+        /// Exececutes an action on the maybe by calling either the ifOk function or the ifError function, depending on the state of the Maybe.
         /// </summary>
         public abstract void If(Action<T> ifOk, Action<ITranslatable> ifError);
 
@@ -68,8 +63,7 @@ namespace ProgressOnderwijsUtils
 
             public override bool IsOk => false;
             public override bool Contains(T value) { return false; }
-            public override T GetValue() { throw new InvalidOperationException("Cannot get value; in error state: " + error.Translate(Taal.NL)); }
-            public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
+            public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifError(error); }
             public override string ToString() => $"Error({error})";
         }
@@ -80,10 +74,8 @@ namespace ProgressOnderwijsUtils
             public OkValue(T val) { this.val = val; }
             public override bool IsOk => true;
             public override bool Contains(T value) { return Equals(value, val); }
-            public override T GetValue() => val;
-            public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
+            public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifOk(val); }
-
             public override string ToString() => $"Ok({val})";
         }
     }
@@ -137,14 +129,14 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static Maybe<Unit> ErrorWhenNotNull(this ITranslatable val) => val == null ? Ok() : new ErrorValue(val);
 
-        public static ITranslatable ErrorOrNull<T>(this Maybe<T> state) { return state.ExtractToValue(v => null, e => e); }
+        public static ITranslatable ErrorOrNull<T>(this Maybe<T> state) { return state.If(v => null, e => e); }
 
         /// <summary>
         /// Maps a possibly failed value to a new value.
         /// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, the output is OK and is mapped
         /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
-        public static Maybe<TOut> WhenOk<T, TOut>(this Maybe<T> state, Func<T, TOut> map) { return state.ExtractToValue(v => Ok(map(v)), Error<TOut>); }
+        public static Maybe<TOut> WhenOk<T, TOut>(this Maybe<T> state, Func<T, TOut> map) { return state.If(v => Ok(map(v)), Error<TOut>); }
         
         /// <summary>
         /// Maps a possibly failed value to a new value.
@@ -152,7 +144,7 @@ namespace ProgressOnderwijsUtils
         /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
         [UsefulToKeep("Library Function")]
-        public static Maybe<TOut> WhenOk<TOut>(this Maybe<Unit> state, Func<TOut> map) { return state.ExtractToValue(v => Ok(map()), Error<TOut>); }
+        public static Maybe<TOut> WhenOk<TOut>(this Maybe<Unit> state, Func<TOut> map) { return state.If(v => Ok(map()), Error<TOut>); }
 
         /// <summary>
         /// Processes a possibly failed value.  
@@ -161,7 +153,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static Maybe<Unit> WhenOk<T>(this Maybe<T> state, Action<T> map)
         {
-            return state.ExtractToValue(
+            return state.If(
                 v => {
                     map(v);
                     return Ok();
@@ -175,7 +167,7 @@ namespace ProgressOnderwijsUtils
         /// has no value (value of type Unit).  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
         public static Maybe<Unit> WhenOk(this Maybe<Unit> state, Action map) {
-            return state.ExtractToValue(
+            return state.If(
                 v => {
                     map();
                     return Ok();
@@ -190,7 +182,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static Maybe<T> WhenError<T>(this Maybe<T> state, Action<ITranslatable> handler)
         {
-            return state.ExtractToValue(
+            return state.If(
                 Ok,
                 err => {
                     handler(err);
@@ -204,6 +196,6 @@ namespace ProgressOnderwijsUtils
         /// provided "map" function (which may itself report an error).   The function is eagerly evaluated, i.e. not like Enumerable.Select, but like
         /// Enumerable.ToArray.
         /// </summary>
-        public static Maybe<TOut> WhenOkTry<T, TOut>(this Maybe<T> state, Func<T, Maybe<TOut>> map) { return state.ExtractToValue(map, Error<TOut>); }
+        public static Maybe<TOut> WhenOkTry<T, TOut>(this Maybe<T> state, Func<T, Maybe<TOut>> map) { return state.If(map, Error<TOut>); }
     }
 }
