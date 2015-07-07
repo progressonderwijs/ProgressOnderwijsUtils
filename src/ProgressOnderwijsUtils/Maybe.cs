@@ -33,11 +33,6 @@ namespace ProgressOnderwijsUtils
         public abstract bool Contains(T value);
 
         /// <summary>
-        /// Gets the value of this Maybe if it is OK; throws an Exception if called when this Maybe is not OK.
-        /// </summary>
-        public abstract T GetValue();
-
-        /// <summary>
         /// Gets the error message of this Maybe if present; throws an Exception if called when this Maybe is OK.
         /// </summary>
         public abstract ITranslatable GetError();
@@ -73,7 +68,6 @@ namespace ProgressOnderwijsUtils
 
             public override bool IsOk => false;
             public override bool Contains(T value) { return false; }
-            public override T GetValue() { throw new InvalidOperationException("Cannot get value; in error state: " + error.Translate(Taal.NL)); }
             public override ITranslatable GetError() => error;
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifError(error); }
@@ -86,7 +80,6 @@ namespace ProgressOnderwijsUtils
             public OkValue(T val) { this.val = val; }
             public override bool IsOk => true;
             public override bool Contains(T value) { return Equals(value, val); }
-            public override T GetValue() => val;
             public override ITranslatable GetError() { throw new InvalidOperationException("No error: cannot get error message!"); }
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifOk(val); }
