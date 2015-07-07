@@ -52,6 +52,8 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public abstract void If(Action<T> ifOk, Action<ITranslatable> ifError);
 
+        public abstract TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError);
+
         /// <summary>
         /// Converts an untyped error message into a specific type of failed Maybe.  This operator is a  workaround to make it easy to create an error message without redundant type info.
         /// </summary>
@@ -77,6 +79,7 @@ namespace ProgressOnderwijsUtils
             public override ITranslatable GetError() => error;
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifError(error); }
+            public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
             public override string ToString() => $"Error({error})";
         }
 
@@ -90,7 +93,7 @@ namespace ProgressOnderwijsUtils
             public override ITranslatable GetError() { throw new InvalidOperationException("No error: cannot get error message!"); }
             public override TOut ExtractToValue<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifOk(val); }
-
+            public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
             public override string ToString() => $"Ok({val})";
         }
     }
