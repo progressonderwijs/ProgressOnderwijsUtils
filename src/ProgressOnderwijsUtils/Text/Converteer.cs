@@ -463,7 +463,6 @@ namespace ProgressOnderwijsUtils
                     }
                 }
                 return ParseResult.Ok(retval);
-                ;
             }
             throw new ConverteerException("TryParse nog niet geimplementeerd voor " + t);
         }
