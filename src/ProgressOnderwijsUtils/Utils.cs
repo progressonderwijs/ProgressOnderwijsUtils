@@ -196,16 +196,6 @@ namespace ProgressOnderwijsUtils
         }
 
         /// <summary>
-        /// Joins a set of values into SQL syntax; e.g. test, ab'c, xyz turn into "('test', 'ab''c', 'xyz')" and the empty set turns into "(null)".
-        /// Single quotes are doubled; however, this is not rigorously safe and as such beware of SQL-injection.
-        /// No user-supplied strings should be used with this function!
-        /// </summary>
-        public static string SqlInClause(IEnumerable<string> values)
-        {
-            return SqlInClauseHelper(values.Select(EscapeSqlString));
-        }
-
-        /// <summary>
         /// Joins a set of values into SQL syntax; e.g. 1,2,3 turn into "(1,2,3)" and the empty set turns into "(null)"
         /// </summary>
         public static string SqlInClause(IEnumerable<int> values)
@@ -213,7 +203,6 @@ namespace ProgressOnderwijsUtils
             return SqlInClauseHelper(values.Select(val => val.ToStringInvariant()));
         }
 
-        static string EscapeSqlString(string val) => '\'' + val.Replace("'", "''") + '\'';
 
         static string SqlInClauseHelper(IEnumerable<string> values)
         {

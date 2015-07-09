@@ -111,7 +111,6 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Utils.SqlInClause(new int[] { }) == "(null)");
             PAssert.That(() => Utils.SqlInClause(new[] { 0 }) == "(0)");
             PAssert.That(() => Utils.SqlInClause(new[] { 0, 1 }) == "(0, 1)");
-            PAssert.That(() => Utils.SqlInClause(new[] { "test", "ab'c", "xyz" }) == "('test', 'ab''c', 'xyz')");
         }
 
         [Test, Continuous]
