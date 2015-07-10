@@ -139,58 +139,30 @@ namespace ProgressOnderwijsUtils
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
         {
-            return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup));
+            return TransitiveClosure(elems,edgeLookup,EqualityComparer<T>.Default);
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
         {
             var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
-
             while (distinctNewlyReachable.Length > 0) {
-                var builder = FastArrayBuilder<T>.Create();
-
-                foreach (var newItem in distinctNewlyReachable) {
-                    foreach (var reachable in edgeLookup(newItem)) {
-                        if (set.Add(reachable)) {
-                            builder.Add(reachable);
-                        }
-                    }
-                }
-                //next.AddRange(multiEdgeLookup(distinctNewlyReachable).Where(set.Add));
-                distinctNewlyReachable = builder.ToArray();
-                //distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
+                distinctNewlyReachable = distinctNewlyReachable.SelectMany(edgeLookup).Where(set.Add).ToArray();
             }
             return set;
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
         {
-            var set = elems.ToSet();
-            var distinctNewlyReachable = set.ToArray();
-            while (distinctNewlyReachable.Length > 0) {
-                distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
-            }
-            return set;
+            return TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
         {
-            var distinctNewlyReachable = elems.ToList();
-            var next = new List<T>();
+            var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
-            while (distinctNewlyReachable.Count > 0) {
-                foreach (var item in multiEdgeLookup(distinctNewlyReachable)) {
-                    if (set.Add(item)) {
-                        next.Add(item);
-                    }
-                }
-                //next.AddRange(multiEdgeLookup(distinctNewlyReachable).Where(set.Add));
-                distinctNewlyReachable.Clear();
-                var tmp = next;
-                next = distinctNewlyReachable;
-                distinctNewlyReachable = tmp;
-                //distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
+            while (distinctNewlyReachable.Length > 0) {
+                distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
             }
             return set;
         }
