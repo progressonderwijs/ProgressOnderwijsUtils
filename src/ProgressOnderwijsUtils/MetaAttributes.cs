@@ -14,10 +14,4 @@ namespace ProgressOnderwijsUtils
     {
         public UsefulToKeepAttribute(string reason) { }
     }
-
-    [AttributeUsage(AttributeTargets.Enum), MeansImplicitUse(ImplicitUseKindFlags.Assign,ImplicitUseTargetFlags.Members)]
-    public class HenkAttribute : Attribute
-    {
-    }
-
 }
