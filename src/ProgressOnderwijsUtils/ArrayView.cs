@@ -136,11 +136,6 @@ namespace ProgressOnderwijsUtils
             return new ArrayView_MappedWithIndex<T, TOut>(vals, map);
         }
 
-        public static IReadOnlyCollection<TOut> SelectROCountable<T, TOut>(this IReadOnlyCollection<T> vals, Func<T, TOut> map)
-        {
-            return new ReadOnlyCollectionView_Mapped<T, TOut>(vals, map);
-        }
-
         public static IReadOnlyCollection<TOut> SelectCountable<T, TOut>(this ICollection<T> vals, Func<T, TOut> map) { return new CollectionView_Mapped<T, TOut>(vals, map); }
 
         public static T[] ToArray<T>(this IReadOnlyList<T> list)

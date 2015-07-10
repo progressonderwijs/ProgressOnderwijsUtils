@@ -178,21 +178,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        /// <summary>
-        /// Overloaded; see primary overload for details.  This overload unpacks two recordsets; i.e. two subsequent SELECT statements.
-        /// It's equivalent to but faster than Tuple.Create(queryA.ReadByConstructor&lt;T1&gt;(conn), queryB.ReadByConstructor&lt;T2&gt;(conn))
-        /// </summary>
-        public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext)
-            where T1 : IReadByConstructor
-            where T2 : IReadByConstructor
-        {
-            return ExecuteQuery(
-                q,
-                qCommandCreationContext,
-                () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T1)) + ", " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T2)) + ">() failed.",
-                ReadByConstructor<T1, T2>);
-        }
-
         public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(SqlCommand cmd)
             where T1 : IReadByConstructor
             where T2 : IReadByConstructor

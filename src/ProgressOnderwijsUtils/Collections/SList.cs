@@ -91,7 +91,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static SList<T> Prepend<T>(this SList<T> self, T head) { return new SList<T>(head, self); }
 
-        [Pure]
+        [Pure, UsefulToKeep("library method")]
         public static SList<T> Prepend<T>(this SList<T> self, SList<T> heads)
         {
             var retval = self;
@@ -133,7 +133,7 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
-        [Pure]
+        [Pure, UsefulToKeep("library method")]
         public static SList<T> WhereReverse<T>(this SList<T> self, Func<T, bool> filter)
         {
             var retval = SList<T>.Empty;
@@ -186,6 +186,8 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         public static SList<T> SingleElement<T>(T element) { return SList<T>.Empty.Prepend(element); }
+
+        [UsefulToKeep("library method")]
         public static SList<T> Empty<T>() => SList<T>.Empty;
     }
 }

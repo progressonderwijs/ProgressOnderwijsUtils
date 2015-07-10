@@ -119,7 +119,6 @@ namespace ProgressOnderwijsUtils
         public override int FieldCount => fields.Length;
         public override Type GetFieldType(int ordinal) => fields[ordinal].DataType;
         public override string GetName(int ordinal) => fields[ordinal].Name;
-        public IEnumerable<string> FieldNames => fields.Select(field => field.Name);
         public override int GetOrdinal(string name) => indexLookup[name];
         public override object GetValue(int ordinal) => cache[ordinal] ?? DBNull.Value;
     }

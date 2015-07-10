@@ -22,8 +22,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static readonly IComparer<Rol> StructuralOrdering = new Comparer();
-
         class RolRelations
         {
             public Rol Rol;
@@ -158,7 +156,6 @@ namespace ProgressOnderwijsUtils
         public RollenSet(Rol[] sortedRollen) { this.sortedRollen = sortedRollen; }
         readonly Rol[] sortedRollen;
         public IReadOnlyList<Rol> Rollen => sortedRollen;
-        public int Count => sortedRollen.Length;
         public bool Contains(Rol rol) => Array.BinarySearch(sortedRollen, rol) >= 0;
     }
 

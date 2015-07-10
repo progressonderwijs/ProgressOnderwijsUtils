@@ -48,9 +48,7 @@ namespace ProgressOnderwijsUtils.Collections
         {
             public readonly int Index;
             public readonly Tree<T> ThisSubTree;
-            public T NodeValue => ThisSubTree.NodeValue;
-            public IReadOnlyList<Tree<T>> Children => ThisSubTree.Children;
-
+            
             public TreePathSegment(int index, Tree<T> node)
             {
                 Index = index;

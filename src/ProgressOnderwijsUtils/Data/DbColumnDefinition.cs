@@ -20,8 +20,6 @@ namespace ProgressOnderwijsUtils
             return new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName);
         }
 
-        public static ColumnDefinition Create(IMetaProperty col) => new ColumnDefinition(col.DataType, col.Name);
-
         public static ColumnDefinition[] GetFromReader(IDataRecord reader)
         {
             return Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
