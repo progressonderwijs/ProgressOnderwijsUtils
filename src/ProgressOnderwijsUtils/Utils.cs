@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.Core;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
@@ -8,11 +9,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
-using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Collections;
-using EntityException = System.Data.Entity.Core.EntityException;
 
 namespace ProgressOnderwijsUtils
 {
@@ -55,7 +53,8 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
         /// </summary>
-        public static bool FuzzyEquals(double x, double y) {
+        public static bool FuzzyEquals(double x, double y)
+        {
             const double relativeEpsilon = 1.0 / (1ul << 32);
 
             double delta = Math.Abs(x - y);
@@ -139,7 +138,7 @@ namespace ProgressOnderwijsUtils
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
         {
-            return TransitiveClosure(elems,edgeLookup,EqualityComparer<T>.Default);
+            return TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
@@ -174,7 +173,6 @@ namespace ProgressOnderwijsUtils
         {
             return SqlInClauseHelper(values.Select(val => val.ToStringInvariant()));
         }
-
 
         static string SqlInClauseHelper(IEnumerable<string> values)
         {
@@ -444,7 +442,6 @@ namespace ProgressOnderwijsUtils
     {
         readonly Comparison<T> comparer;
         public ComparisonComparer(Comparison<T> comparer) { this.comparer = comparer; }
-
         public int Compare(T x, T y) => comparer(x, y);
     }
 
