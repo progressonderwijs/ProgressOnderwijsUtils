@@ -25,6 +25,7 @@ namespace ProgressOnderwijsUtils.Radius
 {
     public enum RadiusAuthResults
     {
+        // ReSharper disable UnusedMember.Global
         UndefinedError,
         Success,
         AuthenticationFailed,
@@ -33,6 +34,7 @@ namespace ProgressOnderwijsUtils.Radius
         ServiceErrorUnexpectedIdentifier,
         ServiceErrorPacketMalformed,
         ServiceErrorBadResponseAuthenticator,
+        // ReSharper restore UnusedMember.Global
     }
 
     public static class RadiusClient

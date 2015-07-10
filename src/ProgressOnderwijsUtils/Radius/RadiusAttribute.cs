@@ -6,6 +6,7 @@ namespace ProgressOnderwijsUtils.Radius
 {
     public enum RadiusAttributeType
     {
+        // ReSharper disable UnusedMember.Global
         //directly from the RFC ;-) after VS.NET regex "^:b+{[^:b]+}:b+{[^:b].+}$" is replaced with "\2 = \1,"
         //then dashes +unassigned nrs. are removed.
         IllegalType = 0,
@@ -53,6 +54,7 @@ namespace ProgressOnderwijsUtils.Radius
         NASPortType = 61,
         PortLimit = 62,
         LoginLATPort = 63,
+        // ReSharper restore UnusedMember.Global
     }
 
     //see http://tools.ietf.org/html/rfc2138 or http://en.wikipedia.org/wiki/RADIUS

@@ -355,6 +355,7 @@ namespace ProgressOnderwijsUtils
 
         public enum ParseState
         {
+            // ReSharper disable UnusedMember.Global
             Undefined,
             Ok,
             Malformed,
@@ -362,6 +363,7 @@ namespace ProgressOnderwijsUtils
             Geendata,
             Datumfout,
             TijdFout
+            // ReSharper restore UnusedMember.Global
         }
 
         //Om gebruikersinvoer te controleren, daarna kan parse plaatsvinden
