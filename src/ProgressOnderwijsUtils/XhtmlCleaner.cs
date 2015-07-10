@@ -44,21 +44,6 @@ namespace ProgressOnderwijsUtils
 
     public static class HtmlFilter
     {
-        sealed class DelegateHtmlFilter : IHtmlFilter
-        {
-            readonly Func<XElement, TagSafety> filterTag;
-            readonly Func<XAttribute, bool> filterAttr;
-
-            public DelegateHtmlFilter(Func<XElement, TagSafety> filterTag, Func<XAttribute, bool> filterAttr)
-            {
-                this.filterTag = filterTag;
-                this.filterAttr = filterAttr;
-            }
-
-            public TagSafety AllowTag(XElement elem) => filterTag(elem);
-            public bool AllowAttribute(XAttribute attr) => filterAttr(attr);
-        }
-
         sealed class SafeStyleFilter : IHtmlFilter
         {
             public static readonly SafeStyleFilter Instance = new SafeStyleFilter();

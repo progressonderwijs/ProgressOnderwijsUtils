@@ -12,19 +12,6 @@ namespace ProgressOnderwijsUtils
     {
         public static T Deserialize<T>(string xml) { return XmlSerializerHelper<T>.Deserialize(xml); }
 
-        public static object Deserialize(Type t, string xml)
-        {
-            using (var reader = XmlReader.Create(new StringReader(xml))) {
-                return ((IXmlSerializeHelper)
-                    typeof(XmlSerializerHelper<>)
-                        .MakeGenericType(t)
-                        .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
-                        .Single()
-                        .Invoke(null)
-                    ).DeserializeInst(reader);
-            }
-        }
-
         public static string SerializeToString(object o)
         {
             using (var writer = new StringWriter()) {
@@ -60,7 +47,6 @@ namespace ProgressOnderwijsUtils
 
     interface IXmlSerializeHelper
     {
-        object DeserializeInst(XmlReader from);
         void SerializeToInst(XmlWriter xw, object val);
     }
 
@@ -82,8 +68,6 @@ namespace ProgressOnderwijsUtils
                 return (T)serializer.Deserialize(reader);
         }
 
-        public static void SerializeTo(XmlWriter xw, T val) { serializer.Serialize(xw, val); }
-
         public static string Serialize(T val)
         {
             using (var writer = new StringWriter()) {
@@ -93,7 +77,6 @@ namespace ProgressOnderwijsUtils
         }
 
         internal XmlSerializerHelper() { }
-        object IXmlSerializeHelper.DeserializeInst(XmlReader from) => (T)serializer.Deserialize(from);
         void IXmlSerializeHelper.SerializeToInst(XmlWriter xw, object val) { serializer.Serialize(xw, val); }
     }
 }
