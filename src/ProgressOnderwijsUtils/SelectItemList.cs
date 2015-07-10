@@ -30,18 +30,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public static SelectItem<T>[] CreateFromDb<T>(DataTable dt) { return Create(DbToEnumerable<T>(dt)); }
-
-        public static SelectItem<T>[] CreateFromDb<T>(DataTable dt, DataColumn idColumn, DataColumn textColumn)
-        {
-            return Create(DbToEnumerable<T>(dt, idColumn, textColumn));
-        }
-
         public static SelectItem<T>[] CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt) { return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt)); }
-
-        public static SelectItem<T>[] CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt, DataColumn idColumn, DataColumn textColumn)
-        {
-            return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt, idColumn, textColumn));
-        }
 
         static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
         {
@@ -73,7 +62,6 @@ namespace ProgressOnderwijsUtils
     public interface ISelectItem<out T>
     {
         T Value { get; }
-        ITranslatable Label { get; }
     }
 
     public interface IToSelectItem<T>
