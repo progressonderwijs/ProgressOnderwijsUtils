@@ -431,6 +431,13 @@ namespace ProgressOnderwijsUtils
                 public static TRowReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
                 // ReSharper restore UnusedParameter.Local
                 {
+                    FieldMapping.VerifyAndCreate(
+                        ColumnDefinition.GetFromReader(reader),
+                        "sql-query",
+                        metadata.ToArray(),
+                        "metaobject: " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)),
+                        fieldMappingMode);
+
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         throw new InvalidOperationException(
