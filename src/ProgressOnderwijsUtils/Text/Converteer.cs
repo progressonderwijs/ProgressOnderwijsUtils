@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -205,6 +205,8 @@ namespace ProgressOnderwijsUtils
 
             return ToText(d, formatString);
         }
+
+        public static LiteralTranslatable ToCheckmarkOrEmpty(bool value) { return value ? Translatable.Literal("✔") : Translatable.Empty; }
 
         /// <summary>
         /// Utility functie die de DatumFormaat enum vertaald naar de overeenkomstige format string.
