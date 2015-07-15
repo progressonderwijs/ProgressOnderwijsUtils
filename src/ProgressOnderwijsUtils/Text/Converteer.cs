@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
@@ -240,7 +239,7 @@ namespace ProgressOnderwijsUtils
                 return null;
             }
 
-            string datum = DateStringCheck(s);
+            var datum = DateStringCheck(s);
 
             switch (formaat) {
                 case DatumFormaat.ClieopDatum:
@@ -278,7 +277,7 @@ namespace ProgressOnderwijsUtils
                     break;
             }
 
-            ParseResult parseResult = TryParse(datum, typeof(DateTime), taal);
+            var parseResult = TryParse(datum, typeof(DateTime), taal);
             if (parseResult.IsOk) {
                 return (DateTime)parseResult.GetValue();
             }
@@ -344,7 +343,7 @@ namespace ProgressOnderwijsUtils
                 return CreateError(
                     ParseState.Malformed,
                     GenericEditText.MalformedData(ClrTypeNamesText.UserReadable(type, false))
-                        .Append(Translatable.Literal(" niet ", " not ", " nicht "), Converteer.ToText("\"" + s + "\".")));
+                        .Append(Translatable.Literal(" niet ", " not ", " nicht "), ToText("\"" + s + "\".")));
             }
 
             public static ParseResult Overflow => CreateError(ParseState.Overflow, GenericEditText.Overflow);
@@ -376,18 +375,18 @@ namespace ProgressOnderwijsUtils
                 return ParseResult.Geendata;
             }
 
-            Type nonNullableType = t.IfNullableGetNonNullableType();
-            bool canBeNull = !t.IsArray && (nonNullableType != null || !t.IsValueType);
-            Type fundamentalType = nonNullableType ?? t;
+            var nonNullableType = t.IfNullableGetNonNullableType();
+            var canBeNull = !t.IsArray && (nonNullableType != null || !t.IsValueType);
+            var fundamentalType = nonNullableType ?? t;
 
             if (canBeNull && s.Length == 0) {
                 return ParseResult.Ok(null); // dus s=="" levert null string op! - en dit vangt ook lege arrays, maar dat is ok; bij het parsen worden die niet-null
             } else if (fundamentalType == typeof(bool)) {
                 bool value;
-                return Boolean.TryParse(s, out value) ? ParseResult.Ok(value) : ParseResult.Malformed(t, s);
+                return bool.TryParse(s, out value) ? ParseResult.Ok(value) : ParseResult.Malformed(t, s);
             } else if (fundamentalType == typeof(DateTime)) {
                 DateTime parsedDate;
-                bool canParse = DateTime.TryParse(DateStringCheck(s), Taal.NL.GetCulture(), DateTimeStyles.None, out parsedDate);
+                var canParse = DateTime.TryParse(DateStringCheck(s), Taal.NL.GetCulture(), DateTimeStyles.None, out parsedDate);
                 return !canParse
                     ? ParseResult.Datumfout
                     : parsedDate.Year < YearMinimum || parsedDate.Year >= YearMaximum
@@ -456,7 +455,7 @@ namespace ProgressOnderwijsUtils
                 }
                 var components = s.Split(WHITESPACE, StringSplitOptions.RemoveEmptyEntries);
                 var retval = Array.CreateInstance(elementType, components.Length);
-                for (int i = 0; i < components.Length; i++) {
+                for (var i = 0; i < components.Length; i++) {
                     var elementParseResult = TryParse(components[i], elementType, taal);
                     if (elementParseResult.IsOk) {
                         retval.SetValue(elementParseResult.GetValue(), i);
