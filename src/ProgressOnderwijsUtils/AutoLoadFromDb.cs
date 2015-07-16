@@ -1,4 +1,5 @@
 ﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -134,7 +135,7 @@ namespace ProgressOnderwijsUtils
                 var lastColumnRead = 0;
                 try {
                     return unpacker(reader, out lastColumnRead);
-                } catch (Exception ex) {
+                } catch (Exception ex) when (!reader.IsClosed) {
                     var mps = MetaObject.GetMetaProperties<T>();
                     var metaObjectTypeName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T));
 
@@ -146,7 +147,8 @@ namespace ProgressOnderwijsUtils
                     var actualCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(mp.DataType);
 
                     throw new InvalidOperationException(
-                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name + " of type " + actualCsTypeName,
+                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name
+                            + " of type " + actualCsTypeName,
                         ex);
                 }
             }
@@ -326,7 +328,7 @@ namespace ProgressOnderwijsUtils
                         typeof(T[]),
                         new[] { listVarExpr },
                         listAssignment,
-                    //listInit,
+                        //listInit,
                         rowLoopExpr,
                         listToArrayExpr
                         ),
@@ -429,7 +431,7 @@ namespace ProgressOnderwijsUtils
 
                 // ReSharper disable UnusedParameter.Local
                 public static TRowReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
-                // ReSharper restore UnusedParameter.Local
+                    // ReSharper restore UnusedParameter.Local
                 {
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
