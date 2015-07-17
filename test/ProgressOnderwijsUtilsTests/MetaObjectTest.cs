@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtilsTests
         public void MetaObjectsAreAbstractOrNotInherited()
         {
             var metaObjectTypes =
-                from assembly in ClassNameConflicts.ProgressAssemblies
+                from assembly in ProgressAssemblies.All
                 from type in assembly.GetTypes()
                 where typeof(IMetaObject).IsAssignableFrom(type)
                 select type;
