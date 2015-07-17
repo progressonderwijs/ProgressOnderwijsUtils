@@ -346,24 +346,41 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
 
         public static bool MightContainHtml(string text)
         {
-            int lt = 0, gt = 0, amp = 0, semi = 0;
+            bool htmlLikeDataFound = false;
+            bool inTag = false;
+            bool inEntityRef = false;
+
             foreach (var c in text) {
                 switch (c) {
                     case '<':
-                        lt++;
+                        if (inTag || inEntityRef) {
+                            return false;
+                        }
+                        inTag = true;
+                        htmlLikeDataFound = true;
                         break;
                     case '>':
-                        gt++;
+                        if (inTag) {
+                            inTag = false;
+                        } else {
+                            return false;
+                        }
                         break;
                     case '&':
-                        amp++;
+                        if (inEntityRef) {
+                            return false;
+                        }
+                        inEntityRef = true;
+                        htmlLikeDataFound = true;
                         break;
                     case ';':
-                        semi++;
+                        if (inEntityRef) {
+                            inEntityRef = false;
+                        }
                         break;
                 }
             }
-            return (lt > 0 || amp > 0) && lt == gt && amp <= semi;
+            return htmlLikeDataFound && !inTag && !inEntityRef;
         }
     }
 }
