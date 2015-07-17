@@ -36,6 +36,7 @@ namespace ProgressOnderwijsUtils
 
         public static XhtmlData GenerateToolTipHtmlFragment(IEnumerable<XNode> text, IEnumerable<XNode> tooltip, ToolTipSettings settings)
         {
+            //TODO:HTML-tooltip
             return
                 Create(
                     tooltip != null && tooltip.Any()

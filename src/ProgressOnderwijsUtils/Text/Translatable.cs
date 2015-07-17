@@ -10,6 +10,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class Translatable
     {
+        public const string HtmlTooltipSuffix = "\aHTML\a";
         public static ITranslatable WithReplacement(this ITranslatable textdef, params ITranslatable[] toreplace) => new ReplacingTranslatable(textdef, toreplace);
         public static ITranslatable Append(this ITranslatable a, ITranslatable b) => new ConcatTranslatable(a, b);
         public static ITranslatable Append(this ITranslatable a, ITranslatable b, ITranslatable c) => new ConcatTranslatable(a, b, c);
@@ -26,6 +27,21 @@ namespace ProgressOnderwijsUtils
             }
 
             return new ConcatTranslatable(args);
+        }
+
+        public static ITranslatable TooltipIsHtml(this ITranslatable translatable) { return new HtmlTooltipTranslatable(translatable); }
+
+        class HtmlTooltipTranslatable : ITranslatable
+        {
+            readonly ITranslatable underlying;
+            public HtmlTooltipTranslatable(ITranslatable underlying) { this.underlying = underlying; }
+            public string GenerateUid() { return underlying.GenerateUid() + "<>"; }
+
+            public TextVal Translate(Taal lang)
+            {
+                var textVal = underlying.Translate(lang);
+                return new TextVal(textVal.Text, textVal.ExtraText + HtmlTooltipSuffix);
+            }
         }
 
         public static ITranslatable AppendTooltipAuto(this ITranslatable a, params object[] objects)
@@ -94,7 +110,6 @@ namespace ProgressOnderwijsUtils
         }
 
         public static ITranslatable TextToTooltip(this ITranslatable translatable) => CreateTranslatable(taal => "", taal => translatable.Translate(taal).Text);
-
         public static ITranslatable TooltipToText(this ITranslatable translatable) => CreateTranslatable(taal => translatable.Translate(taal).ExtraText, taal => "");
 
         public static ITranslatable ReplaceTooltipWithTooltip(this ITranslatable translatable, ITranslatable tt)
@@ -124,7 +139,7 @@ namespace ProgressOnderwijsUtils
             {
                 TextVal raw = m_text.Translate(lang);
                 var shortened = StringMeasurement.LimitTextLength(raw.Text, m_maxwidth);
-                return TextVal.Create(shortened.Item1, string.IsNullOrEmpty(raw.ExtraText) && shortened.Item2 ? raw.Text : raw.ExtraText);
+                return TextVal.Create(shortened.Item1, String.IsNullOrEmpty(raw.ExtraText) && shortened.Item2 ? raw.Text : raw.ExtraText);
             }
 
             public override string ToString() => GenerateUid();
