@@ -344,7 +344,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
             return XhtmlData.Create(sourceHtml.SelectMany(node => FilterElem(node, filter)));
         }
 
-        public static bool MightContainHtml(string text)
+        public static bool CannotBeValidHtml(string text)
         {
             bool htmlLikeDataFound = false;
             bool inTag = false;
@@ -354,7 +354,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                 switch (c) {
                     case '<':
                         if (inTag || inEntityRef) {
-                            return false;
+                            return true;
                         }
                         inTag = true;
                         htmlLikeDataFound = true;
@@ -363,12 +363,12 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                         if (inTag) {
                             inTag = false;
                         } else {
-                            return false;
+                            return true;
                         }
                         break;
                     case '&':
                         if (inEntityRef) {
-                            return false;
+                            return true;
                         }
                         inEntityRef = true;
                         htmlLikeDataFound = true;
@@ -380,7 +380,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                         break;
                 }
             }
-            return htmlLikeDataFound && !inTag && !inEntityRef;
+            return !htmlLikeDataFound || inTag || inEntityRef;
         }
     }
 }
