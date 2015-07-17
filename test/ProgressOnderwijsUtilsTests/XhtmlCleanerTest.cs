@@ -110,6 +110,23 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
+        public void DetectsAnHtmlFragmentWithNestedEntityRefAsHtml()
+        {
+            PAssert.That(() => XhtmlCleaner.MightContainHtml(@"This is <b id=""&amp;"">not</b> just text!"));
+        }
+
+        [Test]
+        public void DetectsAnHtmlFragmentWithOpenTagsNestedAsInvalid()
+        {
+            PAssert.That(() => !XhtmlCleaner.MightContainHtml(@"This is <b <b>bla</b> id>invalid</b>!"));
+        }
+        [Test]
+        public void DetectsAnHtmlFragmentWithTagInEntityAsInvalid()
+        {
+            PAssert.That(() => !XhtmlCleaner.MightContainHtml(@"This is &amp <br/> ;"));
+        }
+
+        [Test]
         public void DetectsUnencodedAmpersandTextAsNonHtml()
         {
             PAssert.That(() => !XhtmlCleaner.MightContainHtml(@"Text & so on is <i>subtly</i> wrong."));
