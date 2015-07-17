@@ -110,6 +110,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public static ITranslatable TextToTooltip(this ITranslatable translatable) => CreateTranslatable(taal => "", taal => translatable.Translate(taal).Text);
+
         public static ITranslatable TooltipToText(this ITranslatable translatable) => CreateTranslatable(taal => translatable.Translate(taal).ExtraText, taal => "");
 
         public static ITranslatable ReplaceTooltipWithTooltip(this ITranslatable translatable, ITranslatable tt)
@@ -139,7 +140,7 @@ namespace ProgressOnderwijsUtils
             {
                 TextVal raw = m_text.Translate(lang);
                 var shortened = StringMeasurement.LimitTextLength(raw.Text, m_maxwidth);
-                return TextVal.Create(shortened.Item1, String.IsNullOrEmpty(raw.ExtraText) && shortened.Item2 ? raw.Text : raw.ExtraText);
+                return TextVal.Create(shortened.Item1, string.IsNullOrEmpty(raw.ExtraText) && shortened.Item2 ? raw.Text : raw.ExtraText);
             }
 
             public override string ToString() => GenerateUid();
