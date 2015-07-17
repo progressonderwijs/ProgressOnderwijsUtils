@@ -185,11 +185,11 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
 
         static string StrWithoutNonXmlEntities(string str)
         {
-            string strWithoutNonXmlEntities =
+            var strWithoutNonXmlEntities =
                 entityRegex.Replace(
                     str,
                     match => {
-                        string entityReference = match.Value.Substring(1, match.Length - 2);
+                        var entityReference = match.Value.Substring(1, match.Length - 2);
 
                         char? refersTo =
                             entityReference == "lt" || entityReference == "gt" || entityReference == "amp" || entityReference == "apos" || entityReference == "quot"
@@ -211,7 +211,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         {
             var output = new XElement(input);
             XNode current = output;
-            int currentMax = length;
+            var currentMax = length;
             var currentLen = current.ToString(SaveOptions.DisableFormatting).Length;
             //assume that xml length is additive; i.e. that adding a child adds precisely as much length as the child itself is long.
             //in debug mode, this assumption is asserted; but in release mode, this assumption avoids quadratic complexity
@@ -225,21 +225,21 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                     current.Remove();
                     return output;
                 } else if (current is XText) {
-                    var text = current as XText;
+                    var text = (XText)current;
                     //since XText does some \r magic, we can't just assume current.ToString is equivalent to text.Value
                     text.Value = current.ToString(SaveOptions.DisableFormatting).Replace('\r', ' ').Substring(0, currentMax);
                     return output;
                 }
                 var currentEl = (XElement)current;
 
-                int lastKidLen = currentEl.LastNode.ToString(SaveOptions.DisableFormatting).Length;
+                var lastKidLen = currentEl.LastNode.ToString(SaveOptions.DisableFormatting).Length;
                 if (currentLen - lastKidLen > currentMax) {
                     currentEl.LastNode.Remove();
                     currentLen = !currentEl.IsEmpty ? currentLen - lastKidLen : current.ToString(SaveOptions.DisableFormatting).Length;
                     Debug.Assert(currentLen == current.ToString(SaveOptions.DisableFormatting).Length, "Current length is inconsistent!");
                 } else {
-                    int restLen = currentLen - lastKidLen;
-                    int lastKidMax = currentMax - restLen;
+                    var restLen = currentLen - lastKidLen;
+                    var lastKidMax = currentMax - restLen;
                     current = currentEl.LastNode;
                     currentLen = lastKidLen;
                     Debug.Assert(currentLen == current.ToString(SaveOptions.DisableFormatting).Length, "Current length is inconsistent!");
@@ -254,9 +254,9 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         /// </summary>
         public static string TidyHtmlStringAndLimitLength(string input, int length)
         {
-            int wrapperLength = "<x></x>".Length;
-            XElement sanitizedWrappedInput = new XElement("x", HeuristicParse(input).Sanitize());
-            XElement trimmedVersion = int.MaxValue - wrapperLength > length
+            var wrapperLength = "<x></x>".Length;
+            var sanitizedWrappedInput = new XElement("x", HeuristicParse(input).Sanitize());
+            var trimmedVersion = int.MaxValue - wrapperLength > length
                 ? LimitLength(sanitizedWrappedInput, length + wrapperLength)
                 : sanitizedWrappedInput;
             return XWrappedToString(trimmedVersion);
