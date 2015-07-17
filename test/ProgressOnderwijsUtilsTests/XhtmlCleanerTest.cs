@@ -96,5 +96,29 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(
                 () => XhtmlCleaner.SanitizeHtmlString(@"This <p style=""margin-left: 40px;"">is indented</p>!") == @"This <p style=""margin-left: 40px;"">is indented</p>!");
         }
+
+        [Test]
+        public void DetectsNormalTextAsNonHtml()
+        {
+            PAssert.That(() => !XhtmlCleaner.MightContainHtml(@"This is just text!"));
+        }
+
+        [Test]
+        public void DetectsAnHtmlFragmentAsHtml()
+        {
+            PAssert.That(() => XhtmlCleaner.MightContainHtml(@"This is <b>not</b> just text!"));
+        }
+
+        [Test]
+        public void DetectsUnencodedAmpersandTextAsNonHtml()
+        {
+            PAssert.That(() => !XhtmlCleaner.MightContainHtml(@"Text & so on is <i>subtly</i> wrong."));
+        }
+
+        [Test]
+        public void DetectsUnmatchedLessThanAsNonHtml()
+        {
+            PAssert.That(() => !XhtmlCleaner.MightContainHtml(@"x < y"));
+        }
     }
 }

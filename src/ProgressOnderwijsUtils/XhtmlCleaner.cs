@@ -343,5 +343,27 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
             filter = filter ?? HtmlFilter.Default;
             return XhtmlData.Create(sourceHtml.SelectMany(node => FilterElem(node, filter)));
         }
+
+        public static bool MightContainHtml(string text)
+        {
+            int lt = 0, gt = 0, amp = 0, semi = 0;
+            foreach (var c in text) {
+                switch (c) {
+                    case '<':
+                        lt++;
+                        break;
+                    case '>':
+                        gt++;
+                        break;
+                    case '&':
+                        amp++;
+                        break;
+                    case ';':
+                        semi++;
+                        break;
+                }
+            }
+            return (lt > 0 || amp > 0) && lt == gt && amp <= semi;
+        }
     }
 }
