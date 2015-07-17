@@ -343,5 +343,44 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
             filter = filter ?? HtmlFilter.Default;
             return XhtmlData.Create(sourceHtml.SelectMany(node => FilterElem(node, filter)));
         }
+
+        public static bool CannotBeValidHtml(string text)
+        {
+            bool htmlLikeDataFound = false;
+            bool inTag = false;
+            bool inEntityRef = false;
+
+            foreach (var c in text) {
+                switch (c) {
+                    case '<':
+                        if (inTag || inEntityRef) {
+                            return true;
+                        }
+                        inTag = true;
+                        htmlLikeDataFound = true;
+                        break;
+                    case '>':
+                        if (inTag) {
+                            inTag = false;
+                        } else {
+                            return true;
+                        }
+                        break;
+                    case '&':
+                        if (inEntityRef) {
+                            return true;
+                        }
+                        inEntityRef = true;
+                        htmlLikeDataFound = true;
+                        break;
+                    case ';':
+                        if (inEntityRef) {
+                            inEntityRef = false;
+                        }
+                        break;
+                }
+            }
+            return !htmlLikeDataFound || inTag || inEntityRef;
+        }
     }
 }
