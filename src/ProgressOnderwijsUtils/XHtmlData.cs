@@ -86,6 +86,8 @@ namespace ProgressOnderwijsUtils
             // ReSharper restore CoVariantArrayConversion
         }
 
+        public string TextContent => ToXHtmlDataElement().Value;
+
         public IEnumerator<XNode> GetEnumerator() => Nodes.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
