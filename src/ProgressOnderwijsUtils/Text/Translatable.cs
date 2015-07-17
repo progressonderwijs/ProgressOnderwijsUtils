@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class Translatable
     {
-        public const string HtmlTooltipSuffix = "\aHTML\a";
+        public const string HtmlTooltipToken = "\aHTML\a";
         public static ITranslatable WithReplacement(this ITranslatable textdef, params ITranslatable[] toreplace) => new ReplacingTranslatable(textdef, toreplace);
         public static ITranslatable Append(this ITranslatable a, ITranslatable b) => new ConcatTranslatable(a, b);
         public static ITranslatable Append(this ITranslatable a, ITranslatable b, ITranslatable c) => new ConcatTranslatable(a, b, c);
@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils
             public TextVal Translate(Taal lang)
             {
                 var textVal = underlying.Translate(lang);
-                return new TextVal(textVal.Text, textVal.ExtraText + HtmlTooltipSuffix);
+                return new TextVal(textVal.Text, textVal.ExtraText + HtmlTooltipToken);
             }
         }
 
