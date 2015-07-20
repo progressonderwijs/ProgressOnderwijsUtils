@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.AppVersion;
+using Progress.Business.Data.GenericLijst;
 using Progress.Business.Organisaties;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -547,6 +546,16 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => filterNonSenseE.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
             PAssert.That(() => filterNonSenseF.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
             PAssert.That(() => filterNonSenseG.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
+        }
+
+        [Test]
+        public void FilterCreator() {
+
+            var filter = new DataSourceBase<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).IsNull();
+            PAssert.That(() => filter.ToQueryBuilder() == QueryBuilder.Create("IntNullable is null"));
+
+            var filter2 = new DataSourceBase<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).Equal(3);
+            PAssert.That(() => filter2.ToQueryBuilder().ToString() == QueryBuilder.Create("IntNullable=3").ToString()); //TODO: waarom is ToString nodig?
         }
     }
 
