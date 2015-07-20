@@ -77,6 +77,12 @@ namespace ProgressOnderwijsUtils
             return new CriteriumFilter(kolomnaam, comparer, waarde);
         }
 
+        public static FilterBase CreateCriterium<TMetaObject, T>(Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, object waarde)
+        {
+            var kolomnaam = MetaObject.GetMemberInfo(columnToFilter).Name;
+            return new CriteriumFilter(kolomnaam, comparer, waarde);
+        }
+
         // ReSharper disable once UnusedParameter.Global
         public static FilterBase CreateFilter<TMetaObject, T>(
             this IFilterFactory<TMetaObject> target,
