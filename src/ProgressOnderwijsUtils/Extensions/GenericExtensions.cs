@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace ProgressOnderwijsUtils
 {
@@ -40,6 +39,7 @@ namespace ProgressOnderwijsUtils
 
         public static bool In(this string obj, params string[] values) => values.Contains(obj);
 
+        [UsefulToKeep("overload")]
         public static bool In<T>(this T? obj, params T?[] values)
             where T : struct, IConvertible, IComparable { return values.Contains(obj); }
     }
