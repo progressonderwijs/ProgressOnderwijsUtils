@@ -32,29 +32,6 @@ namespace ProgressOnderwijsUtils
         public int Count => vals.Count;
     }
 
-    public sealed class ReadOnlyCollectionView_Mapped<T, TOut> : IReadOnlyCollection<TOut>
-    {
-        readonly IReadOnlyCollection<T> source;
-        readonly Func<T, TOut> map;
-
-        public ReadOnlyCollectionView_Mapped(IReadOnlyCollection<T> source, Func<T, TOut> map)
-        {
-            this.source = source;
-            this.map = map;
-        }
-
-        public int Count => source.Count;
-
-        public IEnumerator<TOut> GetEnumerator()
-        {
-            foreach (var item in source) {
-                yield return map(item);
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
-
     public sealed class CollectionView_Mapped<T, TOut> : IReadOnlyCollection<TOut>
     {
         readonly ICollection<T> source;
