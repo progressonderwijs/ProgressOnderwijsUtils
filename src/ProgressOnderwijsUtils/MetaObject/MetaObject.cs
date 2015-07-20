@@ -31,6 +31,7 @@ namespace ProgressOnderwijsUtils
             return MetaInfo<TMetaObject>.Instance.GetByExpression(propertyExpression);
         }
 
+        [UsefulToKeep("library method for getting base-class metaproperty")]
         public static class GetByInheritedExpression<TMetaObject>
             where TMetaObject : IMetaObject
         {
