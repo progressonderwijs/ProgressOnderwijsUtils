@@ -555,7 +555,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => filter.ToQueryBuilder() == QueryBuilder.Create("IntNullable is null"));
 
             var filter2 = new DataSourceBase<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).Equal(3);
-            PAssert.That(() => filter2.ToQueryBuilder().ToString() == QueryBuilder.Create("IntNullable=3").ToString()); //TODO: waarom is ToString nodig?
+            PAssert.That(() => filter2.ToQueryBuilder() == QueryBuilder.Create("IntNullable={0}",3));
         }
     }
 
