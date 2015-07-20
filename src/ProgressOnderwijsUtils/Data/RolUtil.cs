@@ -8,20 +8,6 @@ namespace ProgressOnderwijsUtils
 {
     public static class RolUtil
     {
-        class Comparer : IComparer<Rol>
-        {
-            public int Compare(Rol x, Rol y)
-            {
-                return x == y
-                    ? 0
-                    : x.OnderliggendeToegangsRollen().Contains(y)
-                        ? -1
-                        : y.OnderliggendeToegangsRollen().Contains(x)
-                            ? 1
-                            : x < y ? -1 : 1;
-            }
-        }
-
         class RolRelations
         {
             public Rol Rol;
