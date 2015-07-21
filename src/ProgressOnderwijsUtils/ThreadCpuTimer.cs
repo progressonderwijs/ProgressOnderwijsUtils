@@ -10,13 +10,14 @@ namespace ProgressOnderwijsUtils
         readonly TimeSpan start;
         readonly Stopwatch wallclock;
         readonly ProcessThread thread;
+        static readonly Process currentProcess = Process.GetCurrentProcess();
 
         ThreadCpuTimer()
         {
 #pragma warning disable 612,618
             var id = AppDomain.GetCurrentThreadId();
 #pragma warning restore 612,618
-            thread = Process.GetCurrentProcess().Threads.Cast<ProcessThread>().Single(pt => pt.Id == id);
+            thread = currentProcess.Threads.Cast<ProcessThread>().Single(pt => pt.Id == id);
             start = thread.TotalProcessorTime;
             wallclock = Stopwatch.StartNew();
         }
