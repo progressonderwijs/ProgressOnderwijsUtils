@@ -42,9 +42,9 @@ namespace ProgressOnderwijsUtils
 
             static FieldHelperClass()
             {
-                Type type = typeof(T);
+                var type = typeof(T);
                 if (type.IsValueType) {
-                    Type nullableBase = type.IfNullableGetNonNullableType();
+                    var nullableBase = type.IfNullableGetNonNullableType();
                     if (nullableBase == null) {
                         Extractor = ExtractValueField;
                     } else if (!nullableBase.IsValueType) {
@@ -68,5 +68,8 @@ namespace ProgressOnderwijsUtils
         static TStruct? ExtractNullableStruct<TStruct>(object obj) where TStruct : struct
             // ReSharper restore UnusedMember.Local
         { return obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj; }
+
+        static readonly MethodInfo genericCastMethod = ((Func<object, int>)DBNullRemover.Cast<int>).Method.GetGenericMethodDefinition();
+        public static object DynamicCast(object val, Type type) { return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val }); }
     }
 }
