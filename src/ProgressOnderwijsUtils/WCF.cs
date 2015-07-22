@@ -3,13 +3,12 @@ using System.ServiceModel;
 
 namespace ProgressOnderwijsUtils
 {
-    public interface IClientHandle<out T>
+    public interface IClientHandle<out T>: IDisposable
     {
-        void Call(Action<T> call);
         TR Call<TR>(Func<T, TR> call);
     }
 
-    public class ClientHandle<T, TB> : IClientHandle<TB>, IDisposable
+    public class ClientHandle<T, TB> : IClientHandle<TB>
         where T : class
         where TB : ClientBase<T>, T
     {
@@ -47,18 +46,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public void Call(Action<TB> call)
-        {
-            try {
-                call(client);
-            } catch (FaultException) {
-                throw;
-            } catch (CommunicationException) {
-                // could be timeout on the channel, retry
-                call(client);
-            }
-        }
-
         public TR Call<TR>(Func<TB, TR> call)
         {
             try {
@@ -72,7 +59,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public class ClientFactoryHandle<T> : IClientHandle<T>, IDisposable
+    public class ClientFactoryHandle<T> : IClientHandle<T>
     {
         readonly object monitor;
         readonly ChannelFactory<T> factory;
@@ -106,18 +93,6 @@ namespace ProgressOnderwijsUtils
                 Client.Close();
             } catch {
                 Client.Abort();
-            }
-        }
-
-        public void Call(Action<T> call)
-        {
-            try {
-                call(client);
-            } catch (FaultException) {
-                throw;
-            } catch (CommunicationException) {
-                // could be timeout on the channel, retry
-                call(client);
             }
         }
 
