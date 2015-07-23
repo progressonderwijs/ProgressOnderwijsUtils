@@ -6,7 +6,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
-using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
@@ -15,23 +14,58 @@ namespace ProgressOnderwijsUtils
         IEnumerable<Tuple<string, TimeSpan>> AllQueries { get; }
         TimeSpan AllQueryDurations { get; }
         int QueryCount { get; }
-        Func<string> SlowestQuery { get; }
         TimeSpan SlowestQueryDuration { get; }
         void FinishDisposableTimer(Func<string> commandText, TimeSpan duration);
         IDisposable StartQueryTimer(string commandText);
         IDisposable StartQueryTimer(SqlCommand sqlCommand);
     }
 
+    public enum QueryTracerParameterValues
+    {
+        /// <summary>
+        /// Don't log query argument values
+        /// </summary>
+        Excluded,
+        /// <summary>
+        /// Include query argument values (even things like passwords)
+        /// </summary>
+        Included
+    }
+
     public static class QueryTracer
     {
-        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, bool includeSensitiveInfo)
+        public static IQueryTracer CreateTracer(QueryTracerParameterValues includeSensitiveInfo) { return new QueryTracerImpl(includeSensitiveInfo); }
+        public static IQueryTracer CreateNullTracer() { return new NullTracer(); }
+
+        class NullTracer : IQueryTracer
         {
-            var prefix = !includeSensitiveInfo
-                ? ""
-                : CommandParamString(sqlCommand);
-            //when machine is in LAN, we're not running on the production server: assume it's OK to include potentially confidential info like passwords in debug output.
-            var commandText = prefix + sqlCommand.CommandText;
-            return commandText;
+            public IEnumerable<Tuple<string, TimeSpan>> AllQueries => ArrayExtensions.Empty<Tuple<string, TimeSpan>>();
+            public TimeSpan AllQueryDurations => TimeSpan.Zero;
+            public int QueryCount => 0;
+            public TimeSpan SlowestQueryDuration => TimeSpan.Zero;
+            public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration) { }
+            public IDisposable StartQueryTimer(string commandText) { return NullDisposable.Instance; }
+            public IDisposable StartQueryTimer(SqlCommand sqlCommand) { return NullDisposable.Instance; }
+        }
+
+        class NullDisposable : IDisposable
+        {
+            public void Dispose() { }
+            public static readonly NullDisposable Instance = new NullDisposable();
+        }
+
+        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, QueryTracerParameterValues includeSensitiveInfo)
+        {
+            return CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
+        }
+
+        static string CommandParamStringOrEmpty(SqlCommand sqlCommand, QueryTracerParameterValues includeSensitiveInfo)
+        {
+            if (includeSensitiveInfo == QueryTracerParameterValues.Included) {
+                return CommandParamString(sqlCommand);
+            } else {
+                return "";
+            }
         }
 
         static string CommandParamString(SqlCommand sqlCommand)
@@ -39,13 +73,15 @@ namespace ProgressOnderwijsUtils
             return
                 sqlCommand.Parameters.Cast<SqlParameter>()
                     .Select(
-                        par => "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par) + ";\nSET " + par.ParameterName + " = " + SqlValueString(par.Value) + ";\n")
+                        par =>
+                            "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par) + ";\nSET " + par.ParameterName + " = " + InsecureSqlDebugString(par.Value)
+                                + ";\n")
                     .JoinStrings();
         }
 
         static string SqlParamTypeString(SqlParameter par) => par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
-        static string SqlValueString(object p) // Not Secure, just a debug tool!
+        static string InsecureSqlDebugString(object p)
         {
             if (p is DBNull || p == null) {
                 return "NULL";
@@ -75,8 +111,8 @@ namespace ProgressOnderwijsUtils
             public int QueryCount => queryCount;
             int queryCount;
             int queriesCompleted;
-            readonly bool IncludeSensitiveInfo;
-            public QueryTracerImpl(bool inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
+            readonly QueryTracerParameterValues IncludeSensitiveInfo;
+            public QueryTracerImpl(QueryTracerParameterValues inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
             readonly object Sync = new object();
             readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
             Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
