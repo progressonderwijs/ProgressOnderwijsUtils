@@ -22,44 +22,7 @@ namespace ProgressOnderwijsUtils
         IDisposable StartQueryTimer(SqlCommand sqlCommand);
     }
 
-    public sealed class QueryTracer : IQueryTracer
-    {
-        public int QueryCount => queryCount;
-        int queryCount;
-        int queriesCompleted;
-        readonly bool IncludeSensitiveInfo;
-        public QueryTracer(bool inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
-        readonly object Sync = new object();
-        readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
-        Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
-
-        [UsefulToKeep("library method")]
-        public Func<string> SlowestQuery => slowest.Item2;
-
-        public TimeSpan SlowestQueryDuration => slowest.Item1;
-        public IEnumerable<Tuple<string, TimeSpan>> AllQueries => allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1));
-        public TimeSpan AllQueryDurations { get; private set; }
-
-        IDisposable StartQueryTimer(Func<string> commandText)
-        {
-            if (commandText == null) {
-                throw new ArgumentNullException(nameof(commandText));
-            }
-
-            return new QueryTimer(this, commandText);
-        }
-
-        public IDisposable StartQueryTimer(string commandText)
-        {
-            if (commandText == null) {
-                throw new ArgumentNullException(nameof(commandText));
-            }
-
-            return StartQueryTimer(() => commandText);
-        }
-
-        public IDisposable StartQueryTimer(SqlCommand sqlCommand) => StartQueryTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
-
+    public static class QueryTracer {
         public static string DebugFriendlyCommandText(SqlCommand sqlCommand, bool includeSensitiveInfo)
         {
             var prefix = !includeSensitiveInfo
@@ -105,6 +68,46 @@ namespace ProgressOnderwijsUtils
                 }
             }
         }
+    }
+
+    public sealed class QueryTracerImpl : IQueryTracer
+    {
+        public int QueryCount => queryCount;
+        int queryCount;
+        int queriesCompleted;
+        readonly bool IncludeSensitiveInfo;
+        public QueryTracerImpl(bool inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
+        readonly object Sync = new object();
+        readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
+        Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
+
+        [UsefulToKeep("library method")]
+        public Func<string> SlowestQuery => slowest.Item2;
+
+        public TimeSpan SlowestQueryDuration => slowest.Item1;
+        public IEnumerable<Tuple<string, TimeSpan>> AllQueries => allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1));
+        public TimeSpan AllQueryDurations { get; private set; }
+
+        IDisposable StartQueryTimer(Func<string> commandText)
+        {
+            if (commandText == null) {
+                throw new ArgumentNullException(nameof(commandText));
+            }
+
+            return new QueryTimer(this, commandText);
+        }
+
+        public IDisposable StartQueryTimer(string commandText)
+        {
+            if (commandText == null) {
+                throw new ArgumentNullException(nameof(commandText));
+            }
+
+            return StartQueryTimer(() => commandText);
+        }
+
+        public IDisposable StartQueryTimer(SqlCommand sqlCommand) => StartQueryTimer(QueryTracer.DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
+
 
         public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)
         {
@@ -121,11 +124,11 @@ namespace ProgressOnderwijsUtils
 
         sealed class QueryTimer : IDisposable
         {
-            readonly QueryTracer tracer;
+            readonly QueryTracerImpl tracer;
             readonly Func<string> query;
             readonly Stopwatch queryTimer;
 
-            internal QueryTimer(QueryTracer tracer, Func<string> query)
+            internal QueryTimer(QueryTracerImpl tracer, Func<string> query)
             {
                 this.tracer = tracer;
                 this.query = query;
