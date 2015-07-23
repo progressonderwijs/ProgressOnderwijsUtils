@@ -94,8 +94,7 @@ namespace ProgressOnderwijsUtils
             int queryCount;
             int queriesCompleted;
             readonly bool IncludeSensitiveInfo;
-            public QueryTracerImpl(bool inlcudeSensiveInfo)
-            { IncludeSensitiveInfo = inlcudeSensiveInfo; }
+            public QueryTracerImpl(bool inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
             readonly object Sync = new object();
             readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
             Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
@@ -105,8 +104,7 @@ namespace ProgressOnderwijsUtils
 
             public TimeSpan SlowestQueryDuration => slowest.Item1;
             public IEnumerable<Tuple<string, TimeSpan>> AllQueries => allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1));
-            public TimeSpan AllQueryDurations
-            { get; private set; }
+            public TimeSpan AllQueryDurations { get; private set; }
 
             IDisposable StartQueryTimer(Func<string> commandText)
             {
