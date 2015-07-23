@@ -22,44 +22,8 @@ namespace ProgressOnderwijsUtils
         IDisposable StartQueryTimer(SqlCommand sqlCommand);
     }
 
-    public sealed class QueryTracer : IQueryTracer
+    public static class QueryTracer
     {
-        public int QueryCount => queryCount;
-        int queryCount;
-        int queriesCompleted;
-        readonly bool IncludeSensitiveInfo;
-        public QueryTracer(bool inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
-        readonly object Sync = new object();
-        readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
-        Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
-
-        [UsefulToKeep("library method")]
-        public Func<string> SlowestQuery => slowest.Item2;
-
-        public TimeSpan SlowestQueryDuration => slowest.Item1;
-        public IEnumerable<Tuple<string, TimeSpan>> AllQueries => allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1));
-        public TimeSpan AllQueryDurations { get; private set; }
-
-        IDisposable StartQueryTimer(Func<string> commandText)
-        {
-            if (commandText == null) {
-                throw new ArgumentNullException(nameof(commandText));
-            }
-
-            return new QueryTimer(this, commandText);
-        }
-
-        public IDisposable StartQueryTimer(string commandText)
-        {
-            if (commandText == null) {
-                throw new ArgumentNullException(nameof(commandText));
-            }
-
-            return StartQueryTimer(() => commandText);
-        }
-
-        public IDisposable StartQueryTimer(SqlCommand sqlCommand) => StartQueryTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
-
         public static string DebugFriendlyCommandText(SqlCommand sqlCommand, bool includeSensitiveInfo)
         {
             var prefix = !includeSensitiveInfo
@@ -106,38 +70,77 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)
+        public sealed class QueryTracerImpl : IQueryTracer
         {
-            lock (Sync) {
-                var entry = Tuple.Create(duration, commandText);
+            public int QueryCount => queryCount;
+            int queryCount;
+            int queriesCompleted;
+            readonly bool IncludeSensitiveInfo;
+            public QueryTracerImpl(bool inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
+            readonly object Sync = new object();
+            readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
+            Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
 
-                if (SlowestQueryDuration < duration) {
-                    slowest = Tuple.Create(duration, commandText);
+            [UsefulToKeep("library method")]
+            public Func<string> SlowestQuery => slowest.Item2;
+
+            public TimeSpan SlowestQueryDuration => slowest.Item1;
+            public IEnumerable<Tuple<string, TimeSpan>> AllQueries => allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1));
+            public TimeSpan AllQueryDurations { get; private set; }
+
+            IDisposable StartQueryTimer(Func<string> commandText)
+            {
+                if (commandText == null) {
+                    throw new ArgumentNullException(nameof(commandText));
                 }
-                allqueries.Add(entry);
-                AllQueryDurations += duration;
-            }
-        }
 
-        sealed class QueryTimer : IDisposable
-        {
-            readonly QueryTracer tracer;
-            readonly Func<string> query;
-            readonly Stopwatch queryTimer;
-
-            internal QueryTimer(QueryTracer tracer, Func<string> query)
-            {
-                this.tracer = tracer;
-                this.query = query;
-                Interlocked.Increment(ref tracer.queryCount);
-                queryTimer = Stopwatch.StartNew();
+                return new QueryTimer(this, commandText);
             }
 
-            public void Dispose()
+            public IDisposable StartQueryTimer(string commandText)
             {
-                queryTimer.Stop();
-                Interlocked.Increment(ref tracer.queriesCompleted);
-                tracer.FinishDisposableTimer(query, queryTimer.Elapsed);
+                if (commandText == null) {
+                    throw new ArgumentNullException(nameof(commandText));
+                }
+
+                return StartQueryTimer(() => commandText);
+            }
+
+            public IDisposable StartQueryTimer(SqlCommand sqlCommand) => StartQueryTimer(QueryTracer.DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
+
+            public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)
+            {
+                lock (Sync) {
+                    var entry = Tuple.Create(duration, commandText);
+
+                    if (SlowestQueryDuration < duration) {
+                        slowest = Tuple.Create(duration, commandText);
+                    }
+                    allqueries.Add(entry);
+                    AllQueryDurations += duration;
+                }
+            }
+
+            sealed class QueryTimer : IDisposable
+            {
+                readonly QueryTracerImpl tracer;
+                readonly Func<string> query;
+                readonly Stopwatch queryTimer;
+
+                internal QueryTimer(QueryTracerImpl tracer, Func<string> query)
+                {
+                    this.tracer = tracer;
+                    this.query = query;
+                    Interlocked.Increment(ref tracer.queryCount);
+                    queryTimer = Stopwatch.StartNew();
+                }
+
+                public void Dispose()
+                {
+                    queryTimer.Stop();
+                    Interlocked.Increment(ref tracer.queriesCompleted);
+                    tracer.FinishDisposableTimer(query, queryTimer.Elapsed);
+                }
             }
         }
     }
