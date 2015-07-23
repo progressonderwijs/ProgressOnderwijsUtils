@@ -10,23 +10,37 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
-    public sealed class QueryTracer
+    public interface IQueryTracer
+    {
+        IEnumerable<Tuple<string, TimeSpan>> AllQueries { get; }
+        TimeSpan AllQueryDurations { get; }
+        int QueryCount { get; }
+        Func<string> SlowestQuery { get; }
+        TimeSpan SlowestQueryDuration { get; }
+        void FinishDisposableTimer(Func<string> commandText, TimeSpan duration);
+        IDisposable StartQueryTimer(string commandText);
+        IDisposable StartQueryTimer(SqlCommand sqlCommand);
+    }
+
+    public sealed class QueryTracer : IQueryTracer
     {
         public int QueryCount => queryCount;
         int queryCount;
         int queriesCompleted;
-        public readonly bool IncludeSensitiveInfo;
+        readonly bool IncludeSensitiveInfo;
         public QueryTracer(bool inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
-        public readonly object Sync = new object();
+        readonly object Sync = new object();
         readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
         Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
+
         [UsefulToKeep("library method")]
         public Func<string> SlowestQuery => slowest.Item2;
+
         public TimeSpan SlowestQueryDuration => slowest.Item1;
         public IEnumerable<Tuple<string, TimeSpan>> AllQueries => allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1));
         public TimeSpan AllQueryDurations { get; private set; }
 
-        public IDisposable StartQueryTimer(Func<string> commandText)
+        IDisposable StartQueryTimer(Func<string> commandText)
         {
             if (commandText == null) {
                 throw new ArgumentNullException(nameof(commandText));
@@ -48,7 +62,7 @@ namespace ProgressOnderwijsUtils
 
         public static string DebugFriendlyCommandText(SqlCommand sqlCommand, bool includeSensitiveInfo)
         {
-            string prefix = !includeSensitiveInfo
+            var prefix = !includeSensitiveInfo
                 ? ""
                 : CommandParamString(sqlCommand);
             //when machine is in LAN, we're not running on the production server: assume it's OK to include potentially confidential info like passwords in debug output.
@@ -56,7 +70,7 @@ namespace ProgressOnderwijsUtils
             return commandText;
         }
 
-        public static string CommandParamString(SqlCommand sqlCommand)
+        static string CommandParamString(SqlCommand sqlCommand)
         {
             return
                 sqlCommand.Parameters.Cast<SqlParameter>()
@@ -67,7 +81,7 @@ namespace ProgressOnderwijsUtils
 
         static string SqlParamTypeString(SqlParameter par) => par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
-        public static string SqlValueString(object p) // Not Secure, just a debug tool!
+        static string SqlValueString(object p) // Not Secure, just a debug tool!
         {
             if (p is DBNull || p == null) {
                 return "NULL";
