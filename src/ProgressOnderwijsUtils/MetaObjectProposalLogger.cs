@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
         public static void RedirectLoggingToConsole() { writer = Console.Out.WriteLine; }
 
         [Conditional("DEBUG")]
-        public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, QueryTracer tracer)
+        public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, IQueryTracer tracer)
         {
             var commandText = QueryTracer.DebugFriendlyCommandText(command, false);
             bool wasAdded = false;
