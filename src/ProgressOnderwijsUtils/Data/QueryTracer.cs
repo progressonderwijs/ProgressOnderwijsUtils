@@ -20,9 +20,21 @@ namespace ProgressOnderwijsUtils
         IDisposable StartQueryTimer(SqlCommand sqlCommand);
     }
 
+    public enum QueryTracerParameterValues
+    {
+        /// <summary>
+        /// Don't log query argument values
+        /// </summary>
+        Excluded,
+        /// <summary>
+        /// Include query argument values (even things like passwords)
+        /// </summary>
+        Included
+    }
+
     public static class QueryTracer
     {
-        public static IQueryTracer CreateTracer(bool includeSensitiveInfo) { return new QueryTracerImpl(includeSensitiveInfo); }
+        public static IQueryTracer CreateTracer(QueryTracerParameterValues includeSensitiveInfo) { return new QueryTracerImpl(includeSensitiveInfo); }
         public static IQueryTracer CreateNullTracer() { return new NullTracer(); }
 
         class NullTracer : IQueryTracer
@@ -42,28 +54,34 @@ namespace ProgressOnderwijsUtils
             public static readonly NullDisposable Instance = new NullDisposable();
         }
 
-        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, bool includeSensitiveInfo)
+        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, QueryTracerParameterValues includeSensitiveInfo)
         {
-            string prefix = !includeSensitiveInfo
-                ? ""
-                : CommandParamString(sqlCommand);
-            //when machine is in LAN, we're not running on the production server: assume it's OK to include potentially confidential info like passwords in debug output.
-            var commandText = prefix + sqlCommand.CommandText;
-            return commandText;
+            return CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
         }
 
-        public static string CommandParamString(SqlCommand sqlCommand)
+        static string CommandParamStringOrEmpty(SqlCommand sqlCommand, QueryTracerParameterValues includeSensitiveInfo)
+        {
+            if (includeSensitiveInfo == QueryTracerParameterValues.Included) {
+                return CommandParamString(sqlCommand);
+            } else {
+                return "";
+            }
+        }
+
+        static string CommandParamString(SqlCommand sqlCommand)
         {
             return
                 sqlCommand.Parameters.Cast<SqlParameter>()
                     .Select(
-                        par => "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par) + ";\nSET " + par.ParameterName + " = " + SqlValueString(par.Value) + ";\n")
+                        par =>
+                            "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par) + ";\nSET " + par.ParameterName + " = " + InsecureSqlDebugString(par.Value)
+                                + ";\n")
                     .JoinStrings();
         }
 
         static string SqlParamTypeString(SqlParameter par) => par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
-        public static string SqlValueString(object p) // Not Secure, just a debug tool!
+        static string InsecureSqlDebugString(object p)
         {
             if (p is DBNull || p == null) {
                 return "NULL";
@@ -93,8 +111,8 @@ namespace ProgressOnderwijsUtils
             public int QueryCount => queryCount;
             int queryCount;
             int queriesCompleted;
-            readonly bool IncludeSensitiveInfo;
-            public QueryTracerImpl(bool inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
+            readonly QueryTracerParameterValues IncludeSensitiveInfo;
+            public QueryTracerImpl(QueryTracerParameterValues inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
             readonly object Sync = new object();
             readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
             Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
