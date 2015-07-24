@@ -1,4 +1,6 @@
-﻿namespace ProgressOnderwijsUtils
+﻿using JetBrains.Annotations;
+
+namespace ProgressOnderwijsUtils
 {
     public struct TextVal
     {
@@ -19,13 +21,28 @@
             ExtraText = helptext;
         }
 
+        [Pure]
         public static TextVal CreateUndefined(string hint) => new TextVal("ONVERTAALD: " + hint, UndefinedExtraText);
+
+        [Pure]
         public static bool operator ==(TextVal a, TextVal b) { return a.Text == b.Text && a.ExtraText == b.ExtraText; }
+
+        [Pure]
         public static bool operator !=(TextVal a, TextVal b) { return !(a == b); }
+
+        [Pure]
         public override bool Equals(object obj) => obj is TextVal && this == (TextVal)obj;
+
+        [Pure]
         public override int GetHashCode() => (Text?.GetHashCode() ?? 0) + (137 * ExtraText?.GetHashCode() ?? 0);
+
+        [Pure]
         public override string ToString() => "\"" + Text + "\"/\"" + ExtraText + "\"";
+
+        [Pure]
         public static TextVal Create(string text, string helptext) => new TextVal(text, helptext);
+
+        [Pure]
         public static TextVal Create(string text) => new TextVal(text, "");
     }
 }

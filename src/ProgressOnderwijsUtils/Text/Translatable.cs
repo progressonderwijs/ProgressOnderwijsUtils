@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using log4net.Util;
 using MoreLinq;
 using ProgressOnderwijsUtils;
@@ -11,11 +12,20 @@ namespace ProgressOnderwijsUtils
     public static class Translatable
     {
         public const string HtmlTooltipToken = "\aHTML\a";
+
+        [Pure]
         public static ITranslatable WithReplacement(this ITranslatable textdef, params ITranslatable[] toreplace) => new ReplacingTranslatable(textdef, toreplace);
+
+        [Pure]
         public static ITranslatable Append(this ITranslatable a, ITranslatable b) => new ConcatTranslatable(a, b);
+
+        [Pure]
         public static ITranslatable Append(this ITranslatable a, ITranslatable b, ITranslatable c) => new ConcatTranslatable(a, b, c);
+
+        [Pure]
         public static ITranslatable Append(this ITranslatable a, params ITranslatable[] rest) => new ConcatTranslatable(new[] { a }.Concat(rest).ToArray());
 
+        [Pure]
         public static ITranslatable AppendAuto(this ITranslatable a, params object[] objects)
         {
             var args = new ITranslatable[objects.Length + 1];
@@ -29,7 +39,11 @@ namespace ProgressOnderwijsUtils
             return new ConcatTranslatable(args);
         }
 
-        public static ITranslatable TooltipIsHtml(this ITranslatable translatable) { return new HtmlTooltipTranslatable(translatable); }
+        [Pure]
+        public static ITranslatable TooltipIsHtml(this ITranslatable translatable)
+        {
+            return new HtmlTooltipTranslatable(translatable);
+        }
 
         class HtmlTooltipTranslatable : ITranslatable
         {
@@ -44,6 +58,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [Pure]
         public static ITranslatable AppendTooltipAuto(this ITranslatable a, params object[] objects)
         {
             var args = new ITranslatable[objects.Length + 1];
@@ -57,6 +72,7 @@ namespace ProgressOnderwijsUtils
             return new ConcatTranslatable(args);
         }
 
+        [Pure]
         public static ITranslatable JoinTexts(this IEnumerable<ITranslatable> a, ITranslatable splitter)
         {
             var builder = FastArrayBuilder<ITranslatable>.Create();
@@ -72,6 +88,7 @@ namespace ProgressOnderwijsUtils
             return new ConcatTranslatable(builder.ToArray());
         }
 
+        [Pure]
         public static ITranslatable LimitLength(this ITranslatable translatable, int maxwidth)
         {
             LimitLengthTranslatable input_as_LL = translatable as LimitLengthTranslatable;
@@ -80,48 +97,67 @@ namespace ProgressOnderwijsUtils
                 : new LimitLengthTranslatable(translatable, maxwidth);
         }
 
-        public static ITranslatable LimitLength(this ITranslatable translatable, int? maxwidth)
-        {
-            return maxwidth.HasValue ? LimitLength(translatable, maxwidth.Value) : translatable;
-        }
+        [Pure]
+        public static ITranslatable LimitLength(this ITranslatable translatable, int? maxwidth) => maxwidth.HasValue ? LimitLength(translatable, maxwidth.Value) : translatable;
 
+        [Pure]
         public static ITranslatable ForceLanguage(this ITranslatable translatable, Taal taal)
-        {
-            return (translatable as ForcedLanguageTranslatable) ?? new ForcedLanguageTranslatable(translatable, taal);
-        }
+            => (translatable as ForcedLanguageTranslatable) ?? new ForcedLanguageTranslatable(translatable, taal);
 
+        [Pure]
         public static ITranslatable CreateTranslatable(TranslateFunction text) => new SingleTranslatable(text);
+
+        [Pure]
         public static ITranslatable CreateTranslatable(TranslateFunction text, TranslateFunction extratext) => new DoubleTranslatable(text, extratext);
+
+        [Pure]
+        [UsefulToKeep("library method")]
         public static ITranslatable CreateLazyTranslatable(Func<ITranslatable> lazyCreator) => new SimpleTranslatable(taal => lazyCreator().Translate(taal));
+
+        [Pure]
         public static ITranslatable CreateLazyTranslatable(Func<Taal, TextVal> translator) => new SimpleTranslatable(translator);
+
         static readonly LiteralTranslatable empty = new LiteralTranslatable("", "", "");
         public static LiteralTranslatable Empty => empty;
+
+        [Pure]
         public static ITranslatable EmptyWithNLTooltip(string tooltipnl) => empty.WithTooltip(tooltipnl);
+
+        [Pure]
         public static LiteralTranslatable Literal(string nl) => new LiteralTranslatable(nl, null, null);
+
+        [Pure]
         public static LiteralTranslatable Literal(string nl, string en) => new LiteralTranslatable(nl, en, null);
+
+        [Pure]
         public static LiteralTranslatable Literal(string nl, string en, string du) => new LiteralTranslatable(nl, en, du);
+
+        [Pure]
         public static ITranslatable Raw(string text) => Raw(text, null);
+
+        [Pure]
         public static ITranslatable Raw(string text, string extratext) => Raw(TextVal.Create(text, extratext));
+
+        [Pure]
         public static ITranslatable Raw(TextVal tv) => new RawTranslatable(tv);
 
+        [Pure]
         public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable, ITranslatable tt)
-        {
-            return CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).Text);
-        }
+            => CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).Text);
 
+        [Pure]
         public static ITranslatable TextToTooltip(this ITranslatable translatable) => CreateTranslatable(taal => "", taal => translatable.Translate(taal).Text);
 
+        [Pure]
         public static ITranslatable TooltipToText(this ITranslatable translatable) => CreateTranslatable(taal => translatable.Translate(taal).ExtraText, taal => "");
 
+        [Pure]
         public static ITranslatable ReplaceTooltipWithTooltip(this ITranslatable translatable, ITranslatable tt)
-        {
-            return CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).ExtraText);
-        }
+            => CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).ExtraText);
 
+        [Pure]
         public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable, string tt)
-        {
-            return CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt);
-        }
+            => CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt);
 
         sealed class LimitLengthTranslatable : ITranslatable
         {

@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -7,7 +8,10 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public interface ITranslatable
     {
+        [Pure]
         string GenerateUid();
+
+        [Pure]
         TextVal Translate(Taal lang);
     }
 }
