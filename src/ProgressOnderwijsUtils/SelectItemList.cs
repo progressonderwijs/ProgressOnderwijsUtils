@@ -51,11 +51,14 @@ namespace ProgressOnderwijsUtils
                 select item).SingleOrDefault();
         }
 
+        //TODO:Deze method moet weg
         public static SelectItem<T> GetItem<T>(this IReadOnlyList<SelectItem<T>> list, Taal language, string text)
         {
-            return (from item in list
+            return (
+                from item in list
                 where item.Label.Translate(language).Text == text
-                select item).SingleOrDefault();
+                select item
+                ).SingleOrDefault();
         }
     }
 
