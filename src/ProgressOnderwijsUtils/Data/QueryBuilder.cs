@@ -385,8 +385,6 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, QueryBuilder filterClause, OrderByColumns sortOrder)
             => SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, null);
 
-        // ReSharper disable once PureAttributeOnVoidMethod
-        [Pure]
         //TODO: dit aanzetten voor datasource tests
         // ReSharper disable once UnusedMember.Global
         public void AssertNoVariableColumns()
