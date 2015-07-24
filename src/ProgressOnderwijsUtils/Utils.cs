@@ -199,6 +199,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        // ReSharper disable UnusedMember.Global
+        // Deze F's zijn voor makkelijke type inference, dus worden misschien niet altijd gebruikt
+        // maar wel goed om te houden
         public static Func<TR> F<TR>(Func<TR> v) { return v; } //purely for delegate type inference
         public static Func<T, TR> F<T, TR>(Func<T, TR> v) { return v; } //purely for delegate type inference
         public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v) { return v; } //purely for delegate type inference
@@ -206,7 +209,7 @@ namespace ProgressOnderwijsUtils
         public static Expression<Func<TR>> E<TR>(Expression<Func<TR>> v) { return v; } //purely for delegate type inference
         public static Expression<Func<T, TR>> E<T, TR>(Expression<Func<T, TR>> v) { return v; } //purely for delegate type inference
         public static Expression<Func<T1, T2, TR>> E<T1, T2, TR>(Expression<Func<T1, T2, TR>> v) { return v; } //purely for delegate type inference
-
+        // ReSharper restore UnusedMember.Global
         public static string GetSqlExceptionDetailsString(Exception exception)
         {
             SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
