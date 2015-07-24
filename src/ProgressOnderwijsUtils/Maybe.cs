@@ -67,8 +67,8 @@ namespace ProgressOnderwijsUtils
 
             public override bool IsOk => false;
             public override bool Contains(T value) { return false; }
-            public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifError(error); }
-            public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifError(error); }
+            public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) => ifError(error);
+            public override void If(Action<T> ifOk, Action<ITranslatable> ifError) => ifError(error);
             public override string ToString() => $"Error({error})";
         }
 
@@ -78,8 +78,8 @@ namespace ProgressOnderwijsUtils
             public OkValue(T val) { this.val = val; }
             public override bool IsOk => true;
             public override bool Contains(T value) { return Equals(value, val); }
-            public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) { return ifOk(val); }
-            public override void If(Action<T> ifOk, Action<ITranslatable> ifError) { ifOk(val); }
+            public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) => ifOk(val);
+            public override void If(Action<T> ifOk, Action<ITranslatable> ifError) => ifOk(val);
             public override string ToString() => $"Ok({val})";
         }
     }
@@ -103,7 +103,7 @@ namespace ProgressOnderwijsUtils
         /// Creates a succesful Maybe that stores the provided value.
         /// </summary>
         [Pure]
-        public static Maybe<T> Ok<T>(T val) { return new Maybe<T>.OkValue(val); }
+        public static Maybe<T> Ok<T>(T val) => new Maybe<T>.OkValue(val);
 
         /// <summary>
         /// Creates a succesful Maybe value without a value.
@@ -115,7 +115,7 @@ namespace ProgressOnderwijsUtils
         /// Creates a failed Maybe value with the specified error message.
         /// </summary>
         [Pure]
-        public static Maybe<T> Error<T>(ITranslatable val) { return new Maybe<T>.ErrorValue(val); }
+        public static Maybe<T> Error<T>(ITranslatable val) => new Maybe<T>.ErrorValue(val);
 
         /// <summary>
         /// Create an error message to show to the user describing a failed operation.
@@ -140,7 +140,7 @@ namespace ProgressOnderwijsUtils
         public static Maybe<Unit> ErrorWhenNotNull(this ITranslatable val) => val == null ? Ok() : new ErrorValue(val);
 
         [Pure]
-        public static ITranslatable ErrorOrNull<T>(this Maybe<T> state) { return state.If(v => null, e => e); }
+        public static ITranslatable ErrorOrNull<T>(this Maybe<T> state) => state.If(v => null, e => e);
 
         /// <summary>
         /// Maps a possibly failed value to a new value.
@@ -148,7 +148,7 @@ namespace ProgressOnderwijsUtils
         /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
         [Pure]
-        public static Maybe<TOut> WhenOk<T, TOut>(this Maybe<T> state, Func<T, TOut> map) { return state.If(v => Ok(map(v)), Error<TOut>); }
+        public static Maybe<TOut> WhenOk<T, TOut>(this Maybe<T> state, Func<T, TOut> map) => state.If(v => Ok(map(v)), Error<TOut>);
 
         /// <summary>
         /// Maps a possibly failed value to a new value.
@@ -157,7 +157,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [UsefulToKeep("Library Function")]
         [Pure]
-        public static Maybe<TOut> WhenOk<TOut>(this Maybe<Unit> state, Func<TOut> map) { return state.If(v => Ok(map()), Error<TOut>); }
+        public static Maybe<TOut> WhenOk<TOut>(this Maybe<Unit> state, Func<TOut> map) => state.If(v => Ok(map()), Error<TOut>);
 
         /// <summary>
         /// Processes a possibly failed value.  
@@ -211,6 +211,6 @@ namespace ProgressOnderwijsUtils
         /// Enumerable.ToArray.
         /// </summary>
         [Pure]
-        public static Maybe<TOut> WhenOkTry<T, TOut>(this Maybe<T> state, Func<T, Maybe<TOut>> map) { return state.If(map, Error<TOut>); }
+        public static Maybe<TOut> WhenOkTry<T, TOut>(this Maybe<T> state, Func<T, Maybe<TOut>> map) => state.If(map, Error<TOut>);
     }
 }
