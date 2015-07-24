@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils.ToegangsRolInternal;
 
 namespace ProgressOnderwijsUtils
@@ -15,7 +16,9 @@ namespace ProgressOnderwijsUtils
             public Rol[] Children, Parents, Descendants, Ancestors;
         }
 
+        [Pure]
         public static IReadOnlyList<Rol> Parents(this Rol rol) => rollenRelations[(int)rol].Parents;
+        [Pure]
         public static IReadOnlyList<Rol> Children(this Rol rol) => rollenRelations[(int)rol].Children;
         static readonly Dictionary<int, RolRelations> rollenRelations = new Dictionary<int, RolRelations>();
 
@@ -43,7 +46,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [Pure]
         public static bool IsToekenbaar(this Rol rol) => rollenRelations[(int)rol].IsToekenbaar;
+        [Pure]
         public static RollenSet OnderliggendeToegangsRollen(this Rol root) => new RollenSet(OnderliggendeToegangsRollenImpl(root));
 
         static Rol[] OnderliggendeToegangsRollenImpl(Rol root)
@@ -56,6 +61,7 @@ namespace ProgressOnderwijsUtils
             return rel.Descendants;
         }
 
+        [Pure]
         public static RollenSet BovenliggendeToegangsRollen(this Rol root)
         {
             var rel = rollenRelations[(int)root];
@@ -85,6 +91,7 @@ namespace ProgressOnderwijsUtils
         static readonly int TotalRolCount = EnumHelpers.GetValues<Rol>().Count;
         static readonly ThreadLocal<Rol[]> RolAccumulator = new ThreadLocal<Rol[]>(() => new Rol[TotalRolCount]);
 
+        [Pure]
         public static RollenSet OnderliggendeToegangsRollen(this IEnumerable<Rol> roots)
         {
             var heap = new Cursor[4];
@@ -142,6 +149,7 @@ namespace ProgressOnderwijsUtils
         public RollenSet(Rol[] sortedRollen) { this.sortedRollen = sortedRollen; }
         readonly Rol[] sortedRollen;
         public IReadOnlyList<Rol> Rollen => sortedRollen;
+        [Pure]
         public bool Contains(Rol rol) => Array.BinarySearch(sortedRollen, rol) >= 0;
     }
 

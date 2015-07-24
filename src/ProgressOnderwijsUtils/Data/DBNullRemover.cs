@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -13,6 +14,7 @@ namespace ProgressOnderwijsUtils
         ///  - it doesn't support custom casts, just built-in casts
         ///  - it supports casting from boxed int to nullable enum.
         /// </summary>
+        [Pure]
         public static T Cast<T>(object fromdatabase)
         {
             try {
@@ -69,7 +71,8 @@ namespace ProgressOnderwijsUtils
             // ReSharper restore UnusedMember.Local
         { return obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj; }
 
-        static readonly MethodInfo genericCastMethod = ((Func<object, int>)DBNullRemover.Cast<int>).Method.GetGenericMethodDefinition();
+        static readonly MethodInfo genericCastMethod = ((Func<object, int>)Cast<int>).Method.GetGenericMethodDefinition();
+        [Pure]
         public static object DynamicCast(object val, Type type) { return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val }); }
     }
 }
