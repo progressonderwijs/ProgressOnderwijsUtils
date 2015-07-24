@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -13,6 +14,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="index">The index whose to get the array element of.</param>
         /// <param name="defaultValue">The value to get if the index is out of range.</param>
         /// <returns>The value at the index, or the default if the array does encompass that index.</returns>
+        [Pure]
         public static TValue GetOrDefault<TValue>(this TValue[] array, int index, TValue defaultValue)
         {
             return array != null && index < array.Length && index >= 0 ? array[index] : defaultValue;
@@ -23,16 +25,19 @@ namespace ProgressOnderwijsUtils
             public static readonly T[] EmptyArray = new T[0];
         }
 
+        [Pure]
         public static T[] Empty<T>() => Helper<T>.EmptyArray;
 
         /// <summary>
         /// Return an empty array if it's null
         /// </summary>
+        [Pure]
         public static T[] EmptyIfNull<T>(this T[] array)
         {
             return array ?? Helper<T>.EmptyArray;
         }
 
+        [Pure]
         public static T[] ToArrayFast<T>(this IReadOnlyList<T> list)
         {
             if (list is T[]) {
