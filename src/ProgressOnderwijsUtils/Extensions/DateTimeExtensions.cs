@@ -28,62 +28,69 @@ namespace ProgressOnderwijsUtils
             public DateTime DatumTot { get; set; }
             public static Periode Create(DateTime datumVan, DateTime datumTot) => new Periode { DatumVan = datumVan, DatumTot = datumTot };
         }
+    }
 
+    public static class DateTimeExtensionsTest
+    {
         [Test]
         public static void Overlapt_1_voor_en_in_2()
         {
-            var periode1 = Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
-            var periode2 = Periode.Create(new DateTime(2000, 1, 15), new DateTime(2000, 2, 15));
+            var periode1 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
+            var periode2 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 15), new DateTime(2000, 2, 15));
             AssertOverlapt(periode1, periode2, true);
         }
 
         [Test]
         public static void Overlapt_2_voor_en_in_1()
         {
-            var periode1 = Periode.Create(new DateTime(2000, 1, 15), new DateTime(2000, 2, 15));
-            var periode2 = Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
+            var periode1 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 15), new DateTime(2000, 2, 15));
+            var periode2 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
             AssertOverlapt(periode1, periode2, true);
         }
 
         [Test]
         public static void Overlapt_1_in_2()
         {
-            var periode1 = Periode.Create(new DateTime(2000, 1, 15), new DateTime(2000, 1, 25));
-            var periode2 = Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
+            var periode1 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 15), new DateTime(2000, 1, 25));
+            var periode2 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
             AssertOverlapt(periode1, periode2, true);
         }
 
         [Test]
         public static void Overlapt_2_in_1()
         {
-            var periode1 = Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
-            var periode2 = Periode.Create(new DateTime(2000, 1, 15), new DateTime(2000, 1, 25));
+            var periode1 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
+            var periode2 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 15), new DateTime(2000, 1, 25));
             AssertOverlapt(periode1, periode2, true);
         }
 
         [Test]
         public static void Overlapt_1_voor_2()
         {
-            var periode1 = Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
-            var periode2 = Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
+            var periode1 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
+            var periode2 = DateTimeExtensions.Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
             AssertOverlapt(periode1, periode2, false);
         }
 
         [Test]
         public static void Overlapt_2_voor_1()
         {
-            var periode1 = Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
-            var periode2 = Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
+            var periode1 = DateTimeExtensions.Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
+            var periode2 = DateTimeExtensions.Periode.Create(new DateTime(2000, 1, 1), new DateTime(2000, 2, 1));
             AssertOverlapt(periode1, periode2, false);
         }
 
         [Test]
         public static void Overlapt_1_is_2()
         {
-            var periode1 = Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
-            var periode2 = Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
+            var periode1 = DateTimeExtensions.Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
+            var periode2 = DateTimeExtensions.Periode.Create(new DateTime(2000, 2, 1), new DateTime(2000, 3, 1));
             AssertOverlapt(periode1, periode2, true);
         }
-        static void AssertOverlapt(Periode periode1, Periode periode2, bool uitkomst) { PAssert.That(() => periode1.Overlapt(periode2) == uitkomst); }
+
+        static void AssertOverlapt(DateTimeExtensions.Periode periode1, DateTimeExtensions.Periode periode2, bool uitkomst)
+        {
+            PAssert.That(() => periode1.Overlapt(periode2) == uitkomst);
+        }
     }
 }
