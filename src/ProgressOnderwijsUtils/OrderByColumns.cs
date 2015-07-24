@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using JetBrains.Annotations;
 using System.Linq;
 using MoreLinq;
 
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
         static bool streq(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
         readonly ColumnSort[] sortColumns;
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public IEnumerable<ColumnSort> Columns
         {
             get
@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils
             return index == -1 ? default(int?) : index + 1;
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public int ColumnCount => sortColumns == null ? 0 : sortColumns.Length;
 
         [Pure]

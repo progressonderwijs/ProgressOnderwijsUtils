@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics.Contracts;
+using JetBrains.Annotations;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -77,8 +77,7 @@ namespace ProgressOnderwijsUtils
         //INVARIANT:
         // IF next != null THEN precedingComponents !=null; conversely IF precedingComponents == null THEN next == null 
         // !(value != null AND next !=null)
-        [Pure]
-        public static QueryBuilder Empty => EmptyComponent.Instance;
+        public static readonly QueryBuilder Empty = EmptyComponent.Instance;
 
         bool IsEmpty => this is EmptyComponent;
         bool IsSingleElement { get { return this is SingleComponent; } } //implies ValueOrNull != null
