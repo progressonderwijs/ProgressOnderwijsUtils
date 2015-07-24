@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Media;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
 
@@ -34,6 +35,7 @@ namespace ProgressOnderwijsUtils
 		const double pix_per_char = 7.0;
 #endif
 
+        [Pure]
         public static double Measure(string str)
         {
             double sum = 0;
@@ -45,15 +47,21 @@ namespace ProgressOnderwijsUtils
             return sum;
         }
 
+        [Pure]
         public static string LimitDisplayLength(string s, int maxWidth) => LimitTextLength(s, maxWidth).Item1;
+
+        [Pure]
         public static Tuple<string, bool> LimitTextLength(string s, int maxWidth) => ElideIfNecessary(s, maxWidth * ems_per_char);
 
+        [Pure]
         static Tuple<string, bool> ElideIfNecessary(string s, double ems)
         {
             return Measure(s) < ems ? Tuple.Create(s, false) : Tuple.Create(TrimToEms(s, ems - ellipsis_ems) + ellipsis, true);
         }
 
+        [Pure]
         static string TrimToEms(string s, double ems) => s.Substring(0, CanFitChars(s, ems));
+
         const double ems_per_char = 0.638;
         const string ellipsis = "..."; //zou ook … kunnen zijn (unicode ellipsis)
         static readonly double ellipsis_ems;
@@ -73,6 +81,7 @@ namespace ProgressOnderwijsUtils
             ellipsis_ems = Measure(ellipsis);
         }
 
+        [Pure]
         static int CanFitChars(string str, double ems)
         {
             for (int i = 0; i < str.Length; i++) {

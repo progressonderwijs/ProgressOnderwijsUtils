@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using MoreLinq;
 
 namespace ProgressOnderwijsUtils
@@ -13,6 +14,7 @@ namespace ProgressOnderwijsUtils
         public const string GELD_EURO = "N02";
         static TranslateFunction TryToString<T>(object obj, Func<T, TranslateFunction> translator) { return obj is T ? translator((T)obj) : null; }
 
+        [Pure]
         static IEnumerable<TranslateFunction> ResolveTranslator(object obj, string format)
         {
             yield return TryToString<ITranslatable>(
@@ -115,6 +117,7 @@ namespace ProgressOnderwijsUtils
                     ArrayToStringHelper(o, format));
         }
 
+        [Pure]
         public static TranslateFunction ToStringDynamic(object obj, string format = null)
         {
             if (obj == null || obj == DBNull.Value) {
@@ -130,6 +133,7 @@ namespace ProgressOnderwijsUtils
             throw new ConverteerException("unknown type " + obj.GetType() + " to stringify");
         }
 
+        [Pure]
         static TranslateFunction ArrayToStringHelper(IEnumerable o, string format)
         {
             var subtrans = o.Cast<object>().Select(
