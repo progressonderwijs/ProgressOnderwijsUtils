@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
     public static class SortedListExtension
     {
+        [Pure]
         public static bool EqualsKeyValue(this RowKey a, RowKey b)
         {
             return a == b ||

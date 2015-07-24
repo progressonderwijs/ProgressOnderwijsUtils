@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -16,30 +17,39 @@ namespace ProgressOnderwijsUtils
         /// Enum Vandaag = weekdays.monday;
         /// Vandaag.In(weekdays.thursday,weekdays.friday); //false
         /// </remarks>
+        [Pure]
         public static bool In<T>(this T obj, params T[] values)
             where T : struct, IConvertible, IComparable { return values.Contains(obj); }
 
+        [Pure]
         public static bool In<T>(this T obj, T value)
             where T : struct, IConvertible, IComparable { return value.Equals(obj); }
 
+        [Pure]
         public static bool In<T>(this T? obj, T? value)
             where T : struct, IConvertible, IComparable { return value.Equals(obj); }
 
+        [Pure]
         public static bool In<T>(this T obj, T a, T b)
             where T : struct, IConvertible, IComparable { return a.Equals(obj) || b.Equals(obj); }
 
+        [Pure]
         public static bool In<T>(this T? obj, T? a, T? b)
             where T : struct, IConvertible, IComparable { return a.Equals(obj) || b.Equals(obj); }
 
+        [Pure]
         public static bool In<T>(this T obj, T a, T b, T c)
             where T : struct, IConvertible, IComparable { return a.Equals(obj) || b.Equals(obj) || c.Equals(obj); }
 
+        [Pure]
         public static bool In<T>(this T? obj, T? a, T? b, T? c)
             where T : struct, IConvertible, IComparable { return a.Equals(obj) || b.Equals(obj) || c.Equals(obj); }
 
+        [Pure]
         public static bool In(this string obj, params string[] values) => values.Contains(obj);
 
         [UsefulToKeep("overload")]
+        [Pure]
         public static bool In<T>(this T? obj, params T?[] values)
             where T : struct, IConvertible, IComparable { return values.Contains(obj); }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
 
@@ -20,18 +21,23 @@ namespace ProgressOnderwijsUtils
             this.direction = direction;
         }
 
+        [Pure]
         public ColumnSort WithReverseDirection() => new ColumnSort(column, FlipDirection(direction));
+        [Pure]
         public ColumnSort WithDifferentName(string newColumn) => new ColumnSort(newColumn, direction);
+        [Pure]
         static SortDirection FlipDirection(SortDirection dir) => dir == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc;
 
-        public bool Equals(ColumnSort other)
-        {
-            return string.Equals(ColumnName, other.ColumnName, StringComparison.OrdinalIgnoreCase) && SortDirection == other.SortDirection;
-        }
+        [Pure]
+        public bool Equals(ColumnSort other) => string.Equals(ColumnName, other.ColumnName, StringComparison.OrdinalIgnoreCase) && SortDirection == other.SortDirection;
 
+        [Pure]
         public override bool Equals(object obj) => obj is ColumnSort && Equals((ColumnSort)obj);
+        [Pure]
         public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int)direction;
+        [Pure]
         public static bool operator ==(ColumnSort a, ColumnSort b) { return a.Equals(b); } //ReferenceEquals(a, b) || null != (object)a &&
+        [Pure]
         public static bool operator !=(ColumnSort a, ColumnSort b) { return !a.Equals(b); } //!ReferenceEquals(a, b) && (null == (object)a || 
     }
 

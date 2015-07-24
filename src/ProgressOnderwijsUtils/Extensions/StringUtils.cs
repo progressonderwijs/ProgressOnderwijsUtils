@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -14,6 +15,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="input">the string to change</param>
         /// <returns>the changed string</returns>
+        [Pure]
         public static string VerwijderDiakrieten(string input)
         {
             return
@@ -49,6 +51,7 @@ namespace ProgressOnderwijsUtils
                 sepaStripper = new Regex(@"[^a-zA-z0-9 /-?:().,'+]+", CommonOptions);
         }
 
+        [Pure]
         public static string PrettyPrintCamelCased(string rawString)
         {
             var withSpace =
@@ -59,6 +62,7 @@ namespace ProgressOnderwijsUtils
             return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
         }
 
+        [Pure]
         static bool IsUpperAscii(string str)
         {
             foreach (var c in str) {
@@ -69,6 +73,7 @@ namespace ProgressOnderwijsUtils
             return true;
         }
 
+        [Pure]
         static string DecapitalizeAscii(string str)
         {
             if (str[0] >= 'A' && str[0] <= 'Z') {
@@ -78,6 +83,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [Pure]
         public static string PrettyCapitalizedPrintCamelCased(string rawString)
         {
             var withSpace =
@@ -88,9 +94,12 @@ namespace ProgressOnderwijsUtils
             return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
         }
 
+        [Pure]
         public static string VervangRingelS(string str, bool upper) => str.Replace("ß", upper ? "SS" : "ss");
+        [Pure]
         public static string SepaTekenset(string s) => SepaStripperRegexes.sepaStripper.Replace(s, "");
 
+        [Pure]
         public static string SepaTekensetEnModificaties(string s)
         {
             s = VerwijderDiakrieten(s);
@@ -99,12 +108,15 @@ namespace ProgressOnderwijsUtils
             return s;
         }
 
+        [Pure]
         public static string Capitalize(string name) => name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
+        [Pure]
         public static string Uncapitalize(string name) => name.Substring(0, 1).ToLowerInvariant() + name.Substring(1);
 
-        //modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
+        [Pure]
         public static int LevenshteinDistance(string s, string t, int? substitutionCost = null)
         {
+            //modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
             int subsCost = substitutionCost ?? 1;
             int n = s.Length; //length of s
             int m = t.Length; //length of t
@@ -130,8 +142,10 @@ namespace ProgressOnderwijsUtils
             return d[n, m];
         }
 
+        [Pure]
         public static double LevenshteinDistanceScaled(string s, string t) => LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length));
 
+        [Pure]
         public static string ToFlatDebugString<T>(IEnumerable<T> self)
         {
             return "[" +
@@ -150,6 +164,7 @@ namespace ProgressOnderwijsUtils
         /// tussenvoegsels zouden ook uit database kunnen worden gehaald:
         /// [SELECT voorvoegsels FROM student group by voorvoegsels]
         /// </remarks>
+        [Pure]
         public static string Name2UpperCasedName(string inp)
         {
             //string wat opschonen
@@ -179,8 +194,10 @@ namespace ProgressOnderwijsUtils
                 );
         }
 
+        [Pure]
         static bool isVowel(char c) => c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 
+        [Pure]
         public static string Depluralize(string pluralstring)
         {
             if (pluralstring.EndsWith("s")) {

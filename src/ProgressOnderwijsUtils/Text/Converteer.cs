@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -73,6 +74,7 @@ namespace ProgressOnderwijsUtils
                     }));
         }
 
+        [Pure]
         public static TextVal DateFormatStrings(DatumFormaat formaat, Taal taal = Taal.NL)
         {
             if (taal == Taal.EN) {
@@ -130,6 +132,7 @@ namespace ProgressOnderwijsUtils
             return DATE_FORMATS[formaat];
         }
 
+        [Pure]
         public static int DateTimeStringLengthForFormat(DatumFormaat formaat) => FORMAAT_LENGTE[formaat];
 
         /// <summary>
@@ -140,21 +143,21 @@ namespace ProgressOnderwijsUtils
         /// 	(zie .Net documentatie voor details)</param>
         /// <param name="language">De taal die de te gebruiken culture aangeeft</param>
         /// <returns>De geformateerde string die de waarde representeerd</returns>
-        public static string ToString(object obj, string format, Taal language)
-        {
-            return ConverteerHelper.ToStringDynamic(obj, format)(language);
-        }
+        [Pure]
+        public static string ToString(object obj, string format, Taal language) => ConverteerHelper.ToStringDynamic(obj, format)(language);
 
+        [Pure]
         public static string ToString(object obj) => ToString(obj, null, Taal.NL);
+
+        [Pure]
         public static string ToString(object obj, Taal language) => ToString(obj, null, language);
 
         /// <summary>
         /// Utility functie die de DatumFormaat enum vertaald naar de overeenkomstige format string.
         /// </summary>
+        [Pure]
         public static string ToString(DateTime? dt, DatumFormaat format, Taal language = Taal.NL)
-        {
-            return ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, language).Text)(language);
-        }
+            => ConverteerHelper.ToStringDynamic(dt, DateFormatStrings(format, language).Text)(language);
 
         /// <summary>
         /// Generieke text-efy functie die de default Progress.NET formatering en culture-info gebruikt om een waarde een vertaalbare string representatie te geven.
@@ -165,6 +168,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="extraformat">Extra formatering string om de default Progress.NET formatering voor het tooltip gedeelte te overrulen 
         /// (zie de .NET documentatie voor formatstring details)</param>
         /// <returns>De geformateerde translatable die de waarde representeerd in de Nederlands en Engelse taal.</returns>
+        [Pure]
         public static ITranslatable ToText(object obj, string format = null, string extraformat = null)
         {
             if (obj == null || obj == DBNull.Value) {
@@ -185,6 +189,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Utility functie die de NummerFormaat enum vertaald naar de overeenkomstige format string.
         /// </summary>
+        [Pure]
         public static ITranslatable ToText(decimal? d, NummerFormaat format)
         {
             string formatString;
@@ -205,11 +210,13 @@ namespace ProgressOnderwijsUtils
             return ToText(d, formatString);
         }
 
-        public static LiteralTranslatable ToCheckmarkOrEmpty(bool value) { return value ? Translatable.Literal("✔") : Translatable.Empty; }
+        [Pure]
+        public static LiteralTranslatable ToCheckmarkOrEmpty(bool value) => value ? Translatable.Literal("✔") : Translatable.Empty;
 
         /// <summary>
         /// Utility functie die de DatumFormaat enum vertaald naar de overeenkomstige format string.
         /// </summary>
+        [Pure]
         public static ITranslatable ToText(DateTime? dt, DatumFormaat format)
         {
             if (string.IsNullOrEmpty(DATE_FORMATS[format].ExtraText)) {
@@ -221,12 +228,16 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-
         //Deze functie gebruiken om gebruikersinvoer in vrije textvelden te converteren naar de juiste types, eerste TryParse uitvoeren!
+        [Pure]
         public static object Parse(string s, Type t, Taal taal) => TryParse(s, t, taal).GetValue();
+
+        [Pure]
         public static T Parse<T>(string s, Taal taal) { return (T)TryParse(s, typeof(T), taal).GetValue(); }
+
         const int YearMinimum = 1900, YearMaximum = 2100;
 
+        [Pure]
         static decimal ParseDecimal(string s)
         {
             return s.LastIndexOf(',') < s.LastIndexOf('.') //when true, either only decimal point, or thousand sep commas with decimal point
@@ -235,6 +246,7 @@ namespace ProgressOnderwijsUtils
         }
 
         // string naar datum conversie
+        [Pure]
         public static DateTime? ToDateTime(string s, DatumFormaat formaat, Taal taal = Taal.NL) //TODO:alleen VerwInfo en MT940 worden gebruikt?
         {
             if (string.IsNullOrEmpty(s)) {
@@ -330,8 +342,10 @@ namespace ProgressOnderwijsUtils
                 this.value = value;
             }
 
+            [Pure]
             public static ParseResult Ok(object value) => new ParseResult(ParseState.Ok, value);
 
+            [Pure]
             public static ParseResult CreateError(ParseState state, ITranslatable error)
             {
                 if (state == ParseState.Ok) {
@@ -340,6 +354,7 @@ namespace ProgressOnderwijsUtils
                 return new ParseResult(state, error);
             }
 
+            [Pure]
             public static ParseResult Malformed(Type type, string s)
             {
                 return CreateError(
@@ -368,6 +383,7 @@ namespace ProgressOnderwijsUtils
         }
 
         //Om gebruikersinvoer te controleren, daarna kan parse plaatsvinden
+        [Pure]
         public static ParseResult TryParse(string s, Type t, Taal taal)
         {
             if (t == null) {
@@ -433,7 +449,7 @@ namespace ProgressOnderwijsUtils
                                 .AppendAuto(s)
                                 .Append(Translatable.Literal("' niet uniek interpreteren!", "' cannot be interpreted unambiguously!")));
             }
-                /*catch (OverflowException) { return ParseResult.Overflow; }*/
+            /*catch (OverflowException) { return ParseResult.Overflow; }*/
             else if (fundamentalType == typeof(double)) {
                 try {
                     return ParseResult.Ok((double)ParseDecimal(s));

@@ -17,6 +17,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="elem">the element searched</param>
         /// <returns>an int</returns>
         /// <remarks>If you just want to test existance the native "Contains" would be sufficient</remarks>
+        [Pure]
         public static int IndexOf<T>(this IEnumerable<T> list, T elem)
         {
             if (list == null) {
@@ -32,6 +33,7 @@ namespace ProgressOnderwijsUtils
             return -1;
         }
 
+        [Pure]
         public static int IndexOf<T>(this IEnumerable<T> list, Func<T, bool> matcher)
         {
             if (list == null) {
@@ -50,6 +52,7 @@ namespace ProgressOnderwijsUtils
             return -1;
         }
 
+        [Pure]
         public static IEnumerable<TSource> WhereIf<TSource>(this IEnumerable<TSource> source, bool condition, Func<TSource, bool> predicate)
         {
             return condition ? source.Where(predicate) : source;
@@ -91,6 +94,7 @@ namespace ProgressOnderwijsUtils
             return list ?? Enumerable.Empty<T>();
         }
 
+        [Pure]
         public static int GetSequenceHashCode<T>(IEnumerable<T> list, IEqualityComparer<T> elementComparer = null)
         {
             var elemEquality = elementComparer ?? EqualityComparer<T>.Default;
@@ -101,17 +105,20 @@ namespace ProgressOnderwijsUtils
             return (int)hash ^ (int)(hash >> 32);
         }
 
+        [Pure]
         public static bool ContainsDuplicates<T>(this IEnumerable<T> list)
         {
             var set = new HashSet<T>();
             return !list.All(set.Add);
         }
 
+        [Pure]
         public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(this IEnumerable<T> list, Func<T, TKey> keySelector, Func<T, TVal> valSelector)
         {
             return list.ToSortedList(keySelector, valSelector, Comparer<TKey>.Default);
         }
 
+        [Pure]
         public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(
             this IEnumerable<T> list,
             Func<T, TKey> keySelector,
@@ -125,6 +132,7 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
+        [Pure]
         public static Dictionary<TKey, TValue> ToGroupedDictionary<TElem, TKey, TValue>(
             this IEnumerable<TElem> list,
             Func<TElem, TKey> keyLookup,
@@ -147,6 +155,7 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
+        [Pure]
         public static string ToCsv<T>(this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", bool useQuotesForStrings = false)
             where T : class
         {
@@ -163,6 +172,7 @@ namespace ProgressOnderwijsUtils
             return csvBuilder.ToString();
         }
 
+        [Pure]
         static string ToCsvValue<T>(this T item, string delimiter, bool useQuotesForStrings)
         {
             string csvValueWithoutQuotes = item?.ToString() ?? "";
