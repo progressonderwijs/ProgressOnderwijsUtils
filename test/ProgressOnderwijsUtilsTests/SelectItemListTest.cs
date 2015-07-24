@@ -12,13 +12,13 @@ namespace ProgressOnderwijsUtilsTests
 
         [Test]
         public void GetItemByValue() {
-            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToInt(),Taal.NL, RootOrganisatie.Dummy, null);
+            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToInt(),Taal.NL, RootOrganisatie.Dummy.ToInt(), null);
             Assert.That(sut.GetItem((int)Land.Nederland).Value, Is.EqualTo((int?)(int)Land.Nederland));
         }
 
         [Test]
         public void GetItemByText() {
-            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToInt(), Taal.NL, RootOrganisatie.Dummy, null);
+            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToInt(), Taal.NL, RootOrganisatie.Dummy.ToInt(), null);
             Assert.That(sut.GetItem(Taal.NL, "Nederland").Value, Is.EqualTo((int?)(int)Land.Nederland));
         }
     }
