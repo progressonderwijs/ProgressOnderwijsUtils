@@ -35,6 +35,7 @@ namespace ProgressOnderwijsUtils.Collections
         static readonly int typeHash = typeof(T).GetHashCode();
         static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
 
+        [Pure]
         public bool Equals(SList<T> other)
         {
             var alist = list;
@@ -52,8 +53,10 @@ namespace ProgressOnderwijsUtils.Collections
             return alist == null && blist == null;
         }
 
+        [Pure]
         public override bool Equals(object obj) => obj is SList<T> && Equals((SList<T>)obj);
 
+        [Pure]
         public override int GetHashCode()
         {
             var hash = (ulong)(typeHash + 1);
@@ -63,7 +66,9 @@ namespace ProgressOnderwijsUtils.Collections
             return (int)hash ^ (int)(hash >> 32);
         }
 
+        [Pure]
         public static bool operator ==(SList<T> a, SList<T> b) { return a.Equals(b); }
+        [Pure]
         public static bool operator !=(SList<T> a, SList<T> b) { return !a.Equals(b); }
 
         public IEnumerable<SList<T>> NonEmpySuffixes
@@ -101,6 +106,7 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
+        [Pure]
         public static SList<T> PrependReversed<T>(this SList<T> self, IEnumerable<T> items)
         {
             var retval = self;
@@ -155,6 +161,7 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
+        [Pure]
         public static SList<T> Create<T>(IEnumerable<T> list)
         {
             if (list is IList<T>) {
@@ -164,6 +171,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
+        [Pure]
         public static SList<T> Create<T>(IList<T> list)
         {
             if (list is T[]) {
@@ -176,6 +184,7 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
+        [Pure]
         public static SList<T> Create<T>(T[] list)
         {
             var retval = SList<T>.Empty;
@@ -185,6 +194,7 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
+        [Pure]
         public static SList<T> SingleElement<T>(T element) { return SList<T>.Empty.Prepend(element); }
 
         [UsefulToKeep("library method")]

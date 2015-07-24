@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
@@ -12,28 +13,43 @@ namespace ProgressOnderwijsUtils.Collections
 
     public static class Tree
     {
-        public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children) { return new Tree<T>(value, children); }
-        public static Tree<T> Node<T>(T value, Tree<T> a) { return new Tree<T>(value, new[] { a, }); }
-        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b) { return new Tree<T>(value, new[] { a, b }); }
-        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c) { return new Tree<T>(value, new[] { a, b, c }); }
+        [Pure]
+        public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children) => new Tree<T>(value, children);
+
+        [Pure]
+        public static Tree<T> Node<T>(T value, Tree<T> a) => new Tree<T>(value, new[] { a, });
+
+        [Pure]
+        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b) => new Tree<T>(value, new[] { a, b });
+
+        [Pure]
+        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c) => new Tree<T>(value, new[] { a, b, c });
+
         // ReSharper disable MethodOverloadWithOptionalParameter
-        public static Tree<T> Node<T>(T value, params Tree<T>[] kids) { return new Tree<T>(value, kids); }
+        [Pure]
+        public static Tree<T> Node<T>(T value, params Tree<T>[] kids) => new Tree<T>(value, kids);
+
         // ReSharper restore MethodOverloadWithOptionalParameter
-        public static Tree<T> Node<T>(T value) { return new Tree<T>(value, null); }
-        public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup) { return new CachedTreeBuilder<T>(kidLookup).Resolve(root); }
+        [Pure]
+        public static Tree<T> Node<T>(T value) => new Tree<T>(value, null);
 
-        public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
-        {
-            return BuildRecursively(root, id => kidLookup.GetOrDefaultR(id));
-        }
+        [Pure]
+        public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup) => new CachedTreeBuilder<T>(kidLookup).Resolve(root);
 
-        public static Tree<T> BuildRecursively<T>(T root, ILookup<T, T> kidLookup) { return BuildRecursively(root, id => kidLookup[id]); }
-        public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) { return new Tree<T>.Comparer(valueComparer); }
+        [Pure]
+        public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) => BuildRecursively(root, id => kidLookup.GetOrDefaultR(id));
+
+        [Pure]
+        public static Tree<T> BuildRecursively<T>(T root, ILookup<T, T> kidLookup) => BuildRecursively(root, id => kidLookup[id]);
+
+        [Pure]
+        public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) => new Tree<T>.Comparer(valueComparer);
 
         /// <summary>
         /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
         /// mapper is called in a preorder traversal (i.e. a node before its children, and the descendents of the first child before the second).
         /// </summary>
+        [Pure]
         public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
         {
             var todo = new Stack<Tree<T>>(16);
@@ -101,6 +117,7 @@ namespace ProgressOnderwijsUtils.Collections
                 public Tree<T> A, B;
             }
 
+            [Pure]
             public bool Equals(Tree<T> a, Tree<T> b)
             {
                 var todo = new Stack<NodePair>(16);
@@ -118,6 +135,7 @@ namespace ProgressOnderwijsUtils.Collections
                 return true;
             }
 
+            [Pure]
             bool ShallowEquals(NodePair pair)
             {
                 // ReSharper disable RedundantCast
@@ -129,13 +147,14 @@ namespace ProgressOnderwijsUtils.Collections
                 // ReSharper restore RedundantCast
             }
 
+            [Pure]
             public int GetHashCode(Tree<T> obj)
             {
                 if (obj == null) {
                     return typeHash;
                 }
                 ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
-                ulong offset = 1;//keep offset odd to ensure no bits are lost in scaling.
+                ulong offset = 1; //keep offset odd to ensure no bits are lost in scaling.
                 foreach (var node in obj.PreorderTraversal()) {
                     hash += offset * ((uint)ValueComparer.GetHashCode(node.NodeValue) + ((ulong)node.Children.Count << 32));
                     offset += 2;
@@ -144,11 +163,19 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
+        [Pure]
         public override bool Equals(object obj) => DefaultComparer.Equals(this, obj as Tree<T>);
+
+        [Pure]
         public bool Equals(Tree<T> other) => DefaultComparer.Equals(this, other);
+
+        [Pure]
         public override int GetHashCode() => DefaultComparer.GetHashCode(this);
+
+        [Pure]
         public override string ToString() => "TREE:\n" + ToString("");
 
+        [Pure]
         string ToString(string indent)
         {
             if (indent.Length > 80) {
@@ -161,6 +188,7 @@ namespace ProgressOnderwijsUtils.Collections
                     );
         }
 
+        [Pure]
         public int Height()
         {
             int height = 1;
