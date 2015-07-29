@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
             return array ?? Helper<T>.EmptyArray;
         }
 
-        [Pure]
+        [Pure, UsefulToKeep("This is indeed a faster ToArray, which could be useful for optimizations")]
         public static T[] ToArrayFast<T>(this IReadOnlyList<T> list)
         {
             if (list is T[]) {

@@ -13,8 +13,6 @@ namespace ProgressOnderwijsUtils
         static readonly object sync = new object();
         static Action<string> writer;
 
-        public static void RedirectLoggingToConsole() { writer = Console.Out.WriteLine; }
-
         [Conditional("DEBUG")]
         public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, IQueryTracer tracer)
         {

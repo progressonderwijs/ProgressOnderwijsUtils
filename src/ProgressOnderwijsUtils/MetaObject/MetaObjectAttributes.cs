@@ -148,7 +148,6 @@ namespace ProgressOnderwijsUtils
     public sealed class MpKoppelTabelAttribute : Attribute
     {
         public MpKoppelTabelAttribute(string tabelnaam) { KoppelTabelNaam = tabelnaam; }
-        public MpKoppelTabelAttribute() { KoppelTabelNaam = null; } //means "same as property-name"!
         public readonly string KoppelTabelNaam;
     }
 }

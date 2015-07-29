@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
             return condition ? source.Append(extra) : source;
         }
 
-        [Pure]
+        [Pure, UsefulToKeep("Library function, other overloads used")]
         public static QueryBuilder AppendIf(this QueryBuilder source, bool condition, Func<QueryBuilder> extra)
         {
             return condition ? source.Append(extra()) : source;

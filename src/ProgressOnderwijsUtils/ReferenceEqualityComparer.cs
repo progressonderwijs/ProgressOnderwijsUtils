@@ -12,7 +12,6 @@ namespace ProgressOnderwijsUtils
     /// <remarks>This might be handy to have collections on reference equality while the elements are value comparable.</remarks>
     public sealed class ReferenceEqualityComparer<T> : IEqualityComparer<T>, IEqualityComparer
     {
-        public static readonly ReferenceEqualityComparer<T> Default = new ReferenceEqualityComparer<T>();
         public bool Equals(T one, T other) => object.ReferenceEquals(one, other);
         public int GetHashCode(T obj) => RuntimeHelpers.GetHashCode(obj);
         bool IEqualityComparer.Equals(object x, object y) => object.ReferenceEquals(x, y);

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using log4net.Util;
 using MoreLinq;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
@@ -21,9 +20,6 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static ITranslatable Append(this ITranslatable a, ITranslatable b, ITranslatable c) => new ConcatTranslatable(a, b, c);
-
-        [Pure]
-        public static ITranslatable Append(this ITranslatable a, params ITranslatable[] rest) => new ConcatTranslatable(new[] { a }.Concat(rest).ToArray());
 
         [Pure]
         public static ITranslatable AppendAuto(this ITranslatable a, params object[] objects)
