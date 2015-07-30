@@ -484,8 +484,6 @@ namespace ProgressOnderwijsUtils
                 : Expression.Convert(expr, underlyingType);
         }
 
-        static Expression AddPrecondition(Expression precondition, Expression expr) => precondition == null ? expr : Expression.AndAlso(precondition, expr);
-
         static bool ComparerUsesUnderlyingType(BooleanComparer comparer)
         {
             return comparer == BooleanComparer.GreaterThan
