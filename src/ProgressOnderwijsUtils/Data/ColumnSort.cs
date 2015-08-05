@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
         public void CheckImmutable()
         {
             var col = new ColumnSort("ziggy", SortDirection.Asc);
-            col.WithReverseDirection().WithDifferentName("test");
+            var ignore = col.WithReverseDirection().WithDifferentName("test");
             Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc), col);
         }
 

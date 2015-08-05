@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils
                 () =>
                     task.SetResult(sw.Elapsed));
 
-            Enumerable.Range(0, 5).Select(
+            var ignore = Enumerable.Range(0, 5).Select(
                 n =>
                     Task.Run(
                         async () => {
