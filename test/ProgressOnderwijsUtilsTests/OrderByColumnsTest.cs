@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtilsTests
         public void IsImmutable()
         {
             foreach (var col in colSort.Columns) {
-                colSort.ToggleSortDirection(col.ColumnName); //doesn't do anything!
+                var ignore = colSort.ToggleSortDirection(col.ColumnName); //doesn't do anything!
             }
 
             PAssert.That(() => colSort.Columns.SequenceEqual(new[] { ziggyA, abcA, acolD }));

@@ -3,7 +3,6 @@ using System.IO;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -30,7 +29,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test, ExpectedException(typeof(ArgumentNullException))]
-        public void SameContentsNull() { sut.SameContents(null); }
+        public void SameContentsNull() { var ignore = sut.SameContents(null); }
 
         [Test]
         public void SameContentsSame()
