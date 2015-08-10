@@ -1,8 +1,7 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
@@ -53,7 +52,6 @@ namespace ProgressOnderwijsUtils
             { DatumFormaat.ClieopDatum, new TextVal("ddMMyy", null) },
             { DatumFormaat.MT940Datum, new TextVal("yyMMdd", null) },
             { DatumFormaat.DatumZonderJaar, new TextVal("dd-MM", "dd-MM-yyyy") },
-            { DatumFormaat.VerwInfoDatum, new TextVal("yyMMdd", null) },
             { DatumFormaat.ISODate, new TextVal("yyyy-MM-dd", null) },
             { DatumFormaat.ISODateTime, new TextVal("yyyy-MM-ddTHH:mm:ss", null) },
         };
@@ -132,7 +130,7 @@ namespace ProgressOnderwijsUtils
             return DATE_FORMATS[formaat];
         }
 
-        public static int DateTimeStringLengthForFormat(DatumFormaat formaat) { return FORMAAT_LENGTE[formaat]; }
+        public static int DateTimeStringLengthForFormat(DatumFormaat formaat) => FORMAAT_LENGTE[formaat];
 
         /// <summary>
         /// Generieke string-efy functie die de default Progress.NET formatering en culture-info gebruikt.
@@ -147,8 +145,8 @@ namespace ProgressOnderwijsUtils
             return ConverteerHelper.ToStringDynamic(obj, format)(language);
         }
 
-        public static string ToString(object obj) { return ToString(obj, null, Taal.NL); }
-        public static string ToString(object obj, Taal language) { return ToString(obj, null, language); }
+        public static string ToString(object obj) => ToString(obj, null, Taal.NL);
+        public static string ToString(object obj, Taal language) => ToString(obj, null, language);
 
         /// <summary>
         /// Utility functie die de DatumFormaat enum vertaald naar de overeenkomstige format string.
@@ -207,6 +205,8 @@ namespace ProgressOnderwijsUtils
             return ToText(d, formatString);
         }
 
+        public static LiteralTranslatable ToCheckmarkOrEmpty(bool value) { return value ? Translatable.Literal("✔") : Translatable.Empty; }
+
         /// <summary>
         /// Utility functie die de DatumFormaat enum vertaald naar de overeenkomstige format string.
         /// </summary>
@@ -223,7 +223,7 @@ namespace ProgressOnderwijsUtils
 
 
         //Deze functie gebruiken om gebruikersinvoer in vrije textvelden te converteren naar de juiste types, eerste TryParse uitvoeren!
-        public static object Parse(string s, Type t, Taal taal) { return TryParse(s, t, taal).GetValue(); }
+        public static object Parse(string s, Type t, Taal taal) => TryParse(s, t, taal).GetValue();
         public static T Parse<T>(string s, Taal taal) { return (T)TryParse(s, typeof(T), taal).GetValue(); }
         const int YearMinimum = 1900, YearMaximum = 2100;
 
@@ -241,7 +241,7 @@ namespace ProgressOnderwijsUtils
                 return null;
             }
 
-            string datum = DateStringCheck(s);
+            var datum = DateStringCheck(s);
 
             switch (formaat) {
                 case DatumFormaat.ClieopDatum:
@@ -252,7 +252,6 @@ namespace ProgressOnderwijsUtils
                             s.Substring(0, 2);
                     }
                     break;
-                case DatumFormaat.VerwInfoDatum:
                 case DatumFormaat.MT940Datum:
                     if (s.Length == 6) {
                         datum = DateTime.Now.Year.ToStringInvariant().Substring(0, 2) +
@@ -280,7 +279,7 @@ namespace ProgressOnderwijsUtils
                     break;
             }
 
-            ParseResult parseResult = TryParse(datum, typeof(DateTime), taal);
+            var parseResult = TryParse(datum, typeof(DateTime), taal);
             if (parseResult.IsOk) {
                 return (DateTime)parseResult.GetValue();
             }
@@ -291,7 +290,7 @@ namespace ProgressOnderwijsUtils
         {
             public readonly ParseState State;
             readonly object value;
-            public bool IsOk { get { return State == ParseState.Ok; } }
+            public bool IsOk => State == ParseState.Ok;
 
             /// <summary>
             /// Gets the value as parsed by parse if the parse was successful.  Throws an exception if used in a non-OK state.
@@ -331,7 +330,7 @@ namespace ProgressOnderwijsUtils
                 this.value = value;
             }
 
-            public static ParseResult Ok(object value) { return new ParseResult(ParseState.Ok, value); }
+            public static ParseResult Ok(object value) => new ParseResult(ParseState.Ok, value);
 
             public static ParseResult CreateError(ParseState state, ITranslatable error)
             {
@@ -346,17 +345,18 @@ namespace ProgressOnderwijsUtils
                 return CreateError(
                     ParseState.Malformed,
                     GenericEditText.MalformedData(ClrTypeNamesText.UserReadable(type, false))
-                        .Append(Translatable.Literal(" niet ", " not ", " nicht "), Converteer.ToText("\"" + s + "\".")));
+                        .Append(Translatable.Literal(" niet ", " not ", " nicht "), ToText("\"" + s + "\".")));
             }
 
-            public static ParseResult Overflow { get { return CreateError(ParseState.Overflow, GenericEditText.Overflow); } }
-            public static ParseResult Geendata { get { return CreateError(ParseState.Geendata, GenericEditText.GeenData); } }
-            public static ParseResult Datumfout { get { return CreateError(ParseState.Datumfout, GenericEditText.FoutDatumFormaat); } }
-            public static ParseResult TijdFout { get { return CreateError(ParseState.TijdFout, GenericEditText.FoutTijdFormaat); } }
+            public static ParseResult Overflow => CreateError(ParseState.Overflow, GenericEditText.Overflow);
+            public static ParseResult Geendata => CreateError(ParseState.Geendata, GenericEditText.GeenData);
+            public static ParseResult Datumfout => CreateError(ParseState.Datumfout, GenericEditText.FoutDatumFormaat);
+            public static ParseResult TijdFout => CreateError(ParseState.TijdFout, GenericEditText.FoutTijdFormaat);
         }
 
         public enum ParseState
         {
+            // ReSharper disable UnusedMember.Global
             Undefined,
             Ok,
             Malformed,
@@ -364,30 +364,31 @@ namespace ProgressOnderwijsUtils
             Geendata,
             Datumfout,
             TijdFout
+            // ReSharper restore UnusedMember.Global
         }
 
         //Om gebruikersinvoer te controleren, daarna kan parse plaatsvinden
         public static ParseResult TryParse(string s, Type t, Taal taal)
         {
             if (t == null) {
-                throw new ArgumentNullException("t");
+                throw new ArgumentNullException(nameof(t));
             }
             if (s == null) {
                 return ParseResult.Geendata;
             }
 
-            Type nonNullableType = t.IfNullableGetNonNullableType();
-            bool canBeNull = !t.IsArray && (nonNullableType != null || !t.IsValueType);
-            Type fundamentalType = nonNullableType ?? t;
+            var nonNullableType = t.IfNullableGetNonNullableType();
+            var canBeNull = !t.IsArray && (nonNullableType != null || !t.IsValueType);
+            var fundamentalType = nonNullableType ?? t;
 
             if (canBeNull && s.Length == 0) {
                 return ParseResult.Ok(null); // dus s=="" levert null string op! - en dit vangt ook lege arrays, maar dat is ok; bij het parsen worden die niet-null
             } else if (fundamentalType == typeof(bool)) {
                 bool value;
-                return Boolean.TryParse(s, out value) ? ParseResult.Ok(value) : ParseResult.Malformed(t, s);
+                return bool.TryParse(s, out value) ? ParseResult.Ok(value) : ParseResult.Malformed(t, s);
             } else if (fundamentalType == typeof(DateTime)) {
                 DateTime parsedDate;
-                bool canParse = DateTime.TryParse(DateStringCheck(s), Taal.NL.GetCulture(), DateTimeStyles.None, out parsedDate);
+                var canParse = DateTime.TryParse(DateStringCheck(s), Taal.NL.GetCulture(), DateTimeStyles.None, out parsedDate);
                 return !canParse
                     ? ParseResult.Datumfout
                     : parsedDate.Year < YearMinimum || parsedDate.Year >= YearMaximum
@@ -456,7 +457,7 @@ namespace ProgressOnderwijsUtils
                 }
                 var components = s.Split(WHITESPACE, StringSplitOptions.RemoveEmptyEntries);
                 var retval = Array.CreateInstance(elementType, components.Length);
-                for (int i = 0; i < components.Length; i++) {
+                for (var i = 0; i < components.Length; i++) {
                     var elementParseResult = TryParse(components[i], elementType, taal);
                     if (elementParseResult.IsOk) {
                         retval.SetValue(elementParseResult.GetValue(), i);
@@ -465,7 +466,6 @@ namespace ProgressOnderwijsUtils
                     }
                 }
                 return ParseResult.Ok(retval);
-                ;
             }
             throw new ConverteerException("TryParse nog niet geimplementeerd voor " + t);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.Core;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Globalization;
@@ -8,11 +9,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
-using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Collections;
-using EntityException = System.Data.Entity.Core.EntityException;
 
 namespace ProgressOnderwijsUtils
 {
@@ -52,6 +50,19 @@ namespace ProgressOnderwijsUtils
 
     public static class Utils
     {
+        /// <summary>
+        /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
+        /// </summary>
+        public static bool FuzzyEquals(double x, double y)
+        {
+            const double relativeEpsilon = 1.0 / (1ul << 32);
+
+            double delta = Math.Abs(x - y);
+            double magnitude = Math.Abs(x) + Math.Abs(y);
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            return x == y || delta / magnitude < relativeEpsilon;
+        }
+
         public static Lazy<T> Lazy<T>(Func<T> factory) { return new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication); }
 
         public static bool ElfProef(int getal)
@@ -127,70 +138,32 @@ namespace ProgressOnderwijsUtils
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
         {
-            return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup));
+            return TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
         {
             var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
-
             while (distinctNewlyReachable.Length > 0) {
-                var builder = FastArrayBuilder<T>.Create();
-
-                foreach (var newItem in distinctNewlyReachable) {
-                    foreach (var reachable in edgeLookup(newItem)) {
-                        if (set.Add(reachable)) {
-                            builder.Add(reachable);
-                        }
-                    }
-                }
-                //next.AddRange(multiEdgeLookup(distinctNewlyReachable).Where(set.Add));
-                distinctNewlyReachable = builder.ToArray();
-                //distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
+                distinctNewlyReachable = distinctNewlyReachable.SelectMany(edgeLookup).Where(set.Add).ToArray();
             }
             return set;
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
         {
-            var set = elems.ToSet();
-            var distinctNewlyReachable = set.ToArray();
-            while (distinctNewlyReachable.Length > 0) {
-                distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
-            }
-            return set;
+            return TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
         {
-            var distinctNewlyReachable = elems.ToList();
-            var next = new List<T>();
+            var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
-            while (distinctNewlyReachable.Count > 0) {
-                foreach (var item in multiEdgeLookup(distinctNewlyReachable)) {
-                    if (set.Add(item)) {
-                        next.Add(item);
-                    }
-                }
-                //next.AddRange(multiEdgeLookup(distinctNewlyReachable).Where(set.Add));
-                distinctNewlyReachable.Clear();
-                var tmp = next;
-                next = distinctNewlyReachable;
-                distinctNewlyReachable = tmp;
-                //distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
+            while (distinctNewlyReachable.Length > 0) {
+                distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
             }
             return set;
-        }
-
-        /// <summary>
-        /// Joins a set of values into SQL syntax; e.g. test, ab'c, xyz turn into "('test', 'ab''c', 'xyz')" and the empty set turns into "(null)".
-        /// Single quotes are doubled; however, this is not rigorously safe and as such beware of SQL-injection.
-        /// No user-supplied strings should be used with this function!
-        /// </summary>
-        public static string SqlInClause(IEnumerable<string> values)
-        {
-            return SqlInClauseHelper(values.Select(EscapeSqlString));
         }
 
         /// <summary>
@@ -200,8 +173,6 @@ namespace ProgressOnderwijsUtils
         {
             return SqlInClauseHelper(values.Select(val => val.ToStringInvariant()));
         }
-
-        static string EscapeSqlString(string val) { return '\'' + val.Replace("'", "''") + '\''; }
 
         static string SqlInClauseHelper(IEnumerable<string> values)
         {
@@ -239,7 +210,7 @@ namespace ProgressOnderwijsUtils
         public static string GetSqlExceptionDetailsString(Exception exception)
         {
             SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
-            return sql == null ? null : String.Format("[code='{0:x}'; number='{1}'; state='{2}']", sql.ErrorCode, sql.Number, sql.State);
+            return sql == null ? null : $"[code='{sql.ErrorCode:x}'; number='{sql.Number}'; state='{sql.State}']";
         }
 
         /// <summary>
@@ -303,7 +274,7 @@ namespace ProgressOnderwijsUtils
         }
 
         // vergelijk datums zonder milliseconden.
-        public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2) { return d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond); }
+        public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2) => d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond);
 
         /// <summary>
         /// Geeft het verschil in maanden tussen twee datums
@@ -363,7 +334,7 @@ namespace ProgressOnderwijsUtils
             return new string(buffer, 0, index);
         }
 
-        static char MapToBase36Char(int digit) { return (char)((digit < 10 ? '0' : 'a' - 10) + digit); }
+        static char MapToBase36Char(int digit) => (char)((digit < 10 ? '0' : 'a' - 10) + digit);
 
         /// <summary>
         /// This is almost equivalent to num.ToString("f"+precision), but around 10 times faster.
@@ -390,7 +361,7 @@ namespace ProgressOnderwijsUtils
             var rounded = number * mult + 0.5;
             if (!(rounded <= ulong.MaxValue - 1024)) {
                 if (double.IsNaN(number)) {
-                    return "NaN";
+                    return fI.NaNSymbol;
                 }
                 if (double.IsInfinity(number)) {
                     return isNeg ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
@@ -471,8 +442,7 @@ namespace ProgressOnderwijsUtils
     {
         readonly Comparison<T> comparer;
         public ComparisonComparer(Comparison<T> comparer) { this.comparer = comparer; }
-
-        public int Compare(T x, T y) { return comparer(x, y); }
+        public int Compare(T x, T y) => comparer(x, y);
     }
 
     public class EqualsEqualityComparer<T> : IEqualityComparer<T>
@@ -486,7 +456,7 @@ namespace ProgressOnderwijsUtils
             this.hashCode = hashCode;
         }
 
-        public bool Equals(T x, T y) { return equals(x, y); }
-        public int GetHashCode(T obj) { return hashCode == null ? obj.GetHashCode() : hashCode(obj); }
+        public bool Equals(T x, T y) => equals(x, y);
+        public int GetHashCode(T obj) => hashCode == null ? obj.GetHashCode() : hashCode(obj);
     }
 }

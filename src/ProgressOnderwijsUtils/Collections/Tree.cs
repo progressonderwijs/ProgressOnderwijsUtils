@@ -65,8 +65,8 @@ namespace ProgressOnderwijsUtils.Collections
         static readonly IReadOnlyList<Tree<T>> EmptyArray = new Tree<T>[0]; // cache this since it will be used very commonly.
         readonly T nodeValue;
         readonly IReadOnlyList<Tree<T>> kidArray;
-        public T NodeValue { get { return nodeValue; } }
-        public IReadOnlyList<Tree<T>> Children { get { return kidArray; } }
+        public T NodeValue => nodeValue;
+        public IReadOnlyList<Tree<T>> Children => kidArray;
 
         /// <summary>
         /// Creates a Tree with specified child nodes.  The child node enumeration is materialized using ToArray() before usage.
@@ -144,10 +144,10 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        public override bool Equals(object obj) { return DefaultComparer.Equals(this, obj as Tree<T>); }
-        public bool Equals(Tree<T> other) { return DefaultComparer.Equals(this, other); }
-        public override int GetHashCode() { return DefaultComparer.GetHashCode(this); }
-        public override string ToString() { return "TREE:\n" + ToString(""); }
+        public override bool Equals(object obj) => DefaultComparer.Equals(this, obj as Tree<T>);
+        public bool Equals(Tree<T> other) => DefaultComparer.Equals(this, other);
+        public override int GetHashCode() => DefaultComparer.GetHashCode(this);
+        public override string ToString() => "TREE:\n" + ToString("");
 
         string ToString(string indent)
         {

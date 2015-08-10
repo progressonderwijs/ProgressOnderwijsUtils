@@ -17,19 +17,19 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() { return vals.GetEnumerator(); }
-        public T this[int index] { get { return vals[index]; } }
-        public int Count { get { return vals.Length; } }
+        IEnumerator IEnumerable.GetEnumerator() => vals.GetEnumerator();
+        public T this[int index] => vals[index];
+        public int Count => vals.Length;
     }
 
     public sealed class ListView<T> : IReadOnlyList<T>
     {
         readonly IList<T> vals;
         public ListView(IList<T> vals) { this.vals = vals; }
-        public IEnumerator<T> GetEnumerator() { return vals.AsEnumerable().GetEnumerator(); }
-        IEnumerator IEnumerable.GetEnumerator() { return vals.GetEnumerator(); }
-        public T this[int index] { get { return vals[index]; } }
-        public int Count { get { return vals.Count; } }
+        public IEnumerator<T> GetEnumerator() => vals.AsEnumerable().GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => vals.GetEnumerator();
+        public T this[int index] => vals[index];
+        public int Count => vals.Count;
     }
 
     public sealed class ReadOnlyCollectionView_Mapped<T, TOut> : IReadOnlyCollection<TOut>
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
             this.map = map;
         }
 
-        public int Count { get { return source.Count; } }
+        public int Count => source.Count;
 
         public IEnumerator<TOut> GetEnumerator()
         {
@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
     public sealed class CollectionView_Mapped<T, TOut> : IReadOnlyCollection<TOut>
@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
             this.map = map;
         }
 
-        public int Count { get { return source.Count; } }
+        public int Count => source.Count;
 
         public IEnumerator<TOut> GetEnumerator()
         {
@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
     public sealed class ArrayView_MappedByElement<T, TOut> : IReadOnlyList<TOut>
@@ -96,9 +96,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
-        public TOut this[int index] { get { return map(source[index]); } }
-        public int Count { get { return source.Count; } }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public TOut this[int index] => map(source[index]);
+        public int Count => source.Count;
     }
 
     public sealed class ArrayView_MappedWithIndex<T, TOut> : IReadOnlyList<TOut>
@@ -120,9 +120,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
-        public TOut this[int index] { get { return map(source[index], index); } }
-        public int Count { get { return source.Count; } }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        public TOut this[int index] => map(source[index], index);
+        public int Count => source.Count;
     }
 
     public static class CollectionViewExtensions
@@ -134,11 +134,6 @@ namespace ProgressOnderwijsUtils
         public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, int, TOut> map)
         {
             return new ArrayView_MappedWithIndex<T, TOut>(vals, map);
-        }
-
-        public static IReadOnlyCollection<TOut> SelectROCountable<T, TOut>(this IReadOnlyCollection<T> vals, Func<T, TOut> map)
-        {
-            return new ReadOnlyCollectionView_Mapped<T, TOut>(vals, map);
         }
 
         public static IReadOnlyCollection<TOut> SelectCountable<T, TOut>(this ICollection<T> vals, Func<T, TOut> map) { return new CollectionView_Mapped<T, TOut>(vals, map); }

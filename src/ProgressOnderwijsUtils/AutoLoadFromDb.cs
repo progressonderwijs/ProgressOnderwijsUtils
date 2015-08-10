@@ -1,4 +1,5 @@
 ﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return action(cmd);
                 } catch (Exception e) {
-                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + QueryTracer.DebugFriendlyCommandText(cmd, true), e);
+                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + QueryTracer.DebugFriendlyCommandText(cmd, QueryTracerParameterValues.Included), e);
                 }
             }
         }
@@ -134,7 +135,7 @@ namespace ProgressOnderwijsUtils
                 var lastColumnRead = 0;
                 try {
                     return unpacker(reader, out lastColumnRead);
-                } catch (Exception ex) {
+                } catch (Exception ex) when (!reader.IsClosed) {
                     var mps = MetaObject.GetMetaProperties<T>();
                     var metaObjectTypeName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T));
 
@@ -146,7 +147,8 @@ namespace ProgressOnderwijsUtils
                     var actualCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(mp.DataType);
 
                     throw new InvalidOperationException(
-                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name + " of type " + actualCsTypeName,
+                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name
+                            + " of type " + actualCsTypeName,
                         ex);
                 }
             }
@@ -176,21 +178,6 @@ namespace ProgressOnderwijsUtils
                 var lastColumnRead = 0;
                 return DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.LoadRows(reader, out lastColumnRead);
             }
-        }
-
-        /// <summary>
-        /// Overloaded; see primary overload for details.  This overload unpacks two recordsets; i.e. two subsequent SELECT statements.
-        /// It's equivalent to but faster than Tuple.Create(queryA.ReadByConstructor&lt;T1&gt;(conn), queryB.ReadByConstructor&lt;T2&gt;(conn))
-        /// </summary>
-        public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext)
-            where T1 : IReadByConstructor
-            where T2 : IReadByConstructor
-        {
-            return ExecuteQuery(
-                q,
-                qCommandCreationContext,
-                () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T1)) + ", " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T2)) + ">() failed.",
-                ReadByConstructor<T1, T2>);
         }
 
         public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(SqlCommand cmd)
@@ -230,8 +217,8 @@ namespace ProgressOnderwijsUtils
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
             };
 
-        //static bool SupportsType(Type type) { return GetterMethodsByType.ContainsKey(type); }
-        //static MethodInfo GetterForType(Type type) { return GetterMethodsByType[type]; }
+        //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
+        //static MethodInfo GetterForType(Type type) => GetterMethodsByType[type];
 
         //static readonly MethodInfo IsDBNullMethod = typeof(IDataRecord).GetMethod("IsDBNull", binding);
         //static readonly MethodInfo ReadMethod = typeof(IDataReader).GetMethod("Read", binding);
@@ -341,7 +328,7 @@ namespace ProgressOnderwijsUtils
                         typeof(T[]),
                         new[] { listVarExpr },
                         listAssignment,
-                    //listInit,
+                        //listInit,
                         rowLoopExpr,
                         listToArrayExpr
                         ),
@@ -402,13 +389,13 @@ namespace ProgressOnderwijsUtils
                         return true;
                     }
 
-                    public override int GetHashCode() { return (int)(uint)((cachedHash >> 32) + cachedHash); }
-                    public override bool Equals(object obj) { return obj is ColumnOrdering && Equals((ColumnOrdering)obj); }
+                    public override int GetHashCode() => (int)(uint)((cachedHash >> 32) + cachedHash);
+                    public override bool Equals(object obj) => obj is ColumnOrdering && Equals((ColumnOrdering)obj);
                 }
 
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> LoadRows;
-                static Type type { get { return typeof(T); } }
-                static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
+                static Type type => typeof(T);
+                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 static readonly uint[] ColHashPrimes;
                 static readonly MetaInfo<T> metadata = MetaInfo<T>.Instance;
                 static readonly bool hasUnsupportedColumns;
@@ -444,7 +431,7 @@ namespace ProgressOnderwijsUtils
 
                 // ReSharper disable UnusedParameter.Local
                 public static TRowReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
-                // ReSharper restore UnusedParameter.Local
+                    // ReSharper restore UnusedParameter.Local
                 {
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
@@ -489,7 +476,6 @@ namespace ProgressOnderwijsUtils
                                 )
                             );
                     }
-                    ;
                 }
             }
 
@@ -497,10 +483,10 @@ namespace ProgressOnderwijsUtils
                 where T : IReadByConstructor
             {
                 public static readonly TRowReader<T> LoadRows;
-                static Type type { get { return typeof(T); } }
-                static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
+                static Type type => typeof(T);
+                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 static readonly ConstructorInfo constructor;
-                static ParameterInfo[] ConstructorParameters { get { return constructor.GetParameters(); } }
+                static ParameterInfo[] ConstructorParameters => constructor.GetParameters();
 
                 static Impl()
                 {
@@ -562,9 +548,9 @@ namespace ProgressOnderwijsUtils
 
             public static class PlainImpl<T>
             {
-                static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
+                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 public static readonly TRowReader<T> LoadRows;
-                static Type type { get { return typeof(T); } }
+                static Type type => typeof(T);
 
                 static PlainImpl()
                 {

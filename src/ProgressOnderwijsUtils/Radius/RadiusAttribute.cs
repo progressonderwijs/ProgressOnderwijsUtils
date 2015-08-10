@@ -6,6 +6,7 @@ namespace ProgressOnderwijsUtils.Radius
 {
     public enum RadiusAttributeType
     {
+        // ReSharper disable UnusedMember.Global
         //directly from the RFC ;-) after VS.NET regex "^:b+{[^:b]+}:b+{[^:b].+}$" is replaced with "\2 = \1,"
         //then dashes +unassigned nrs. are removed.
         IllegalType = 0,
@@ -53,15 +54,16 @@ namespace ProgressOnderwijsUtils.Radius
         NASPortType = 61,
         PortLimit = 62,
         LoginLATPort = 63,
+        // ReSharper restore UnusedMember.Global
     }
 
     //see http://tools.ietf.org/html/rfc2138 or http://en.wikipedia.org/wiki/RADIUS
     public sealed class RadiusAttribute
     {
-        public RadiusAttributeType AttributeType { get; private set; }
+        public RadiusAttributeType AttributeType { get; }
         public byte[] AttributeValue { get; set; }
-        public byte[] Paket { get { return new[] { (byte)(int)AttributeType, (byte)(AttributeValue.Length + 2) }.Concat(AttributeValue).ToArray(); } }
-        public int Length { get { return AttributeValue.Length + 2; } }
+        public byte[] Paket => new[] { (byte)(int)AttributeType, (byte)(AttributeValue.Length + 2) }.Concat(AttributeValue).ToArray();
+        public int Length => AttributeValue.Length + 2;
 
         public RadiusAttribute(RadiusAttributeType Type, byte[] attributeValue)
         {
@@ -72,6 +74,6 @@ namespace ProgressOnderwijsUtils.Radius
             }
         }
 
-        public static RadiusAttribute NASIPAddress(IPAddress addr) { return new RadiusAttribute(RadiusAttributeType.NASIPAddress, addr.GetAddressBytes()); }
+        public static RadiusAttribute NASIPAddress(IPAddress addr) => new RadiusAttribute(RadiusAttributeType.NASIPAddress, addr.GetAddressBytes());
     }
 }

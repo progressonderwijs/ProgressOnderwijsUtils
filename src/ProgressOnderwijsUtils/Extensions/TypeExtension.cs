@@ -60,7 +60,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static bool CanBeNull(this Type type) { return !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>); }
+        public static bool CanBeNull(this Type type) => !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 
         /// <summary>
         /// If type is non-Nullable value type T, returns typeof(Nullable&lt;T&gt;).  For Nullable&lt;&gt; or reference types, returns null;
@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils
             return backtickIdx == -1 ? typename : typename.Substring(0, backtickIdx);
         }
 
-        public static string FriendlyName(this Type type) { return ObjectToCode.GetCSharpFriendlyTypeName(type); }
+        public static string FriendlyName(this Type type) => ObjectToCode.GetCSharpFriendlyTypeName(type);
 
         public static T Attr<T>(this MemberInfo mi) where T : Attribute
         {

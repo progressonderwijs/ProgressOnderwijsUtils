@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
             if (typeof(T).Name == "RootOrganisatie")
                 return "organisatieid";
             else
-                return typeof(T).Name + "id";
+                return typeof(T).Name + "Id";
         }
 
         public static string DbForeignKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible

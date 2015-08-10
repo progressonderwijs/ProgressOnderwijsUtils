@@ -146,7 +146,7 @@ namespace ProgressOnderwijsUtils
         public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old, params Dictionary<TKey, TValue>[] others)
         {
             if (old == null) {
-                throw new ArgumentNullException("old");
+                throw new ArgumentNullException(nameof(old));
             }
 
             var merged = old.Clone();

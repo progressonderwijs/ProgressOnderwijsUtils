@@ -6,6 +6,9 @@ namespace ProgressOnderwijsUtils.Log4Net
 {
     public static class ILogExtensions
     {
+        // ReSharper disable UnusedMember.Global
+        // Utility methods, and we want people to see those as alternatives,
+        // since logging might be expensive, and it's good to see the alternative
         public static void Debug(this ILog log, Func<object> msg)
         {
             if (log.IsDebugEnabled) {
@@ -114,5 +117,6 @@ namespace ProgressOnderwijsUtils.Log4Net
                 log.Fatal(msg(), exception);
             }
         }
+        // ReSharper restore UnusedMember.Global
     }
 }

@@ -136,7 +136,7 @@ namespace ProgressOnderwijsUtils
             };
         }
 
-        [Test, TestCaseSource("MakeUniqueData")]
+        [Test, TestCaseSource(nameof(MakeUniqueData))]
         public void MakeUnique(int count, int[][] rows)
         {
             SetUpRows(rows, sut);

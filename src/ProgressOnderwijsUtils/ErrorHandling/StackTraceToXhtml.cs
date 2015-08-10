@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils.ErrorHandling
         static IEnumerable<XNode> decompose(string trace)
         {
             if (trace == null) {
-                throw new ArgumentNullException("trace");
+                throw new ArgumentNullException(nameof(trace));
             }
             int lastIndex = 0;
             foreach (Match m in stackLine.Matches(trace)) {

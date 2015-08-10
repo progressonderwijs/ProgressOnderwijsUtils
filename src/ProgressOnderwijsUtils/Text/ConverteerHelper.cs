@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils
                         case Taal.DU:
                             return o ? "Ja" : "Nein";
                         default:
-                            throw new ArgumentOutOfRangeException("language", "Taal niet bekend: " + language);
+                            throw new ArgumentOutOfRangeException(nameof(language), "Taal niet bekend: " + language);
                     }
                 });
             yield return TryToString<char>(
@@ -72,11 +72,11 @@ namespace ProgressOnderwijsUtils
             yield return TryToString<VariantData>(
                 obj,
                 o => language =>
-                    o.ToUiString());
+                    o.ToString());
             yield return TryToString<FileData>(
                 obj,
                 o => language =>
-                    o.ContainsFile ? string.Format("{0} ({1} KB)", o.FileName, o.Content.Length / 1000m) : "");
+                    o.ContainsFile ? $"{o.FileName} ({o.Content.Length / 1000m} KB)" : "");
             yield return TryToString<double>(
                 obj,
                 o => language =>

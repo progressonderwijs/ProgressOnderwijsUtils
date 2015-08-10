@@ -32,16 +32,16 @@ namespace ProgressOnderwijsUtilsTests
         [MpReadonly]
         public string MpReadonlyProperty { get; set; }
 
-        string PrivateProperty { get; set; }
+        string PrivateProperty { get; }
 #pragma warning disable 169
         DateTime PrivateField;
 #pragma warning restore 169
 #pragma warning disable 649
         public readonly double ReadonlyField;
 #pragma warning restore 649
-        public double ReadonlyProperty { get { return 0.0; } }
+        public double ReadonlyProperty => 0.0;
         public char WriteonlyProperty { set { } }
-        public object PrivateSetter { get; private set; }
+        public object PrivateSetter { get; }
         public object PrivateGetter { set; private get; }
     }
 
@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtilsTests
         public void MetaObjectsAreAbstractOrNotInherited()
         {
             var metaObjectTypes =
-                from assembly in ClassNameConflicts.ProgressAssemblies
+                from assembly in ProgressAssemblies.All
                 from type in assembly.GetTypes()
                 where typeof(IMetaObject).IsAssignableFrom(type)
                 select type;

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.AppVersion;
+using Progress.Business.Data.GenericLijst;
 using Progress.Business.Organisaties;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -376,7 +375,7 @@ namespace ProgressOnderwijsUtilsTests
 
         static readonly IFilterFactory<BlaFilterObject> helper = null;
         Func<int, Func<int, bool>> getStaticGroupContainmentVerifier;
-        IEnumerable<BlaFilterObject> run(FilterBase filter) { return data.Where(filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier)); }
+        IEnumerable<BlaFilterObject> run(FilterBase filter) => data.Where(filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier));
 
         [SetUp]
         public void initGroupLookup() { getStaticGroupContainmentVerifier = InfoStaticGroup.CachedGroupMembershipVerifier(conn); }
@@ -547,6 +546,16 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => filterNonSenseE.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
             PAssert.That(() => filterNonSenseF.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
             PAssert.That(() => filterNonSenseG.ClearFilterWhenItContainsInvalidColumns<BlaFilterObject>() == null);
+        }
+
+        [Test]
+        public void FilterCreator() {
+
+            var filter = new DataSourceBase<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).IsNull();
+            PAssert.That(() => filter.ToQueryBuilder() == QueryBuilder.Create("IntNullable is null"));
+
+            var filter2 = new DataSourceBase<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).Equal(3);
+            PAssert.That(() => filter2.ToQueryBuilder() == QueryBuilder.Create("IntNullable={0}",3));
         }
     }
 
