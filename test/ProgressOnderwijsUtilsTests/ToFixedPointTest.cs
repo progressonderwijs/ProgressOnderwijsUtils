@@ -6,6 +6,7 @@ using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -13,6 +14,7 @@ namespace ProgressOnderwijsUtilsTests
     {
         static readonly CultureInfo INV = CultureInfo.InvariantCulture;
         static readonly CultureInfo NL = CultureInfo.GetCultureInfo("nl");
+        static readonly CultureInfo BE = CultureInfo.GetCultureInfo("nl-BE"); //in belgie is "NaN" "NaN (geen getal)" dus das een mooie corner case
 
         [Test]
         public void ToFixedPointWorksLikeFormatter()
@@ -34,7 +36,7 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test]
+        [Test, Continuous]
         public void FixedPointOmitsMinusForZero()
         {
             PAssert.That(() => Utils.ToFixedPointString(-0.1, INV, 0) == "0");
@@ -43,15 +45,18 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Utils.ToFixedPointString(-double.Epsilon, INV, 2) == "0.00");
         }
 
-        [Test]
+        [Test, Continuous]
         public void WorksOnNonFiniteNumbers()
         {
-            PAssert.That(() => Utils.ToFixedPointString(double.NaN, NL, 0) == double.NaN.ToString("f0"));
-            PAssert.That(() => Utils.ToFixedPointString(double.PositiveInfinity, INV, 1) == double.PositiveInfinity.ToString("f0"));
-            PAssert.That(() => Utils.ToFixedPointString(double.NegativeInfinity, INV, 2) == double.NegativeInfinity.ToString("f0"));
+            PAssert.That(() => Utils.ToFixedPointString(double.NaN, NL, 0) == double.NaN.ToString("f0", NL));
+            PAssert.That(() => Utils.ToFixedPointString(double.NaN, BE, 0) == double.NaN.ToString("f0", BE));
+            PAssert.That(() => Utils.ToFixedPointString(double.PositiveInfinity, INV, 1) == double.PositiveInfinity.ToString("f0", INV));
+            PAssert.That(() => Utils.ToFixedPointString(double.NegativeInfinity, INV, 2) == double.NegativeInfinity.ToString("f0", INV));
+            PAssert.That(() => Utils.ToFixedPointString(double.PositiveInfinity, BE, 1) == double.PositiveInfinity.ToString("f0", BE));
+            PAssert.That(() => Utils.ToFixedPointString(double.NegativeInfinity, BE, 2) == double.NegativeInfinity.ToString("f0", BE));
         }
 
-        [Test]
+        [Test, Continuous]
         public void WorksOnCornerCases()
         {
             ulong edgeCase = ulong.MaxValue - 1024;
@@ -65,7 +70,7 @@ namespace ProgressOnderwijsUtilsTests
                 () =>
                     approxEqual(
                         double.Parse(Utils.ToFixedPointString(edgeCase - 1, NL, 0), NumberStyles.AllowDecimalPoint, NL),
-                        double.Parse(((double)(edgeCase - 1)).ToString("f0"), NumberStyles.AllowDecimalPoint, NL)));
+                        double.Parse(((double)(edgeCase - 1)).ToString("f0", NL), NumberStyles.AllowDecimalPoint, NL)));
         }
     }
 }

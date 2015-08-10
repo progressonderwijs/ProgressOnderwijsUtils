@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils.Log4Net
             public static readonly Lazy<ILog> Log = For(typeof(T));
         }
 
-        public static Lazy<ILog> For<T>() { return LoggerCache<T>.Log; }
+        public static Lazy<ILog> For<T>() => LoggerCache<T>.Log;
         public static Lazy<ILog> For<T>(T obj) { return LoggerCache<T>.Log; }
 
         public static Lazy<ILog> For(Type type)

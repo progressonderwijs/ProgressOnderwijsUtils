@@ -41,8 +41,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public ITranslatable WithTooltip(string tooltipNL) { return WithTooltip(tooltipNL, null, null); }
-        public ITranslatable WithTooltip(string tooltipNL, string tooltipEN) { return WithTooltip(tooltipNL, tooltipEN, null); }
+        public ITranslatable WithTooltip(string tooltipNL) => WithTooltip(tooltipNL, null, null);
+        public ITranslatable WithTooltip(string tooltipNL, string tooltipEN) => WithTooltip(tooltipNL, tooltipEN, null);
 
         public ITranslatable WithTooltip(string tooltipNL, string tooltipEN, string tooltipDU)
         {

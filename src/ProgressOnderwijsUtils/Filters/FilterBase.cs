@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
             Expression objParamExpr,
             Expression DateTimeNowToken,
             Func<int, Func<int, bool>> getStaticGroupContainmentVerifier); //where T : IMetaObject;
-        public override string ToString() { return ToQueryBuilderImpl().DebugText(null); }
+        public override string ToString() => ToQueryBuilderImpl().DebugText(null);
         public abstract string SerializeToString();
         public abstract bool Equals(FilterBase other);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -9,13 +10,9 @@ using Progress.WebApp.RequestRouting;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public sealed class ConextAttribute : CategoryAttribute { }
-
-    [Conext]
-    public abstract class ConextTestSuite
+    public static class ConextTestHelpers
     {
-        protected static Saml20MetaData Saml20MetaData(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
+        public static Saml20MetaData Saml20MetaData(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
         {
             IdentityProviderConfig server = MetaDataFactory.GetIdentityProvider(idp);
             ServiceProviderConfig? client = sp.HasValue && db.HasValue
@@ -27,7 +24,7 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 
-    public class ConextMetaDataFactoryTest : ConextTestSuite
+    public sealed class ConextMetaDataFactoryTest
     {
         [Test]
         public void Generate()
@@ -38,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
 
         [TestCase(ServiceProvider.P3W, DatabaseVersion.ProductieDB), TestCase(ServiceProvider.P3W, DatabaseVersion.TestDB),
          TestCase(ServiceProvider.PNet, DatabaseVersion.ProductieDB), TestCase(ServiceProvider.PNet, DatabaseVersion.TestDB),
-         TestCase(ServiceProvider.PNet, DatabaseVersion.AcceptatieDB), 
+         TestCase(ServiceProvider.PNet, DatabaseVersion.AcceptatieDB),
          TestCase(ServiceProvider.PNet, DatabaseVersion.OntwikkelDB), TestCase(ServiceProvider.PNet, DatabaseVersion.BronHODB),
          TestCase(ServiceProvider.Student, DatabaseVersion.ProductieDB), TestCase(ServiceProvider.Student, DatabaseVersion.TestDB),
          TestCase(ServiceProvider.Student, DatabaseVersion.OntwikkelDB), TestCase(ServiceProvider.StudentOAuth, DatabaseVersion.ProductieDB),
@@ -96,12 +93,12 @@ namespace ProgressOnderwijsUtilsTests
          TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, DatabaseVersion.OntwikkelDB)]
         public void GetMetaData(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
         {
-            var sut = Saml20MetaData(idp, sp, db);
+            var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
             Assert.That(sut, Is.Not.Null);
         }
     }
 
-    public class Saml20MetaDataTest : ConextTestSuite
+    public sealed class Saml20MetaDataTest
     {
         [TestCase(IdentityProvider.ConextWayf, null, null), TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.ProductieDB),
          TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.TestDB), TestCase(IdentityProvider.Conext, ServiceProvider.PNet, DatabaseVersion.ProductieDB),
@@ -116,9 +113,8 @@ namespace ProgressOnderwijsUtilsTests
          TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, DatabaseVersion.OntwikkelDB)]
         public void GetEntities(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
         {
-            var sut = Saml20MetaData(idp, sp, db);
-            var entities = sut.GetEntities();
-            Assert.That(entities, Is.EquivalentTo(MetaDataFactory.GetEntities(idp, sp, db).Values.Distinct()));
+            var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
+            Assert.That(sut.GetEntities(), Is.EquivalentTo(MetaDataFactory.GetEntities(idp, sp, db).Values.Distinct()));
         }
 
         [TestCase(IdentityProvider.ConextWayf, null, null), TestCase(IdentityProvider.Conext, ServiceProvider.P3W, DatabaseVersion.ProductieDB),
@@ -134,7 +130,7 @@ namespace ProgressOnderwijsUtilsTests
          TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, DatabaseVersion.OntwikkelDB)]
         public void SingleSignOnService(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
         {
-            var sut = Saml20MetaData(idp, sp, db);
+            var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
             foreach (var entity in MetaDataFactory.GetEntities(idp, sp, db).Values.Distinct()) {
                 var sso = sut.SingleSignOnService(entity);
                 Assert.That(sso, Is.Not.Null);
@@ -143,8 +139,7 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 
-    [TestFixture, Conext]
-    public class SingleSignOnHandlerTest
+    public sealed class SingleSignOnHandlerTest
     {
         [Test]
         public void RelayStateSerialization()

@@ -22,23 +22,28 @@ namespace ProgressOnderwijsUtils
             return bytes;
         }
 
-        public static byte GetByte() { return GetBytes(1)[0]; }
-        public static int GetInt32() { return BitConverter.ToInt32(GetBytes(sizeof(int)), 0); }
-        public static long GetInt64() { return BitConverter.ToInt64(GetBytes(sizeof(long)), 0); }
+        [UsefulToKeep("library method")]
+        public static byte GetByte() => GetBytes(1)[0];
 
-        [CLSCompliant(false)]
+        [UsefulToKeep("library method")]
+        public static int GetInt32() => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
+
+        [UsefulToKeep("library method")]
+        public static long GetInt64() => BitConverter.ToInt64(GetBytes(sizeof(long)), 0);
+
+        [CLSCompliant(false), UsefulToKeep("library method")]
         public static uint GetUInt32()
         {
             return BitConverter.ToUInt32(GetBytes(sizeof(uint)), 0);
         }
 
-        [CLSCompliant(false)]
+        [CLSCompliant(false), UsefulToKeep("library method")]
         public static ulong GetUInt64()
         {
             return BitConverter.ToUInt64(GetBytes(sizeof(ulong)), 0);
         }
 
-        [CLSCompliant(false)]
+        [CLSCompliant(false), UsefulToKeep("library method")]
         public static uint GetUInt32(uint bound)
         {
             uint modErr = (uint.MaxValue % bound + 1) % bound;
@@ -52,7 +57,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [CLSCompliant(false)]
+        [CLSCompliant(false), UsefulToKeep("library method")]
         public static ulong GetUInt64(ulong bound)
         {
             ulong modErr = (ulong.MaxValue % bound + 1) % bound;
@@ -66,10 +71,10 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static string GetStringOfLatinLower(int length) { return GetString(length, 'a', 'z'); }
-        public static string GetStringCapitalized(int length) { return GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z'); }
-        public static string GetStringOfLatinUpperOrLower(int length) { return GetStringUpperAndLower(length, 'a', 'z'); }
-        public static string GetStringOfNumbers(int length) { return GetString(1, '1', '9') + GetString(length - 1, '0', '9'); }
+        public static string GetStringOfLatinLower(int length) => GetString(length, 'a', 'z');
+        public static string GetStringCapitalized(int length) => GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z');
+        public static string GetStringOfLatinUpperOrLower(int length) => GetStringUpperAndLower(length, 'a', 'z');
+        public static string GetStringOfNumbers(int length) => GetString(1, '1', '9') + GetString(length - 1, '0', '9');
 
         public static string GetString(int length, char min, char max)
         {

@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="strings">string sequence</param>
         /// <returns>a string</returns>
-        public static string JoinStrings(this IEnumerable<string> strings) { return JoinStrings(strings, ""); }
+        public static string JoinStrings(this IEnumerable<string> strings) => JoinStrings(strings, "");
 
         //don't use optional params to allow usage in expression trees
         /// <summary>
@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="strings">string sequence</param>
         /// <param name="separator">separator string</param>
         /// <returns>a string</returns>
-        public static string JoinStrings(this IEnumerable<string> strings, string separator) { return string.Join(separator, strings); }
+        public static string JoinStrings(this IEnumerable<string> strings, string separator) => string.Join(separator, strings);
     }
 
     [Continuous]

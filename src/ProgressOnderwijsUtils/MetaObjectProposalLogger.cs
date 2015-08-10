@@ -16,9 +16,9 @@ namespace ProgressOnderwijsUtils
         public static void RedirectLoggingToConsole() { writer = Console.Out.WriteLine; }
 
         [Conditional("DEBUG")]
-        public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, QueryTracer tracer)
+        public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, IQueryTracer tracer)
         {
-            var commandText = QueryTracer.DebugFriendlyCommandText(command, false);
+            var commandText = QueryTracer.DebugFriendlyCommandText(command, QueryTracerParameterValues.Excluded);
             bool wasAdded = false;
 
             var metaObjectClass = metaObjectProposals.GetOrAdd(
@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils
             lock (sync) {
                 if (writer == null) {
                     try {
-                        writer = new StreamWriter(String.Format(@"C:\\temp\\MetaObjectProposals_{0}.txt", DateTime.Now.ToString("yyyy-MM-dd_HHmm_ss"))) {
+                        writer = new StreamWriter($@"C:\\temp\\MetaObjectProposals_{DateTime.Now.ToString("yyyy-MM-dd_HHmm_ss")}.txt") {
                             AutoFlush = true
                         }.Write;
                     } catch {

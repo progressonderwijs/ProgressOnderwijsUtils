@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils.Barcode
         ///   wwwwww: een versleuteling van de int32 waarde
         ///   C: een checksum over T en wwwwww
         /// </summary>
-        public static string Encode(BarcodeType type, int value) { return Encode(new BarcodeWaarde { Type = type, Value = value }); }
+        public static string Encode(BarcodeType type, int value) => Encode(new BarcodeWaarde { Type = type, Value = value });
 
         static string Encode(BarcodeWaarde barcodeWaarde)
         {
@@ -88,6 +88,6 @@ namespace ProgressOnderwijsUtils.Barcode
             return barcode;
         }
 
-        static int Checksum(int value) { return value % BarcodeEncodingValue.AANTAL_KARAKTERS; }
+        static int Checksum(int value) => value % BarcodeEncodingValue.AANTAL_KARAKTERS;
     }
 }

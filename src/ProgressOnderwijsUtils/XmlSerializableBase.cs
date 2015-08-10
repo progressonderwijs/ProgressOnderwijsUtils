@@ -12,19 +12,6 @@ namespace ProgressOnderwijsUtils
     {
         public static T Deserialize<T>(string xml) { return XmlSerializerHelper<T>.Deserialize(xml); }
 
-        public static object Deserialize(Type t, string xml)
-        {
-            using (var reader = XmlReader.Create(new StringReader(xml))) {
-                return ((IXmlSerializeHelper)
-                    typeof(XmlSerializerHelper<>)
-                        .MakeGenericType(t)
-                        .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
-                        .Single()
-                        .Invoke(null)
-                    ).DeserializeInst(reader);
-            }
-        }
-
         public static string SerializeToString(object o)
         {
             using (var writer = new StringWriter()) {
@@ -60,7 +47,6 @@ namespace ProgressOnderwijsUtils
 
     interface IXmlSerializeHelper
     {
-        object DeserializeInst(XmlReader from);
         void SerializeToInst(XmlWriter xw, object val);
     }
 
@@ -74,15 +60,13 @@ namespace ProgressOnderwijsUtils
                 return Deserialize(reader);
         }
 
-        public static T Deserialize(XmlReader from) { return (T)serializer.Deserialize(from); }
+        public static T Deserialize(XmlReader from) => (T)serializer.Deserialize(from);
 
         public static T Deserialize(string from)
         {
             using (var reader = new StringReader(from))
                 return (T)serializer.Deserialize(reader);
         }
-
-        public static void SerializeTo(XmlWriter xw, T val) { serializer.Serialize(xw, val); }
 
         public static string Serialize(T val)
         {
@@ -93,21 +77,6 @@ namespace ProgressOnderwijsUtils
         }
 
         internal XmlSerializerHelper() { }
-        object IXmlSerializeHelper.DeserializeInst(XmlReader from) { return (T)serializer.Deserialize(from); }
         void IXmlSerializeHelper.SerializeToInst(XmlWriter xw, object val) { serializer.Serialize(xw, val); }
-    }
-
-    public abstract class XmlSerializableBase<T>
-        where T : XmlSerializableBase<T>
-    {
-        public static T Deserialize(XDocument from) { return XmlSerializerHelper<T>.Deserialize(from); }
-
-        public XDocument Serialize()
-        {
-            XDocument doc = new XDocument();
-            using (var xw = doc.CreateWriter())
-                XmlSerializerHelper<T>.SerializeTo(xw, (T)this);
-            return doc;
-        }
     }
 }

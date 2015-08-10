@@ -63,78 +63,6 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void OlapCommonTest()
-        {
-            var olapcommon_sample = new OlapCommon(
-                2,
-                3,
-                4,
-                5,
-                false,
-                OlapCommon.VoltijdType.Deeltijd,
-                OlapCommon.EoiType.Eoi,
-                OlapCommon.NrOplType.MeerOpl,
-                OlapCommon.Per1OktType.Alle,
-                OlapCommon.VooroplType.NonVwo,
-                OlapCommon.HerinschrijverType.HerinschrOpl,
-                OlapCommon.RijDimensieType.Cohorten,
-                OlapCommon.CelSomType.AbsenPercPerRij,
-                9,
-                OlapCommon.StudieStaakType.AlleenstudiestakersOpl,
-                "BlaBlaTestMenu") {
-                    EcGrenswaarde = 42,
-                    NrJarenMax = 2,
-                    StartExmType = OlapStartUitstroomType.StartPropedeuse
-                };
-            ComparePod(
-                olapcommon_sample,
-                new {
-                    ExtraRijdimensie = "",
-                    GeselecteerdeRijen = "",
-                    GeselecteerdeStudentCel = "",
-                    Rendement = false,
-                    Samenvatting = true,
-                    LangeLijst = false,
-                    TopZoveel = false,
-                    SpecificMember = false,
-                    Organisatie = 2,
-                    StartJaar = 3,
-                    //StopJaar = stopjaar,//niet gebruikt
-                    ExamenType = 5,
-                    RijDimensie = OlapCommon.RijDimensieType.Cohorten,
-                    VolofDeeltijd = OlapCommon.VoltijdType.Deeltijd,
-                    isEoi = OlapCommon.EoiType.Eoi,
-                    eenOpl = OlapCommon.NrOplType.MeerOpl,
-                    per1Okt = OlapCommon.Per1OktType.Alle,
-                    Vooropleiding = OlapCommon.VooroplType.NonVwo,
-                    isHerinschrijver = OlapCommon.HerinschrijverType.HerinschrOpl,
-                    ToonPerCel = OlapCommon.CelSomType.AbsenPercPerRij,
-                    opbasisvanCohort = false,
-                    StudiejaarNr = 9,
-                    isStudiestaker = OlapCommon.StudieStaakType.AlleenstudiestakersOpl,
-                    EerstejrNietdef = DateTime.Now.CollegeJaar(), //blech
-                    ShowTijdsverloop = false,
-                    EcGrenswaarde = 42,
-                    NrJarenMax = 2,
-                    StartExmType = OlapStartUitstroomType.StartPropedeuse,
-                    ParentMenuName = "BlaBlaTestMenu",
-                    aanmeldstatus = default(OlapCommon.AanmstatusType),
-                    alleeneerstejr = OlapCommon.AlleenEerstejaarType.Alle,
-                }
-                );
-
-            AutomaticClassTest(olapcommon_sample);
-        }
-
-        [Test]
-        public void RegioTest()
-        {
-            PAssert.That(
-                () => new Regio("wonderland", new[] { "abc", "def", "ghi" }).Member ==
-                    "member [Provincie].[provincie].[wonderland] as Sum({ [Provincie].[provincie].[abc],[Provincie].[provincie].[def],[Provincie].[provincie].[ghi]}) ");
-        }
-
-        [Test]
         public void SLBerichtSamenvattingTest()
         {
             var a = new SLBerichtSamenvatting.Value {
@@ -179,16 +107,8 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void ServiceTest()
+        public void SomeTest()
         {
-            AutomaticClassTest(new ServiceOrganisatie());
-            AutomaticClassTest(new ServiceVakInformatie());
-            AutomaticClassTest(new VakPeriode());
-            AutomaticClassTest(new EntreeVoorwaarde());
-            AutomaticClassTest(new ToetsVorm());
-            AutomaticClassTest(new OnderwijsVorm());
-            AutomaticClassTest(new OnderwijsNiveau());
-            AutomaticClassTest(new Literatuur());
             AutomaticClassTest(new BSADossierData());
         }
     }

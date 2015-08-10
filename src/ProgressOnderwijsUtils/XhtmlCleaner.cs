@@ -44,26 +44,11 @@ namespace ProgressOnderwijsUtils
 
     public static class HtmlFilter
     {
-        sealed class DelegateHtmlFilter : IHtmlFilter
-        {
-            readonly Func<XElement, TagSafety> filterTag;
-            readonly Func<XAttribute, bool> filterAttr;
-
-            public DelegateHtmlFilter(Func<XElement, TagSafety> filterTag, Func<XAttribute, bool> filterAttr)
-            {
-                this.filterTag = filterTag;
-                this.filterAttr = filterAttr;
-            }
-
-            public TagSafety AllowTag(XElement elem) { return filterTag(elem); }
-            public bool AllowAttribute(XAttribute attr) { return filterAttr(attr); }
-        }
-
         sealed class SafeStyleFilter : IHtmlFilter
         {
             public static readonly SafeStyleFilter Instance = new SafeStyleFilter();
-            public TagSafety AllowTag(XElement elem) { return TagSafety.Unsafe; }
-            public bool AllowAttribute(XAttribute attr) { return IsSafeStyleAttribute(attr); }
+            public TagSafety AllowTag(XElement elem) => TagSafety.Unsafe;
+            public bool AllowAttribute(XAttribute attr) => IsSafeStyleAttribute(attr);
 
             static readonly Regex
                 SafeStyleRegex = new Regex(@"^
@@ -71,7 +56,7 @@ namespace ProgressOnderwijsUtils
 		\d+(px|em|cm|mm|)\s*;?\s*
 $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 
-            static bool IsSafeStyleAttribute(XAttribute attr) { return attr.Name.LocalName == "style" && SafeStyleRegex.IsMatch(attr.Value); }
+            static bool IsSafeStyleAttribute(XAttribute attr) => attr.Name.LocalName == "style" && SafeStyleRegex.IsMatch(attr.Value);
         }
 
         sealed class AllowWhenAny : IHtmlFilter
@@ -93,7 +78,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                 return retval;
             }
 
-            public bool AllowAttribute(XAttribute attr) { return filters.Any(filter => filter.AllowAttribute(attr)); }
+            public bool AllowAttribute(XAttribute attr) => filters.Any(filter => filter.AllowAttribute(attr));
         }
 
         sealed class SetBasedHtmlFilter : IHtmlFilter
@@ -107,7 +92,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                 this.safeAttributes = MkSet(safeAttributes);
             }
 
-            static HashSet<string> MkSet(IEnumerable<string> elems) { return new HashSet<string>(elems ?? new string[0], StringComparer.OrdinalIgnoreCase); }
+            static HashSet<string> MkSet(IEnumerable<string> elems) => new HashSet<string>(elems ?? new string[0], StringComparer.OrdinalIgnoreCase);
 
             public TagSafety AllowTag(XElement elem)
             {
@@ -118,7 +103,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                         : TagSafety.Unknown;
             }
 
-            public bool AllowAttribute(XAttribute attr) { return safeAttributes.Contains(attr.Name.LocalName); }
+            public bool AllowAttribute(XAttribute attr) => safeAttributes.Contains(attr.Name.LocalName);
         }
 
         static readonly string[]
@@ -200,11 +185,11 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
 
         static string StrWithoutNonXmlEntities(string str)
         {
-            string strWithoutNonXmlEntities =
+            var strWithoutNonXmlEntities =
                 entityRegex.Replace(
                     str,
                     match => {
-                        string entityReference = match.Value.Substring(1, match.Length - 2);
+                        var entityReference = match.Value.Substring(1, match.Length - 2);
 
                         char? refersTo =
                             entityReference == "lt" || entityReference == "gt" || entityReference == "amp" || entityReference == "apos" || entityReference == "quot"
@@ -226,7 +211,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         {
             var output = new XElement(input);
             XNode current = output;
-            int currentMax = length;
+            var currentMax = length;
             var currentLen = current.ToString(SaveOptions.DisableFormatting).Length;
             //assume that xml length is additive; i.e. that adding a child adds precisely as much length as the child itself is long.
             //in debug mode, this assumption is asserted; but in release mode, this assumption avoids quadratic complexity
@@ -240,21 +225,21 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                     current.Remove();
                     return output;
                 } else if (current is XText) {
-                    var text = current as XText;
+                    var text = (XText)current;
                     //since XText does some \r magic, we can't just assume current.ToString is equivalent to text.Value
                     text.Value = current.ToString(SaveOptions.DisableFormatting).Replace('\r', ' ').Substring(0, currentMax);
                     return output;
                 }
                 var currentEl = (XElement)current;
 
-                int lastKidLen = currentEl.LastNode.ToString(SaveOptions.DisableFormatting).Length;
+                var lastKidLen = currentEl.LastNode.ToString(SaveOptions.DisableFormatting).Length;
                 if (currentLen - lastKidLen > currentMax) {
                     currentEl.LastNode.Remove();
                     currentLen = !currentEl.IsEmpty ? currentLen - lastKidLen : current.ToString(SaveOptions.DisableFormatting).Length;
                     Debug.Assert(currentLen == current.ToString(SaveOptions.DisableFormatting).Length, "Current length is inconsistent!");
                 } else {
-                    int restLen = currentLen - lastKidLen;
-                    int lastKidMax = currentMax - restLen;
+                    var restLen = currentLen - lastKidLen;
+                    var lastKidMax = currentMax - restLen;
                     current = currentEl.LastNode;
                     currentLen = lastKidLen;
                     Debug.Assert(currentLen == current.ToString(SaveOptions.DisableFormatting).Length, "Current length is inconsistent!");
@@ -269,9 +254,9 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         /// </summary>
         public static string TidyHtmlStringAndLimitLength(string input, int length)
         {
-            int wrapperLength = "<x></x>".Length;
-            XElement sanitizedWrappedInput = new XElement("x", HeuristicParse(input).Sanitize());
-            XElement trimmedVersion = int.MaxValue - wrapperLength > length
+            var wrapperLength = "<x></x>".Length;
+            var sanitizedWrappedInput = new XElement("x", HeuristicParse(input).Sanitize());
+            var trimmedVersion = int.MaxValue - wrapperLength > length
                 ? LimitLength(sanitizedWrappedInput, length + wrapperLength)
                 : sanitizedWrappedInput;
             return XWrappedToString(trimmedVersion);
@@ -280,13 +265,13 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         /// <summary>
         /// Takes an insecure html fragment and cleans it up.
         /// </summary>
-        public static string SanitizeHtmlString(string input) { return HeuristicParse(input).Sanitize().ToString(); }
+        public static string SanitizeHtmlString(string input) => HeuristicParse(input).Sanitize().ToString();
 
         /// <summary>
         /// Strips xml tags from the string for readability.  The resulting string still needs to be encoded (i.e. it is not disable-output escaping safe.)
         /// This function also decodes xml entities and &amp;nbsp; into readable characters.
         /// </summary>
-        public static string HtmlToTextParser(string str) { return new XElement("x", HeuristicParse(str)).Value; }
+        public static string HtmlToTextParser(string str) => new XElement("x", HeuristicParse(str)).Value;
 
         /// <summary>
         /// Serializes a document fragment as passed by Progress.NET - i.e. all children of a meaningless "&lt;x&gt;" root node.
@@ -338,7 +323,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         /// </summary>
         /// <param name="sourceHtml">The xhtml to sanitize.  The root element is ignored.</param>
         /// <returns>The parsed xhtml fragments without non-validating or unsafe tags.</returns>
-        public static XhtmlData Sanitize(this XhtmlData sourceHtml) { return sourceHtml.Sanitize(HtmlFilter.Default); }
+        public static XhtmlData Sanitize(this XhtmlData sourceHtml) => sourceHtml.Sanitize(HtmlFilter.Default);
 
         /// <summary>This function sanitizes an html tree.
         ///  - Any html that isn't recognized as html is considered content (e.g. a lone ampersand)
@@ -357,6 +342,45 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         {
             filter = filter ?? HtmlFilter.Default;
             return XhtmlData.Create(sourceHtml.SelectMany(node => FilterElem(node, filter)));
+        }
+
+        public static bool CannotBeValidHtml(string text)
+        {
+            bool htmlLikeDataFound = false;
+            bool inTag = false;
+            bool inEntityRef = false;
+
+            foreach (var c in text) {
+                switch (c) {
+                    case '<':
+                        if (inTag || inEntityRef) {
+                            return true;
+                        }
+                        inTag = true;
+                        htmlLikeDataFound = true;
+                        break;
+                    case '>':
+                        if (inTag) {
+                            inTag = false;
+                        } else {
+                            return true;
+                        }
+                        break;
+                    case '&':
+                        if (inEntityRef) {
+                            return true;
+                        }
+                        inEntityRef = true;
+                        htmlLikeDataFound = true;
+                        break;
+                    case ';':
+                        if (inEntityRef) {
+                            inEntityRef = false;
+                        }
+                        break;
+                }
+            }
+            return !htmlLikeDataFound || inTag || inEntityRef;
         }
     }
 }

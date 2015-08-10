@@ -59,8 +59,8 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            static T ExtractClassOrNullableField(object obj) { return obj == DBNull.Value ? default(T) : (T)obj; }
-            static T ExtractValueField(object obj) { return (T)obj; }
+            static T ExtractClassOrNullableField(object obj) => obj == DBNull.Value ? default(T) : (T)obj;
+            static T ExtractValueField(object obj) => (T)obj;
 
         }
 

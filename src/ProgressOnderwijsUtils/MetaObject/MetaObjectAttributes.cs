@@ -12,6 +12,8 @@ namespace ProgressOnderwijsUtils
         AlignCenter = 1 << 2,
         ExplicitLines = 1 << 3,
         ExtraSpaceRight = 1 << 4,
+        LimitedWidth = 1 << 5,
+        ExternalData = 1 << 6,
     }
 
     public static class ColumnCssHelpers
@@ -131,7 +133,7 @@ namespace ProgressOnderwijsUtils
 
         public MpLabelAttribute(string nl) { NL = nl; }
         public readonly string NL, EN, DE;
-        public LiteralTranslatable ToTranslatable() { return Translatable.Literal(NL, EN, DE); }
+        public LiteralTranslatable ToTranslatable() => Translatable.Literal(NL, EN, DE);
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
@@ -139,7 +141,7 @@ namespace ProgressOnderwijsUtils
     {
         public MpLabelUntranslatedAttribute(string label) { Label = label; }
         public readonly string Label;
-        public LiteralTranslatable ToTranslatable() { return Translatable.Literal(Label, Label, Label); }
+        public LiteralTranslatable ToTranslatable() => Translatable.Literal(Label, Label, Label);
     }
 
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]

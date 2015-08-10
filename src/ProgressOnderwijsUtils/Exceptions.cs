@@ -47,8 +47,8 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public class TemplateException : Exception
     {
-        public int Line { get; private set; }
-        public int Position { get; private set; }
+        public int Line { get; }
+        public int Position { get; }
 
         public TemplateException(int _Line, int _Position, string message)
             : base(message)
