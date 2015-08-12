@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
             Assert.That(sut.Name, Is.EqualTo("test"));
         }
 
-        IEnumerable<TestCaseData> EquatableData()
+        static IEnumerable<TestCaseData> EquatableData()
         {
             yield return new TestCaseData(default(GroupReference), default(GroupReference), true);
             yield return new TestCaseData(default(GroupReference), new GroupReference(1, "rhs"), false);
