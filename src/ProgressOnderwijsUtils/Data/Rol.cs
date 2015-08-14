@@ -4,7 +4,6 @@ using ProgressOnderwijsUtils.ToegangsRolInternal;
 
 namespace ProgressOnderwijsUtils
 {
-    [OdsTable]
     public enum Rol
     {
 #pragma warning disable 612
