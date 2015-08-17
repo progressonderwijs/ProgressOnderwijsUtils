@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity.Core.Common.CommandTrees;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
@@ -212,5 +213,26 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [Pure]
         public static Maybe<TOut> WhenOkTry<T, TOut>(this Maybe<T> state, Func<T, Maybe<TOut>> map) => state.If(map, Error<TOut>);
+
+        public static Maybe<T> ConvertExceptionToError<TException, T>(Action action, Func<TException, ITranslatable> error)
+            where TException : Exception
+        {
+            try {
+                action();
+                return Ok(default(T));
+            } catch (TException e) {
+                return Error(error(e));
+            }
+        }
+
+        public static Maybe<T> ConvertExceptionToError<TException, T>(Func<T> func, Func<TException, ITranslatable> error)
+            where TException : Exception
+        {
+            try {
+                return Ok(func());
+            } catch (TException e) {
+                return Error(error(e));
+            }
+        }
     }
 }
