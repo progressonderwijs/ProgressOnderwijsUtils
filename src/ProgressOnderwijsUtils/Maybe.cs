@@ -214,17 +214,23 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static Maybe<TOut> WhenOkTry<T, TOut>(this Maybe<T> state, Func<T, Maybe<TOut>> map) => state.If(map, Error<TOut>);
 
-        public static Maybe<T> ConvertExceptionToError<TException, T>(Action action, Func<TException, ITranslatable> error)
+        /// <summary>
+        /// Calls the action and converts exceptions of the specified type into a Maybe with an error.
+        /// </summary>
+        public static ErrorValue ConvertExceptionToError<TException>(Action action, Func<TException, ITranslatable> error)
             where TException : Exception
         {
             try {
                 action();
-                return Ok(default(T));
+                return new ErrorValue();
             } catch (TException e) {
                 return Error(error(e));
             }
         }
 
+        /// <summary>
+        /// Calls the function and returns a Maybe with its result or a Maybe with an error in case of an exception of the specified type is thrown.
+        /// </summary>
         public static Maybe<T> ConvertExceptionToError<TException, T>(Func<T> func, Func<TException, ITranslatable> error)
             where TException : Exception
         {
