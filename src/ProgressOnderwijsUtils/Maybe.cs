@@ -217,12 +217,12 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Calls the action and converts exceptions of the specified type into a Maybe with an error.
         /// </summary>
-        public static ErrorValue ConvertExceptionToError<TException>(Action action, Func<TException, ITranslatable> error)
+        public static Maybe<Unit> ConvertExceptionToError<TException>(Action action, Func<TException, ITranslatable> error)
             where TException : Exception
         {
             try {
                 action();
-                return new ErrorValue();
+                return Ok();
             } catch (TException e) {
                 return Error(error(e));
             }
