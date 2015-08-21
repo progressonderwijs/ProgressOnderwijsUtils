@@ -8,6 +8,14 @@ using System.Text.RegularExpressions;
 
 namespace ProgressOnderwijsUtils
 {
+    public static class SafeSql {
+        [Pure]
+        public static QueryBuilder SqlQuery(FormattableString interpolatedQuery)
+        {
+            return QueryBuilder.CreateDynamic(interpolatedQuery.Format, interpolatedQuery.GetArguments());
+        }
+    }
+
     public abstract class QueryBuilder : IEquatable<QueryBuilder>
     {
         QueryBuilder() { } // only inner classes may inherit
@@ -167,10 +175,6 @@ namespace ProgressOnderwijsUtils
 
         // ReSharper restore UnusedMember.Global
 
-        [Pure]
-        public static QueryBuilder CreateSafe(FormattableString interpolatedQuery) {
-            return CreateDynamic( interpolatedQuery.Format,interpolatedQuery.GetArguments());
-        }
 
         [Pure]
         public static QueryBuilder Create(string str, params object[] arguments)
