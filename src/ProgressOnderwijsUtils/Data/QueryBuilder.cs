@@ -166,8 +166,21 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder TableParamDynamic(Array o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         // ReSharper restore UnusedMember.Global
+
+        [Pure]
+        public static QueryBuilder CreateSafe(FormattableString interpolatedQuery) {
+            return CreateDynamic( interpolatedQuery.Format,interpolatedQuery.GetArguments());
+        }
+
         [Pure]
         public static QueryBuilder Create(string str, params object[] arguments)
+        {
+            return CreateDynamic(str, arguments);
+        }
+
+
+        [Pure]
+        public static QueryBuilder CreateDynamic(string str, params object[] arguments)
         {
             if (str == null) {
                 throw new ArgumentNullException(nameof(str));
