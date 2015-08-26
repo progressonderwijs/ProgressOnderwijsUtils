@@ -107,10 +107,6 @@ namespace ProgressOnderwijsUtils
         public static ITranslatable CreateTranslatable(TranslateFunction text, TranslateFunction extratext) => new DoubleTranslatable(text, extratext);
 
         [Pure]
-        [UsefulToKeep("library method")]
-        public static ITranslatable CreateLazyTranslatable(Func<ITranslatable> lazyCreator) => new SimpleTranslatable(taal => lazyCreator().Translate(taal));
-
-        [Pure]
         public static ITranslatable CreateLazyTranslatable(Func<Taal, TextVal> translator) => new SimpleTranslatable(translator);
 
         static readonly LiteralTranslatable empty = new LiteralTranslatable("", "", "");
