@@ -7,15 +7,13 @@ using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
-    public delegate string TranslateFunction(Taal taal = Taal.NL);
-
     public static class ConverteerHelper
     {
         public const string GELD_EURO = "N02";
-        static TranslateFunction TryToString<T>(object obj, Func<T, TranslateFunction> translator) { return obj is T ? translator((T)obj) : null; }
+        static Func<Taal, string> TryToString<T>(object obj, Func<T, Func<Taal, string>> translator) { return obj is T ? translator((T)obj) : null; }
 
         [Pure]
-        static IEnumerable<TranslateFunction> ResolveTranslator(object obj, string format)
+        static IEnumerable<Func<Taal, string>> ResolveTranslator(object obj, string format)
         {
             yield return TryToString<ITranslatable>(
                 obj,
@@ -118,7 +116,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static TranslateFunction ToStringDynamic(object obj, string format = null)
+        public static Func<Taal, string> ToStringDynamic(object obj, string format = null)
         {
             if (obj == null || obj == DBNull.Value) {
                 return language => "";
@@ -134,7 +132,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        static TranslateFunction ArrayToStringHelper(IEnumerable o, string format)
+        static Func<Taal, string> ArrayToStringHelper(IEnumerable o, string format)
         {
             var subtrans = o.Cast<object>().Select(
                 elem =>

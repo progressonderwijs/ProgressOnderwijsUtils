@@ -101,17 +101,13 @@ namespace ProgressOnderwijsUtils
             => (translatable as ForcedLanguageTranslatable) ?? new ForcedLanguageTranslatable(translatable, taal);
 
         [Pure]
-        public static ITranslatable CreateTranslatable(TranslateFunction text) => new SingleTranslatable(text);
+        public static ITranslatable CreateTranslatable(Func<Taal, string> text) => new SingleTranslatable(text);
 
         [Pure]
-        public static ITranslatable CreateTranslatable(TranslateFunction text, TranslateFunction extratext) => new DoubleTranslatable(text, extratext);
+        public static ITranslatable CreateTranslatable(Func<Taal, string> text, Func<Taal, string> extratext) => new DoubleTranslatable(text, extratext);
 
         [Pure]
-        [UsefulToKeep("library method")]
-        public static ITranslatable CreateLazyTranslatable(Func<ITranslatable> lazyCreator) => new SimpleTranslatable(taal => lazyCreator().Translate(taal));
-
-        [Pure]
-        public static ITranslatable CreateLazyTranslatable(Func<Taal, TextVal> translator) => new SimpleTranslatable(translator);
+        public static ITranslatable CreateTranslatable(Func<Taal, TextVal> translator) => new SimpleTranslatable(translator);
 
         static readonly LiteralTranslatable empty = new LiteralTranslatable("", "", "");
         public static LiteralTranslatable Empty => empty;
@@ -180,18 +176,18 @@ namespace ProgressOnderwijsUtils
 
         sealed class SingleTranslatable : ITranslatable
         {
-            readonly TranslateFunction stringify;
-            public SingleTranslatable(TranslateFunction stringify) { this.stringify = stringify; }
-            public string GenerateUid() => stringify();
+            readonly Func<Taal, string> stringify;
+            public SingleTranslatable(Func<Taal, string> stringify) { this.stringify = stringify; }
+            public string GenerateUid() => stringify(Taal.NL);
             public TextVal Translate(Taal lang) => TextVal.Create(stringify(lang));
             public override string ToString() => GenerateUid();
         }
 
         sealed class DoubleTranslatable : ITranslatable
         {
-            readonly TranslateFunction textF, extratextF;
+            readonly Func<Taal, string> textF, extratextF;
 
-            public DoubleTranslatable(TranslateFunction textFactory, TranslateFunction extratextFactory)
+            public DoubleTranslatable(Func<Taal, string> textFactory, Func<Taal, string> extratextFactory)
             {
                 textF = textFactory;
                 extratextF = extratextFactory;
