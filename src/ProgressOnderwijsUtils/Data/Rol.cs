@@ -360,7 +360,7 @@ namespace ProgressOnderwijsUtils
 
         [MpLabel("Bekijken inschrijvingen"), Toekenbaar,
          Implies(BekijkenStudentBasis, StudentInschrijvingenTabblad, VooropleidingenBekijken,
-             AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, InloggenWebsite)]
+             AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, InloggenWebsite, StatischeGroepenGebruiken)]
         BekijkenInschrijvingen = 160,
 
         [MpLabel("Bekijken inschrijvingen uitgebreid"), Toekenbaar,
