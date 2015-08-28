@@ -1,6 +1,4 @@
 using System.Collections.Immutable;
-using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -13,14 +11,15 @@ namespace QueryBuilderConverter
     public class QueryBuilderConverterAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "QueryBuilderConverter";
+        private const string Category = "Naming";
 
         // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
         private static readonly string Title = "Can use safe SqlQuery instead";
         private static readonly string MessageFormat = "Bla '{0}'";
         private static readonly string Description = "QueryBuilder can be converted to safe SqlQuery";
-        private const string Category = "Naming";
 
-        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat, Category, DiagnosticSeverity.Warning, true, Description);
+        private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat,
+            Category, DiagnosticSeverity.Warning, true, Description);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -40,7 +39,8 @@ namespace QueryBuilderConverter
             }
         }
 
-        public static bool IsQueryBuilderCreate(SyntaxNode syntaxNode, SemanticModel semanticModel, CancellationToken cancellationToken)
+        public static bool IsQueryBuilderCreate(SyntaxNode syntaxNode, SemanticModel semanticModel,
+            CancellationToken cancellationToken)
         {
             var invocationExpr = syntaxNode as InvocationExpressionSyntax;
             if (invocationExpr == null)
@@ -95,7 +95,14 @@ namespace QueryBuilderConverter
             if (symbolInfo.Symbol.ContainingNamespace.ToString() != "ProgressOnderwijsUtils")
                 return false;
 
-            return true;
+            var speculativeSqlQuerySymbols = semanticModel.GetSpeculativeSymbolInfo(invocationExpr.Span.Start,
+                SyntaxFactory.IdentifierName("SqlQuery"), SpeculativeBindingOption.BindAsExpression);
+            if (speculativeSqlQuerySymbols.Symbol != null)
+                if (speculativeSqlQuerySymbols.Symbol.ContainingType.Name != "SafeSql" ||
+                    speculativeSqlQuerySymbols.Symbol.ContainingType.ContainingNamespace.ToString() != "ProgressOnderwijsUtils")
+                    return false;
+
+          return true;
         }
     }
 }
