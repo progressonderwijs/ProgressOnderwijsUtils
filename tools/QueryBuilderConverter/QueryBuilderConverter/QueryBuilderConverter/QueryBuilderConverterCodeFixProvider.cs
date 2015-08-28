@@ -51,41 +51,48 @@ namespace QueryBuilderConverter
         private async Task<Document> ConvertToSqlQueryInterpolation(Document document,
             InvocationExpressionSyntax invocation, CancellationToken cancellationToken)
         {
-            var queryBuilderCreateArgs = invocation.ArgumentList.Arguments;
-            var replacementArguments = queryBuilderCreateArgs.Skip(1).Select(arg => arg.Expression).ToArray();
-            var queryFormatLiteralSyntax = (LiteralExpressionSyntax) queryBuilderCreateArgs[0].Expression;
-            var newInterpolatedString = ReplaceFormatStringWithInterpolation(queryFormatLiteralSyntax,
-                replacementArguments);
+            try
+            {
+                var queryBuilderCreateArgs = invocation.ArgumentList.Arguments;
+                var replacementArguments = queryBuilderCreateArgs.Skip(1).Select(arg => arg.Expression).ToArray();
+                var queryFormatLiteralSyntax = (LiteralExpressionSyntax) queryBuilderCreateArgs[0].Expression;
+                var newInterpolatedString = ReplaceFormatStringWithInterpolation(queryFormatLiteralSyntax,
+                    replacementArguments);
 
-            var root = (CompilationUnitSyntax) await document.GetSyntaxRootAsync(cancellationToken);
-            var newInvocation = SyntaxFactory.InvocationExpression(
-                SyntaxFactory.IdentifierName("SqlQuery"),
-                SyntaxFactory.ArgumentList()
-                    .AddArguments(SyntaxFactory.Argument(newInterpolatedString))
-                )
-                .WithLeadingTrivia(invocation.GetLeadingTrivia())
-                .WithTrailingTrivia(invocation.GetTrailingTrivia())
-                ;
+                var root = (CompilationUnitSyntax) await document.GetSyntaxRootAsync(cancellationToken);
+                var newInvocation = SyntaxFactory.InvocationExpression(
+                    SyntaxFactory.IdentifierName("SqlQuery"),
+                    SyntaxFactory.ArgumentList()
+                        .AddArguments(SyntaxFactory.Argument(newInterpolatedString))
+                    )
+                    .WithLeadingTrivia(invocation.GetLeadingTrivia())
+                    .WithTrailingTrivia(invocation.GetTrailingTrivia())
+                    ;
 
-            var rootWithSqlInterpolation = root.ReplaceNode(invocation, newInvocation);
+                var rootWithSqlInterpolation = root.ReplaceNode(invocation, newInvocation);
 
-            var hasUsingStaticProgressToolsSafeSql = rootWithSqlInterpolation.Usings.Any(ud =>
-                ud.StaticKeyword.Kind() != SyntaxKind.None
-                &&
-                ud.Name.ToString() == "ProgressOnderwijsUtils.SafeSql"
-                );
+                var hasUsingStaticProgressToolsSafeSql = rootWithSqlInterpolation.Usings.Any(ud =>
+                    ud.StaticKeyword.Kind() != SyntaxKind.None
+                    &&
+                    ud.Name.ToString() == "ProgressOnderwijsUtils.SafeSql"
+                    );
 
-            var rootWithSqlInterpolationAndUsing =
-                hasUsingStaticProgressToolsSafeSql
-                    ? rootWithSqlInterpolation
-                    : rootWithSqlInterpolation.WithUsings(
-                        rootWithSqlInterpolation.Usings.Add(SyntaxFactory.UsingDirective(
-                            SyntaxFactory.Token(SyntaxKind.StaticKeyword),
-                            null,
-                            SyntaxFactory.ParseName("ProgressOnderwijsUtils.SafeSql")
-                            )));
+                var rootWithSqlInterpolationAndUsing =
+                    hasUsingStaticProgressToolsSafeSql
+                        ? rootWithSqlInterpolation
+                        : rootWithSqlInterpolation.WithUsings(
+                            rootWithSqlInterpolation.Usings.Add(SyntaxFactory.UsingDirective(
+                                SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                                null,
+                                SyntaxFactory.ParseName("ProgressOnderwijsUtils.SafeSql")
+                                )));
 
-            return document.WithSyntaxRoot(rootWithSqlInterpolationAndUsing);
+                return document.WithSyntaxRoot(rootWithSqlInterpolationAndUsing);
+            }
+            catch
+            {
+                return document;
+            }
         }
 
         private static InterpolatedStringExpressionSyntax ReplaceFormatStringWithInterpolation(
