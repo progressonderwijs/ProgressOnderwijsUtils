@@ -8,7 +8,6 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Simplification;
 
 namespace QueryBuilderConverter
 {
@@ -16,12 +15,6 @@ namespace QueryBuilderConverter
     public class QueryBuilderConverterCodeFixProvider : CodeFixProvider
     {
         private const string title = "Replace with SqlQuery($\"...\")";
-
-        private static readonly SyntaxToken OpenParenToken = SyntaxFactory.Token(SyntaxTriviaList.Empty,
-            SyntaxKind.OpenParenToken, SyntaxTriviaList.Empty);
-
-        private static readonly SyntaxToken CloseParenToken = SyntaxFactory.Token(SyntaxTriviaList.Empty,
-            SyntaxKind.CloseParenToken, SyntaxTriviaList.Empty);
 
         public override sealed ImmutableArray<string> FixableDiagnosticIds
             => ImmutableArray.Create(QueryBuilderConverterAnalyzer.DiagnosticId);
@@ -49,13 +42,13 @@ namespace QueryBuilderConverter
                 context.RegisterCodeFix(
                     CodeAction.Create(title,
                         c =>
-                            ConvertToSqlQueryInterpolation(semanticModel, document,
+                            ConvertToSqlQueryInterpolation(document,
                                 (InvocationExpressionSyntax) diagnosticSyntaxNode, c), title),
                     diagnostic);
             }
         }
 
-        private async Task<Document> ConvertToSqlQueryInterpolation(SemanticModel semanticModel, Document document,
+        private async Task<Document> ConvertToSqlQueryInterpolation(Document document,
             InvocationExpressionSyntax invocation, CancellationToken cancellationToken)
         {
             var queryBuilderCreateArgs = invocation.ArgumentList.Arguments;
@@ -64,19 +57,35 @@ namespace QueryBuilderConverter
             var newInterpolatedString = ReplaceFormatStringWithInterpolation(queryFormatLiteralSyntax,
                 replacementArguments);
 
-            var root = await document.GetSyntaxRootAsync(cancellationToken);
-
-
+            var root = (CompilationUnitSyntax) await document.GetSyntaxRootAsync(cancellationToken);
             var newInvocation = SyntaxFactory.InvocationExpression(
                 SyntaxFactory.IdentifierName("SqlQuery"),
                 SyntaxFactory.ArgumentList()
                     .AddArguments(SyntaxFactory.Argument(newInterpolatedString))
+                )
+                .WithLeadingTrivia(invocation.GetLeadingTrivia())
+                .WithTrailingTrivia(invocation.GetTrailingTrivia())
+                ;
 
+            var rootWithSqlInterpolation = root.ReplaceNode(invocation, newInvocation);
+
+            var hasUsingStaticProgressToolsSafeSql = rootWithSqlInterpolation.Usings.Any(ud =>
+                ud.StaticKeyword.Kind() != SyntaxKind.None
+                &&
+                ud.Name.ToString() == "ProgressOnderwijsUtils.SafeSql"
                 );
 
-            var newRoot = root.ReplaceNode(invocation, newInvocation);
+            var rootWithSqlInterpolationAndUsing =
+                hasUsingStaticProgressToolsSafeSql
+                    ? rootWithSqlInterpolation
+                    : rootWithSqlInterpolation.WithUsings(
+                        rootWithSqlInterpolation.Usings.Add(SyntaxFactory.UsingDirective(
+                            SyntaxFactory.Token(SyntaxKind.StaticKeyword),
+                            null,
+                            SyntaxFactory.ParseName("ProgressOnderwijsUtils.SafeSql")
+                            )));
 
-            return document.WithSyntaxRoot(newRoot);
+            return document.WithSyntaxRoot(rootWithSqlInterpolationAndUsing);
         }
 
         private static InterpolatedStringExpressionSyntax ReplaceFormatStringWithInterpolation(
@@ -116,7 +125,9 @@ namespace QueryBuilderConverter
             var literalExpression = (LiteralExpressionSyntax) interpolationSyntax.Expression;
             var index = (int) literalExpression.Token.Value;
 
-            return interpolationSyntax.WithExpression(replacementArguments[index]);
+            return
+                interpolationSyntax.WithExpression(
+                    replacementArguments[index].WithoutLeadingTrivia().WithoutTrailingTrivia());
         }
     }
 }
