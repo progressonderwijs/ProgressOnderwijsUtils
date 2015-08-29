@@ -11,15 +11,14 @@ namespace QueryBuilderConverter
     public class QueryBuilderConverterAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "QueryBuilderConverter";
-        private const string Category = "Naming";
+        private const string Category = "Api usage";
 
         // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
-        private static readonly string Title = "Can use safe SqlQuery instead";
-        private static readonly string MessageFormat = "Bla '{0}'";
-        private static readonly string Description = "QueryBuilder can be converted to safe SqlQuery";
+        private static readonly string Title = "Avoid unsafe QueryBuilder.Create";
+        private static readonly string MessageFormat = "Replace QueryBuilder.Create(...) with injection-safe safe SQL($\"...\")";
 
         private static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(DiagnosticId, Title, MessageFormat,
-            Category, DiagnosticSeverity.Warning, true, Description);
+            Category, DiagnosticSeverity.Warning, true);
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
@@ -96,7 +95,7 @@ namespace QueryBuilderConverter
                 return false;
 
             var speculativeSqlQuerySymbols = semanticModel.GetSpeculativeSymbolInfo(invocationExpr.Span.Start,
-                SyntaxFactory.IdentifierName("SqlQuery"), SpeculativeBindingOption.BindAsExpression);
+                SyntaxFactory.IdentifierName("SQL"), SpeculativeBindingOption.BindAsExpression);
             if (speculativeSqlQuerySymbols.Symbol != null)
                 if (speculativeSqlQuerySymbols.Symbol.ContainingType.Name != "SafeSql" ||
                     speculativeSqlQuerySymbols.Symbol.ContainingType.ContainingNamespace.ToString() != "ProgressOnderwijsUtils")
