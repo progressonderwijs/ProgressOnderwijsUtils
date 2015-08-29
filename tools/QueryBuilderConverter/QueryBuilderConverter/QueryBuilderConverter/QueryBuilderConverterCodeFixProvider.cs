@@ -14,7 +14,7 @@ namespace QueryBuilderConverter
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(QueryBuilderConverterCodeFixProvider)), Shared]
     public class QueryBuilderConverterCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Replace with SqlQuery($\"...\")";
+        private const string title = "Replace with SQL($\"...\")";
 
         public override sealed ImmutableArray<string> FixableDiagnosticIds
             => ImmutableArray.Create(QueryBuilderConverterAnalyzer.DiagnosticId);
@@ -61,7 +61,7 @@ namespace QueryBuilderConverter
 
                 var root = (CompilationUnitSyntax) await document.GetSyntaxRootAsync(cancellationToken);
                 var newInvocation = SyntaxFactory.InvocationExpression(
-                    SyntaxFactory.IdentifierName("SqlQuery"),
+                    SyntaxFactory.IdentifierName("SQL"),
                     SyntaxFactory.ArgumentList()
                         .AddArguments(SyntaxFactory.Argument(newInterpolatedString))
                     )
