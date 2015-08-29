@@ -74,7 +74,7 @@ namespace ProgressOnderwijsUtilsTests
         [SetUp]
         public void CreateTempTable()
         {
-            SqlQuery($@"create table #MyTable (id int not null primary key, bla nvarchar(max) null, bla2 nvarchar(max) not null)").ExecuteNonQuery(conn);
+            SQL($@"create table #MyTable (id int not null primary key, bla nvarchar(max) null, bla2 nvarchar(max) not null)").ExecuteNonQuery(conn);
         }
 
         [Test]
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtilsTests
         public void BulkCopyAllowsExactMatch()
         {
             MetaObject.SqlBulkCopy(SampleObjects, conn.SqlConnection, "#MyTable");
-            var fromDb = SqlQuery($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(conn);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(conn);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
         }
 
@@ -119,7 +119,7 @@ namespace ProgressOnderwijsUtilsTests
         public void BulkCopySupportsColumnReordering()
         {
             MetaObject.SqlBulkCopy(SampleObjects, conn.SqlConnection, "#MyTable");
-            var fromDb = SqlQuery($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(conn);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(conn);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
         }
     }

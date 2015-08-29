@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void EenmaligeScripts()
         {
-            var names = SqlQuery($@"
+            var names = SQL($@"
 				select Naam
 				from SqlBuild.EenmaligScript
 				where DatumControle > DatumUitvoerProductie")

@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void QueryBuildersCanIncludeTvps()
         {
-            var q = SqlQuery($@"select sum(val) from {Enumerable.Range(1, 100)}");
+            var q = SQL($@"select sum(val) from {Enumerable.Range(1, 100)}");
 
             DevelopmentDbSelector.PreferredDevDb.ReadWriteNoTransaction(
                 conn => {

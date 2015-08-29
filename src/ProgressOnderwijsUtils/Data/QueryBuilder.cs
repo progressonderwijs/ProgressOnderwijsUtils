@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class SafeSql {
         [Pure]
-        public static QueryBuilder SqlQuery(FormattableString interpolatedQuery)
+        public static QueryBuilder SQL(FormattableString interpolatedQuery)
         {
             return QueryBuilder.CreateDynamic(interpolatedQuery.Format, interpolatedQuery.GetArguments());
         }
