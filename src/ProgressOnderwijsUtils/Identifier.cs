@@ -6,10 +6,14 @@ namespace ProgressOnderwijsUtils
     {
         public static string DbPrimaryKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible
         {
-            if (typeof(T).Name == "RootOrganisatie")
-                return "organisatieid";
-            else
-                return typeof(T).Name + "Id";
+            switch (typeof(T).Name) {
+                case "RootOrganisatie":
+                    return "organisatieid";
+                case "BankrekeningAfschrift":
+                    return "afschriftid";
+                default:
+                    return typeof(T).Name + "Id";
+            }
         }
 
         public static string DbForeignKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible
