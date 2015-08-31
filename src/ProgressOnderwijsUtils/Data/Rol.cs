@@ -336,7 +336,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Beheer inschrijvingen"), Toekenbaar,
          Implies(OrganisatieToevoegenVerwijderenWijzigen, OpleidingenBekijken, OpleidingenToevoegenVerwijderenWijzigen, DocumentTemplates,
              BekijkenKengetallen, WijzigenInschrijvingenEnAanmeldingen, WijzigenUitschrijvingen, WijzigenExamens, WijzigenCrm, TakenBekijkenWijzigen,
-             StatischeGroepenAanmakenWijzigenVerwijderen,
+             StatischeGroepenAanmakenWijzigenVerwijderen, StatischeGroepenGebruiken,
              KenmerkenToevoegenWijzigenVerwijderen, BatchesToevoegenWijzigenVerwijderen, StudentenSamenvoegen, StudielinkvragenBekijken)]
         BeheerInschrijvingen = 135,
 
@@ -355,12 +355,12 @@ namespace ProgressOnderwijsUtils
              WijzigenCommunicatieStudievolg)]
         WijzigenStudievolg = 139,
 
-        [MpLabel("Beheer studievolg"), Toekenbaar, Implies(WijzigenStudentKenmerken, VolgOnderwijsBeheerAlles, WijzigenStudievolg)]
+        [MpLabel("Beheer studievolg"), Toekenbaar, Implies(WijzigenStudentKenmerken, VolgOnderwijsBeheerAlles, WijzigenStudievolg, StatischeGroepenGebruiken)]
         BeheerStudievolg = 140,
 
         [MpLabel("Bekijken inschrijvingen"), Toekenbaar,
          Implies(BekijkenStudentBasis, StudentInschrijvingenTabblad, VooropleidingenBekijken,
-             AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, InloggenWebsite, StatischeGroepenGebruiken)]
+             AanmeldingenBekijken, InschrijvingenBekijken, Examenstabblad, NietReguliereInschrijvingenBekijken, InloggenWebsite)]
         BekijkenInschrijvingen = 160,
 
         [MpLabel("Bekijken inschrijvingen uitgebreid"), Toekenbaar,
