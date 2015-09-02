@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
@@ -385,7 +386,7 @@ namespace ProgressOnderwijsUtils
             var skipNrowsParam = Param((long)skipNrows);
 
             var sortorder = sortOrder;
-            var orderClause = sortorder == OrderByColumns.Empty ? (QueryBuilder)"order by (select 1)" : CreateFromSortOrder(sortorder);
+            var orderClause = sortorder == OrderByColumns.Empty ? SQL($"order by (select 1)") : CreateFromSortOrder(sortorder);
 
             return "select top (" + takeRowsParam + ") " + projectedColumns.JoinStrings(", ") + "\n"
                 + "from (select _row=row_number() over (" + orderClause + "),\n"
