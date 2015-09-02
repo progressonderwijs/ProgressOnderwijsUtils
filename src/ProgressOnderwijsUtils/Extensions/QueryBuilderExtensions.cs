@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static QueryBuilder Append(this QueryBuilder source, string str, params object[] parms)
         {
-            return source + QueryBuilder.Create(Environment.NewLine + str + " ", parms);
+            return source + QueryBuilder.CreateDynamic(Environment.NewLine + str + " ", parms);
         }
 
         [Pure]

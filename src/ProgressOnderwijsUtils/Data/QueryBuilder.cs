@@ -362,7 +362,7 @@ namespace ProgressOnderwijsUtils
         {
             return !sortOrder.Columns.Any()
                 ? Empty
-                : Create("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
+                : CreateDynamic("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
         }
 
         [Pure]
