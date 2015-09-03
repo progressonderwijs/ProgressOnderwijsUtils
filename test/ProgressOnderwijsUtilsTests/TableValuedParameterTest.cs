@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Progress.Business;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -25,7 +26,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void QueryBuildersCanIncludeTvps()
         {
-            var q = QueryBuilder.Create(@"select sum(val) from {0}", Enumerable.Range(1, 100));
+            var q = SQL($@"select sum(val) from {Enumerable.Range(1, 100)}");
 
             DevelopmentDbSelector.PreferredDevDb.ReadWriteNoTransaction(
                 conn => {

@@ -99,14 +99,14 @@ namespace ProgressOnderwijsUtils
                     }
                     return KolomNaam + "=" + BuildParam();
                 case BooleanComparer.IsNull:
-                    return QueryBuilder.Create(KolomNaam + " is null");
+                    return QueryBuilder.CreateDynamic(KolomNaam + " is null");
                 case BooleanComparer.NotEqual:
                     if (Waarde == null) {
                         goto case BooleanComparer.IsNotNull;
                     }
                     return KolomNaam + "!=" + BuildParam();
                 case BooleanComparer.IsNotNull:
-                    return QueryBuilder.Create(KolomNaam + " is not null");
+                    return QueryBuilder.CreateDynamic(KolomNaam + " is not null");
 
                 case BooleanComparer.LessThan:
                     return KolomNaam + "<" + BuildParam();
@@ -315,7 +315,7 @@ namespace ProgressOnderwijsUtils
         QueryBuilder BuildParam()
         {
             if (Waarde is ColumnReference) {
-                return QueryBuilder.Create(((ColumnReference)Waarde).ColumnName);
+                return QueryBuilder.CreateDynamic(((ColumnReference)Waarde).ColumnName);
             } else if (Waarde is Filter.CurrentTimeToken) {
                 return QueryBuilder.Param(DateTime.Now);
             } else {

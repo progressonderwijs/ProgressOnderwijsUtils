@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using ProgressOnderwijsUtils.Collections;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
@@ -33,7 +34,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static QueryBuilder ToQueryBuilder(this FilterBase filter) => filter == null ? QueryBuilder.Create("1=1") : filter.ToQueryBuilderImpl();
+        public static QueryBuilder ToQueryBuilder(this FilterBase filter) => filter == null ? SQL($"1=1") : filter.ToQueryBuilderImpl();
 
         public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier) //where T : IMetaObject
         {

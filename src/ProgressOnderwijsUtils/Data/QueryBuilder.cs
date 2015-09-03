@@ -5,12 +5,13 @@ using JetBrains.Annotations;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
     public static class SafeSql {
         [Pure]
-        public static QueryBuilder SqlQuery(FormattableString interpolatedQuery)
+        public static QueryBuilder SQL(FormattableString interpolatedQuery)
         {
             return QueryBuilder.CreateDynamic(interpolatedQuery.Format, interpolatedQuery.GetArguments());
         }
@@ -96,10 +97,7 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder operator +(QueryBuilder a, string b) => Concat(a, QueryComponent.CreateString(b));
 
         [Pure]
-        public static QueryBuilder operator +(string a, QueryBuilder b) => Concat(Create(a), b);
-
-        [Pure]
-        public static explicit operator QueryBuilder(string a) => Create(a);
+        public static QueryBuilder operator +(string a, QueryBuilder b) => Concat(CreateDynamic(a), b);
 
         static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) => null == part ? query : new PrefixAndComponent(query, part);
 
@@ -362,7 +360,7 @@ namespace ProgressOnderwijsUtils
         {
             return !sortOrder.Columns.Any()
                 ? Empty
-                : Create("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
+                : CreateDynamic("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
         }
 
         [Pure]
@@ -385,7 +383,7 @@ namespace ProgressOnderwijsUtils
             var skipNrowsParam = Param((long)skipNrows);
 
             var sortorder = sortOrder;
-            var orderClause = sortorder == OrderByColumns.Empty ? (QueryBuilder)"order by (select 1)" : CreateFromSortOrder(sortorder);
+            var orderClause = sortorder == OrderByColumns.Empty ? SQL($"order by (select 1)") : CreateFromSortOrder(sortorder);
 
             return "select top (" + takeRowsParam + ") " + projectedColumns.JoinStrings(", ") + "\n"
                 + "from (select _row=row_number() over (" + orderClause + "),\n"
