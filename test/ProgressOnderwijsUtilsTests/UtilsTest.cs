@@ -106,14 +106,6 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test, Continuous]
-        public void InClause()
-        {
-            PAssert.That(() => Utils.SqlInClause(new int[] { }) == "(null)");
-            PAssert.That(() => Utils.SqlInClause(new[] { 0 }) == "(0)");
-            PAssert.That(() => Utils.SqlInClause(new[] { 0, 1 }) == "(0, 1)");
-        }
-
-        [Test, Continuous]
         public void NUnitSession()
         {
             Assert.That(Utils.IsInUnitTest());
