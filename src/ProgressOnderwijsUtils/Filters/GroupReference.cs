@@ -14,11 +14,11 @@ namespace ProgressOnderwijsUtils
             Name = name;
         }
 
-        public int GroupId { get; private set; }
-        public string Name { get; private set; }
-        public bool Equals(GroupReference other) { return other != null && other.GroupId == GroupId; }
-        public override bool Equals(object obj) { return obj is GroupReference && Equals(obj as GroupReference); }
-        public override int GetHashCode() { return GroupId; }
+        public int GroupId { get; }
+        public string Name { get; }
+        public bool Equals(GroupReference other) => other != null && other.GroupId == GroupId;
+        public override bool Equals(object obj) => obj is GroupReference && Equals(obj as GroupReference);
+        public override int GetHashCode() => GroupId;
         public static bool operator ==(GroupReference left, GroupReference right) { return Equals(left, right); }
         public static bool operator !=(GroupReference left, GroupReference right) { return !Equals(left, right); }
     }
@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
             Assert.That(sut.Name, Is.EqualTo("test"));
         }
 
-        IEnumerable<TestCaseData> EquatableData()
+        static IEnumerable<TestCaseData> EquatableData()
         {
             yield return new TestCaseData(default(GroupReference), default(GroupReference), true);
             yield return new TestCaseData(default(GroupReference), new GroupReference(1, "rhs"), false);
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
             yield return new TestCaseData(new GroupReference(1, "lhs"), new GroupReference(2, "rhs"), false);
         }
 
-        [Test, TestCaseSource("EquatableData")]
+        [Test, TestCaseSource(nameof(EquatableData))]
         public void Equatable(GroupReference lhs, GroupReference rhs, bool equals)
         {
             Assert.That(lhs == rhs, Is.EqualTo(equals));

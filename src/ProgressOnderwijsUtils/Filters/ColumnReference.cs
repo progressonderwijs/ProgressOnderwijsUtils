@@ -12,16 +12,16 @@ namespace ProgressOnderwijsUtils
         public ColumnReference(string colname)
         {
             if (colname == null) {
-                throw new ArgumentNullException("colname");
+                throw new ArgumentNullException(nameof(colname));
             } else if (!IsOkName.IsMatch(colname)) {
-                throw new ArgumentException("Geen valide kolomnaam " + colname, "colname");
+                throw new ArgumentException("Geen valide kolomnaam " + colname, nameof(colname));
             }
             ColumnName = colname;
         }
 
-        public bool Equals(ColumnReference other) { return ColumnName == other.ColumnName; }
-        public override bool Equals(object obj) { return obj is ColumnReference && Equals((ColumnReference)obj); }
-        public override int GetHashCode() { return 1 + ColumnName.GetHashCode(); }
+        public bool Equals(ColumnReference other) => ColumnName == other.ColumnName;
+        public override bool Equals(object obj) => obj is ColumnReference && Equals((ColumnReference)obj);
+        public override int GetHashCode() => 1 + ColumnName.GetHashCode();
         public static bool operator ==(ColumnReference a, ColumnReference b) { return ReferenceEquals(a, b) || a != null && b != null && a.Equals(b); }
         public static bool operator !=(ColumnReference a, ColumnReference b) { return !ReferenceEquals(a, b) && (a == null || b == null || !a.Equals(b)); }
     }
@@ -31,13 +31,11 @@ namespace ProgressOnderwijsUtils
     {
         public readonly int Value;
         public LiteralSqlInt(int val) { Value = val; }
-        public static readonly LiteralSqlInt Zero = new LiteralSqlInt(0);
-        public static readonly LiteralSqlInt One = new LiteralSqlInt(1);
-        public bool Equals(LiteralSqlInt other) { return Value == other.Value; }
-        public override bool Equals(object obj) { return obj is LiteralSqlInt && Equals((LiteralSqlInt)obj); }
-        public override int GetHashCode() { return 27 + Value.GetHashCode(); }
+        public bool Equals(LiteralSqlInt other) => Value == other.Value;
+        public override bool Equals(object obj) => obj is LiteralSqlInt && Equals((LiteralSqlInt)obj);
+        public override int GetHashCode() => 27 + Value.GetHashCode();
         public static bool operator ==(LiteralSqlInt a, LiteralSqlInt b) { return ReferenceEquals(a, b) || a != null && b != null && a.Equals(b); }
         public static bool operator !=(LiteralSqlInt a, LiteralSqlInt b) { return !ReferenceEquals(a, b) && (a == null || b == null || !a.Equals(b)); }
-        public static LiteralSqlInt Create(int p) { return new LiteralSqlInt(p); }
+        public static LiteralSqlInt Create(int p) => new LiteralSqlInt(p);
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using JetBrains.Annotations;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace ProgressOnderwijsUtils
 {
@@ -16,13 +17,14 @@ namespace ProgressOnderwijsUtils
         /// <param name="elem">the element searched</param>
         /// <returns>an int</returns>
         /// <remarks>If you just want to test existance the native "Contains" would be sufficient</remarks>
+        [Pure]
         public static int IndexOf<T>(this IEnumerable<T> list, T elem)
         {
             if (list == null) {
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(list));
             }
-            int retval = 0;
-            foreach (T item in list) {
+            var retval = 0;
+            foreach (var item in list) {
                 if (Equals(elem, item)) {
                     return retval;
                 }
@@ -31,13 +33,14 @@ namespace ProgressOnderwijsUtils
             return -1;
         }
 
+        [Pure]
         public static int IndexOf<T>(this IEnumerable<T> list, Func<T, bool> matcher)
         {
             if (list == null) {
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(list));
             }
             if (matcher == null) {
-                throw new ArgumentNullException("matcher");
+                throw new ArgumentNullException(nameof(matcher));
             }
             int retval = 0;
             foreach (var item in list) {
@@ -49,6 +52,10 @@ namespace ProgressOnderwijsUtils
             return -1;
         }
 
+        [Pure]
+        public static bool None<TSource>(this IEnumerable<TSource> source) { return !source.Any(); }
+
+        [Pure]
         public static IEnumerable<TSource> WhereIf<TSource>(this IEnumerable<TSource> source, bool condition, Func<TSource, bool> predicate)
         {
             return condition ? source.Where(predicate) : source;
@@ -90,6 +97,7 @@ namespace ProgressOnderwijsUtils
             return list ?? Enumerable.Empty<T>();
         }
 
+        [Pure]
         public static int GetSequenceHashCode<T>(IEnumerable<T> list, IEqualityComparer<T> elementComparer = null)
         {
             var elemEquality = elementComparer ?? EqualityComparer<T>.Default;
@@ -100,17 +108,20 @@ namespace ProgressOnderwijsUtils
             return (int)hash ^ (int)(hash >> 32);
         }
 
+        [Pure]
         public static bool ContainsDuplicates<T>(this IEnumerable<T> list)
         {
             var set = new HashSet<T>();
             return !list.All(set.Add);
         }
 
+        [Pure]
         public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(this IEnumerable<T> list, Func<T, TKey> keySelector, Func<T, TVal> valSelector)
         {
             return list.ToSortedList(keySelector, valSelector, Comparer<TKey>.Default);
         }
 
+        [Pure]
         public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(
             this IEnumerable<T> list,
             Func<T, TKey> keySelector,
@@ -124,6 +135,7 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
+        [Pure]
         public static Dictionary<TKey, TValue> ToGroupedDictionary<TElem, TKey, TValue>(
             this IEnumerable<TElem> list,
             Func<TElem, TKey> keyLookup,
@@ -146,6 +158,7 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
+        [Pure]
         public static string ToCsv<T>(this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", bool useQuotesForStrings = false)
             where T : class
         {
@@ -162,14 +175,17 @@ namespace ProgressOnderwijsUtils
             return csvBuilder.ToString();
         }
 
+        [Pure]
         static string ToCsvValue<T>(this T item, string delimiter, bool useQuotesForStrings)
         {
-            if (string.Format("{0}", item).Contains(delimiter) && !useQuotesForStrings) {
+            string csvValueWithoutQuotes = item?.ToString() ?? "";
+
+            if (csvValueWithoutQuotes.Contains(delimiter) && !useQuotesForStrings) {
                 throw new ArgumentException("item contains illegal characters, use useQuotesForStrings=true");
             }
 
             if (!useQuotesForStrings) {
-                return string.Format("{0}", item);
+                return csvValueWithoutQuotes;
             }
 
             if (item == null) {
@@ -177,9 +193,17 @@ namespace ProgressOnderwijsUtils
             }
 
             if (item is string) {
-                return string.Format("\"{0}\"", item.ToString().Replace("\"", "\\\""));
+                return "\""+item.ToString().Replace("\"", "\\\"")+"\"";
             } else {
-                return string.Format("{0}", item);
+                return item.ToString();
+            }
+        }
+
+        public static void ForEach<T>(this IEnumerable<T> list, CancellationToken cancel, Action<T> action)
+        {
+            foreach (var item in list) {
+                cancel.ThrowIfCancellationRequested();
+                action(item);
             }
         }
     }

@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using Progress.Business;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -13,7 +14,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void EenmaligeScripts()
         {
-            var names = QueryBuilder.Create(@"
+            var names = SQL($@"
 				select Naam
 				from SqlBuild.EenmaligScript
 				where DatumControle > DatumUitvoerProductie")

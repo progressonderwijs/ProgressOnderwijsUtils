@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using JetBrains.Annotations;
 using System.Linq;
 using MoreLinq;
 
@@ -18,10 +18,10 @@ namespace ProgressOnderwijsUtils
     public struct OrderByColumns : IEquatable<OrderByColumns>
     {
         static readonly ColumnSort[] EmptyOrder = { };
-        static bool streq(string a, string b) { return string.Equals(a, b, StringComparison.OrdinalIgnoreCase); }
+        static bool streq(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
         readonly ColumnSort[] sortColumns;
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         public IEnumerable<ColumnSort> Columns
         {
             get
@@ -34,8 +34,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        ColumnSort[] DirectAcessColumns { get { return sortColumns ?? EmptyOrder; } }
-        public static OrderByColumns Empty { get { return default(OrderByColumns); } }
+        ColumnSort[] DirectAcessColumns => sortColumns ?? EmptyOrder;
+        public static OrderByColumns Empty => default(OrderByColumns);
 
         public OrderByColumns(IEnumerable<ColumnSort> order)
         {
@@ -81,8 +81,8 @@ namespace ProgressOnderwijsUtils
             return index == -1 ? default(int?) : index + 1;
         }
 
-        [Pure]
-        public int ColumnCount { get { return sortColumns == null ? 0 : sortColumns.Length; } }
+        [System.Diagnostics.Contracts.Pure]
+        public int ColumnCount => sortColumns == null ? 0 : sortColumns.Length;
 
         [Pure]
         public OrderByColumns ToggleSortDirection(string kolomnaam)
@@ -191,7 +191,7 @@ namespace ProgressOnderwijsUtils
             return (int)(DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Aggregate(12345L, (a, b) => a + b));
         }
 
-        public override string ToString() { return "{" + DirectAcessColumns.Select(col => col.ToString()).JoinStrings(", ") + "}"; }
+        public override string ToString() => "{" + DirectAcessColumns.Select(col => col.ToString()).JoinStrings(", ") + "}";
 
         [Pure]
         public OrderByColumns AssumeThenBy(OrderByColumns BaseSortOrder)

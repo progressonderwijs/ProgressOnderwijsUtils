@@ -1,7 +1,6 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System;
-using ProgressOnderwijsUtils;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
@@ -10,7 +9,6 @@ namespace ProgressOnderwijsUtils.Collections
         readonly Dictionary<T, NodeContainer> completedBranches = new Dictionary<T, NodeContainer>();
         readonly Func<T, IEnumerable<T>> kidLookup;
         public CachedTreeBuilder(Func<T, IEnumerable<T>> kidLookup) { this.kidLookup = kidLookup; }
-#if true
         static readonly NodeContainer[] Empty = new NodeContainer[0];
 
         sealed class NodeContainer
@@ -34,6 +32,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
+        [Pure]
         public Tree<T> Resolve(T rootNodeValue)
         {
             Stack<NodeContainer> todoGenerateOutput = new Stack<NodeContainer>(); //in order of creation; so junctions always before their kids.
@@ -46,9 +45,9 @@ namespace ProgressOnderwijsUtils.Collections
             todoGenerateOutput.Push(rootContainer);
             completedBranches.Add(rootNodeValue, rootContainer);
 
-            Stack<NodeContainer> todo = new Stack<NodeContainer>();
+            var todo = new Stack<NodeContainer>();
             todo.Push(rootContainer);
-            NodeContainer[] tempKidBuilder = new NodeContainer[15];
+            var tempKidBuilder = new NodeContainer[15];
             while (todo.Count > 0) {
                 var nodeContainer = todo.Pop();
                 if (nodeContainer.tempKids == null) {
@@ -78,8 +77,6 @@ namespace ProgressOnderwijsUtils.Collections
                     }
                 }
             }
-            tempKidBuilder = null;
-            todo = null;
 
             while (todoGenerateOutput.Count > 0) {
                 todoGenerateOutput.Pop().GenerateOutput();
@@ -87,26 +84,5 @@ namespace ProgressOnderwijsUtils.Collections
 
             return rootContainer.output;
         }
-#else
-    //this much simpler version is only about 2 times as slow but supports only trees of limited depth (stack-dependant; around 1000).
-			sealed class NodeContainer { public Tree<T> node; }
-			public Tree<T> Resolve(T node)
-			{
-
-				NodeContainer nodeContainer;
-				if (completedBranches.TryGetValue(node, out nodeContainer))
-				{
-					if (nodeContainer.node == null)
-						throw new InvalidOperationException("Cycle detected!");
-				}
-				else
-				{
-					nodeContainer = new NodeContainer();
-					completedBranches.Add(node, nodeContainer);//add BEFORE initialization to detect cycles.
-					nodeContainer.node = Node(node, kidLookup(node).EmptyIfNull().Select(Resolve));
-				}
-				return nodeContainer.node;
-			}
-#endif
     }
 }

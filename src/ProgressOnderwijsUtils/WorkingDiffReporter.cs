@@ -9,18 +9,20 @@ using ApprovalTests.Reporters;
 
 namespace ProgressOnderwijsUtils
 {
-    public class WorkinDiffReporter : FirstWorkingReporter
+    public class WorkingDiffReporter : FirstWorkingReporter
     {
-        public WorkinDiffReporter()
+        public WorkingDiffReporter()
             : base(
-                (IEnvironmentAwareReporter)CodeCompareReporter.INSTANCE,
-                (IEnvironmentAwareReporter)BeyondCompareReporter.INSTANCE,
-                (IEnvironmentAwareReporter)TortoiseDiffReporter.INSTANCE,
-                (IEnvironmentAwareReporter)AraxisMergeReporter.INSTANCE,
-                (IEnvironmentAwareReporter)P4MergeReporter.INSTANCE,
-                (IEnvironmentAwareReporter)WinMergeReporter.INSTANCE,
-                (IEnvironmentAwareReporter)KDiffReporter.INSTANCE,
-                (IEnvironmentAwareReporter)FrameworkAssertReporter.INSTANCE,
-                (IEnvironmentAwareReporter)QuietReporter.INSTANCE) { }
+                new GenericDiffReporter(@"C:\Program Files\TortoiseHg\lib\kdiff3.exe", "Please install KDIFF3"),
+                new GenericDiffReporter(@"C:\Program Files\TortoiseHg\bin\kdiff3.exe", "Please install KDIFF3"),
+                CodeCompareReporter.INSTANCE,
+                BeyondCompareReporter.INSTANCE,
+                TortoiseDiffReporter.INSTANCE,
+                AraxisMergeReporter.INSTANCE,
+                P4MergeReporter.INSTANCE,
+                WinMergeReporter.INSTANCE,
+                KDiffReporter.INSTANCE,
+                FrameworkAssertReporter.INSTANCE,
+                QuietReporter.INSTANCE) { }
     }
 }

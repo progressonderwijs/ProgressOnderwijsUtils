@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using ProgressOnderwijsUtils.Collections;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
@@ -33,7 +34,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static QueryBuilder ToQueryBuilder(this FilterBase filter) { return filter == null ? QueryBuilder.Create("1=1") : filter.ToQueryBuilderImpl(); }
+        public static QueryBuilder ToQueryBuilder(this FilterBase filter) => filter == null ? SQL($"1=1") : filter.ToQueryBuilderImpl();
 
         public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier) //where T : IMetaObject
         {
@@ -67,13 +68,19 @@ namespace ProgressOnderwijsUtils
                 : filter.AddToImpl(filterInEditMode, booleanOperator, c);
         }
 
-        public static FilterBase Remove(this FilterBase filter, FilterBase filterToRemove) { return filter.ReplaceImpl(filterToRemove, null); }
+        public static FilterBase Remove(this FilterBase filter, FilterBase filterToRemove) => filter.ReplaceImpl(filterToRemove, null);
 
         /// <summary>
         /// Maakt een filter definitie aan.  Om twee kolommen onderling te vergelijken, moet de waarde van type ColumnReference zijn.
         /// </summary>
         public static FilterBase CreateCriterium(string kolomnaam, BooleanComparer comparer, object waarde)
         {
+            return new CriteriumFilter(kolomnaam, comparer, waarde);
+        }
+
+        public static FilterBase CreateCriterium<TMetaObject, T>(Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, object waarde)
+        {
+            var kolomnaam = MetaObject.GetMemberInfo(columnToFilter).Name;
             return new CriteriumFilter(kolomnaam, comparer, waarde);
         }
 
@@ -194,7 +201,7 @@ namespace ProgressOnderwijsUtils
                 .ToDictionary(NiceString, StringComparer.Ordinal);
         }
 
-        public static BooleanComparer? ParseComparerNiceString(string s) { return ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?)); }
+        public static BooleanComparer? ParseComparerNiceString(string s) => ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?));
 
         public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, Type> typeIfPresent)
         {
@@ -219,17 +226,6 @@ namespace ProgressOnderwijsUtils
             return parsed != null && parsed.Item2 == "" ? parsed.Item1 : null;
         }
 
-        public static FilterBase ReplaceCurrentTimeToken(FilterBase f, DateTime replacement)
-        {
-            var comb = f as CombinedFilter;
-            var crit = f as CriteriumFilter;
-            if (comb != null) {
-                return CreateCombined(comb.AndOr, comb.FilterLijst.Select(kid => ReplaceCurrentTimeToken(kid, replacement)));
-            } else if (crit != null && crit.Waarde is CurrentTimeToken) {
-                return CreateCriterium(crit.KolomNaam, crit.Comparer, replacement);
-            } else {
-                return f;
-            }
-        }
+        public static QueryBuilder ToFilterClause(this IEnumerable<FilterBase> filters) => CreateCombined(BooleanOperator.And, filters.EmptyIfNull()).ToQueryBuilder();
     }
 }

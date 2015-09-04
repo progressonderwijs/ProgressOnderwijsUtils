@@ -20,11 +20,17 @@ namespace ProgressOnderwijsUtils
 
     public static class MetaObject
     {
-        public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) { return GetCache(metaobj.GetType()); }
+        [Pure]
+        public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) => GetCache(metaobj.GetType());
 
-        //public static object DynamicGet(this IMetaObject metaobj, string propertyName) { return GetCache(metaobj.GetType()).DynGet(metaobj, propertyName); }
-        public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject { return MetaInfo<T>.Instance; }
+        //public static object DynamicGet(this IMetaObject metaobj, string propertyName) => GetCache(metaobj.GetType()).DynGet(metaobj, propertyName);
+        [Pure]
+        public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject
+        {
+            return MetaInfo<T>.Instance;
+        }
 
+        [Pure]
         public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
             where TMetaObject : IMetaObject
         {
@@ -34,6 +40,8 @@ namespace ProgressOnderwijsUtils
         public static class GetByInheritedExpression<TMetaObject>
             where TMetaObject : IMetaObject
         {
+            [UsefulToKeep("library method for getting base-class metaproperty")]
+            [Pure]
             public static IMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
             {
                 var memberInfo = GetMemberInfo(propertyExpression);
@@ -63,6 +71,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [Pure]
         public static MemberInfo GetMemberInfo<TObject, TProperty>(Expression<Func<TObject, TProperty>> property)
         {
             var bodyExpr = property.Body;
@@ -97,11 +106,13 @@ namespace ProgressOnderwijsUtils
                     "The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property or field");
         }
 
+        [Pure]
         static Expression UnwrapCast(Expression bodyExpr)
         {
             return bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr;
         }
 
+        [Pure]
         public static DataTable ToDataTable<T>(IEnumerable<T> objs, string[] optionalPrimaryKey) where T : IMetaObject
         {
             var dt = new DataTable();
@@ -119,7 +130,11 @@ namespace ProgressOnderwijsUtils
             return dt;
         }
 
-        public static MetaObjectDataReader<T> CreateDataReader<T>(IEnumerable<T> entities) where T : IMetaObject { return new MetaObjectDataReader<T>(entities); }
+        [Pure]
+        public static MetaObjectDataReader<T> CreateDataReader<T>(IEnumerable<T> entities) where T : IMetaObject
+        {
+            return new MetaObjectDataReader<T>(entities);
+        }
 
         /// <summary>
         /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout.
@@ -133,16 +148,19 @@ namespace ProgressOnderwijsUtils
         public static void SqlBulkCopy<T>(IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
         {
             if (metaObjects == null) {
-                throw new ArgumentNullException("metaObjects");
+                throw new ArgumentNullException(nameof(metaObjects));
             }
             if (tableName.Contains('[') || tableName.Contains(']')) {
-                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, "tableName");
+                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, nameof(tableName));
             }
             if (sqlconn == null) {
-                throw new ArgumentNullException("sqlconn");
+                throw new ArgumentNullException(nameof(sqlconn));
             }
             if (sqlconn.State != ConnectionState.Open) {
                 throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
+            }
+            if (!typeof(T).IsVisible) {
+                throw new ArgumentException("MetaObject " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " must be public (accessable to other assemblies)");
             }
 
             SqlBulkCopyOptions effectiveOptions = options ?? (SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction);
@@ -175,10 +193,7 @@ namespace ProgressOnderwijsUtils
                     if (match.Success) {
                         var col_id = int.Parse(match.Groups[1].Value);
                         throw new Exception(
-                            string.Format(
-                                "Received an invalid column length from the bcp client for column name {0}",
-                                clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name
-                                ),
+                            $"Received an invalid column length from the bcp client for column name {clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name}",
                             ex);
                     }
                     throw;
@@ -186,6 +201,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [Pure]
         public static IReadOnlyList<IMetaProperty> GetMetaProperties(Type t)
         {
             if (!typeof(IMetaObject).IsAssignableFrom(t)) {
@@ -198,6 +214,8 @@ namespace ProgressOnderwijsUtils
         }
 
         static readonly MethodInfo genGetCache = Utils.F(GetMetaProperties<IMetaObject>).Method.GetGenericMethodDefinition();
-        static IMetaPropCache<IMetaProperty> GetCache(Type t) { return (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null); }
+
+        [Pure]
+        static IMetaPropCache<IMetaProperty> GetCache(Type t) => (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
     }
 }

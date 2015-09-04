@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ProgressOnderwijsUtils
@@ -7,13 +6,7 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public class NoRowsFoundException : ProgressNetException
     {
-        public NoRowsFoundException(string msg)
-            : base(msg) { }
-
         public NoRowsFoundException() { }
-
-        public NoRowsFoundException(string msg, Exception inner)
-            : base(msg, inner) { }
 
         protected NoRowsFoundException(SerializationInfo serializationinfo, StreamingContext streamingcontext)
             : base(serializationinfo, streamingcontext) { }
@@ -47,8 +40,8 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public class TemplateException : Exception
     {
-        public int Line { get; private set; }
-        public int Position { get; private set; }
+        public int Line { get; }
+        public int Position { get; }
 
         public TemplateException(int _Line, int _Position, string message)
             : base(message)

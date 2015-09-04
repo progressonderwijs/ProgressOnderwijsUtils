@@ -20,18 +20,17 @@ namespace ProgressOnderwijsUtils
             Nonce = nonce;
         }
 
-        public string Context { get; private set; }
-        public DateTime Timestamp { get; private set; }
-        public string Nonce { get; private set; }
+        public string Context { get; }
+        public DateTime Timestamp { get; }
+        public string Nonce { get; }
 
-        #region Implementation of IEquatable<NonceStoreItem>
         public bool Equals(NonceStoreItem other)
         {
             return !ReferenceEquals(other, null) &&
                 other.Timestamp.Equals(Timestamp) && Equals(other.Context, Context) && Equals(other.Nonce, Nonce);
         }
 
-        public override bool Equals(object obj) { return Equals(obj as NonceStoreItem); }
+        public override bool Equals(object obj) => Equals(obj as NonceStoreItem);
 
         public override int GetHashCode()
         {
@@ -45,7 +44,6 @@ namespace ProgressOnderwijsUtils
 
         public static bool operator ==(NonceStoreItem left, NonceStoreItem right) { return Equals(left, right); }
         public static bool operator !=(NonceStoreItem left, NonceStoreItem right) { return !(left == right); }
-        #endregion
     }
 
     public interface INonceStore
@@ -91,8 +89,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public bool IsOriginal(NonceStoreItem item) { return IsInWindow(item) && IsNotKnown(item); }
-        public bool IsInWindow(NonceStoreItem item) { return (DateTime.UtcNow - item.Timestamp).Duration() <= window; }
+        public bool IsOriginal(NonceStoreItem item) => IsInWindow(item) && IsNotKnown(item);
+        public bool IsInWindow(NonceStoreItem item) => (DateTime.UtcNow - item.Timestamp).Duration() <= window;
 
         public bool IsNotKnown(NonceStoreItem item)
         {

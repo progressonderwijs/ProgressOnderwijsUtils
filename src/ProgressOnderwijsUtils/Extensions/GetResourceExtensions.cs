@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
     public static class GetResourceExtensions
     {
-        public static Stream GetResource(this Type type, string filename) { return type.Assembly.GetManifestResourceStream(type, filename); }
+        [Pure]
+        public static Stream GetResource(this Type type, string filename) => type.Assembly.GetManifestResourceStream(type, filename);
     }
 }

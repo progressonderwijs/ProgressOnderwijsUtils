@@ -22,6 +22,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Casts the boxed objects to a typed representation.  Supports directly unboxing int's into (nullable) enums.
         /// </summary>
+        [UsefulToKeep("library method; interface is used, since method above is used")]
         public static T Field<T>(this IReadOnlyDictionary<string, object> dict, string key)
         {
             return DBNullRemover.Cast<T>(dict[key]);
@@ -80,6 +81,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The key whose value to get.</param>
         /// <param name="defaultValue">The default value of the key.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
+        [UsefulToKeep("library method; interface is used, since method above is used")]
         public static TValue? GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue? defaultValue)
             where TValue : struct
         {
@@ -146,7 +148,7 @@ namespace ProgressOnderwijsUtils
         public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old, params Dictionary<TKey, TValue>[] others)
         {
             if (old == null) {
-                throw new ArgumentNullException("old");
+                throw new ArgumentNullException(nameof(old));
             }
 
             var merged = old.Clone();

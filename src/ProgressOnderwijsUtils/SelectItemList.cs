@@ -7,19 +7,19 @@ namespace ProgressOnderwijsUtils
 {
     public static class SelectItemList
     {
-        public static IReadOnlyList<SelectItem<T>> Create<T>(IEnumerable<IToSelectItem<T>> collection)
+        public static SelectItem<T>[] Create<T>(IEnumerable<IToSelectItem<T>> collection)
         {
             return Create(collection.Select(i => i.ToSelectItem()));
         }
 
-        public static IReadOnlyList<SelectItem<T>> Create<T>(IEnumerable<SelectItem<T>> collection) { return collection.ToArray(); }
+        public static SelectItem<T>[] Create<T>(IEnumerable<SelectItem<T>> collection) { return collection.ToArray(); }
 
-        public static IReadOnlyList<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<IToSelectItem<T>> collection)
+        public static SelectItem<T>[] CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<IToSelectItem<T>> collection)
         {
             return CreateWithLeeg(addnullitem, Create(collection));
         }
 
-        public static IReadOnlyList<SelectItem<T>> CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<SelectItem<T>> collection)
+        public static SelectItem<T>[] CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<SelectItem<T>> collection)
         {
             return Create(new[] { addnullitem }.Concat(collection));
         }
@@ -29,19 +29,8 @@ namespace ProgressOnderwijsUtils
             return Create(new[] { addnullitem }.Concat(collection.Select(item => SelectItem.Create((T?)item.Value, item.Label))));
         }
 
-        public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(DataTable dt) { return Create(DbToEnumerable<T>(dt)); }
-
-        public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(DataTable dt, DataColumn idColumn, DataColumn textColumn)
-        {
-            return Create(DbToEnumerable<T>(dt, idColumn, textColumn));
-        }
-
-        public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt) { return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt)); }
-
-        public static IReadOnlyList<SelectItem<T>> CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt, DataColumn idColumn, DataColumn textColumn)
-        {
-            return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt, idColumn, textColumn));
-        }
+        public static SelectItem<T>[] CreateFromDb<T>(DataTable dt) { return Create(DbToEnumerable<T>(dt)); }
+        public static SelectItem<T>[] CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt) { return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt)); }
 
         static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
         {
@@ -62,18 +51,20 @@ namespace ProgressOnderwijsUtils
                 select item).SingleOrDefault();
         }
 
+        //TODO:Deze method moet weg
         public static SelectItem<T> GetItem<T>(this IReadOnlyList<SelectItem<T>> list, Taal language, string text)
         {
-            return (from item in list
+            return (
+                from item in list
                 where item.Label.Translate(language).Text == text
-                select item).SingleOrDefault();
+                select item
+                ).SingleOrDefault();
         }
     }
 
     public interface ISelectItem<out T>
     {
         T Value { get; }
-        ITranslatable Label { get; }
     }
 
     public interface IToSelectItem<T>
@@ -85,19 +76,19 @@ namespace ProgressOnderwijsUtils
     {
         readonly T v;
         readonly ITranslatable label;
-        public T Value { get { return v; } }
-        public ITranslatable Label { get { return label; } }
+        public T Value => v;
+        public ITranslatable Label => label;
 
         internal SelectItem(T v, ITranslatable label)
         {
             if (label == null) {
-                throw new ArgumentNullException("label");
+                throw new ArgumentNullException(nameof(label));
             }
             this.v = v;
             this.label = label;
         }
 
-        public override string ToString() { return "{" + v + ": " + label.Translate(Taal.NL).Text + "}"; }
+        public override string ToString() => "{" + v + ": " + label.Translate(Taal.NL).Text + "}";
     }
 
     public static class SelectItem

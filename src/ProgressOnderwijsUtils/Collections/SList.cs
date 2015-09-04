@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+using JetBrains.Annotations;
 using System.Linq;
 
 namespace ProgressOnderwijsUtils.Collections
@@ -28,13 +28,14 @@ namespace ProgressOnderwijsUtils.Collections
             : this(new Impl(head, tail.list)) { }
 
         readonly Impl list;
-        public static SList<T> Empty { get { return default(SList<T>); } }
-        public bool IsEmpty { get { return list == null; } }
-        public T Head { get { return list.Head; } }
-        public SList<T> Tail { get { return new SList<T>(list.Tail); } }
+        public static SList<T> Empty => default(SList<T>);
+        public bool IsEmpty => list == null;
+        public T Head => list.Head;
+        public SList<T> Tail => new SList<T>(list.Tail);
         static readonly int typeHash = typeof(T).GetHashCode();
         static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
 
+        [Pure]
         public bool Equals(SList<T> other)
         {
             var alist = list;
@@ -52,8 +53,10 @@ namespace ProgressOnderwijsUtils.Collections
             return alist == null && blist == null;
         }
 
-        public override bool Equals(object obj) { return obj is SList<T> && Equals((SList<T>)obj); }
+        [Pure]
+        public override bool Equals(object obj) => obj is SList<T> && Equals((SList<T>)obj);
 
+        [Pure]
         public override int GetHashCode()
         {
             var hash = (ulong)(typeHash + 1);
@@ -63,7 +66,9 @@ namespace ProgressOnderwijsUtils.Collections
             return (int)hash ^ (int)(hash >> 32);
         }
 
+        [Pure]
         public static bool operator ==(SList<T> a, SList<T> b) { return a.Equals(b); }
+        [Pure]
         public static bool operator !=(SList<T> a, SList<T> b) { return !a.Equals(b); }
 
         public IEnumerable<SList<T>> NonEmpySuffixes
@@ -83,7 +88,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() { return ((IEnumerable<T>)this).GetEnumerator(); }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() => ((IEnumerable<T>)this).GetEnumerator();
     }
 
     public static class SList
@@ -91,12 +96,22 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static SList<T> Prepend<T>(this SList<T> self, T head) { return new SList<T>(head, self); }
 
-        [Pure]
+        [Pure, UsefulToKeep("library method")]
         public static SList<T> Prepend<T>(this SList<T> self, SList<T> heads)
         {
             var retval = self;
             for (var cur = heads.Reverse(); !cur.IsEmpty; cur = cur.Tail) {
                 retval = retval.Prepend(cur.Head);
+            }
+            return retval;
+        }
+
+        [Pure]
+        public static SList<T> PrependReversed<T>(this SList<T> self, IEnumerable<T> items)
+        {
+            var retval = self;
+            foreach (var item in items) {
+                retval = retval.Prepend(item);
             }
             return retval;
         }
@@ -124,7 +139,7 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
-        [Pure]
+        [Pure, UsefulToKeep("library method")]
         public static SList<T> WhereReverse<T>(this SList<T> self, Func<T, bool> filter)
         {
             var retval = SList<T>.Empty;
@@ -146,6 +161,7 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
+        [Pure]
         public static SList<T> Create<T>(IEnumerable<T> list)
         {
             if (list is IList<T>) {
@@ -155,6 +171,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
+        [Pure]
         public static SList<T> Create<T>(IList<T> list)
         {
             if (list is T[]) {
@@ -167,6 +184,7 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
+        [Pure]
         public static SList<T> Create<T>(T[] list)
         {
             var retval = SList<T>.Empty;
@@ -176,7 +194,10 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
+        [Pure]
         public static SList<T> SingleElement<T>(T element) { return SList<T>.Empty.Prepend(element); }
-        public static SList<T> Empty<T>() { return SList<T>.Empty; }
+
+        [UsefulToKeep("library method")]
+        public static SList<T> Empty<T>() => SList<T>.Empty;
     }
 }

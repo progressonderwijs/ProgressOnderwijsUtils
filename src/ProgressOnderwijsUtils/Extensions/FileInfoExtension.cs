@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
     public static class FileInfoExtension
     {
+        [Pure]
         public static string ReadToEnd(this FileInfo file)
         {
             using (var reader = file.OpenText())
@@ -14,10 +16,11 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Tests whether this file has the same contents as another file.
         /// </summary>
+        [Pure]
         public static bool SameContents(this FileInfo one, FileInfo other)
         {
             if (other == null) {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             bool result = true;

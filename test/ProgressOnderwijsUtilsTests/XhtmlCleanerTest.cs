@@ -96,5 +96,46 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(
                 () => XhtmlCleaner.SanitizeHtmlString(@"This <p style=""margin-left: 40px;"">is indented</p>!") == @"This <p style=""margin-left: 40px;"">is indented</p>!");
         }
+
+        [Test]
+        public void DetectsNormalTextAsNonHtml()
+        {
+            PAssert.That(() => XhtmlCleaner.CannotBeValidHtml(@"This is just text!"));
+        }
+
+        [Test]
+        public void DetectsAnHtmlFragmentAsHtml()
+        {
+            PAssert.That(() => !XhtmlCleaner.CannotBeValidHtml(@"This is <b>not</b> just text!"));
+        }
+
+        [Test]
+        public void DetectsAnHtmlFragmentWithNestedEntityRefAsHtml()
+        {
+            PAssert.That(() => !XhtmlCleaner.CannotBeValidHtml(@"This is <b id=""&amp;"">not</b> just text!"));
+        }
+
+        [Test]
+        public void DetectsAnHtmlFragmentWithOpenTagsNestedAsInvalid()
+        {
+            PAssert.That(() => XhtmlCleaner.CannotBeValidHtml(@"This is <b <b>bla</b> id>invalid</b>!"));
+        }
+        [Test]
+        public void DetectsAnHtmlFragmentWithTagInEntityAsInvalid()
+        {
+            PAssert.That(() => XhtmlCleaner.CannotBeValidHtml(@"This is &amp <br/> ;"));
+        }
+
+        [Test]
+        public void DetectsUnencodedAmpersandTextAsNonHtml()
+        {
+            PAssert.That(() => XhtmlCleaner.CannotBeValidHtml(@"Text & so on is <i>subtly</i> wrong."));
+        }
+
+        [Test]
+        public void DetectsUnmatchedLessThanAsNonHtml()
+        {
+            PAssert.That(() => XhtmlCleaner.CannotBeValidHtml(@"x < y"));
+        }
     }
 }

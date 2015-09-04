@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using ExpressionToCodeLib;
 using MoreLinq;
 
 namespace ProgressOnderwijsUtils
@@ -10,15 +11,13 @@ namespace ProgressOnderwijsUtils
     {
         readonly object paramval;
         internal QueryScalarParameterComponent(object o) { paramval = o ?? DBNull.Value; }
-        public string ToSqlString(CommandFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
+        public string ToSqlString(CommandFactory qnum) => "@par" + qnum.GetNumberForParam(this);
 
         public SqlParameter ToSqlParameter(int paramNum)
         {
             object value;
             if (paramval is Filter.CurrentTimeToken) {
                 value = DateTime.Now;
-            } else if (typeof(IIdentifier).IsAssignableFrom(paramval.GetType().BaseType)) {
-                value = paramval == null ? (int?)null : ((IIdentifier)paramval).Value;
             } else {
                 value = paramval;
             }
@@ -42,14 +41,14 @@ namespace ProgressOnderwijsUtils
             } else if (paramval is DateTime) {
                 return ((DateTime)paramval).ToString(@"\'yyyy-MM-dd HH:mm:ss.fffffff\'");
             } else if (paramval is Enum) {
-                return Converteer.ToString(paramval, taalOrNull ?? Taal.NL);
+                return ((IConvertible)paramval).ToInt64(null).ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(paramval) + "*/";
             } else {
                 return "{!" + (taalOrNull.HasValue ? Converteer.ToString(paramval, taalOrNull.Value) : paramval.ToString()) + "!}";
             }
         }
 
-        public bool Equals(IQueryComponent other) { return (other is QueryScalarParameterComponent) && Equals(paramval, ((QueryScalarParameterComponent)other).paramval); }
-        public override bool Equals(object obj) { return (obj is QueryScalarParameterComponent) && Equals((QueryScalarParameterComponent)obj); }
+        public bool Equals(IQueryComponent other) => (other is QueryScalarParameterComponent) && Equals(paramval, ((QueryScalarParameterComponent)other).paramval);
+        public override bool Equals(object obj) => (obj is QueryScalarParameterComponent) && Equals((QueryScalarParameterComponent)obj);
         public override int GetHashCode() { return paramval.GetHashCode() + 37; } //paramval never null!
     }
 }

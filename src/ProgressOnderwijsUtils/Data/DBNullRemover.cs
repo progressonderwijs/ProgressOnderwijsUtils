@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -13,6 +14,7 @@ namespace ProgressOnderwijsUtils
         ///  - it doesn't support custom casts, just built-in casts
         ///  - it supports casting from boxed int to nullable enum.
         /// </summary>
+        [Pure]
         public static T Cast<T>(object fromdatabase)
         {
             try {
@@ -42,9 +44,9 @@ namespace ProgressOnderwijsUtils
 
             static FieldHelperClass()
             {
-                Type type = typeof(T);
+                var type = typeof(T);
                 if (type.IsValueType) {
-                    Type nullableBase = type.IfNullableGetNonNullableType();
+                    var nullableBase = type.IfNullableGetNonNullableType();
                     if (nullableBase == null) {
                         Extractor = ExtractValueField;
                     } else if (!nullableBase.IsValueType) {
@@ -54,39 +56,23 @@ namespace ProgressOnderwijsUtils
                             typeof(Func<object, T>),
                             typeof(DBNullRemover).GetMethod("ExtractNullableStruct", BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(nullableBase));
                     }
-                } else if (typeof(IIdentifier).IsAssignableFrom(type)) {
-                    Extractor = ExtractIdentifier;
                 } else {
                     Extractor = ExtractClassOrNullableField;
                 }
             }
 
-            static T ExtractClassOrNullableField(object obj) { return obj == DBNull.Value ? default(T) : (T)obj; }
-            static T ExtractValueField(object obj) { return (T)obj; }
+            static T ExtractClassOrNullableField(object obj) => obj == DBNull.Value ? default(T) : (T)obj;
+            static T ExtractValueField(object obj) => (T)obj;
 
-            static T ExtractIdentifier(object obj)
-            {
-                if (obj == DBNull.Value) {
-                    return default(T);
-                }
-
-                if (obj == null) {
-                    return default(T);
-                }
-
-                var r = (T)Activator.CreateInstance(typeof(T), null);
-                var i = r as IIdentifier;
-                // ReSharper disable PossibleNullReferenceException
-                i.Value = (int)obj;
-                // ReSharper restore PossibleNullReferenceException
-
-                return r;
-            }
         }
 
         // ReSharper disable UnusedMember.Local
         static TStruct? ExtractNullableStruct<TStruct>(object obj) where TStruct : struct
             // ReSharper restore UnusedMember.Local
         { return obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj; }
+
+        static readonly MethodInfo genericCastMethod = ((Func<object, int>)Cast<int>).Method.GetGenericMethodDefinition();
+        [Pure]
+        public static object DynamicCast(object val, Type type) { return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val }); }
     }
 }

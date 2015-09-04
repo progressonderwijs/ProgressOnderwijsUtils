@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -10,6 +11,7 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public static class DataRowExtensions
     {
+        [Pure]
         public static T Field<T>(this DataRowView row, string fieldname) { return row.Row.Field<T>(fieldname); }
     }
 }

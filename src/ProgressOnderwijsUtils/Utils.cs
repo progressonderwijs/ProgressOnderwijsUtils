@@ -1,33 +1,27 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Data.Entity.Core;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.Core;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
-using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Collections;
-using ProgressOnderwijsUtils.Test;
-using EntityException = System.Data.Entity.Core.EntityException;
 
 namespace ProgressOnderwijsUtils
 {
     public static class ErrorUtils
     {
-        [ExcludeFromNCover]
         public static string TestErrorStackOverflow(int rounds)
         {
             //This is intended for testing error-handling in case of dramatic errors.
             return TestErrorStackOverflow(rounds + 1);
         }
 
-        [ExcludeFromNCover]
         public static void TestErrorOutOfMemory()
         {
             var memorySlurper = new List<byte[]>();
@@ -39,7 +33,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [ExcludeFromNCover]
         public static void TestErrorNormalException()
         {
             throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
@@ -57,6 +50,19 @@ namespace ProgressOnderwijsUtils
 
     public static class Utils
     {
+        /// <summary>
+        /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
+        /// </summary>
+        public static bool FuzzyEquals(double x, double y)
+        {
+            const double relativeEpsilon = 1.0 / (1ul << 32);
+
+            double delta = Math.Abs(x - y);
+            double magnitude = Math.Abs(x) + Math.Abs(y);
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            return x == y || delta / magnitude < relativeEpsilon;
+        }
+
         public static Lazy<T> Lazy<T>(Func<T> factory) { return new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication); }
 
         public static bool ElfProef(int getal)
@@ -132,70 +138,32 @@ namespace ProgressOnderwijsUtils
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
         {
-            return TransitiveClosure(elems, nodes => nodes.SelectMany(edgeLookup));
+            return TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
         {
             var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
-
             while (distinctNewlyReachable.Length > 0) {
-                var builder = FastArrayBuilder<T>.Create();
-
-                foreach (var newItem in distinctNewlyReachable) {
-                    foreach (var reachable in edgeLookup(newItem)) {
-                        if (set.Add(reachable)) {
-                            builder.Add(reachable);
-                        }
-                    }
-                }
-                //next.AddRange(multiEdgeLookup(distinctNewlyReachable).Where(set.Add));
-                distinctNewlyReachable = builder.ToArray();
-                //distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
+                distinctNewlyReachable = distinctNewlyReachable.SelectMany(edgeLookup).Where(set.Add).ToArray();
             }
             return set;
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
         {
-            var distinctNewlyReachable = elems.ToArray();
-            var set = distinctNewlyReachable.ToSet();
-            while (distinctNewlyReachable.Length > 0) {
-                distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
-            }
-            return set;
+            return TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
         {
-            var distinctNewlyReachable = elems.ToList();
-            var next = new List<T>();
+            var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
-            while (distinctNewlyReachable.Count > 0) {
-                foreach (var item in multiEdgeLookup(distinctNewlyReachable)) {
-                    if (set.Add(item)) {
-                        next.Add(item);
-                    }
-                }
-                //next.AddRange(multiEdgeLookup(distinctNewlyReachable).Where(set.Add));
-                distinctNewlyReachable.Clear();
-                var tmp = next;
-                next = distinctNewlyReachable;
-                distinctNewlyReachable = tmp;
-                //distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
+            while (distinctNewlyReachable.Length > 0) {
+                distinctNewlyReachable = multiEdgeLookup(distinctNewlyReachable).Where(set.Add).ToArray();
             }
             return set;
-        }
-
-        /// <summary>
-        /// Joins a set of values into SQL syntax; e.g. test, ab'c, xyz turn into "('test', 'ab''c', 'xyz')" and the empty set turns into "(null)".
-        /// Single quotes are doubled; however, this is not rigorously safe and as such beware of SQL-injection.
-        /// No user-supplied strings should be used with this function!
-        /// </summary>
-        public static string SqlInClause(IEnumerable<string> values)
-        {
-            return SqlInClauseHelper(values.Select(EscapeSqlString));
         }
 
         /// <summary>
@@ -205,8 +173,6 @@ namespace ProgressOnderwijsUtils
         {
             return SqlInClauseHelper(values.Select(val => val.ToStringInvariant()));
         }
-
-        static string EscapeSqlString(string val) { return '\'' + val.Replace("'", "''") + '\''; }
 
         static string SqlInClauseHelper(IEnumerable<string> values)
         {
@@ -233,6 +199,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        // ReSharper disable UnusedMember.Global
+        // Deze F's zijn voor makkelijke type inference, dus worden misschien niet altijd gebruikt
+        // maar wel goed om te houden
         public static Func<TR> F<TR>(Func<TR> v) { return v; } //purely for delegate type inference
         public static Func<T, TR> F<T, TR>(Func<T, TR> v) { return v; } //purely for delegate type inference
         public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v) { return v; } //purely for delegate type inference
@@ -240,11 +209,11 @@ namespace ProgressOnderwijsUtils
         public static Expression<Func<TR>> E<TR>(Expression<Func<TR>> v) { return v; } //purely for delegate type inference
         public static Expression<Func<T, TR>> E<T, TR>(Expression<Func<T, TR>> v) { return v; } //purely for delegate type inference
         public static Expression<Func<T1, T2, TR>> E<T1, T2, TR>(Expression<Func<T1, T2, TR>> v) { return v; } //purely for delegate type inference
-
+        // ReSharper restore UnusedMember.Global
         public static string GetSqlExceptionDetailsString(Exception exception)
         {
             SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
-            return sql == null ? null : String.Format("[code='{0:x}'; number='{1}'; state='{2}']", sql.ErrorCode, sql.Number, sql.State);
+            return sql == null ? null : $"[code='{sql.ErrorCode:x}'; number='{sql.Number}'; state='{sql.State}']";
         }
 
         /// <summary>
@@ -308,7 +277,7 @@ namespace ProgressOnderwijsUtils
         }
 
         // vergelijk datums zonder milliseconden.
-        public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2) { return d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond); }
+        public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2) => d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond);
 
         /// <summary>
         /// Geeft het verschil in maanden tussen twee datums
@@ -337,6 +306,8 @@ namespace ProgressOnderwijsUtils
 
         public static string ToSortableShortString(long value)
         {
+            //This function is used on a hot-path in Programma and Resultaten export - it needs to be fast.
+
             char[] buffer = new char[14]; // log(2^31)/log(36) < 6 char; +1 for length+sign.
             int index = 0;
             bool isNeg = value < 0;
@@ -357,11 +328,78 @@ namespace ProgressOnderwijsUtils
             int encodedLength = (isNeg ? -index : index) + 13; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
             buffer[index++] = MapToBase36Char(encodedLength);
 
-            Array.Reverse(buffer, 0, index);
+            for (int i = 0, j = index - 1; i < j; i++, j--) {
+                var tmp = buffer[i];
+                buffer[i] = buffer[j];
+                buffer[j] = tmp;
+            }
+
             return new string(buffer, 0, index);
         }
 
-        static char MapToBase36Char(int digit) { return (char)((digit < 10 ? '0' : 'a' - 10) + digit); }
+        static char MapToBase36Char(int digit) => (char)((digit < 10 ? '0' : 'a' - 10) + digit);
+
+        /// <summary>
+        /// This is almost equivalent to num.ToString("f"+precision), but around 10 times faster.
+        /// 
+        /// Differences: 
+        ///   - rounding differences may exist for doubles like 1.005 which are not precisely representable.
+        ///   - numbers over (2^64 - 2^10)/(2^precision) are slow.
+        /// </summary>
+        public static string ToFixedPointString(double number, CultureInfo culture, int precision)
+        {
+            //TODO:add tests
+            var fI = culture.NumberFormat;
+            var str = new char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
+            int idx = 0;
+            bool isNeg = number < 0;
+            if (isNeg) {
+                number = -number;
+            }
+
+            ulong mult = 1;
+            for (int i = 0; i < precision; i++) {
+                mult *= 10;
+            }
+            var rounded = number * mult + 0.5;
+            if (!(rounded <= ulong.MaxValue - 1024)) {
+                if (double.IsNaN(number)) {
+                    return fI.NaNSymbol;
+                }
+                if (double.IsInfinity(number)) {
+                    return isNeg ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
+                }
+                return number.ToString("f" + precision, culture);
+            }
+            var x = (ulong)rounded;
+
+            isNeg = isNeg && x > 0;
+
+            if (precision > 0) {
+                do {
+                    var tmp = x;
+                    x = x / 10;
+                    str[idx++] = (char)('0' + (tmp - x * 10));
+                }
+                while (idx < precision);
+                str[idx++] = fI.PercentDecimalSeparator[0];
+            }
+            do {
+                var tmp = x;
+                x = x / 10;
+                str[idx++] = (char)('0' + (tmp - x * 10));
+            }
+            while (x != 0);
+            if (isNeg) {
+                str[idx++] = fI.NegativeSign[0];
+            }
+            for (int i = 0, j = idx - 1; i < j; i++, j--) {
+                var tmp = str[i];
+                str[i] = str[j];
+                str[j] = tmp;
+            }
+            return new string(str, 0, idx);
+        }
 
         public static DateTime? DateMax(DateTime? d1, DateTime? d2)
         {
@@ -407,10 +445,7 @@ namespace ProgressOnderwijsUtils
     {
         readonly Comparison<T> comparer;
         public ComparisonComparer(Comparison<T> comparer) { this.comparer = comparer; }
-
-        #region Implementation of IComparer<in T>
-        public int Compare(T x, T y) { return comparer(x, y); }
-        #endregion
+        public int Compare(T x, T y) => comparer(x, y);
     }
 
     public class EqualsEqualityComparer<T> : IEqualityComparer<T>
@@ -424,9 +459,7 @@ namespace ProgressOnderwijsUtils
             this.hashCode = hashCode;
         }
 
-        #region Implementation of IEqualityComparer<in T>
-        public bool Equals(T x, T y) { return equals(x, y); }
-        public int GetHashCode(T obj) { return hashCode == null ? obj.GetHashCode() : hashCode(obj); }
-        #endregion
+        public bool Equals(T x, T y) => equals(x, y);
+        public int GetHashCode(T obj) => hashCode == null ? obj.GetHashCode() : hashCode(obj);
     }
 }

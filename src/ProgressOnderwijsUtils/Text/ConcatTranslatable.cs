@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
-using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtils.Text
+namespace ProgressOnderwijsUtils
 {
     public sealed class ConcatTranslatable : ITranslatable
     {
@@ -16,12 +13,12 @@ namespace ProgressOnderwijsUtils.Text
             foreach (ITranslatable p in parts) {
                 if (p == null) //Perf: no LINQ
                 {
-                    throw new ArgumentNullException("parts", "element of parts is null");
+                    throw new ArgumentNullException(nameof(parts), "element of parts is null");
                 }
             }
         }
 
-        public string GenerateUid() { return parts.Select(it => it.GenerateUid()).JoinStrings(); }
+        public string GenerateUid() => parts.Select(it => it.GenerateUid()).JoinStrings();
 
         public TextVal Translate(Taal taal)
         {

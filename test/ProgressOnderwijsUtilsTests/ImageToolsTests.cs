@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtilsTests
 {
     static class Helper
     {
-        public static double Distance(this Color a, Color b) { return (Math.Abs(a.G - b.G) * 0.5 + Math.Abs(a.R - b.R) * 0.35 + Math.Abs(a.B - b.B) * 0.15) / 255.0; }
+        public static double Distance(this Color a, Color b) => (Math.Abs(a.G - b.G) * 0.5 + Math.Abs(a.R - b.R) * 0.35 + Math.Abs(a.B - b.B) * 0.15) / 255.0;
     }
 
     [Continuous]
@@ -45,24 +45,38 @@ namespace ProgressOnderwijsUtilsTests
             using (var down_W_H = ImageTools.Resize(down_W, 50, 50))
             using (var down_H_W = ImageTools.Resize(down_H, 50, 50))
             using (var down_WH = ImageTools.Resize(resImage, 50, 50)) {
-                PAssert.That(
-                    () =>
-                        !(from y in Enumerable.Range(0, 50)
-                            from x in Enumerable.Range(0, 50)
-                            select new { x, y }).Where(p => down_W_H.GetPixel(p.x, p.y).Distance(down_WH.GetPixel(p.x, p.y)) > 0.02).Any());
-                PAssert.That(
-                    () =>
-                        !(from y in Enumerable.Range(0, 50)
-                            from x in Enumerable.Range(0, 50)
-                            select new { x, y }).Where(p => down_H_W.GetPixel(p.x, p.y).Distance(down_WH.GetPixel(p.x, p.y)) > 0.02).Any());
-                PAssert.That(
-                    () =>
-                        !(from y in Enumerable.Range(0, 50)
-                            from x in Enumerable.Range(0, 50)
-                            select new { x, y }).Where(p => down_H_W.GetPixel(p.x, p.y).Distance(down_W_H.GetPixel(p.x, p.y)) > 0.02).Any());
+                AssertImagesSimilar(down_W_H, down_WH);
+                AssertImagesSimilar(down_H_W, down_WH);
+                AssertImagesSimilar(down_H_W, down_W_H);
+                
+                //als het test-plaatje geen contrast heeft, dan is deze hele test zinloos: verifieer dat het test plaatje contrast heeft:
+                PAssert.That(() => down_W_H.GetPixel(45, 25) != down_W_H.GetPixel(10, 30));
 
-                Assert.Throws<ArgumentException>(() => ImageTools.Resize(resImage, 100, 0));
             }
+        }
+
+        [Test]
+        public void CannotResizeToZero()
+        {
+            var resImage = Resources.rainbow;
+            Assert.Throws<ArgumentException>(() => ImageTools.Resize(resImage, 100, 0));
+        }
+
+        static void AssertImagesSimilar(Bitmap img1, Bitmap img2)
+        {
+            PAssert.That(() => img1.Size == img2.Size);
+
+            var pixelsDiffs = (
+                from y in Enumerable.Range(0, img1.Height)
+                from x in Enumerable.Range(0, img1.Width)
+                let err = img1.GetPixel(x, y).Distance(img2.GetPixel(x, y))
+                select new { x, y, err });
+
+            var bitness = 8 * IntPtr.Size;
+            var accuracy = bitness == 32 ? 0.1 : 0.025; //for some odd reason, the 32-bit clr has much lower image scaling accuracy...
+
+            var badPixels = pixelsDiffs.Where(diff => diff.err > accuracy);
+            PAssert.That(() => !badPixels.Any());
         }
 
         [Test]
@@ -73,13 +87,11 @@ namespace ProgressOnderwijsUtilsTests
             using (var down_H = ImageTools.DownscaleAndClip(resImage, 2000, 1000))
             using (var down_W_H = ImageTools.DownscaleAndClip(down_W, 50, 50))
             using (var down_H_W = ImageTools.DownscaleAndClip(down_H, 50, 50)) {
-                PAssert.That(
-                    () =>
-                        !(from y in Enumerable.Range(0, 50)
-                            from x in Enumerable.Range(0, 50)
-                            select new { x, y }).Where(p => down_H_W.GetPixel(p.x, p.y).Distance(down_W_H.GetPixel(p.x, p.y)) > 0.05).Any());
+                AssertImagesSimilar(down_H_W, down_W_H);
+
+                //als het test-plaatje geen contrast heeft, dan is deze hele test zinloos: verifieer dat het test plaatje contrast heeft:
+                PAssert.That(() => down_W_H.GetPixel(25, 25) != down_W_H.GetPixel(20, 20));
             }
-            Assert.Throws<ArgumentException>(() => ImageTools.Resize(resImage, 100, 0));
         }
     }
 }

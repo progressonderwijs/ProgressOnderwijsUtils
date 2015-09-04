@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
@@ -9,6 +10,7 @@ namespace ProgressOnderwijsUtils.Collections
         static readonly ulong start = (ulong)typeof(T).MetadataToken + ((ulong)typeof(T).Module.MetadataToken << 32);
         public ArrayComparer(EqualityComparer<T> underlying) { this.underlying = underlying; }
 
+        [Pure]
         public bool Equals(T[] x, T[] y)
         {
             if (x == null && y == null) {
@@ -28,6 +30,7 @@ namespace ProgressOnderwijsUtils.Collections
             return true;
         }
 
+        [Pure]
         public int GetHashCode(T[] arr)
         {
             ulong buffer;

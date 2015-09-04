@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using MoreLinq;
-using ProgressOnderwijsUtils;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -24,6 +21,7 @@ namespace ProgressOnderwijsUtils
             CULTURES[Taal.DU].DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
         }
 
-        public static CultureInfo GetCulture(this Taal language) { return CULTURES[language]; }
+        [Pure]
+        public static CultureInfo GetCulture(this Taal language) => CULTURES[language];
     }
 }

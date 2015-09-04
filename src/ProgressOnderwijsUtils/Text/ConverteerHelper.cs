@@ -2,18 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
-    public delegate string TranslateFunction(Taal taal = Taal.NL);
-
     public static class ConverteerHelper
     {
         public const string GELD_EURO = "N02";
-        static TranslateFunction TryToString<T>(object obj, Func<T, TranslateFunction> translator) { return obj is T ? translator((T)obj) : null; }
+        static Func<Taal, string> TryToString<T>(object obj, Func<T, Func<Taal, string>> translator) { return obj is T ? translator((T)obj) : null; }
 
-        static IEnumerable<TranslateFunction> ResolveTranslator(object obj, string format)
+        [Pure]
+        static IEnumerable<Func<Taal, string>> ResolveTranslator(object obj, string format)
         {
             yield return TryToString<ITranslatable>(
                 obj,
@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils
                         case Taal.DU:
                             return o ? "Ja" : "Nein";
                         default:
-                            throw new ArgumentOutOfRangeException("language", "Taal niet bekend: " + language);
+                            throw new ArgumentOutOfRangeException(nameof(language), "Taal niet bekend: " + language);
                     }
                 });
             yield return TryToString<char>(
@@ -72,11 +72,11 @@ namespace ProgressOnderwijsUtils
             yield return TryToString<VariantData>(
                 obj,
                 o => language =>
-                    o.ToUiString());
+                    o.ToString());
             yield return TryToString<FileData>(
                 obj,
                 o => language =>
-                    o.ContainsFile ? string.Format("{0} ({1} KB)", o.FileName, o.Content.Length / 1000m) : "");
+                    o.ContainsFile ? $"{o.FileName} ({o.Content.Length / 1000m} KB)" : "");
             yield return TryToString<double>(
                 obj,
                 o => language =>
@@ -109,17 +109,14 @@ namespace ProgressOnderwijsUtils
                 obj,
                 o => language =>
                     o.ToString(format ?? "D", language.GetCulture()));
-            yield return TryToString<IIdentifier>(
-                obj,
-                o => language =>
-                    o.Value.ToString(format ?? "D", language.GetCulture()));
             yield return TryToString<IEnumerable>(
                 obj,
                 o =>
                     ArrayToStringHelper(o, format));
         }
 
-        public static TranslateFunction ToStringDynamic(object obj, string format = null)
+        [Pure]
+        public static Func<Taal, string> ToStringDynamic(object obj, string format = null)
         {
             if (obj == null || obj == DBNull.Value) {
                 return language => "";
@@ -134,7 +131,8 @@ namespace ProgressOnderwijsUtils
             throw new ConverteerException("unknown type " + obj.GetType() + " to stringify");
         }
 
-        static TranslateFunction ArrayToStringHelper(IEnumerable o, string format)
+        [Pure]
+        static Func<Taal, string> ArrayToStringHelper(IEnumerable o, string format)
         {
             var subtrans = o.Cast<object>().Select(
                 elem =>

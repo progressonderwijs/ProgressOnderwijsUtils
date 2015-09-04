@@ -17,11 +17,11 @@ namespace ProgressOnderwijsUtils
         readonly string _KolomNaam;
         readonly BooleanComparer _Comparer;
         readonly object _Waarde;
-        public string KolomNaam { get { return _KolomNaam; } }
-        public BooleanComparer Comparer { get { return _Comparer; } }
-        public object Waarde { get { return _Waarde; } }
-        public override bool Equals(object obj) { return Equals(obj as CriteriumFilter); }
-        public override bool Equals(FilterBase other) { return Equals(other as CriteriumFilter); }
+        public string KolomNaam => _KolomNaam;
+        public BooleanComparer Comparer => _Comparer;
+        public object Waarde => _Waarde;
+        public override bool Equals(object obj) => Equals(obj as CriteriumFilter);
+        public override bool Equals(FilterBase other) => Equals(other as CriteriumFilter);
 
         public bool Equals(CriteriumFilter other)
         {
@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
                 && StructuralComparisons.StructuralEqualityComparer.Equals(_Waarde, other._Waarde);
         }
 
-        public override int GetHashCode() { return 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode()); }
+        public override int GetHashCode() => 3 * _KolomNaam.GetHashCode() + 13 * _Comparer.GetHashCode() + 137 * (_Waarde == null ? 0 : _Waarde.GetHashCode());
 
         public static BooleanComparer[] StringComparers
         {
@@ -99,14 +99,14 @@ namespace ProgressOnderwijsUtils
                     }
                     return KolomNaam + "=" + BuildParam();
                 case BooleanComparer.IsNull:
-                    return QueryBuilder.Create(KolomNaam + " is null");
+                    return QueryBuilder.CreateDynamic(KolomNaam + " is null");
                 case BooleanComparer.NotEqual:
                     if (Waarde == null) {
                         goto case BooleanComparer.IsNotNull;
                     }
                     return KolomNaam + "!=" + BuildParam();
                 case BooleanComparer.IsNotNull:
-                    return QueryBuilder.Create(KolomNaam + " is not null");
+                    return QueryBuilder.CreateDynamic(KolomNaam + " is not null");
 
                 case BooleanComparer.LessThan:
                     return KolomNaam + "<" + BuildParam();
@@ -176,10 +176,10 @@ namespace ProgressOnderwijsUtils
                 this.code = code;
             }
 
-            public char Code { get { return code; } }
-            public Type Type { get { return typeof(T); } }
-            public string Serialize(object val) { return serialize((T)val); }
-            object IValSerializer.Deserialize(string s) { return deserialize(s); }
+            public char Code => code;
+            public Type Type => typeof(T);
+            public string Serialize(object val) => serialize((T)val);
+            object IValSerializer.Deserialize(string s) => deserialize(s);
         }
 
         static IValSerializer Serializer<T>(char code, Func<string, T> deserialize, Func<T, string> serialize) { return new ValSerializer<T>(serialize, deserialize, code); }
@@ -216,7 +216,7 @@ namespace ProgressOnderwijsUtils
                             var currentSegment = FindUptoNonDuplicatedTerminatorWithLeftover(remaining, '#');
                             elems.Add(underlying.Deserialize(currentSegment.Item1));
                             if (currentSegment.Item2[0] != ';') {
-                                throw new ArgumentOutOfRangeException("s", "serialized array does not contain ';' where expected, instead" + currentSegment.Item2[0]);
+                                throw new ArgumentOutOfRangeException(nameof(s), "serialized array does not contain ';' where expected, instead" + currentSegment.Item2[0]);
                             }
                             remaining = currentSegment.Item2.Substring(1); //skip ';'
                         }
@@ -245,7 +245,7 @@ namespace ProgressOnderwijsUtils
             if (serializerByCode.TryGetValue(s[0], out serializer)) {
                 return serializer.Deserialize(s.Substring(1));
             } else {
-                throw new ArgumentOutOfRangeException("s", "string starts with unknown letter " + s[0]);
+                throw new ArgumentOutOfRangeException(nameof(s), "string starts with unknown letter " + s[0]);
             }
         }
 
@@ -265,7 +265,7 @@ namespace ProgressOnderwijsUtils
             if (serializerByType.TryGetValue(underlyingType, out serializer)) {
                 return serializer.Code + serializer.Serialize(waarde);
             } else {
-                throw new ArgumentOutOfRangeException("waarde", "waarde is van onbekend type " + waarde.GetType());
+                throw new ArgumentOutOfRangeException(nameof(waarde), "waarde is van onbekend type " + waarde.GetType());
             }
         }
 
@@ -315,7 +315,7 @@ namespace ProgressOnderwijsUtils
         QueryBuilder BuildParam()
         {
             if (Waarde is ColumnReference) {
-                return QueryBuilder.Create(((ColumnReference)Waarde).ColumnName);
+                return QueryBuilder.CreateDynamic(((ColumnReference)Waarde).ColumnName);
             } else if (Waarde is Filter.CurrentTimeToken) {
                 return QueryBuilder.Param(DateTime.Now);
             } else {
@@ -349,7 +349,7 @@ namespace ProgressOnderwijsUtils
             return secondaryType.GetNonNullableUnderlyingType() == primaryType;
         }
 
-        protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) { return ReferenceEquals(this, toReplace) ? replaceWith : this; }
+        protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith) => ReferenceEquals(this, toReplace) ? replaceWith : this;
 
         protected internal override FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c)
         {
@@ -360,10 +360,10 @@ namespace ProgressOnderwijsUtils
 
         // ReSharper disable MemberCanBePrivate.Global
         //not private due to access via Expression trees.
-        public static bool StartsWithHelper(string val, string with) { return val != null && with != null && val.StartsWith(with, StringComparison.OrdinalIgnoreCase); }
-        public static bool EndsWithHelper(string val, string with) { return val != null && with != null && val.EndsWith(with, StringComparison.OrdinalIgnoreCase); }
-        public static bool ContainsHelper(string val, string needle) { return val != null && needle != null && -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase); }
-        public static bool HasFlagHelper(long val, long flag) { return (val & flag) == flag; }
+        public static bool StartsWithHelper(string val, string with) => val != null && with != null && val.StartsWith(with, StringComparison.OrdinalIgnoreCase);
+        public static bool EndsWithHelper(string val, string with) => val != null && with != null && val.EndsWith(with, StringComparison.OrdinalIgnoreCase);
+        public static bool ContainsHelper(string val, string needle) => val != null && needle != null && -1 != val.IndexOf(needle, StringComparison.OrdinalIgnoreCase);
+        public static bool HasFlagHelper(long val, long flag) => (val & flag) == flag;
         // ReSharper restore MemberCanBePrivate.Global
         static readonly MethodInfo stringStartsWithMethod = ((Func<string, string, bool>)StartsWithHelper).Method;
         static readonly MethodInfo stringEndsWithMethod = ((Func<string, string, bool>)EndsWithHelper).Method;
@@ -483,8 +483,6 @@ namespace ProgressOnderwijsUtils
                 ? expr
                 : Expression.Convert(expr, underlyingType);
         }
-
-        static Expression AddPrecondition(Expression precondition, Expression expr) { return precondition == null ? expr : Expression.AndAlso(precondition, expr); }
 
         static bool ComparerUsesUnderlyingType(BooleanComparer comparer)
         {

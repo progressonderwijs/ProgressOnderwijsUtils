@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public Stream GetResource(string filename) { return typeof(T).GetResource(filename); }
+        public Stream GetResource(string filename) => typeof(T).GetResource(filename);
 
         public IEnumerable<string> GetResourceNames()
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -11,6 +12,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// If type is Nullable&lt;T&gt;, returns typeof(T).  For non-Nullable&lt;&gt; types, returns null;
         /// </summary>
+        [Pure]
         public static Type IfNullableGetNonNullableType(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)
@@ -21,6 +23,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// If type is Nullable&lt;T&gt;, returns typeof(T).  For non-Nullable&lt;&gt; types, returns the type itself - this might also be a reference type, so the resulting type may still permit the value null.
         /// </summary>
+        [Pure]
         public static Type GetNonNullableType(this Type type)
         {
             return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)
@@ -35,14 +38,12 @@ namespace ProgressOnderwijsUtils
         /// e.g. typeof(string) => typeof(string)
         /// 
         /// </summary>
+        [Pure]
         public static Type GetNonNullableUnderlyingType(this Type type)
         {
             var nonNullableType = type.GetNonNullableType();
             if (nonNullableType.IsEnum) {
                 return nonNullableType.GetEnumUnderlyingType();
-            }
-            if (typeof(IIdentifier).IsAssignableFrom(type.BaseType)) {
-                return Identifier.BaseType;
             }
             return nonNullableType;
         }
@@ -51,6 +52,7 @@ namespace ProgressOnderwijsUtils
         /// Find (nullable) underlying type corresponding to a (nullable) enum.
         /// Nullability is unaltered; Non-enum types are unaltered.
         /// </summary>
+        [Pure]
         public static Type GetUnderlyingType(this Type type)
         {
             var maybeNonNullable = type.IfNullableGetNonNullableType();
@@ -63,11 +65,13 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static bool CanBeNull(this Type type) { return !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>); }
+        [Pure]
+        public static bool CanBeNull(this Type type) => !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 
         /// <summary>
         /// If type is non-Nullable value type T, returns typeof(Nullable&lt;T&gt;).  For Nullable&lt;&gt; or reference types, returns null;
         /// </summary>
+        [Pure]
         public static Type MakeNullableType(this Type type)
         {
             return !type.IsValueType || type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>)
@@ -75,6 +79,7 @@ namespace ProgressOnderwijsUtils
                 : typeof(Nullable<>).MakeGenericType(type);
         }
 
+        [Pure]
         public static IEnumerable<Type> BaseTypes(this Type type)
         {
             if (null == type) {
@@ -87,6 +92,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [Pure]
         public static string GetNonGenericName(this Type type)
         {
             var typename = type.FullName;
@@ -96,8 +102,10 @@ namespace ProgressOnderwijsUtils
             return backtickIdx == -1 ? typename : typename.Substring(0, backtickIdx);
         }
 
-        public static string FriendlyName(this Type type) { return ObjectToCode.GetCSharpFriendlyTypeName(type); }
+        [Pure]
+        public static string FriendlyName(this Type type) => ObjectToCode.GetCSharpFriendlyTypeName(type);
 
+        [Pure]
         public static T Attr<T>(this MemberInfo mi) where T : Attribute
         {
             var customAttributes = mi.GetCustomAttributes(typeof(T), true);

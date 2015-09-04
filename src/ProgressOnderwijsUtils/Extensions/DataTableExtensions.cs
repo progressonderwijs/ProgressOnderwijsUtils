@@ -111,32 +111,32 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static IEnumerable<object[]> MakeUniqueData()
+        static IEnumerable<TestCaseData> MakeUniqueData()
         {
-            yield return new object[] { 0, new int[][] { } };
-            yield return new object[] {
+            yield return new TestCaseData(0, new int[][] { });
+            yield return new TestCaseData(
                 1,
                 new[] {
                     new[] { 1, 1 },
                 }
-            };
-            yield return new object[] {
+            );
+            yield return new TestCaseData(
                 2,
                 new[] {
                     new[] { 1, 1 },
                     new[] { 2, 2 },
                 }
-            };
-            yield return new object[] {
+            );
+            yield return new TestCaseData(
                 1,
                 new[] {
                     new[] { 1, 2 },
                     new[] { 1, 2 },
                 }
-            };
+            );
         }
 
-        [Test, TestCaseSource("MakeUniqueData")]
+        [Test, TestCaseSource(nameof(MakeUniqueData))]
         public void MakeUnique(int count, int[][] rows)
         {
             SetUpRows(rows, sut);

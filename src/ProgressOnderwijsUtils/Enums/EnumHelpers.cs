@@ -21,18 +21,18 @@ namespace ProgressOnderwijsUtils
 
         static class Int32Helpers
         {
-            public static int Or(int a, int b) { return a | b; }
-            public static bool HasFlag(int val, int flag) { return (val & flag) == flag; }
-            public static bool HasFlagOverlap(int a, int b) { return (a & b) != 0; }
-            public static long ToInt64(int a) { return a; }
+            public static int Or(int a, int b) => a | b;
+            public static bool HasFlag(int val, int flag) => (val & flag) == flag;
+            public static bool HasFlagOverlap(int a, int b) => (a & b) != 0;
+            public static long ToInt64(int a) => a;
         }
 
         static class Int64Helpers
         {
-            public static long Or(long a, long b) { return a | b; }
-            public static bool HasFlag(long val, long flag) { return (val & flag) == flag; }
-            public static bool HasFlagOverlap(long a, long b) { return (a & b) != 0L; }
-            public static long ToInt64(long a) { return a; }
+            public static long Or(long a, long b) => a | b;
+            public static bool HasFlag(long val, long flag) => (val & flag) == flag;
+            public static bool HasFlagOverlap(long a, long b) => (a & b) != 0L;
+            public static long ToInt64(long a) => a;
         }
 
         struct FlagOperationMethods
@@ -50,8 +50,7 @@ namespace ProgressOnderwijsUtils
             public MethodInfo Or, HasFlag, HasFlagOverlap, ToInt64;
         }
 
-        static readonly FlagOperationMethods forInt = FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap, Int32Helpers.ToInt64)
-            ,
+        static readonly FlagOperationMethods forInt = FlagOperationMethods.Get<int>(Int32Helpers.Or, Int32Helpers.HasFlag, Int32Helpers.HasFlagOverlap, Int32Helpers.ToInt64),
             forLong = FlagOperationMethods.Get<long>(Int64Helpers.Or, Int64Helpers.HasFlag, Int64Helpers.HasFlagOverlap, Int64Helpers.ToInt64);
 
         static readonly ITranslatable translatableComma = Translatable.Raw(", ");
@@ -315,8 +314,8 @@ namespace ProgressOnderwijsUtils
                 sortedAttrs = entries;
             }
 
-            public IReadOnlyList<Enum> Values() { return EnumValues.SelectIndexable(e => (Enum)(object)e); }
-            public ITranslatable GetEnumLabel(Enum val) { return GetLabel((TEnum)(object)val); }
+            public IReadOnlyList<Enum> Values() => EnumValues.SelectIndexable(e => (Enum)(object)e);
+            public ITranslatable GetEnumLabel(Enum val) => GetLabel((TEnum)(object)val);
 
             public static ITranslatable GetLabel(TEnum val)
             {
@@ -417,7 +416,7 @@ namespace ProgressOnderwijsUtils
             public static IEnumerable<TEnum> Lookup(string s, Taal taal)
             {
                 if (taal == Taal.None) {
-                    throw new ArgumentOutOfRangeException("taal", "Taal is niet gezet.  (== Taal.None)");
+                    throw new ArgumentOutOfRangeException(nameof(taal), "Taal is niet gezet.  (== Taal.None)");
                 }
                 return !EnumMetaCache<TEnum>.IsFlags
                     ? ParseLabels[taal][s.Trim()]
@@ -430,7 +429,7 @@ namespace ProgressOnderwijsUtils
                     };
             }
 
-            IEnumerable<Enum> ILabelLookup.Lookup(string s, Taal taal) { return Lookup(s, taal).Select(e => (Enum)(object)e); }
+            IEnumerable<Enum> ILabelLookup.Lookup(string s, Taal taal) => Lookup(s, taal).Select(e => (Enum)(object)e);
         }
 
         public static class GetAttrs<TAttr>
@@ -459,15 +458,13 @@ namespace ProgressOnderwijsUtils
         }
 
         public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable { return EnumMetaCache<T>.EnumValues; }
-        public static IReadOnlyList<Enum> GetValues(Type enumType) { return GetEnumMetaCache(enumType).Values(); }
+        public static IReadOnlyList<Enum> GetValues(Type enumType) => GetEnumMetaCache(enumType).Values();
         public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.FlagEnumHelpers.AddFlag; }
         public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.FlagEnumHelpers.HasFlag; }
         public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.GetLabel(f); }
 
         public static ITranslatable GetLabel(Enum enumVal)
         {
-            //if (enumVal == null)
-            //	throw new ArgumentNullException("enumVal");
             return GetEnumMetaCache(enumVal.GetType())
                 .GetEnumLabel(enumVal);
         }
@@ -478,12 +475,15 @@ namespace ProgressOnderwijsUtils
             return SelectItem.Create(f, GetLabel(f));
         }
 
+        public static IReadOnlyList<SelectItem<TEnum>> CreateSelectItemList<TEnum>(this IEnumerable<TEnum> values)
+            where TEnum : struct, IConvertible, IComparable { return values.Select(GetSelectItem).ToArray(); }
+
         public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal)
             where TEnum : struct, IConvertible, IComparable
         {
-            return values.Select(
-                v =>
-                    new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).Text }
+            //TODO:EMN:improve this API.
+            return values.CreateSelectItemList()
+                .Select(v =>new KoppelTabelEntry { Id = v.Value.ToInt32(null), Tekst = v.Label.Translate(taal).Text }
                 ).ToDataTable();
         }
 
@@ -522,6 +522,14 @@ namespace ProgressOnderwijsUtils
                 .ToArray();
         }
 
+        public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
+            this IEnumerable<SelectItem<TEnum>> enumSelectItemList)
+            where TEnum : struct, IConvertible
+        {
+            return enumSelectItemList.Select(item => SelectItem.Create((int?)item.Value.ToInt32(null), item.Label))
+                .ToArray();
+        }
+
         public static TEnum? TryParse<TEnum>(string s) where TEnum : struct, IConvertible
         {
             if (!typeof(TEnum).IsEnum) {
@@ -534,6 +542,17 @@ namespace ProgressOnderwijsUtils
 
         public static TEnum ParseCaseSensitively<TEnum>(string s) where TEnum : struct, IConvertible
         {
+            var parsed = TryParseCaseSensitively<TEnum>(s);
+
+            if (parsed.HasValue) {
+                return parsed.Value;
+            } else {
+                throw new ArgumentException("Could not parse string as " + typeof(TEnum).Name);
+            }
+        }
+
+        public static TEnum? TryParseCaseSensitively<TEnum>(string s) where TEnum : struct, IConvertible
+        {
             if (!typeof(TEnum).IsEnum) {
                 throw new ArgumentException("type must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum)));
             }
@@ -543,9 +562,10 @@ namespace ProgressOnderwijsUtils
             if (Enum.TryParse(s, false, out retval)) {
                 return retval;
             } else {
-                throw new ArgumentException("Could not parse string as " + typeof(TEnum).Name);
+                return null;
             }
         }
+
 
         public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible, IComparable
         {

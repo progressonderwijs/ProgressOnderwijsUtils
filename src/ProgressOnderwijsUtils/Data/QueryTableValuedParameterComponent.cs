@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
             DbTypeName = dbTypeName;
         }
 
-        public string ToSqlString(CommandFactory qnum) { return "@par" + qnum.GetNumberForParam(this); }
+        public string ToSqlString(CommandFactory qnum) => "@par" + qnum.GetNumberForParam(this);
 
         public SqlParameter ToSqlParameter(int paramnum)
         {
@@ -29,12 +29,12 @@ namespace ProgressOnderwijsUtils
                 ParameterName = "@par" + paramnum,
                 Value = MetaObject.CreateDataReader(objs),
                 SqlDbType = SqlDbType.Structured,
-                TypeName = DbTypeName
+                TypeName = DbTypeName,
             };
         }
 
-        public string ToDebugText(Taal? taalOrNull) { return "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")"; }
-        public bool Equals(IQueryComponent other) { return Equals((object)other); }
+        public string ToDebugText(Taal? taalOrNull) => "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")";
+        public bool Equals(IQueryComponent other) => Equals((object)other);
 
         public override bool Equals(object other)
         {

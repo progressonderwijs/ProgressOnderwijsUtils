@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtilsTests
     public sealed class UtilsTest
     {
         [Test]
-        public void ToSortableStringTest()
+        public void ToSortableString_MaintainsOrder()
         {
             var cmp = StringComparer.Ordinal;
             var samplePoints = MoreEnumerable
@@ -31,6 +31,59 @@ namespace ProgressOnderwijsUtilsTests
                 }
             }
         }
+
+        [Test]
+        public void ToSortableString_ConcatenatedStringsMaintainOrder()
+        {
+            var samplePoints = new long[] {
+                -10000,
+                -1000,
+                -100,
+                -50,
+                -25,
+                -12,
+                -6,
+                0,
+                6,
+                12,
+                25,
+                50,
+                100,
+                1000,
+                10000,
+            };
+
+            var combos = (
+                from a in samplePoints
+                from b in samplePoints
+                select new[] { a, b }
+                ).Concat(
+                    from a in samplePoints
+                    select new[] { a }
+                );
+
+            foreach (var combo1 in combos) {
+                foreach (var combo2 in combos) {
+                    var str1 = combo1.Select(Utils.ToSortableShortString).JoinStrings();
+                    var str2 = combo2.Select(Utils.ToSortableShortString).JoinStrings();
+
+                    var strComparison = Math.Sign(StringComparer.Ordinal.Compare(str1, str2));
+                    var seqComparison = Math.Sign(combo1.Cast<long?>().ZipLongest(combo2.Cast<long?>(), Comparer<long?>.Default.Compare).FirstOrDefault(x => x != 0));
+                    if (strComparison != seqComparison) {
+                        Assert.Fail(
+                            "Comparisons don't match: {0} compared to {1} is {2} but after short string conversion {3}.CompareTo({4}) is {5}",
+                            ObjectToCode.ComplexObjectToPseudoCode(combo1),
+                            ObjectToCode.ComplexObjectToPseudoCode(combo2),
+                            seqComparison,
+                            ObjectToCode.ComplexObjectToPseudoCode(str1),
+                            ObjectToCode.ComplexObjectToPseudoCode(str2),
+                            strComparison
+                            );
+                    }
+                }
+            }
+        }
+
 
         [Test, Continuous]
         public void SwapValue()
@@ -58,11 +111,13 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Utils.SqlInClause(new int[] { }) == "(null)");
             PAssert.That(() => Utils.SqlInClause(new[] { 0 }) == "(0)");
             PAssert.That(() => Utils.SqlInClause(new[] { 0, 1 }) == "(0, 1)");
-            PAssert.That(() => Utils.SqlInClause(new[] { "test", "ab'c", "xyz" }) == "('test', 'ab''c', 'xyz')");
         }
 
         [Test, Continuous]
-        public void NUnitSession() { Assert.That(Utils.IsInUnitTest()); }
+        public void NUnitSession()
+        {
+            Assert.That(Utils.IsInUnitTest());
+        }
 
         static IEnumerable<TestCaseData> MaandSpan()
         {
@@ -76,19 +131,10 @@ namespace ProgressOnderwijsUtilsTests
             yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
         }
 
-        [Test, TestCaseSource("MaandSpan"), Continuous]
-        public int MaandSpanTest(DateTime d1, DateTime d2) { return Utils.MaandSpan(d1, d2); }
-
-        IEnumerable<TestCaseData> DateMax()
+        [Test, TestCaseSource(nameof(MaandSpan)), Continuous]
+        public int MaandSpanTest(DateTime d1, DateTime d2)
         {
-            yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2000, 1, 1)).Returns(0);
-            yield return new TestCaseData(new DateTime(2000, 5, 1), new DateTime(2000, 1, 1)).Returns(4);
-            yield return new TestCaseData(new DateTime(2000, 1, 1), new DateTime(2001, 1, 1)).Returns(12);
-            yield return new TestCaseData(new DateTime(2001, 1, 1), new DateTime(2000, 1, 1)).Returns(12);
-            yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 2, 1)).Returns(5);
-            yield return new TestCaseData(new DateTime(2000, 9, 1), new DateTime(2001, 4, 1)).Returns(7);
-            yield return new TestCaseData(new DateTime(2001, 6, 1), new DateTime(2000, 9, 1)).Returns(9);
-            yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
+            return Utils.MaandSpan(d1, d2);
         }
 
         [Test, Continuous]
@@ -163,7 +209,10 @@ namespace ProgressOnderwijsUtilsTests
          TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true),
          TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true),
          TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false), Continuous]
-        public bool GenerateForLanguage(DocumentLanguage doc, Taal language) { return Utils.GenerateForLanguage(doc, language); }
+        public bool GenerateForLanguage(DocumentLanguage doc, Taal language)
+        {
+            return Utils.GenerateForLanguage(doc, language);
+        }
 
         public static IEnumerable<TestCaseData> RoundUpData()
         {
@@ -175,7 +224,24 @@ namespace ProgressOnderwijsUtilsTests
             yield return new TestCaseData(1000001.129m, 2, 1000001.13m);
         }
 
-        [Test, TestCaseSource("RoundUpData")]
-        public void RoundUp(decimal waarde, int posities, decimal resultaat) { Assert.That(Utils.RoundUp(waarde, posities), Is.EqualTo(resultaat)); }
+        [Test, TestCaseSource(nameof(RoundUpData))]
+        public void RoundUp(decimal waarde, int posities, decimal resultaat)
+        {
+            Assert.That(Utils.RoundUp(waarde, posities), Is.EqualTo(resultaat));
+        }
+
+        [Test]
+        public void SimpleTransitiveClosureWorks() {
+            var nodes =new[] {2,3,};
+
+            PAssert.That(() => Utils.TransitiveClosure(nodes, num => new[] { num * 2 % 6 }).SetEquals(new[] { 2,4,0,3 }));
+        }
+        [Test]
+        public void MultiTransitiveClosureWorks()
+        {
+            var nodes = new[] { 2, 3, };
+
+            PAssert.That(() => Utils.TransitiveClosure(nodes, nums => nums.Select(num =>num * 2 % 6 )).SetEquals(new[] { 2, 4, 0, 3 }));
+        }
     }
 }

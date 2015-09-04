@@ -1,8 +1,5 @@
-﻿using System.Diagnostics;
-using System.IO;
-using log4net;
-using ProgressOnderwijsUtils.Log4Net;
-// ReSharper disable PossiblyMistakenUseOfParamsMethod
+﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -27,7 +24,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return action(cmd);
                 } catch (Exception e) {
-                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + QueryTracer.DebugFriendlyCommandText(cmd, true), e);
+                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + QueryTracer.DebugFriendlyCommandText(cmd, QueryTracerParameterValues.Included), e);
                 }
             }
         }
@@ -62,50 +59,6 @@ namespace ProgressOnderwijsUtils
                         return dt;
                     }
                 });
-        }
-
-        static class MetaObjectProposalLogger
-        {
-            static readonly ConcurrentDictionary<string, string> metaObjectProposals = new ConcurrentDictionary<string, string>();
-            static readonly object sync = new object();
-            static Action<string> writer;
-
-            [Conditional("DEBUG")]
-            public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, QueryTracer tracer)
-            {
-                var commandText = QueryTracer.DebugFriendlyCommandText(command, false);
-                bool wasAdded = false;
-
-                var metaObjectClass = metaObjectProposals.GetOrAdd(
-                    commandText,
-                    _ => {
-                        wasAdded = true;
-                        return dt.DataTableToMetaObjectClassDef();
-                    });
-                if (wasAdded) {
-                    lock (sync) {
-
-                    }
-                    Log("=======================\r\n" + commandText + "\r\n\r\n" + metaObjectClass + "\r\n\r\n");
-                }
-                tracer.FinishDisposableTimer(() => "METAOBJECT proposed for next query:\n" + metaObjectClass, TimeSpan.Zero);
-            }
-
-            static void Log(string text)
-            {
-                lock (sync) {
-                    if (writer == null) {
-                        try {
-                            writer = new StreamWriter(String.Format(@"C:\\temp\\MetaObjectProposals_{0}.txt", DateTime.Now.ToString("yyyy-MM-dd_HHmm_ss"))) {
-                                AutoFlush = true
-                            }.Write;
-                        } catch {
-                            writer = s => { };
-                        }
-                    }
-                    writer(text);
-                }
-            }
         }
 
         /// <summary>
@@ -182,7 +135,7 @@ namespace ProgressOnderwijsUtils
                 var lastColumnRead = 0;
                 try {
                     return unpacker(reader, out lastColumnRead);
-                } catch (Exception ex) {
+                } catch (Exception ex) when (!reader.IsClosed) {
                     var mps = MetaObject.GetMetaProperties<T>();
                     var metaObjectTypeName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T));
 
@@ -194,7 +147,8 @@ namespace ProgressOnderwijsUtils
                     var actualCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(mp.DataType);
 
                     throw new InvalidOperationException(
-                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name + " of type " + actualCsTypeName,
+                        "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name
+                            + " of type " + actualCsTypeName,
                         ex);
                 }
             }
@@ -224,21 +178,6 @@ namespace ProgressOnderwijsUtils
                 var lastColumnRead = 0;
                 return DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.LoadRows(reader, out lastColumnRead);
             }
-        }
-
-        /// <summary>
-        /// Overloaded; see primary overload for details.  This overload unpacks two recordsets; i.e. two subsequent SELECT statements.
-        /// It's equivalent to but faster than Tuple.Create(queryA.ReadByConstructor&lt;T1&gt;(conn), queryB.ReadByConstructor&lt;T2&gt;(conn))
-        /// </summary>
-        public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext)
-            where T1 : IReadByConstructor
-            where T2 : IReadByConstructor
-        {
-            return ExecuteQuery(
-                q,
-                qCommandCreationContext,
-                () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T1)) + ", " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T2)) + ">() failed.",
-                ReadByConstructor<T1, T2>);
         }
 
         public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(SqlCommand cmd)
@@ -278,8 +217,8 @@ namespace ProgressOnderwijsUtils
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
             };
 
-        //static bool SupportsType(Type type) { return GetterMethodsByType.ContainsKey(type); }
-        //static MethodInfo GetterForType(Type type) { return GetterMethodsByType[type]; }
+        //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
+        //static MethodInfo GetterForType(Type type) => GetterMethodsByType[type];
 
         //static readonly MethodInfo IsDBNullMethod = typeof(IDataRecord).GetMethod("IsDBNull", binding);
         //static readonly MethodInfo ReadMethod = typeof(IDataReader).GetMethod("Read", binding);
@@ -302,7 +241,6 @@ namespace ProgressOnderwijsUtils
 
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
-        static readonly MethodInfo getIdentifier_SqlDataReader = typeof(SqlDataReader).GetMethod("GetInt32", binding);
 
         static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
@@ -322,7 +260,7 @@ namespace ProgressOnderwijsUtils
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 return GetterMethodsByType.ContainsKey(underlyingType) ||
                     (isSqlDataReader
-                        && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset) || typeof(IIdentifier).IsAssignableFrom(underlyingType)));
+                        && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
             }
 
             static MethodInfo GetterForType(Type underlyingType)
@@ -331,8 +269,6 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (isSqlDataReader && typeof(IIdentifier).IsAssignableFrom(underlyingType)) {
-                    return getIdentifier_SqlDataReader;
                 } else {
                     return InterfaceMap[GetterMethodsByType[underlyingType]];
                 }
@@ -342,7 +278,7 @@ namespace ProgressOnderwijsUtils
             {
                 bool canBeNull = type.CanBeNull();
                 Type underlyingType = type.GetNonNullableUnderlyingType();
-                bool needsCast = ((underlyingType != type.GetNonNullableType()) && (!typeof(IIdentifier).IsAssignableFrom(type.BaseType)));
+                bool needsCast = (underlyingType != type.GetNonNullableType());
                 var iConstant = Expression.Constant(i);
                 var callExpr = underlyingType == typeof(byte[])
                     ? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant)
@@ -354,15 +290,7 @@ namespace ProgressOnderwijsUtils
                 } else {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
-                    Expression ifNotDbNull;
-                    if (typeof(IIdentifier).IsAssignableFrom(type)) {
-                        //TODO: this makes it impossible to create overloads for the method "Create" on an IIdentifier.
-                        //A redesign would be better here.
-                        var conversionMethod = type.BaseType.GetMethod("Create");
-                        ifNotDbNull = Expression.Convert(castExpr, type, conversionMethod);
-                    } else {
-                        ifNotDbNull = Expression.Convert(castExpr, type);
-                    }
+                    var ifNotDbNull = Expression.Convert(castExpr, type);
 
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
                 }
@@ -400,7 +328,7 @@ namespace ProgressOnderwijsUtils
                         typeof(T[]),
                         new[] { listVarExpr },
                         listAssignment,
-                    //listInit,
+                        //listInit,
                         rowLoopExpr,
                         listToArrayExpr
                         ),
@@ -461,13 +389,13 @@ namespace ProgressOnderwijsUtils
                         return true;
                     }
 
-                    public override int GetHashCode() { return (int)(uint)((cachedHash >> 32) + cachedHash); }
-                    public override bool Equals(object obj) { return obj is ColumnOrdering && Equals((ColumnOrdering)obj); }
+                    public override int GetHashCode() => (int)(uint)((cachedHash >> 32) + cachedHash);
+                    public override bool Equals(object obj) => obj is ColumnOrdering && Equals((ColumnOrdering)obj);
                 }
 
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> LoadRows;
-                static Type type { get { return typeof(T); } }
-                static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
+                static Type type => typeof(T);
+                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 static readonly uint[] ColHashPrimes;
                 static readonly MetaInfo<T> metadata = MetaInfo<T>.Instance;
                 static readonly bool hasUnsupportedColumns;
@@ -503,7 +431,7 @@ namespace ProgressOnderwijsUtils
 
                 // ReSharper disable UnusedParameter.Local
                 public static TRowReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
-                // ReSharper restore UnusedParameter.Local
+                    // ReSharper restore UnusedParameter.Local
                 {
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
@@ -548,7 +476,6 @@ namespace ProgressOnderwijsUtils
                                 )
                             );
                     }
-                    ;
                 }
             }
 
@@ -556,10 +483,10 @@ namespace ProgressOnderwijsUtils
                 where T : IReadByConstructor
             {
                 public static readonly TRowReader<T> LoadRows;
-                static Type type { get { return typeof(T); } }
-                static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
+                static Type type => typeof(T);
+                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 static readonly ConstructorInfo constructor;
-                static ParameterInfo[] ConstructorParameters { get { return constructor.GetParameters(); } }
+                static ParameterInfo[] ConstructorParameters => constructor.GetParameters();
 
                 static Impl()
                 {
@@ -621,9 +548,9 @@ namespace ProgressOnderwijsUtils
 
             public static class PlainImpl<T>
             {
-                static string FriendlyName { get { return ObjectToCode.GetCSharpFriendlyTypeName(type); } }
+                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 public static readonly TRowReader<T> LoadRows;
-                static Type type { get { return typeof(T); } }
+                static Type type => typeof(T);
 
                 static PlainImpl()
                 {
