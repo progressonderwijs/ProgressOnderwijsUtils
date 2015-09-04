@@ -173,14 +173,6 @@ namespace ProgressOnderwijsUtils
 
         // ReSharper restore UnusedMember.Global
 
-
-        [Pure]
-        public static QueryBuilder Create(string str, params object[] arguments)
-        {
-            return CreateDynamic(str, arguments);
-        }
-
-
         [Pure]
         public static QueryBuilder CreateDynamic(string str, params object[] arguments)
         {

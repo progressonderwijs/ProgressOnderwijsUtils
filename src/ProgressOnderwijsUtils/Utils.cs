@@ -166,20 +166,6 @@ namespace ProgressOnderwijsUtils
             return set;
         }
 
-        /// <summary>
-        /// Joins a set of values into SQL syntax; e.g. 1,2,3 turn into "(1,2,3)" and the empty set turns into "(null)"
-        /// </summary>
-        public static string SqlInClause(IEnumerable<int> values)
-        {
-            return SqlInClauseHelper(values.Select(val => val.ToStringInvariant()));
-        }
-
-        static string SqlInClauseHelper(IEnumerable<string> values)
-        {
-            string joined = values.JoinStrings(", ");
-            return joined.Length == 0 ? "(null)" : "(" + joined + ")";
-        }
-
         public static bool IsDbConnectionFailure(Exception e)
         {
             if (e == null) {
