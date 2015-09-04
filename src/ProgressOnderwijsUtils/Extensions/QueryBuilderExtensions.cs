@@ -24,11 +24,5 @@ namespace ProgressOnderwijsUtils
         {
             return condition ? source.Append(extra()) : source;
         }
-
-        [Pure]
-        public static QueryBuilder AppendIf(this QueryBuilder source, bool condition, string str, params object[] parms)
-        {
-            return condition ? source + Environment.NewLine + QueryBuilder.CreateDynamic(str, parms) + " " : source;
-        }
     }
 }
