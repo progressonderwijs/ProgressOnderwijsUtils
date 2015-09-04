@@ -54,7 +54,7 @@ namespace QueryBuilderConverter
 
             var calledMethodName = memberAccessExpression.Name;
 
-            if (calledMethodName.Identifier.Text != "Create")
+            if (calledMethodName.Identifier.Text != "Create" && calledMethodName.Identifier.Text != "CreateDynamic")
                 return false;
 
             var typeOfMemberExpr = memberAccessExpression.Expression as IdentifierNameSyntax;
@@ -65,7 +65,7 @@ namespace QueryBuilderConverter
             if (typeOfMemberExpr.Identifier.Text != "QueryBuilder")
                 return false;
 
-            //calling something like QueryBuilder.Create
+            //calling something like QueryBuilder.Create/CreateDynamic
 
             if (invocationExpr.ArgumentList.Arguments.Count < 1)
                 return false;
