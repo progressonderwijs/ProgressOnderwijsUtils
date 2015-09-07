@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils
         [Pure, Obsolete("Implicitly converts to SQL", true)]
         public static QueryBuilder operator +(QueryBuilder a, string b) => Concat(a, QueryComponent.CreateString(b));
 
-        [Pure]
+        [Pure, Obsolete("Implicitly converts to SQL", true)]
         public static QueryBuilder operator +(string a, QueryBuilder b) => Concat(CreateDynamic(a), b);
 
         static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) => null == part ? query : new PrefixAndComponent(query, part);

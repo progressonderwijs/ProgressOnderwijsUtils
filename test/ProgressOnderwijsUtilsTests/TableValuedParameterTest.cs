@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             DevelopmentDbSelector.PreferredDevDb.ReadWriteNoTransaction(
                 conn => {
-                    var q = @"select sum(val) from " + QueryBuilder.TableParam(Enumerable.Range(1, 100));
+                    var q = SQL($@"select sum(val) from ") + QueryBuilder.TableParam(Enumerable.Range(1, 100));
                     int sum = q.ReadScalar<int>(conn);
                     Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
                 });
