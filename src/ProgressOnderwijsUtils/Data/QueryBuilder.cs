@@ -9,7 +9,8 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class SafeSql {
+    public static class SafeSql
+    {
         [Pure]
         public static QueryBuilder SQL(FormattableString interpolatedQuery)
         {
@@ -93,7 +94,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b) => Concat(a, b);
 
-        [Pure]
+        [Pure, Obsolete("Implicitly converts to SQL", true)]
         public static QueryBuilder operator +(QueryBuilder a, string b) => Concat(a, QueryComponent.CreateString(b));
 
         [Pure]
@@ -172,7 +173,6 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder TableParamDynamic(Array o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         // ReSharper restore UnusedMember.Global
-
         [Pure]
         public static QueryBuilder CreateDynamic(string str, params object[] arguments)
         {
@@ -339,11 +339,10 @@ namespace ProgressOnderwijsUtils
         {
             projectedColumns = projectedColumns ?? AllColumns;
 
-            var topClause = topRowsOrNull != null ? " top (" + topRowsOrNull + ")" : Empty;
+            var topClause = topRowsOrNull != null ? SQL($"top ({topRowsOrNull}) ") : Empty;
+            var projectedColumnsClause = CreateDynamic(projectedColumns.JoinStrings(", "));
             return
-                "select" + topClause + " " + projectedColumns.JoinStrings(", ") + " from (\n"
-                    + subquery + "\n"
-                    + ") as _g1 where " + filterClause + "\n"
+                SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateFromSortOrder(sortOrder);
         }
 
@@ -376,16 +375,20 @@ namespace ProgressOnderwijsUtils
 
             var sortorder = sortOrder;
             var orderClause = sortorder == OrderByColumns.Empty ? SQL($"order by (select 1)") : CreateFromSortOrder(sortorder);
+            var projectedColumnsClause = CreateDynamic(projectedColumns.JoinStrings(", "));
 
-            return "select top (" + takeRowsParam + ") " + projectedColumns.JoinStrings(", ") + "\n"
-                + "from (select _row=row_number() over (" + orderClause + "),\n"
-                + "      _g2.*\n"
-                + "from (\n\n"
-                + SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + "+" + skipNrowsParam)
-                + "\n\n"
-                + ") as _g2) t\n"
-                + "where _row > " + skipNrowsParam + " \n"
-                + "order by _row";
+            var topNSubQuery = SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + SQL($"+") + skipNrowsParam);
+            return SQL($@"
+select top ({takeRowsParam}) {projectedColumnsClause}
+from (select _row=row_number() over ({orderClause}),
+      _g2.*
+from (
+
+{topNSubQuery}
+
+) as _g2) t
+where _row > {skipNrowsParam}
+order by _row");
         }
 
         [Pure]
@@ -425,7 +428,11 @@ namespace ProgressOnderwijsUtils
             Tracer = tracer;
         }
 
-        public void Dispose() { Connection.Dispose(); }
+        public void Dispose()
+        {
+            Connection.Dispose();
+        }
+
         public static implicit operator SqlCommandCreationContext(SqlConnection conn) => new SqlCommandCreationContext(conn, 0, null);
     }
 }

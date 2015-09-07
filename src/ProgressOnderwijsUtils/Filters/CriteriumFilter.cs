@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using ExpressionToCodeLib;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
@@ -71,7 +72,10 @@ namespace ProgressOnderwijsUtils
 
         public static BooleanComparer[] BooleanComparers
         {
-            get { return new[] { BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, }; }
+            get
+            {
+                return new[] { BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, };
+            }
         }
 
         internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde)
@@ -90,6 +94,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        QueryBuilder KolomNaamSql() => QueryBuilder.CreateDynamic(KolomNaam);
+
         protected internal override QueryBuilder ToQueryBuilderImpl()
         {
             switch (Comparer) {
@@ -97,47 +103,47 @@ namespace ProgressOnderwijsUtils
                     if (Waarde == null) {
                         goto case BooleanComparer.IsNull;
                     }
-                    return KolomNaam + "=" + BuildParam();
+                    return KolomNaamSql() + SQL($"=") + BuildParam();
                 case BooleanComparer.IsNull:
                     return QueryBuilder.CreateDynamic(KolomNaam + " is null");
                 case BooleanComparer.NotEqual:
                     if (Waarde == null) {
                         goto case BooleanComparer.IsNotNull;
                     }
-                    return KolomNaam + "!=" + BuildParam();
+                    return KolomNaamSql() + SQL($"!=") + BuildParam();
                 case BooleanComparer.IsNotNull:
                     return QueryBuilder.CreateDynamic(KolomNaam + " is not null");
 
                 case BooleanComparer.LessThan:
-                    return KolomNaam + "<" + BuildParam();
+                    return KolomNaamSql() + SQL($"<") + BuildParam();
                 case BooleanComparer.LessThanOrEqual:
-                    return KolomNaam + "<=" + BuildParam();
+                    return KolomNaamSql() + SQL($"<=") + BuildParam();
                 case BooleanComparer.GreaterThanOrEqual:
-                    return KolomNaam + ">=" + BuildParam();
+                    return KolomNaamSql() + SQL($">=") + BuildParam();
                 case BooleanComparer.GreaterThan:
-                    return KolomNaam + ">" + BuildParam();
+                    return KolomNaamSql() + SQL($">") + BuildParam();
 
                 case BooleanComparer.In:
                     if (Waarde is GroupReference) {
-                        return KolomNaam + " in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
+                        return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = ") + QueryBuilder.Param((Waarde as GroupReference).GroupId) + SQL($")");
                     } else {
-                        return KolomNaam + " in (select val from " + QueryBuilder.TableParamDynamic((Array)Waarde) + ")";
+                        return KolomNaamSql() + SQL($" in (select val from ") + QueryBuilder.TableParamDynamic((Array)Waarde) + SQL($")");
                     }
                 case BooleanComparer.NotIn:
                     if (Waarde is GroupReference) {
-                        return KolomNaam + " not in (select keyint0 from statischegroepslid where groep = " + QueryBuilder.Param((Waarde as GroupReference).GroupId) + ")";
+                        return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = ") + QueryBuilder.Param((Waarde as GroupReference).GroupId) + SQL($")");
                     } else {
-                        return KolomNaam + " not in (select val from " + QueryBuilder.TableParamDynamic((Array)Waarde) + ")";
+                        return KolomNaamSql() + SQL($" not in (select val from ") + QueryBuilder.TableParamDynamic((Array)Waarde) + SQL($")");
                     }
 
                 case BooleanComparer.StartsWith:
-                    return KolomNaam + " like " + QueryBuilder.Param(Waarde + "%");
+                    return KolomNaamSql() + SQL($" like ") + QueryBuilder.Param(Waarde + "%");
                 case BooleanComparer.EndsWith:
-                    return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde);
+                    return KolomNaamSql() + SQL($" like ") + QueryBuilder.Param("%" + Waarde);
                 case BooleanComparer.Contains:
-                    return KolomNaam + " like " + QueryBuilder.Param("%" + Waarde + "%");
+                    return KolomNaamSql() + SQL($" like ") + QueryBuilder.Param("%" + Waarde + "%");
                 case BooleanComparer.HasFlag:
-                    return "(" + KolomNaam + " & " + BuildParam() + ") = " + BuildParam();
+                    return SQL($"({KolomNaamSql()} & {BuildParam()}) = {BuildParam()}");
                 default:
                     throw new InvalidOperationException("Geen geldige operator");
             }
@@ -182,7 +188,11 @@ namespace ProgressOnderwijsUtils
             object IValSerializer.Deserialize(string s) => deserialize(s);
         }
 
-        static IValSerializer Serializer<T>(char code, Func<string, T> deserialize, Func<T, string> serialize) { return new ValSerializer<T>(serialize, deserialize, code); }
+        static IValSerializer Serializer<T>(char code, Func<string, T> deserialize, Func<T, string> serialize)
+        {
+            return new ValSerializer<T>(serialize, deserialize, code);
+        }
+
         static readonly Dictionary<Type, IValSerializer> serializerByType;
         static readonly Dictionary<char, IValSerializer> serializerByCode;
         static readonly IValSerializer ArraySerializer;

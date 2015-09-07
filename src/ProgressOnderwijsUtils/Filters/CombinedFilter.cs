@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
@@ -36,7 +37,7 @@ namespace ProgressOnderwijsUtils
         protected internal override QueryBuilder ToQueryBuilderImpl()
         {
             QueryBuilder andorQ = QueryBuilder.CreateDynamic(" " + andor + " ");
-            return "(" + filterLijst.Aggregate(default(QueryBuilder), (q, f) => null == q ? f.ToQueryBuilder() : q + andorQ + f.ToQueryBuilder()) + ")";
+            return SQL($")") + filterLijst.Aggregate(default(QueryBuilder), (q, f) => null == q ? f.ToQueryBuilder() : q + andorQ + f.ToQueryBuilder()) + SQL($")");
         }
 
         protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith)
