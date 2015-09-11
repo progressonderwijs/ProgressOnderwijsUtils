@@ -56,7 +56,10 @@ namespace ProgressOnderwijsUtils
                 : Filter.CreateCombined(AndOr, FilterLijst.Select(f => f.AddToImpl(filterInEditMode, booleanOperator, c)));
         }
 
-        public override string SerializeToString() { return SerializeOp() + string.Join(",", filterLijst.Select(filter => filter.SerializeToString())) + ";"; }
+        public override string SerializeToString()
+        {
+            return SerializeOp() + string.Join(",", filterLijst.Select(filter => filter.SerializeToString())) + ";";
+        }
 
         public static Tuple<FilterBase, string> Parse(string serialized)
         {
