@@ -328,11 +328,12 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override string ToString() => DebugText(null);
 
-        static readonly string[] AllColumns = { "*" };
+        static readonly QueryBuilder[] AllColumns = { SQL($"*") };
+        static readonly QueryBuilder Comma_ColumnSeperator = SQL($", ");
 
         static QueryBuilder SubQueryHelper(
             QueryBuilder subquery,
-            IEnumerable<string> projectedColumns,
+            IEnumerable<QueryBuilder> projectedColumns,
             QueryBuilder filterClause,
             OrderByColumns sortOrder,
             QueryBuilder topRowsOrNull)
@@ -340,11 +341,14 @@ namespace ProgressOnderwijsUtils
             projectedColumns = projectedColumns ?? AllColumns;
 
             var topClause = topRowsOrNull != null ? SQL($"top ({topRowsOrNull}) ") : Empty;
-            var projectedColumnsClause = CreateDynamic(projectedColumns.JoinStrings(", "));
+            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
             return
                 SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateFromSortOrder(sortOrder);
         }
+
+        static QueryBuilder CreateProjectedColumnsClause(IEnumerable<QueryBuilder> projectedColumns)
+            => projectedColumns.Aggregate((a, b) => a.Append(Comma_ColumnSeperator).Append(b));
 
         [Pure]
         static QueryBuilder CreateFromSortOrder(OrderByColumns sortOrder)
@@ -357,7 +361,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static QueryBuilder CreatePagedSubQuery(
             QueryBuilder subQuery,
-            IEnumerable<string> projectedColumns,
+            IEnumerable<QueryBuilder> projectedColumns,
             QueryBuilder filterClause,
             OrderByColumns sortOrder,
             int skipNrows,
@@ -375,7 +379,7 @@ namespace ProgressOnderwijsUtils
 
             var sortorder = sortOrder;
             var orderClause = sortorder == OrderByColumns.Empty ? SQL($"order by (select 1)") : CreateFromSortOrder(sortorder);
-            var projectedColumnsClause = CreateDynamic(projectedColumns.JoinStrings(", "));
+            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
 
             var topNSubQuery = SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + SQL($"+") + skipNrowsParam);
             return SQL($@"
@@ -392,7 +396,7 @@ order by _row");
         }
 
         [Pure]
-        public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<string> projectedColumns, QueryBuilder filterClause, OrderByColumns sortOrder)
+        public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<QueryBuilder> projectedColumns, QueryBuilder filterClause, OrderByColumns sortOrder)
             => SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, null);
 
         //TODO: dit aanzetten voor datasource tests
