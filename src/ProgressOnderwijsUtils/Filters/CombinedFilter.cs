@@ -36,11 +36,11 @@ namespace ProgressOnderwijsUtils
 
         static readonly QueryBuilder sql_and_keyword = SQL($" and ");
         static readonly QueryBuilder sql_or_keyword = SQL($" or ");
-        static QueryBuilder OperatorToSql(BooleanOperator op) => op == BooleanOperator.Or ? sql_or_keyword : sql_and_keyword;
+        QueryBuilder OperatorToSql() => andor == BooleanOperator.Or ? sql_or_keyword : sql_and_keyword;
 
         protected internal override QueryBuilder ToQueryBuilderImpl()
         {
-            var andorQ = OperatorToSql(andor);
+            var andorQ = OperatorToSql();
             return SQL($"(") + filterLijst.Aggregate(default(QueryBuilder), (q, f) => null == q ? f.ToQueryBuilder() : q + andorQ + f.ToQueryBuilder()) + SQL($")");
         }
 
