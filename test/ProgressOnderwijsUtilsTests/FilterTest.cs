@@ -108,26 +108,26 @@ namespace ProgressOnderwijsUtilsTests
             var testFilter = Filter.CreateCriterium("test", BooleanComparer.LessThan, 3);
             var test2Filter = Filter.CreateCriterium("test2", BooleanComparer.LessThan, 3);
             var combFilter = Filter.CreateCombined(BooleanOperator.And, testFilter, test2Filter);
-            PAssert.That(() => combFilter.ToQueryBuilder() == SQL($"(test<{3} And test2<{3})")); //initial check
+            PAssert.That(() => combFilter.ToQueryBuilder() == SQL($"(test<{3} and test2<{3})")); //initial check
 
             var modFilter =
                 combFilter
                     .Replace(testFilter, Filter.CreateCriterium("ziggy", BooleanComparer.LessThan, 3))
                     .AddTo(test2Filter, BooleanOperator.And, Filter.CreateCriterium("stardust", BooleanComparer.GreaterThan, 37));
 
-            PAssert.That(() => modFilter.ToQueryBuilder() == SQL($"(ziggy<{3} And test2<{3} And stardust>{37})")); //note no nested brackets!
-            PAssert.That(() => combFilter.ToQueryBuilder() == SQL($"(test<{3} And test2<{3})")); // side-effect free
+            PAssert.That(() => modFilter.ToQueryBuilder() == SQL($"(ziggy<{3} and test2<{3} and stardust>{37})")); //note no nested brackets!
+            PAssert.That(() => combFilter.ToQueryBuilder() == SQL($"(test<{3} and test2<{3})")); // side-effect free
             PAssert.That(
                 () =>
                     Filter.CreateCombined(BooleanOperator.And, combFilter, null, modFilter).ToQueryBuilder()
-                        == SQL($"(test<{3} And test2<{3} And ziggy<{3} And test2<{3} And stardust>{37})")); // no unnecessary brackets!
+                        == SQL($"(test<{3} and test2<{3} and ziggy<{3} and test2<{3} and stardust>{37})")); // no unnecessary brackets!
 
             PAssert.That(() => combFilter.Remove(test2Filter) == testFilter && combFilter.Remove(testFilter) == test2Filter); // no unnecessary brackets!
 
             PAssert.That(
                 () =>
                     combFilter.AddTo(testFilter, BooleanOperator.Or, Filter.CreateCriterium("abc", BooleanComparer.GreaterThan, 42)).ToQueryBuilder()
-                        == SQL($"((test<{3} Or abc>{42}) And test2<{3})")); //does include nested brackets!
+                        == SQL($"((test<{3} or abc>{42}) and test2<{3})")); //does include nested brackets!
 
             var colTypes = new[] { "stardust", "ziggy", "test", "test2" }.ToDictionary(n => n, n => typeof(int));
             PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => colTypes.GetOrDefault(s, null)) == modFilter);
@@ -168,8 +168,8 @@ namespace ProgressOnderwijsUtilsTests
             var combFilter = Filter.CreateCombined(BooleanOperator.And, testFilter, test2Filter);
 
             var q = combFilter.ToQueryBuilder();
-            var qAlt = SQL($"(test<{3} And test2<{3})");
-            var qAltWrong = SQL($"(test<{3} And test2<{3.0})");
+            var qAlt = SQL($"(test<{3} and test2<{3})");
+            var qAltWrong = SQL($"(test<{3} and test2<{3.0})");
 
             PAssert.That(() => q.CommandText() == qAlt.CommandText());
             PAssert.That(() => q.CommandText().GetHashCode() == qAlt.CommandText().GetHashCode());
