@@ -105,14 +105,14 @@ namespace ProgressOnderwijsUtils
                     }
                     return KolomNaamSql() + SQL($"=") + BuildParam();
                 case BooleanComparer.IsNull:
-                    return KolomNaamSql().Append(SQL($"  is null"));
+                    return KolomNaamSql() + SQL($" is null");
                 case BooleanComparer.NotEqual:
                     if (Waarde == null) {
                         goto case BooleanComparer.IsNotNull;
                     }
                     return KolomNaamSql() + SQL($"!=") + BuildParam();
                 case BooleanComparer.IsNotNull:
-                    return KolomNaamSql().Append(SQL($" is not null"));
+                    return KolomNaamSql() + SQL($" is not null");
 
                 case BooleanComparer.LessThan:
                     return KolomNaamSql() + SQL($"<") + BuildParam();
