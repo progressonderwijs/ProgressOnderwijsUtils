@@ -346,7 +346,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Superuser"), Implies(Combi_BeheerAlles, BeheerStudievolg, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
             WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenBekijken, Student, WijzigenGroepen,
             Combi_FontysBeheerFO, Combi_FontysMuteerFO, StudiebegeleidingNotities, StudievoortgangNotities, DecaanNotities, FinancieelNotities, InschrijvingNotities,
-            StudentDecanaatNotities, PsycholoogNotities, StudiekeuzeAdviseurNotities
+            StudentDecanaatNotities, PsycholoogNotities, StudiekeuzeAdviseurNotities, WijzigenGradingTable
             )]
         Superuser = 138,
 
@@ -604,7 +604,10 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Rapporten bekijken"), Toekenbaar]
         RapportenBekijken = 243,
 
+        [MpLabel("Wijzigen Grading Table", "Edit Grading Tables"), Toekenbaar, Implies(VolgOnderwijsInzien)]
+        WijzigenGradingTable = 254,
+
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 254,
+        META_EerstVolgendVrijRolId = 255,
     }
 }
