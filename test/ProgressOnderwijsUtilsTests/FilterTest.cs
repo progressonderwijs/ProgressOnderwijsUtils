@@ -387,7 +387,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void MetaObjectFiltersWork()
         {
-            var filter = helper.CreateFilter(o => o.EnumNullable, BooleanComparer.Equal, BlaFilterEnumTest.Test);
+            var filter = helper.FilterOn(o => o.EnumNullable).Equal(BlaFilterEnumTest.Test);
             PAssert.That(() => filter.ToQueryBuilder() == SQL($"EnumNullable={BlaFilterEnumTest.Test}"));
 
             PAssert.That(() => run(filter).Count() == 2);
@@ -396,9 +396,9 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void MetaObject_StringEq()
         {
-            var filterNull = helper.CreateFilter(o => o.StringVal, BooleanComparer.Equal, null);
-            var filter3 = helper.CreateFilter(o => o.StringVal, BooleanComparer.Equal, "3");
-            var filter100 = helper.CreateFilter(o => o.StringVal, BooleanComparer.Equal, "100");
+            var filterNull = helper.FilterOn(o => o.StringVal).Equal(null);
+            var filter3 = helper.FilterOn(o => o.StringVal).Equal("3");
+            var filter100 = helper.FilterOn(o => o.StringVal).Equal("100");
             PAssert.That(() => run(filterNull).Count() == 8);
             PAssert.That(() => run(filter3).Count() == 1);
             PAssert.That(() => run(filter100).Count() == 2);
@@ -410,9 +410,9 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void MetaObject_StringNeq()
         {
-            var filterNull = helper.CreateFilter(o => o.StringVal, BooleanComparer.NotEqual, null);
-            var filter3 = helper.CreateFilter(o => o.StringVal, BooleanComparer.NotEqual, "3");
-            var filter100 = helper.CreateFilter(o => o.StringVal, BooleanComparer.NotEqual, "100");
+            var filterNull = helper.FilterOn(o => o.StringVal).NotEqual(null);
+            var filter3 = helper.FilterOn(o => o.StringVal).NotEqual("3");
+            var filter100 = helper.FilterOn(o => o.StringVal).NotEqual("100");
             PAssert.That(() => run(filterNull).Count() == 3);
             PAssert.That(() => run(filter3).Count() == 10);
             PAssert.That(() => run(filter100).Count() == 9);
@@ -434,23 +434,23 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void MetaObject_IntBasics()
         {
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.LessThan, 100)).Count() == 3);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.LessThanOrEqual, 100)).Count() == 5);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.GreaterThanOrEqual, 100)).Count() == 2);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.GreaterThan, 100)).Count() == 0);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.Equal, 100)).Count() == 2);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNullable, BooleanComparer.NotEqual, 100)).Count() == 9);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNullable).LessThan(100)).Count() == 3);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNullable).LessThanOrEqual(100)).Count() == 5);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNullable).GreaterThanOrEqual(100)).Count() == 2);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNullable).GreaterThan(100)).Count() == 0);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNullable).Equal(100)).Count() == 2);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNullable).NotEqual(100)).Count() == 9);
         }
 
         [Test]
         public void MetaObject_IntNonNullableBasics()
         {
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.LessThan, 100)).Count() == 8);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.LessThanOrEqual, 100)).Count() == 11);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.GreaterThanOrEqual, 100)).Count() == 3);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.GreaterThan, 100)).Count() == 0);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.Equal, 100)).Count() == 3);
-            PAssert.That(() => run(helper.CreateFilter(o => o.IntNonNullable, BooleanComparer.NotEqual, 100)).Count() == 8);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNonNullable).LessThan(100)).Count() == 8);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNonNullable).LessThanOrEqual(100)).Count() == 11);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNonNullable).GreaterThanOrEqual(100)).Count() == 3);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNonNullable).GreaterThan(100)).Count() == 0);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNonNullable).Equal(100)).Count() == 3);
+            PAssert.That(() => run(helper.FilterOn(o => o.IntNonNullable).NotEqual(100)).Count() == 8);
         }
 
         [Test]
@@ -469,12 +469,12 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void MetaObject_StrCompNullSafe()
         {
-            var filterA = helper.CreateFilter(o => o.StringVal, BooleanComparer.Contains, "0");
-            var filterB = helper.CreateFilter(o => o.StringVal, BooleanComparer.StartsWith, "10");
-            var filterC = helper.CreateFilter(o => o.StringVal, BooleanComparer.EndsWith, "3");
-            var filterA_null = helper.CreateFilter(o => o.StringVal, BooleanComparer.Contains, null);
-            var filterB_null = helper.CreateFilter(o => o.StringVal, BooleanComparer.StartsWith, null);
-            var filterC_null = helper.CreateFilter(o => o.StringVal, BooleanComparer.EndsWith, null);
+            var filterA = helper.FilterOn(o => o.StringVal).Contains("0");
+            var filterB = helper.FilterOn(o => o.StringVal).StartsWith("10");
+            var filterC = helper.FilterOn(o => o.StringVal).EndsWith("3");
+            var filterA_null = helper.FilterOn(o => o.StringVal).Contains(null);
+            var filterB_null = helper.FilterOn(o => o.StringVal).StartsWith(null);
+            var filterC_null = helper.FilterOn(o => o.StringVal).EndsWith(null);
 
             PAssert.That(() => run(filterA).Count() == 2);
             PAssert.That(() => run(filterB).Count() == 2);

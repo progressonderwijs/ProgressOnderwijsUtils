@@ -45,6 +45,8 @@ namespace ProgressOnderwijsUtils
         static Expression<Func<TRow, T>> ExtractColumn<TRow, T>(this FilterFactory<TRow>.FilterCreator<T> x) => FilterFactory<TRow>.FilterCreator<T>.ExtractColumn(x);
         static FilterBase CreateCriterium<TRow, T>(this FilterFactory<TRow>.FilterCreator<T> x, BooleanComparer booleanComparer, object waarde) => Filter.CreateCriterium(x.ExtractColumn(), booleanComparer, waarde);
 
+        // ReSharper disable once UnusedParameter.Global
+        //parameter *is* used (just not at runtime) - for type inference.
         public static FilterFactory<TRow>.FilterCreator<T> FilterOn<TRow, T>(this IFilterFactory<TRow> factory, Expression<Func<TRow, T>> columnToFilter) =>
             new FilterFactory<TRow>().FilterOn(columnToFilter);
 

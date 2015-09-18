@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils
         }
 
         // ReSharper disable once UnusedParameter.Global
-        public static FilterBase CreateFilter<TMetaObject, T>(
+        public static FilterBase CreateFilterXyz<TMetaObject, T>(
             this IFilterFactory<TMetaObject> target,
             Expression<Func<TMetaObject, T>> columnToFilter,
             BooleanComparer comparer,
