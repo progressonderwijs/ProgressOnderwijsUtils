@@ -29,13 +29,22 @@ namespace ProgressOnderwijsUtils
     public sealed class EnumerableOfStringExtensionTest
     {
         [Test]
-        public void testJoin() { Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings(), Is.EqualTo("eentweedrie")); }
+        public void testJoin()
+        {
+            Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings(), Is.EqualTo("eentweedrie"));
+        }
 
         [Test]
-        public void EmptyJoin() { Assert.That(() => new string[] { }.JoinStrings(), Is.EqualTo(string.Empty)); }
+        public void EmptyJoin()
+        {
+            Assert.That(() => new string[] { }.JoinStrings(), Is.EqualTo(string.Empty));
+        }
 
         [Test]
-        public void EmptyJoinStrings() { Assert.That(() => new string[] { }.JoinStrings("!"), Is.EqualTo(string.Empty)); }
+        public void EmptyJoinStrings()
+        {
+            Assert.That(() => new string[] { }.JoinStrings("!"), Is.EqualTo(string.Empty));
+        }
 
         [Test]
         public void FastJoin()
@@ -46,15 +55,27 @@ namespace ProgressOnderwijsUtils
         }
 
         [Test]
-        public void testJoinStrings() { Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings("!"), Is.EqualTo("een!twee!drie")); }
+        public void testJoinStrings()
+        {
+            Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings("!"), Is.EqualTo("een!twee!drie"));
+        }
 
         [Test]
-        public void testBiggerJoinStrings() { Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings("123"), Is.EqualTo("een123twee123drie")); }
+        public void testBiggerJoinStrings()
+        {
+            Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings("123"), Is.EqualTo("een123twee123drie"));
+        }
 
         [Test]
-        public void testEmptyJoinStrings() { Assert.That(() => new string[] { }.JoinStrings("!"), Is.EqualTo("")); }
+        public void testEmptyJoinStrings()
+        {
+            Assert.That(() => new string[] { }.JoinStrings("!"), Is.EqualTo(""));
+        }
 
         [Test]
-        public void testJoinShortStrings() { Assert.That(() => new[] { "", "0", "1", "2" }.JoinStrings(","), Is.EqualTo(",0,1,2")); }
+        public void testJoinShortStrings()
+        {
+            Assert.That(() => new[] { "", "0", "1", "2" }.JoinStrings(","), Is.EqualTo(",0,1,2"));
+        }
     }
 }

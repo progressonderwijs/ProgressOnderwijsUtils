@@ -18,10 +18,11 @@ namespace ProgressOnderwijsUtils
 
         public static string DbForeignKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible
         {
-            if (typeof(T).Name == "RootOrganisatie")
+            if (typeof(T).Name == "RootOrganisatie") {
                 return "organisatie";
-            else
+            } else {
                 return typeof(T).Name;
+            }
         }
     }
 }

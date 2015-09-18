@@ -233,7 +233,10 @@ namespace ProgressOnderwijsUtils
         public static object Parse(string s, Type t, Taal taal) => TryParse(s, t, taal).GetValue();
 
         [Pure]
-        public static T Parse<T>(string s, Taal taal) { return (T)TryParse(s, typeof(T), taal).GetValue(); }
+        public static T Parse<T>(string s, Taal taal)
+        {
+            return (T)TryParse(s, typeof(T), taal).GetValue();
+        }
 
         const int YearMinimum = 1900, YearMaximum = 2100;
 

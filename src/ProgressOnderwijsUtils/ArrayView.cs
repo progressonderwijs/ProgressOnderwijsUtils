@@ -8,7 +8,11 @@ namespace ProgressOnderwijsUtils
     public sealed class ArrayView<T> : IReadOnlyList<T>
     {
         readonly T[] vals;
-        public ArrayView(T[] vals) { this.vals = vals; }
+
+        public ArrayView(T[] vals)
+        {
+            this.vals = vals;
+        }
 
         public IEnumerator<T> GetEnumerator()
         {
@@ -25,7 +29,12 @@ namespace ProgressOnderwijsUtils
     public sealed class ListView<T> : IReadOnlyList<T>
     {
         readonly IList<T> vals;
-        public ListView(IList<T> vals) { this.vals = vals; }
+
+        public ListView(IList<T> vals)
+        {
+            this.vals = vals;
+        }
+
         public IEnumerator<T> GetEnumerator() => vals.AsEnumerable().GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => vals.GetEnumerator();
         public T this[int index] => vals[index];
@@ -104,16 +113,30 @@ namespace ProgressOnderwijsUtils
 
     public static class CollectionViewExtensions
     {
-        public static IReadOnlyList<T> AsReadView<T>(this T[] vals) { return new ArrayView<T>(vals); }
-        public static IReadOnlyList<T> AsReadOnlyView<T>(this IList<T> list) { return list as IReadOnlyList<T> ?? new ListView<T>(list); }
-        public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, TOut> map) { return new ArrayView_MappedByElement<T, TOut>(vals, map); }
+        public static IReadOnlyList<T> AsReadView<T>(this T[] vals)
+        {
+            return new ArrayView<T>(vals);
+        }
+
+        public static IReadOnlyList<T> AsReadOnlyView<T>(this IList<T> list)
+        {
+            return list as IReadOnlyList<T> ?? new ListView<T>(list);
+        }
+
+        public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, TOut> map)
+        {
+            return new ArrayView_MappedByElement<T, TOut>(vals, map);
+        }
 
         public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, int, TOut> map)
         {
             return new ArrayView_MappedWithIndex<T, TOut>(vals, map);
         }
 
-        public static IReadOnlyCollection<TOut> SelectCountable<T, TOut>(this ICollection<T> vals, Func<T, TOut> map) { return new CollectionView_Mapped<T, TOut>(vals, map); }
+        public static IReadOnlyCollection<TOut> SelectCountable<T, TOut>(this ICollection<T> vals, Func<T, TOut> map)
+        {
+            return new CollectionView_Mapped<T, TOut>(vals, map);
+        }
 
         public static T[] ToArray<T>(this IReadOnlyList<T> list)
         {

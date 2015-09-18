@@ -63,7 +63,10 @@ namespace ProgressOnderwijsUtils
             return x == y || delta / magnitude < relativeEpsilon;
         }
 
-        public static Lazy<T> Lazy<T>(Func<T> factory) { return new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication); }
+        public static Lazy<T> Lazy<T>(Func<T> factory)
+        {
+            return new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
+        }
 
         public static bool ElfProef(int getal)
         {
@@ -202,13 +205,40 @@ namespace ProgressOnderwijsUtils
         // ReSharper disable UnusedMember.Global
         // Deze F's zijn voor makkelijke type inference, dus worden misschien niet altijd gebruikt
         // maar wel goed om te houden
-        public static Func<TR> F<TR>(Func<TR> v) { return v; } //purely for delegate type inference
-        public static Func<T, TR> F<T, TR>(Func<T, TR> v) { return v; } //purely for delegate type inference
-        public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v) { return v; } //purely for delegate type inference
-        public static Func<T1, T2, T3, TR> F<T1, T2, T3, TR>(Func<T1, T2, T3, TR> v) { return v; } //purely for delegate type inference
-        public static Expression<Func<TR>> E<TR>(Expression<Func<TR>> v) { return v; } //purely for delegate type inference
-        public static Expression<Func<T, TR>> E<T, TR>(Expression<Func<T, TR>> v) { return v; } //purely for delegate type inference
-        public static Expression<Func<T1, T2, TR>> E<T1, T2, TR>(Expression<Func<T1, T2, TR>> v) { return v; } //purely for delegate type inference
+        public static Func<TR> F<TR>(Func<TR> v)
+        {
+            return v;
+        } //purely for delegate type inference
+
+        public static Func<T, TR> F<T, TR>(Func<T, TR> v)
+        {
+            return v;
+        } //purely for delegate type inference
+
+        public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v)
+        {
+            return v;
+        } //purely for delegate type inference
+
+        public static Func<T1, T2, T3, TR> F<T1, T2, T3, TR>(Func<T1, T2, T3, TR> v)
+        {
+            return v;
+        } //purely for delegate type inference
+
+        public static Expression<Func<TR>> E<TR>(Expression<Func<TR>> v)
+        {
+            return v;
+        } //purely for delegate type inference
+
+        public static Expression<Func<T, TR>> E<T, TR>(Expression<Func<T, TR>> v)
+        {
+            return v;
+        } //purely for delegate type inference
+
+        public static Expression<Func<T1, T2, TR>> E<T1, T2, TR>(Expression<Func<T1, T2, TR>> v)
+        {
+            return v;
+        } //purely for delegate type inference
         // ReSharper restore UnusedMember.Global
         public static string GetSqlExceptionDetailsString(Exception exception)
         {
@@ -444,7 +474,12 @@ namespace ProgressOnderwijsUtils
     public class ComparisonComparer<T> : IComparer<T>
     {
         readonly Comparison<T> comparer;
-        public ComparisonComparer(Comparison<T> comparer) { this.comparer = comparer; }
+
+        public ComparisonComparer(Comparison<T> comparer)
+        {
+            this.comparer = comparer;
+        }
+
         public int Compare(T x, T y) => comparer(x, y);
     }
 

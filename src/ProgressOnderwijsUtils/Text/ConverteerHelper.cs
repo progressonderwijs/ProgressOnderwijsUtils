@@ -10,7 +10,11 @@ namespace ProgressOnderwijsUtils
     public static class ConverteerHelper
     {
         public const string GELD_EURO = "N02";
-        static Func<Taal, string> TryToString<T>(object obj, Func<T, Func<Taal, string>> translator) { return obj is T ? translator((T)obj) : null; }
+
+        static Func<Taal, string> TryToString<T>(object obj, Func<T, Func<Taal, string>> translator)
+        {
+            return obj is T ? translator((T)obj) : null;
+        }
 
         [Pure]
         static IEnumerable<Func<Taal, string>> ResolveTranslator(object obj, string format)

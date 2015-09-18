@@ -42,8 +42,15 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static bool operator ==(NonceStoreItem left, NonceStoreItem right) { return Equals(left, right); }
-        public static bool operator !=(NonceStoreItem left, NonceStoreItem right) { return !(left == right); }
+        public static bool operator ==(NonceStoreItem left, NonceStoreItem right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(NonceStoreItem left, NonceStoreItem right)
+        {
+            return !(left == right);
+        }
     }
 
     public interface INonceStore

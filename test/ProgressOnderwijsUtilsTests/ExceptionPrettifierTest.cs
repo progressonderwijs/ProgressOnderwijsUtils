@@ -12,11 +12,17 @@ namespace ProgressOnderwijsUtilsTests
     public class ExampleTestClass
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void CausesError() { throw new Exception("This is an exception"); }
+        public static void CausesError()
+        {
+            throw new Exception("This is an exception");
+        }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         // ReSharper disable UnusedParameter.Global
-        public void IndirectErrorViaInterface<T>(T param, string arg2 = "bla") { ((IExampleTestInterface)new NestedClass()).SomeMethod(); }
+        public void IndirectErrorViaInterface<T>(T param, string arg2 = "bla")
+        {
+            ((IExampleTestInterface)new NestedClass()).SomeMethod();
+        }
 
         // ReSharper restore UnusedParameter.Global
         interface IExampleTestInterface
@@ -26,7 +32,10 @@ namespace ProgressOnderwijsUtilsTests
 
         class NestedClass : IExampleTestInterface
         {
-            void IExampleTestInterface.SomeMethod() { throw new NotImplementedException(); }
+            void IExampleTestInterface.SomeMethod()
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 

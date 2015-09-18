@@ -26,6 +26,7 @@ namespace ProgressOnderwijsUtils
         /// Don't log query argument values
         /// </summary>
         Excluded,
+
         /// <summary>
         /// Include query argument values (even things like passwords)
         /// </summary>
@@ -34,8 +35,15 @@ namespace ProgressOnderwijsUtils
 
     public static class QueryTracer
     {
-        public static IQueryTracer CreateTracer(QueryTracerParameterValues includeSensitiveInfo) { return new QueryTracerImpl(includeSensitiveInfo); }
-        public static IQueryTracer CreateNullTracer() { return new NullTracer(); }
+        public static IQueryTracer CreateTracer(QueryTracerParameterValues includeSensitiveInfo)
+        {
+            return new QueryTracerImpl(includeSensitiveInfo);
+        }
+
+        public static IQueryTracer CreateNullTracer()
+        {
+            return new NullTracer();
+        }
 
         class NullTracer : IQueryTracer
         {
@@ -44,8 +52,16 @@ namespace ProgressOnderwijsUtils
             public int QueryCount => 0;
             public TimeSpan SlowestQueryDuration => TimeSpan.Zero;
             public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration) { }
-            public IDisposable StartQueryTimer(string commandText) { return NullDisposable.Instance; }
-            public IDisposable StartQueryTimer(SqlCommand sqlCommand) { return NullDisposable.Instance; }
+
+            public IDisposable StartQueryTimer(string commandText)
+            {
+                return NullDisposable.Instance;
+            }
+
+            public IDisposable StartQueryTimer(SqlCommand sqlCommand)
+            {
+                return NullDisposable.Instance;
+            }
         }
 
         class NullDisposable : IDisposable
@@ -112,7 +128,12 @@ namespace ProgressOnderwijsUtils
             int queryCount;
             int queriesCompleted;
             readonly QueryTracerParameterValues IncludeSensitiveInfo;
-            public QueryTracerImpl(QueryTracerParameterValues inlcudeSensiveInfo) { IncludeSensitiveInfo = inlcudeSensiveInfo; }
+
+            public QueryTracerImpl(QueryTracerParameterValues inlcudeSensiveInfo)
+            {
+                IncludeSensitiveInfo = inlcudeSensiveInfo;
+            }
+
             readonly object Sync = new object();
             readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
             Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));

@@ -379,7 +379,10 @@ namespace ProgressOnderwijsUtilsTests
         IEnumerable<BlaFilterObject> run(FilterBase filter) => data.Where(filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier));
 
         [SetUp]
-        public void initGroupLookup() { getStaticGroupContainmentVerifier = InfoStaticGroup.CachedGroupMembershipVerifier(conn); }
+        public void initGroupLookup()
+        {
+            getStaticGroupContainmentVerifier = InfoStaticGroup.CachedGroupMembershipVerifier(conn);
+        }
 
         [Test]
         public void MetaObjectFiltersWork()
@@ -550,8 +553,8 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void FilterCreator() {
-
+        public void FilterCreator()
+        {
             var filter = new DataSourceBase<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).IsNull();
             PAssert.That(() => filter.ToQueryBuilder() == SQL($"IntNullable is null"));
 

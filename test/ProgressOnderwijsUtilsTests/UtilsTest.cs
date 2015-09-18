@@ -84,7 +84,6 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-
         [Test, Continuous]
         public void SwapValue()
         {
@@ -231,17 +230,19 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void SimpleTransitiveClosureWorks() {
-            var nodes =new[] {2,3,};
+        public void SimpleTransitiveClosureWorks()
+        {
+            var nodes = new[] { 2, 3, };
 
-            PAssert.That(() => Utils.TransitiveClosure(nodes, num => new[] { num * 2 % 6 }).SetEquals(new[] { 2,4,0,3 }));
+            PAssert.That(() => Utils.TransitiveClosure(nodes, num => new[] { num * 2 % 6 }).SetEquals(new[] { 2, 4, 0, 3 }));
         }
+
         [Test]
         public void MultiTransitiveClosureWorks()
         {
             var nodes = new[] { 2, 3, };
 
-            PAssert.That(() => Utils.TransitiveClosure(nodes, nums => nums.Select(num =>num * 2 % 6 )).SetEquals(new[] { 2, 4, 0, 3 }));
+            PAssert.That(() => Utils.TransitiveClosure(nodes, nums => nums.Select(num => num * 2 % 6)).SetEquals(new[] { 2, 4, 0, 3 }));
         }
     }
 }

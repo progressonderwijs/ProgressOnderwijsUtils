@@ -71,7 +71,10 @@ namespace ProgressOnderwijsUtils
 
         public static BooleanComparer[] BooleanComparers
         {
-            get { return new[] { BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, }; }
+            get
+            {
+                return new[] { BooleanComparer.Equal, BooleanComparer.NotEqual, BooleanComparer.IsNull, BooleanComparer.IsNotNull, };
+            }
         }
 
         internal CriteriumFilter(string kolomnaam, BooleanComparer comparer, object waarde)
@@ -182,7 +185,11 @@ namespace ProgressOnderwijsUtils
             object IValSerializer.Deserialize(string s) => deserialize(s);
         }
 
-        static IValSerializer Serializer<T>(char code, Func<string, T> deserialize, Func<T, string> serialize) { return new ValSerializer<T>(serialize, deserialize, code); }
+        static IValSerializer Serializer<T>(char code, Func<string, T> deserialize, Func<T, string> serialize)
+        {
+            return new ValSerializer<T>(serialize, deserialize, code);
+        }
+
         static readonly Dictionary<Type, IValSerializer> serializerByType;
         static readonly Dictionary<char, IValSerializer> serializerByCode;
         static readonly IValSerializer ArraySerializer;

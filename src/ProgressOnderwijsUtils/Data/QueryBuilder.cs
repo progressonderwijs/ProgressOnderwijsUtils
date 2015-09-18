@@ -9,7 +9,8 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class SafeSql {
+    public static class SafeSql
+    {
         [Pure]
         public static QueryBuilder SQL(FormattableString interpolatedQuery)
         {
@@ -172,14 +173,11 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder TableParamDynamic(Array o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         // ReSharper restore UnusedMember.Global
-
-
         [Pure]
         public static QueryBuilder Create(string str, params object[] arguments)
         {
             return CreateDynamic(str, arguments);
         }
-
 
         [Pure]
         public static QueryBuilder CreateDynamic(string str, params object[] arguments)
@@ -433,7 +431,11 @@ namespace ProgressOnderwijsUtils
             Tracer = tracer;
         }
 
-        public void Dispose() { Connection.Dispose(); }
+        public void Dispose()
+        {
+            Connection.Dispose();
+        }
+
         public static implicit operator SqlCommandCreationContext(SqlConnection conn) => new SqlCommandCreationContext(conn, 0, null);
     }
 }
