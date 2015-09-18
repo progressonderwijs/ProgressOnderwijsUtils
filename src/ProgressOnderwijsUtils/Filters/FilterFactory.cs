@@ -63,7 +63,11 @@ namespace ProgressOnderwijsUtils
 
         public static FilterBase LessThan_CurrentTime<TRow>(this FilterFactory<TRow>.FilterCreator<DateTime> x)
             => x.CreateCriterium(BooleanComparer.LessThan, Filter.CurrentTimeToken.Instance);
+        public static FilterBase LessThan_CurrentTime<TRow>(this FilterFactory<TRow>.FilterCreator<DateTime?> x)
+            => x.CreateCriterium(BooleanComparer.LessThan, Filter.CurrentTimeToken.Instance);
 
+        public static FilterBase GreaterThan_CurrentTime<TRow>(this FilterFactory<TRow>.FilterCreator<DateTime> x)
+            => x.CreateCriterium(BooleanComparer.GreaterThan, Filter.CurrentTimeToken.Instance);
         public static FilterBase GreaterThan_CurrentTime<TRow>(this FilterFactory<TRow>.FilterCreator<DateTime?> x)
             => x.CreateCriterium(BooleanComparer.GreaterThan, Filter.CurrentTimeToken.Instance);
 
