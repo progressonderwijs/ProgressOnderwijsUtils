@@ -64,6 +64,22 @@ namespace ProgressOnderwijsUtils
         public static FilterBase Contains<TRow>(this FilterFactory<TRow>.FilterCreator<string> x, string waarde)
             => x.CreateCriterium(BooleanComparer.Contains, waarde);
 
+        static readonly char[] starTrimFilter = { '*' };
+
+        public static FilterBase SearchWithStars<TRow>(this FilterFactory<TRow>.FilterCreator<string> x, string waarde)
+        {
+            var realNeedle = waarde.Trim(starTrimFilter);
+            bool start = waarde.StartsWith("*");
+            bool end = waarde.EndsWith("*");
+            return start && end
+                ? x.Contains(realNeedle)
+                : start
+                    ? x.EndsWith(realNeedle)
+                    : end
+                        ? x.StartsWith(realNeedle)
+                        : x.Equal(realNeedle);
+        }
+
         public static FilterBase In<TRow, T>(this FilterFactory<TRow>.FilterCreator<T?> x, IEnumerable<T> waarde) where T : struct
             => x.CreateCriterium(BooleanComparer.In, waarde);
 
