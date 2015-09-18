@@ -11,6 +11,7 @@ namespace ProgressOnderwijsUtils
 
     public static class Filter<TMetaObject>
     {
+        [Obsolete("should be migrated to FilterOn")]
         public static FilterBase CreateFilter<T>(Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, T waarde)
         {
             var pi = MetaObject.GetMemberInfo(columnToFilter);
