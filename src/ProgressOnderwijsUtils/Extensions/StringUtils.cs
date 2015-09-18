@@ -102,6 +102,10 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static string SepaTekensetEnModificaties(string s)
         {
+            if (s == null) {
+                return null;
+            }
+
             s = VerwijderDiakrieten(s);
             s = VervangRingelS(s, false);
             s = SepaTekenset(s);
