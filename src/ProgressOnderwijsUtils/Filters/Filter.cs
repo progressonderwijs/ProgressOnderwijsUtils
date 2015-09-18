@@ -7,9 +7,6 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class Filter<TMetaObject>
-    { }
-
     public static class Filter
     {
         public sealed class CurrentTimeToken
