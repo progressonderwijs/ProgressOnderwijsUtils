@@ -58,8 +58,8 @@ namespace ProgressOnderwijsUtils
 
                 throw new InvalidOperationException(
                     "Source " + srcSetDebugName + " has different shape than destination " + dstSetDebugName + " with mode " + mode + ":\n"
-                        + (!extraSrcCols.Any() ? "" : "\n" + "Fields only on source " + srcSetDebugName + ": " + String.Join(", ", extraSrcCols))
-                        + (!extraDstCols.Any() ? "" : "\n" + "Fields only on destination " + dstSetDebugName + ": " + String.Join(", ", extraDstCols))
+                        + (!extraSrcCols.Any() ? "" : "\n" + "Fields only on source " + srcSetDebugName + ": " + string.Join(", ", extraSrcCols))
+                        + (!extraDstCols.Any() ? "" : "\n" + "Fields only on destination " + dstSetDebugName + ": " + string.Join(", ", extraDstCols))
                         + typeMismatchMessage
                         + "\n" + "All source " + srcSetDebugName + " fields: " + srcFieldsByName.Select(col => col.Value.Def.ToString()).JoinStrings(", ")
                         + "\n" + "All destination " + dstSetDebugName + " fields: " + dstFieldsByName.Select(col => col.Value.Def.ToString()).JoinStrings(", ")

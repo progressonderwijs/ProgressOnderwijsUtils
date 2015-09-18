@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils.Barcode
                 var exponentiation = BarcodeEncodingValue.Pow(exponent);
                 if (exponentiation <= remainingValue) {
                     // ReSharper disable PossibleLossOfFraction
-                    var currentValue = (int)Decimal.Truncate(remainingValue / exponentiation);
+                    var currentValue = (int)decimal.Truncate(remainingValue / exponentiation);
                     // ReSharper restore PossibleLossOfFraction
                     encodedValue += BarcodeEncodingValue.Get(currentValue);
                     checksum += currentValue;
