@@ -9,7 +9,12 @@ namespace ProgressOnderwijsUtils
     {
         readonly string[] lines;
         int position;
-        public LineScanner(string s) { lines = Regex.Split(s, "\r\n|\n"); }
+
+        public LineScanner(string s)
+        {
+            lines = Regex.Split(s, "\r\n|\n");
+        }
+
         public string GetLine() => position != lines.Length ? lines[position++] : null;
 
         public void PushBack()

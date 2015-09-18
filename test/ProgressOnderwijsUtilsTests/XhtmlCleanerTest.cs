@@ -120,6 +120,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             PAssert.That(() => XhtmlCleaner.CannotBeValidHtml(@"This is <b <b>bla</b> id>invalid</b>!"));
         }
+
         [Test]
         public void DetectsAnHtmlFragmentWithTagInEntityAsInvalid()
         {

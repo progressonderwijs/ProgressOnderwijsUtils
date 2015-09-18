@@ -12,7 +12,10 @@ namespace ProgressOnderwijsUtils
             return Create(collection.Select(i => i.ToSelectItem()));
         }
 
-        public static SelectItem<T>[] Create<T>(IEnumerable<SelectItem<T>> collection) { return collection.ToArray(); }
+        public static SelectItem<T>[] Create<T>(IEnumerable<SelectItem<T>> collection)
+        {
+            return collection.ToArray();
+        }
 
         public static SelectItem<T>[] CreateWithLeeg<T>(SelectItem<T> addnullitem, IEnumerable<IToSelectItem<T>> collection)
         {
@@ -29,8 +32,15 @@ namespace ProgressOnderwijsUtils
             return Create(new[] { addnullitem }.Concat(collection.Select(item => SelectItem.Create((T?)item.Value, item.Label))));
         }
 
-        public static SelectItem<T>[] CreateFromDb<T>(DataTable dt) { return Create(DbToEnumerable<T>(dt)); }
-        public static SelectItem<T>[] CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt) { return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt)); }
+        public static SelectItem<T>[] CreateFromDb<T>(DataTable dt)
+        {
+            return Create(DbToEnumerable<T>(dt));
+        }
+
+        public static SelectItem<T>[] CreateFromDb<T>(SelectItem<T> addnullitem, DataTable dt)
+        {
+            return CreateWithLeeg(addnullitem, DbToEnumerable<T>(dt));
+        }
 
         static IEnumerable<SelectItem<T>> DbToEnumerable<T>(DataTable dt)
         {
@@ -93,6 +103,9 @@ namespace ProgressOnderwijsUtils
 
     public static class SelectItem
     {
-        public static SelectItem<T> Create<T>(T val, ITranslatable text) { return new SelectItem<T>(val, text); }
+        public static SelectItem<T> Create<T>(T val, ITranslatable text)
+        {
+            return new SelectItem<T>(val, text);
+        }
     }
 }

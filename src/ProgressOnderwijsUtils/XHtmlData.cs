@@ -57,7 +57,11 @@ namespace ProgressOnderwijsUtils
                         : text);
         }
 
-        XhtmlData(XNode[] nodes) { this.nodes = nodes; }
+        XhtmlData(XNode[] nodes)
+        {
+            this.nodes = nodes;
+        }
+
         public bool Equals(XhtmlData other) => EqualsByMembers<XhtmlData>.Func(this, other);
         public override bool Equals(object obj) => obj is XhtmlData && Equals((XhtmlData)obj);
         public override int GetHashCode() => GetHashCodeByMembers<XhtmlData>.Func(this);
@@ -87,7 +91,6 @@ namespace ProgressOnderwijsUtils
         }
 
         public string TextContent => ToXHtmlDataElement().Value;
-
         public IEnumerator<XNode> GetEnumerator() => Nodes.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }

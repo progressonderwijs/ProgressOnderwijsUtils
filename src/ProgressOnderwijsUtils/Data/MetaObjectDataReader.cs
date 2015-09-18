@@ -103,7 +103,11 @@ namespace ProgressOnderwijsUtils
             isClosed = true;
         }
 
-        public MetaObjectDataReader(IEnumerable<T> objects) { metaObjects = objects.GetEnumerator(); }
+        public MetaObjectDataReader(IEnumerable<T> objects)
+        {
+            metaObjects = objects.GetEnumerator();
+        }
+
         object[] cache;
 
         protected override bool ReadImpl()

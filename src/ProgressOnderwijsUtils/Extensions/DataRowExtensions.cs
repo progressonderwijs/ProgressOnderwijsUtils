@@ -12,6 +12,9 @@ namespace ProgressOnderwijsUtils
     public static class DataRowExtensions
     {
         [Pure]
-        public static T Field<T>(this DataRowView row, string fieldname) { return row.Row.Field<T>(fieldname); }
+        public static T Field<T>(this DataRowView row, string fieldname)
+        {
+            return row.Row.Field<T>(fieldname);
+        }
     }
 }

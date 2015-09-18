@@ -53,7 +53,10 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static bool None<TSource>(this IEnumerable<TSource> source) { return !source.Any(); }
+        public static bool None<TSource>(this IEnumerable<TSource> source)
+        {
+            return !source.Any();
+        }
 
         [Pure]
         public static IEnumerable<TSource> WhereIf<TSource>(this IEnumerable<TSource> source, bool condition, Func<TSource, bool> predicate)
@@ -193,7 +196,7 @@ namespace ProgressOnderwijsUtils
             }
 
             if (item is string) {
-                return "\""+item.ToString().Replace("\"", "\\\"")+"\"";
+                return "\"" + item.ToString().Replace("\"", "\\\"") + "\"";
             } else {
                 return item.ToString();
             }
