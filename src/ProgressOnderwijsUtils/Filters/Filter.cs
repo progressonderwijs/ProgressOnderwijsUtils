@@ -7,17 +7,8 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
-    public interface IFilterFactory<out T> { }
-
     public static class Filter<TMetaObject>
-    {
-        [Obsolete("should be migrated to FilterOn")]
-        public static FilterBase CreateFilter<T>(Expression<Func<TMetaObject, T>> columnToFilter, BooleanComparer comparer, T waarde)
-        {
-            var pi = MetaObject.GetMemberInfo(columnToFilter);
-            return Filter.CreateCriterium(pi.Name, comparer, waarde);
-        }
-    }
+    { }
 
     public static class Filter
     {
@@ -92,7 +83,8 @@ namespace ProgressOnderwijsUtils
             BooleanComparer comparer,
             T waarde)
         {
-            return Filter<TMetaObject>.CreateFilter(columnToFilter, comparer, waarde);
+            var pi = MetaObject.GetMemberInfo(columnToFilter);
+            return Filter.CreateCriterium(pi.Name, comparer, waarde);
         }
 
         public static FilterBase CreateCombined(BooleanOperator andor, FilterBase a, FilterBase b, params FilterBase[] extra)

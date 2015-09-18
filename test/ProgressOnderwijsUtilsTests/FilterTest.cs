@@ -484,7 +484,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void MetaObject_EnumGreaterThanComparison()
         {
-            var filter = Filter<BlaFilterObject>.CreateFilter(o => o.EnumVal, BooleanComparer.GreaterThan, BlaFilterEnumTest.Abc);
+            var filter = new FilterFactory<BlaFilterObject>().FilterOn(o => o.EnumVal).GreaterThan(BlaFilterEnumTest.Abc);
             var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
             PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
         }
@@ -492,7 +492,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void MetaObject_NullableEnumGreaterThanComparison()
         {
-            var filter = Filter<BlaFilterObject>.CreateFilter(o => o.EnumNullable, BooleanComparer.GreaterThan, BlaFilterEnumTest.Abc);
+            var filter = new FilterFactory<BlaFilterObject>().FilterOn(o => o.EnumNullable).GreaterThan(BlaFilterEnumTest.Abc);
             var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
             PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, BlaFilterEnumTest.Test)));
             PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
@@ -550,12 +550,12 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void FilterCreator() {
-
-            var filter = new DataSourceBase<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).IsNull();
+        public void FilterCreator()
+        {
+            var filter = new FilterFactory<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).IsNull();
             PAssert.That(() => filter.ToQueryBuilder() == SQL($"IntNullable is null"));
 
-            var filter2 = new DataSourceBase<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).Equal(3);
+            var filter2 = new FilterFactory<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).Equal(3);
             PAssert.That(() => filter2.ToQueryBuilder() == SQL($"IntNullable={3}"));
         }
     }
