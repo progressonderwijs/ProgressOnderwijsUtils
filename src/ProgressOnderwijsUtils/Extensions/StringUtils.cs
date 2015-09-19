@@ -96,6 +96,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static string VervangRingelS(string str, bool upper) => str.Replace("ß", upper ? "SS" : "ss");
+
         [Pure]
         public static string SepaTekenset(string s) => SepaStripperRegexes.sepaStripper.Replace(s, "");
 
@@ -114,6 +115,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static string Capitalize(string name) => name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
+
         [Pure]
         public static string Uncapitalize(string name) => name.Substring(0, 1).ToLowerInvariant() + name.Substring(1);
 

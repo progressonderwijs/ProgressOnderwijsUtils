@@ -30,6 +30,9 @@ namespace ProgressOnderwijsUtils
     public class BTTester
     {
         [Test]
-        public void ArgVerify() { Assert.Throws<ArgumentException>(() => BenchTimer.MinimumTime(() => { }, 0)); }
+        public void ArgVerify()
+        {
+            Assert.Throws<ArgumentException>(() => BenchTimer.MinimumTime(() => { }, 0));
+        }
     }
 }

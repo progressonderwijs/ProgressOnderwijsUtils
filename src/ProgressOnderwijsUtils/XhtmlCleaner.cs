@@ -62,7 +62,11 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
         sealed class AllowWhenAny : IHtmlFilter
         {
             readonly IHtmlFilter[] filters;
-            public AllowWhenAny(params IHtmlFilter[] filters) { this.filters = filters ?? new IHtmlFilter[0]; }
+
+            public AllowWhenAny(params IHtmlFilter[] filters)
+            {
+                this.filters = filters ?? new IHtmlFilter[0];
+            }
 
             public TagSafety AllowTag(XElement elem)
             {
