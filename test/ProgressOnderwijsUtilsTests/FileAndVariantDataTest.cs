@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void FileDataTest()
         {
-            FileData 
+            FileData
                 empty = default(FileData),
                 basic = new FileData { Content = new byte[] { 1, 2, 3 }, ContentType = "ab", FileName = "xyz" },
                 same = new FileData { Content = new byte[] { 1, 2, 3 }, ContentType = "aab".Substring(1), FileName = "Xxyz".Substring(1) },

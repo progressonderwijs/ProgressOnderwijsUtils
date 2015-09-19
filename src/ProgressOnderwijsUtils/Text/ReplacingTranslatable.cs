@@ -16,7 +16,10 @@ namespace ProgressOnderwijsUtils
             this.toreplace = toreplace;
         }
 
-        public string GenerateUid() { return core.GenerateUid() + "|" + toreplace.Select(it => it.GenerateUid()).JoinStrings(";"); }
+        public string GenerateUid()
+        {
+            return core.GenerateUid() + "|" + toreplace.Select(it => it.GenerateUid()).JoinStrings(";");
+        }
 
         public TextVal Translate(Taal taal)
         {
@@ -29,7 +32,6 @@ namespace ProgressOnderwijsUtils
                 retval.ExtraText == null ? null : string.Format(retval.ExtraText, helpTextRep));
         }
 
-        public ITranslatable Core => core;// needed for testing purposes ...
-
+        public ITranslatable Core => core; // needed for testing purposes ...
     }
 }

@@ -40,7 +40,12 @@ namespace ProgressOnderwijsUtilsTests
         public readonly double ReadonlyField;
 #pragma warning restore 649
         public double ReadonlyProperty => 0.0;
-        public char WriteonlyProperty { set { } }
+
+        public char WriteonlyProperty
+        {
+            set { }
+        }
+
         public object PrivateSetter { get; }
         public object PrivateGetter { set; private get; }
     }

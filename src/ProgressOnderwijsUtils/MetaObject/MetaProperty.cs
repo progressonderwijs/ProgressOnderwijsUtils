@@ -228,7 +228,10 @@ namespace ProgressOnderwijsUtils
             readonly MethodInfo getterMethod;
         }
 
-        static T MkDelegate<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
+        static T MkDelegate<T>(MethodInfo mi)
+        {
+            return (T)(object)Delegate.CreateDelegate(typeof(T), mi);
+        }
 
         static T AttrH<T>(this object[] attrs) where T : class
         {

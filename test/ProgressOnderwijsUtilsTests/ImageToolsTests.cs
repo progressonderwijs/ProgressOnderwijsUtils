@@ -48,10 +48,9 @@ namespace ProgressOnderwijsUtilsTests
                 AssertImagesSimilar(down_W_H, down_WH);
                 AssertImagesSimilar(down_H_W, down_WH);
                 AssertImagesSimilar(down_H_W, down_W_H);
-                
+
                 //als het test-plaatje geen contrast heeft, dan is deze hele test zinloos: verifieer dat het test plaatje contrast heeft:
                 PAssert.That(() => down_W_H.GetPixel(45, 25) != down_W_H.GetPixel(10, 30));
-
             }
         }
 

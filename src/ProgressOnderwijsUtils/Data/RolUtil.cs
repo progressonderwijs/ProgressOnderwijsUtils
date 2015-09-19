@@ -18,8 +18,10 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static IReadOnlyList<Rol> Parents(this Rol rol) => rollenRelations[(int)rol].Parents;
+
         [Pure]
         public static IReadOnlyList<Rol> Children(this Rol rol) => rollenRelations[(int)rol].Children;
+
         static readonly Dictionary<int, RolRelations> rollenRelations = new Dictionary<int, RolRelations>();
 
         static RolUtil()
@@ -48,6 +50,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool IsToekenbaar(this Rol rol) => rollenRelations[(int)rol].IsToekenbaar;
+
         [Pure]
         public static RollenSet OnderliggendeToegangsRollen(this Rol root) => new RollenSet(OnderliggendeToegangsRollenImpl(root));
 
@@ -84,7 +87,12 @@ namespace ProgressOnderwijsUtils
             }
 
             public bool Valid() => Pos < Arr.Length;
-            public void MoveNext() { Pos++; }
+
+            public void MoveNext()
+            {
+                Pos++;
+            }
+
             public int Value => (int)Arr[Pos];
         }
 
@@ -146,9 +154,14 @@ namespace ProgressOnderwijsUtils
 
     public struct RollenSet
     {
-        public RollenSet(Rol[] sortedRollen) { this.sortedRollen = sortedRollen; }
+        public RollenSet(Rol[] sortedRollen)
+        {
+            this.sortedRollen = sortedRollen;
+        }
+
         readonly Rol[] sortedRollen;
         public IReadOnlyList<Rol> Rollen => sortedRollen;
+
         [Pure]
         public bool Contains(Rol rol) => Array.BinarySearch(sortedRollen, rol) >= 0;
     }
@@ -161,7 +174,11 @@ namespace ProgressOnderwijsUtils
         public sealed class ImpliesAttribute : Attribute
         {
             public readonly IReadOnlyList<Rol> Kinderen;
-            public ImpliesAttribute(params Rol[] kinderen) { Kinderen = kinderen; }
+
+            public ImpliesAttribute(params Rol[] kinderen)
+            {
+                Kinderen = kinderen;
+            }
         }
     }
 }
