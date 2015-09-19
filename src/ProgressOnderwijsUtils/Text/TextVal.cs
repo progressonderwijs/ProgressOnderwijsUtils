@@ -25,10 +25,16 @@ namespace ProgressOnderwijsUtils
         public static TextVal CreateUndefined(string hint) => new TextVal("ONVERTAALD: " + hint, UndefinedExtraText);
 
         [Pure]
-        public static bool operator ==(TextVal a, TextVal b) { return a.Text == b.Text && a.ExtraText == b.ExtraText; }
+        public static bool operator ==(TextVal a, TextVal b)
+        {
+            return a.Text == b.Text && a.ExtraText == b.ExtraText;
+        }
 
         [Pure]
-        public static bool operator !=(TextVal a, TextVal b) { return !(a == b); }
+        public static bool operator !=(TextVal a, TextVal b)
+        {
+            return !(a == b);
+        }
 
         [Pure]
         public override bool Equals(object obj) => obj is TextVal && this == (TextVal)obj;

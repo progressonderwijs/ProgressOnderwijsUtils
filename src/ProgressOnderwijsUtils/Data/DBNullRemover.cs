@@ -63,16 +63,21 @@ namespace ProgressOnderwijsUtils
 
             static T ExtractClassOrNullableField(object obj) => obj == DBNull.Value ? default(T) : (T)obj;
             static T ExtractValueField(object obj) => (T)obj;
-
         }
 
         // ReSharper disable UnusedMember.Local
         static TStruct? ExtractNullableStruct<TStruct>(object obj) where TStruct : struct
             // ReSharper restore UnusedMember.Local
-        { return obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj; }
+        {
+            return obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj;
+        }
 
         static readonly MethodInfo genericCastMethod = ((Func<object, int>)Cast<int>).Method.GetGenericMethodDefinition();
+
         [Pure]
-        public static object DynamicCast(object val, Type type) { return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val }); }
+        public static object DynamicCast(object val, Type type)
+        {
+            return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });
+        }
     }
 }

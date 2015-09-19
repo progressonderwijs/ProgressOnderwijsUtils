@@ -11,7 +11,11 @@ namespace ProgressOnderwijsUtilsTests
         struct TestType
         {
             int value;
-            public TestType(int value) { this.value = value; }
+
+            public TestType(int value)
+            {
+                this.value = value;
+            }
         }
 
         static readonly TestType t1 = new TestType(1);

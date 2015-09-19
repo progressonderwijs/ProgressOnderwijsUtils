@@ -19,8 +19,16 @@ namespace ProgressOnderwijsUtils
         public bool Equals(GroupReference other) => other != null && other.GroupId == GroupId;
         public override bool Equals(object obj) => obj is GroupReference && Equals(obj as GroupReference);
         public override int GetHashCode() => GroupId;
-        public static bool operator ==(GroupReference left, GroupReference right) { return Equals(left, right); }
-        public static bool operator !=(GroupReference left, GroupReference right) { return !Equals(left, right); }
+
+        public static bool operator ==(GroupReference left, GroupReference right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(GroupReference left, GroupReference right)
+        {
+            return !Equals(left, right);
+        }
     }
 
     [Continuous]

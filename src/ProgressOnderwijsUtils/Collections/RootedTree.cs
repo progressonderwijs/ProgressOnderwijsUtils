@@ -41,14 +41,18 @@ namespace ProgressOnderwijsUtils.Collections
         public override bool Equals(object obj) => obj is RootedTree<T> && Equals((RootedTree<T>)obj);
 
         // internal details:
-        RootedTree(SList<TreePathSegment> pathSegments) { PathSegments = pathSegments; }
+        RootedTree(SList<TreePathSegment> pathSegments)
+        {
+            PathSegments = pathSegments;
+        }
+
         readonly SList<TreePathSegment> PathSegments;
 
         struct TreePathSegment
         {
             public readonly int Index;
             public readonly Tree<T> ThisSubTree;
-            
+
             public TreePathSegment(int index, Tree<T> node)
             {
                 Index = index;

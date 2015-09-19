@@ -11,8 +11,14 @@ public sealed class RegisterTestingProgressTools //may not be in a namespace!
     public static bool IsInUnitTest => testsLoaded > 0;
 
     [SetUp]
-    public static void BeforeTests() { Interlocked.Increment(ref testsLoaded); }
+    public static void BeforeTests()
+    {
+        Interlocked.Increment(ref testsLoaded);
+    }
 
     [TearDown]
-    public static void AfterTests() { Interlocked.Decrement(ref testsLoaded); }
+    public static void AfterTests()
+    {
+        Interlocked.Decrement(ref testsLoaded);
+    }
 }

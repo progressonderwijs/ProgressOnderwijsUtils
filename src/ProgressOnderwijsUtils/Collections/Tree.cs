@@ -110,7 +110,11 @@ namespace ProgressOnderwijsUtils.Collections
         {
             static readonly int typeHash = typeof(Tree<T>).GetHashCode();
             readonly IEqualityComparer<T> ValueComparer;
-            public Comparer(IEqualityComparer<T> valueComparer) { ValueComparer = valueComparer; }
+
+            public Comparer(IEqualityComparer<T> valueComparer)
+            {
+                ValueComparer = valueComparer;
+            }
 
             struct NodePair
             {

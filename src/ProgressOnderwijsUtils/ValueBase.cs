@@ -54,7 +54,10 @@ namespace ProgressOnderwijsUtils
 
     public static class ToStringByMembers
     {
-        public static string ToStringByPublicMembers<T>(T obj) { return ToStringByMembers<T>.Func(obj); }
+        public static string ToStringByPublicMembers<T>(T obj)
+        {
+            return ToStringByMembers<T>.Func(obj);
+        }
     }
 
     public static class ToStringByMembers<T>

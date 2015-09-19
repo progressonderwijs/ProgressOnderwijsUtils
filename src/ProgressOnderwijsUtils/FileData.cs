@@ -14,7 +14,18 @@ namespace ProgressOnderwijsUtils
         string fileName;
         public byte[] Content { get; set; }
         public string ContentType { get; set; }
-        public string FileName { get { return fileName; } set { fileName = TrimNameToLength(value, MAX_FILE_NAME); } }
+
+        public string FileName
+        {
+            get
+            {
+                return fileName;
+            }
+            set
+            {
+                fileName = TrimNameToLength(value, MAX_FILE_NAME);
+            }
+        }
 
         public static string TrimNameToLength(string filePath, int maxFileNameLength)
         {
@@ -27,7 +38,7 @@ namespace ProgressOnderwijsUtils
                 var basename = Path.GetFileNameWithoutExtension(filename);
                 if (extension.Length + 8 > maxFileNameLength) {
                     //don't keep extension if it crowds out the name.
-                    return basename.TrimToLength(maxFileNameLength).Replace('.','_');
+                    return basename.TrimToLength(maxFileNameLength).Replace('.', '_');
                 } else {
                     var fileNameWithoutExtension = basename.TrimToLength(maxFileNameLength - extension.Length);
                     return fileNameWithoutExtension + extension;
@@ -71,8 +82,15 @@ namespace ProgressOnderwijsUtils
                 (Content != null && other.Content != null && Content.SequenceEqual(other.Content));
         }
 
-        public static bool operator ==(FileData left, FileData right) { return left.Equals(right); }
-        public static bool operator !=(FileData left, FileData right) { return !left.Equals(right); }
+        public static bool operator ==(FileData left, FileData right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(FileData left, FileData right)
+        {
+            return !left.Equals(right);
+        }
 
         public static FileData Serialize<T>(T obj, string fileName = null)
         {

@@ -9,7 +9,10 @@ namespace ProgressOnderwijsUtils
 {
     public abstract class DbDataReaderBase : DbDataReader
     {
-        public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length) { throw new NotSupportedException(); }
+        public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
+        {
+            throw new NotSupportedException();
+        }
 
         public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length)
         {
@@ -25,7 +28,11 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public override DataTable GetSchemaTable() { throw new NotSupportedException(); }
+        public override DataTable GetSchemaTable()
+        {
+            throw new NotSupportedException();
+        }
+
         public override string GetDataTypeName(int ordinal) => GetFieldType(ordinal).ToString();
         bool hasRows, afterFirstRowPeek;
         protected abstract bool ReadImpl();
