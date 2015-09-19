@@ -3,7 +3,7 @@ using System.ServiceModel;
 
 namespace ProgressOnderwijsUtils
 {
-    public interface IClientHandle<out T>: IDisposable
+    public interface IClientHandle<out T> : IDisposable
     {
         TR Call<TR>(Func<T, TR> call);
     }

@@ -22,7 +22,10 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        SList(Impl list) { this.list = list; }
+        SList(Impl list)
+        {
+            this.list = list;
+        }
 
         public SList(T head, SList<T> tail)
             : this(new Impl(head, tail.list)) { }
@@ -67,9 +70,16 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static bool operator ==(SList<T> a, SList<T> b) { return a.Equals(b); }
+        public static bool operator ==(SList<T> a, SList<T> b)
+        {
+            return a.Equals(b);
+        }
+
         [Pure]
-        public static bool operator !=(SList<T> a, SList<T> b) { return !a.Equals(b); }
+        public static bool operator !=(SList<T> a, SList<T> b)
+        {
+            return !a.Equals(b);
+        }
 
         public IEnumerable<SList<T>> NonEmpySuffixes
         {
@@ -94,7 +104,10 @@ namespace ProgressOnderwijsUtils.Collections
     public static class SList
     {
         [Pure]
-        public static SList<T> Prepend<T>(this SList<T> self, T head) { return new SList<T>(head, self); }
+        public static SList<T> Prepend<T>(this SList<T> self, T head)
+        {
+            return new SList<T>(head, self);
+        }
 
         [Pure, UsefulToKeep("library method")]
         public static SList<T> Prepend<T>(this SList<T> self, SList<T> heads)
@@ -127,7 +140,10 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<TR> SelectEager<T, TR>(this SList<T> self, Func<T, TR> map) { return self.SelectReverse(map).Reverse(); }
+        public static SList<TR> SelectEager<T, TR>(this SList<T> self, Func<T, TR> map)
+        {
+            return self.SelectReverse(map).Reverse();
+        }
 
         [Pure]
         public static SList<TR> SelectReverse<T, TR>(this SList<T> self, Func<T, TR> map)
@@ -195,7 +211,10 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> SingleElement<T>(T element) { return SList<T>.Empty.Prepend(element); }
+        public static SList<T> SingleElement<T>(T element)
+        {
+            return SList<T>.Empty.Prepend(element);
+        }
 
         [UsefulToKeep("library method")]
         public static SList<T> Empty<T>() => SList<T>.Empty;

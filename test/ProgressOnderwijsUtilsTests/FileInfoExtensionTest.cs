@@ -29,7 +29,10 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test, ExpectedException(typeof(ArgumentNullException))]
-        public void SameContentsNull() { var ignore = sut.SameContents(null); }
+        public void SameContentsNull()
+        {
+            var ignore = sut.SameContents(null);
+        }
 
         [Test]
         public void SameContentsSame()
@@ -39,7 +42,10 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void SameContentsEmpty() { Assert.That(sut.SameContents(other)); }
+        public void SameContentsEmpty()
+        {
+            Assert.That(sut.SameContents(other));
+        }
 
         [Test]
         public void SameContentsFilled()

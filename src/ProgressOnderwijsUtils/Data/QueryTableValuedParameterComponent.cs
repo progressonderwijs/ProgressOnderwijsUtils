@@ -43,6 +43,9 @@ namespace ProgressOnderwijsUtils
                     && (ReferenceEquals(objs, ((QueryTableValuedParameterComponent<T>)other).objs) || objs.SequenceEqual(((QueryTableValuedParameterComponent<T>)other).objs));
         }
 
-        public override int GetHashCode() { return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200; } //paramval never null!
+        public override int GetHashCode()
+        {
+            return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200;
+        } //paramval never null!
     }
 }

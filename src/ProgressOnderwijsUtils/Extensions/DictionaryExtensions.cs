@@ -58,7 +58,10 @@ namespace ProgressOnderwijsUtils
             return GetOrDefaultR(dict, key, default(TValue));
         }
 
-        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) { return GetOrDefault(dict, key, default(TValue)); }
+        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
+        {
+            return GetOrDefault(dict, key, default(TValue));
+        }
 
         /// <summary>
         /// Utility method to retrieve a value with a default from a dictionary; you can use GetOrCreateDefault if finding the default is expensive.
@@ -158,7 +161,10 @@ namespace ProgressOnderwijsUtils
             return merged;
         }
 
-        public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dict) { return new ReadOnlyDictionary<TKey, TValue>(dict); }
+        public static ReadOnlyDictionary<TKey, TValue> AsReadOnly<TKey, TValue>(this IDictionary<TKey, TValue> dict)
+        {
+            return new ReadOnlyDictionary<TKey, TValue>(dict);
+        }
     }
 
     [Continuous]

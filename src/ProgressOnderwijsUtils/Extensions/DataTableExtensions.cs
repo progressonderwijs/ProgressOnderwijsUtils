@@ -119,21 +119,21 @@ namespace ProgressOnderwijsUtils
                 new[] {
                     new[] { 1, 1 },
                 }
-            );
+                );
             yield return new TestCaseData(
                 2,
                 new[] {
                     new[] { 1, 1 },
                     new[] { 2, 2 },
                 }
-            );
+                );
             yield return new TestCaseData(
                 1,
                 new[] {
                     new[] { 1, 2 },
                     new[] { 1, 2 },
                 }
-            );
+                );
         }
 
         [Test, TestCaseSource(nameof(MakeUniqueData))]

@@ -7,7 +7,10 @@ namespace ProgressOnderwijsUtils.WebSupport
 {
     public class RemoveServerHeadersModule : IHttpModule
     {
-        public void Init(HttpApplication app) { app.BeginRequest += RemoveIdentifyingHeaders; }
+        public void Init(HttpApplication app)
+        {
+            app.BeginRequest += RemoveIdentifyingHeaders;
+        }
 
         static void RemoveIdentifyingHeaders(object sender, EventArgs e)
         {

@@ -5,7 +5,10 @@ namespace ProgressOnderwijsUtils.WebSupport
 {
     public class HstsAndHttpsRedirectModule : IHttpModule
     {
-        public void Init(HttpApplication app) { app.BeginRequest += context_BeginRequest; }
+        public void Init(HttpApplication app)
+        {
+            app.BeginRequest += context_BeginRequest;
+        }
 
         static void context_BeginRequest(object sender, EventArgs e)
         {

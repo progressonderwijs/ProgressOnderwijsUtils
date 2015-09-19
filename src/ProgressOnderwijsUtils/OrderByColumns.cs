@@ -54,7 +54,10 @@ namespace ProgressOnderwijsUtils
             sortColumns = columns;
         }
 
-        OrderByColumns(ColumnSort[] order) { sortColumns = order; }
+        OrderByColumns(ColumnSort[] order)
+        {
+            sortColumns = order;
+        }
 
         [Pure]
         public ColumnSort? GetSortColumn(string column)
@@ -176,8 +179,15 @@ namespace ProgressOnderwijsUtils
             return DirectAcessColumns.SequenceEqual(other.DirectAcessColumns);
         }
 
-        public static bool operator ==(OrderByColumns a, OrderByColumns b) { return a.Equals(b); }
-        public static bool operator !=(OrderByColumns a, OrderByColumns b) { return !a.Equals(b); }
+        public static bool operator ==(OrderByColumns a, OrderByColumns b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(OrderByColumns a, OrderByColumns b)
+        {
+            return !a.Equals(b);
+        }
 
         [Pure]
         public override bool Equals(object obj)

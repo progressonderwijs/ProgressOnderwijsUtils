@@ -8,7 +8,11 @@ namespace ProgressOnderwijsUtils.Collections
         public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
         readonly EqualityComparer<T> underlying;
         static readonly ulong start = (ulong)typeof(T).MetadataToken + ((ulong)typeof(T).Module.MetadataToken << 32);
-        public ArrayComparer(EqualityComparer<T> underlying) { this.underlying = underlying; }
+
+        public ArrayComparer(EqualityComparer<T> underlying)
+        {
+            this.underlying = underlying;
+        }
 
         [Pure]
         public bool Equals(T[] x, T[] y)
