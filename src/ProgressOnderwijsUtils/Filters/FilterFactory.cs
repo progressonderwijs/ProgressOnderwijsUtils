@@ -69,13 +69,14 @@ namespace ProgressOnderwijsUtils
         public static FilterBase SearchWithStars<TRow>(this FilterFactory<TRow>.FilterCreator<string> x, string waarde)
         {
             var realNeedle = waarde.Trim(starTrimFilter);
-            bool start = waarde.StartsWith("*");
-            bool end = waarde.EndsWith("*");
-            return start && end
+            bool startsWithWildcard = waarde.StartsWith("*");
+            bool endWithWildcard = waarde.EndsWith("*");
+
+            return startsWithWildcard && endWithWildcard
                 ? x.Contains(realNeedle)
-                : start
+                : startsWithWildcard
                     ? x.EndsWith(realNeedle)
-                    : end
+                    : endWithWildcard
                         ? x.StartsWith(realNeedle)
                         : x.Equal(realNeedle);
         }
