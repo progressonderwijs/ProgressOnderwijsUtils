@@ -30,7 +30,10 @@ namespace ProgressOnderwijsUtils
              SMMutatiesToevoegenWijzigenVerwijderen, StudentEisenTabblad,
              OrganisatieFinancieelCollegegeldTabelBeheer,
              DocumentTemplates,
-             TakenBekijkenWijzigen)]
+             TakenBekijkenWijzigen), 
+            UsedImplicitly]
+        //bijna niemand heeft deze rol meer, en de mensen die hem hebben zijn allemaal mensen die we kennen
+        //van bv scrumdag. Denk dat deze goed is te verwijderen met een uurtje handwerk.
         StudentadministratieBeheerder = -5,
 
         [Obsolete, MpLabel("Studentadministratie extra"),
