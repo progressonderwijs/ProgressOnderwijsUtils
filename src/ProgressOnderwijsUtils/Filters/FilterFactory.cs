@@ -61,6 +61,12 @@ namespace ProgressOnderwijsUtils
         public static FilterBase Equal<TRow, T>(this FilterFactory<TRow>.FilterCreator<T> x, T? waarde) where T : struct
             => x.CreateCriterium(BooleanComparer.Equal, waarde);
 
+        public static FilterBase LessThan_CurrentTime<TRow>(this FilterFactory<TRow>.FilterCreator<DateTime> x)
+            => x.CreateCriterium(BooleanComparer.LessThan, Filter.CurrentTimeToken.Instance);
+
+        public static FilterBase GreaterThan_CurrentTime<TRow>(this FilterFactory<TRow>.FilterCreator<DateTime?> x)
+            => x.CreateCriterium(BooleanComparer.GreaterThan, Filter.CurrentTimeToken.Instance);
+
         public static FilterBase Contains<TRow>(this FilterFactory<TRow>.FilterCreator<string> x, string waarde)
             => x.CreateCriterium(BooleanComparer.Contains, waarde);
 
