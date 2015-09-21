@@ -1,0 +1,53 @@
+using ExpressionToCodeLib;
+using NUnit.Framework;
+using ProgressOnderwijsUtils;
+
+namespace ProgressOnderwijsUtilsTests
+{
+    public class FilterFactoryWildcardSearchTest
+    {
+        public class ExampleRow : IMetaObject
+        {
+            public string Text { get; set; }
+        }
+
+        static FilterFactory<ExampleRow>.FilterCreator<string> FilterFactory()
+            => new FilterFactory<ExampleRow>().FilterOn(o => o.Text);
+
+        [Test]
+        public void WithoutWildcardsMeansEqual()
+        {
+            PAssert.That(() => Equals(FilterFactory().SearchWithStars("needle"), FilterFactory().Equal("needle")));
+        }
+
+        [Test]
+        public void WildcardSuffixMeansStartsWith()
+        {
+            PAssert.That(() => Equals(FilterFactory().SearchWithStars("needle*"), FilterFactory().StartsWith("needle")));
+        }
+
+        [Test]
+        public void WildcardPrefixMeansEndsWith()
+        {
+            PAssert.That(() => Equals(FilterFactory().SearchWithStars("*needle"), FilterFactory().EndsWith("needle")));
+        }
+
+        [Test]
+        public void SuffixAndPrefixMeansContains()
+        {
+            PAssert.That(() => Equals(FilterFactory().SearchWithStars("*needle*"), FilterFactory().Contains("needle")));
+        }
+
+        [Test]
+        public void UnnecessaryStarsAreTrimmed()
+        {
+            PAssert.That(() => Equals(FilterFactory().SearchWithStars("***needle*****"), FilterFactory().Contains("needle")));
+        }
+
+        [Test]
+        public void StarsInTheMiddleArePlainContent()
+        {
+            PAssert.That(() => Equals(FilterFactory().SearchWithStars("a*needle*b"), FilterFactory().Equal("a*needle*b")));
+        }
+    }
+}
