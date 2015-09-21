@@ -1,5 +1,4 @@
-﻿using ApprovalTests.Core;
-using ApprovalTests.Reporters;
+﻿using ApprovalTests.Reporters;
 
 /*
  * Workaround voor https://github.com/approvals/ApprovalTests.Net/issues/91

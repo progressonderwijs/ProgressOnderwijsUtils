@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using log4net;
 
 namespace ProgressOnderwijsUtils.Log4Net

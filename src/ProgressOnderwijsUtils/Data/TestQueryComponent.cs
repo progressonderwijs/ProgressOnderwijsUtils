@@ -1,10 +1,7 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using System;
+﻿using System;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
-using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {

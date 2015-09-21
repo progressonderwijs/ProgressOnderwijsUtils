@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using Progress.Business;
