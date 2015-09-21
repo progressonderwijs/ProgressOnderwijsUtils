@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils.ErrorHandling
                 PrintMethodName(sb, method);
                 PrintMethodParameters(sb, method);
                 string fileName = frame.GetFileName();
-                if (!String.IsNullOrEmpty(fileName)) {
+                if (!string.IsNullOrEmpty(fileName)) {
                     sb.Append(" in ");
                     sb.Append(StripIrrelevantPathPrefix(fileName));
                     sb.Append(":line ");
