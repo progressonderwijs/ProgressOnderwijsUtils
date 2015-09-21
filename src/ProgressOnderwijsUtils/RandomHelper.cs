@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
         public static string GetStringUpperAndLower(int length, char min, char max)
         {
             var letters = (uint)max - min + 1;
-            var MIN = Char.ToUpper(min);
+            var MIN = char.ToUpper(min);
             var sb = new StringBuilder();
             for (var i = 0; i < length; i++) {
                 sb.Append((char)(GetUInt32(letters) + (GetUInt32(100) < 50 ? min : MIN)));
@@ -113,9 +113,9 @@ namespace ProgressOnderwijsUtils
         public void CheckRandomBasic()
         {
             HashSet<uint> numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
-            Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32()).Take(10000).Any(num => num > Int32.MaxValue));
-            Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetInt64()).Take(10000).Any(num => num > UInt32.MaxValue));
-            Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt64()).Take(10000).Any(num => num > Int64.MaxValue));
+            Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32()).Take(10000).Any(num => num > int.MaxValue));
+            Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetInt64()).Take(10000).Any(num => num > uint.MaxValue));
+            Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt64()).Take(10000).Any(num => num > long.MaxValue));
             Assert.IsTrue(numTo37.SetEquals(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32(37)).Take(10000))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
         }
 

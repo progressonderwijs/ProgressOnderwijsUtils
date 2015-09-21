@@ -72,16 +72,21 @@ namespace ProgressOnderwijsUtils
 
         static readonly char[] starTrimFilter = { '*' };
 
-        public static FilterBase SearchWithStars<TRow>(this FilterFactory<TRow>.FilterCreator<string> x, string waarde)
+        /// <summary>
+        /// Allows prefixing and suffixing a search term with '*' which are interpreted as globs.
+        /// i.e., a prefixed or suffixed star is equivalent to the regex .*
+        /// </summary>
+        public static FilterBase WildcardSearch<TRow>(this FilterFactory<TRow>.FilterCreator<string> x, string waarde)
         {
             var realNeedle = waarde.Trim(starTrimFilter);
-            bool start = waarde.StartsWith("*");
-            bool end = waarde.EndsWith("*");
-            return start && end
+            bool startsWithWildcard = waarde.StartsWith("*");
+            bool endWithWildcard = waarde.EndsWith("*");
+
+            return startsWithWildcard && endWithWildcard
                 ? x.Contains(realNeedle)
-                : start
+                : startsWithWildcard
                     ? x.EndsWith(realNeedle)
-                    : end
+                    : endWithWildcard
                         ? x.StartsWith(realNeedle)
                         : x.Equal(realNeedle);
         }

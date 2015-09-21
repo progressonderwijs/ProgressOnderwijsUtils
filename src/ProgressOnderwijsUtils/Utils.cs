@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
         public static void TestErrorOutOfMemory()
         {
             var memorySlurper = new List<byte[]>();
-            for (long i = 0; i < Int64.MaxValue; i++) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
+            for (long i = 0; i < long.MaxValue; i++) //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
             {
                 memorySlurper.Add(
                     Encoding.UTF8.GetBytes(

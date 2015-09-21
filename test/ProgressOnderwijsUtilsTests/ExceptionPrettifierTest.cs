@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using ApprovalTests;
@@ -42,7 +40,7 @@ namespace ProgressOnderwijsUtilsTests
 
     public class ExceptionPrettifierTest
     {
-        static string ElideLineNumbers(string text) => Regex.Replace(text, @":line \d+", ":line ??");
+        static string RemoveLineNumbers(string text) => Regex.Replace(text, @":line \d+", ":line ??");
 
         [Test, MethodImpl(MethodImplOptions.NoInlining), Continuous]
         public void TrivialStackTraceWorks()
@@ -50,7 +48,7 @@ namespace ProgressOnderwijsUtilsTests
             try {
                 ExampleTestClass.CausesError();
             } catch (Exception e) {
-                Approvals.Verify(ElideLineNumbers(ExceptionPrettifier.PrettyPrintException(e)));
+                Approvals.Verify(RemoveLineNumbers(ExceptionPrettifier.PrettyPrintException(e)));
             }
         }
 
@@ -60,7 +58,7 @@ namespace ProgressOnderwijsUtilsTests
             try {
                 new ExampleTestClass().IndirectErrorViaInterface(42);
             } catch (Exception e) {
-                Approvals.Verify(ElideLineNumbers(ExceptionPrettifier.PrettyPrintException(e)));
+                Approvals.Verify(RemoveLineNumbers(ExceptionPrettifier.PrettyPrintException(e)));
             }
         }
     }

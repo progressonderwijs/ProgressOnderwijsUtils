@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -42,7 +41,7 @@ namespace ProgressOnderwijsUtils.ErrorHandling
                 PrintMethodName(sb, method);
                 PrintMethodParameters(sb, method);
                 string fileName = frame.GetFileName();
-                if (!String.IsNullOrEmpty(fileName)) {
+                if (!string.IsNullOrEmpty(fileName)) {
                     sb.Append(" in ");
                     sb.Append(StripIrrelevantPathPrefix(fileName));
                     sb.Append(":line ");
