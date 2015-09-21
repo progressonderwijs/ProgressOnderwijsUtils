@@ -17,37 +17,37 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void WithoutWildcardsMeansEqual()
         {
-            PAssert.That(() => Equals(FilterFactory().SearchWithStars("needle"), FilterFactory().Equal("needle")));
+            PAssert.That(() => Equals(FilterFactory().WildcardSearch("needle"), FilterFactory().Equal("needle")));
         }
 
         [Test]
         public void WildcardSuffixMeansStartsWith()
         {
-            PAssert.That(() => Equals(FilterFactory().SearchWithStars("needle*"), FilterFactory().StartsWith("needle")));
+            PAssert.That(() => Equals(FilterFactory().WildcardSearch("needle*"), FilterFactory().StartsWith("needle")));
         }
 
         [Test]
         public void WildcardPrefixMeansEndsWith()
         {
-            PAssert.That(() => Equals(FilterFactory().SearchWithStars("*needle"), FilterFactory().EndsWith("needle")));
+            PAssert.That(() => Equals(FilterFactory().WildcardSearch("*needle"), FilterFactory().EndsWith("needle")));
         }
 
         [Test]
         public void SuffixAndPrefixMeansContains()
         {
-            PAssert.That(() => Equals(FilterFactory().SearchWithStars("*needle*"), FilterFactory().Contains("needle")));
+            PAssert.That(() => Equals(FilterFactory().WildcardSearch("*needle*"), FilterFactory().Contains("needle")));
         }
 
         [Test]
         public void UnnecessaryStarsAreTrimmed()
         {
-            PAssert.That(() => Equals(FilterFactory().SearchWithStars("***needle*****"), FilterFactory().Contains("needle")));
+            PAssert.That(() => Equals(FilterFactory().WildcardSearch("***needle*****"), FilterFactory().Contains("needle")));
         }
 
         [Test]
         public void StarsInTheMiddleArePlainContent()
         {
-            PAssert.That(() => Equals(FilterFactory().SearchWithStars("a*needle*b"), FilterFactory().Equal("a*needle*b")));
+            PAssert.That(() => Equals(FilterFactory().WildcardSearch("a*needle*b"), FilterFactory().Equal("a*needle*b")));
         }
     }
 }
