@@ -70,7 +70,6 @@ namespace ProgressOnderwijsUtilsTests
             public string Bla2 { get; set; }
         }
 
-        [SetUp]
         public void CreateTempTable()
         {
             SQL($@"create table #MyTable (id int not null primary key, bla nvarchar(max) null, bla2 nvarchar(max) not null)").ExecuteNonQuery(conn);
@@ -79,36 +78,42 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void BulkCopyChecksNames()
         {
+            CreateTempTable();
             Assert.Throws<InvalidOperationException>(() => MetaObject.SqlBulkCopy(new BlaWithMispelledColumns[0], conn.SqlConnection, "#MyTable"));
         }
 
         [Test]
         public void BulkCopyChecksTypes()
         {
+            CreateTempTable();
             Assert.Throws<InvalidOperationException>(() => MetaObject.SqlBulkCopy(new BlaWithMistypedColumns[0], conn.SqlConnection, "#MyTable"));
         }
 
         [Test]
         public void BulkCopyChecksTypes2()
         {
+            CreateTempTable();
             Assert.Throws<InvalidOperationException>(() => MetaObject.SqlBulkCopy(new BlaWithMistypedColumns2[0], conn.SqlConnection, "#MyTable"));
         }
 
         [Test]
         public void BulkCopyVerifiesExistanceOfDestinationColumns()
         {
+            CreateTempTable();
             Assert.Throws<InvalidOperationException>(() => MetaObject.SqlBulkCopy(new BlaWithExtraClrFields[0], conn.SqlConnection, "#MyTable"));
         }
 
         [Test]
         public void BulkCopyAllowsExtraDestinationColumns()
         {
+            CreateTempTable();
             MetaObject.SqlBulkCopy(new BlaWithMissingClrFields[0], conn.SqlConnection, "#MyTable");
         }
 
         [Test]
         public void BulkCopyAllowsExactMatch()
         {
+            CreateTempTable();
             MetaObject.SqlBulkCopy(SampleObjects, conn.SqlConnection, "#MyTable");
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(conn);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
@@ -117,6 +122,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void BulkCopySupportsColumnReordering()
         {
+            CreateTempTable();
             MetaObject.SqlBulkCopy(SampleObjects, conn.SqlConnection, "#MyTable");
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(conn);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
