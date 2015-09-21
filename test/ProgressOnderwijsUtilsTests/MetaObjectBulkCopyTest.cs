@@ -79,6 +79,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void BulkCopyChecksNames()
         {
+            CreateTempTable();
             Assert.Throws<InvalidOperationException>(() => MetaObject.SqlBulkCopy(new BlaWithMispelledColumns[0], conn.SqlConnection, "#MyTable"));
         }
 
