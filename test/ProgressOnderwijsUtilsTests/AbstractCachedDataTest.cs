@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 using Progress.WebFramework.Internal;
 
 namespace ProgressOnderwijsUtilsTests

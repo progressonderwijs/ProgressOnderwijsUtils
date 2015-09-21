@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using System.Globalization;
-using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
