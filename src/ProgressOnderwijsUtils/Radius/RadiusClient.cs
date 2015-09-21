@@ -79,8 +79,8 @@ namespace ProgressOnderwijsUtils.Radius
                 requestStream.WriteByte(0); //2
                 requestStream.WriteByte(0); //length placeholder;
                 requestStream.Write(requestAuthenticator, 0, requestAuthenticator.Length);
-                foreach (byte[] serializedAttr in radiusAttributes.Select(attr => attr.Paket)) {
-                    requestStream.Write(serializedAttr, 0, serializedAttr.Length);
+                foreach (var serializedAttribute in radiusAttributes.Select(attr => attr.Paket)) {
+                    requestStream.Write(serializedAttribute, 0, serializedAttribute.Length);
                 }
                 byte[] request = requestStream.ToArray();
                 if (request.Length > short.MaxValue) //perhaps actually ushort.Length is permitted, but we're taking no risks

@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.AppVersion;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {

@@ -1,9 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
-using System.Linq;
-using System.Collections.Generic;
 using System;
-using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {

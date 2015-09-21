@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using MoreLinq;
-using ProgressOnderwijsUtils;
+﻿using System.Collections.Generic;
 
 namespace ProgressOnderwijsUtils
 {

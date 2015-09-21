@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace ProgressOnderwijsUtils
+﻿namespace ProgressOnderwijsUtils
 {
     public static class HashCodeHelper
     {
