@@ -605,28 +605,5 @@ namespace ProgressOnderwijsUtils
         {
             return Enum.IsDefined(typeof(TEnum), enumval);
         }
-
-        public static IEnumerable<T> AllCombinations<T>() where T : struct, IConvertible, IComparable
-        {
-            // Construct a function for OR-ing together two enums
-            var orFunction = AddFlagsFunc<T>();
-
-            var initalValues = (T[])Enum.GetValues(typeof(T));
-            var discoveredCombinations = new HashSet<T>(initalValues);
-            var queue = new Queue<T>(initalValues);
-
-            // Try OR-ing every inital value to each value in the queue
-            while (queue.Count > 0) {
-                var a = queue.Dequeue();
-                foreach (T b in initalValues) {
-                    T combo = orFunction(a, b);
-                    if (discoveredCombinations.Add(combo)) {
-                        queue.Enqueue(combo);
-                    }
-                }
-            }
-
-            return discoveredCombinations;
-        }
     }
 }

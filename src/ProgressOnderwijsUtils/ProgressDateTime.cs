@@ -23,14 +23,6 @@ namespace ProgressOnderwijsUtils
         }
 
         /// <summary>
-        /// Zet de datum weer terug naar vandaag
-        /// </summary>
-        public void Reset()
-        {
-            DaysToAdd = 0;
-        }
-
-        /// <summary>
         /// De (voor de software) huidige datumtijd
         /// </summary>
         public DateTime Now => DateTime.Now.AddDays(DaysToAdd);
