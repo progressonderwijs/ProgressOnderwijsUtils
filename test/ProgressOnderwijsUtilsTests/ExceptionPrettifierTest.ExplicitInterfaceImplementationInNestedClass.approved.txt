@@ -1,4 +1,4 @@
 ﻿The method or operation is not implemented.
-   at Progress.Test.Tools.ExampleTestClass.NestedClass.SomeMethod() in test\Tools\ExceptionPrettifierTest.cs:line 29
-   at Progress.Test.Tools.ExampleTestClass.IndirectErrorViaInterface<T>(T param, string arg2) in test\Tools\ExceptionPrettifierTest.cs:line 19
-   at Progress.Test.Tools.ExceptionPrettifierTest.ExplicitInterfaceImplementationInNestedClass() in test\Tools\ExceptionPrettifierTest.cs:line 49
+   at Progress.Test.Tools.ExampleTestClass.NestedClass.SomeMethod() in test\Tools\ExceptionPrettifierTest.cs:line ??
+   at Progress.Test.Tools.ExampleTestClass.IndirectErrorViaInterface<T>(T param, string arg2) in test\Tools\ExceptionPrettifierTest.cs:line ??
+   at Progress.Test.Tools.ExceptionPrettifierTest.ExplicitInterfaceImplementationInNestedClass() in test\Tools\ExceptionPrettifierTest.cs:line ??

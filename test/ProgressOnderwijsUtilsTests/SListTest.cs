@@ -110,7 +110,10 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void HashDiffersPerType() { PAssert.That(() => SList<int>.Empty.GetHashCode() != SList<double>.Empty.GetHashCode()); }
+        public void HashDiffersPerType()
+        {
+            PAssert.That(() => SList<int>.Empty.GetHashCode() != SList<double>.Empty.GetHashCode());
+        }
 
         [Test]
         public void HashConsistentWithEquals()

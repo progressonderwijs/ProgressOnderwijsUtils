@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Test.CodeStyle;
@@ -40,7 +38,12 @@ namespace ProgressOnderwijsUtilsTests
         public readonly double ReadonlyField;
 #pragma warning restore 649
         public double ReadonlyProperty => 0.0;
-        public char WriteonlyProperty { set { } }
+
+        public char WriteonlyProperty
+        {
+            set { }
+        }
+
         public object PrivateSetter { get; }
         public object PrivateGetter { set; private get; }
     }

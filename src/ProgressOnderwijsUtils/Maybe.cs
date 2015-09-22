@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity.Core.Common.CommandTrees;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
@@ -50,7 +49,10 @@ namespace ProgressOnderwijsUtils
         /// Converts an untyped error message into a specific type of failed Maybe.  This operator is a  workaround to make it easy to create an error message without redundant type info.
         /// </summary>
         [Pure]
-        public static implicit operator Maybe<T>(Maybe.ErrorValue err) { return Maybe.Error<T>(err.ErrorMessage); }
+        public static implicit operator Maybe<T>(Maybe.ErrorValue err)
+        {
+            return Maybe.Error<T>(err.ErrorMessage);
+        }
 
         Maybe() { }
 
@@ -67,7 +69,12 @@ namespace ProgressOnderwijsUtils
             }
 
             public override bool IsOk => false;
-            public override bool Contains(T value) { return false; }
+
+            public override bool Contains(T value)
+            {
+                return false;
+            }
+
             public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) => ifError(error);
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) => ifError(error);
             public override string ToString() => $"Error({error})";
@@ -76,9 +83,19 @@ namespace ProgressOnderwijsUtils
         public sealed class OkValue : Maybe<T>
         {
             readonly T val;
-            public OkValue(T val) { this.val = val; }
+
+            public OkValue(T val)
+            {
+                this.val = val;
+            }
+
             public override bool IsOk => true;
-            public override bool Contains(T value) { return Equals(value, val); }
+
+            public override bool Contains(T value)
+            {
+                return Equals(value, val);
+            }
+
             public override TOut If<TOut>(Func<T, TOut> ifOk, Func<ITranslatable, TOut> ifError) => ifOk(val);
             public override void If(Action<T> ifOk, Action<ITranslatable> ifError) => ifOk(val);
             public override string ToString() => $"Ok({val})";

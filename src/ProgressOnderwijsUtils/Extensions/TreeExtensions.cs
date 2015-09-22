@@ -7,7 +7,10 @@ namespace ProgressOnderwijsUtils
     public static class TreeExtensions
     {
         [Pure]
-        public static RootedTree<T> RootHere<T>(this Tree<T> tree) { return RootedTree<T>.RootTree(tree); }
+        public static RootedTree<T> RootHere<T>(this Tree<T> tree)
+        {
+            return RootedTree<T>.RootTree(tree);
+        }
 
         [Pure]
         public static IEnumerable<T> PreorderTraversal<T>(this T tree) where T : IRecursiveStructure<T>

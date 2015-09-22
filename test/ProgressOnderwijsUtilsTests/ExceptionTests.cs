@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
@@ -12,7 +10,10 @@ namespace ProgressOnderwijsUtilsTests
     public sealed class ExceptionTests
     {
         [Test]
-        public void ClonerTest() { Assert.Throws<ArgumentException>(() => SerializationCloner.Clone(new Bla())); }
+        public void ClonerTest()
+        {
+            Assert.Throws<ArgumentException>(() => SerializationCloner.Clone(new Bla()));
+        }
 
         sealed class Bla { }
 

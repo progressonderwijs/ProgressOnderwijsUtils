@@ -8,7 +8,12 @@ namespace ProgressOnderwijsUtils.Collections
     {
         readonly Dictionary<T, NodeContainer> completedBranches = new Dictionary<T, NodeContainer>();
         readonly Func<T, IEnumerable<T>> kidLookup;
-        public CachedTreeBuilder(Func<T, IEnumerable<T>> kidLookup) { this.kidLookup = kidLookup; }
+
+        public CachedTreeBuilder(Func<T, IEnumerable<T>> kidLookup)
+        {
+            this.kidLookup = kidLookup;
+        }
+
         static readonly NodeContainer[] Empty = new NodeContainer[0];
 
         sealed class NodeContainer

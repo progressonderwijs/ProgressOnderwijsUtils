@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
@@ -120,6 +117,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             PAssert.That(() => XhtmlCleaner.CannotBeValidHtml(@"This is <b <b>bla</b> id>invalid</b>!"));
         }
+
         [Test]
         public void DetectsAnHtmlFragmentWithTagInEntityAsInvalid()
         {

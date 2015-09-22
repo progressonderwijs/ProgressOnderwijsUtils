@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ExpressionToCodeLib;
@@ -18,7 +17,10 @@ namespace ProgressOnderwijsUtilsTests
     [Continuous]
     public sealed class PlainOldDataTest
     {
-        static Func<T, S> MakeFunc<T, S>(Func<T, S> f) { return f; }
+        static Func<T, S> MakeFunc<T, S>(Func<T, S> f)
+        {
+            return f;
+        }
 
         public static void ComparePod(object a, object b)
         {

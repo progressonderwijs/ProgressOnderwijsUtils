@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
@@ -228,7 +225,10 @@ namespace ProgressOnderwijsUtils
             readonly MethodInfo getterMethod;
         }
 
-        static T MkDelegate<T>(MethodInfo mi) { return (T)(object)Delegate.CreateDelegate(typeof(T), mi); }
+        static T MkDelegate<T>(MethodInfo mi)
+        {
+            return (T)(object)Delegate.CreateDelegate(typeof(T), mi);
+        }
 
         static T AttrH<T>(this object[] attrs) where T : class
         {

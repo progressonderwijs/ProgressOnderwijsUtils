@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
 
@@ -30,6 +28,9 @@ namespace ProgressOnderwijsUtils
     public class BTTester
     {
         [Test]
-        public void ArgVerify() { Assert.Throws<ArgumentException>(() => BenchTimer.MinimumTime(() => { }, 0)); }
+        public void ArgVerify()
+        {
+            Assert.Throws<ArgumentException>(() => BenchTimer.MinimumTime(() => { }, 0));
+        }
     }
 }

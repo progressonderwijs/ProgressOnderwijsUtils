@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 using Progress.WebFramework.Internal;
 
 namespace ProgressOnderwijsUtilsTests
@@ -15,7 +14,10 @@ namespace ProgressOnderwijsUtilsTests
         public readonly FileInfo file;
 
         public TempTextFileTest(FileInfo tempfile)
-            : base(tempfile.Directory, tempfile.Name, true) { file = tempfile; }
+            : base(tempfile.Directory, tempfile.Name, true)
+        {
+            file = tempfile;
+        }
 
         public TempTextFileTest()
             : this(new FileInfo(Path.GetTempFileName())) { }
@@ -56,7 +58,10 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void NeedsRealDir() { Assert.Throws<ArgumentException>(() => { using (var t = new TempTextFileTest(new FileInfo(@"A:\b\c\d\e"))) { } }); }
+        public void NeedsRealDir()
+        {
+            Assert.Throws<ArgumentException>(() => { using (var t = new TempTextFileTest(new FileInfo(@"A:\b\c\d\e"))) { } });
+        }
 
         [Test]
         public void DeleteRecreateWorks()

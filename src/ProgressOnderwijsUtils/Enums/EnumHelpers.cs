@@ -7,7 +7,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -221,7 +220,10 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            static void CreateDelegate<TFunc>(out TFunc func, MethodInfo method) { func = (TFunc)(object)Delegate.CreateDelegate(typeof(TFunc), method); }
+            static void CreateDelegate<TFunc>(out TFunc func, MethodInfo method)
+            {
+                func = (TFunc)(object)Delegate.CreateDelegate(typeof(TFunc), method);
+            }
 
             struct AttrEntry
             {
@@ -457,11 +459,27 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable { return EnumMetaCache<T>.EnumValues; }
+        public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable
+        {
+            return EnumMetaCache<T>.EnumValues;
+        }
+
         public static IReadOnlyList<Enum> GetValues(Type enumType) => GetEnumMetaCache(enumType).Values();
-        public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.FlagEnumHelpers.AddFlag; }
-        public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.FlagEnumHelpers.HasFlag; }
-        public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible, IComparable { return EnumMetaCache<TEnum>.GetLabel(f); }
+
+        public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
+        {
+            return EnumMetaCache<TEnum>.FlagEnumHelpers.AddFlag;
+        }
+
+        public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
+        {
+            return EnumMetaCache<TEnum>.FlagEnumHelpers.HasFlag;
+        }
+
+        public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible, IComparable
+        {
+            return EnumMetaCache<TEnum>.GetLabel(f);
+        }
 
         public static ITranslatable GetLabel(Enum enumVal)
         {
@@ -476,14 +494,17 @@ namespace ProgressOnderwijsUtils
         }
 
         public static IReadOnlyList<SelectItem<TEnum>> CreateSelectItemList<TEnum>(this IEnumerable<TEnum> values)
-            where TEnum : struct, IConvertible, IComparable { return values.Select(GetSelectItem).ToArray(); }
+            where TEnum : struct, IConvertible, IComparable
+        {
+            return values.Select(GetSelectItem).ToArray();
+        }
 
         public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal)
             where TEnum : struct, IConvertible, IComparable
         {
             //TODO:EMN:improve this API.
             return values.CreateSelectItemList()
-                .Select(v =>new KoppelTabelEntry { Id = v.Value.ToInt32(null), Tekst = v.Label.Translate(taal).Text }
+                .Select(v => new KoppelTabelEntry { Id = v.Value.ToInt32(null), Tekst = v.Label.Translate(taal).Text }
                 ).ToDataTable();
         }
 
@@ -566,7 +587,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-
         public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible, IComparable
         {
             return EnumLabelLookup<TEnum>.Lookup(s, taal);
@@ -581,7 +601,10 @@ namespace ProgressOnderwijsUtils
             return parser.Lookup(s, taal);
         }
 
-        public static bool IsDefined<TEnum>(TEnum enumval) where TEnum : struct, IConvertible, IComparable { return Enum.IsDefined(typeof(TEnum), enumval); }
+        public static bool IsDefined<TEnum>(TEnum enumval) where TEnum : struct, IConvertible, IComparable
+        {
+            return Enum.IsDefined(typeof(TEnum), enumval);
+        }
 
         public static IEnumerable<T> AllCombinations<T>() where T : struct, IConvertible, IComparable
         {

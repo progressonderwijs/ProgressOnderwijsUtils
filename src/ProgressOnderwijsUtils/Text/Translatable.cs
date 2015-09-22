@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using JetBrains.Annotations;
-using MoreLinq;
-using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -44,8 +41,16 @@ namespace ProgressOnderwijsUtils
         class HtmlTooltipTranslatable : ITranslatable
         {
             readonly ITranslatable underlying;
-            public HtmlTooltipTranslatable(ITranslatable underlying) { this.underlying = underlying; }
-            public string GenerateUid() { return underlying.GenerateUid() + "<>"; }
+
+            public HtmlTooltipTranslatable(ITranslatable underlying)
+            {
+                this.underlying = underlying;
+            }
+
+            public string GenerateUid()
+            {
+                return underlying.GenerateUid() + "<>";
+            }
 
             public TextVal Translate(Taal lang)
             {
@@ -177,7 +182,12 @@ namespace ProgressOnderwijsUtils
         sealed class SingleTranslatable : ITranslatable
         {
             readonly Func<Taal, string> stringify;
-            public SingleTranslatable(Func<Taal, string> stringify) { this.stringify = stringify; }
+
+            public SingleTranslatable(Func<Taal, string> stringify)
+            {
+                this.stringify = stringify;
+            }
+
             public string GenerateUid() => stringify(Taal.NL);
             public TextVal Translate(Taal lang) => TextVal.Create(stringify(lang));
             public override string ToString() => GenerateUid();
@@ -201,7 +211,12 @@ namespace ProgressOnderwijsUtils
         sealed class SimpleTranslatable : ITranslatable
         {
             readonly Func<Taal, TextVal> translator;
-            public SimpleTranslatable(Func<Taal, TextVal> translator) { this.translator = translator; }
+
+            public SimpleTranslatable(Func<Taal, TextVal> translator)
+            {
+                this.translator = translator;
+            }
+
             public string GenerateUid() => Translate(Taal.NL).ToString();
             public TextVal Translate(Taal lang) => translator(lang);
             public override string ToString() => GenerateUid();
@@ -226,7 +241,12 @@ namespace ProgressOnderwijsUtils
         sealed class RawTranslatable : ITranslatable
         {
             readonly TextVal tv;
-            public RawTranslatable(TextVal tv) { this.tv = tv; }
+
+            public RawTranslatable(TextVal tv)
+            {
+                this.tv = tv;
+            }
+
             public string GenerateUid() => "TV:" + tv.Text + "\n" + tv.ExtraText;
             public override string ToString() => GenerateUid();
             public TextVal Translate(Taal taal) => tv;

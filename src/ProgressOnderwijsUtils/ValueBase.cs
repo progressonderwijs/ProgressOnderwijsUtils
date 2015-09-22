@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -54,7 +53,10 @@ namespace ProgressOnderwijsUtils
 
     public static class ToStringByMembers
     {
-        public static string ToStringByPublicMembers<T>(T obj) { return ToStringByMembers<T>.Func(obj); }
+        public static string ToStringByPublicMembers<T>(T obj)
+        {
+            return ToStringByMembers<T>.Func(obj);
+        }
     }
 
     public static class ToStringByMembers<T>

@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static string DataTableToMetaObjectClassDef(this DataTable dt, string classNameOverride = null)
         {
-            classNameOverride = classNameOverride ?? (String.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName);
+            classNameOverride = classNameOverride ?? (string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName);
             return ("public sealed class " + classNameOverride + " : IMetaObject "
                 + "{\n"
                 + Indent(
@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils
             var wrapped = SQL($"select top 0 q.* from ({q}) q");
             var dt = AutoLoadFromDb.ReadDataTableWithSqlMetadata(wrapped, conn);
             var columns = dt.Columns.Cast<DataColumn>().Select(ColumnDefinition.Create).ToArray();
-            name = name ?? (String.IsNullOrEmpty(dt.TableName) ? "ZZ_SAMPLE_CLASS" : dt.TableName);
+            name = name ?? (string.IsNullOrEmpty(dt.TableName) ? "ZZ_SAMPLE_CLASS" : dt.TableName);
             return (
                 "public sealed class " + name + " : ILoadFromDbByConstructor\n"
                     + "{\n"

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ExpressionToCodeLib;
+﻿using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.WebSupport;
 
@@ -90,9 +87,15 @@ a.KleinVet {
                 @".noxslt{background-color:#faf!important;font-family:MS Sans Serif,Sans-Serif;font-size:smaller;color:#000}#reqTime{color:black;background:#eee;padding:.2em;white-space:pre-wrap;font-family:Segoe UI,Verdana,Helvetica,sans-serif;font-size:130%}.adisabled{color:Gray!important}.KleinVet{font-weight:bold;font-size:80%;color:Gray}a.KleinVet{color:#365a9c}.treebuttons,.taallinks,.statusmodule a{font-weight:bold;font-size:80%;color:#365a9c}";
 
         [Test]
-        public void MinifyJavascript() { PAssert.That(() => outputIdealJS == MinifyYui.MinifyJs(inputJS)); }
+        public void MinifyJavascript()
+        {
+            PAssert.That(() => outputIdealJS == MinifyYui.MinifyJs(inputJS));
+        }
 
         [Test]
-        public void MinifyCss() { PAssert.That(() => outputCss == MinifyYui.MinifyCss(inputCss)); }
+        public void MinifyCss()
+        {
+            PAssert.That(() => outputCss == MinifyYui.MinifyCss(inputCss));
+        }
     }
 }

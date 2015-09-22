@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using ExpressionToCodeLib;
+﻿using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;

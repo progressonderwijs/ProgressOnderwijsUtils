@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
@@ -10,7 +9,10 @@ namespace ProgressOnderwijsUtils
 {
     public static class XmlSerializerHelper
     {
-        public static T Deserialize<T>(string xml) { return XmlSerializerHelper<T>.Deserialize(xml); }
+        public static T Deserialize<T>(string xml)
+        {
+            return XmlSerializerHelper<T>.Deserialize(xml);
+        }
 
         public static string SerializeToString(object o)
         {
@@ -77,6 +79,10 @@ namespace ProgressOnderwijsUtils
         }
 
         internal XmlSerializerHelper() { }
-        void IXmlSerializeHelper.SerializeToInst(XmlWriter xw, object val) { serializer.Serialize(xw, val); }
+
+        void IXmlSerializeHelper.SerializeToInst(XmlWriter xw, object val)
+        {
+            serializer.Serialize(xw, val);
+        }
     }
 }

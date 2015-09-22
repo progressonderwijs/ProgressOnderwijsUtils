@@ -180,23 +180,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static Tuple<T1[], T2[]> ReadByConstructor<T1, T2>(SqlCommand cmd)
-            where T1 : IReadByConstructor
-            where T2 : IReadByConstructor
-        {
-            using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
-                var lastColumnRead = 0;
-                DataReaderSpecialization<SqlDataReader>.Impl<T1>.VerifyDataReaderShape(reader);
-                var arr1 = DataReaderSpecialization<SqlDataReader>.Impl<T1>.LoadRows(reader, out lastColumnRead);
-                if (!reader.NextResult()) {
-                    throw new QueryException("Cannot load second result set (type " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T2)) + ")\nQuery:\n\n" + cmd.CommandText);
-                }
-                DataReaderSpecialization<SqlDataReader>.Impl<T2>.VerifyDataReaderShape(reader);
-                var arr2 = DataReaderSpecialization<SqlDataReader>.Impl<T2>.LoadRows(reader, out lastColumnRead);
-                return Tuple.Create(arr1, arr2);
-            }
-        }
-
         const BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
 
         static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =

@@ -62,8 +62,16 @@ namespace ProgressOnderwijsUtils
             public override bool Equals(object obj) => Equals(obj as ReferencePair);
             public bool Equals(ReferencePair other) => other != null && ReferenceEquals(a, other.a) && ReferenceEquals(b, other.b);
             public override int GetHashCode() => RuntimeHelpers.GetHashCode(a) + 137 * RuntimeHelpers.GetHashCode(b);
-            public static bool operator ==(ReferencePair a, ReferencePair b) { return ReferenceEquals(a, b) || !object.ReferenceEquals(a, null) && a.Equals(b); }
-            public static bool operator !=(ReferencePair a, ReferencePair b) { return !(a == b); }
+
+            public static bool operator ==(ReferencePair a, ReferencePair b)
+            {
+                return ReferenceEquals(a, b) || !object.ReferenceEquals(a, null) && a.Equals(b);
+            }
+
+            public static bool operator !=(ReferencePair a, ReferencePair b)
+            {
+                return !(a == b);
+            }
         }
 
         struct AccessibleMember

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
@@ -27,7 +25,10 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Zet de datum weer terug naar vandaag
         /// </summary>
-        public void Reset() { DaysToAdd = 0; }
+        public void Reset()
+        {
+            DaysToAdd = 0;
+        }
 
         /// <summary>
         /// De (voor de software) huidige datumtijd

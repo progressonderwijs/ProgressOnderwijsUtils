@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
@@ -44,10 +42,16 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void ColumnCountOk() { PAssert.That(() => colSort.ColumnCount == 3); }
+        public void ColumnCountOk()
+        {
+            PAssert.That(() => colSort.ColumnCount == 3);
+        }
 
         [Test]
-        public void ToStringOk() { PAssert.That(() => colSort.ToString() == "{[ziggy Asc], [abc Asc], [acol Desc]}"); }
+        public void ToStringOk()
+        {
+            PAssert.That(() => colSort.ToString() == "{[ziggy Asc], [abc Asc], [acol Desc]}");
+        }
 
         [Test]
         public void IsImmutable()
