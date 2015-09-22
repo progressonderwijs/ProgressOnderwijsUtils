@@ -29,6 +29,7 @@ namespace ProgressOnderwijsUtils
                 retval.ExtraText == null ? null : string.Format(retval.ExtraText, helpTextRep));
         }
 
+        [CodeDieAlleenWordtGebruiktInTests]
         public ITranslatable Core => core; // needed for testing purposes ...
     }
 }
