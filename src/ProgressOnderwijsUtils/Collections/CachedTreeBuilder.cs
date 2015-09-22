@@ -59,7 +59,6 @@ namespace ProgressOnderwijsUtils.Collections
                     var kids = kidLookup(nodeContainer.value);
                     if (kids != null) {
                         int kidCount = 0;
-                        //var kidCons = FastArrayBuilder<NodeContainer>.Create();
                         foreach (var kid in kids) {
                             NodeContainer con;
                             if (!completedBranches.TryGetValue(kid, out con)) {
