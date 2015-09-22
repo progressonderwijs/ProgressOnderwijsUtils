@@ -25,6 +25,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 
         public readonly byte[] GzippedUtf8String;
 
+        [CodeDieAlleenWordtGebruiktInTests]
         public CompressedUtf8String(byte[] compressedData)
         {
             GzippedUtf8String = compressedData;

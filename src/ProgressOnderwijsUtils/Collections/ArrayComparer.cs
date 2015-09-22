@@ -3,8 +3,10 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
+    [CodeDieAlleenWordtGebruiktInTests]
     public class ArrayComparer<T> : IEqualityComparer<T[]>
     {
+        [CodeDieAlleenWordtGebruiktInTests]
         public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
         readonly EqualityComparer<T> underlying;
         static readonly ulong start = (ulong)typeof(T).MetadataToken + ((ulong)typeof(T).Module.MetadataToken << 32);

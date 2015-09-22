@@ -31,6 +31,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
+        [CodeDieAlleenWordtGebruiktInTests]
         public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
             where TMetaObject : IMetaObject
         {

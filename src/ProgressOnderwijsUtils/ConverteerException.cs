@@ -6,6 +6,7 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public class ConverteerException : ProgressNetException
     {
+        [CodeDieAlleenWordtGebruiktInTests]
         public ConverteerException() { }
 
         public ConverteerException(string debugMessage)

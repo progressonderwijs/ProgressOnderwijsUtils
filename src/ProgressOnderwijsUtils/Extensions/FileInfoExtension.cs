@@ -4,9 +4,11 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
+    [CodeDieAlleenWordtGebruiktInTests]
     public static class FileInfoExtension
     {
         [Pure]
+        [CodeDieAlleenWordtGebruiktInTests]
         public static string ReadToEnd(this FileInfo file)
         {
             using (var reader = file.OpenText())
@@ -17,6 +19,7 @@ namespace ProgressOnderwijsUtils
         /// Tests whether this file has the same contents as another file.
         /// </summary>
         [Pure]
+        [CodeDieAlleenWordtGebruiktInTests]
         public static bool SameContents(this FileInfo one, FileInfo other)
         {
             if (other == null) {

@@ -8,6 +8,7 @@
 
 namespace ProgressOnderwijsUtils
 {
+    [CodeDieAlleenWordtGebruiktInTests]
     public class WorkingDiffReporter : FirstWorkingReporter
     {
         public WorkingDiffReporter()

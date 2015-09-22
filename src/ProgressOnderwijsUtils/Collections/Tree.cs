@@ -23,6 +23,7 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b) => new Tree<T>(value, new[] { a, b });
 
         [Pure]
+        [CodeDieAlleenWordtGebruiktInTests]
         public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c) => new Tree<T>(value, new[] { a, b, c });
 
         // ReSharper disable MethodOverloadWithOptionalParameter
@@ -40,9 +41,11 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) => BuildRecursively(root, id => kidLookup.GetOrDefaultR(id));
 
         [Pure]
+        [CodeDieAlleenWordtGebruiktInTests]
         public static Tree<T> BuildRecursively<T>(T root, ILookup<T, T> kidLookup) => BuildRecursively(root, id => kidLookup[id]);
 
         [Pure]
+        [CodeDieAlleenWordtGebruiktInTests]
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) => new Tree<T>.Comparer(valueComparer);
 
         /// <summary>

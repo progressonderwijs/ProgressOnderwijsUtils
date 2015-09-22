@@ -52,6 +52,7 @@ namespace ProgressOnderwijsUtils
         public static bool IsToekenbaar(this Rol rol) => rollenRelations[(int)rol].IsToekenbaar;
 
         [Pure]
+        [CodeDieAlleenWordtGebruiktInTests]
         public static RollenSet OnderliggendeToegangsRollen(this Rol root) => new RollenSet(OnderliggendeToegangsRollenImpl(root));
 
         static Rol[] OnderliggendeToegangsRollenImpl(Rol root)

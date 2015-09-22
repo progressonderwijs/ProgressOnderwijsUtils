@@ -118,6 +118,7 @@ namespace ProgressOnderwijsUtils
             return new ArrayView<T>(vals);
         }
 
+        [CodeDieAlleenWordtGebruiktInTests]
         public static IReadOnlyList<T> AsReadOnlyView<T>(this IList<T> list)
         {
             return list as IReadOnlyList<T> ?? new ListView<T>(list);

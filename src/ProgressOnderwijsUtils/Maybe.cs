@@ -32,6 +32,7 @@ namespace ProgressOnderwijsUtils
         /// Returns whether this maybe contains this value. Returns false if the maybe is not ok
         /// </summary>
         [Pure]
+        [CodeDieAlleenWordtGebruiktInTests]
         public abstract bool Contains(T value);
 
         /// <summary>

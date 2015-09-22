@@ -188,6 +188,7 @@ namespace ProgressOnderwijsUtils
             return filter != null && filter.IsFilterValid(typeIfPresent) ? filter : null;
         }
 
+        [CodeDieAlleenWordtGebruiktInTests]
         public static FilterBase ClearFilterWhenItContainsInvalidColumns<T>(this FilterBase filter)
             where T : IMetaObject
         {

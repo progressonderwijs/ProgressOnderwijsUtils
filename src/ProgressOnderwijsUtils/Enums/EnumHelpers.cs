@@ -587,6 +587,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [CodeDieAlleenWordtGebruiktInTests]
         public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible, IComparable
         {
             return EnumLabelLookup<TEnum>.Lookup(s, taal);

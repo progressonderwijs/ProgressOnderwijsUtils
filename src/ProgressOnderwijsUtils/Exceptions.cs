@@ -25,9 +25,11 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public class QueryException : ProgressNetException
     {
+        [CodeDieAlleenWordtGebruiktInTests]
         public QueryException(string msg)
             : base(msg) { }
 
+        [CodeDieAlleenWordtGebruiktInTests]
         public QueryException() { }
 
         public QueryException(string msg, Exception inner)
@@ -38,6 +40,7 @@ namespace ProgressOnderwijsUtils
     }
 
     [Serializable]
+    [CodeDieAlleenWordtGebruiktInTests]
     public class TemplateException : Exception
     {
         public int Line { get; }
@@ -69,6 +72,7 @@ namespace ProgressOnderwijsUtils
         public GenericMetaDataException(string debugMessage)
             : base(debugMessage) { }
 
+        [CodeDieAlleenWordtGebruiktInTests]
         public GenericMetaDataException(string debugMessage, Exception innerException)
             : base(debugMessage, innerException) { }
 
