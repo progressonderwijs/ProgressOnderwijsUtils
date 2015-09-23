@@ -11,6 +11,8 @@ namespace ProgressOnderwijsUtils
                     return "organisatieid";
                 case "BankrekeningAfschrift":
                     return "afschriftid";
+                case "Betalinginformatie":
+                    return "StudentInschrijvingBetalingInformatieId";
                 default:
                     return typeof(T).Name + "Id";
             }
