@@ -545,7 +545,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Cursussen tab")]
         CursussenTab = 221,
 
-        [MpLabel("Student richting toevoegen wijzigen verwijderen")]
+        [MpLabel("Student richting toevoegen wijzigen verwijderen"), Toekenbaar]
         StudentRichtingToevoegenWijzigenVerwijderen = 222,
 
         [MpLabel("COMBI: bekijk inschrijving/financieel/studielink/cursus"), Toekenbaar, Implies(BekijkenStudielinkberichten, BekijkenInschrijvingenUitgebreid,
