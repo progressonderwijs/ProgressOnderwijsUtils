@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.Serialization;
-using System.ServiceModel.Channels;
 
 namespace ProgressOnderwijsUtils
 {
@@ -13,6 +11,8 @@ namespace ProgressOnderwijsUtils
         public NietZoErgeException(string message, Exception inner)
             : this(Translatable.Raw(message + (inner != null ? " (" + inner.Message + ")" : "")), inner) { }
 
+
+        [UsefulToKeep("als de string handig is zonder inner, is deze dat ook")]
         public NietZoErgeException(ITranslatable melding)
             : this(melding, null) { }
 
