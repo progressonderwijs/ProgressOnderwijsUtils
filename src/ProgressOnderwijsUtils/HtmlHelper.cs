@@ -4,6 +4,8 @@ namespace ProgressOnderwijsUtils
 {
     public static class HtmlHelper
     {
+        public static XhtmlData CheckmarkGreenNoBorderSymbol() => XhtmlData.Create(new XElement("span", new XAttribute("class", "CheckmarkGreenNoBorderSymbol")));
+
         public static XhtmlData RenderPercentageGrafisch(decimal percentage)
         {
             var divOuter = new XElement(
