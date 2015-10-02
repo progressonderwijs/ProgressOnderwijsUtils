@@ -15,7 +15,6 @@ namespace ProgressOnderwijsUtils
     {
         public int Id { get; set; }
         public string Tekst { get; set; }
-
         public int CompareTo(KoppelTabelEntry other) => Id.CompareTo(other.Id);
     }
 
