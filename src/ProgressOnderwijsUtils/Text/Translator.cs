@@ -1,11 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
     public static class Translator
     {
+        public static readonly IReadOnlyCollection<Taal> AllLanguages = EnumHelpers.GetValues<Taal>().Where(taal => taal != Taal.None).ToArray();
+
         static readonly IDictionary<Taal, CultureInfo> CULTURES = new Dictionary<Taal, CultureInfo> {
             { Taal.NL, new CultureInfo("nl-NL", false) },
             { Taal.EN, new CultureInfo("en-GB", false) },
