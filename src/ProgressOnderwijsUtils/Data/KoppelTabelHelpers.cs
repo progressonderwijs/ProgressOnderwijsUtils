@@ -17,4 +17,13 @@ namespace ProgressOnderwijsUtils
         public string Tekst { get; set; }
         public int CompareTo(KoppelTabelEntry other) => Id.CompareTo(other.Id);
     }
+
+    public struct KoppelTabelTaalEntry : IMetaObject
+    {
+        public int Id { get; set; }
+        public string Tekst { get; set; }
+        public Taal Taal { get; set; }
+        public KoppelTabelEntry ToEntryWithoutTaal() => new KoppelTabelEntry { Id = Id, Tekst = Tekst };
+    }
+
 }
