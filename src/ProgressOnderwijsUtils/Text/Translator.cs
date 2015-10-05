@@ -19,6 +19,30 @@ namespace ProgressOnderwijsUtils
             CULTURES[Taal.EN].DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
             CULTURES[Taal.EN].NumberFormat.CurrencySymbol = CULTURES[Taal.NL].NumberFormat.CurrencySymbol;
             CULTURES[Taal.DU].DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
+            CULTURES[Taal.LA] = CreateLatinCulture();
+        }
+
+        static CultureInfo CreateLatinCulture()
+        {
+            var info = (CultureInfo)CULTURES[Taal.NL].Clone(); // Geen .NET-ondersteuning voor Latijn
+
+            info.DateTimeFormat.MonthGenitiveNames = new[] {
+                "Ianuarii",
+                "Februarii",
+                "Martii",
+                "Aprilis",
+                "Maii",
+                "Iunii",
+                "Iulii",
+                "Augusti",
+                "Septembris",
+                "Octobris",
+                "Novembris",
+                "Decembris",
+                ""
+            };
+
+            return info;
         }
 
         [Pure]
