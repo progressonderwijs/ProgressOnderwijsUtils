@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -8,6 +9,7 @@ namespace ProgressOnderwijsUtils
 
     public struct FilterFactory<TObj>
     {
+        [Pure]
         public FilterCreator<T> FilterOn<T>(Expression<Func<TObj, T>> columnToFilter) => new FilterCreator<T>(columnToFilter);
 
         public struct FilterCreator<T>
