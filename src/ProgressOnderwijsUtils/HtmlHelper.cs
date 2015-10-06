@@ -6,6 +6,21 @@ namespace ProgressOnderwijsUtils
     {
         public static XhtmlData CheckmarkGreenNoBorderSymbol() => XhtmlData.Create(new XElement("span", new XAttribute("class", "CheckmarkGreenNoBorderSymbol")));
 
+        public static XhtmlData QuestionRedSymbol(string toolTip) => XhtmlData.Create(
+            new XElement("span",
+                new XAttribute("class", "QuestionRedSymbol hastooltip"),
+                new XAttribute("data-tiptext", toolTip)));
+
+        public static XhtmlData CrossRedSymbol(string toolTip) => XhtmlData.Create(
+            new XElement("span",
+                new XAttribute("class", "CrossRedSymbol hastooltip"),
+                new XAttribute("data-tiptext", toolTip)));
+
+        public static XhtmlData ExclamationGreenSymbol(string toolTip) => XhtmlData.Create(
+            new XElement("span",
+                new XAttribute("class", "ExclamationGreenSymbol hastooltip"),
+                new XAttribute("data-tiptext", toolTip)));
+
         public static XhtmlData RenderPercentageGrafisch(decimal percentage)
         {
             var divOuter = new XElement(
