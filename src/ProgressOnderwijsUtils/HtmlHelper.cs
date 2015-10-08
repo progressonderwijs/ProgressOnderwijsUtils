@@ -4,16 +4,16 @@ namespace ProgressOnderwijsUtils
 {
     public static class HtmlHelper
     {
-        static XhtmlData Symbol(string cssClass) => XhtmlData.Create(
-            new XElement("span",
-                new XAttribute("class", cssClass)));
+        static XhtmlData Symbol(string cssClass, string toolTip)
+        {
+            var hasToolTip = !string.IsNullOrWhiteSpace(toolTip);
+            return XhtmlData.Create(
+                new XElement("span",
+                    new XAttribute("class", cssClass + (hasToolTip ? " hastooltip" : "")),
+                    hasToolTip ? new XAttribute("data-tiptext", toolTip) : null));
+        }
 
-        static XhtmlData Symbol(string cssClass, string toolTip) => XhtmlData.Create(
-            new XElement("span",
-                new XAttribute("class", cssClass + " hastooltip"),
-                new XAttribute("data-tiptext", toolTip)));
-
-        public static XhtmlData CheckmarkGreenNoBorderSymbol() => Symbol("CheckmarkGreenNoBorderSymbol");
+        public static XhtmlData CheckmarkGreenNoBorderSymbol() => Symbol("CheckmarkGreenNoBorderSymbol", null);
 
         public static XhtmlData QuestionRedSymbol(string toolTip) => Symbol("QuestionRedSymbol", toolTip);
 
