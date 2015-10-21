@@ -57,6 +57,12 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
+        public static T ToEnum<T>(this string value)
+        {
+            return (T)Enum.Parse(typeof(T), value);
+        }
+
+        [Pure]
         public static string Replace(this string s, IEnumerable<KeyValuePair<string, string>> replacements) => replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
     }
 }
