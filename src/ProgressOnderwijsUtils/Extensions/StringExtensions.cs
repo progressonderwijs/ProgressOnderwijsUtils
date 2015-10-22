@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
@@ -56,10 +57,15 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [Pure]
-        public static T ToEnum<T>(this string value)
+        public static T ToEnum<T>(this string value, bool canAddValue = false)
         {
-            return (T)Enum.Parse(typeof(T), value);
+            T outEnum;
+            if (Enum.IsDefined(typeof(T), value) || canAddValue) {
+               outEnum = (T) Enum.Parse(typeof(T), value);
+            } else {
+                throw new InvalidEnumArgumentException($"{value} niet in {typeof(T).FullName}");
+            }
+            return outEnum;
         }
 
         [Pure]
