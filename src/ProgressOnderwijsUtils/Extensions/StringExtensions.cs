@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils
             if (Enum.IsDefined(typeof(T), value) || (canAddValue && int.TryParse(value, out valueIsNumeric))) {
                outEnum = (T) Enum.Parse(typeof(T), value);
             } else {
-                throw new InvalidEnumArgumentException($"{value} niet in {typeof(T).FullName}");
+                throw new InvalidEnumArgumentException($"{value} niet in {typeof(T).FullName} {(canAddValue ? "canAddValue:true kan alleen met numerieke waarden" : "")}");
             }
             return outEnum;
         }
@@ -75,9 +75,6 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static string Replace(this string s, IEnumerable<KeyValuePair<string, string>> replacements) => replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
     }
-
-    [AttributeUsage(AttributeTargets.Enum)]
-    sealed class IdentifierEnumAttribute : Attribute { }
 
     public static class TestData
     {
@@ -88,7 +85,6 @@ namespace ProgressOnderwijsUtils
             vchmsg06onderhoudennaw
         }
 
-        [IdentifierEnum]
         public enum Opleiding
         { }
     
