@@ -31,6 +31,10 @@ namespace ProgressOnderwijsUtils
 
         public static XhtmlData CheckmarkBlackSymbol() => Symbol("CheckmarkBlackSymbol", null);
 
+        public static XhtmlData EmptySquareSymbol() => Symbol("EmptySquareSymbol", null);
+
+        public static XhtmlData CheckmarkOnGreenSquareSymbol() => Symbol("CheckmarkOnGreenSquareSymbol", null);
+
         public static XhtmlData RenderPercentageGrafisch(decimal percentage)
         {
             var divOuter = new XElement(
