@@ -15,6 +15,8 @@ namespace ProgressOnderwijsUtils
 
         public static XhtmlData CheckmarkGreenNoBorderSymbol() => Symbol("CheckmarkGreenNoBorderSymbol", null);
 
+        public static XhtmlData CheckmarkGreenNoBorderSymbol(string toolTip) => Symbol("CheckmarkGreenNoBorderSymbol", toolTip);
+
         public static XhtmlData QuestionRedSymbol(string toolTip) => Symbol("QuestionRedSymbol", toolTip);
 
         public static XhtmlData CrossRedSymbol(string toolTip) => Symbol("CrossRedSymbol", toolTip);
@@ -26,6 +28,10 @@ namespace ProgressOnderwijsUtils
         public static XhtmlData LedGreenSymbol(string toolTip) => Symbol("LedGreenSymbol", toolTip);
 
         public static XhtmlData LedRedSymbol(string toolTip) => Symbol("LedRedSymbol", toolTip);
+
+        public static XhtmlData EmptySquareSymbol() => Symbol("EmptySquareSymbol", null);
+
+        public static XhtmlData CheckmarkOnGreenSquareSymbol() => Symbol("CheckmarkOnGreenSquareSymbol", null);
 
         public static XhtmlData RenderPercentageGrafisch(decimal percentage)
         {
