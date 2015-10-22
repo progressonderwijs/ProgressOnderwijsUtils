@@ -29,6 +29,8 @@ namespace ProgressOnderwijsUtils
 
         public static XhtmlData LedRedSymbol(string toolTip) => Symbol("LedRedSymbol", toolTip);
 
+        public static XhtmlData CheckmarkBlackSymbol() => Symbol("CheckmarkBlackSymbol", null);
+
         public static XhtmlData RenderPercentageGrafisch(decimal percentage)
         {
             var divOuter = new XElement(
