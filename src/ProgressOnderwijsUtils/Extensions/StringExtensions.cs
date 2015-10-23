@@ -81,7 +81,6 @@ namespace ProgressOnderwijsUtils
 
         public enum BerichtTypes
         {
-            //vchmsg03inschrijving,
             vchmsg06onderhoudennaw
         }
 
@@ -103,9 +102,12 @@ namespace ProgressOnderwijsUtils
             Assert.Throws<InvalidEnumArgumentException>(() => "vchmsg25herinschrijving".ToEnum<TestData.BerichtTypes>());
             Assert.Throws<InvalidEnumArgumentException>(() => 23.ToString().ToEnum<TestData.BerichtTypes>());
             Assert.Throws<InvalidEnumArgumentException>(() => "vchmsg03inschrijving".ToEnum<TestData.BerichtTypes>(true));
+            Assert.DoesNotThrow(() => 75612.ToString().ToEnum<TestData.BerichtTypes>(true));
             PAssert.That(() => n23 == (TestData.Opleiding)23);
             PAssert.That(() => n75612 != (TestData.Opleiding)23);
             PAssert.That(() => n75612 == (TestData.Opleiding)75612);
+            var add2berichttype = 75612.ToString().ToEnum<TestData.BerichtTypes>(true);
+            PAssert.That(() =>  add2berichttype == (TestData.BerichtTypes)75612);
         }
     }
 }
