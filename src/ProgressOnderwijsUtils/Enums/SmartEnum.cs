@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace ProgressOnderwijsUtils
+﻿namespace ProgressOnderwijsUtils
 {
     public abstract class SmartEnum
     {
@@ -14,6 +10,11 @@ namespace ProgressOnderwijsUtils
         {
             Id = id;
             Text = text;
+        }
+
+        public override string ToString()
+        {
+            return Text.Translate(Taal.NL).Text;
         }
     }
 }
