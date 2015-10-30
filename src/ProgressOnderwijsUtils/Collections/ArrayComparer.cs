@@ -42,8 +42,8 @@ namespace ProgressOnderwijsUtils.Collections
             ulong buffer;
             if (arr != null) {
                 buffer = start;
-                for (int i = 0; i < arr.Length; i++) {
-                    buffer = buffer * 997 + (ulong)underlying.GetHashCode(arr[i]);
+                foreach (var obj in arr) {
+                    buffer = buffer * 997 + (ulong)underlying.GetHashCode(obj);
                 }
             } else {
                 buffer = ~start;
