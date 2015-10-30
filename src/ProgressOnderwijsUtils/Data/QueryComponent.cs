@@ -28,6 +28,8 @@ namespace ProgressOnderwijsUtils
                 return new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant());
             } else if (o is IEnumerable && !(o is string) && !(o is byte[])) {
                 return ToTableParameter((IEnumerable)o);
+            } else if (o is SmartEnum) {
+                return new QuerySmartEnumComponent((SmartEnum)o);
             } else {
                 return new QueryScalarParameterComponent(o);
             }
