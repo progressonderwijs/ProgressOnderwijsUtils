@@ -179,6 +179,8 @@ namespace ProgressOnderwijsUtils
                 return Translatable.Raw((TextVal)obj);
             } else if (obj is Enum) {
                 return EnumHelpers.GetLabel((Enum)obj); // TranslateEnum((Enum)obj);
+            } else if (obj is SmartEnum) {
+                return ((SmartEnum)obj).Text;
             } else if (string.IsNullOrEmpty(extraformat)) {
                 return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format));
             } else {

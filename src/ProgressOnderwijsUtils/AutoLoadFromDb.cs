@@ -198,6 +198,7 @@ namespace ProgressOnderwijsUtils
                 { typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
                 { typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
+                { typeof(SmartPeriodeStudiejaar), typeof(IDataRecord).GetMethod("GetInt32", binding) },
             };
 
         //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
@@ -266,7 +267,9 @@ namespace ProgressOnderwijsUtils
                 var callExpr = underlyingType == typeof(byte[])
                     ? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant)
                     : Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
-                var castExpr = !needsCast ? (Expression)callExpr : Expression.Convert(callExpr, type.GetNonNullableType());
+                var castExpr =
+                    typeof(SmartEnum).IsAssignableFrom(underlyingType) ? Expression.Call(null, underlyingType.GetMethod("GetById"), callExpr) : 
+                    !needsCast ? (Expression)callExpr : Expression.Convert(callExpr, type.GetNonNullableType());
                 Expression colValueExpr;
                 if (!canBeNull) {
                     colValueExpr = castExpr;
