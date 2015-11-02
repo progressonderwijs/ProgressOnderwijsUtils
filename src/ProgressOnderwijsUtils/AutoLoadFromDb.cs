@@ -268,7 +268,7 @@ namespace ProgressOnderwijsUtils
                     ? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant)
                     : Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
                 var castExpr =
-                    typeof(SmartEnum).IsAssignableFrom(underlyingType) ? Expression.Call(null, underlyingType.GetMethod("GetById"), callExpr) : 
+                    typeof(SmartEnum).IsAssignableFrom(underlyingType) ? Expression.Call(null, typeof(SmartEnum).GetMethod(nameof(SmartEnum.GetById)).MakeGenericMethod(underlyingType), callExpr) : 
                     !needsCast ? (Expression)callExpr : Expression.Convert(callExpr, type.GetNonNullableType());
                 Expression colValueExpr;
                 if (!canBeNull) {
