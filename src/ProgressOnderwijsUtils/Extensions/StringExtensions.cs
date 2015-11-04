@@ -63,10 +63,11 @@ namespace ProgressOnderwijsUtils
         public static T ToEnum<T>(this string value, bool canAddValue = false)
         {
             T outEnum;
-            if (Enum.IsDefined(typeof(T), value) || canAddValue) {
+            int valueIsNumeric;
+            if (Enum.IsDefined(typeof(T), value) || (canAddValue && int.TryParse(value, out valueIsNumeric))) {
                 outEnum = (T)Enum.Parse(typeof(T), value);
             } else {
-                throw new InvalidEnumArgumentException($"{value} niet in {typeof(T).FullName}");
+                throw new InvalidEnumArgumentException($"{value} niet in {typeof(T).FullName} {(canAddValue ? "canAddValue:true kan alleen met numerieke waarden" : "")}");
             }
             return outEnum;
         }
