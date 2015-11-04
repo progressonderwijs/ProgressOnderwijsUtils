@@ -1,8 +1,12 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
+using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using NUnit.Framework;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -56,13 +60,48 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [Pure]
-        public static T ToEnum<T>(this string value)
+        public static T ToEnum<T>(this string value, bool canAddValue = false)
         {
-            return (T)Enum.Parse(typeof(T), value);
+            T outEnum;
+            if (Enum.IsDefined(typeof(T), value) || canAddValue) {
+                outEnum = (T)Enum.Parse(typeof(T), value);
+            } else {
+                throw new InvalidEnumArgumentException($"{value} niet in {typeof(T).FullName}");
+            }
+            return outEnum;
         }
 
         [Pure]
         public static string Replace(this string s, IEnumerable<KeyValuePair<string, string>> replacements) => replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
+    }
+
+    public static class TestData
+    {
+        public enum BerichtTypes
+        {
+            vchmsg06onderhoudennaw
+        }
+
+        public enum Opleiding
+        { }
+    }
+
+    [Continuous]
+    public sealed class ExtensionsTest
+    {
+        [Test]
+        public void ToEnumTest()
+        {
+            var n23 = "23".ToEnum<TestData.Opleiding>(true);
+            var n75612 = 75612.ToString().ToEnum<TestData.Opleiding>(true);
+            var msg06Type = "vchmsg06onderhoudennaw".ToEnum<TestData.BerichtTypes>();
+            PAssert.That(() => msg06Type == TestData.BerichtTypes.vchmsg06onderhoudennaw);
+            Assert.Throws<InvalidEnumArgumentException>(() => "vchmsg25herinschrijving".ToEnum<TestData.BerichtTypes>());
+            Assert.Throws<InvalidEnumArgumentException>(() => 23.ToString().ToEnum<TestData.BerichtTypes>());
+            Assert.Throws<InvalidEnumArgumentException>(() => "vchmsg03inschrijving".ToEnum<TestData.BerichtTypes>(true));
+            PAssert.That(() => n23 == (TestData.Opleiding)23);
+            PAssert.That(() => n75612 != (TestData.Opleiding)23);
+            PAssert.That(() => n75612 == (TestData.Opleiding)75612);
+        }
     }
 }
