@@ -1,12 +1,8 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System;
-using System.ComponentModel;
+using System.Linq;
 using System.Text.RegularExpressions;
-using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
