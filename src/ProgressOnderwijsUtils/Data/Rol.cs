@@ -612,5 +612,8 @@ namespace ProgressOnderwijsUtils
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
         META_EerstVolgendVrijRolId = 255,
+
+        [MpLabel("Toegang tot ODS", "Can access ODS"), Toekenbaar]
+        ToegangTotOds = 256,
     }
 }
