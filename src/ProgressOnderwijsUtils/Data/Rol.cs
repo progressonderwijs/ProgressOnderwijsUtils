@@ -349,7 +349,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Superuser"), Implies(Combi_BeheerAlles, BeheerStudievolg, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
             WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenBekijken, Student, WijzigenGroepen,
             Combi_FontysBeheerFO, Combi_FontysMuteerFO, StudiebegeleidingNotities, StudievoortgangNotities, DecaanNotities, FinancieelNotities, InschrijvingNotities,
-            StudentDecanaatNotities, PsycholoogNotities, StudiekeuzeAdviseurNotities, WijzigenGradingTable
+            StudentDecanaatNotities, PsycholoogNotities, StudiekeuzeAdviseurNotities, WijzigenGradingTable, ToegangTotOds
             )]
         Superuser = 138,
 
