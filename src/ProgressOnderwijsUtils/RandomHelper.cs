@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void CheckRandomBasic()
         {
-            HashSet<uint> numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
+            var numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
             Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32()).Take(10000).Any(num => num > int.MaxValue));
             Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetInt64()).Take(10000).Any(num => num > uint.MaxValue));
             Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt64()).Take(10000).Any(num => num > long.MaxValue));
