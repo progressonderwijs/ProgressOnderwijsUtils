@@ -151,15 +151,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [Test]
-        public void CheckPassword()
-        {
-            for (var i = 0; i < 50; i++) {
-                var str = RandomHelper.GetPasswordString(i);
-                PAssert.That(() => str.Length == i);
-            }
-        }
-
-        [Test]
         public void CheckStrings()
         {
             Assert.That(RandomHelper.GetStringOfNumbers(10), Is.StringMatching("[0-9]{10}"));
