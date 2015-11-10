@@ -105,13 +105,9 @@ namespace ProgressOnderwijsUtils
             return new string(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
         }
 
-        public static readonly string specialPasswordCharacters = "~!@#$%^&*:;<>,";
-        static readonly char[] PasswordAllowedCharacters =
-            Enumerable.Range('A', 26).Concat(Enumerable.Range('a', 26)).Concat(Enumerable.Range('0', 10)).Select(i => (char)i).Concat(specialPasswordCharacters).ToArray();
-
         public static string GetPasswordString(int length)
         {
-            return new string(Enumerable.Range(0, length).Select(_ => PasswordAllowedCharacters[GetUInt32((uint)PasswordAllowedCharacters.Length)]).ToArray());
+            return System.Web.Security.Membership.GeneratePassword(length, 1);
         }
     }
 
@@ -154,14 +150,12 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-
         [Test]
         public void CheckPassword()
         {
             for (var i = 0; i < 50; i++) {
                 var str = RandomHelper.GetPasswordString(i);
                 PAssert.That(() => str.Length == i);
-                PAssert.That(() => Regex.IsMatch(str, $"^[{RandomHelper.specialPasswordCharacters}0-9A-Za-z]*$"));
             }
         }
 
