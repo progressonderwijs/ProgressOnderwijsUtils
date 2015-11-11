@@ -613,10 +613,10 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Toegang tot ODS", "Can access ODS"), Toekenbaar]
         ToegangTotOds = 255,
 
-        [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 256,
-
         [MpLabel("Wijzigen rangnummers selectie en plaatsing")]
-        WijzigenSelectieEnPlaatsing = 257,
+        WijzigenSelectieEnPlaatsing = 256,
+
+        [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
+        META_EerstVolgendVrijRolId = 257,
     }
 }
