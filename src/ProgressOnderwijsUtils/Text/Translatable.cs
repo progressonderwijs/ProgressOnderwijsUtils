@@ -118,9 +118,6 @@ namespace ProgressOnderwijsUtils
         public static LiteralTranslatable Empty => empty;
 
         [Pure]
-        public static ITranslatable EmptyWithNLTooltip(string tooltipnl) => empty.WithTooltip(tooltipnl);
-
-        [Pure]
         public static LiteralTranslatable Literal(string nl) => new LiteralTranslatable(nl, null, null);
 
         [Pure]
