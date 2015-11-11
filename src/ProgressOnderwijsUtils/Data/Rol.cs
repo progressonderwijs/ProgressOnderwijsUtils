@@ -297,7 +297,7 @@ namespace ProgressOnderwijsUtils
              InvoerNietReguliereInschrijvingen, WijzigenAccorderenToelatingseisen,
              WijzigenVerblijfsvergunningVnummer, WijzigenPasfoto,
              StudentRichtingToevoegenWijzigenVerwijderen, WijzigenVoorlopigeToelating, WijzigenStudentBatchRegel,
-             WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen, WijzigenMatching)]
+             WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen, WijzigenMatching, WijzigenSelectieEnPlaatsing)]
         WijzigenInschrijvingenEnAanmeldingen = 125,
 
         [MpLabel("Wijzigen uitschrijvingen"), Toekenbaar,
@@ -616,5 +616,7 @@ namespace ProgressOnderwijsUtils
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
         META_EerstVolgendVrijRolId = 256,
 
+        [MpLabel("Wijzigen rangnummers selectie en plaatsing")]
+        WijzigenSelectieEnPlaatsing = 257,
     }
 }
