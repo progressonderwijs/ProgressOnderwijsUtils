@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
         public string ToSqlString(CommandFactory qnum)
         {
             var number = qnum.GetNumberForParam(this);
-            // select par0.val from @par0 par0, par0 is alias for @par0
+            // select par0.querytablevalue from @par0 par0, par0 is alias for @par0
             return $"(select par{number}.querytablevalue from @par{number} par{number})";
         }
 
