@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtils
         static IQueryComponent ToEnumTableParameter<TEnum, TInt>(string tableTypeName, IEnumerable set)
         {
             var typedSet = (IEnumerable<TEnum>)set;
-            var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<TInt> { querytablevalue = DBNullRemover.Cast<TInt>(i) });
+            var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<TInt> { val = DBNullRemover.Cast<TInt>(i) });
             return ToTableParameter(tableTypeName, projectedSet);
         }
 
