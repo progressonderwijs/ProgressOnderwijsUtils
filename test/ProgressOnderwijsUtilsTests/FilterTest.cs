@@ -36,11 +36,11 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(
                 () =>
                     Filter.CreateCriterium("test", BooleanComparer.In, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder()
-                        == SQL($"test in (select val from {Enumerable.Range(1, 5)})"));
+                        == SQL($"test in {Enumerable.Range(1, 5)}"));
             PAssert.That(
                 () =>
                     Filter.CreateCriterium("test", BooleanComparer.NotIn, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder()
-                        == SQL($"test not in (select val from {Enumerable.Range(1, 5)})"));
+                        == SQL($"test not in {Enumerable.Range(1, 5)}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.HasFlag, 3).ToQueryBuilder() == SQL($"(test & {3}) = {3}"));
         }
 

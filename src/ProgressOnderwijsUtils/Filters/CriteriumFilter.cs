@@ -127,13 +127,13 @@ namespace ProgressOnderwijsUtils
                     if (Waarde is GroupReference) {
                         return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = ") + QueryBuilder.Param((Waarde as GroupReference).GroupId) + SQL($")");
                     } else {
-                        return KolomNaamSql() + SQL($" in (select val from ") + QueryBuilder.TableParamDynamic((Array)Waarde) + SQL($")");
+                        return KolomNaamSql() + SQL($" in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
                     }
                 case BooleanComparer.NotIn:
                     if (Waarde is GroupReference) {
                         return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = ") + QueryBuilder.Param((Waarde as GroupReference).GroupId) + SQL($")");
                     } else {
-                        return KolomNaamSql() + SQL($" not in (select val from ") + QueryBuilder.TableParamDynamic((Array)Waarde) + SQL($")");
+                        return KolomNaamSql() + SQL($" not in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
                     }
 
                 case BooleanComparer.StartsWith:
