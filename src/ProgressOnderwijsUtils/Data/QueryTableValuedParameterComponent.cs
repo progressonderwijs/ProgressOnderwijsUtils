@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
         {
             var number = qnum.GetNumberForParam(this);
             // select par0.val from @par0 par0, par0 is alias for @par0
-            return $"(select par{number}.val from @par{number} par{number})";
+            return $"(select par{number}.querytablevalue from @par{number} par{number})";
         }
 
         public SqlParameter ToSqlParameter(int paramnum)
