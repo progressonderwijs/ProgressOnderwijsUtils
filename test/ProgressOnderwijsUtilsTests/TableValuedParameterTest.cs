@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             DevelopmentDbSelector.PreferredDevDb.ReadWriteNoTransaction(
                 conn => {
-                    var q = SQL($@"select sum(x.val) from ") + QueryBuilder.TableParam(Enumerable.Range(1, 100)) + SQL($" x");
+                    var q = SQL($@"select sum(x.querytablevalue) from ") + QueryBuilder.TableParam(Enumerable.Range(1, 100)) + SQL($" x");
                     int sum = q.ReadScalar<int>(conn);
                     Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
                 });
@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void QueryBuildersCanIncludeTvps()
         {
-            var q = SQL($@"select sum(x.val) from {Enumerable.Range(1, 100)} x");
+            var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
 
             DevelopmentDbSelector.PreferredDevDb.ReadWriteNoTransaction(
                 conn => {
