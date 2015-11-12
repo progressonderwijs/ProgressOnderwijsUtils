@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.Reflection;
 using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
@@ -39,15 +40,56 @@ namespace ProgressOnderwijsUtils
         }
 
         static IQueryComponent TryToTableParameter<T>(string tableTypeName, IEnumerable set)
-            where T : IComparable, IComparable<T>, IEquatable<T>
         {
             if (set is IEnumerable<T>) {
-                var typedSet = ((IEnumerable<T>)set);
+                var typedSet = (IEnumerable<T>)set;
                 var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { val = i });
                 return ToTableParameter(tableTypeName, projectedSet);
             } else {
                 return null;
             }
+        }
+
+        static readonly MethodInfo ToEnumTableParameter_Method =
+            ((Func<string, IEnumerable, IQueryComponent>)ToEnumTableParameter<int, int>)
+                .Method
+                .GetGenericMethodDefinition();
+
+        static IQueryComponent TryToEnumTableParameter(IEnumerable set)
+        {
+            var interfaceType = set
+                .GetType()
+                .GetInterfaces()
+                .SingleOrDefault(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+
+            if (interfaceType == null) {
+                return null;
+            }
+
+            var enumType = interfaceType.GetGenericArguments().Single();
+            if (!enumType.IsEnum) {
+                return null;
+            }
+
+            var func = MakeEnumTVP_Delegate(enumType);
+
+            return func("TVar_Int", set); //TODO: also non-int-types;
+        }
+
+        static Func<string, IEnumerable, IQueryComponent> MakeEnumTVP_Delegate(Type enumType)
+        {
+            //TODO: cache all this.
+            var underlyingType = enumType.GetEnumUnderlyingType();
+            var specializedMethod = ToEnumTableParameter_Method.MakeGenericMethod(enumType, underlyingType);
+            var func = (Func<string, IEnumerable, IQueryComponent>)Delegate.CreateDelegate(typeof(Func<string, IEnumerable, IQueryComponent>), specializedMethod);
+            return func;
+        }
+
+        static IQueryComponent ToEnumTableParameter<TEnum, TInt>(string tableTypeName, IEnumerable set)
+        {
+            var typedSet = (IEnumerable<TEnum>)set;
+            var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<TInt> { querytablevalue = DBNullRemover.Cast<TInt>(i) });
+            return ToTableParameter(tableTypeName, projectedSet);
         }
 
         public static IQueryComponent ToTableParameter(IEnumerable set)
@@ -64,6 +106,7 @@ namespace ProgressOnderwijsUtils
                                                 ?? TryToTableParameter<short>("TVar_Smallint", set)
                                                     ?? TryToTableParameter<long>("TVar_Bigint", set)
                                                         ?? TryToTableParameter<double>("TVar_Float", set)
+                                                            ?? TryToEnumTableParameter(set)
                 ;
             if (retval == null) {
                 throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(set.GetType()) + " as a table valued parameter", nameof(set));
