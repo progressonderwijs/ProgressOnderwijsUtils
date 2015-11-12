@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
         {
             if (set is IEnumerable<T>) {
                 var typedSet = ((IEnumerable<T>)set);
-                var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { val = i });
+                var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { querytablevalue = i });
                 return ToTableParameter(tableTypeName, projectedSet);
             } else {
                 return null;
@@ -115,9 +115,9 @@ namespace ProgressOnderwijsUtils
         public struct DbTableValuedParameterWrapper<T> : IMetaObject
         {
             [Key]
-            public T val { get; set; }
+            public T querytablevalue { get; set; }
 
-            public override string ToString() => val == null ? "NULL" : val.ToString();
+            public override string ToString() => querytablevalue == null ? "NULL" : querytablevalue.ToString();
         }
     }
 }
