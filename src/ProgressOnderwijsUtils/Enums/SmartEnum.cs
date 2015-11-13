@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProgressOnderwijsUtils
@@ -36,6 +37,11 @@ namespace ProgressOnderwijsUtils
             where T : SmartEnum
         {
             return Values<T>.GetValues();
+        }
+
+        public static bool IsSmartEnum(Type type)
+        {
+            return typeof(SmartEnum).IsAssignableFrom(type);
         }
 
         public int Id { get; }

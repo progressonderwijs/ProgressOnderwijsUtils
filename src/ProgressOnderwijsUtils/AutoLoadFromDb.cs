@@ -182,7 +182,7 @@ namespace ProgressOnderwijsUtils
 
         const BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
 
-        static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
+        static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
             new Dictionary<Type, MethodInfo> {
                 { typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
                 { typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
@@ -198,8 +198,16 @@ namespace ProgressOnderwijsUtils
                 { typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
                 { typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
-                { typeof(SmartPeriodeStudiejaar), typeof(IDataRecord).GetMethod("GetInt32", binding) },
             };
+
+        static MethodInfo GetGetterMethodByType(Type type)
+        {
+            if (SmartEnum.IsSmartEnum(type)) {
+                return getterMethodsByType[typeof(int)];
+            } else {
+                return getterMethodsByType[type];
+            }
+        }
 
         //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
         //static MethodInfo GetterForType(Type type) => GetterMethodsByType[type];
@@ -242,9 +250,9 @@ namespace ProgressOnderwijsUtils
             static bool SupportsType(Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                return GetterMethodsByType.ContainsKey(underlyingType) ||
-                    (isSqlDataReader
-                        && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
+                return getterMethodsByType.ContainsKey(underlyingType) ||
+                    SmartEnum.IsSmartEnum(type) ||
+                    (isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
             }
 
             static MethodInfo GetterForType(Type underlyingType)
@@ -254,7 +262,7 @@ namespace ProgressOnderwijsUtils
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
                 } else {
-                    return InterfaceMap[GetterMethodsByType[underlyingType]];
+                    return InterfaceMap[GetGetterMethodByType(underlyingType)];
                 }
             }
 
@@ -265,10 +273,10 @@ namespace ProgressOnderwijsUtils
                 bool needsCast = (underlyingType != type.GetNonNullableType());
                 var iConstant = Expression.Constant(i);
                 var callExpr = underlyingType == typeof(byte[])
-                    ? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant)
+                    ? Expression.Call(GetGetterMethodByType(underlyingType), readerParamExpr, iConstant)
                     : Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
                 var castExpr =
-                    typeof(SmartEnum).IsAssignableFrom(underlyingType) ? Expression.Call(null, typeof(SmartEnum).GetMethod(nameof(SmartEnum.GetById)).MakeGenericMethod(underlyingType), callExpr) : 
+                    SmartEnum.IsSmartEnum(underlyingType) ? Expression.Call(null, typeof(SmartEnum).GetMethod(nameof(SmartEnum.GetById)).MakeGenericMethod(underlyingType), callExpr) : 
                     !needsCast ? (Expression)callExpr : Expression.Convert(callExpr, type.GetNonNullableType());
                 Expression colValueExpr;
                 if (!canBeNull) {
@@ -549,7 +557,8 @@ namespace ProgressOnderwijsUtils
                     if (!SupportsType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
-                                + GetterMethodsByType.Keys.Select(ObjectToCode.GetCSharpFriendlyTypeName).JoinStrings(", ") + ")!");
+                                + getterMethodsByType.Keys.Select(ObjectToCode.GetCSharpFriendlyTypeName).JoinStrings(", ") + ") or a "
+                                + nameof(SmartEnum) + "!");
                     }
                 }
 
