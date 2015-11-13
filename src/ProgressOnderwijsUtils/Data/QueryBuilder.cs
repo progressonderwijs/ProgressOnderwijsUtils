@@ -12,10 +12,8 @@ namespace ProgressOnderwijsUtils
     public static class SafeSql
     {
         [Pure]
-        public static QueryBuilder SQL(FormattableString interpolatedQuery)
-        {
-            return QueryBuilder.CreateDynamic(interpolatedQuery.Format, interpolatedQuery.GetArguments());
-        }
+        public static QueryBuilder SQL(FormattableString interpolatedQuery) 
+            => QueryBuilder.CreateFromInterpolation(interpolatedQuery);
     }
 
     public abstract class QueryBuilder : IEquatable<QueryBuilder>
@@ -173,12 +171,22 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder TableParamDynamic(Array o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         // ReSharper restore UnusedMember.Global
-        [Pure]
-        public static QueryBuilder CreateDynamic(string str, params object[] arguments)
+        public static QueryBuilder CreateDynamic(string str)
         {
-            if (str == null) {
-                throw new ArgumentNullException(nameof(str));
+            var stringComponent = QueryComponent.CreateString(str);
+            return stringComponent == null ? Empty : new SingleComponent(stringComponent);
+        }
+
+        [Pure]
+        public static QueryBuilder CreateFromInterpolation(FormattableString interpolatedQuery)
+        {
+            if (interpolatedQuery == null) {
+                throw new ArgumentNullException(nameof(interpolatedQuery));
             }
+
+            var str = interpolatedQuery.Format;
+            var arguments = interpolatedQuery.GetArguments();
+
 
             //null if argument is already a QueryBuilder and no new component needs to be created
             var queryComponents = new IQueryComponent[arguments.Length];

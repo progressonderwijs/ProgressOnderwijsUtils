@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Progress.Business;
+using Progress.Business.Data;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
@@ -12,14 +13,14 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void GetItemByValue()
         {
-            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToInt(), Taal.NL, RootOrganisatie.Dummy.ToInt());
+            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToOrganisatieId(), Taal.NL, RootOrganisatie.Dummy);
             Assert.That(sut.GetItem((int)Land.Nederland).Value, Is.EqualTo((int?)(int)Land.Nederland));
         }
 
         [Test]
         public void GetItemByText()
         {
-            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToInt(), Taal.NL, RootOrganisatie.Dummy.ToInt());
+            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToOrganisatieId(), Taal.NL, RootOrganisatie.Dummy);
             Assert.That(sut.GetItem(Taal.NL, "Nederland").Value, Is.EqualTo((int?)(int)Land.Nederland));
         }
     }
