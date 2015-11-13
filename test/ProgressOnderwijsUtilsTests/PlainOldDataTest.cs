@@ -3,7 +3,6 @@ using System.Linq;
 using System.Reflection;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.Data;
 using Progress.Business.DomainUnits;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
