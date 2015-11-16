@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
         {
             if (set is IEnumerable<T>) {
                 var typedSet = (IEnumerable<T>)set;
-                var projectedSet = typedSet.Select(i => new DbTableValuedParameterWrapper<T> { val = i });
+                var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { querytablevalue = i });
                 return ToTableParameter(TableValueTypeName<T>.TypeName, projectedSet);
             } else {
                 return null;
@@ -142,7 +142,7 @@ namespace ProgressOnderwijsUtils
 
                 var targetType = typeof(DbTableValuedParameterWrapper<TOutput>);
                 var newExpr = Expression.New(targetType);
-                var bindingParExpr = Expression.Bind(targetType.GetProperty(nameof(DbTableValuedParameterWrapper<TOutput>.val)), convertExpr);
+                var bindingParExpr = Expression.Bind(targetType.GetProperty(nameof(DbTableValuedParameterWrapper<TOutput>.querytablevalue)), convertExpr);
                 var initExpr = Expression.MemberInit(newExpr, bindingParExpr);
                 return Expression.Lambda<Func<TInput, DbTableValuedParameterWrapper<TOutput>>>(initExpr, parExpr);
             }
@@ -171,29 +171,44 @@ namespace ProgressOnderwijsUtils
         }
 
         /*
-		CREATE TYPE TVar_Int AS TABLE (val int NOT NULL)
-		CREATE TYPE TVar_NVarcharMax AS TABLE (val nvarchar(max) NOT NULL)
-		CREATE TYPE TVar_DateTime2 AS TABLE (val datetime2 NOT NULL)
-		CREATE TYPE TVar_Time AS TABLE (val time NOT NULL)
-		CREATE TYPE TVar_Decimal AS TABLE (val decimal NOT NULL)
-		CREATE TYPE TVar_NChar1 AS TABLE (val nchar(1) NOT NULL)
-		CREATE TYPE TVar_Bit AS TABLE (val bit NOT NULL)
-		CREATE TYPE TVar_Tinyint AS TABLE (val tinyint NOT NULL)
-		CREATE TYPE TVar_Smallint AS TABLE (val smallint NOT NULL)
-		CREATE TYPE TVar_Bigint AS TABLE (val bigint NOT NULL)
-		CREATE TYPE TVar_Float AS TABLE (val float NOT NULL)
+        create type TVar_Bigint as table(querytablevalue bigint not null)
+        create type TVar_Bit as table(querytablevalue bit not null)
+        create type TVar_DateTime2 as table(querytablevalue datetime2(7) not null)
+        create type TVar_Decimal as table(querytablevalue decimal(18, 0) not null)
+        create type TVar_Float as table(querytablevalue float not null)
+        create type TVar_Int as table(querytablevalue int not null, primary key clustered (querytablevalue asc) with (ignore_dup_key = off))
+        create type TVar_NChar1 as table(querytablevalue nchar(1) not null)
+        create type TVar_NVarcharMax as table(querytablevalue nvarchar(max) not null)
+        create type TVar_Smallint as table(querytablevalue smallint not null)
+        create type TVar_StudentStudielast as table(studentid int not null, studielast int not null)
+        create type TVar_Time as table(querytablevalue time(7) not null)
+        create type TVar_Tinyint as table(querytablevalue tinyint not null)
 
-		GRANT EXECUTE ON TYPE::dbo.TVar_Int TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_NVarcharMax TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_DateTime2 TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_Time TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_Decimal TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_NChar1 TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_Bit TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_Tinyint TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_Smallint TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_Bigint TO public;
-		GRANT EXECUTE ON TYPE::dbo.TVar_Float TO public;
+        grant exec on TYPE::TVar_Bigint to [webprogress-readonly]
+        grant exec on TYPE::TVar_Bit to [webprogress-readonly]
+        grant exec on TYPE::TVar_DateTime2 to [webprogress-readonly]
+        grant exec on TYPE::TVar_Decimal to [webprogress-readonly]
+        grant exec on TYPE::TVar_Float to [webprogress-readonly]
+        grant exec on TYPE::TVar_Int to [webprogress-readonly]
+        grant exec on TYPE::TVar_NChar1 to [webprogress-readonly]
+        grant exec on TYPE::TVar_NVarcharMax to [webprogress-readonly]
+        grant exec on TYPE::TVar_Smallint to [webprogress-readonly]
+        grant exec on TYPE::TVar_StudentStudielast to [webprogress-readonly]
+        grant exec on TYPE::TVar_Time to [webprogress-readonly]
+        grant exec on TYPE::TVar_Tinyint to [webprogress-readonly]
+
+        grant exec on TYPE::TVar_Bigint to [webprogress]
+        grant exec on TYPE::TVar_Bit to [webprogress]
+        grant exec on TYPE::TVar_DateTime2 to [webprogress]
+        grant exec on TYPE::TVar_Decimal to [webprogress]
+        grant exec on TYPE::TVar_Float to [webprogress]
+        grant exec on TYPE::TVar_Int to [webprogress]
+        grant exec on TYPE::TVar_NChar1 to [webprogress]
+        grant exec on TYPE::TVar_NVarcharMax to [webprogress]
+        grant exec on TYPE::TVar_Smallint to [webprogress]
+        grant exec on TYPE::TVar_StudentStudielast to [webprogress]
+        grant exec on TYPE::TVar_Time to [webprogress]
+        grant exec on TYPE::TVar_Tinyint to [webprogress]
 		 
 
         TODO: once we're using Sql2014, the following types appear to be considerably faster:
@@ -214,9 +229,9 @@ namespace ProgressOnderwijsUtils
         public struct DbTableValuedParameterWrapper<T> : IMetaObject
         {
             [Key]
-            public T val { get; set; }
+            public T querytablevalue { get; set; }
 
-            public override string ToString() => val == null ? "NULL" : val.ToString();
+            public override string ToString() => querytablevalue == null ? "NULL" : querytablevalue.ToString();
         }
     }
 }
