@@ -17,11 +17,8 @@ namespace ProgressOnderwijsUtils
 
         static Translator()
         {
-            // TODO: ...
             CULTURES[Taal.NL].DateTimeFormat.ShortDatePattern = "dd-MM-yyyy";
-            CULTURES[Taal.EN].DateTimeFormat.ShortDatePattern = "dd/MM/yyyy";
             CULTURES[Taal.EN].NumberFormat.CurrencySymbol = CULTURES[Taal.NL].NumberFormat.CurrencySymbol;
-            CULTURES[Taal.DU].DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
             CULTURES[Taal.LA] = CreateLatinCulture();
         }
 

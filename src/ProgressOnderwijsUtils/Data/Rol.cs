@@ -113,7 +113,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Studielinkvragen bekijken"), Toekenbaar, Implies(StudentKenmerkenTabblad)]
         StudielinkvragenBekijken = 253,
 
-        [MpLabel("Vooropleidingen toevoegen verwijderen wijzigen")]
+        [MpLabel("Vooropleidingen toevoegen verwijderen wijzigen"), Toekenbaar]
         VooropleidingenToevoegenVerwijderenWijzigen = 58,
 
         [MpLabel("Vooropleidingen verifieeren")]
