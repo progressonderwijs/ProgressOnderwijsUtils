@@ -18,7 +18,12 @@ namespace ProgressOnderwijsUtils
             DbTypeName = dbTypeName;
         }
 
-        public string ToSqlString(CommandFactory qnum) => "@par" + qnum.GetNumberForParam(this);
+        public string ToSqlString(CommandFactory qnum)
+        {
+            var number = qnum.GetNumberForParam(this);
+            // select par0.querytablevalue from @par0 par0, par0 is alias for @par0
+            return $"(select par{number}.querytablevalue from @par{number} par{number})";
+        }
 
         public SqlParameter ToSqlParameter(int paramnum)
         {
