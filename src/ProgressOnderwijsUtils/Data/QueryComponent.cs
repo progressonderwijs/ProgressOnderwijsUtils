@@ -79,10 +79,9 @@ namespace ProgressOnderwijsUtils
         static Func<IEnumerable, IQueryComponent> TvpFactoryFactory(Type enumType)
         {
             var underlyingType = enumType.GetEnumUnderlyingType();
-            var func = ToEnumTableParameter_Method
-                .MakeGenericMethod(enumType, underlyingType)
-                .CreateDelegate(typeof(Func<IEnumerable, IQueryComponent>));
-            return (Func<IEnumerable, IQueryComponent>)func;
+            var specializedMethod = ToEnumTableParameter_Method.MakeGenericMethod(enumType, underlyingType);
+            var func = (Func<IEnumerable, IQueryComponent>)Delegate.CreateDelegate(typeof(Func<IEnumerable, IQueryComponent>), specializedMethod);
+            return func;
         }
 
         static readonly MethodInfo ToEnumTableParameter_Method =
