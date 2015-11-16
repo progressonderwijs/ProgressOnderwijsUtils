@@ -3,7 +3,11 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Collections.Generic;
 using System;
+using System.Collections.Concurrent;
+using System.Linq.Expressions;
+using System.Reflection;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Internal;
 
 namespace ProgressOnderwijsUtils
 {
@@ -38,32 +42,127 @@ namespace ProgressOnderwijsUtils
             return new QueryTableValuedParameterComponent<T>(tableTypeName, set);
         }
 
-        static IQueryComponent TryToTableParameter<T>(string tableTypeName, IEnumerable set)
-            where T : IComparable, IComparable<T>, IEquatable<T>
+        static IQueryComponent TryToTableParameter<T>(IEnumerable set)
         {
             if (set is IEnumerable<T>) {
-                var typedSet = ((IEnumerable<T>)set);
-                var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { val = i });
-                return ToTableParameter(tableTypeName, projectedSet);
+                var typedSet = (IEnumerable<T>)set;
+                var projectedSet = typedSet.Select(i => new DbTableValuedParameterWrapper<T> { val = i });
+                return ToTableParameter(TableValueTypeName<T>.TypeName, projectedSet);
             } else {
                 return null;
             }
         }
 
+        static IQueryComponent TryToEnumTableParameter(IEnumerable set)
+        {
+            var interfaceType = set
+                .GetType()
+                .GetInterfaces()
+                .SingleOrDefault(iface => iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+
+            if (interfaceType == null) {
+                return null;
+            }
+
+            var enumType = interfaceType.GetGenericArguments().Single();
+            if (!enumType.IsEnum) {
+                return null;
+            }
+
+            var func = TvpFactoryCache.GetOrAdd(enumType, TvpFactoryFactory);
+
+            return func(set);
+        }
+
+        static readonly ConcurrentDictionary<Type, Func<IEnumerable, IQueryComponent>> TvpFactoryCache = new ConcurrentDictionary<Type, Func<IEnumerable, IQueryComponent>>();
+
+        static Func<IEnumerable, IQueryComponent> TvpFactoryFactory(Type enumType)
+        {
+            var underlyingType = enumType.GetEnumUnderlyingType();
+            var specializedMethod = ToEnumTableParameter_Method.MakeGenericMethod(enumType, underlyingType);
+            var func = (Func<IEnumerable, IQueryComponent>)Delegate.CreateDelegate(typeof(Func<IEnumerable, IQueryComponent>), specializedMethod);
+            return func;
+        }
+
+        static readonly MethodInfo ToEnumTableParameter_Method =
+            ((Func<IEnumerable, IQueryComponent>)ToEnumTableParameter<int, int>)
+                .Method
+                .GetGenericMethodDefinition();
+
+        static IQueryComponent ToEnumTableParameter<TEnum, TOut>(IEnumerable set)
+        {
+            var typedSet = (IEnumerable<TEnum>)set;
+            var projectedSet = typedSet.Select(Converter<TEnum, TOut>.Func);
+
+            return ToTableParameter(TableValueTypeName<TOut>.TypeName, projectedSet);
+        }
+
+        static class TableValueTypeName<T>
+        {
+            public static readonly string TypeName = Compute();
+
+            static string Compute()
+            {
+                if (typeof(int) == typeof(T)) {
+                    return "TVar_Int";
+                } else if (typeof(string) == typeof(T)) {
+                    return "TVar_NVarcharMax";
+                } else if (typeof(DateTime) == typeof(T)) {
+                    return "TVar_DateTime2";
+                } else if (typeof(TimeSpan) == typeof(T)) {
+                    return "TVar_Time";
+                } else if (typeof(decimal) == typeof(T)) {
+                    return "TVar_Decimal";
+                } else if (typeof(char) == typeof(T)) {
+                    return "TVar_NChar1";
+                } else if (typeof(bool) == typeof(T)) {
+                    return "TVar_Bit";
+                } else if (typeof(byte) == typeof(T)) {
+                    return "TVar_Tinyint";
+                } else if (typeof(short) == typeof(T)) {
+                    return "TVar_Smallint";
+                } else if (typeof(long) == typeof(T)) {
+                    return "TVar_Bigint";
+                } else if (typeof(double) == typeof(T)) {
+                    return "TVar_Float";
+                }
+
+                throw new InvalidOperationException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " as a table valued parameter");
+            }
+        }
+
+        static class Converter<TInput, TOutput>
+        {
+            public static readonly Func<TInput, DbTableValuedParameterWrapper<TOutput>> Func = MakeWrappedConverterExpression().Compile();
+
+            static Expression<Func<TInput, DbTableValuedParameterWrapper<TOutput>>> MakeWrappedConverterExpression()
+            {
+                var parExpr = Expression.Parameter(typeof(TInput), "input");
+                var convertExpr = Expression.Convert(parExpr, typeof(TOutput));
+
+                var targetType = typeof(DbTableValuedParameterWrapper<TOutput>);
+                var newExpr = Expression.New(targetType);
+                var bindingParExpr = Expression.Bind(targetType.GetProperty(nameof(DbTableValuedParameterWrapper<TOutput>.val)), convertExpr);
+                var initExpr = Expression.MemberInit(newExpr, bindingParExpr);
+                return Expression.Lambda<Func<TInput, DbTableValuedParameterWrapper<TOutput>>>(initExpr, parExpr);
+            }
+        }
+
         public static IQueryComponent ToTableParameter(IEnumerable set)
         {
-            var retval = null
-                ?? TryToTableParameter<int>("TVar_Int", set)
-                    ?? TryToTableParameter<string>("TVar_NVarcharMax", set)
-                        ?? TryToTableParameter<DateTime>("TVar_DateTime2", set)
-                            ?? TryToTableParameter<TimeSpan>("TVar_Time", set)
-                                ?? TryToTableParameter<decimal>("TVar_Decimal", set)
-                                    ?? TryToTableParameter<char>("TVar_NChar1", set)
-                                        ?? TryToTableParameter<bool>("TVar_Bit", set)
-                                            ?? TryToTableParameter<byte>("TVar_Tinyint", set)
-                                                ?? TryToTableParameter<short>("TVar_Smallint", set)
-                                                    ?? TryToTableParameter<long>("TVar_Bigint", set)
-                                                        ?? TryToTableParameter<double>("TVar_Float", set)
+            var retval =
+                TryToEnumTableParameter(set)
+                    ?? TryToTableParameter<int>(set)
+                        ?? TryToTableParameter<string>(set)
+                            ?? TryToTableParameter<DateTime>(set)
+                                ?? TryToTableParameter<TimeSpan>(set)
+                                    ?? TryToTableParameter<decimal>(set)
+                                        ?? TryToTableParameter<char>(set)
+                                            ?? TryToTableParameter<bool>(set)
+                                                ?? TryToTableParameter<byte>(set)
+                                                    ?? TryToTableParameter<short>(set)
+                                                        ?? TryToTableParameter<long>(set)
+                                                            ?? TryToTableParameter<double>(set)
                 ;
             if (retval == null) {
                 throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(set.GetType()) + " as a table valued parameter", nameof(set));
