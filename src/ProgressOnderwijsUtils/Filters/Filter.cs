@@ -25,8 +25,7 @@ namespace ProgressOnderwijsUtils
 
         public static QueryBuilder ToQueryBuilder(this FilterBase filter) => filter == null ? SQL($"1=1") : filter.ToQueryBuilderImpl();
 
-        public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier) //where T : IMetaObject
-        {
+        public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier) { //where T : IMetaObject
             if (filter == null) {
                 return _ => true;
             }

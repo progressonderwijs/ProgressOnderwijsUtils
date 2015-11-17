@@ -279,8 +279,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static Tuple<string, string> FindUptoNonDuplicatedTerminatorWithLeftover(string s, char terminator) //TODO: test strings ending with '*';
-        {
+        static Tuple<string, string> FindUptoNonDuplicatedTerminatorWithLeftover(string s, char terminator) { //TODO: test strings ending with '*';
             int i = 0;
             var waardeStr = new StringBuilder();
             while (true) {
@@ -466,8 +465,7 @@ namespace ProgressOnderwijsUtils
 
             bool isNullable = colIsNullable || waardeIsNullable;
 
-            if (waardeExpr.Type != coreExpr.Type) //e.g. enums
-            {
+            if (waardeExpr.Type != coreExpr.Type) { //e.g. enums
                 if (waardeExpr.Type.GetNonNullableUnderlyingType() == coreExpr.Type.GetNonNullableUnderlyingType()) {
                     var underlying = waardeExpr.Type.GetNonNullableUnderlyingType();
                     if (isNullable) {

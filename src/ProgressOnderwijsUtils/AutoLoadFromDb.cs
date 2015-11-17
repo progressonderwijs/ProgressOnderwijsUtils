@@ -386,8 +386,7 @@ namespace ProgressOnderwijsUtils
                 static ByMetaObjectImpl()
                 {
                     int writablePropCount = 0;
-                    foreach (var mp in metadata) //perf:no LINQ
-                    {
+                    foreach (var mp in metadata) { //perf:no LINQ
                         if (mp.CanWrite && SupportsType(mp.DataType)) {
                             writablePropCount++;
                         }
@@ -401,8 +400,7 @@ namespace ProgressOnderwijsUtils
                         }
                     }
                     hasUnsupportedColumns = false;
-                    foreach (var mp in metadata) //perf:no LINQ
-                    {
+                    foreach (var mp in metadata) { //perf:no LINQ
                         if (mp.CanWrite && !SupportsType(mp.DataType)) {
                             hasUnsupportedColumns = true;
                             break;

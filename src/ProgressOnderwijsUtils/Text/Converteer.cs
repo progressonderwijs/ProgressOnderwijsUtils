@@ -250,8 +250,7 @@ namespace ProgressOnderwijsUtils
 
         // string naar datum conversie
         [Pure]
-        public static DateTime? ToDateTime(string s, DatumFormaat formaat, Taal taal = Taal.NL) //TODO:alleen VerwInfo en MT940 worden gebruikt?
-        {
+        public static DateTime? ToDateTime(string s, DatumFormaat formaat, Taal taal = Taal.NL) { //TODO:alleen VerwInfo en MT940 worden gebruikt?
             if (string.IsNullOrEmpty(s)) {
                 return null;
             }

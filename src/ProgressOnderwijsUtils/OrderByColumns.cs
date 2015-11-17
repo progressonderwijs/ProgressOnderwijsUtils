@@ -212,8 +212,7 @@ namespace ProgressOnderwijsUtils
             }
             var possibleMatchingTail = DirectAcessColumns.SkipWhile(colsort => colsort != BaseSortOrder.DirectAcessColumns.First());
             var baseTailOfSameLength = BaseSortOrder.DirectAcessColumns.Take(possibleMatchingTail.Count());
-            if (possibleMatchingTail.SequenceEqual(baseTailOfSameLength)) //equal!
-            {
+            if (possibleMatchingTail.SequenceEqual(baseTailOfSameLength)) { //equal!
                 return new OrderByColumns(DirectAcessColumns.TakeWhile(colsort => colsort != BaseSortOrder.DirectAcessColumns.First()));
             } else {
                 return this;

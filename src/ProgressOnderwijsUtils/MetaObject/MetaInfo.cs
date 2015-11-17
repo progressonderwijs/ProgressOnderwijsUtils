@@ -33,8 +33,7 @@ namespace ProgressOnderwijsUtils
 
             MetaProperties = GetMetaPropertiesImpl();
             var dictionary = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-            foreach (var property in MetaProperties) //perf:avoid LINQ.
-            {
+            foreach (var property in MetaProperties) { //perf:avoid LINQ.
                 dictionary.Add(property.Name, property.Index);
             }
             indexByName = dictionary;

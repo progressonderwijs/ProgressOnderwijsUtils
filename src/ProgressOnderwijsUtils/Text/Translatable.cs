@@ -24,8 +24,7 @@ namespace ProgressOnderwijsUtils
             var args = new ITranslatable[objects.Length + 1];
             int i = 1;
             args[0] = a;
-            foreach (var obj in objects) //perf: no LINQ
-            {
+            foreach (var obj in objects) { //perf: no LINQ
                 args[i++] = Converteer.ToText(obj);
             }
 
@@ -65,8 +64,7 @@ namespace ProgressOnderwijsUtils
             var args = new ITranslatable[objects.Length + 1];
             int i = 1;
             args[0] = a;
-            foreach (var obj in objects) //perf: no LINQ
-            {
+            foreach (var obj in objects) { //perf: no LINQ
                 args[i++] = Converteer.ToText(obj).TextToTooltip();
             }
 

@@ -228,8 +228,7 @@ namespace ProgressOnderwijsUtils
                     for (int pI = pos + 1; pI < query.Length; pI++) {
                         if (query[pI] >= '0' && query[pI] <= '9') {
                             continue;
-                        } else if (query[pI] == '}' && pI >= pos + 2) //{} testen
-                        {
+                        } else if (query[pI] == '}' && pI >= pos + 2) { //{} testen
                             yield return new SubstringPosition { Index = pos, Length = pI - pos + 1 };
                             pos = pI;
                             break;
