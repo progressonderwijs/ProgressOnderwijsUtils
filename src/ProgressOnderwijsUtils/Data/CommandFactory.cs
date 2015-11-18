@@ -18,9 +18,10 @@ namespace ProgressOnderwijsUtils
 
         static CommandFactory ProcessQuery(IEnumerable<IQueryComponent> components)
         {
-            return
-                components
-                    .Aggregate(new CommandFactory(), (factory, component) => factory.AppendQueryComponent(component));
+            var commandFactory = new CommandFactory();
+            foreach (var component in components)
+                commandFactory.AppendQueryComponent(component);
+            return commandFactory;
         }
 
         public static string BuildQueryText(IEnumerable<IQueryComponent> components)
