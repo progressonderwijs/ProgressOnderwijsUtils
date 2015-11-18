@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -54,8 +55,8 @@ namespace ProgressOnderwijsUtils
         }
 
         readonly StringBuilder queryText = new StringBuilder();
-        readonly List<IQueryParameter> parmetersInOrder = new List<IQueryParameter>();
-        readonly Dictionary<IQueryParameter, int> lookup = new Dictionary<IQueryParameter, int>();
+        FastArrayBuilder<SqlParameter> parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
+        readonly Dictionary<IQueryParameter, string> lookup = new Dictionary<IQueryParameter, string>();
 
         public CommandFactory AppendQueryComponent(IQueryComponent component)
         {
@@ -69,17 +70,17 @@ namespace ProgressOnderwijsUtils
 
         public string GetNameForParam(IQueryParameter o)
         {
-            int parameterIndex;
-            if (!lookup.TryGetValue(o, out parameterIndex)) {
-                parmetersInOrder.Add(o);
-                parameterIndex = lookup.Count;
-                lookup.Add(o, parameterIndex);
+            string paramName;
+            if (!lookup.TryGetValue(o, out paramName)) {
+                var parameterIndex = lookup.Count;
+                paramName = parameterIndex < parNames.Length ? parNames[parameterIndex] : NumToParName(parameterIndex);
+                parmetersInOrder.Add(o.ToSqlParameter(paramName));
+                lookup.Add(o, paramName);
             }
-            return parameterIndex < parNames.Length ? parNames[parameterIndex] : NumToParName(parameterIndex);
-
+            return paramName;
         }
 
-        SqlParameter[] GenerateSqlParameters() => parmetersInOrder.Select(par => par.ToSqlParameter(GetNameForParam(par))).ToArray();
+        SqlParameter[] GenerateSqlParameters() => parmetersInOrder.ToArray();
         string GenerateCommandText() => queryText.ToString();
     }
 }
