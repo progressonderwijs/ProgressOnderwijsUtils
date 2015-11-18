@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -62,17 +63,23 @@ namespace ProgressOnderwijsUtils
             return this;
         }
 
-        public int GetNumberForParam(IQueryParameter o)
+        static readonly string[] parNames = Enumerable.Range(0, 20).Select(NumToParName).ToArray();
+        static string NumToParName(int num)=> "@par" + num.ToStringInvariant();
+
+
+        public string GetNameForParam(IQueryParameter o)
         {
-            int retval;
-            if (!lookup.TryGetValue(o, out retval)) {
+            int parameterIndex;
+            if (!lookup.TryGetValue(o, out parameterIndex)) {
                 parmetersInOrder.Add(o);
-                lookup.Add(o, retval = lookup.Count);
+                parameterIndex = lookup.Count;
+                lookup.Add(o, parameterIndex);
             }
-            return retval;
+            return parameterIndex < parNames.Length ? parNames[parameterIndex] : NumToParName(parameterIndex);
+
         }
 
-        SqlParameter[] GenerateSqlParameters() => parmetersInOrder.Select(par => par.ToSqlParameter(GetNumberForParam(par))).ToArray();
+        SqlParameter[] GenerateSqlParameters() => parmetersInOrder.Select(par => par.ToSqlParameter(GetNameForParam(par))).ToArray();
         string GenerateCommandText() => queryText.ToString();
     }
 }

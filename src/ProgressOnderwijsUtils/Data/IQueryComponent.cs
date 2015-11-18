@@ -11,6 +11,6 @@ namespace ProgressOnderwijsUtils
 
     interface IQueryParameter : IQueryComponent
     {
-        SqlParameter ToSqlParameter(int paramNum);
+        SqlParameter ToSqlParameter(string paramName);
     }
 }

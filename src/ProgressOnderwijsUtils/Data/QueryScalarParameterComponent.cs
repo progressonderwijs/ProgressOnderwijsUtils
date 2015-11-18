@@ -15,9 +15,9 @@ namespace ProgressOnderwijsUtils
             hashCode = paramval.GetHashCode() + 37;
         }
 
-        public string ToSqlString(CommandFactory qnum) => "@par" + qnum.GetNumberForParam(this);
+        public string ToSqlString(CommandFactory factory) => factory.GetNameForParam(this);
 
-        public SqlParameter ToSqlParameter(int paramNum)
+        public SqlParameter ToSqlParameter(string paramName)
         {
             object value;
             if (paramval is Filter.CurrentTimeToken) {
@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
             }
             return new SqlParameter {
                 IsNullable = paramval == DBNull.Value,
-                ParameterName = "@par" + paramNum,
+                ParameterName = paramName,
                 Value = value,
             };
         }
