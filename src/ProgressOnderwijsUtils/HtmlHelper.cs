@@ -52,6 +52,10 @@ namespace ProgressOnderwijsUtils
 
         public static XhtmlData CheckmarkOnGreenSquareSymbol() => Symbol("CheckmarkOnGreenSquareSymbol", null);
 
+        public static XhtmlData TriangleOrangeRightSymbol(string toolTip) => Symbol("TriangleOrangeRightSymbol", toolTip);
+
+        public static XhtmlData CheckmarkOrangeSymbol(string toolTip) => Symbol("CheckmarkOrangeSymbol", toolTip);
+
         public static XhtmlData FlowStepSymbol(FlowStep step, string toolTip)
         {
             switch (step) {
