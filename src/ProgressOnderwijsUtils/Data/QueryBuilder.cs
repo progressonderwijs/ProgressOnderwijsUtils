@@ -189,15 +189,15 @@ namespace ProgressOnderwijsUtils
 
             var pos = 0;
             foreach (var paramRefMatch in ParamRefMatches(str)) {
-                query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.Index - pos)));
-                var argumentIndex = int.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2), NumberStyles.None, CultureInfo.InvariantCulture);
+                query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.StartIndex - pos)));
+                var argumentIndex = int.Parse(str.Substring(paramRefMatch.StartIndex + 1, paramRefMatch.EndIndex - paramRefMatch.StartIndex - 2), NumberStyles.None, CultureInfo.InvariantCulture);
                 var argument = interpolatedQuery.GetArgument(argumentIndex);
                 if (argument is QueryBuilder) {
                     query = Concat(query, (QueryBuilder)argument);
                 } else {
                     query = Concat(query, QueryComponent.CreateParam(argument));
                 }
-                pos = paramRefMatch.Index + paramRefMatch.Length;
+                pos = paramRefMatch.EndIndex;
             }
             query = Concat(query, QueryComponent.CreateString(str.Substring(pos, str.Length - pos)));
 
@@ -206,7 +206,7 @@ namespace ProgressOnderwijsUtils
 
         struct SubstringPosition
         {
-            public int Index, Length;
+            public int StartIndex, EndIndex;
         }
 
         static IEnumerable<SubstringPosition> ParamRefMatches(string query)
@@ -218,7 +218,7 @@ namespace ProgressOnderwijsUtils
                         if (query[pI] >= '0' && query[pI] <= '9') {
                             continue;
                         } else if (query[pI] == '}' && pI >= pos + 2) { //{} testen
-                            yield return new SubstringPosition { Index = pos, Length = pI - pos + 1 };
+                            yield return new SubstringPosition { StartIndex = pos, EndIndex = pI + 1 };
                             pos = pI;
                             break;
                         } else {
