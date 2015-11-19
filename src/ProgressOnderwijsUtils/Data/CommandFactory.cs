@@ -21,8 +21,9 @@ namespace ProgressOnderwijsUtils
         static CommandFactory ProcessQuery(IEnumerable<IQueryComponent> components)
         {
             var commandFactory = new CommandFactory();
-            foreach (var component in components)
-                commandFactory.AppendQueryComponent(component);
+            foreach (var component in components) {
+                commandFactory.queryText.Append(component.ToSqlString(commandFactory));
+            }
             return commandFactory;
         }
 
@@ -57,13 +58,6 @@ namespace ProgressOnderwijsUtils
         readonly StringBuilder queryText = new StringBuilder();
         FastArrayBuilder<SqlParameter> parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
         readonly Dictionary<IQueryParameter, string> lookup = new Dictionary<IQueryParameter, string>();
-
-        public CommandFactory AppendQueryComponent(IQueryComponent component)
-        {
-            queryText.Append(component.ToSqlString(this));
-            return this;
-        }
-
         static readonly string[] parNames = Enumerable.Range(0, 20).Select(NumToParName).ToArray();
         static string NumToParName(int num) => "@par" + num.ToStringInvariant();
 
