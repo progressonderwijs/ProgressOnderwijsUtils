@@ -8,7 +8,12 @@ namespace ProgressOnderwijsUtils
 {
     sealed class CommandFactory
     {
-        CommandFactory(IEnumerable<IQueryComponent> components) {
+        readonly StringBuilder queryText = new StringBuilder();
+        FastArrayBuilder<SqlParameter> parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
+        readonly Dictionary<IQueryParameter, string> lookup = new Dictionary<IQueryParameter, string>();
+
+        CommandFactory(IEnumerable<IQueryComponent> components)
+        {
             foreach (var component in components) {
                 queryText.Append(component.ToSqlString(this));
             }
@@ -50,18 +55,23 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        readonly StringBuilder queryText = new StringBuilder();
-        FastArrayBuilder<SqlParameter> parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
-        readonly Dictionary<IQueryParameter, string> lookup = new Dictionary<IQueryParameter, string>();
-        static readonly string[] parNames = Enumerable.Range(0, 20).Select(NumToParName).ToArray();
-        static string NumToParName(int num) => "@par" + num.ToStringInvariant();
+        const int ParameterNameCacheSize = 20;
+
+        static readonly string[] CachedParameterNames =
+            Enumerable.Range(0, ParameterNameCacheSize)
+                .Select(IndexToParameterName)
+                .ToArray();
+
+        static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
 
         public string GetNameForParam(IQueryParameter o)
         {
             string paramName;
             if (!lookup.TryGetValue(o, out paramName)) {
                 var parameterIndex = lookup.Count;
-                paramName = parameterIndex < parNames.Length ? parNames[parameterIndex] : NumToParName(parameterIndex);
+                paramName = parameterIndex < CachedParameterNames.Length
+                    ? CachedParameterNames[parameterIndex]
+                    : IndexToParameterName(parameterIndex);
                 parmetersInOrder.Add(o.ToSqlParameter(paramName));
                 lookup.Add(o, paramName);
             }
