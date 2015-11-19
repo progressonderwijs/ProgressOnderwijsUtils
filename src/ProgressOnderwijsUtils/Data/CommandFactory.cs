@@ -65,8 +65,7 @@ namespace ProgressOnderwijsUtils
         }
 
         static readonly string[] parNames = Enumerable.Range(0, 20).Select(NumToParName).ToArray();
-        static string NumToParName(int num)=> "@par" + num.ToStringInvariant();
-
+        static string NumToParName(int num) => "@par" + num.ToStringInvariant();
 
         public string GetNameForParam(IQueryParameter o)
         {
