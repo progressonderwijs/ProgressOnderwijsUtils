@@ -18,19 +18,25 @@ namespace ProgressOnderwijsUtils
                 queryText.Append(component.ToSqlString(this));
             }
         }
+        internal CommandFactory() { }
 
         public static SqlCommand BuildQuery(IEnumerable<IQueryComponent> components, SqlConnection conn, int commandTimeout)
         {
             var query = new CommandFactory(components);
-            var commandText = query.queryText.ToString();
-            var sqlParameters = query.parmetersInOrder.ToArray();
-            return CreateCommand(conn, commandTimeout, commandText, sqlParameters);
+            return query.CreateCommand(conn, commandTimeout);
         }
 
         public static string BuildQueryText(IEnumerable<IQueryComponent> components)
         {
             var query = new CommandFactory(components);
             return query.queryText.ToString();
+        }
+
+        internal SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
+        {
+            var commandText = queryText.ToString();
+            var sqlParameters = parmetersInOrder.ToArray();
+            return CreateCommand(conn, commandTimeout, commandText, sqlParameters);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
@@ -76,6 +82,11 @@ namespace ProgressOnderwijsUtils
                 lookup.Add(o, paramName);
             }
             return paramName;
+        }
+
+        internal void AppendSql(string sql)
+        {
+            queryText.Append(sql);
         }
     }
 }
