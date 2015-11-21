@@ -27,6 +27,11 @@ namespace ProgressOnderwijsUtils
             return $"(select {alias}.querytablevalue from {name} {alias})";
         }
 
+        public void AppendTo(CommandFactory factory)
+        {
+            factory.AppendSql(ToSqlString(factory));
+        }
+
         public SqlParameter ToSqlParameter(string paramName)
         {
             return new SqlParameter {
