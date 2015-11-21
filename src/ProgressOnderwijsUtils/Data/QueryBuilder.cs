@@ -189,9 +189,10 @@ namespace ProgressOnderwijsUtils
 
             var pos = 0;
             while (true) {
-                var paramRefMatch = ParamRefNextMatch(str, pos);
-                if (paramRefMatch.WasNotFound())
+                var paramRefMatchOrNull = ParamRefNextMatch(str, pos);
+                if (paramRefMatchOrNull == null)
                     break;
+                var paramRefMatch = paramRefMatchOrNull.Value;
                 query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.StartIndex - pos)));
                 var argumentIndex = int.Parse(str.Substring(paramRefMatch.StartIndex + 1, paramRefMatch.EndIndex - paramRefMatch.StartIndex - 2), NumberStyles.None, CultureInfo.InvariantCulture);
                 var argument = interpolatedQuery.GetArgument(argumentIndex);
@@ -210,34 +211,26 @@ namespace ProgressOnderwijsUtils
         struct SubstringPosition
         {
             public int StartIndex, EndIndex;
-            public bool WasNotFound() => StartIndex < 0;
-            public static readonly SubstringPosition NotFound = new SubstringPosition { StartIndex = -1 };
         }
 
-        static SubstringPosition ParamRefNextMatch(string query, int pos)
+        static SubstringPosition? ParamRefNextMatch(string query, int pos)
         {
-            if (pos >= query.Length) {
-                return SubstringPosition.NotFound;
-            }
-            while (query[pos] != '{') {
+            while(pos < query.Length) {
+                char c = query[pos];
+                if (c == '{') {
+                    for (int pI = pos + 1; pI < query.Length; pI++) {
+                        if (query[pI] >= '0' && query[pI] <= '9') {
+                            continue;
+                        } else if (query[pI] == '}' && pI >= pos + 2) { //{} testen
+                            return new SubstringPosition { StartIndex = pos, EndIndex = pI + 1 };
+                        } else {
+                            break;
+                        }
+                    }
+                }
                 pos++;
-                if (pos >= query.Length) {
-                    return SubstringPosition.NotFound;
-                }
             }
-            var startPos = pos;
-            pos++;
-            if (pos >= query.Length) {
-                return SubstringPosition.NotFound;
-            }
-            while (pos < query.Length) {
-                if (query[pos] == '}') {
-                    return new SubstringPosition { StartIndex = startPos, EndIndex = pos + 1 };
-                } else {
-                    pos++;
-                }
-            }
-            return SubstringPosition.NotFound;
+            return null;
         }
 
 
