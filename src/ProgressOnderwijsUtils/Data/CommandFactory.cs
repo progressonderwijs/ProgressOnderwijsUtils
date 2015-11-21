@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -9,27 +8,29 @@ namespace ProgressOnderwijsUtils
 {
     sealed class CommandFactory
     {
-        CommandFactory() { }
+        readonly StringBuilder queryText = new StringBuilder();
+        FastArrayBuilder<SqlParameter> parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
+        readonly Dictionary<IQueryParameter, string> lookup = new Dictionary<IQueryParameter, string>();
+
+        CommandFactory(IEnumerable<IQueryComponent> components)
+        {
+            foreach (var component in components) {
+                queryText.Append(component.ToSqlString(this));
+            }
+        }
 
         public static SqlCommand BuildQuery(IEnumerable<IQueryComponent> components, SqlConnection conn, int commandTimeout)
         {
-            var query = ProcessQuery(components);
-
-            return CreateCommand(conn, commandTimeout, query.GenerateCommandText(), query.GenerateSqlParameters());
-        }
-
-        static CommandFactory ProcessQuery(IEnumerable<IQueryComponent> components)
-        {
-            var commandFactory = new CommandFactory();
-            foreach (var component in components)
-                commandFactory.AppendQueryComponent(component);
-            return commandFactory;
+            var query = new CommandFactory(components);
+            var commandText = query.queryText.ToString();
+            var sqlParameters = query.parmetersInOrder.ToArray();
+            return CreateCommand(conn, commandTimeout, commandText, sqlParameters);
         }
 
         public static string BuildQueryText(IEnumerable<IQueryComponent> components)
         {
-            var query = ProcessQuery(components);
-            return query.GenerateCommandText();
+            var query = new CommandFactory(components);
+            return query.queryText.ToString();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
@@ -54,33 +55,27 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        readonly StringBuilder queryText = new StringBuilder();
-        FastArrayBuilder<SqlParameter> parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
-        readonly Dictionary<IQueryParameter, string> lookup = new Dictionary<IQueryParameter, string>();
+        const int ParameterNameCacheSize = 20;
 
-        public CommandFactory AppendQueryComponent(IQueryComponent component)
-        {
-            queryText.Append(component.ToSqlString(this));
-            return this;
-        }
+        static readonly string[] CachedParameterNames =
+            Enumerable.Range(0, ParameterNameCacheSize)
+                .Select(IndexToParameterName)
+                .ToArray();
 
-        static readonly string[] parNames = Enumerable.Range(0, 20).Select(NumToParName).ToArray();
-        static string NumToParName(int num)=> "@par" + num.ToStringInvariant();
-
+        static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
 
         public string GetNameForParam(IQueryParameter o)
         {
             string paramName;
             if (!lookup.TryGetValue(o, out paramName)) {
                 var parameterIndex = lookup.Count;
-                paramName = parameterIndex < parNames.Length ? parNames[parameterIndex] : NumToParName(parameterIndex);
+                paramName = parameterIndex < CachedParameterNames.Length
+                    ? CachedParameterNames[parameterIndex]
+                    : IndexToParameterName(parameterIndex);
                 parmetersInOrder.Add(o.ToSqlParameter(paramName));
                 lookup.Add(o, paramName);
             }
             return paramName;
         }
-
-        SqlParameter[] GenerateSqlParameters() => parmetersInOrder.ToArray();
-        string GenerateCommandText() => queryText.ToString();
     }
 }
