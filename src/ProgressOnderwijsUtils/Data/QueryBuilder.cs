@@ -188,7 +188,11 @@ namespace ProgressOnderwijsUtils
             var query = Empty;
 
             var pos = 0;
-            foreach (var paramRefMatch in ParamRefMatches(str)) {
+            while (true) {
+                var paramRefMatchOrNull = ParamRefNextMatch(str, pos);
+                if (paramRefMatchOrNull == null)
+                    break;
+                var paramRefMatch = paramRefMatchOrNull.Value;
                 query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.StartIndex - pos)));
                 var argumentIndex = int.Parse(str.Substring(paramRefMatch.StartIndex + 1, paramRefMatch.EndIndex - paramRefMatch.StartIndex - 2), NumberStyles.None, CultureInfo.InvariantCulture);
                 var argument = interpolatedQuery.GetArgument(argumentIndex);
@@ -209,25 +213,26 @@ namespace ProgressOnderwijsUtils
             public int StartIndex, EndIndex;
         }
 
-        static IEnumerable<SubstringPosition> ParamRefMatches(string query)
+        static SubstringPosition? ParamRefNextMatch(string query, int pos)
         {
-            for (int pos = 0; pos < query.Length; pos++) {
+            while(pos < query.Length) {
                 char c = query[pos];
                 if (c == '{') {
                     for (int pI = pos + 1; pI < query.Length; pI++) {
                         if (query[pI] >= '0' && query[pI] <= '9') {
                             continue;
                         } else if (query[pI] == '}' && pI >= pos + 2) { //{} testen
-                            yield return new SubstringPosition { StartIndex = pos, EndIndex = pI + 1 };
-                            pos = pI;
-                            break;
+                            return new SubstringPosition { StartIndex = pos, EndIndex = pI + 1 };
                         } else {
                             break;
                         }
                     }
                 }
+                pos++;
             }
+            return null;
         }
+
 
         [Pure]
         public SqlCommand CreateSqlCommand(SqlCommandCreationContext commandCreationContext)
