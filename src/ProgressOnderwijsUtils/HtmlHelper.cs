@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
             var hasToolTip = !string.IsNullOrWhiteSpace(toolTip);
             return XhtmlData.Create(
                 new XElement("span",
-                    new XAttribute("class", cssClass + (hasToolTip ? " hastooltip" : "")),
+                    new XAttribute("class", cssClass + (hasToolTip ? " hastooltip undashed" : "")),
                     hasToolTip ? new XAttribute("data-tiptext", toolTip) : null));
         }
 
