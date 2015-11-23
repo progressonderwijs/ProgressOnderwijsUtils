@@ -53,10 +53,15 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        [CodeDieAlleenWordtGebruiktInTests]
         public static bool None<TSource>(this IEnumerable<TSource> source)
         {
             return !source.Any();
+        }
+
+        [Pure]
+        public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            return !source.Any(predicate);
         }
 
         [Pure]
@@ -90,7 +95,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        [CodeDieAlleenWordtGebruiktInTests]
         public static bool SetEqual<T>(this IEnumerable<T> list, IEnumerable<T> other, IEqualityComparer<T> comparer)
         {
             return list.ToSet(comparer).SetEquals(other);
