@@ -23,24 +23,6 @@ namespace ProgressOnderwijsUtils
             lookup = new Dictionary<object, string>();
         } 
 
-        public static SqlCommand BuildQuery(IEnumerable<IQueryComponent> components, SqlConnection conn, int commandTimeout)
-        {
-            var query = new CommandFactory(32);
-            foreach (var component in components) {
-                component.AppendTo(ref query);
-            }
-            return query.CreateCommand(conn, commandTimeout);
-        }
-
-        public static string BuildQueryText(IEnumerable<IQueryComponent> components)
-        {
-            var query = new CommandFactory(32);
-            foreach (var component in components) {
-                component.AppendTo(ref query);
-            }
-            return new string(query.queryText, 0, query.queryLen);
-        }
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
         {
