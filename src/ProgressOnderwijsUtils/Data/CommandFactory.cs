@@ -6,32 +6,33 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class CommandFactory
+    struct CommandFactory
     {
         readonly StringBuilder queryText;
-        FastArrayBuilder<SqlParameter> parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
-        readonly Dictionary<IQueryParameter, string> lookup = new Dictionary<IQueryParameter, string>();
-
-        CommandFactory(IEnumerable<IQueryComponent> components) : this(32)
-        {
-            foreach (var component in components) {
-                queryText.Append(component.ToSqlString(this));
-            }
-        }
+        FastArrayBuilder<SqlParameter> parmetersInOrder;
+        readonly Dictionary<IQueryParameter, string> lookup;
 
         internal CommandFactory(int estimatedLength) {
-             queryText = new StringBuilder(estimatedLength);
-        }
+            queryText = new StringBuilder(estimatedLength);
+            parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
+            lookup = new Dictionary<IQueryParameter, string>();
+        } 
 
         public static SqlCommand BuildQuery(IEnumerable<IQueryComponent> components, SqlConnection conn, int commandTimeout)
         {
-            var query = new CommandFactory(components);
+            var query = new CommandFactory(32);
+            foreach (var component in components) {
+                component.AppendTo(query);
+            }
             return query.CreateCommand(conn, commandTimeout);
         }
 
         public static string BuildQueryText(IEnumerable<IQueryComponent> components)
         {
-            var query = new CommandFactory(components);
+            var query = new CommandFactory(32);
+            foreach (var component in components) {
+                component.AppendTo(query);
+            }
             return query.queryText.ToString();
         }
 
