@@ -9,12 +9,14 @@ namespace ProgressOnderwijsUtils
     struct CommandFactory
     {
         readonly StringBuilder queryText;
-        FastArrayBuilder<SqlParameter> parmetersInOrder;
+        readonly SqlCommand command;
+        readonly SqlParameterCollection commandParameters;
         readonly Dictionary<object, string> lookup;
 
         internal CommandFactory(int estimatedLength) {
             queryText = new StringBuilder(estimatedLength);
-            parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
+            command = new SqlCommand();
+            commandParameters = command.Parameters;
             lookup = new Dictionary<object, string>();
         } 
 
@@ -36,33 +38,16 @@ namespace ProgressOnderwijsUtils
             return query.queryText.ToString();
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         internal SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
         {
-            var commandText = queryText.ToString();
-            var sqlParameters = parmetersInOrder.ToArray();
-            return CreateCommand(conn, commandTimeout, commandText, sqlParameters);
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        static SqlCommand CreateCommand(SqlConnection sqlconn, int commandTimeout, string commandText, SqlParameter[] parameters)
-        {
-            bool finishedOk = false;
-            var command = new SqlCommand();
-            try {
-                command.Connection = sqlconn;
+            command.Connection = conn;
 #if USE_RAW_TRANSACTIONS
-				command.Transaction = conn.SqlTransaction;
+			command.Transaction = conn.SqlTransaction;
 #endif
-                command.CommandTimeout = commandTimeout; //60 by default
-                command.CommandText = commandText;
-                command.Parameters.AddRange(parameters);
-                finishedOk = true;
-                return command;
-            } finally {
-                if (!finishedOk) {
-                    command.Dispose();
-                }
-            }
+            command.CommandTimeout = commandTimeout; //60 by default
+            command.CommandText = queryText.ToString();
+            return command;
         }
 
         const int ParameterNameCacheSize = 20;
@@ -83,7 +68,7 @@ namespace ProgressOnderwijsUtils
                 paramName = parameterIndex < CachedParameterNames.Length
                     ? CachedParameterNames[parameterIndex]
                     : IndexToParameterName(parameterIndex);
-                parmetersInOrder.Add(o.ToSqlParameter(paramName));
+                commandParameters.Add(o.ToSqlParameter(paramName));
                 lookup.Add(o.EquatableValue, paramName);
             }
             return paramName;
