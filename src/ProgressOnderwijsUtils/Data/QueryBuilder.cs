@@ -46,6 +46,10 @@ namespace ProgressOnderwijsUtils
 
         public static QueryBuilder CreateDynamic(string rawSqlString)
         {
+            if (rawSqlString == null) {
+                throw new ArgumentNullException(nameof(rawSqlString));
+            }
+
             return new StringSqlFragment(rawSqlString).ToQuery();
         }
 

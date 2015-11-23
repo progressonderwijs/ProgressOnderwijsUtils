@@ -11,12 +11,12 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void ValidatesArgumentsOK()
         {
-            Assert.Throws<ArgumentNullException>(() => QueryComponent.CreateString(null));
-            Assert.DoesNotThrow(() => QueryComponent.CreateString("bla"));
+            Assert.Throws<ArgumentNullException>(() => QueryBuilder.CreateDynamic(null));
+            Assert.DoesNotThrow(() => QueryBuilder.CreateDynamic("bla"));
 
-            PAssert.That(() => QueryComponent.CreateString("bla" + 0).GetHashCode() == QueryComponent.CreateString("bla0").GetHashCode());
-            PAssert.That(() => QueryComponent.CreateString("bla" + 0).GetHashCode() != QueryComponent.CreateString("bla").GetHashCode());
-            PAssert.That(() => QueryComponent.CreateString("bla" + 0).Equals(QueryComponent.CreateString("bla0")));
+            PAssert.That(() => QueryBuilder.CreateDynamic("bla" + 0).GetHashCode() == QueryBuilder.CreateDynamic("bla0").GetHashCode());
+            PAssert.That(() => QueryBuilder.CreateDynamic("bla" + 0).GetHashCode() != QueryBuilder.CreateDynamic("bla").GetHashCode());
+            PAssert.That(() => QueryBuilder.CreateDynamic("bla" + 0).Equals(QueryBuilder.CreateDynamic("bla0")));
 
             PAssert.That(() => QueryComponent.CreateParam("bla" + 0).GetHashCode() == QueryComponent.CreateParam("bla0").GetHashCode());
             PAssert.That(() => QueryComponent.CreateParam("bla" + 0).GetHashCode() != QueryComponent.CreateParam("bla").GetHashCode());
