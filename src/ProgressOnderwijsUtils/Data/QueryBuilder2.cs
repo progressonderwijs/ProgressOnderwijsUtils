@@ -139,6 +139,15 @@ order by _row");
             }
         }
 
+
+        public string CommandText()
+        {
+            using (var cmd = CreateSqlCommand(new SqlCommandCreationContext(null, 0, null))) {
+                return cmd.CommandText;
+            }
+        }
+
+
         [Pure]
         public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<QueryBuilder> projectedColumns, QueryBuilder filterClause, OrderByColumns sortOrder)
             => SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, Empty);
