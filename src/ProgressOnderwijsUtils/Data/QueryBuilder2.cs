@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
             throw new InvalidOperationException("Cannot concatenate sql with strings");
         }
 
-        internal static QueryBuilder CreateDynamic(string rawSqlString)
+        public static QueryBuilder CreateDynamic(string rawSqlString)
         {
             return new StringSqlFragment(rawSqlString).ToQuery();
         }
