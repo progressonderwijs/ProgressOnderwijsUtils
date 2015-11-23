@@ -156,6 +156,21 @@ order by _row");
 
         [Pure]
         public static QueryBuilder TableParamDynamic(Array o) => new SingleTableParameterSqlFragment(o).ToQuery();
+
+        /// <summary>
+        /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
+        /// 
+        ///   You need to define a corresponding type in the database (see QueryComponent.ToTableParameter for details).
+        /// </summary>
+        /// <param name="typeName">name of the db-type e.g. IntValues</param>
+        /// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
+        /// <returns>a composable query-component</returns>
+        // ReSharper disable UnusedMember.Global
+        [Pure]
+        public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o)
+            where T : IMetaObject, new()
+            => QueryComponent.ToTableParameter(typeName, o).ToQuery();
+
     }
 
     internal class StringSqlFragment : IBuildableQuery
