@@ -62,9 +62,8 @@ namespace ProgressOnderwijsUtils.Data
                 var paramRefMatch = ParamRefNextMatch(str, pos);
                 if (paramRefMatch.WasNotFound())
                     break;
-                factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos); 
-                var argumentIndex = int.Parse(str.Substring(paramRefMatch.StartIndex + 1, paramRefMatch.EndIndex - paramRefMatch.StartIndex - 2), NumberStyles.None, CultureInfo.InvariantCulture);
-                var argument = interpolatedQuery.GetArgument(argumentIndex);
+                factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos);
+                var argument = interpolatedQuery.GetArgument(paramRefMatch.ReferencedParameterIndex);
                 if (argument is QueryBuilder2) {
                     ((QueryBuilder2)argument).AppendTo(ref factory);
                 } else {
@@ -75,30 +74,32 @@ namespace ProgressOnderwijsUtils.Data
             factory.AppendSql(str, pos, str.Length - pos);
         }
 
-        static SubstringPosition ParamRefNextMatch(string query, int pos)
+        static ParamRefSubString ParamRefNextMatch(string query, int pos)
         {
-            if (pos >= query.Length) {
-                return SubstringPosition.NotFound;
-            }
-            while (query[pos] != '{') {
-                pos++;
-                if (pos >= query.Length) {
-                    return SubstringPosition.NotFound;
-                }
-            }
-            var startPos = pos;
-            pos++;
-            if (pos >= query.Length) {
-                return SubstringPosition.NotFound;
-            }
             while (pos < query.Length) {
-                if (query[pos] == '}') {
-                    return new SubstringPosition { StartIndex = startPos, EndIndex = pos + 1 };
-                } else {
-                    pos++;
+                char c = query[pos];
+                if (c == '{') {
+                    var startPos = pos;
+                    int num = 0;
+                    for (pos++; pos < query.Length; pos++) {
+                        c = query[pos];
+                        if (c >= '0' && c <= '9') {
+                            num = num * 10 + (c - '0');
+                            continue;
+                        } else if (c == '}') {
+                            return new ParamRefSubString {
+                                StartIndex = startPos,
+                                EndIndex = pos + 1,
+                                ReferencedParameterIndex = num
+                            };
+                        } else {
+                            break;
+                        }
+                    }
                 }
+                pos++;
             }
-            return SubstringPosition.NotFound;
+            return ParamRefSubString.NotFound;
         }
 
         public int EstimateLength()
@@ -107,13 +108,11 @@ namespace ProgressOnderwijsUtils.Data
             // converting {0} into @par0 adds 2 to length
         }
 
-        struct SubstringPosition
+        struct ParamRefSubString
         {
-            public int StartIndex, EndIndex;
-            public bool WasNotFound() => StartIndex < 0;
-            public static readonly SubstringPosition NotFound = new SubstringPosition { StartIndex = -1 };
+            public int StartIndex, EndIndex, ReferencedParameterIndex;
+            public bool WasNotFound() => ReferencedParameterIndex < 0;
+            public static readonly ParamRefSubString NotFound = new ParamRefSubString { ReferencedParameterIndex = -1 };
         }
-
-
     }
 }
