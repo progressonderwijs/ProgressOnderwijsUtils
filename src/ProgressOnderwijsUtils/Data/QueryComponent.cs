@@ -36,7 +36,6 @@ namespace ProgressOnderwijsUtils
                 return new QueryScalarParameterComponent(o);
             }
         }
-
         public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
         {
             return new QueryTableValuedParameterComponent<T>(tableTypeName, set);
