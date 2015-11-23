@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -8,13 +9,15 @@ namespace ProgressOnderwijsUtils
 {
     struct CommandFactory
     {
-        readonly StringBuilder queryText;
+        char[] queryText; //readonly StringBuilder;
+        int queryLen;
         readonly SqlCommand command;
         readonly SqlParameterCollection commandParameters;
         readonly Dictionary<object, string> lookup;
 
         internal CommandFactory(int estimatedLength) {
-            queryText = new StringBuilder(estimatedLength);
+            queryText = new char[estimatedLength];
+            queryLen = 0;
             command = new SqlCommand();
             commandParameters = command.Parameters;
             lookup = new Dictionary<object, string>();
@@ -35,7 +38,7 @@ namespace ProgressOnderwijsUtils
             foreach (var component in components) {
                 component.AppendTo(ref query);
             }
-            return query.queryText.ToString();
+            return new string(query.queryText, 0, query.queryLen);
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
@@ -46,7 +49,7 @@ namespace ProgressOnderwijsUtils
 			command.Transaction = conn.SqlTransaction;
 #endif
             command.CommandTimeout = commandTimeout; //60 by default
-            command.CommandText = queryText.ToString();
+            command.CommandText = new string(queryText, 0, queryLen);
             return command;
         }
 
@@ -76,7 +79,10 @@ namespace ProgressOnderwijsUtils
 
         internal void AppendSql(string sql, int startIndex, int length)
         {
-            queryText.Append(sql, startIndex, length);
+            if (queryText.Length < queryLen + length)
+                Array.Resize(ref queryText, Math.Max(queryText.Length * 3 / 2, queryLen + length + 5));
+            sql.CopyTo(startIndex, queryText, queryLen, length);
+            queryLen += length;
         }
     }
 }
