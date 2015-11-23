@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils.Data
                 if (argument is QueryBuilder2) {
                     ((QueryBuilder2)argument).AppendTo(ref factory);
                 } else {
-                    QueryComponent.CreateParam(argument).AppendTo(ref factory);
+                    QueryComponent.AppendParamTo(ref factory, argument);
                 }
                 pos = paramRefMatch.EndIndex;
             }
