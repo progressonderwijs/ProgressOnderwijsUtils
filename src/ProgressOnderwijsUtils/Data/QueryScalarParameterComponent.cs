@@ -7,15 +7,17 @@ namespace ProgressOnderwijsUtils
     sealed class QueryScalarParameterComponent : IQueryParameter
     {
         readonly object paramval;
+        readonly int hashCode;
 
         internal QueryScalarParameterComponent(object o)
         {
             paramval = o ?? DBNull.Value;
+            hashCode = paramval.GetHashCode() + 37;
         }
 
-        public string ToSqlString(CommandFactory qnum) => "@par" + qnum.GetNumberForParam(this);
+        public string ToSqlString(CommandFactory factory) => factory.GetNameForParam(this);
 
-        public SqlParameter ToSqlParameter(int paramNum)
+        public SqlParameter ToSqlParameter(string paramName)
         {
             object value;
             if (paramval is Filter.CurrentTimeToken) {
@@ -25,7 +27,7 @@ namespace ProgressOnderwijsUtils
             }
             return new SqlParameter {
                 IsNullable = paramval == DBNull.Value,
-                ParameterName = "@par" + paramNum,
+                ParameterName = paramName,
                 Value = value,
             };
         }
@@ -51,10 +53,6 @@ namespace ProgressOnderwijsUtils
 
         public bool Equals(IQueryComponent other) => (other is QueryScalarParameterComponent) && Equals(paramval, ((QueryScalarParameterComponent)other).paramval);
         public override bool Equals(object obj) => (obj is QueryScalarParameterComponent) && Equals((QueryScalarParameterComponent)obj);
-
-        public override int GetHashCode()
-        {
-            return paramval.GetHashCode() + 37;
-        } //paramval never null!
+        public override int GetHashCode() => hashCode;
     }
 }
