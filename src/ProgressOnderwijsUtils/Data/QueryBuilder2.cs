@@ -155,7 +155,8 @@ order by _row");
         public static QueryBuilder Param(object paramVal) => new SingleParameterSqlFragment(paramVal).ToQuery();
 
         [Pure]
-        public static QueryBuilder TableParamDynamic(Array o) => new SingleTableParameterSqlFragment(o).ToQuery();
+        public static QueryBuilder TableParamDynamic(Array o) => QueryComponent.ToTableParameter(o).ToQuery();
+
 
         /// <summary>
         /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -201,22 +202,6 @@ order by _row");
 
         public int EstimateLength() => 5;
     }
-
-    internal class SingleTableParameterSqlFragment : IBuildableQuery
-    {
-        readonly Array paramVal;
-
-        public SingleTableParameterSqlFragment(Array paramVal)
-        {
-            this.paramVal = paramVal;
-        }
-
-        public void AppendTo(ref CommandFactory factory)
-            => QueryComponent.ToTableParameter(paramVal).AppendTo(ref factory);
-
-        public int EstimateLength() => 5;
-    }
-
 
     interface IBuildableQuery
     {
