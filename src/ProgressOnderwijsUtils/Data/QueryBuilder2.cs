@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils.Data
 
         public SqlCommand CreateSqlCommand(SqlCommandCreationContext conn)
         {
-            var factory = new CommandFactory();
+            var factory = new CommandFactory(impl.EstimateLength());
             impl.AppendTo(factory);
             return factory.CreateCommand(conn.Connection, conn.CommandTimeoutInS);
         }
@@ -29,6 +29,7 @@ namespace ProgressOnderwijsUtils.Data
     interface IBuildableQuery
     {
         void AppendTo(CommandFactory factory);
+        int EstimateLength();
     }
 
     public static class SqlFactory
@@ -98,6 +99,12 @@ namespace ProgressOnderwijsUtils.Data
                 }
             }
             return SubstringPosition.NotFound;
+        }
+
+        public int EstimateLength()
+        {
+            return interpolatedQuery.Format.Length + interpolatedQuery.ArgumentCount*2;
+            // converting {0} into @par0 adds 2 to length
         }
 
         struct SubstringPosition

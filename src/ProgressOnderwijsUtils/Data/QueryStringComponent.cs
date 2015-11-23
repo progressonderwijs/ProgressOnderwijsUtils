@@ -24,5 +24,10 @@ namespace ProgressOnderwijsUtils
         {
             factory.AppendSql(val, 0, val.Length);
         }
+
+        public int EstimateLength()
+        {
+            return val.Length;
+        }
     }
 }

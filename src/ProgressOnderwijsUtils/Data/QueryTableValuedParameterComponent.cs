@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Collections.Generic;
 using ExpressionToCodeLib;
+using System;
 
 namespace ProgressOnderwijsUtils
 {
@@ -25,6 +26,11 @@ namespace ProgressOnderwijsUtils
 
             // select par0.querytablevalue from @par0 par0, par0 is alias for @par0
             return $"(select {alias}.querytablevalue from {name} {alias})";
+        }
+
+        public int EstimateLength()
+        {
+            return "(select par0.querytablevalue from @par0 par0)".Length;
         }
 
         public void AppendTo(CommandFactory factory)

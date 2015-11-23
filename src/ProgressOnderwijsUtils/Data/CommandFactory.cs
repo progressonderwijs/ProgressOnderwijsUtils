@@ -8,17 +8,20 @@ namespace ProgressOnderwijsUtils
 {
     sealed class CommandFactory
     {
-        readonly StringBuilder queryText = new StringBuilder();
+        readonly StringBuilder queryText;
         FastArrayBuilder<SqlParameter> parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
         readonly Dictionary<IQueryParameter, string> lookup = new Dictionary<IQueryParameter, string>();
 
-        CommandFactory(IEnumerable<IQueryComponent> components)
+        CommandFactory(IEnumerable<IQueryComponent> components) : this(32)
         {
             foreach (var component in components) {
                 queryText.Append(component.ToSqlString(this));
             }
         }
-        internal CommandFactory() { }
+
+        internal CommandFactory(int estimatedLength) {
+             queryText = new StringBuilder(estimatedLength);
+        }
 
         public static SqlCommand BuildQuery(IEnumerable<IQueryComponent> components, SqlConnection conn, int commandTimeout)
         {

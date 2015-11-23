@@ -60,5 +60,10 @@ namespace ProgressOnderwijsUtils
             var sqlString = ToSqlString(factory);
             factory.AppendSql(sqlString, 0, sqlString.Length);
         }
+
+        public int EstimateLength()
+        {
+            return 5; // length of @par0
+        }
     }
 }
