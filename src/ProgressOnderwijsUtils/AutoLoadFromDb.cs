@@ -13,7 +13,6 @@ using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
-using ProgressOnderwijsUtils.Data;
 
 namespace ProgressOnderwijsUtils
 {
@@ -29,7 +28,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
         }
-        public static T ExecuteQuery<T>(QueryBuilder2 builder, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, Func<SqlCommand, T> action)
+        public static T ExecuteQuery<T>(QueryBuilder0 builder, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, Func<SqlCommand, T> action)
         {
             using (var cmd = builder.CreateSqlCommand(commandCreationContext)) {
                 try {
@@ -147,7 +146,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The database connection</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
-        public static T[] ReadMetaObjects<T>(this QueryBuilder2 q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
+        public static T[] ReadMetaObjects<T>(this QueryBuilder0 q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
         {
             return ExecuteQuery(
                 q,

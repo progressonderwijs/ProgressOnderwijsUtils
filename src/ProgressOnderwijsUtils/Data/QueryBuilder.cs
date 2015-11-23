@@ -13,23 +13,23 @@ namespace ProgressOnderwijsUtils
     {
         [Pure]
         public static QueryBuilder SQL(FormattableString interpolatedQuery) 
-            => QueryBuilder.CreateFromInterpolation(interpolatedQuery);
+            => SqlFactory.SQL(interpolatedQuery);
     }
 
-    public abstract class QueryBuilder : IEquatable<QueryBuilder>
+    public abstract class QueryBuilder0 : IEquatable<QueryBuilder0>
     {
-        QueryBuilder() { } // only inner classes may inherit
-        protected virtual QueryBuilder PrefixOrNull => null;
-        protected virtual QueryBuilder SuffixOrNull => null;
+        QueryBuilder0() { } // only inner classes may inherit
+        protected virtual QueryBuilder0 PrefixOrNull => null;
+        protected virtual QueryBuilder0 SuffixOrNull => null;
         internal virtual IQueryComponent ValueOrNull => null;
 
-        sealed class EmptyComponent : QueryBuilder
+        sealed class EmptyComponent : QueryBuilder0
         {
             EmptyComponent() { }
             public static readonly EmptyComponent Instance = new EmptyComponent();
         }
 
-        sealed class SingleComponent : QueryBuilder
+        sealed class SingleComponent : QueryBuilder0
         {
             readonly IQueryComponent value;
             internal override IQueryComponent ValueOrNull => value;
@@ -43,14 +43,14 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        sealed class PrefixAndComponent : QueryBuilder
+        sealed class PrefixAndComponent : QueryBuilder0
         {
-            readonly QueryBuilder precedingComponents;
+            readonly QueryBuilder0 precedingComponents;
             readonly IQueryComponent value;
-            protected override QueryBuilder PrefixOrNull => precedingComponents;
+            protected override QueryBuilder0 PrefixOrNull => precedingComponents;
             internal override IQueryComponent ValueOrNull => value;
 
-            public PrefixAndComponent(QueryBuilder prefix, IQueryComponent singleComponent)
+            public PrefixAndComponent(QueryBuilder0 prefix, IQueryComponent singleComponent)
             {
                 if (null == prefix) {
                     throw new ArgumentNullException(nameof(prefix));
@@ -63,13 +63,13 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        sealed class PrefixAndSuffix : QueryBuilder
+        sealed class PrefixAndSuffix : QueryBuilder0
         {
-            readonly QueryBuilder precedingComponents, next;
-            protected override QueryBuilder PrefixOrNull => precedingComponents;
-            protected override QueryBuilder SuffixOrNull => next;
+            readonly QueryBuilder0 precedingComponents, next;
+            protected override QueryBuilder0 PrefixOrNull => precedingComponents;
+            protected override QueryBuilder0 SuffixOrNull => next;
 
-            public PrefixAndSuffix(QueryBuilder prefix, QueryBuilder continuation)
+            public PrefixAndSuffix(QueryBuilder0 prefix, QueryBuilder0 continuation)
             {
                 if (null == prefix) {
                     throw new ArgumentNullException(nameof(prefix));
@@ -85,22 +85,22 @@ namespace ProgressOnderwijsUtils
         //INVARIANT:
         // IF next != null THEN precedingComponents !=null; conversely IF precedingComponents == null THEN next == null 
         // !(value != null AND next !=null)
-        public static readonly QueryBuilder Empty = EmptyComponent.Instance;
+        public static readonly QueryBuilder0 Empty = EmptyComponent.Instance;
         bool IsEmpty => this is EmptyComponent;
         bool IsSingleNonNullElement => this is SingleComponent;
 
         [Pure]
-        public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b) => Concat(a, b);
+        public static QueryBuilder0 operator +(QueryBuilder0 a, QueryBuilder0 b) => Concat(a, b);
 
         [Pure, Obsolete("Implicitly converts to SQL", true)]
-        public static QueryBuilder operator +(QueryBuilder a, string b) => Concat(a, QueryComponent.CreateString(b));
+        public static QueryBuilder0 operator +(QueryBuilder0 a, string b) => Concat(a, QueryComponent.CreateString(b));
 
         [Pure, Obsolete("Implicitly converts to SQL", true)]
-        public static QueryBuilder operator +(string a, QueryBuilder b) => Concat(CreateDynamic(a), b);
+        public static QueryBuilder0 operator +(string a, QueryBuilder0 b) => Concat(CreateDynamic(a), b);
 
-        static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) => null == part ? query : new PrefixAndComponent(query, part);
+        static QueryBuilder0 Concat(QueryBuilder0 query, IQueryComponent part) => null == part ? query : new PrefixAndComponent(query, part);
 
-        static QueryBuilder Concat(QueryBuilder first, QueryBuilder second)
+        static QueryBuilder0 Concat(QueryBuilder0 first, QueryBuilder0 second)
         {
             if (null == first) {
                 throw new ArgumentNullException(nameof(first));
@@ -118,7 +118,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static QueryBuilder Param(object o) => new SingleComponent(QueryComponent.CreateParam(o));
+        public static QueryBuilder0 Param(object o) => new SingleComponent(QueryComponent.CreateParam(o));
 
         /// <summary>
         /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -130,55 +130,57 @@ namespace ProgressOnderwijsUtils
         /// <returns>a composable query-component</returns>
         // ReSharper disable UnusedMember.Global
         [Pure]
-        public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o)
+        public static QueryBuilder0 TableParam<T>(string typeName, IEnumerable<T> o)
             where T : IMetaObject, new()
             => new SingleComponent(QueryComponent.ToTableParameter(typeName, o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<int> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<int> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<string> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<string> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<DateTime> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<DateTime> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<TimeSpan> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<TimeSpan> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<decimal> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<decimal> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<char> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<char> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<bool> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<bool> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<byte> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<byte> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<short> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<short> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<long> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<long> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParam(IEnumerable<double> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParam(IEnumerable<double> o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         [Pure]
-        public static QueryBuilder TableParamDynamic(Array o) => new SingleComponent(QueryComponent.ToTableParameter(o));
+        public static QueryBuilder0 TableParamDynamic(Array o) => new SingleComponent(QueryComponent.ToTableParameter(o));
 
         // ReSharper restore UnusedMember.Global
-        public static QueryBuilder CreateDynamic(string str)
+        public static QueryBuilder0 CreateDynamic(string str)
         {
             var stringComponent = QueryComponent.CreateString(str);
             return stringComponent == null ? Empty : new SingleComponent(stringComponent);
         }
 
+        public static QueryBuilder0 SQL(FormattableString interpolatedQuery) => CreateFromInterpolation(interpolatedQuery);
+
         [Pure]
-        public static QueryBuilder CreateFromInterpolation(FormattableString interpolatedQuery)
+        public static QueryBuilder0 CreateFromInterpolation(FormattableString interpolatedQuery)
         {
             if (interpolatedQuery == null) {
                 throw new ArgumentNullException(nameof(interpolatedQuery));
@@ -196,8 +198,8 @@ namespace ProgressOnderwijsUtils
                 query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.StartIndex - pos)));
                 var argumentIndex = int.Parse(str.Substring(paramRefMatch.StartIndex + 1, paramRefMatch.EndIndex - paramRefMatch.StartIndex - 2), NumberStyles.None, CultureInfo.InvariantCulture);
                 var argument = interpolatedQuery.GetArgument(argumentIndex);
-                if (argument is QueryBuilder) {
-                    query = Concat(query, (QueryBuilder)argument);
+                if (argument is QueryBuilder0) {
+                    query = Concat(query, (QueryBuilder0)argument);
                 } else {
                     query = Concat(query, QueryComponent.CreateParam(argument));
                 }
@@ -263,8 +265,8 @@ namespace ProgressOnderwijsUtils
                 if (IsEmpty) {
                     yield break;
                 }
-                var Continuation = new Stack<QueryBuilder>();
-                QueryBuilder current = this;
+                var Continuation = new Stack<QueryBuilder0>();
+                QueryBuilder0 current = this;
                 while (true) {
                     if (current.PrefixOrNull != null) {
                         Continuation.Push(current.PrefixOrNull); //deal with prefix if any later
@@ -312,16 +314,16 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public override bool Equals(object obj) => Equals(obj as QueryBuilder);
+        public override bool Equals(object obj) => Equals(obj as QueryBuilder0);
 
         [Pure]
-        public static bool operator ==(QueryBuilder a, QueryBuilder b) => ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b);
+        public static bool operator ==(QueryBuilder0 a, QueryBuilder0 b) => ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b);
 
         [Pure]
-        public bool Equals(QueryBuilder other) => !ReferenceEquals(other, null) && CanonicalReverseComponents.SequenceEqual(other.CanonicalReverseComponents);
+        public bool Equals(QueryBuilder0 other) => !ReferenceEquals(other, null) && CanonicalReverseComponents.SequenceEqual(other.CanonicalReverseComponents);
 
         [Pure]
-        public static bool operator !=(QueryBuilder a, QueryBuilder b) => !(a == b);
+        public static bool operator !=(QueryBuilder0 a, QueryBuilder0 b) => !(a == b);
 
         [Pure]
         public override int GetHashCode() => HashCodeHelper.ComputeHash(CanonicalReverseComponents.ToArray()) + 123;
@@ -329,15 +331,15 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override string ToString() => DebugText(null);
 
-        static readonly QueryBuilder[] AllColumns = { SQL($"*") };
-        static readonly QueryBuilder Comma_ColumnSeperator = SQL($", ");
+        static readonly QueryBuilder0[] AllColumns = { SQL($"*") };
+        static readonly QueryBuilder0 Comma_ColumnSeperator = SQL($", ");
 
-        static QueryBuilder SubQueryHelper(
-            QueryBuilder subquery,
-            IEnumerable<QueryBuilder> projectedColumns,
-            QueryBuilder filterClause,
+        static QueryBuilder0 SubQueryHelper(
+            QueryBuilder0 subquery,
+            IEnumerable<QueryBuilder0> projectedColumns,
+            QueryBuilder0 filterClause,
             OrderByColumns sortOrder,
-            QueryBuilder topRowsOrNull)
+            QueryBuilder0 topRowsOrNull)
         {
             projectedColumns = projectedColumns ?? AllColumns;
 
@@ -348,11 +350,11 @@ namespace ProgressOnderwijsUtils
                     + CreateFromSortOrder(sortOrder);
         }
 
-        static QueryBuilder CreateProjectedColumnsClause(IEnumerable<QueryBuilder> projectedColumns)
+        static QueryBuilder0 CreateProjectedColumnsClause(IEnumerable<QueryBuilder0> projectedColumns)
             => projectedColumns.Aggregate((a, b) => a.Append(Comma_ColumnSeperator).Append(b));
 
         [Pure]
-        static QueryBuilder CreateFromSortOrder(OrderByColumns sortOrder)
+        static QueryBuilder0 CreateFromSortOrder(OrderByColumns sortOrder)
         {
             return !sortOrder.Columns.Any()
                 ? Empty
@@ -360,10 +362,10 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static QueryBuilder CreatePagedSubQuery(
-            QueryBuilder subQuery,
-            IEnumerable<QueryBuilder> projectedColumns,
-            QueryBuilder filterClause,
+        public static QueryBuilder0 CreatePagedSubQuery(
+            QueryBuilder0 subQuery,
+            IEnumerable<QueryBuilder0> projectedColumns,
+            QueryBuilder0 filterClause,
             OrderByColumns sortOrder,
             int skipNrows,
             int takeNrows)
@@ -397,7 +399,7 @@ order by _row");
         }
 
         [Pure]
-        public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<QueryBuilder> projectedColumns, QueryBuilder filterClause, OrderByColumns sortOrder)
+        public static QueryBuilder0 CreateSubQuery(QueryBuilder0 subQuery, IEnumerable<QueryBuilder0> projectedColumns, QueryBuilder0 filterClause, OrderByColumns sortOrder)
             => SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, null);
 
         //TODO: dit aanzetten voor datasource tests

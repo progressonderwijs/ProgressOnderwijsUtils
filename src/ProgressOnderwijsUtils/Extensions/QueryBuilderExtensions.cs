@@ -26,4 +26,27 @@ namespace ProgressOnderwijsUtils
             return condition ? source.Append(extra()) : source;
         }
     }
+    public static class QueryBuilder0Extensions
+    {
+        static readonly QueryBuilder0 newline = QueryBuilder0.SQL($"\r\n");
+
+        [Pure]
+        public static QueryBuilder0 Append(this QueryBuilder0 source, QueryBuilder0 extra)
+        {
+            return source + newline + extra;
+        }
+
+        [Pure]
+        public static QueryBuilder AppendIf(this QueryBuilder source, bool condition, QueryBuilder extra)
+        {
+            return condition ? source.Append(extra) : source;
+        }
+
+        [Pure, UsefulToKeep("Library function, other overloads used")]
+        public static QueryBuilder AppendIf(this QueryBuilder source, bool condition, Func<QueryBuilder> extra)
+        {
+            return condition ? source.Append(extra()) : source;
+        }
+    }
+
 }
