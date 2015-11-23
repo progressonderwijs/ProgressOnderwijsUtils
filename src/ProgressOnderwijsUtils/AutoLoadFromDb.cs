@@ -28,16 +28,6 @@ namespace ProgressOnderwijsUtils
                 }
             }
         }
-        public static T ExecuteQuery<T>(QueryBuilder0 builder, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, Func<SqlCommand, T> action)
-        {
-            using (var cmd = builder.CreateSqlCommand(commandCreationContext)) {
-                try {
-                    return action(cmd);
-                } catch (Exception e) {
-                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + QueryTracer.DebugFriendlyCommandText(cmd, QueryTracerParameterValues.Included), e);
-                }
-            }
-        }
 
         public static T ReadScalar<T>(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
         {
@@ -128,25 +118,6 @@ namespace ProgressOnderwijsUtils
         /// <param name="qCommandCreationContext">The database connection</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         public static T[] ReadMetaObjects<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
-        {
-            return ExecuteQuery(
-                q,
-                qCommandCreationContext,
-                () => "ReadMetaObjects<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
-                cmd => ReadMetaObjectsUnpacker<T>(cmd)
-                );
-        }
-        /// <summary>
-        /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
-        /// Type T must have a public parameterless constructor; both structs and classes are supported
-        /// The type T must match the queries columns by name (the order is not relevant).  Matching columns to properties/fields is case insensitive.
-        /// The number of fields+properties must be the same as the number of columns
-        /// </summary>
-        /// <typeparam name="T">The type to unpack each record into</typeparam>
-        /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The database connection</param>
-        /// <returns>An array of strongly-typed objects; never null</returns>
-        public static T[] ReadMetaObjects<T>(this QueryBuilder0 q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
         {
             return ExecuteQuery(
                 q,
