@@ -33,31 +33,4 @@ namespace ProgressOnderwijsUtils
             return !ReferenceEquals(a, b) && (a == null || b == null || !a.Equals(b));
         }
     }
-
-    [Serializable]
-    public sealed class LiteralSqlInt : IEquatable<LiteralSqlInt>
-    {
-        public readonly int Value;
-
-        public LiteralSqlInt(int val)
-        {
-            Value = val;
-        }
-
-        public bool Equals(LiteralSqlInt other) => Value == other.Value;
-        public override bool Equals(object obj) => obj is LiteralSqlInt && Equals((LiteralSqlInt)obj);
-        public override int GetHashCode() => 27 + Value.GetHashCode();
-
-        public static bool operator ==(LiteralSqlInt a, LiteralSqlInt b)
-        {
-            return ReferenceEquals(a, b) || a != null && b != null && a.Equals(b);
-        }
-
-        public static bool operator !=(LiteralSqlInt a, LiteralSqlInt b)
-        {
-            return !ReferenceEquals(a, b) && (a == null || b == null || !a.Equals(b));
-        }
-
-        public static LiteralSqlInt Create(int p) => new LiteralSqlInt(p);
-    }
 }

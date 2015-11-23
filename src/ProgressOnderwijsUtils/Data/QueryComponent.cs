@@ -15,16 +15,12 @@ namespace ProgressOnderwijsUtils
     {
         public static void AppendParamTo(ref CommandFactory factory, object o)
         {
-            if (o is LiteralSqlInt) {
-                var literalIntSql = ((LiteralSqlInt)o).Value.ToStringInvariant();
-                factory.AppendSql(literalIntSql, 0, literalIntSql.Length);
-            } else if (o is IEnumerable && !(o is string) && !(o is byte[])) {
+            if (o is IEnumerable && !(o is string) && !(o is byte[])) {
                 ToTableParameter((IEnumerable)o).AppendTo(ref factory);
             } else {
                 new QueryScalarParameterComponent(o).AppendTo(ref factory);
             }
         }
-
 
         public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
         {
