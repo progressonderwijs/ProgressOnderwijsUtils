@@ -13,21 +13,6 @@ namespace ProgressOnderwijsUtils
 {
     static class QueryComponent
     {
-        public static IQueryComponent CreateParam(object o)
-        {
-            if (o is QueryBuilder) {
-                throw new ArgumentException("Cannot pass a querybuilder as a parameter");
-            } else if (o is IQueryParameter) {
-                return (IQueryComponent)o;
-            } else if (o is LiteralSqlInt) {
-                return new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant());
-            } else if (o is IEnumerable && !(o is string) && !(o is byte[])) {
-                return ToTableParameter((IEnumerable)o);
-            } else {
-                return new QueryScalarParameterComponent(o);
-            }
-        }
-
         public static void AppendParamTo(ref CommandFactory factory, object o)
         {
             if (o is LiteralSqlInt) {
