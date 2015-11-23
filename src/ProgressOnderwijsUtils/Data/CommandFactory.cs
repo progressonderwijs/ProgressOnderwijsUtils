@@ -29,8 +29,8 @@ namespace ProgressOnderwijsUtils
 
         public static string BuildQueryText(IEnumerable<IQueryComponent> components)
         {
-            var query = new CommandFactory(components);
-            return query.queryText.ToString();
+            var commandFactory = new CommandFactory(components);
+            return commandFactory.queryText.ToString();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
