@@ -229,6 +229,12 @@ order by _row");
         void AppendTo(ref CommandFactory factory);
         int EstimateLength();
     }
+    interface IQueryParameter : IBuildableQuery
+    {
+        SqlParameter ToSqlParameter(string paramName);
+        object EquatableValue
+        { get; }
+    }
 
     public static class SafeSql
     {

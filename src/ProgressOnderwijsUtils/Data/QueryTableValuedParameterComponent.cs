@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
             DbTypeName = dbTypeName;
         }
 
-        public object EquatableValue => objs;
+        public object EquatableValue => Tuple.Create(objs, DbTypeName);
 
         public int EstimateLength()
         {
@@ -47,19 +47,5 @@ namespace ProgressOnderwijsUtils
                 TypeName = DbTypeName,
             };
         }
-
-        public bool Equals(IQueryComponent other) => Equals((object)other);
-
-        public override bool Equals(object other)
-        {
-            return ReferenceEquals(this, other)
-                || (other is QueryTableValuedParameterComponent<T>) && Equals(DbTypeName, ((QueryTableValuedParameterComponent<T>)other).DbTypeName)
-                    && (ReferenceEquals(objs, ((QueryTableValuedParameterComponent<T>)other).objs) || objs.SequenceEqual(((QueryTableValuedParameterComponent<T>)other).objs));
-        }
-
-        public override int GetHashCode()
-        {
-            return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200;
-        } //paramval never null!
     }
 }

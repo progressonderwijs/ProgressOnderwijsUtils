@@ -2,7 +2,7 @@
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class QueryStringComponent : IQueryComponent
+    sealed class QueryStringComponent : IBuildableQuery
     {
         public readonly string val;
 
@@ -13,10 +13,6 @@ namespace ProgressOnderwijsUtils
             }
             this.val = val;
         }
-
-        public bool Equals(IQueryComponent other) => (other is QueryStringComponent) && val == ((QueryStringComponent)other).val;
-        public override bool Equals(object obj) => (obj is QueryStringComponent) && Equals((QueryStringComponent)obj);
-        public override int GetHashCode() => val.GetHashCode() + 31;
 
         public void AppendTo(ref CommandFactory factory)
         {

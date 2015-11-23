@@ -7,12 +7,10 @@ namespace ProgressOnderwijsUtils
     struct QueryScalarParameterComponent : IQueryParameter
     {
         readonly object paramval;
-        readonly int hashCode;
 
         internal QueryScalarParameterComponent(object o)
         {
             paramval = o ?? DBNull.Value;
-            hashCode = paramval.GetHashCode() + 37;
         }
 
         public object EquatableValue => paramval;
@@ -31,10 +29,6 @@ namespace ProgressOnderwijsUtils
                 Value = value,
             };
         }
-
-        public bool Equals(IQueryComponent other) => (other is QueryScalarParameterComponent) && Equals(paramval, ((QueryScalarParameterComponent)other).paramval);
-        public override bool Equals(object obj) => (obj is QueryScalarParameterComponent) && Equals((QueryScalarParameterComponent)obj);
-        public override int GetHashCode() => hashCode;
 
         public void AppendTo(ref CommandFactory factory)
         {
