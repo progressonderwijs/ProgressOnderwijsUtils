@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
             hashCode = paramval.GetHashCode() + 37;
         }
 
-        public string ToSqlString(CommandFactory factory) => factory.GetNameForParam(this);
+        public string ToSqlString(ref CommandFactory factory) => factory.GetNameForParam(this);
 
         public SqlParameter ToSqlParameter(string paramName)
         {
@@ -55,9 +55,9 @@ namespace ProgressOnderwijsUtils
         public override bool Equals(object obj) => (obj is QueryScalarParameterComponent) && Equals((QueryScalarParameterComponent)obj);
         public override int GetHashCode() => hashCode;
 
-        public void AppendTo(CommandFactory factory)
+        public void AppendTo(ref CommandFactory factory)
         {
-            var sqlString = ToSqlString(factory);
+            var sqlString = ToSqlString(ref factory);
             factory.AppendSql(sqlString, 0, sqlString.Length);
         }
 

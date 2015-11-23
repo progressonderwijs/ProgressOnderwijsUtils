@@ -16,19 +16,19 @@ namespace ProgressOnderwijsUtils.Data
             this.impl = impl;
         }
 
-        internal void AppendTo(CommandFactory factory) => impl.AppendTo(factory);
+        internal void AppendTo(ref CommandFactory factory) => impl.AppendTo(ref factory);
 
         public SqlCommand CreateSqlCommand(SqlCommandCreationContext conn)
         {
             var factory = new CommandFactory(impl.EstimateLength());
-            impl.AppendTo(factory);
+            impl.AppendTo(ref factory);
             return factory.CreateCommand(conn.Connection, conn.CommandTimeoutInS);
         }
     }
 
     interface IBuildableQuery
     {
-        void AppendTo(CommandFactory factory);
+        void AppendTo(ref CommandFactory factory);
         int EstimateLength();
     }
 
@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtils.Data
             this.interpolatedQuery = interpolatedQuery;
         }
 
-        public void AppendTo(CommandFactory factory)
+        public void AppendTo(ref CommandFactory factory)
         {
 
             if (interpolatedQuery == null) {
@@ -66,9 +66,9 @@ namespace ProgressOnderwijsUtils.Data
                 var argumentIndex = int.Parse(str.Substring(paramRefMatch.StartIndex + 1, paramRefMatch.EndIndex - paramRefMatch.StartIndex - 2), NumberStyles.None, CultureInfo.InvariantCulture);
                 var argument = interpolatedQuery.GetArgument(argumentIndex);
                 if (argument is QueryBuilder2) {
-                    ((QueryBuilder2)argument).AppendTo(factory);
+                    ((QueryBuilder2)argument).AppendTo(ref factory);
                 } else {
-                    QueryComponent.CreateParam(argument).AppendTo(factory);
+                    QueryComponent.CreateParam(argument).AppendTo(ref factory);
                 }
                 pos = paramRefMatch.EndIndex;
             }

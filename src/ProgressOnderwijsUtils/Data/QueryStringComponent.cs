@@ -5,7 +5,7 @@ namespace ProgressOnderwijsUtils
     sealed class QueryStringComponent : IQueryComponent
     {
         public readonly string val;
-        public string ToSqlString(CommandFactory qnum) => val;
+        public string ToSqlString(ref CommandFactory qnum) => val;
 
         internal QueryStringComponent(string val)
         {
@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
         public override bool Equals(object obj) => (obj is QueryStringComponent) && Equals((QueryStringComponent)obj);
         public override int GetHashCode() => val.GetHashCode() + 31;
 
-        public void AppendTo(CommandFactory factory)
+        public void AppendTo(ref CommandFactory factory)
         {
             factory.AppendSql(val, 0, val.Length);
         }

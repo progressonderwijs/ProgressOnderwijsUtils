@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
             DbTypeName = dbTypeName;
         }
 
-        public string ToSqlString(CommandFactory qnum)
+        public string ToSqlString(ref CommandFactory qnum)
         {
             var name = qnum.GetNameForParam(this);
             var alias = name.Substring(1);
@@ -33,9 +33,9 @@ namespace ProgressOnderwijsUtils
             return "(select par0.querytablevalue from @par0 par0)".Length;
         }
 
-        public void AppendTo(CommandFactory factory)
+        public void AppendTo(ref CommandFactory factory)
         {
-            var sqlString = ToSqlString(factory);
+            var sqlString = ToSqlString(ref factory);
             factory.AppendSql(sqlString, 0, sqlString.Length);
         }
 

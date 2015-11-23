@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
         {
             var query = new CommandFactory(32);
             foreach (var component in components) {
-                component.AppendTo(query);
+                component.AppendTo(ref query);
             }
             return query.CreateCommand(conn, commandTimeout);
         }
@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils
         {
             var query = new CommandFactory(32);
             foreach (var component in components) {
-                component.AppendTo(query);
+                component.AppendTo(ref query);
             }
             return query.queryText.ToString();
         }
