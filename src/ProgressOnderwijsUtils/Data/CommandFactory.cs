@@ -10,12 +10,12 @@ namespace ProgressOnderwijsUtils
     {
         readonly StringBuilder queryText;
         FastArrayBuilder<SqlParameter> parmetersInOrder;
-        readonly Dictionary<IQueryParameter, string> lookup;
+        readonly Dictionary<object, string> lookup;
 
         internal CommandFactory(int estimatedLength) {
             queryText = new StringBuilder(estimatedLength);
             parmetersInOrder = FastArrayBuilder<SqlParameter>.Create();
-            lookup = new Dictionary<IQueryParameter, string>();
+            lookup = new Dictionary<object, string>();
         } 
 
         public static SqlCommand BuildQuery(IEnumerable<IQueryComponent> components, SqlConnection conn, int commandTimeout)
@@ -74,16 +74,17 @@ namespace ProgressOnderwijsUtils
 
         static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
 
-        public string GetNameForParam(IQueryParameter o)
+        public string GetNameForParam<T>(T o)
+            where T: IQueryParameter
         {
             string paramName;
-            if (!lookup.TryGetValue(o, out paramName)) {
+            if (!lookup.TryGetValue(o.EquatableValue, out paramName)) {
                 var parameterIndex = lookup.Count;
                 paramName = parameterIndex < CachedParameterNames.Length
                     ? CachedParameterNames[parameterIndex]
                     : IndexToParameterName(parameterIndex);
                 parmetersInOrder.Add(o.ToSqlParameter(paramName));
-                lookup.Add(o, paramName);
+                lookup.Add(o.EquatableValue, paramName);
             }
             return paramName;
         }

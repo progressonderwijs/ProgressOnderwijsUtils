@@ -4,7 +4,7 @@ using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class QueryScalarParameterComponent : IQueryParameter
+    struct QueryScalarParameterComponent : IQueryParameter
     {
         readonly object paramval;
         readonly int hashCode;
@@ -15,8 +15,9 @@ namespace ProgressOnderwijsUtils
             hashCode = paramval.GetHashCode() + 37;
         }
 
-        public string ToSqlString(ref CommandFactory factory) => factory.GetNameForParam(this);
+        public object EquatableValue => paramval;
 
+        public string ToSqlString(ref CommandFactory factory) => factory.GetNameForParam(this);
         public SqlParameter ToSqlParameter(string paramName)
         {
             object value;

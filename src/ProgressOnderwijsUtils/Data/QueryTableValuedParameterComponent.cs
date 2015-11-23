@@ -19,6 +19,8 @@ namespace ProgressOnderwijsUtils
             DbTypeName = dbTypeName;
         }
 
+        public object EquatableValue => objs;
+
         public string ToSqlString(ref CommandFactory qnum)
         {
             var name = qnum.GetNameForParam(this);
