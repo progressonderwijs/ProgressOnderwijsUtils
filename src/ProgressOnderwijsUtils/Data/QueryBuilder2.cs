@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils.Data
                 var paramRefMatch = ParamRefNextMatch(str, pos);
                 if (paramRefMatch.WasNotFound())
                     break;
-                factory.AppendSql(str.Substring(pos, paramRefMatch.StartIndex - pos));
+                factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos); 
                 var argumentIndex = int.Parse(str.Substring(paramRefMatch.StartIndex + 1, paramRefMatch.EndIndex - paramRefMatch.StartIndex - 2), NumberStyles.None, CultureInfo.InvariantCulture);
                 var argument = interpolatedQuery.GetArgument(argumentIndex);
                 if (argument is QueryBuilder2) {
@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils.Data
                 }
                 pos = paramRefMatch.EndIndex;
             }
-            factory.AppendSql(str.Substring(pos, str.Length - pos));
+            factory.AppendSql(str, pos, str.Length - pos);
         }
 
         static SubstringPosition ParamRefNextMatch(string query, int pos)

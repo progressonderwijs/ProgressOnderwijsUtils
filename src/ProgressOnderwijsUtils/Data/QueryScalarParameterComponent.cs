@@ -57,7 +57,8 @@ namespace ProgressOnderwijsUtils
 
         public void AppendTo(CommandFactory factory)
         {
-            factory.AppendSql(ToSqlString(factory));
+            var sqlString = ToSqlString(factory);
+            factory.AppendSql(sqlString, 0, sqlString.Length);
         }
     }
 }

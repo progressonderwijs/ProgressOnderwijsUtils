@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
 
         public void AppendTo(CommandFactory factory)
         {
-            factory.AppendSql(val);
+            factory.AppendSql(val, 0, val.Length);
         }
     }
 }

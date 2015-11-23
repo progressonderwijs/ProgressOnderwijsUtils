@@ -84,9 +84,9 @@ namespace ProgressOnderwijsUtils
             return paramName;
         }
 
-        internal void AppendSql(string sql)
+        internal void AppendSql(string sql, int startIndex, int length)
         {
-            queryText.Append(sql);
+            queryText.Append(sql, startIndex, length);
         }
     }
 }
