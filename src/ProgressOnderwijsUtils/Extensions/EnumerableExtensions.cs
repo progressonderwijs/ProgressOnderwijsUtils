@@ -60,6 +60,13 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
+        [CodeDieAlleenWordtGebruiktInTests]
+        public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+        {
+            return !source.Any(predicate);
+        }
+
+        [Pure]
         public static IEnumerable<TSource> WhereIf<TSource>(this IEnumerable<TSource> source, bool condition, Func<TSource, bool> predicate)
         {
             return condition ? source.Where(predicate) : source;
