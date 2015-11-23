@@ -5,7 +5,6 @@ namespace ProgressOnderwijsUtils
     sealed class QueryStringComponent : IQueryComponent
     {
         public readonly string val;
-        public string ToSqlString(ref CommandFactory qnum) => val;
 
         internal QueryStringComponent(string val)
         {

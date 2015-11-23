@@ -5,7 +5,6 @@ namespace ProgressOnderwijsUtils
 {
     interface IQueryComponent : IEquatable<IQueryComponent>, IBuildableQuery
     {
-        string ToSqlString(ref CommandFactory qnum);
     }
 
     interface IQueryParameter : IQueryComponent

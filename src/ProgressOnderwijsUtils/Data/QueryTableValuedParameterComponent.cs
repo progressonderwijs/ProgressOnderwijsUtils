@@ -21,15 +21,6 @@ namespace ProgressOnderwijsUtils
 
         public object EquatableValue => objs;
 
-        public string ToSqlString(ref CommandFactory qnum)
-        {
-            var name = qnum.GetNameForParam(this);
-            var alias = name.Substring(1);
-
-            // select par0.querytablevalue from @par0 par0, par0 is alias for @par0
-            return $"(select {alias}.querytablevalue from {name} {alias})";
-        }
-
         public int EstimateLength()
         {
             return "(select par0.querytablevalue from @par0 par0)".Length;
@@ -37,7 +28,12 @@ namespace ProgressOnderwijsUtils
 
         public void AppendTo(ref CommandFactory factory)
         {
-            var sqlString = ToSqlString(ref factory);
+            var name = factory.GetNameForParam(this);
+            var alias = name.Substring(1);
+
+            // select par0.querytablevalue from @par0 par0, par0 is alias for @par0
+            var sqlString = $"(select {alias}.querytablevalue from {name} {alias})";
+
             factory.AppendSql(sqlString, 0, sqlString.Length);
         }
 

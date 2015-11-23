@@ -17,7 +17,6 @@ namespace ProgressOnderwijsUtils
 
         public object EquatableValue => paramval;
 
-        public string ToSqlString(ref CommandFactory factory) => factory.GetNameForParam(this);
         public SqlParameter ToSqlParameter(string paramName)
         {
             object value;
@@ -39,7 +38,7 @@ namespace ProgressOnderwijsUtils
 
         public void AppendTo(ref CommandFactory factory)
         {
-            var sqlString = ToSqlString(ref factory);
+            var sqlString = factory.GetNameForParam(this);
             factory.AppendSql(sqlString, 0, sqlString.Length);
         }
 
