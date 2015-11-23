@@ -15,7 +15,6 @@ namespace ProgressOnderwijsUtils
             this.val = val;
         }
 
-        public string ToDebugText(Taal? taalOrNull) => val;
         public bool Equals(IQueryComponent other) => (other is QueryStringComponent) && val == ((QueryStringComponent)other).val;
         public override bool Equals(object obj) => (obj is QueryStringComponent) && Equals((QueryStringComponent)obj);
         public override int GetHashCode() => val.GetHashCode() + 31;

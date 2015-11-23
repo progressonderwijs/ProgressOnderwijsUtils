@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -112,10 +113,10 @@ namespace ProgressOnderwijsUtils
             } else if (p is bool) {
                 return (bool)p ? "1" : "0";
             } else if (p is Enum) {
-                return Convert.ToInt64(p) + "/*" + p + "*/";
+                return ((IConvertible)p).ToInt64(null).ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(p) + "*/";
             } else {
                 try {
-                    return p.ToString();
+                    return "{!" + p + "!}";
                 } catch (Exception e) {
                     return "[[Exception in QueryTracer.SqlValueString: " + e.Message + "]]";
                 }
