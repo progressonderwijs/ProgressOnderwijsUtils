@@ -20,16 +20,18 @@ namespace ProgressOnderwijsUtils
 
         public string ToSqlString(CommandFactory qnum)
         {
-            var number = qnum.GetNumberForParam(this);
+            var name = qnum.GetNameForParam(this);
+            var alias = name.Substring(1);
+
             // select par0.querytablevalue from @par0 par0, par0 is alias for @par0
-            return $"(select par{number}.querytablevalue from @par{number} par{number})";
+            return $"(select {alias}.querytablevalue from {name} {alias})";
         }
 
-        public SqlParameter ToSqlParameter(int paramnum)
+        public SqlParameter ToSqlParameter(string paramName)
         {
             return new SqlParameter {
                 IsNullable = false,
-                ParameterName = "@par" + paramnum,
+                ParameterName = paramName,
                 Value = MetaObject.CreateDataReader(objs),
                 SqlDbType = SqlDbType.Structured,
                 TypeName = DbTypeName,

@@ -185,28 +185,17 @@ namespace ProgressOnderwijsUtils
             }
 
             var str = interpolatedQuery.Format;
-            var arguments = interpolatedQuery.GetArguments();
-
-
-            //null if argument is already a QueryBuilder and no new component needs to be created
-            var queryComponents = new IQueryComponent[arguments.Length];
-
-            for (var i = 0; i < arguments.Length; i++) {
-                if (!(arguments[i] is QueryBuilder)) {
-                    queryComponents[i] = QueryComponent.CreateParam(arguments[i]);
-                }
-            }
             var query = Empty;
 
             var pos = 0;
             foreach (var paramRefMatch in ParamRefMatches(str)) {
                 query = Concat(query, QueryComponent.CreateString(str.Substring(pos, paramRefMatch.Index - pos)));
-                var componentIndex = int.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2), NumberStyles.None, CultureInfo.InvariantCulture);
-                var queryComponent = queryComponents[componentIndex];
-                if (queryComponent == null) {
-                    query = Concat(query, (QueryBuilder)arguments[componentIndex]);
+                var argumentIndex = int.Parse(str.Substring(paramRefMatch.Index + 1, paramRefMatch.Length - 2), NumberStyles.None, CultureInfo.InvariantCulture);
+                var argument = interpolatedQuery.GetArgument(argumentIndex);
+                if (argument is QueryBuilder) {
+                    query = Concat(query, (QueryBuilder)argument);
                 } else {
-                    query = Concat(query, queryComponent);
+                    query = Concat(query, QueryComponent.CreateParam(argument));
                 }
                 pos = paramRefMatch.Index + paramRefMatch.Length;
             }
