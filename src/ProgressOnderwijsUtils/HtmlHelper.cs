@@ -68,7 +68,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static XhtmlData FlowStepSymbol(FlowStep? step) => step == null ? XhtmlData.Empty : FlowStepSymbol(step.Value, null);
+        public static XhtmlData FlowStepSymbol(FlowStep? step, string toolTip) => step == null ? XhtmlData.Empty : FlowStepSymbol(step.Value, toolTip);
+
+        public static XhtmlData FlowStepSymbol(FlowStep? step) => FlowStepSymbol(step, null);
 
         public static XhtmlData RenderPercentageGrafisch(decimal percentage)
         {
