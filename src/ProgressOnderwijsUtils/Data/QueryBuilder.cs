@@ -60,7 +60,7 @@ namespace ProgressOnderwijsUtils
         public override int GetHashCode() => (impl?.GetHashCode() ?? 12345678) + 4567;
 
         [Pure]
-        public static bool operator ==(QueryBuilder a, QueryBuilder b) => ReferenceEquals(a.impl, b.impl) || !ReferenceEquals(a.impl, null) && a.Equals(b);
+        public static bool operator ==(QueryBuilder a, QueryBuilder b) => ReferenceEquals(a.impl, b.impl) || !ReferenceEquals(a.impl, null) && a.impl.Equals(b.impl);
 
         [Pure]
         public bool Equals(QueryBuilder other) => this == other;
