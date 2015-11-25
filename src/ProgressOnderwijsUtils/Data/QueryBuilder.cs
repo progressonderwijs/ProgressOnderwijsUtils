@@ -13,6 +13,7 @@ namespace ProgressOnderwijsUtils
     public struct QueryBuilder
     {
         readonly IBuildableQuery impl;
+
         internal QueryBuilder(IBuildableQuery impl)
         {
             this.impl = impl;
@@ -27,10 +28,9 @@ namespace ProgressOnderwijsUtils
             return factory.CreateCommand(conn.Connection, conn.CommandTimeoutInS);
         }
 
-
         [Pure]
-        public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b) 
-            => (a.impl==null||b.impl==null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).ToQuery();
+        public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b)
+            => (a.impl == null || b.impl == null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).ToQuery();
 
         [Pure, Obsolete("Implicitly converts to SQL", true)]
         public static QueryBuilder operator +(QueryBuilder a, string b)
@@ -69,7 +69,6 @@ namespace ProgressOnderwijsUtils
         public static bool operator !=(QueryBuilder a, QueryBuilder b) => !(a == b);
 
         public static QueryBuilder Empty => new QueryBuilder(null);
-
         static readonly QueryBuilder[] AllColumns = { SqlFactory.SQL($"*") };
         static readonly QueryBuilder Comma_ColumnSeperator = SqlFactory.SQL($", ");
 
@@ -139,19 +138,15 @@ order by _row");
 
         public string DebugText()
         {
-            using (var cmd = CreateSqlCommand(new SqlCommandCreationContext(null, 0, null))) {
+            using (var cmd = CreateSqlCommand(new SqlCommandCreationContext(null, 0, null)))
                 return QueryTracer.DebugFriendlyCommandText(cmd, QueryTracerParameterValues.Included);
-            }
         }
-
 
         public string CommandText()
         {
-            using (var cmd = CreateSqlCommand(new SqlCommandCreationContext(null, 0, null))) {
+            using (var cmd = CreateSqlCommand(new SqlCommandCreationContext(null, 0, null)))
                 return cmd.CommandText;
-            }
         }
-
 
         [Pure]
         public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<QueryBuilder> projectedColumns, QueryBuilder filterClause, OrderByColumns sortOrder)
@@ -161,7 +156,6 @@ order by _row");
 
         [Pure]
         public static QueryBuilder TableParamDynamic(Array o) => QueryComponent.ToTableParameter(o).ToQuery();
-
 
         /// <summary>
         /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -192,7 +186,6 @@ order by _row");
                     GetType().FullName + ": Query may not use * as that might cause runtime exceptions in productie when DB changes:\n" + commandText);
             }
         }
-
     }
 
     internal class StringSqlFragment : IBuildableQuery
@@ -205,7 +198,6 @@ order by _row");
         }
 
         public void AppendTo(ref CommandFactory factory) => factory.AppendSql(rawSqlString, 0, rawSqlString.Length);
-
         public int EstimateLength() => rawSqlString.Length;
     }
 
@@ -218,7 +210,7 @@ order by _row");
             this.paramVal = paramVal;
         }
 
-        public void AppendTo(ref CommandFactory factory) 
+        public void AppendTo(ref CommandFactory factory)
             => QueryComponent.AppendParamTo(ref factory, paramVal);
 
         public int EstimateLength() => 5;
@@ -229,11 +221,11 @@ order by _row");
         void AppendTo(ref CommandFactory factory);
         int EstimateLength();
     }
+
     interface IQueryParameter : IBuildableQuery
     {
         SqlParameter ToSqlParameter(string paramName);
-        object EquatableValue
-        { get; }
+        object EquatableValue { get; }
     }
 
     public static class SafeSql
@@ -278,7 +270,6 @@ order by _row");
 
         public void AppendTo(ref CommandFactory factory)
         {
-
             if (interpolatedQuery == null) {
                 throw new ArgumentNullException(nameof(interpolatedQuery));
             }
@@ -288,8 +279,9 @@ order by _row");
             var pos = 0;
             while (true) {
                 var paramRefMatch = ParamRefNextMatch(str, pos);
-                if (paramRefMatch.WasNotFound())
+                if (paramRefMatch.WasNotFound()) {
                     break;
+                }
                 factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos);
                 var argument = interpolatedQuery.GetArgument(paramRefMatch.ReferencedParameterIndex);
                 if (argument is QueryBuilder) {
