@@ -5,10 +5,10 @@ namespace ProgressOnderwijsUtils
 {
     public enum FlowStep
     {
-        CanEdit,
-        Partial,
-        Rejected,
-        Ok,
+        Partial = -2,
+        Rejected = -1,
+        CanEdit = 0,
+        Ok = 1,
     }
 
     public static class HtmlHelper
@@ -67,6 +67,10 @@ namespace ProgressOnderwijsUtils
                     throw new ArgumentOutOfRangeException(nameof(step), step, null);
             }
         }
+
+        public static XhtmlData FlowStepSymbol(FlowStep? step, string toolTip) => step == null ? XhtmlData.Empty : FlowStepSymbol(step.Value, toolTip);
+
+        public static XhtmlData FlowStepSymbol(FlowStep? step) => FlowStepSymbol(step, null);
 
         public static XhtmlData RenderPercentageGrafisch(decimal percentage)
         {
