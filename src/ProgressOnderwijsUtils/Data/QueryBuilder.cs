@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public override bool Equals(object obj) => obj is QueryBuilder && Equals((QueryBuilder)this);
+        public override bool Equals(object obj) => obj is QueryBuilder && Equals((QueryBuilder)obj);
 
         [Pure]
         public override int GetHashCode() => (impl?.GetHashCode() ?? 12345678) + 4567;
