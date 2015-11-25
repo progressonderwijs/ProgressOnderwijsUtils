@@ -14,8 +14,8 @@ namespace ProgressOnderwijsUtils
     {
         interface IEnumMetaCache
         {
-            IReadOnlyList<ILabelledEnum> LabelledValues();
-            ITranslatable GetEnumLabel(Enum val);
+            IReadOnlyList<IEnumValueWithMetaData> ValuesWithMetaData();
+            IEnumValueWithMetaData GetValueWithMetaData(Enum val);
         }
 
         static class Int32Helpers
@@ -317,11 +317,11 @@ namespace ProgressOnderwijsUtils
                 sortedAttrs = entries;
             }
 
-            class LabelledEnum : ILabelledEnum
+            class ValueWithMetaData : IEnumValueWithMetaData
             {
                 readonly TEnum value;
 
-                public LabelledEnum(TEnum value)
+                public ValueWithMetaData(TEnum value)
                 {
                     this.value = value;
                 }
@@ -334,8 +334,8 @@ namespace ProgressOnderwijsUtils
                     => Attributes(value).OfType<TAttr>();
             }
 
-            public IReadOnlyList<ILabelledEnum> LabelledValues() => EnumValues.SelectIndexable(e => new LabelledEnum(e));
-            public ITranslatable GetEnumLabel(Enum val) => GetLabel((TEnum)(object)val);
+            public IReadOnlyList<IEnumValueWithMetaData> ValuesWithMetaData() => EnumValues.SelectIndexable(e => new ValueWithMetaData(e));
+            public IEnumValueWithMetaData GetValueWithMetaData(Enum val) => new ValueWithMetaData((TEnum)(object)val);
 
             public static ITranslatable GetLabel(TEnum val)
             {
@@ -467,14 +467,10 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static T GetAttributeValue<T>(this Enum enumValue) where T : Attribute
+        public static IReadOnlyList<object> GetAttributes<TEnum>(this TEnum enumValue) 
+            where TEnum : struct, IConvertible, IComparable
         {
-            var memberInfo = enumValue.GetType().GetMember(enumValue.ToString()).FirstOrDefault();
-            if (memberInfo != null) {
-                var attribute = (T)memberInfo.GetCustomAttributes(typeof(T), false).FirstOrDefault();
-                return attribute;
-            }
-            return null;
+            return EnumMetaCache<TEnum>.Attributes(enumValue);
         }
 
         public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable
@@ -482,7 +478,7 @@ namespace ProgressOnderwijsUtils
             return EnumMetaCache<T>.EnumValues;
         }
 
-        public static IReadOnlyList<ILabelledEnum> GetValuesWithLabels(Type enumType) => GetEnumMetaCache(enumType).LabelledValues();
+        public static IReadOnlyList<IEnumValueWithMetaData> GetValuesWithMetaData(Type enumType) => GetEnumMetaCache(enumType).ValuesWithMetaData();
 
         public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
         {
@@ -501,8 +497,14 @@ namespace ProgressOnderwijsUtils
 
         public static ITranslatable GetLabel(Enum enumVal)
         {
+            return GetMetaData(enumVal)
+                .Label;
+        }
+
+        public static IEnumValueWithMetaData GetMetaData(Enum enumVal)
+        {
             return GetEnumMetaCache(enumVal.GetType())
-                .GetEnumLabel(enumVal);
+                .GetValueWithMetaData(enumVal);
         }
 
         public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
@@ -626,7 +628,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public interface ILabelledEnum
+    public interface IEnumValueWithMetaData
     {
         Enum EnumValue { get; }
         ITranslatable Label { get; }
