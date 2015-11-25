@@ -125,23 +125,23 @@ namespace ProgressOnderwijsUtils
 
                 case BooleanComparer.In:
                     if (Waarde is GroupReference) {
-                        return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = ") + QueryBuilder.Param((Waarde as GroupReference).GroupId) + SQL($")");
+                        return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = {(Waarde as GroupReference).GroupId})");
                     } else {
                         return KolomNaamSql() + SQL($" in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
                     }
                 case BooleanComparer.NotIn:
                     if (Waarde is GroupReference) {
-                        return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = ") + QueryBuilder.Param((Waarde as GroupReference).GroupId) + SQL($")");
+                        return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = {(Waarde as GroupReference).GroupId})");
                     } else {
                         return KolomNaamSql() + SQL($" not in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
                     }
 
                 case BooleanComparer.StartsWith:
-                    return KolomNaamSql() + SQL($" like ") + QueryBuilder.Param(Waarde + "%");
+                    return KolomNaamSql() + SQL($" like {Waarde + "%"}");
                 case BooleanComparer.EndsWith:
-                    return KolomNaamSql() + SQL($" like ") + QueryBuilder.Param("%" + Waarde);
+                    return KolomNaamSql() + SQL($" like {"%" + Waarde}");
                 case BooleanComparer.Contains:
-                    return KolomNaamSql() + SQL($" like ") + QueryBuilder.Param("%" + Waarde + "%");
+                    return KolomNaamSql() + SQL($" like {"%" + Waarde + "%"}");
                 case BooleanComparer.HasFlag:
                     return SQL($"({KolomNaamSql()} & {BuildParam()}) = {BuildParam()}");
                 default:
