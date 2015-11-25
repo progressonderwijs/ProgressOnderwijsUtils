@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
     {
         interface IEnumMetaCache
         {
-            IReadOnlyList<Enum> Values();
+            IReadOnlyList<ILabelledEnum> LabelledValues();
             ITranslatable GetEnumLabel(Enum val);
         }
 
@@ -232,8 +232,8 @@ namespace ProgressOnderwijsUtils
                 public ITranslatable Label;
             }
 
-            static AttrEntry[] sortedAttrs;
             static Func<TEnum, long> toInt64;
+            static AttrEntry[] sortedAttrs;
 
             static int IdxAfterLastLtNode(long needle)
             {
@@ -275,6 +275,7 @@ namespace ProgressOnderwijsUtils
                     toInt64 = a => a.ToInt64(null);
                 }
 
+                //TODO: some documentation of invariants here might be in order.
                 var entries = new AttrEntry[EnumValues.Length];
                 var nextIdx = 0;
                 foreach (var field in enumFields) {
@@ -316,7 +317,24 @@ namespace ProgressOnderwijsUtils
                 sortedAttrs = entries;
             }
 
-            public IReadOnlyList<Enum> Values() => EnumValues.SelectIndexable(e => (Enum)(object)e);
+            class LabelledEnum : ILabelledEnum
+            {
+                readonly TEnum value;
+
+                public LabelledEnum(TEnum value)
+                {
+                    this.value = value;
+                }
+
+                public Enum EnumValue => (Enum)(object)value;
+                public ITranslatable Label => GetLabel(value);
+
+                public IEnumerable<TAttr> GetAttributeValues<TAttr>()
+                    where TAttr : Attribute
+                    => Attributes(value).OfType<TAttr>();
+            }
+
+            public IReadOnlyList<ILabelledEnum> LabelledValues() => EnumValues.SelectIndexable(e => new LabelledEnum(e));
             public ITranslatable GetEnumLabel(Enum val) => GetLabel((TEnum)(object)val);
 
             public static ITranslatable GetLabel(TEnum val)
@@ -464,7 +482,7 @@ namespace ProgressOnderwijsUtils
             return EnumMetaCache<T>.EnumValues;
         }
 
-        public static IReadOnlyList<Enum> GetValues(Type enumType) => GetEnumMetaCache(enumType).Values();
+        public static IReadOnlyList<ILabelledEnum> GetValuesWithLabels(Type enumType) => GetEnumMetaCache(enumType).LabelledValues();
 
         public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
         {
@@ -606,5 +624,12 @@ namespace ProgressOnderwijsUtils
         {
             return Enum.IsDefined(typeof(TEnum), enumval);
         }
+    }
+
+    public interface ILabelledEnum
+    {
+        Enum EnumValue { get; }
+        ITranslatable Label { get; }
+        IEnumerable<TAttr> GetAttributeValues<TAttr>() where TAttr : Attribute;
     }
 }
