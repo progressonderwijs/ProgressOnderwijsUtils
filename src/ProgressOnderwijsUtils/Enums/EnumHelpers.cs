@@ -502,10 +502,10 @@ namespace ProgressOnderwijsUtils
                 .MetaData(enumVal);
         }
 
-        public static IEnumMetaData GetMetaData(Enum enumVal)
+        public static IEnumMetaData<TEnum> MetaData<TEnum>(TEnum enumValue)
+            where TEnum : struct, IConvertible, IComparable
         {
-            return GetEnumMetaCache(enumVal.GetType())
-                .MetaData(enumVal);
+            return EnumMetaCache<TEnum>.MetaData(enumValue);
         }
 
         public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
