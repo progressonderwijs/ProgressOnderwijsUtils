@@ -9,7 +9,7 @@ using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
-    interface IEnumMetaCache
+    interface IEnumMetaDataCache
     {
         IReadOnlyList<IEnumMetaData> AllValuesWithMetaData();
         IEnumMetaData MetaData(Enum val);
@@ -21,10 +21,10 @@ namespace ProgressOnderwijsUtils
         public static readonly ITranslatable translatableComma = Translatable.Raw(", ");
     }
 
-    class EnumMetaCache<TEnum> : IEnumMetaCache
+    class EnumMetaDataCache<TEnum> : IEnumMetaDataCache
         where TEnum : struct, IConvertible, IComparable
     {
-        public static readonly EnumMetaCache<TEnum> Instance = new EnumMetaCache<TEnum>();
+        public static readonly EnumMetaDataCache<TEnum> Instance = new EnumMetaDataCache<TEnum>();
         public readonly TEnum[] EnumValues;
         public readonly bool IsFlags;
         readonly FieldInfo[] enumFields;
@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
         public readonly Func<TEnum, TEnum, bool> HasFlag;
         readonly Func<TEnum, TEnum, bool> FlagsOverlap;
 
-        EnumMetaCache()
+        EnumMetaDataCache()
         {
             if (!typeof(TEnum).IsEnum) {
                 throw new InvalidOperationException("EnumMetaCache werkt alleen met enums");
@@ -270,9 +270,9 @@ namespace ProgressOnderwijsUtils
 
         class EnumMetaData : IEnumMetaData<TEnum>
         {
-            readonly EnumMetaCache<TEnum> cache;
+            readonly EnumMetaDataCache<TEnum> cache;
 
-            public EnumMetaData(EnumMetaCache<TEnum> cache, TEnum value)
+            public EnumMetaData(EnumMetaDataCache<TEnum> cache, TEnum value)
             {
                 this.cache = cache;
                 this.EnumValue = value;

@@ -11,15 +11,15 @@ namespace ProgressOnderwijsUtils
 
     public static class EnumHelpers
     {
-        static readonly ConcurrentDictionary<Type, IEnumMetaCache> enumMetaCache = new ConcurrentDictionary<Type, IEnumMetaCache>();
+        static readonly ConcurrentDictionary<Type, IEnumMetaDataCache> enumMetaCache = new ConcurrentDictionary<Type, IEnumMetaDataCache>();
 
-        static IEnumMetaCache GetEnumMetaCache(Type enumType)
+        static IEnumMetaDataCache GetEnumMetaCache(Type enumType)
         {
             return enumMetaCache.GetOrAdd(enumType, type => {
-                var specializedType = typeof(EnumMetaCache<>).MakeGenericType(type);
-                var instanceField = specializedType.GetField(nameof(EnumMetaCache<DayOfWeek>.Instance), BindingFlags.Static | BindingFlags.Public);
+                var specializedType = typeof(EnumMetaDataCache<>).MakeGenericType(type);
+                var instanceField = specializedType.GetField(nameof(EnumMetaDataCache<DayOfWeek>.Instance), BindingFlags.Static | BindingFlags.Public);
 
-                return (IEnumMetaCache)instanceField.GetValue(null);
+                return (IEnumMetaDataCache)instanceField.GetValue(null);
             });
         }
 
@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils
                 if (taal == Taal.None) {
                     throw new ArgumentOutOfRangeException(nameof(taal), "Taal is niet gezet.  (== Taal.None)");
                 }
-                var cache = EnumMetaCache<TEnum>.Instance;
+                var cache = EnumMetaDataCache<TEnum>.Instance;
                 return !cache.IsFlags
                     ? ParseLabels[taal][s.Trim()]
                     : new[] {
@@ -60,13 +60,13 @@ namespace ProgressOnderwijsUtils
         {
             public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible, IComparable
             {
-                return EnumMetaCache<T>.Instance.AllAttributes(enumVal).OfType<TAttr>();
+                return EnumMetaDataCache<T>.Instance.AllAttributes(enumVal).OfType<TAttr>();
                 //return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal];
             }
 
             public static IEnumerable<T> From<T>(Func<TAttr, bool> pred) where T : struct, IConvertible, IComparable
             {
-                return EnumMetaCache<T>.Instance.EnumValues.Where(v => On(v).Any(pred));
+                return EnumMetaDataCache<T>.Instance.EnumValues.Where(v => On(v).Any(pred));
             }
         }
 
@@ -78,19 +78,19 @@ namespace ProgressOnderwijsUtils
 
         public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable
         {
-            return EnumMetaCache<T>.Instance.EnumValues;
+            return EnumMetaDataCache<T>.Instance.EnumValues;
         }
 
         public static IReadOnlyList<IEnumMetaData> GetValuesWithMetaData(Type enumType) => GetEnumMetaCache(enumType).AllValuesWithMetaData();
 
         public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
         {
-            return EnumMetaCache<TEnum>.Instance.AddFlag;
+            return EnumMetaDataCache<TEnum>.Instance.AddFlag;
         }
 
         public static Func<TEnum, TEnum, bool> HasFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
         {
-            return EnumMetaCache<TEnum>.Instance.HasFlag;
+            return EnumMetaDataCache<TEnum>.Instance.HasFlag;
         }
 
         public static ITranslatable GetLabel<TEnum>(TEnum enumVal)
@@ -108,7 +108,7 @@ namespace ProgressOnderwijsUtils
         public static IEnumMetaData<TEnum> MetaData<TEnum>(TEnum enumValue)
             where TEnum : struct, IConvertible, IComparable
         {
-            return EnumMetaCache<TEnum>.Instance.MetaData(enumValue);
+            return EnumMetaDataCache<TEnum>.Instance.MetaData(enumValue);
         }
 
         public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
