@@ -329,7 +329,7 @@ namespace ProgressOnderwijsUtils
                 public Enum UntypedEnumValue => (Enum)(object)value;
                 public ITranslatable Label => GetLabel(value);
 
-                public IEnumerable<TAttr> GetAttributeValues<TAttr>()
+                public IEnumerable<TAttr> Attributes<TAttr>()
                     where TAttr : Attribute
                     => AllAttributes(value).OfType<TAttr>();
             }
@@ -632,6 +632,6 @@ namespace ProgressOnderwijsUtils
     {
         Enum UntypedEnumValue { get; }
         ITranslatable Label { get; }
-        IEnumerable<TAttr> GetAttributeValues<TAttr>() where TAttr : Attribute;
+        IEnumerable<TAttr> Attributes<TAttr>() where TAttr : Attribute;
     }
 }
