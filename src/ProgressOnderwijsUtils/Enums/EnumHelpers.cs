@@ -22,38 +22,6 @@ namespace ProgressOnderwijsUtils
             });
         }
 
-        interface ILabelLookup
-        {
-            IEnumerable<Enum> Lookup(string s, Taal taal);
-        }
-
-        struct EnumParserLabelLookup<TEnum> : ILabelLookup
-            where TEnum : struct, IConvertible, IComparable
-        {
-            static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>()
-                .Where(t => t != Taal.None)
-                .ToDictionary(taal => taal, taal => GetValues<TEnum>().ToLookup(e => GetLabel(e).Translate(taal).Text.Trim(), e => e, StringComparer.OrdinalIgnoreCase));
-
-            public static IEnumerable<TEnum> Lookup(string s, Taal taal)
-            {
-                if (taal == Taal.None) {
-                    throw new ArgumentOutOfRangeException(nameof(taal), "Taal is niet gezet.  (== Taal.None)");
-                }
-                var cache = EnumMetaDataCache<TEnum>.Instance;
-                return !cache.IsFlags
-                    ? ParseLabels[taal][s.Trim()]
-                    : new[] {
-                        s.Split(',')
-                            .Select(sub => sub.Trim())
-                            .Where(sub => sub.Length > 0)
-                            .Select(sub => ParseLabels[taal][sub].Single())
-                            .Aggregate(default(TEnum), cache.AddFlag)
-                    };
-            }
-
-            IEnumerable<Enum> ILabelLookup.Lookup(string s, Taal taal) => Lookup(s, taal).Select(e => (Enum)(object)e);
-        }
-
         public static class GetAttrs<TAttr>
             where TAttr : Attribute
         {
@@ -214,7 +182,7 @@ namespace ProgressOnderwijsUtils
         [CodeDieAlleenWordtGebruiktInTests]
         public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible, IComparable
         {
-            return EnumParserLabelLookup<TEnum>.Lookup(s, taal);
+            return EnumLabelParser<TEnum>.Lookup(s, taal);
         }
 
         public static IEnumerable<Enum> TryParseLabel(Type enumType, string s, Taal taal)
@@ -222,8 +190,8 @@ namespace ProgressOnderwijsUtils
             if (!enumType.IsEnum) {
                 throw new ArgumentException("enumType must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(enumType));
             }
-            var parser = (ILabelLookup)Activator.CreateInstance(typeof(EnumParserLabelLookup<>).MakeGenericType(enumType));
-            return parser.Lookup(s, taal);
+            var parser = EnumLabelParser.GetLabelParser(enumType);
+            return parser.UntypedLookup(s, taal);
         }
 
         public static bool IsDefined<TEnum>(TEnum enumval) where TEnum : struct, IConvertible, IComparable

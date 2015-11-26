@@ -273,31 +273,12 @@ namespace ProgressOnderwijsUtils
             sortedAttrs = entries;
         }
 
-        class EnumMetaData : IEnumMetaData<TEnum>
-        {
-            readonly EnumMetaDataCache<TEnum> cache;
-
-            public EnumMetaData(EnumMetaDataCache<TEnum> cache, TEnum value)
-            {
-                this.cache = cache;
-                EnumValue = value;
-            }
-
-            public TEnum EnumValue { get; }
-            public Enum UntypedEnumValue => (Enum)(object)EnumValue;
-            public ITranslatable Label => cache.GetLabel(EnumValue);
-
-            public IEnumerable<TAttr> Attributes<TAttr>()
-                where TAttr : Attribute
-                => cache.AllAttributes(EnumValue).OfType<TAttr>();
-        }
-
-        public IReadOnlyList<IEnumMetaData> AllUntypedValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(this, e));
-        public IReadOnlyList<IEnumMetaData<TEnum>> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(this, e));
-        public IEnumMetaData UntypedMetaData(Enum val) => new EnumMetaData(this, (TEnum)(object)val);
-        public IEnumMetaData<TEnum> MetaData(TEnum val) => new EnumMetaData(this, val);
+        public IReadOnlyList<IEnumMetaData> AllUntypedValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData<TEnum>(e));
+        public IReadOnlyList<IEnumMetaData<TEnum>> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData<TEnum>(e));
+        public IEnumMetaData UntypedMetaData(Enum val) => new EnumMetaData<TEnum>((TEnum)(object)val);
+        public IEnumMetaData<TEnum> MetaData(TEnum val) => new EnumMetaData<TEnum>(val);
         public IReadOnlyList<TEnum> AllValues() => EnumValues;
-        ITranslatable GetLabel(TEnum val) => IsFlags ? GetFlagsLabel(val) : GetSingleLabel(val);
+        public ITranslatable GetLabel(TEnum val) => IsFlags ? GetFlagsLabel(val) : GetSingleLabel(val);
 
         ITranslatable GetFlagsLabel(TEnum val)
         {
@@ -373,5 +354,22 @@ namespace ProgressOnderwijsUtils
             return translatable;
         }
 
+    }
+
+    class EnumMetaData<TEnum> : IEnumMetaData<TEnum>
+        where TEnum : struct, IConvertible, IComparable
+    {
+        public EnumMetaData(TEnum value)
+        {
+            EnumValue = value;
+        }
+
+        public TEnum EnumValue { get; }
+        public Enum UntypedEnumValue => (Enum)(object)EnumValue;
+        public ITranslatable Label => EnumMetaDataCache<TEnum>.Instance.GetLabel(EnumValue);
+
+        public IEnumerable<TAttr> Attributes<TAttr>()
+            where TAttr : Attribute
+            => EnumMetaDataCache<TEnum>.Instance.AllAttributes(EnumValue).OfType<TAttr>();
     }
 }
