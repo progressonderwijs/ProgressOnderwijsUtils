@@ -470,7 +470,7 @@ namespace ProgressOnderwijsUtils
         public static IReadOnlyList<object> GetAttributes<TEnum>(this TEnum enumValue)
             where TEnum : struct, IConvertible, IComparable
         {
-            return EnumMetaCache<TEnum>.Attributes(enumValue);
+            return EnumMetaCache<TEnum>.AllAttributes(enumValue);
         }
 
         public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable
