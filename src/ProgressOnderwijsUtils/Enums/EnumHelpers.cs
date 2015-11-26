@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils
                 .UntypedMetaData(enumVal);
         }
 
-        public static IEnumMetaData<TEnum> MetaData<TEnum>(TEnum enumValue)
+        public static IEnumMetaData MetaData<TEnum>(TEnum enumValue)
             where TEnum : struct, IConvertible, IComparable
         {
             return EnumMetaDataCache<TEnum>.Instance.MetaData(enumValue);
@@ -205,10 +205,5 @@ namespace ProgressOnderwijsUtils
         Enum UntypedEnumValue { get; }
         ITranslatable Label { get; }
         IEnumerable<TAttr> Attributes<TAttr>() where TAttr : Attribute;
-    }
-
-    public interface IEnumMetaData<out TEnum> : IEnumMetaData
-    {
-        TEnum EnumValue { get; }
     }
 }
