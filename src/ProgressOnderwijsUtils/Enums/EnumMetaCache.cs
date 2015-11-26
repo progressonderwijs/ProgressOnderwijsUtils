@@ -15,6 +15,12 @@ namespace ProgressOnderwijsUtils
         IEnumMetaData MetaData(Enum val);
     }
 
+    interface IEnumMetaDataCache<TEnum> : IEnumMetaDataCache
+    {
+        IReadOnlyList<IEnumMetaData<TEnum>> AllValuesWithMetaData();
+        IEnumMetaData<TEnum> MetaData(Enum val);
+    }
+
     static class EnumMetaDataStaticHelpers
     {
         //this class is separate from EnumMetaDataCache itself to avoid multiple copies of this static fields
@@ -114,7 +120,6 @@ namespace ProgressOnderwijsUtils
                 }
             }
         }
-
 
         Func<TEnum, TEnum, bool> MakeHasFlag()
         {
