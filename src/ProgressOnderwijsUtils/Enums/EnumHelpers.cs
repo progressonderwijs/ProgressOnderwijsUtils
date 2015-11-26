@@ -97,9 +97,7 @@ namespace ProgressOnderwijsUtils
 
         public static ITranslatable GetLabel<TEnum>(TEnum enumVal)
             where TEnum : struct, IConvertible, IComparable
-        {
-            return MetaData(enumVal).Label;
-        }
+            => MetaData(enumVal).Label;
 
         public static IEnumMetaData MetaData(Enum enumVal)
         {
