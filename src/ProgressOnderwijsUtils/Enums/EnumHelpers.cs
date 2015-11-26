@@ -14,8 +14,8 @@ namespace ProgressOnderwijsUtils
     {
         interface IEnumMetaCache
         {
-            IReadOnlyList<IEnumValueWithMetaData> ValuesWithMetaData();
-            IEnumValueWithMetaData GetValueWithMetaData(Enum val);
+            IReadOnlyList<IEnumMetaData> ValuesWithMetaData();
+            IEnumMetaData GetValueWithMetaData(Enum val);
         }
 
         static class Int32Helpers
@@ -317,11 +317,11 @@ namespace ProgressOnderwijsUtils
                 sortedAttrs = entries;
             }
 
-            class ValueWithMetaData : IEnumValueWithMetaData
+            class EnumMetaData : IEnumMetaData
             {
                 readonly TEnum value;
 
-                public ValueWithMetaData(TEnum value)
+                public EnumMetaData(TEnum value)
                 {
                     this.value = value;
                 }
@@ -334,8 +334,8 @@ namespace ProgressOnderwijsUtils
                     => AllAttributes(value).OfType<TAttr>();
             }
 
-            public IReadOnlyList<IEnumValueWithMetaData> ValuesWithMetaData() => EnumValues.SelectIndexable(e => new ValueWithMetaData(e));
-            public IEnumValueWithMetaData GetValueWithMetaData(Enum val) => new ValueWithMetaData((TEnum)(object)val);
+            public IReadOnlyList<IEnumMetaData> ValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(e));
+            public IEnumMetaData GetValueWithMetaData(Enum val) => new EnumMetaData((TEnum)(object)val);
 
             public static ITranslatable GetLabel(TEnum val)
             {
@@ -478,7 +478,7 @@ namespace ProgressOnderwijsUtils
             return EnumMetaCache<T>.EnumValues;
         }
 
-        public static IReadOnlyList<IEnumValueWithMetaData> GetValuesWithMetaData(Type enumType) => GetEnumMetaCache(enumType).ValuesWithMetaData();
+        public static IReadOnlyList<IEnumMetaData> GetValuesWithMetaData(Type enumType) => GetEnumMetaCache(enumType).ValuesWithMetaData();
 
         public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
         {
@@ -501,7 +501,7 @@ namespace ProgressOnderwijsUtils
                 .Label;
         }
 
-        public static IEnumValueWithMetaData GetMetaData(Enum enumVal)
+        public static IEnumMetaData GetMetaData(Enum enumVal)
         {
             return GetEnumMetaCache(enumVal.GetType())
                 .GetValueWithMetaData(enumVal);
@@ -628,7 +628,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public interface IEnumValueWithMetaData
+    public interface IEnumMetaData
     {
         Enum UntypedEnumValue { get; }
         ITranslatable Label { get; }
