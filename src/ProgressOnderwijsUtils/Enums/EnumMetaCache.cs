@@ -40,6 +40,8 @@ namespace ProgressOnderwijsUtils
         public readonly Func<TEnum, TEnum, TEnum> AddFlag;
         public readonly Func<TEnum, TEnum, bool> HasFlag;
         readonly Func<TEnum, TEnum, bool> FlagsOverlap;
+        Func<TEnum, long> toInt64;
+        AttrEntry[] sortedAttrs;
         public IReadOnlyList<IEnumMetaData> AllUntypedValuesWithMetaData() => EnumValues.SelectIndexable(e => (IEnumMetaData)new EnumMetaData<TEnum>(e));
         public IReadOnlyList<EnumMetaData<TEnum>> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData<TEnum>(e));
         public IEnumMetaData UntypedMetaData(Enum val) => new EnumMetaData<TEnum>((TEnum)(object)val);
@@ -97,9 +99,9 @@ namespace ProgressOnderwijsUtils
                 var fastpathHelpers = FlagsEnumOperationMethodInfos.GetFlagsMethods(underlying);
 
                 if (fastpathHelpers.Or != null) {
-                    CreateDelegate(out HasFlag, fastpathHelpers.HasFlag);
-                    CreateDelegate(out FlagsOverlap, fastpathHelpers.HasFlagOverlap);
-                    CreateDelegate(out AddFlag, fastpathHelpers.Or);
+                    HasFlag = CreateDelegate<Func<TEnum, TEnum, bool>>(fastpathHelpers.HasFlag);
+                    FlagsOverlap = CreateDelegate<Func<TEnum, TEnum, bool>>(fastpathHelpers.HasFlagOverlap);
+                    AddFlag = CreateDelegate<Func<TEnum, TEnum, TEnum>>(fastpathHelpers.Or);
                 } else {
                     HasFlag = MakeHasFlag();
                     FlagsOverlap = MakeFlagsOverlap();
@@ -195,9 +197,9 @@ namespace ProgressOnderwijsUtils
                 flagExpr).Compile();
         }
 
-        static void CreateDelegate<TFunc>(out TFunc func, MethodInfo method)
+        static TFunc CreateDelegate<TFunc>(MethodInfo method)
         {
-            func = (TFunc)(object)Delegate.CreateDelegate(typeof(TFunc), method);
+            return (TFunc)(object)Delegate.CreateDelegate(typeof(TFunc), method);
         }
 
         struct AttrEntry
@@ -207,10 +209,7 @@ namespace ProgressOnderwijsUtils
             public ITranslatable Label;
         }
 
-        static Func<TEnum, long> toInt64;
-        static AttrEntry[] sortedAttrs;
-
-        static int IdxAfterLastLtNode(long needle)
+        int IdxAfterLastLtNode(long needle)
         {
             //based on https://github.com/EamonNerbonne/a-vs-an/blob/master/A-vs-An/A-vs-An-DotNet/Internals/Node.cs
             int start = 0, end = sortedAttrs.Length;
@@ -235,9 +234,9 @@ namespace ProgressOnderwijsUtils
             }
 
             if (typeof(int) == underlying) {
-                CreateDelegate(out toInt64, FlagsEnumOperationMethodInfos.forInt32.ToInt64);
+                toInt64 = CreateDelegate<Func<TEnum, long>>(FlagsEnumOperationMethodInfos.forInt32.ToInt64);
             } else {
-                toInt64 = a => a.ToInt64(null);
+                toInt64 = CreateDelegate<Func<TEnum, long>>(FlagsEnumOperationMethodInfos.forInt64.ToInt64);
             }
 
             //TODO: some documentation of invariants here might be in order.
