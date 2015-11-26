@@ -125,13 +125,13 @@ namespace ProgressOnderwijsUtils
 
                 case BooleanComparer.In:
                     if (Waarde is GroupReference) {
-                        return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = {(Waarde as GroupReference).GroupId})");
+                        return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
                     } else {
                         return KolomNaamSql() + SQL($" in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
                     }
                 case BooleanComparer.NotIn:
                     if (Waarde is GroupReference) {
-                        return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = {(Waarde as GroupReference).GroupId})");
+                        return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
                     } else {
                         return KolomNaamSql() + SQL($" not in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
                     }
