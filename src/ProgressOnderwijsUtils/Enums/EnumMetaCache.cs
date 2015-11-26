@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
         EnumMetaDataCache()
         {
             if (!typeof(TEnum).IsEnum) {
-                throw new InvalidOperationException("EnumMetaCache werkt alleen met enums");
+                throw new InvalidOperationException($"{typeof(EnumMetaDataCache<>).Name} werkt alleen met enums; niet ${ObjectToCode.GetCSharpFriendlyTypeName(typeof(TEnum))}");
             }
             underlying = typeof(TEnum).GetEnumUnderlyingType();
 
