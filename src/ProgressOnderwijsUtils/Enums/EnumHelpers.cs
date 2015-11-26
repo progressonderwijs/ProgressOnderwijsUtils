@@ -40,12 +40,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static IEnumerable<Attribute> GetAttributes<TEnum>(TEnum enumValue)
-            where TEnum : struct, IConvertible, IComparable
-        {
-            return MetaData(enumValue).Attributes<Attribute>();
-        }
-
         public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable
         {
             return EnumMetaDataCache<T>.Instance.AllValues();
