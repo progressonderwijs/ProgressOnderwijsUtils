@@ -9,6 +9,11 @@ namespace ProgressOnderwijsUtils
     sealed class QueryTableValuedParameterComponent<T> : IQueryParameter
         where T : IMetaObject
     {
+        static readonly string columnListClause =
+            MetaObject.GetMetaProperties<T>()
+                .Select(mp => "TVP." + mp.Name)
+                .JoinStrings(", ");
+
         readonly IEnumerable<T> objs;
         readonly string DbTypeName;
 
@@ -21,8 +26,7 @@ namespace ProgressOnderwijsUtils
         public string ToSqlString(CommandFactory qnum)
         {
             var number = qnum.GetNumberForParam(this);
-            // select par0.querytablevalue from @par0 par0, par0 is alias for @par0
-            return $"(select par{number}.querytablevalue from @par{number} par{number})";
+            return $"(select ${columnListClause} from @par{number} TVP)";
         }
 
         public SqlParameter ToSqlParameter(int paramnum)
