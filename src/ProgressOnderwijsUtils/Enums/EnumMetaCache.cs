@@ -40,6 +40,24 @@ namespace ProgressOnderwijsUtils
         public readonly Func<TEnum, TEnum, TEnum> AddFlag;
         public readonly Func<TEnum, TEnum, bool> HasFlag;
         readonly Func<TEnum, TEnum, bool> FlagsOverlap;
+        public IReadOnlyList<IEnumMetaData> AllUntypedValuesWithMetaData() => EnumValues.SelectIndexable(e => (IEnumMetaData)new EnumMetaData<TEnum>(e));
+        public IReadOnlyList<EnumMetaData<TEnum>> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData<TEnum>(e));
+        public IEnumMetaData UntypedMetaData(Enum val) => new EnumMetaData<TEnum>((TEnum)(object)val);
+        public EnumMetaData<TEnum> MetaData(TEnum val) => new EnumMetaData<TEnum>(val);
+        public IReadOnlyList<TEnum> AllValues() => EnumValues;
+        public ITranslatable GetLabel(TEnum val) => IsFlags ? GetFlagsLabel(val) : GetSingleLabel(val);
+
+        public object[] AllAttributes(TEnum value)
+        {
+            EnsureAttrCacheInitialized();
+            var key = toInt64(value);
+            var idx = IdxAfterLastLtNode(key);
+            if (idx < sortedAttrs.Length && sortedAttrs[idx].Value == key) {
+                return sortedAttrs[idx].Attrs;
+            } else {
+                return ArrayExtensions.Empty<object>();
+            }
+        }
 
         EnumMetaDataCache()
         {
@@ -210,22 +228,12 @@ namespace ProgressOnderwijsUtils
             return end;
         }
 
-        public object[] AllAttributes(TEnum value)
+        void EnsureAttrCacheInitialized()
         {
-            if (sortedAttrs == null) {
-                InitAttrCache();
+            if (sortedAttrs != null) {
+                return;
             }
-            var key = toInt64(value);
-            var idx = IdxAfterLastLtNode(key);
-            if (idx < sortedAttrs.Length && sortedAttrs[idx].Value == key) {
-                return sortedAttrs[idx].Attrs;
-            } else {
-                return ArrayExtensions.Empty<object>();
-            }
-        }
 
-        void InitAttrCache()
-        {
             if (typeof(int) == underlying) {
                 CreateDelegate(out toInt64, FlagsEnumOperationMethodInfos.forInt32.ToInt64);
             } else {
@@ -274,13 +282,6 @@ namespace ProgressOnderwijsUtils
             sortedAttrs = entries;
         }
 
-        public IReadOnlyList<IEnumMetaData> AllUntypedValuesWithMetaData() => EnumValues.SelectIndexable(e => (IEnumMetaData)new EnumMetaData<TEnum>(e));
-        public IReadOnlyList<EnumMetaData<TEnum>> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData<TEnum>(e));
-        public IEnumMetaData UntypedMetaData(Enum val) => new EnumMetaData<TEnum>((TEnum)(object)val);
-        public EnumMetaData<TEnum> MetaData(TEnum val) => new EnumMetaData<TEnum>(val);
-        public IReadOnlyList<TEnum> AllValues() => EnumValues;
-        public ITranslatable GetLabel(TEnum val) => IsFlags ? GetFlagsLabel(val) : GetSingleLabel(val);
-
         ITranslatable GetFlagsLabel(TEnum val)
         {
             var values = ValuesInOverlapOrder;
@@ -317,9 +318,7 @@ namespace ProgressOnderwijsUtils
 
         ITranslatable GetSingleLabel(TEnum f)
         {
-            if (sortedAttrs == null) {
-                InitAttrCache();
-            }
+            EnsureAttrCacheInitialized();
             var key = toInt64(f);
             var idx = IdxAfterLastLtNode(key);
             var validIdx = idx < sortedAttrs.Length && sortedAttrs[idx].Value == key;
