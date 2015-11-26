@@ -4,6 +4,13 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
+    public interface IEnumMetaData
+    {
+        Enum UntypedEnumValue { get; }
+        ITranslatable Label { get; }
+        IEnumerable<TAttr> Attributes<TAttr>() where TAttr : Attribute;
+    }
+
     struct EnumMetaData<TEnum> : IEnumMetaData
         where TEnum : struct, IConvertible, IComparable
     {

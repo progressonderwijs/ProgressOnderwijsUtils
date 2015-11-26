@@ -199,11 +199,4 @@ namespace ProgressOnderwijsUtils
             return Enum.IsDefined(typeof(TEnum), enumval);
         }
     }
-
-    public interface IEnumMetaData
-    {
-        Enum UntypedEnumValue { get; }
-        ITranslatable Label { get; }
-        IEnumerable<TAttr> Attributes<TAttr>() where TAttr : Attribute;
-    }
 }
