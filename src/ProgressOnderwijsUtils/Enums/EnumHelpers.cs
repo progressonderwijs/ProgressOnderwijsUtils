@@ -326,7 +326,7 @@ namespace ProgressOnderwijsUtils
                     this.value = value;
                 }
 
-                public Enum EnumValue => (Enum)(object)value;
+                public Enum UntypedEnumValue => (Enum)(object)value;
                 public ITranslatable Label => GetLabel(value);
 
                 public IEnumerable<TAttr> GetAttributeValues<TAttr>()
@@ -467,7 +467,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static IReadOnlyList<object> GetAttributes<TEnum>(this TEnum enumValue) 
+        public static IReadOnlyList<object> GetAttributes<TEnum>(this TEnum enumValue)
             where TEnum : struct, IConvertible, IComparable
         {
             return EnumMetaCache<TEnum>.Attributes(enumValue);
@@ -630,7 +630,7 @@ namespace ProgressOnderwijsUtils
 
     public interface IEnumValueWithMetaData
     {
-        Enum EnumValue { get; }
+        Enum UntypedEnumValue { get; }
         ITranslatable Label { get; }
         IEnumerable<TAttr> GetAttributeValues<TAttr>() where TAttr : Attribute;
     }
