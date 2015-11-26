@@ -335,6 +335,7 @@ namespace ProgressOnderwijsUtils
 
             public IReadOnlyList<IEnumMetaData> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(e));
             public IEnumMetaData MetaData(Enum val) => new EnumMetaData((TEnum)(object)val);
+            public static IEnumMetaData<TEnum> MetaData(TEnum val) => new EnumMetaData((TEnum)(object)val);
 
             public static ITranslatable GetLabel(TEnum val)
             {
