@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-    class EnumMetaData<TEnum> : IEnumMetaData<TEnum>
+    struct EnumMetaData<TEnum> : IEnumMetaData<TEnum>
         where TEnum : struct, IConvertible, IComparable
     {
         public EnumMetaData(TEnum value)
