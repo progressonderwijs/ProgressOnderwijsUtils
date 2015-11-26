@@ -331,7 +331,7 @@ namespace ProgressOnderwijsUtils
 
                 public IEnumerable<TAttr> GetAttributeValues<TAttr>()
                     where TAttr : Attribute
-                    => AllAttributes(EnumValue).OfType<TAttr>();
+                    => AllAttributes(value).OfType<TAttr>();
             }
 
             public IReadOnlyList<IEnumValueWithMetaData> ValuesWithMetaData() => EnumValues.SelectIndexable(e => new ValueWithMetaData(e));
