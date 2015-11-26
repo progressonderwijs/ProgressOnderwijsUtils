@@ -317,21 +317,20 @@ namespace ProgressOnderwijsUtils
                 sortedAttrs = entries;
             }
 
-            class EnumMetaData : IEnumMetaData
+            class EnumMetaData : IEnumMetaData<TEnum>
             {
-                readonly TEnum value;
-
                 public EnumMetaData(TEnum value)
                 {
-                    this.value = value;
+                    this.EnumValue = value;
                 }
 
-                public Enum UntypedEnumValue => (Enum)(object)value;
-                public ITranslatable Label => GetLabel(value);
+                public TEnum EnumValue { get; }
+                public Enum UntypedEnumValue => (Enum)(object)EnumValue;
+                public ITranslatable Label => GetLabel(EnumValue);
 
                 public IEnumerable<TAttr> Attributes<TAttr>()
                     where TAttr : Attribute
-                    => AllAttributes(value).OfType<TAttr>();
+                    => AllAttributes(EnumValue).OfType<TAttr>();
             }
 
             public IReadOnlyList<IEnumMetaData> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(e));
