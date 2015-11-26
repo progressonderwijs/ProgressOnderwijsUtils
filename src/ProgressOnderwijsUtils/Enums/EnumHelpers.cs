@@ -496,10 +496,10 @@ namespace ProgressOnderwijsUtils
             return MetaData(enumVal).Label;
         }
 
-        public static ITranslatable GetLabel(Enum enumVal)
+        public static IEnumMetaData MetaData(Enum enumVal)
         {
-            return GetMetaData(enumVal)
-                .Label;
+            return GetEnumMetaCache(enumVal.GetType())
+                .MetaData(enumVal);
         }
 
         public static IEnumMetaData GetMetaData(Enum enumVal)
