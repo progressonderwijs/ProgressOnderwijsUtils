@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         interface IEnumMetaCache
         {
             IReadOnlyList<IEnumMetaData> ValuesWithMetaData();
-            IEnumMetaData GetValueWithMetaData(Enum val);
+            IEnumMetaData MetaData(Enum val);
         }
 
         static class Int32Helpers
@@ -335,7 +335,7 @@ namespace ProgressOnderwijsUtils
             }
 
             public IReadOnlyList<IEnumMetaData> ValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(e));
-            public IEnumMetaData GetValueWithMetaData(Enum val) => new EnumMetaData((TEnum)(object)val);
+            public IEnumMetaData MetaData(Enum val) => new EnumMetaData((TEnum)(object)val);
 
             public static ITranslatable GetLabel(TEnum val)
             {
@@ -504,7 +504,7 @@ namespace ProgressOnderwijsUtils
         public static IEnumMetaData GetMetaData(Enum enumVal)
         {
             return GetEnumMetaCache(enumVal.GetType())
-                .GetValueWithMetaData(enumVal);
+                .MetaData(enumVal);
         }
 
         public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
