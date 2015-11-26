@@ -489,9 +489,10 @@ namespace ProgressOnderwijsUtils
             return EnumMetaCache<TEnum>.FlagEnumHelpers.HasFlag;
         }
 
-        public static ITranslatable GetLabel<TEnum>(TEnum f) where TEnum : struct, IConvertible, IComparable
+        public static ITranslatable GetLabel<TEnum>(TEnum enumVal) 
+            where TEnum : struct, IConvertible, IComparable
         {
-            return EnumMetaCache<TEnum>.GetLabel(f);
+            return MetaData(enumVal).Label;
         }
 
         public static ITranslatable GetLabel(Enum enumVal)
