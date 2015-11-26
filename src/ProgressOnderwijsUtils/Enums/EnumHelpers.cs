@@ -8,7 +8,6 @@ using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
-
     public static class EnumHelpers
     {
         static readonly ConcurrentDictionary<Type, IEnumMetaDataCache> enumMetaCache = new ConcurrentDictionary<Type, IEnumMetaDataCache>();
@@ -66,7 +65,10 @@ namespace ProgressOnderwijsUtils
 
             public static IEnumerable<T> From<T>(Func<TAttr, bool> pred) where T : struct, IConvertible, IComparable
             {
-                return EnumMetaDataCache<T>.Instance.EnumValues.Where(v => On(v).Any(pred));
+                return EnumMetaDataCache<T>.Instance
+                    .AllValuesWithMetaData()
+                    .Where(v => v.Attributes<TAttr>().Any(pred))
+                    .Select(v => v.EnumValue);
             }
         }
 
@@ -78,10 +80,10 @@ namespace ProgressOnderwijsUtils
 
         public static IReadOnlyList<T> GetValues<T>() where T : struct, IConvertible, IComparable
         {
-            return EnumMetaDataCache<T>.Instance.EnumValues;
+            return EnumMetaDataCache<T>.Instance.AllValues();
         }
 
-        public static IReadOnlyList<IEnumMetaData> GetValuesWithMetaData(Type enumType) => GetEnumMetaCache(enumType).AllValuesWithMetaData();
+        public static IReadOnlyList<IEnumMetaData> GetValuesWithMetaData(Type enumType) => GetEnumMetaCache(enumType).AllUntypedValuesWithMetaData();
 
         public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
         {
@@ -102,7 +104,7 @@ namespace ProgressOnderwijsUtils
         public static IEnumMetaData MetaData(Enum enumVal)
         {
             return GetEnumMetaCache(enumVal.GetType())
-                .MetaData(enumVal);
+                .UntypedMetaData(enumVal);
         }
 
         public static IEnumMetaData<TEnum> MetaData<TEnum>(TEnum enumValue)

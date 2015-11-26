@@ -11,14 +11,14 @@ namespace ProgressOnderwijsUtils
 {
     interface IEnumMetaDataCache
     {
-        IReadOnlyList<IEnumMetaData> AllValuesWithMetaData();
-        IEnumMetaData MetaData(Enum val);
+        IReadOnlyList<IEnumMetaData> AllUntypedValuesWithMetaData();
+        IEnumMetaData UntypedMetaData(Enum val);
     }
 
     interface IEnumMetaDataCache<TEnum> : IEnumMetaDataCache
     {
         IReadOnlyList<IEnumMetaData<TEnum>> AllValuesWithMetaData();
-        IEnumMetaData<TEnum> MetaData(Enum val);
+        IEnumMetaData<TEnum> MetaData(TEnum val);
     }
 
     static class EnumMetaDataStaticHelpers
@@ -27,11 +27,11 @@ namespace ProgressOnderwijsUtils
         public static readonly ITranslatable translatableComma = Translatable.Raw(", ");
     }
 
-    class EnumMetaDataCache<TEnum> : IEnumMetaDataCache
+    class EnumMetaDataCache<TEnum> : IEnumMetaDataCache<TEnum>
         where TEnum : struct, IConvertible, IComparable
     {
         public static readonly EnumMetaDataCache<TEnum> Instance = new EnumMetaDataCache<TEnum>();
-        public readonly TEnum[] EnumValues;
+        readonly TEnum[] EnumValues;
         public readonly bool IsFlags;
         readonly FieldInfo[] enumFields;
         readonly Type underlying;
@@ -280,7 +280,7 @@ namespace ProgressOnderwijsUtils
             public EnumMetaData(EnumMetaDataCache<TEnum> cache, TEnum value)
             {
                 this.cache = cache;
-                this.EnumValue = value;
+                EnumValue = value;
             }
 
             public TEnum EnumValue { get; }
@@ -292,18 +292,12 @@ namespace ProgressOnderwijsUtils
                 => cache.AllAttributes(EnumValue).OfType<TAttr>();
         }
 
-        public IReadOnlyList<IEnumMetaData> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(this, e));
-        public IEnumMetaData MetaData(Enum val) => new EnumMetaData(this, (TEnum)(object)val);
+        public IReadOnlyList<IEnumMetaData> AllUntypedValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(this, e));
+        public IReadOnlyList<IEnumMetaData<TEnum>> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(this, e));
+        public IEnumMetaData UntypedMetaData(Enum val) => new EnumMetaData(this, (TEnum)(object)val);
         public IEnumMetaData<TEnum> MetaData(TEnum val) => new EnumMetaData(this, val);
-
-        public ITranslatable GetLabel(TEnum val)
-        {
-            if (IsFlags) {
-                return GetFlagsLabel(val);
-            } else {
-                return GetSingleLabel(val);
-            }
-        }
+        public IReadOnlyList<TEnum> AllValues() => EnumValues;
+        ITranslatable GetLabel(TEnum val) => IsFlags ? GetFlagsLabel(val) : GetSingleLabel(val);
 
         ITranslatable GetFlagsLabel(TEnum val)
         {
@@ -378,5 +372,6 @@ namespace ProgressOnderwijsUtils
             }
             return translatable;
         }
+
     }
 }
