@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
     {
         interface IEnumMetaCache
         {
-            IReadOnlyList<IEnumMetaData> ValuesWithMetaData();
+            IReadOnlyList<IEnumMetaData> AllValuesWithMetaData();
             IEnumMetaData MetaData(Enum val);
         }
 
@@ -334,7 +334,7 @@ namespace ProgressOnderwijsUtils
                     => AllAttributes(value).OfType<TAttr>();
             }
 
-            public IReadOnlyList<IEnumMetaData> ValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(e));
+            public IReadOnlyList<IEnumMetaData> AllValuesWithMetaData() => EnumValues.SelectIndexable(e => new EnumMetaData(e));
             public IEnumMetaData MetaData(Enum val) => new EnumMetaData((TEnum)(object)val);
 
             public static ITranslatable GetLabel(TEnum val)
@@ -478,7 +478,7 @@ namespace ProgressOnderwijsUtils
             return EnumMetaCache<T>.EnumValues;
         }
 
-        public static IReadOnlyList<IEnumMetaData> GetValuesWithMetaData(Type enumType) => GetEnumMetaCache(enumType).ValuesWithMetaData();
+        public static IReadOnlyList<IEnumMetaData> GetValuesWithMetaData(Type enumType) => GetEnumMetaCache(enumType).AllValuesWithMetaData();
 
         public static Func<TEnum, TEnum, TEnum> AddFlagsFunc<TEnum>() where TEnum : struct, IConvertible, IComparable
         {
