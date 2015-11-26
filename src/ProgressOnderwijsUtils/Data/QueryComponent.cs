@@ -28,15 +28,12 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentException("Cannot pass a querybuilder as a parameter");
             } else if (o is IQueryParameter) {
                 return (IQueryComponent)o;
-            } else if (o is LiteralSqlInt) {
-                return new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant());
             } else if (o is IEnumerable && !(o is string) && !(o is byte[])) {
                 return ToTableParameter((IEnumerable)o);
             } else {
                 return new QueryScalarParameterComponent(o);
             }
         }
-
         public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
         {
             return new QueryTableValuedParameterComponent<T>(tableTypeName, set);
