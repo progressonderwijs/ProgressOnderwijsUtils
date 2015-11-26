@@ -634,4 +634,9 @@ namespace ProgressOnderwijsUtils
         ITranslatable Label { get; }
         IEnumerable<TAttr> Attributes<TAttr>() where TAttr : Attribute;
     }
+
+    public interface IEnumMetaData<out TEnum> : IEnumMetaData
+    {
+        TEnum EnumValue { get; }
+    }
 }
