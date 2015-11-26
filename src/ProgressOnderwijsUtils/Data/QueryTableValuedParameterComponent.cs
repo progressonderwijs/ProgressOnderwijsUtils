@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
         public string ToSqlString(CommandFactory qnum)
         {
             var name = qnum.GetNameForParam(this);
-            return $"(select {columnListClause} from @par{number} TVP)";
+            return $"(select {columnListClause} from {name} TVP)";
 
         }
 
