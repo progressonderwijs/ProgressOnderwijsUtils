@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
             IEnumerable<Enum> Lookup(string s, Taal taal);
         }
 
-        struct EnumLabelLookup<TEnum> : ILabelLookup
+        struct EnumParserLabelLookup<TEnum> : ILabelLookup
             where TEnum : struct, IConvertible, IComparable
         {
             static readonly Dictionary<Taal, ILookup<string, TEnum>> ParseLabels = GetValues<Taal>()
@@ -214,7 +214,7 @@ namespace ProgressOnderwijsUtils
         [CodeDieAlleenWordtGebruiktInTests]
         public static IEnumerable<TEnum> TryParseLabel<TEnum>(string s, Taal taal) where TEnum : struct, IConvertible, IComparable
         {
-            return EnumLabelLookup<TEnum>.Lookup(s, taal);
+            return EnumParserLabelLookup<TEnum>.Lookup(s, taal);
         }
 
         public static IEnumerable<Enum> TryParseLabel(Type enumType, string s, Taal taal)
@@ -222,7 +222,7 @@ namespace ProgressOnderwijsUtils
             if (!enumType.IsEnum) {
                 throw new ArgumentException("enumType must be an enum, not " + ObjectToCode.GetCSharpFriendlyTypeName(enumType));
             }
-            var parser = (ILabelLookup)Activator.CreateInstance(typeof(EnumLabelLookup<>).MakeGenericType(enumType));
+            var parser = (ILabelLookup)Activator.CreateInstance(typeof(EnumParserLabelLookup<>).MakeGenericType(enumType));
             return parser.Lookup(s, taal);
         }
 
