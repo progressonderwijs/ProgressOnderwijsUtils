@@ -253,7 +253,7 @@ namespace ProgressOnderwijsUtils
                 return end;
             }
 
-            public static object[] Attributes(TEnum value)
+            public static object[] AllAttributes(TEnum value)
             {
                 if (sortedAttrs == null) {
                     InitAttrCache();
@@ -331,7 +331,7 @@ namespace ProgressOnderwijsUtils
 
                 public IEnumerable<TAttr> GetAttributeValues<TAttr>()
                     where TAttr : Attribute
-                    => Attributes(value).OfType<TAttr>();
+                    => AllAttributes(EnumValue).OfType<TAttr>();
             }
 
             public IReadOnlyList<IEnumValueWithMetaData> ValuesWithMetaData() => EnumValues.SelectIndexable(e => new ValueWithMetaData(e));
@@ -457,7 +457,7 @@ namespace ProgressOnderwijsUtils
         {
             public static IEnumerable<TAttr> On<T>(T enumVal) where T : struct, IConvertible, IComparable
             {
-                return EnumMetaCache<T>.Attributes(enumVal).OfType<TAttr>();
+                return EnumMetaCache<T>.AllAttributes(enumVal).OfType<TAttr>();
                 //return EnumMetaCache<T>.AttrCache<TAttr>.EnumMemberAttributes[enumVal];
             }
 
