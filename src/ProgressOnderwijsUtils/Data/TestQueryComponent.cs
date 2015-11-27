@@ -23,8 +23,8 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => QueryBuilder.Param("bla" + 0).Equals(QueryBuilder.Param("bla0")));
 
             var someday = new DateTime(2012, 3, 4);
-            PAssert.That(() => QueryBuilder.Param(someday).DebugText() == "'2012-03-04 00:00:00.0000000'");
-            PAssert.That(() => QueryBuilder.Param(null).DebugText() == "null");
+            PAssert.That(() => QueryBuilder.Param(someday).DebugText() == "'2012-03-03T23:00:00.000Z'");
+            PAssert.That(() => QueryBuilder.Param(null).DebugText() == "NULL");
             PAssert.That(() => QueryBuilder.Param("abc").DebugText() == "'abc'");
             PAssert.That(() => QueryBuilder.Param("ab'c").DebugText() == "'ab''c'");
             PAssert.That(() => QueryBuilder.Param(12345).DebugText() == "12345");
