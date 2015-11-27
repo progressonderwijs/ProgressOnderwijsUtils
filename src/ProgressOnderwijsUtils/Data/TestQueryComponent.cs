@@ -32,7 +32,6 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => QueryComponent.CreateParam(12345.6m).ToDebugText() == "12345.6");
             PAssert.That(() => QueryComponent.CreateParam(12345.6m).ToDebugText() == "12345.6"); //ToString niet taal afhankelijk
             PAssert.That(() => QueryComponent.CreateParam(new object()).ToDebugText() == "{!System.Object!}");
-            Assert.Throws<ConverteerException>(() => QueryComponent.CreateParam(new object()).ToDebugText());
         }
     }
 }
