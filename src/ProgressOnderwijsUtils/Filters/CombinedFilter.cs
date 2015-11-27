@@ -41,7 +41,12 @@ namespace ProgressOnderwijsUtils
         protected internal override QueryBuilder ToQueryBuilderImpl()
         {
             var andorQ = OperatorToSql();
-            return SQL($"(") + filterLijst.Aggregate(default(QueryBuilder), (q, f) => QueryBuilder.Empty == q ? f.ToQueryBuilder() : q + andorQ + f.ToQueryBuilder()) + SQL($")");
+            var result = SQL($"(") + filterLijst[0].ToQueryBuilder();
+            for (int i = 1; i < filterLijst.Length; i++) {
+                result += andorQ + filterLijst[i].ToQueryBuilder();
+            }
+            result += SQL($")");
+            return result;
         }
 
         protected internal override FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith)
