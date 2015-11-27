@@ -246,7 +246,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public string DebugText(Taal? taalOrNull) => ComponentsInReverseOrder.Reverse().Select(component => component.ToDebugText(taalOrNull)).JoinStrings();
+        public string DebugText() => ComponentsInReverseOrder.Reverse().Select(component => component.ToDebugText()).JoinStrings();
 
         [Pure]
         public string CommandText() => CommandFactory.BuildQueryText(ComponentsInReverseOrder.Reverse());
@@ -322,7 +322,7 @@ namespace ProgressOnderwijsUtils
         public override int GetHashCode() => HashCodeHelper.ComputeHash(CanonicalReverseComponents.ToArray()) + 123;
 
         [Pure]
-        public override string ToString() => DebugText(null);
+        public override string ToString() => DebugText();
 
         static readonly QueryBuilder[] AllColumns = { SQL($"*") };
         static readonly QueryBuilder Comma_ColumnSeperator = SQL($", ");
@@ -367,7 +367,7 @@ namespace ProgressOnderwijsUtils
             if (!projectedColumns.Any()) {
                 throw new InvalidOperationException(
                     "Cannot create subquery without any projected columns: at least one column must be projected (are your columns all virtual?)\nQuery:\n"
-                        + subQuery.DebugText(null));
+                        + subQuery.DebugText());
             }
 
             var takeRowsParam = Param((long)takeNrows);
