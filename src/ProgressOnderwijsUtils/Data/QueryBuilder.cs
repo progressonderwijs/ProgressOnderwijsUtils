@@ -188,7 +188,7 @@ order by _row");
         }
     }
 
-    internal class StringSqlFragment : IBuildableQuery
+    class StringSqlFragment : IBuildableQuery
     {
         readonly string rawSqlString;
 
@@ -201,7 +201,7 @@ order by _row");
         public int EstimateLength() => rawSqlString.Length;
     }
 
-    internal class SingleParameterSqlFragment : IBuildableQuery
+    class SingleParameterSqlFragment : IBuildableQuery
     {
         readonly object paramVal;
 
