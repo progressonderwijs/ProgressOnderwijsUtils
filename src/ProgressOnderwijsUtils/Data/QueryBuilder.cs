@@ -139,8 +139,7 @@ order by _row");
         }
 
         public override string ToString() => DebugText();
-
-        public string DebugText() => DebugCommandFactory.Create().DebugTextFor(impl);
+        public string DebugText() => DebugCommandFactory.Create(impl?.EstimateLength() ?? 0).DebugTextFor(impl);
 
         public string CommandText()
         {

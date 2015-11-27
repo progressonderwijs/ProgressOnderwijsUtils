@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils
                 .Select(IndexToParameterName)
                 .ToArray();
 
-        static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
+        public static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
         public static readonly int EstimatedParameterLength = "@par0".Length;
 
         public string RegisterParameterAndGetName<T>(T o)
@@ -86,22 +86,20 @@ namespace ProgressOnderwijsUtils
     {
         readonly StringBuilder debugText;
 
-        DebugCommandFactory(StringBuilder stringBuilder)
+        DebugCommandFactory(int estimatedLength)
         {
-            debugText = stringBuilder;
+            debugText = new StringBuilder(estimatedLength + 30); //extra length for argument values.
         }
 
-        public static DebugCommandFactory Create() => new DebugCommandFactory(new StringBuilder());
+        public static DebugCommandFactory Create(int estimatedLength) => new DebugCommandFactory(estimatedLength);
         public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => QueryTracer.InsecureSqlDebugString(o.EquatableValue);
         public void AppendSql(string sql, int startIndex, int length) => debugText.Append(sql, startIndex, length);
         public void AppendSql(string sql) => debugText.Append(sql);
 
-        public string DebugText() => debugText.ToString();
-
         public string DebugTextFor(IBuildableQuery impl)
         {
             impl?.AppendTo(ref this);
-            return DebugText();
+            return debugText.ToString();
         }
     }
 }
