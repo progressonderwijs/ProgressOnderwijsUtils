@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
@@ -8,6 +9,7 @@ namespace ProgressOnderwijsUtils.Collections
     {
         [CodeDieAlleenWordtGebruiktInTests]
         public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
+
         readonly EqualityComparer<T> underlying;
         static readonly ulong start = (ulong)typeof(T).MetadataToken + ((ulong)typeof(T).Module.MetadataToken << 32);
 
@@ -50,5 +52,26 @@ namespace ProgressOnderwijsUtils.Collections
             }
             return (int)((buffer >> 32) ^ buffer);
         }
+    }
+
+    static class ComparableArray
+    {
+        [Pure]
+        public static ComparableArray<T> WrapInComparableArray<T>(this T[] array)
+            => new ComparableArray<T>(array);
+    }
+
+    public struct ComparableArray<T> : IEquatable<ComparableArray<T>>
+    {
+        readonly T[] array;
+
+        public ComparableArray(T[] array)
+        {
+            this.array = array;
+        }
+
+        public bool Equals(ComparableArray<T> other) => ArrayComparer<T>.Default.Equals(array, other.array);
+        public override int GetHashCode() => ArrayComparer<T>.Default.GetHashCode(array);
+        public override bool Equals(object obj) => obj is ComparableArray<T> && Equals((ComparableArray<T>)obj);
     }
 }
