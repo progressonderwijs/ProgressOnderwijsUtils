@@ -61,10 +61,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static bool operator ==(QueryBuilder a, QueryBuilder b)
             => ReferenceEquals(a.impl, b.impl)
-                || !ReferenceEquals(a.impl, null)
-                    && EqualityKeyCommandFactory.EqualityKey(a.impl)
-                        .Equals(EqualityKeyCommandFactory.EqualityKey(b.impl)
-                        );
+                || EqualityKeyCommandFactory.EqualityKey(a.impl).Equals(EqualityKeyCommandFactory.EqualityKey(b.impl));
 
         [Pure]
         public bool Equals(QueryBuilder other) => this == other;
