@@ -322,11 +322,11 @@ order by _row");
             return ParamRefSubString.NotFound;
         }
 
-        public int EstimateLength()
-        {
-            return interpolatedQuery.Format.Length + interpolatedQuery.ArgumentCount * 2;
-            // converting {0} into @par0 adds 2 to length
-        }
+        static readonly int EstimatedPlaceholderLength = "{0}".Length;
+
+        public int EstimateLength() 
+            => interpolatedQuery.Format.Length + interpolatedQuery.ArgumentCount * (CommandFactory.EstimatedParameterLength - EstimatedPlaceholderLength);
+        //we ignore TVP and subqueries here - any query using those will thus incur a slight perf overhead, which seems acceptable to me.
 
         struct ParamRefSubString
         {

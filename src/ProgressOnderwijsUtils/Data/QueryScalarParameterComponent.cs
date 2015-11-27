@@ -36,9 +36,6 @@ namespace ProgressOnderwijsUtils
             factory.AppendSql(sqlString);
         }
 
-        public int EstimateLength()
-        {
-            return 5; // length of @par0
-        }
+        public int EstimateLength() => CommandFactory.EstimatedParameterLength;
     }
 }
