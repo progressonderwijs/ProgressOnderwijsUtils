@@ -192,11 +192,11 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => q.DebugText() == qAlt.DebugText());
 
             PAssert.That(() => qAlt.CommandText() != qAltWrong.CommandText());
-            PAssert.That(() => qAlt.DebugText() != qAltWrong.DebugText());
+            PAssert.That(() => qAlt.DebugText() == qAltWrong.DebugText());
             PAssert.That(() => !qAlt.Equals(qAltWrong));
             PAssert.That(() => qAlt != qAltWrong);
             PAssert.That(() => qAlt.GetHashCode() != qAltWrong.GetHashCode());
-            PAssert.That(() => qAlt.ToString() != qAltWrong.ToString());
+            PAssert.That(() => qAlt.ToString() == qAltWrong.ToString());
         }
 
         [Test]
