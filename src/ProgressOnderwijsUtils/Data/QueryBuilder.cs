@@ -93,10 +93,16 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b) => Concat(a, b);
 
         [Pure, Obsolete("Implicitly converts to SQL", true)]
-        public static QueryBuilder operator +(QueryBuilder a, string b) => Concat(a, QueryComponent.CreateString(b));
+        public static QueryBuilder operator +(QueryBuilder a, string b)
+        {
+            throw new InvalidOperationException("Cannot concatenate sql with strings");
+        }
 
         [Pure, Obsolete("Implicitly converts to SQL", true)]
-        public static QueryBuilder operator +(string a, QueryBuilder b) => Concat(CreateDynamic(a), b);
+        public static QueryBuilder operator +(string a, QueryBuilder b)
+        {
+            throw new InvalidOperationException("Cannot concatenate sql with strings");
+        }
 
         static QueryBuilder Concat(QueryBuilder query, IQueryComponent part) => null == part ? query : new PrefixAndComponent(query, part);
 
