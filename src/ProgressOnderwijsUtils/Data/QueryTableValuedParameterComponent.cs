@@ -10,10 +10,16 @@ namespace ProgressOnderwijsUtils
     sealed class QueryTableValuedParameterComponent<T> : IQueryParameter
         where T : IMetaObject
     {
+        const string subselect_part1 = "(select ";
+        const string subselect_part3 = " from ";
+        const string subselect_part5 = " TVP)";
+
         static readonly string columnListClause =
             MetaObject.GetMetaProperties<T>()
                 .Select(mp => "TVP." + mp.Name)
                 .JoinStrings(", ");
+
+        static readonly int estimatedLength = subselect_part1.Length + columnListClause.Length + "@par0".Length + subselect_part5.Length;
 
         readonly IEnumerable<T> objs;
         readonly string DbTypeName;
@@ -26,18 +32,17 @@ namespace ProgressOnderwijsUtils
 
         public object EquatableValue => Tuple.Create(objs, DbTypeName);
 
-        public int EstimateLength()
-        {
-            return "(select par0.querytablevalue from @par0 par0)".Length;
-        }
+        public int EstimateLength() => estimatedLength;
 
         public void AppendTo(ref CommandFactory factory)
         {
             var name = factory.GetNameForParam(this);
 
-            var sqlString = $"(select {columnListClause} from {name} TVP)";
-
-            factory.AppendSql(sqlString, 0, sqlString.Length);
+            factory.AppendSql(subselect_part1);
+            factory.AppendSql(columnListClause);
+            factory.AppendSql(subselect_part3);
+            factory.AppendSql(name);
+            factory.AppendSql(subselect_part5);
         }
 
         public SqlParameter ToSqlParameter(string paramName)
