@@ -34,9 +34,10 @@ namespace ProgressOnderwijsUtils
 
         public int EstimateLength() => estimatedLength;
 
-        public void AppendTo(ref CommandFactory factory)
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
         {
-            var name = factory.GetNameForParam(this);
+            var name = factory.RegisterParameterAndGetName(this);
 
             factory.AppendSql(subselect_part1);
             factory.AppendSql(columnListClause);

@@ -98,7 +98,7 @@ namespace ProgressOnderwijsUtils
 
         static string SqlParamTypeString(SqlParameter par) => par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
-        static string InsecureSqlDebugString(object p)
+        public static string InsecureSqlDebugString(object p)
         {
             if (p is DBNull || p == null) {
                 return "NULL";

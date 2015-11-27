@@ -30,9 +30,10 @@ namespace ProgressOnderwijsUtils
             };
         }
 
-        public void AppendTo(ref CommandFactory factory)
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
         {
-            var sqlString = factory.GetNameForParam(this);
+            var sqlString = factory.RegisterParameterAndGetName(this);
             factory.AppendSql(sqlString);
         }
 

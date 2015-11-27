@@ -7,7 +7,16 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-    struct CommandFactory
+    interface ICommandFactory
+    {
+        string RegisterParameterAndGetName<T>(T o)
+            where T : IQueryParameter;
+
+        void AppendSql(string sql, int startIndex, int length);
+        void AppendSql(string sql);
+    }
+
+    struct CommandFactory : ICommandFactory
     {
         char[] queryText; //readonly StringBuilder;
         int queryLen;
@@ -15,16 +24,17 @@ namespace ProgressOnderwijsUtils
         readonly SqlParameterCollection commandParameters;
         readonly Dictionary<object, string> lookup;
 
-        internal CommandFactory(int estimatedLength) {
+        public CommandFactory(int estimatedLength)
+        {
             queryText = new char[estimatedLength];
             queryLen = 0;
             command = new SqlCommand();
             commandParameters = command.Parameters;
             lookup = new Dictionary<object, string>();
-        } 
+        }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
-        internal SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
+        public SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
         {
             command.Connection = conn;
 #if USE_RAW_TRANSACTIONS
@@ -45,8 +55,8 @@ namespace ProgressOnderwijsUtils
         static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
         public static readonly int EstimatedParameterLength = "@par0".Length;
 
-        public string GetNameForParam<T>(T o)
-            where T: IQueryParameter
+        public string RegisterParameterAndGetName<T>(T o)
+            where T : IQueryParameter
         {
             string paramName;
             if (!lookup.TryGetValue(o.EquatableValue, out paramName)) {
@@ -60,14 +70,38 @@ namespace ProgressOnderwijsUtils
             return paramName;
         }
 
-        internal void AppendSql(string sql, int startIndex, int length)
+        public void AppendSql(string sql, int startIndex, int length)
         {
-            if (queryText.Length < queryLen + length)
+            if (queryText.Length < queryLen + length) {
                 Array.Resize(ref queryText, Math.Max(queryText.Length * 3 / 2, queryLen + length + 5));
+            }
             sql.CopyTo(startIndex, queryText, queryLen, length);
             queryLen += length;
         }
 
-        internal void AppendSql(string sql) => AppendSql(sql, 0, sql.Length);
+        public void AppendSql(string sql) => AppendSql(sql, 0, sql.Length);
+    }
+
+    struct DebugCommandFactory : ICommandFactory
+    {
+        readonly StringBuilder debugText;
+
+        DebugCommandFactory(StringBuilder stringBuilder)
+        {
+            debugText = stringBuilder;
+        }
+
+        public static DebugCommandFactory Create() => new DebugCommandFactory(new StringBuilder());
+        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => QueryTracer.InsecureSqlDebugString(o.EquatableValue);
+        public void AppendSql(string sql, int startIndex, int length) => debugText.Append(sql, startIndex, length);
+        public void AppendSql(string sql) => debugText.Append(sql);
+
+        public string DebugText() => debugText.ToString();
+
+        public string DebugTextFor(IBuildableQuery impl)
+        {
+            impl?.AppendTo(ref this);
+            return DebugText();
+        }
     }
 }

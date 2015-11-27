@@ -16,7 +16,9 @@ namespace ProgressOnderwijsUtils
             this.impl = impl;
         }
 
-        internal void AppendTo(ref CommandFactory factory) => impl?.AppendTo(ref factory);
+        internal void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
+            => impl?.AppendTo(ref factory);
 
         public SqlCommand CreateSqlCommand(SqlCommandCreationContext conn)
         {
@@ -136,11 +138,9 @@ where _row > {skipNrowsParam}
 order by _row");
         }
 
-        public string DebugText()
-        {
-            using (var cmd = CreateSqlCommand(new SqlCommandCreationContext(null, 0, null)))
-                return QueryTracer.DebugFriendlyCommandText(cmd, QueryTracerParameterValues.Included);
-        }
+        public override string ToString() => DebugText();
+
+        public string DebugText() => DebugCommandFactory.Create().DebugTextFor(impl);
 
         public string CommandText()
         {
@@ -197,7 +197,10 @@ order by _row");
             this.rawSqlString = rawSqlString;
         }
 
-        public void AppendTo(ref CommandFactory factory) => factory.AppendSql(rawSqlString);
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
+            => factory.AppendSql(rawSqlString);
+
         public int EstimateLength() => rawSqlString.Length;
     }
 
@@ -210,7 +213,8 @@ order by _row");
             this.paramVal = paramVal;
         }
 
-        public void AppendTo(ref CommandFactory factory)
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
             => QueryComponent.AppendParamTo(ref factory, paramVal);
 
         public int EstimateLength() => 5;
@@ -218,7 +222,9 @@ order by _row");
 
     interface IBuildableQuery
     {
-        void AppendTo(ref CommandFactory factory);
+        void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory;
+
         int EstimateLength();
     }
 
@@ -250,7 +256,8 @@ order by _row");
             this.b = b;
         }
 
-        public void AppendTo(ref CommandFactory factory)
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
         {
             a.AppendTo(ref factory);
             b.AppendTo(ref factory);
@@ -268,7 +275,8 @@ order by _row");
             this.interpolatedQuery = interpolatedQuery;
         }
 
-        public void AppendTo(ref CommandFactory factory)
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
         {
             if (interpolatedQuery == null) {
                 throw new ArgumentNullException(nameof(interpolatedQuery));

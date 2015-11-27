@@ -13,7 +13,8 @@ namespace ProgressOnderwijsUtils
 {
     static class QueryComponent
     {
-        public static void AppendParamTo(ref CommandFactory factory, object o)
+        public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object o)
+            where TCommandFactory : struct, ICommandFactory
         {
             if (o is IEnumerable && !(o is string) && !(o is byte[])) {
                 ToTableParameter((IEnumerable)o).AppendTo(ref factory);
