@@ -133,8 +133,8 @@ namespace ProgressOnderwijsUtils
                 var StR = RandomHelper.GetStringOfLatinUpperOrLower(len);
                 Assert.That(str.Length == len);
                 Assert.That(StR.Length == len);
-                Assert.IsFalse(str.AsEnumerable().Any(c => c < 'a' || c > 'z'));
-                Assert.IsFalse(StR.AsEnumerable().Any(c => (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')));
+                PAssert.That(() => !str.AsEnumerable().Any(c => c < 'a' || c > 'z'));
+                PAssert.That(() => !StR.AsEnumerable().Any(c => (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')));
             }
         }
 
