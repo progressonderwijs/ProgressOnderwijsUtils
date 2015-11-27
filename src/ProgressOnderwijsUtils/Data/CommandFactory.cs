@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
 
     struct CommandFactory : ICommandFactory
     {
-        char[] queryText; //readonly StringBuilder;
+        char[] queryText; //faster than StringBuilder since we're append only and know the size quite reliably;
         int queryLen;
         readonly SqlCommand command;
         readonly SqlParameterCollection commandParameters;
