@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils
             };
         }
 
-        public string ToDebugText(Taal? taalOrNull)
+        public string ToDebugText()
         {
             if (paramval == null || paramval == DBNull.Value) {
                 return "null";
@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
             } else if (paramval is Enum) {
                 return ((IConvertible)paramval).ToInt64(null).ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(paramval) + "*/";
             } else {
-                return "{!" + (taalOrNull.HasValue ? Converteer.ToString(paramval, taalOrNull.Value) : paramval.ToString()) + "!}";
+                return "{!" + paramval + "!}";
             }
         }
 
