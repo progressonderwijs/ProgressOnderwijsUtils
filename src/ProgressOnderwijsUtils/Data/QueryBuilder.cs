@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
     public static class SafeSql
     {
         [Pure]
-        public static QueryBuilder SQL(FormattableString interpolatedQuery) 
+        public static QueryBuilder SQL(FormattableString interpolatedQuery)
             => QueryBuilder.CreateFromInterpolation(interpolatedQuery);
     }
 
@@ -307,13 +307,16 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public override bool Equals(object obj) => Equals(obj as QueryBuilder);
+        public override bool Equals(object obj) 
+            => obj is QueryBuilder && Equals((QueryBuilder)obj);
 
         [Pure]
-        public static bool operator ==(QueryBuilder a, QueryBuilder b) => ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b);
+        public static bool operator ==(QueryBuilder a, QueryBuilder b)
+            => ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b);
 
         [Pure]
-        public bool Equals(QueryBuilder other) => !ReferenceEquals(other, null) && CanonicalReverseComponents.SequenceEqual(other.CanonicalReverseComponents);
+        public bool Equals(QueryBuilder other)
+            => !ReferenceEquals(other, null) && CanonicalReverseComponents.SequenceEqual(other.CanonicalReverseComponents);
 
         [Pure]
         public static bool operator !=(QueryBuilder a, QueryBuilder b) => !(a == b);
