@@ -322,7 +322,6 @@ order by _row");
 
         public int EstimateLength()
             => interpolatedQuery.Format.Length + interpolatedQuery.ArgumentCount * (CommandFactory.EstimatedParameterLength - EstimatedPlaceholderLength);
-        //we ignore TVP and subqueries here - any query using those will thus incur a slight perf overhead, which seems acceptable to me.
 
         //we ignore TVP and subqueries here - any query using those will thus incur a slight perf overhead, which seems acceptable to me.
         struct ParamRefSubString
