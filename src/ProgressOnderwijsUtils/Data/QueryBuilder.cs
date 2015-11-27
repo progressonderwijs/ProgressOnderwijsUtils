@@ -312,7 +312,7 @@ order by _row");
                                 ReferencedParameterIndex = num
                             };
                         } else {
-                            break;
+                            throw new ArgumentException("format string invalid: an opening brace must be followed by one or more decimal digits which must be followed by a closing brace", nameof(query));
                         }
                     }
                 }
