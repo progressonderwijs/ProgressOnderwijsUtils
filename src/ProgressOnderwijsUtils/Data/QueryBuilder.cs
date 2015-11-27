@@ -51,10 +51,12 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public override bool Equals(object obj) => obj is QueryBuilder && Equals((QueryBuilder)obj);
+        public override bool Equals(object obj) 
+            => obj is QueryBuilder && Equals((QueryBuilder)obj);
 
         [Pure]
-        public static bool operator ==(QueryBuilder a, QueryBuilder b) => ReferenceEquals(a.impl, b.impl) || !ReferenceEquals(a.impl, null) && a.impl.Equals(b.impl);
+        public static bool operator ==(QueryBuilder a, QueryBuilder b) 
+            => ReferenceEquals(a.impl, b.impl) || !ReferenceEquals(a.impl, null) && a.impl.Equals(b.impl);
 
         [Pure]
         public bool Equals(QueryBuilder other) => this == other;
