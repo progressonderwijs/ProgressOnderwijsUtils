@@ -197,7 +197,7 @@ order by _row");
             this.rawSqlString = rawSqlString;
         }
 
-        public void AppendTo(ref CommandFactory factory) => factory.AppendSql(rawSqlString, 0, rawSqlString.Length);
+        public void AppendTo(ref CommandFactory factory) => factory.AppendSql(rawSqlString);
         public int EstimateLength() => rawSqlString.Length;
     }
 

@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
         public void AppendTo(ref CommandFactory factory)
         {
             var sqlString = factory.GetNameForParam(this);
-            factory.AppendSql(sqlString, 0, sqlString.Length);
+            factory.AppendSql(sqlString);
         }
 
         public int EstimateLength()
