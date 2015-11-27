@@ -56,11 +56,15 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public override bool Equals(object obj)
-            => obj is QueryBuilder && Equals((QueryBuilder)obj);
+            => obj is QueryBuilder && (QueryBuilder)obj == this;
 
         [Pure]
         public static bool operator ==(QueryBuilder a, QueryBuilder b)
-            => ReferenceEquals(a.impl, b.impl) || !ReferenceEquals(a.impl, null) && a.impl.Equals(b.impl);
+            => ReferenceEquals(a.impl, b.impl)
+                || !ReferenceEquals(a.impl, null)
+                    && EqualityKeyCommandFactory.EqualityKey(a.impl)
+                        .Equals(EqualityKeyCommandFactory.EqualityKey(b.impl)
+                        );
 
         [Pure]
         public bool Equals(QueryBuilder other) => this == other;
@@ -69,7 +73,7 @@ namespace ProgressOnderwijsUtils
         public static bool operator !=(QueryBuilder a, QueryBuilder b) => !(a == b);
 
         [Pure]
-        public override int GetHashCode() => (impl?.GetHashCode() ?? 12345678) + 4567;
+        public override int GetHashCode() => EqualityKeyCommandFactory.EqualityKey(impl).GetHashCode();
 
         static readonly QueryBuilder[] AllColumns = { SqlFactory.SQL($"*") };
         static readonly QueryBuilder Comma_ColumnSeperator = SqlFactory.SQL($", ");

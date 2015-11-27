@@ -102,4 +102,47 @@ namespace ProgressOnderwijsUtils
             return debugText.ToString();
         }
     }
+
+    struct EqualityKeyCommandFactory : ICommandFactory
+    {
+        readonly StringBuilder debugText;
+        int argOffset;
+        FastArrayBuilder<object> paramValues;
+
+        EqualityKeyCommandFactory(int estimatedLength)
+        {
+            debugText = new StringBuilder(estimatedLength + 30); //extra length for argument values.
+            argOffset = 0;
+            paramValues = FastArrayBuilder<object>.Create();
+        }
+
+        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter
+        {
+            paramValues.Add(o.EquatableValue);
+            return CommandFactory.IndexToParameterName(argOffset++);
+        }
+
+        public void AppendSql(string sql, int startIndex, int length) => debugText.Append(sql, startIndex, length);
+        public void AppendSql(string sql) => debugText.Append(sql);
+
+        public static QueryKey EqualityKey(IBuildableQuery impl)
+        {
+            if (impl == null) {
+                return new QueryKey();
+            }
+
+            var factory = new EqualityKeyCommandFactory(impl.EstimateLength());
+            impl.AppendTo(ref factory);
+            return new QueryKey {
+                SqlTextKey = factory.debugText.ToString(),
+                Params = factory.paramValues.ToArray().WrapInComparableArray(),
+            };
+        }
+    }
+
+    sealed class QueryKey : ValueBase<QueryKey>
+    {
+        public string SqlTextKey { get; set; }
+        public ComparableArray<object> Params { get; set; }
+    }
 }
