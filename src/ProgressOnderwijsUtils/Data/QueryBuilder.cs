@@ -25,6 +25,8 @@ namespace ProgressOnderwijsUtils
             return factory.CreateCommand(conn.Connection, conn.CommandTimeoutInS);
         }
 
+        public static readonly QueryBuilder Empty = new QueryBuilder(null);
+
         [Pure]
         public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b)
             => (a.impl == null || b.impl == null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).ToQuery();
@@ -67,7 +69,6 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override int GetHashCode() => (impl?.GetHashCode() ?? 12345678) + 4567;
 
-        public static QueryBuilder Empty => new QueryBuilder(null);
         static readonly QueryBuilder[] AllColumns = { SqlFactory.SQL($"*") };
         static readonly QueryBuilder Comma_ColumnSeperator = SqlFactory.SQL($", ");
 
