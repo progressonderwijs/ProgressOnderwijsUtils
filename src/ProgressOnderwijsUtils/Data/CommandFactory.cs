@@ -66,5 +66,7 @@ namespace ProgressOnderwijsUtils
             sql.CopyTo(startIndex, queryText, queryLen, length);
             queryLen += length;
         }
+
+        internal void AppendSql(string sql) => AppendSql(sql, 0, sql.Length);
     }
 }
