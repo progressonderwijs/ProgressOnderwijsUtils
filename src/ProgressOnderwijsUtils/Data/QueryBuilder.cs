@@ -302,7 +302,6 @@ order by _row");
                         c = query[pos];
                         if (c >= '0' && c <= '9') {
                             num = num * 10 + (c - '0');
-                            continue;
                         } else if (c == '}') {
                             return new ParamRefSubString {
                                 StartIndex = startPos,
