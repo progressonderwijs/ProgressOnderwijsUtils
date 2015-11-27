@@ -54,9 +54,6 @@ namespace ProgressOnderwijsUtils
         public override bool Equals(object obj) => obj is QueryBuilder && Equals((QueryBuilder)obj);
 
         [Pure]
-        public override int GetHashCode() => (impl?.GetHashCode() ?? 12345678) + 4567;
-
-        [Pure]
         public static bool operator ==(QueryBuilder a, QueryBuilder b) => ReferenceEquals(a.impl, b.impl) || !ReferenceEquals(a.impl, null) && a.impl.Equals(b.impl);
 
         [Pure]
@@ -64,6 +61,9 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool operator !=(QueryBuilder a, QueryBuilder b) => !(a == b);
+
+        [Pure]
+        public override int GetHashCode() => (impl?.GetHashCode() ?? 12345678) + 4567;
 
         public static QueryBuilder Empty => new QueryBuilder(null);
         static readonly QueryBuilder[] AllColumns = { SqlFactory.SQL($"*") };
