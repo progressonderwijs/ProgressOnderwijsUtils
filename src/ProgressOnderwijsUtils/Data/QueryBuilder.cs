@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
@@ -328,6 +325,7 @@ order by _row");
             => interpolatedQuery.Format.Length + interpolatedQuery.ArgumentCount * (CommandFactory.EstimatedParameterLength - EstimatedPlaceholderLength);
         //we ignore TVP and subqueries here - any query using those will thus incur a slight perf overhead, which seems acceptable to me.
 
+        //we ignore TVP and subqueries here - any query using those will thus incur a slight perf overhead, which seems acceptable to me.
         struct ParamRefSubString
         {
             public int StartIndex, EndIndex, ReferencedParameterIndex;
