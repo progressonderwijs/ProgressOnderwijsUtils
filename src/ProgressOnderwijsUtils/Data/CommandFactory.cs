@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -127,12 +128,8 @@ namespace ProgressOnderwijsUtils
 
         public static QueryKey EqualityKey(IBuildableQuery impl)
         {
-            if (impl == null) {
-                return new QueryKey();
-            }
-
-            var factory = new EqualityKeyCommandFactory(impl.EstimateLength());
-            impl.AppendTo(ref factory);
+            var factory = new EqualityKeyCommandFactory(impl?.EstimateLength() ?? 0);
+            impl?.AppendTo(ref factory);
             return new QueryKey {
                 SqlTextKey = factory.debugText.ToString(),
                 Params = factory.paramValues.ToArray().WrapInComparableArray(),
