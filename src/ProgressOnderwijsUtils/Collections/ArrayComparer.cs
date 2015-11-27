@@ -10,10 +10,10 @@ namespace ProgressOnderwijsUtils.Collections
         [CodeDieAlleenWordtGebruiktInTests]
         public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
 
-        readonly EqualityComparer<T> underlying;
+        readonly IEqualityComparer<T> underlying;
         static readonly ulong start = (ulong)typeof(T).MetadataToken + ((ulong)typeof(T).Module.MetadataToken << 32);
 
-        public ArrayComparer(EqualityComparer<T> underlying)
+        public ArrayComparer(IEqualityComparer<T> underlying)
         {
             this.underlying = underlying;
         }
