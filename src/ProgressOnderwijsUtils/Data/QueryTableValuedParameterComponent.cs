@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtils
             };
         }
 
-        public string ToDebugText(Taal? taalOrNull) => "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")";
+        public string ToDebugText() => "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")";
         public bool Equals(IQueryComponent other) => Equals((object)other);
 
         public override bool Equals(object other)
