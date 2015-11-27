@@ -10,6 +10,11 @@ namespace ProgressOnderwijsUtils
     sealed class QueryTableValuedParameterComponent<T> : IQueryParameter
         where T : IMetaObject
     {
+        static readonly string columnListClause =
+            MetaObject.GetMetaProperties<T>()
+                .Select(mp => "TVP." + mp.Name)
+                .JoinStrings(", ");
+
         readonly IEnumerable<T> objs;
         readonly string DbTypeName;
 
@@ -29,10 +34,8 @@ namespace ProgressOnderwijsUtils
         public void AppendTo(ref CommandFactory factory)
         {
             var name = factory.GetNameForParam(this);
-            var alias = name.Substring(1);
 
-            // select par0.querytablevalue from @par0 par0, par0 is alias for @par0
-            var sqlString = $"(select {alias}.querytablevalue from {name} {alias})";
+            var sqlString = $"(select {columnListClause} from {name} TVP)";
 
             factory.AppendSql(sqlString, 0, sqlString.Length);
         }

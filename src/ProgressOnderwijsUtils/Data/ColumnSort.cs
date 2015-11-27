@@ -1,4 +1,5 @@
 ﻿using System;
+using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
@@ -77,10 +78,10 @@ namespace ProgressOnderwijsUtils
         public void OperatorsOk()
         {
             Assert.That(new ColumnSort("test", SortDirection.Asc) == new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
-            Assert.IsFalse(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
+            PAssert.That(() => !(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test")));
 
             Assert.That(new ColumnSort("test", SortDirection.Asc) == new ColumnSort("Test", SortDirection.Asc));
-            Assert.IsFalse(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("Test", SortDirection.Asc));
+            PAssert.That(() => !(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("Test", SortDirection.Asc)));
         }
 
         [Test]
