@@ -34,15 +34,15 @@ namespace ProgressOnderwijsUtils
         public DateTime Today => DateTime.Today.AddDays(DaysToAdd);
     }
 
-    public sealed class ProgressTimeTravelor : IDisposable
+    public sealed class ProgressTimeTraveller : IDisposable
     {
         readonly ProgressDateTime dateTime;
         readonly DateTime travelFromDate;
 
-        public ProgressTimeTravelor(ProgressDateTime dateTime, DateTime travelToDate)
+        public ProgressTimeTraveller(ProgressDateTime dateTime, DateTime travelToDate)
             : this(dateTime, travelToDate.Date.Subtract(DateTime.Now.Date).Days) { }
 
-        public ProgressTimeTravelor(ProgressDateTime dateTime, int daysToAdd)
+        public ProgressTimeTraveller(ProgressDateTime dateTime, int daysToAdd)
         {
             this.dateTime = dateTime;
             travelFromDate = dateTime.Now;
