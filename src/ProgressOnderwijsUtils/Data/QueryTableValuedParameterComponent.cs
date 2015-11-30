@@ -39,11 +39,11 @@ namespace ProgressOnderwijsUtils
         {
             var name = factory.RegisterParameterAndGetName(this);
 
-            factory.AppendSql(subselect_part1);
-            factory.AppendSql(columnListClause);
-            factory.AppendSql(subselect_part3);
-            factory.AppendSql(name);
-            factory.AppendSql(subselect_part5);
+            SqlFactory.AppendSql(ref factory, subselect_part1);
+            SqlFactory.AppendSql(ref factory, columnListClause);
+            SqlFactory.AppendSql(ref factory, subselect_part3);
+            SqlFactory.AppendSql(ref factory, name);
+            SqlFactory.AppendSql(ref factory, subselect_part5);
         }
 
         public SqlParameter ToSqlParameter(string paramName)

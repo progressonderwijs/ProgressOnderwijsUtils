@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -10,11 +9,8 @@ namespace ProgressOnderwijsUtils
 {
     interface ICommandFactory
     {
-        string RegisterParameterAndGetName<T>(T o)
-            where T : IQueryParameter;
-
+        string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter;
         void AppendSql(string sql, int startIndex, int length);
-        void AppendSql(string sql);
     }
 
     struct CommandFactory : ICommandFactory
@@ -79,8 +75,6 @@ namespace ProgressOnderwijsUtils
             sql.CopyTo(startIndex, queryText, queryLen, length);
             queryLen += length;
         }
-
-        public void AppendSql(string sql) => AppendSql(sql, 0, sql.Length);
     }
 
     struct DebugCommandFactory : ICommandFactory
@@ -95,7 +89,6 @@ namespace ProgressOnderwijsUtils
         public static DebugCommandFactory Create(int estimatedLength) => new DebugCommandFactory(estimatedLength);
         public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => QueryTracer.InsecureSqlDebugString(o.EquatableValue);
         public void AppendSql(string sql, int startIndex, int length) => debugText.Append(sql, startIndex, length);
-        public void AppendSql(string sql) => debugText.Append(sql);
 
         public string DebugTextFor(IBuildableQuery impl)
         {
@@ -124,7 +117,6 @@ namespace ProgressOnderwijsUtils
         }
 
         public void AppendSql(string sql, int startIndex, int length) => debugText.Append(sql, startIndex, length);
-        public void AppendSql(string sql) => debugText.Append(sql);
 
         public static QueryKey EqualityKey(IBuildableQuery impl)
         {

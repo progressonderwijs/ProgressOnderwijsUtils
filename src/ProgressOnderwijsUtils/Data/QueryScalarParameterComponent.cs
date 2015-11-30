@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
         {
             var sqlString = factory.RegisterParameterAndGetName(this);
-            factory.AppendSql(sqlString);
+            SqlFactory.AppendSql(ref factory, sqlString);
         }
 
         public int EstimateLength() => CommandFactory.EstimatedParameterLength;

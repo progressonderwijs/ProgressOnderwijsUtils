@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b)
-            => (a.impl == null || b.impl == null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).ToQuery();
+            => (a.impl == null || b.impl == null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
 
         [Pure, Obsolete("Implicitly converts to SQL", true)]
         public static QueryBuilder operator +(QueryBuilder a, string b)
@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentNullException(nameof(rawSqlString));
             }
 
-            return new StringSqlFragment(rawSqlString).ToQuery();
+            return new StringSqlFragment(rawSqlString).BuildableToQuery();
         }
 
         [Pure]
@@ -72,8 +72,8 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override int GetHashCode() => EqualityKeyCommandFactory.EqualityKey(impl).GetHashCode();
 
-        static readonly QueryBuilder[] AllColumns = { SqlFactory.SQL($"*") };
-        static readonly QueryBuilder Comma_ColumnSeperator = SqlFactory.SQL($", ");
+        static readonly QueryBuilder[] AllColumns = { SqlFactory.InterpolationToQuery($"*") };
+        static readonly QueryBuilder Comma_ColumnSeperator = SqlFactory.InterpolationToQuery($", ");
 
         static QueryBuilder SubQueryHelper(
             QueryBuilder subquery,
@@ -84,10 +84,10 @@ namespace ProgressOnderwijsUtils
         {
             projectedColumns = projectedColumns ?? AllColumns;
 
-            var topClause = topRowsOrNull != Empty ? SqlFactory.SQL($"top ({topRowsOrNull}) ") : Empty;
+            var topClause = topRowsOrNull != Empty ? SqlFactory.InterpolationToQuery($"top ({topRowsOrNull}) ") : Empty;
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
             return
-                SqlFactory.SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
+                SqlFactory.InterpolationToQuery($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateFromSortOrder(sortOrder);
         }
 
@@ -118,15 +118,15 @@ namespace ProgressOnderwijsUtils
                         + subQuery.DebugText());
             }
 
-            var takeRowsParam = SqlFactory.SQL($@"{(long)takeNrows}");
-            var skipNrowsParam = SqlFactory.SQL($@"{(long)skipNrows}");
+            var takeRowsParam = SqlFactory.InterpolationToQuery($@"{(long)takeNrows}");
+            var skipNrowsParam = SqlFactory.InterpolationToQuery($@"{(long)skipNrows}");
 
             var sortorder = sortOrder;
-            var orderClause = sortorder == OrderByColumns.Empty ? SqlFactory.SQL($"order by (select 1)") : CreateFromSortOrder(sortorder);
+            var orderClause = sortorder == OrderByColumns.Empty ? SqlFactory.InterpolationToQuery($"order by (select 1)") : CreateFromSortOrder(sortorder);
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
 
-            var topNSubQuery = SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + SqlFactory.SQL($"+") + skipNrowsParam);
-            return SqlFactory.SQL($@"
+            var topNSubQuery = SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + SqlFactory.InterpolationToQuery($"+") + skipNrowsParam);
+            return SqlFactory.InterpolationToQuery($@"
 select top ({takeRowsParam}) {projectedColumnsClause}
 from (select _row=row_number() over ({orderClause}),
       _g2.*
@@ -152,10 +152,10 @@ order by _row");
         public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<QueryBuilder> projectedColumns, QueryBuilder filterClause, OrderByColumns sortOrder)
             => SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, Empty);
 
-        public static QueryBuilder Param(object paramVal) => new SingleParameterSqlFragment(paramVal).ToQuery();
+        public static QueryBuilder Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]
-        public static QueryBuilder TableParamDynamic(Array o) => QueryComponent.ToTableParameter(o).ToQuery();
+        public static QueryBuilder TableParamDynamic(Array o) => QueryComponent.ToTableParameter(o).BuildableToQuery();
 
         /// <summary>
         /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -168,7 +168,7 @@ order by _row");
         [Pure]
         public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o)
             where T : IMetaObject, new()
-            => QueryComponent.ToTableParameter(typeName, o).ToQuery();
+            => QueryComponent.ToTableParameter(typeName, o).BuildableToQuery();
 
         //TODO: dit aanzetten voor datasource tests
         // ReSharper disable once UnusedMember.Global
@@ -187,6 +187,14 @@ order by _row");
         }
     }
 
+    interface IBuildableQuery
+    {
+        void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory;
+
+        int EstimateLength();
+    }
+
     class StringSqlFragment : IBuildableQuery
     {
         readonly string rawSqlString;
@@ -198,7 +206,7 @@ order by _row");
 
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
-            => factory.AppendSql(rawSqlString);
+            => SqlFactory.AppendSql(ref factory, rawSqlString);
 
         public int EstimateLength() => rawSqlString.Length;
     }
@@ -219,14 +227,6 @@ order by _row");
         public int EstimateLength() => 5;
     }
 
-    interface IBuildableQuery
-    {
-        void AppendTo<TCommandFactory>(ref TCommandFactory factory)
-            where TCommandFactory : struct, ICommandFactory;
-
-        int EstimateLength();
-    }
-
     interface IQueryParameter : IBuildableQuery
     {
         SqlParameter ToSqlParameter(string paramName);
@@ -236,13 +236,17 @@ order by _row");
     public static class SafeSql
     {
         [Pure]
-        public static QueryBuilder SQL(FormattableString interpolatedQuery) => SqlFactory.SQL(interpolatedQuery);
+        public static QueryBuilder SQL(FormattableString interpolatedQuery) => SqlFactory.InterpolationToQuery(interpolatedQuery);
     }
 
-    public static class SqlFactory
+    static class SqlFactory
     {
-        internal static QueryBuilder ToQuery(this IBuildableQuery q) => new QueryBuilder(q);
-        public static QueryBuilder SQL(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).ToQuery();
+        public static QueryBuilder BuildableToQuery(this IBuildableQuery q) => new QueryBuilder(q);
+        public static QueryBuilder InterpolationToQuery(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
+
+        public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, string sql)
+            where TCommandFactory : struct, ICommandFactory
+            => factory.AppendSql(sql, 0, sql.Length);
     }
 
     class TwoSqlFragments : IBuildableQuery
