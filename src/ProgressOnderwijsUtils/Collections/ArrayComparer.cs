@@ -54,13 +54,6 @@ namespace ProgressOnderwijsUtils.Collections
         }
     }
 
-    static class ComparableArray
-    {
-        [Pure]
-        public static ComparableArray<T> WrapInComparableArray<T>(this T[] array)
-            => new ComparableArray<T>(array);
-    }
-
     public struct ComparableArray<T> : IEquatable<ComparableArray<T>>
     {
         readonly T[] array;

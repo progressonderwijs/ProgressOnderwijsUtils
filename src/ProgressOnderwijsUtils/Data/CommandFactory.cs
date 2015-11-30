@@ -131,7 +131,7 @@ namespace ProgressOnderwijsUtils
             impl?.AppendTo(ref factory);
             return new QueryKey {
                 SqlTextKey = factory.debugText.ToString(),
-                Params = factory.paramValues.ToArray().WrapInComparableArray(),
+                Params = new ComparableArray<object>(factory.paramValues.ToArray()),
             };
         }
     }
