@@ -96,6 +96,13 @@ namespace ProgressOnderwijsUtils
             return debugText.ToString();
         }
     }
+    struct LengthEstimationCommandFactory : ICommandFactory
+    {
+        public int QueryLength;
+        static readonly string ExampleParameterName = CommandFactory.IndexToParameterName(9);
+        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => ExampleParameterName;
+        public void AppendSql(string sql, int startIndex, int length) => QueryLength += length;
+    }
 
     struct EqualityKeyCommandFactory : ICommandFactory
     {

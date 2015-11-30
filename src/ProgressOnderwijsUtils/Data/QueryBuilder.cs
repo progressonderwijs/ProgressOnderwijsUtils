@@ -191,8 +191,6 @@ order by _row");
     {
         void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory;
-
-        int EstimateLength();
     }
 
     class StringSqlFragment : IBuildableQuery
@@ -207,8 +205,6 @@ order by _row");
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
             => SqlFactory.AppendSql(ref factory, rawSqlString);
-
-        public int EstimateLength() => rawSqlString.Length;
     }
 
     class SingleParameterSqlFragment : IBuildableQuery
@@ -223,8 +219,6 @@ order by _row");
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
             => QueryComponent.AppendParamTo(ref factory, paramVal);
-
-        public int EstimateLength() => 5;
     }
 
     interface IQueryParameter : IBuildableQuery
@@ -241,6 +235,13 @@ order by _row");
 
     static class SqlFactory
     {
+        public static int EstimateLength(this IBuildableQuery q)
+        {
+            var lengthEstimator = new LengthEstimationCommandFactory();
+            q.AppendTo(ref lengthEstimator);
+            return lengthEstimator.QueryLength;
+        }
+
         public static QueryBuilder BuildableToQuery(this IBuildableQuery q) => new QueryBuilder(q);
         public static QueryBuilder InterpolationToQuery(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
@@ -265,8 +266,6 @@ order by _row");
             a.AppendTo(ref factory);
             b.AppendTo(ref factory);
         }
-
-        public int EstimateLength() => a.EstimateLength() + b.EstimateLength();
     }
 
     class InterpolatedSqlFragment : IBuildableQuery
@@ -331,11 +330,6 @@ order by _row");
             }
             return ParamRefSubString.NotFound;
         }
-
-        static readonly int EstimatedPlaceholderLength = "{0}".Length;
-
-        public int EstimateLength()
-            => interpolatedQuery.Format.Length + interpolatedQuery.ArgumentCount * (CommandFactory.EstimatedParameterLength - EstimatedPlaceholderLength);
 
         //we ignore TVP and subqueries here - any query using those will thus incur a slight perf overhead, which seems acceptable to me.
         struct ParamRefSubString
