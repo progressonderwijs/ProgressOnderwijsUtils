@@ -96,11 +96,9 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         static QueryBuilder CreateFromSortOrder(OrderByColumns sortOrder)
-        {
-            return !sortOrder.Columns.Any()
+            => !sortOrder.Columns.Any()
                 ? Empty
                 : CreateDynamic("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
-        }
 
         [Pure]
         public static QueryBuilder CreatePagedSubQuery(
@@ -221,7 +219,7 @@ order by _row");
             => QueryComponent.AppendParamTo(ref factory, paramVal);
     }
 
-    interface IQueryParameter : IBuildableQuery
+    interface IQueryParameter
     {
         SqlParameter ToSqlParameter(string paramName);
         object EquatableValue { get; }

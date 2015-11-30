@@ -19,20 +19,18 @@ namespace ProgressOnderwijsUtils
             if (o is IEnumerable && !(o is string) && !(o is byte[])) {
                 ToTableParameter((IEnumerable)o).AppendTo(ref factory);
             } else {
-                new QueryScalarParameterComponent(o).AppendTo(ref factory);
+                QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
             }
         }
 
         public static IBuildableQuery ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
-        {
-            return new QueryTableValuedParameterComponent<T>(tableTypeName, set);
-        }
+            => new QueryTableValuedParameterComponent<T>(tableTypeName, set);
 
         static IBuildableQuery TryToTableParameter<T>(IEnumerable set)
         {
             if (set is IEnumerable<T>) {
                 var typedSet = (IEnumerable<T>)set;
-                var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { querytablevalue = i });
+                var projectedSet = typedSet.Select(i => new DbTableValuedParameterWrapper<T> { querytablevalue = i });
                 return ToTableParameter(TableValueTypeName<T>.TypeName, projectedSet);
             } else {
                 return null;

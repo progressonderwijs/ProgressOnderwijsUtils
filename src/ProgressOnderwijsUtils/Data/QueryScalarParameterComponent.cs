@@ -5,12 +5,7 @@ namespace ProgressOnderwijsUtils
 {
     struct QueryScalarParameterComponent : IQueryParameter
     {
-        public object EquatableValue { get; }
-
-        internal QueryScalarParameterComponent(object o)
-        {
-            EquatableValue = o ?? DBNull.Value;
-        }
+        public object EquatableValue { get; private set; }
 
         public SqlParameter ToSqlParameter(string paramName)
             => new SqlParameter {
@@ -19,8 +14,11 @@ namespace ProgressOnderwijsUtils
                 Value = EquatableValue is Filter.CurrentTimeToken ? DateTime.Now : EquatableValue,
             };
 
-        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+        public static void AppendScalarParameter<TCommandFactory>(ref TCommandFactory factory, object o) 
             where TCommandFactory : struct, ICommandFactory
-            => SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(this));
+        {
+            var param = new QueryScalarParameterComponent { EquatableValue = o ?? DBNull.Value };
+            SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
+        }
     }
 }
