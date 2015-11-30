@@ -47,7 +47,6 @@ namespace ProgressOnderwijsUtils
                 .ToArray();
 
         public static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
-        public static readonly int EstimatedParameterLength = "@par0".Length;
 
         public string RegisterParameterAndGetName<T>(T o)
             where T : IQueryParameter
