@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using System.Linq;
 using System.Collections.Generic;
-using ExpressionToCodeLib;
 using System;
 
 namespace ProgressOnderwijsUtils
@@ -19,8 +18,6 @@ namespace ProgressOnderwijsUtils
                 .Select(mp => "TVP." + mp.Name)
                 .JoinStrings(", ");
 
-        static readonly int estimatedLength = subselect_part1.Length + columnListClause.Length + "@par0".Length + subselect_part5.Length;
-
         readonly IEnumerable<T> objs;
         readonly string DbTypeName;
 
@@ -31,8 +28,6 @@ namespace ProgressOnderwijsUtils
         }
 
         public object EquatableValue => Tuple.Create(objs, DbTypeName);
-
-        public int EstimateLength() => estimatedLength;
 
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
