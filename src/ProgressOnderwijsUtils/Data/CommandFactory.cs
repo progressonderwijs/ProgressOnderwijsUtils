@@ -34,9 +34,6 @@ namespace ProgressOnderwijsUtils
         public SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
         {
             command.Connection = conn;
-#if USE_RAW_TRANSACTIONS
-			command.Transaction = conn.SqlTransaction;
-#endif
             command.CommandTimeout = commandTimeout; //60 by default
             command.CommandText = new string(queryText, 0, queryLen);
             return command;
