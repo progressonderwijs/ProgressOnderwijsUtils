@@ -42,9 +42,7 @@ namespace ProgressOnderwijsUtils
         const int ParameterNameCacheSize = 20;
 
         static readonly string[] CachedParameterNames =
-            Enumerable.Range(0, ParameterNameCacheSize)
-                .Select(IndexToParameterName)
-                .ToArray();
+            Enumerable.Range(0, ParameterNameCacheSize).Select(IndexToParameterName).ToArray();
 
         public static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
 
@@ -92,6 +90,7 @@ namespace ProgressOnderwijsUtils
             return debugText.ToString();
         }
     }
+
     struct LengthEstimationCommandFactory : ICommandFactory
     {
         public int QueryLength;
