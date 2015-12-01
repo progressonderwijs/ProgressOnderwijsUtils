@@ -40,15 +40,15 @@ namespace ProgressOnderwijsUtils
         readonly DateTime travelFromDate;
 
         public ProgressTimeTraveller(ProgressDateTime dateTime, DateTime travelToDate)
-            : this(dateTime, travelToDate.Date.Subtract(DateTime.Now.Date).Days) { }
-
-        public ProgressTimeTraveller(ProgressDateTime dateTime, int daysToAdd)
         {
             this.dateTime = dateTime;
             travelFromDate = dateTime.Now;
 
-            dateTime.DaysToAdd = daysToAdd;
+            dateTime.TimeTravelToDate(travelToDate);
         }
+
+        public ProgressTimeTraveller(ProgressDateTime dateTime, int daysToAdd)
+            : this(dateTime, dateTime.Now.AddDays(daysToAdd)) { }
 
         public void Dispose()
         {
