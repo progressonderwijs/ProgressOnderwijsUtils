@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
 
         public SqlCommand CreateSqlCommand(SqlCommandCreationContext conn)
         {
-            var factory = new CommandFactory(impl?.EstimateLength() ?? 0);
+            var factory = new CommandFactory(0);
             impl?.AppendTo(ref factory);
             return factory.CreateCommand(conn.Connection, conn.CommandTimeoutInS);
         }

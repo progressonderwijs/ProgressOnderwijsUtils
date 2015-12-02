@@ -25,9 +25,9 @@ namespace ProgressOnderwijsUtils
         readonly SqlParameterCollection commandParameters;
         Dictionary<object, string> lookup;
 
-        public CommandFactory(int estimatedLength)
+        public CommandFactory(int ignore)
         {
-            queryText = PooledExponentialBufferAllocator<char>.GetByLength((uint)estimatedLength);
+            queryText = PooledExponentialBufferAllocator<char>.GetByLength(2048);
             queryLen = 0;
             command = new SqlCommand();
             commandParameters = command.Parameters;
