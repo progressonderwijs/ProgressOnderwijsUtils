@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using NUnit.Framework;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -25,7 +27,7 @@ namespace ProgressOnderwijsUtils
 
         public CommandFactory(int estimatedLength)
         {
-            queryText = new char[estimatedLength];
+            queryText = PooledExponentialBufferAllocator<char>.GetByLength((uint)estimatedLength);
             queryLen = 0;
             command = new SqlCommand();
             commandParameters = command.Parameters;
@@ -39,6 +41,8 @@ namespace ProgressOnderwijsUtils
             command.Connection = conn;
             command.CommandTimeout = commandTimeout; //60 by default
             command.CommandText = new string(queryText, 0, queryLen);
+            PooledExponentialBufferAllocator<char>.ReturnToPool(queryText);
+            queryText = null;
             lookup.Clear();
             nameLookupBag.Enqueue(lookup);
             lookup = null;
@@ -70,7 +74,11 @@ namespace ProgressOnderwijsUtils
         public void AppendSql(string sql, int startIndex, int length)
         {
             if (queryText.Length < queryLen + length) {
-                Array.Resize(ref queryText, Math.Max(queryText.Length * 3 / 2, queryLen + length + 5));
+                var newLen = (uint)Math.Max(queryText.Length * 3 / 2, queryLen + length + 5);
+                var newArray = PooledExponentialBufferAllocator<char>.GetByLength(newLen);
+                Array.Copy(queryText, newArray, queryLen);
+                PooledExponentialBufferAllocator<char>.ReturnToPool(queryText);
+                queryText = newArray;
             }
             sql.CopyTo(startIndex, queryText, queryLen, length);
             queryLen += length;
@@ -141,5 +149,43 @@ namespace ProgressOnderwijsUtils
     {
         public string SqlTextKey { get; set; }
         public ComparableArray<object> Params { get; set; }
+    }
+
+    static class PooledExponentialBufferAllocator<T>
+    {
+        static readonly int IndexCount = 15;
+        static readonly int MaxIndex = IndexCount-1;
+        static readonly int MaxArrayLength = 1 << MaxIndex;
+
+        static readonly ConcurrentQueue<T[]>[] bagsByIndex = InitBags();
+
+        static ConcurrentQueue<T[]>[] InitBags() {
+            var allBags = new ConcurrentQueue<T[]>[IndexCount];
+            for (int i = 0; i < IndexCount; i++)
+                allBags[i] = new ConcurrentQueue<T[]>();
+            return allBags;
+        }
+
+        public static T[] GetByLength(uint length)
+        {
+            if (length > MaxArrayLength)
+                return new T[length];
+            var i = Utils.LogBase2RoundedUp(length);
+            var bag = bagsByIndex[i];
+            T[] result;
+            if (bag.TryDequeue(out result))
+                return result;
+            return new T[1 << i];
+        }
+
+        public static void ReturnToPool(T[] arr)
+        {
+            if (arr.Length > MaxArrayLength)
+                return;
+            var i = Utils.LogBase2RoundedUp((uint)arr.Length);
+            var bag = bagsByIndex[i];
+            //Array.Clear(arr,0,arr.Length);
+            bag.Enqueue(arr);
+        }
     }
 }
