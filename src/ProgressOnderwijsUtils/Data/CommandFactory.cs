@@ -30,7 +30,6 @@ namespace ProgressOnderwijsUtils
             lookup = new Dictionary<object, string>();
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2100:Review SQL queries for security vulnerabilities")]
         public SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
         {
             command.Connection = conn;
