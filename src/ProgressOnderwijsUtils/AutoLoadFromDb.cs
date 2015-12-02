@@ -306,6 +306,10 @@ namespace ProgressOnderwijsUtils
                 var listType = typeof(FastArrayBuilder<T>);
                 var listVarExpr = Expression.Variable(listType, "rowList");
 
+                var rowVar = Expression.Variable(typeof(T), "row");
+
+                
+
                 var listAssignment = Expression.Assign(listVarExpr, Expression.Call(listType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static)));
 
                 var lastColumnReadParameter = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
@@ -322,11 +326,53 @@ namespace ProgressOnderwijsUtils
                             ),
                         loopExitLabel
                         );
+                var rowLoopAltExpr =
+                    Expression.Loop(
+                        Expression.Block(
+                            addRowExpr,
+                            Expression.IfThen(
+                                Expression.Not(Expression.Call(dataReaderParamExpr, ReadMethod)),
+                                Expression.Break(loopExitLabel)
+                                )
+                            ),
+                        loopExitLabel
+                        );
 
                 var listToArrayExpr = Expression.Call(listVarExpr, listType.GetMethod("ToArray", BindingFlags.Public | BindingFlags.Instance));
 
+                var afterTwoReads = Expression.Block(
+                                            typeof(T[]),
+                                            new[] { listVarExpr },
+                                            listAssignment,
+                                            //listInit,
+                                            Expression.Call(listVarExpr, listType.GetMethod("Add", new[] { typeof(T) }), rowVar),
+                                            rowLoopAltExpr,
+                                            listToArrayExpr
+                                            );
+                var afterFirstRead = Expression.Condition(
+                                    Expression.Call(dataReaderParamExpr, ReadMethod),
+                                        afterTwoReads,
+                                    Expression.NewArrayInit(typeof(T), rowVar)
+                                );
+                var afterFirstPartialRead = Expression.Block(
+                                typeof(T[]),
+                                new[] { rowVar },
+                                Expression.Assign(rowVar, constructRowExpr),
+                                afterFirstRead
+                            );
+
+                Func<T[]> mkEmptyArray = ArrayExtensions.Empty<T>;
+
+                var body = Expression.Condition(
+                            Expression.Call(dataReaderParamExpr, ReadMethod),
+                            afterFirstPartialRead,
+                            Expression.Call(mkEmptyArray.Method)
+                            );
+
+
                 //LoadRows = 
                 var loadRowFunc = Expression.Lambda<TRowReader<T>>(
+                    body /*/
                     Expression.Block(
                         typeof(T[]),
                         new[] { listVarExpr },
@@ -334,7 +380,7 @@ namespace ProgressOnderwijsUtils
                         //listInit,
                         rowLoopExpr,
                         listToArrayExpr
-                        ),
+                        )/**/,
                     "LoadRows",
                     new[] { dataReaderParamExpr, lastColumnReadParameter }
                     );
