@@ -78,7 +78,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            PooledSmallBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
+            PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
             paramObjs = null;
 
             lookup.Clear();
