@@ -6,7 +6,7 @@ using System;
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class QueryTableValuedParameterComponent<T> : IQueryParameter, IBuildableQuery
+    sealed class QueryTableValuedParameterComponent<T> : IQueryParameter, IQueryComponent
         where T : IMetaObject
     {
         static readonly string columnListClause =

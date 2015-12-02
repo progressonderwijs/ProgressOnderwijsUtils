@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtils
         public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => QueryTracer.InsecureSqlDebugString(o.EquatableValue);
         public void AppendSql(string sql, int startIndex, int length) => debugText.Append(sql, startIndex, length);
 
-        public string DebugTextFor(IBuildableQuery impl)
+        public string DebugTextFor(IQueryComponent impl)
         {
             impl?.AppendTo(ref this);
             return debugText.ToString();
@@ -120,7 +120,7 @@ namespace ProgressOnderwijsUtils
 
         public void AppendSql(string sql, int startIndex, int length) => debugText.Append(sql, startIndex, length);
 
-        public static QueryKey EqualityKey(IBuildableQuery impl)
+        public static QueryKey EqualityKey(IQueryComponent impl)
         {
             var factory = new EqualityKeyCommandFactory(impl?.EstimateLength() ?? 0);
             impl?.AppendTo(ref factory);

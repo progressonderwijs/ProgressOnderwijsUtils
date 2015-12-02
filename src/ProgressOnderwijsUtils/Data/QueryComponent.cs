@@ -23,10 +23,10 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static IBuildableQuery ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
+        public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
             => new QueryTableValuedParameterComponent<T>(tableTypeName, set);
 
-        static IBuildableQuery TryToTableParameter<T>(IEnumerable set)
+        static IQueryComponent TryToTableParameter<T>(IEnumerable set)
         {
             if (set is IEnumerable<T>) {
                 var typedSet = (IEnumerable<T>)set;
@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static IBuildableQuery TryToEnumTableParameter(IEnumerable set)
+        static IQueryComponent TryToEnumTableParameter(IEnumerable set)
         {
             var interfaceType = set
                 .GetType()
@@ -58,22 +58,22 @@ namespace ProgressOnderwijsUtils
             return func(set);
         }
 
-        static readonly ConcurrentDictionary<Type, Func<IEnumerable, IBuildableQuery>> TvpFactoryCache = new ConcurrentDictionary<Type, Func<IEnumerable, IBuildableQuery>>();
+        static readonly ConcurrentDictionary<Type, Func<IEnumerable, IQueryComponent>> TvpFactoryCache = new ConcurrentDictionary<Type, Func<IEnumerable, IQueryComponent>>();
 
-        static Func<IEnumerable, IBuildableQuery> TvpFactoryFactory(Type enumType)
+        static Func<IEnumerable, IQueryComponent> TvpFactoryFactory(Type enumType)
         {
             var underlyingType = enumType.GetEnumUnderlyingType();
             var specializedMethod = ToEnumTableParameter_Method.MakeGenericMethod(enumType, underlyingType);
-            var func = (Func<IEnumerable, IBuildableQuery>)Delegate.CreateDelegate(typeof(Func<IEnumerable, IBuildableQuery>), specializedMethod);
+            var func = (Func<IEnumerable, IQueryComponent>)Delegate.CreateDelegate(typeof(Func<IEnumerable, IQueryComponent>), specializedMethod);
             return func;
         }
 
         static readonly MethodInfo ToEnumTableParameter_Method =
-            ((Func<IEnumerable, IBuildableQuery>)ToEnumTableParameter<int, int>)
+            ((Func<IEnumerable, IQueryComponent>)ToEnumTableParameter<int, int>)
                 .Method
                 .GetGenericMethodDefinition();
 
-        static IBuildableQuery ToEnumTableParameter<TEnum, TOut>(IEnumerable set)
+        static IQueryComponent ToEnumTableParameter<TEnum, TOut>(IEnumerable set)
         {
             var typedSet = (IEnumerable<TEnum>)set;
             var projectedSet = typedSet.Select(Converter<TEnum, TOut>.Func);
@@ -132,7 +132,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static IBuildableQuery ToTableParameter(IEnumerable set)
+        public static IQueryComponent ToTableParameter(IEnumerable set)
         {
             var retval =
                 TryToEnumTableParameter(set)

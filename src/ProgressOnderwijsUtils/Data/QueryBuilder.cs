@@ -9,9 +9,9 @@ namespace ProgressOnderwijsUtils
 {
     public struct QueryBuilder
     {
-        readonly IBuildableQuery impl;
+        readonly IQueryComponent impl;
 
-        internal QueryBuilder(IBuildableQuery impl)
+        internal QueryBuilder(IQueryComponent impl)
         {
             this.impl = impl;
         }
@@ -101,13 +101,13 @@ namespace ProgressOnderwijsUtils
             => QueryComponent.ToTableParameter(typeName, o).BuildableToQuery();
     }
 
-    interface IBuildableQuery
+    interface IQueryComponent
     {
         void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory;
     }
 
-    class StringSqlFragment : IBuildableQuery
+    class StringSqlFragment : IQueryComponent
     {
         readonly string rawSqlString;
 
@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtils
             => SqlFactory.AppendSql(ref factory, rawSqlString);
     }
 
-    class SingleParameterSqlFragment : IBuildableQuery
+    class SingleParameterSqlFragment : IQueryComponent
     {
         readonly object paramVal;
 
@@ -149,14 +149,14 @@ namespace ProgressOnderwijsUtils
 
     static class SqlFactory
     {
-        public static int EstimateLength(this IBuildableQuery q)
+        public static int EstimateLength(this IQueryComponent q)
         {
             var lengthEstimator = new LengthEstimationCommandFactory();
             q.AppendTo(ref lengthEstimator);
             return lengthEstimator.QueryLength;
         }
 
-        public static QueryBuilder BuildableToQuery(this IBuildableQuery q) => new QueryBuilder(q);
+        public static QueryBuilder BuildableToQuery(this IQueryComponent q) => new QueryBuilder(q);
         public static QueryBuilder InterpolationToQuery(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
         public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, string sql)
@@ -164,11 +164,11 @@ namespace ProgressOnderwijsUtils
             => factory.AppendSql(sql, 0, sql.Length);
     }
 
-    class TwoSqlFragments : IBuildableQuery
+    class TwoSqlFragments : IQueryComponent
     {
-        readonly IBuildableQuery a, b;
+        readonly IQueryComponent a, b;
 
-        public TwoSqlFragments(IBuildableQuery a, IBuildableQuery b)
+        public TwoSqlFragments(IQueryComponent a, IQueryComponent b)
         {
             this.a = a;
             this.b = b;
@@ -182,7 +182,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    class InterpolatedSqlFragment : IBuildableQuery
+    class InterpolatedSqlFragment : IQueryComponent
     {
         readonly FormattableString interpolatedQuery;
 
