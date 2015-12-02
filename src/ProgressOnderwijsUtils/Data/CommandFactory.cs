@@ -72,6 +72,7 @@ namespace ProgressOnderwijsUtils
             var cmdParams = command.Parameters;
             for (int i = 0; i < paramCount; i++) {
                 cmdParams[i].Value = paramObjs[i].Value;
+                cmdParams[i].IsNullable = paramObjs[i].Value == DBNull.Value;
                 if (paramObjs[i].TypeName != null) {
                     cmdParams[i].SqlDbType = SqlDbType.Structured;
                     cmdParams[i].TypeName = paramObjs[i].TypeName;
