@@ -77,6 +77,7 @@ namespace ProgressOnderwijsUtils
                     cmdParams[i].SqlDbType = SqlDbType.Structured;
                     cmdParams[i].TypeName = paramObjs[i].TypeName;
                 }
+                paramObjs[i] = default(SqlParamArgs);
             }
 
             PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
