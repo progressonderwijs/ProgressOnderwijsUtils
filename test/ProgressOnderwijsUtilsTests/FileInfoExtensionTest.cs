@@ -28,10 +28,10 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test, ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void SameContentsNull()
         {
-            var ignore = sut.SameContents(null);
+            Assert.Catch<ArgumentNullException>(() => { var ignore = sut.SameContents(null); });
         }
 
         [Test]
