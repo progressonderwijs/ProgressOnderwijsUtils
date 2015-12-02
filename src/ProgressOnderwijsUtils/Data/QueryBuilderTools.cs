@@ -55,7 +55,7 @@ order by _row");
             IEnumerable<QueryBuilder> projectedColumns,
             QueryBuilder filterClause,
             OrderByColumns sortOrder,
-            QueryBuilder topRowsOrNull)
+            QueryBuilder? topRowsOrNull)
         {
             projectedColumns = projectedColumns ?? AllColumns;
 
