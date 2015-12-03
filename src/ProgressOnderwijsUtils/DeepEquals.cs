@@ -168,12 +168,14 @@ namespace ProgressOnderwijsUtils
             // ReSharper disable UnaccessedField.Local
 #pragma warning disable 649
             public decimal BC;
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public string XYZ { get; set; }
         }
 
         struct YT
         {
             public decimal BC;
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public string XYZ { get; set; }
         }
 
