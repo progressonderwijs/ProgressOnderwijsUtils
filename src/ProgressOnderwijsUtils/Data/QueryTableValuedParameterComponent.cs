@@ -2,11 +2,11 @@
 using System.Data.SqlClient;
 using System.Linq;
 using System.Collections.Generic;
-using ExpressionToCodeLib;
+using System;
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class QueryTableValuedParameterComponent<T> : IQueryParameter
+    sealed class QueryTableValuedParameterComponent<T> : IQueryParameter, IQueryComponent
         where T : IMetaObject
     {
         static readonly string columnListClause =
@@ -14,8 +14,12 @@ namespace ProgressOnderwijsUtils
                 .Select(mp => "TVP." + mp.Name)
                 .JoinStrings(", ");
 
+        const string subselect_part1 = "(select ";
+        const string subselect_part3 = " from ";
+        const string subselect_part5 = " TVP)";
         readonly IEnumerable<T> objs;
         readonly string DbTypeName;
+        public object EquatableValue => Tuple.Create(objs, DbTypeName);
 
         internal QueryTableValuedParameterComponent(string dbTypeName, IEnumerable<T> list)
         {
@@ -23,37 +27,23 @@ namespace ProgressOnderwijsUtils
             DbTypeName = dbTypeName;
         }
 
-        public string ToSqlString(CommandFactory qnum)
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
         {
-            var name = qnum.GetNameForParam(this);
-            return $"(select {columnListClause} from {name} TVP)";
-
+            SqlFactory.AppendSql(ref factory, subselect_part1);
+            SqlFactory.AppendSql(ref factory, columnListClause);
+            SqlFactory.AppendSql(ref factory, subselect_part3);
+            SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(this));
+            SqlFactory.AppendSql(ref factory, subselect_part5);
         }
 
         public SqlParameter ToSqlParameter(string paramName)
-        {
-            return new SqlParameter {
+            => new SqlParameter {
                 IsNullable = false,
                 ParameterName = paramName,
                 Value = MetaObject.CreateDataReader(objs),
                 SqlDbType = SqlDbType.Structured,
                 TypeName = DbTypeName,
             };
-        }
-
-        public string ToDebugText() => "(" + ObjectToCode.ComplexObjectToPseudoCode(objs) + ")";
-        public bool Equals(IQueryComponent other) => Equals((object)other);
-
-        public override bool Equals(object other)
-        {
-            return ReferenceEquals(this, other)
-                || (other is QueryTableValuedParameterComponent<T>) && Equals(DbTypeName, ((QueryTableValuedParameterComponent<T>)other).DbTypeName)
-                    && (ReferenceEquals(objs, ((QueryTableValuedParameterComponent<T>)other).objs) || objs.SequenceEqual(((QueryTableValuedParameterComponent<T>)other).objs));
-        }
-
-        public override int GetHashCode()
-        {
-            return objs.GetHashCode() + 37 * DbTypeName.GetHashCode() + 200;
-        } //paramval never null!
     }
 }

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -97,7 +98,7 @@ namespace ProgressOnderwijsUtils
 
         static string SqlParamTypeString(SqlParameter par) => par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
-        static string InsecureSqlDebugString(object p)
+        public static string InsecureSqlDebugString(object p)
         {
             if (p is DBNull || p == null) {
                 return "NULL";
@@ -112,10 +113,12 @@ namespace ProgressOnderwijsUtils
             } else if (p is bool) {
                 return (bool)p ? "1" : "0";
             } else if (p is Enum) {
-                return Convert.ToInt64(p) + "/*" + p + "*/";
+                return ((IConvertible)p).ToInt64(null).ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(p) + "*/";
+            } else if (p is IFormattable) {
+                return ((IFormattable)p).ToString(null, CultureInfo.InvariantCulture);
             } else {
                 try {
-                    return p.ToString();
+                    return "{!" + p + "!}";
                 } catch (Exception e) {
                     return "[[Exception in QueryTracer.SqlValueString: " + e.Message + "]]";
                 }
