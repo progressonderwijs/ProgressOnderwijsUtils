@@ -3,44 +3,24 @@ using System.Data.SqlClient;
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class QuerySmartEnumComponent : IQueryParameter
+    struct QuerySmartEnumComponent : IQueryParameter
     {
-        readonly SmartEnum paramval;
+        public object EquatableValue { get; private set; }
 
-        internal QuerySmartEnumComponent(SmartEnum o)
-        {
-            paramval = o;
-        }
-
-        public string ToSqlString(CommandFactory qnum) => "@par" + qnum.GetNumberForParam(this);
-
-        public SqlParameter ToSqlParameter(int paramNum)
+        public SqlParameter ToSqlParameter(string paramName)
         {
             return new SqlParameter {
-                IsNullable = paramval == null,
-                ParameterName = "@par" + paramNum,
-                Value = (object)paramval?.Id ?? DBNull.Value,
+                IsNullable = EquatableValue == DBNull.Value,
+                ParameterName = paramName,
+                Value = (object)(EquatableValue as SmartEnum)?.Id ?? DBNull.Value,
             };
         }
 
-        public string ToDebugText(Taal? taalOrNull)
+        public static void AppendSmartEnumParameter<TCommandFactory>(ref TCommandFactory factory, object o)
+            where TCommandFactory : struct, ICommandFactory
         {
-            if (paramval == null) {
-                return "null";
-            } else {
-                return paramval.Id +  " /*" + (taalOrNull.HasValue ? Converteer.ToString(paramval, taalOrNull.Value) : paramval.ToString()) + "*/";
-            }
-        }
-
-        public bool Equals(IQueryComponent other) => (other is QuerySmartEnumComponent) && Equals(paramval, ((QuerySmartEnumComponent)other).paramval);
-        public override bool Equals(object obj) => (obj is QuerySmartEnumComponent) && Equals((QuerySmartEnumComponent)obj);
-
-        public override int GetHashCode()
-        {
-            if (paramval == null) {
-                return 0;
-            }
-            return paramval.GetHashCode() + 37;
+            var param = new QuerySmartEnumComponent { EquatableValue = o ?? DBNull.Value };
+            SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
         }
     }
 }

@@ -18,6 +18,8 @@ namespace ProgressOnderwijsUtils
         {
             if (o is IEnumerable && !(o is string) && !(o is byte[])) {
                 ToTableParameter((IEnumerable)o).AppendTo(ref factory);
+            } else if (o is SmartEnum) {
+                QuerySmartEnumComponent.AppendSmartEnumParameter(ref factory, o);
             } else {
                 QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
             }
@@ -32,8 +34,6 @@ namespace ProgressOnderwijsUtils
                 var typedSet = (IEnumerable<T>)set;
                 var projectedSet = typedSet.Select(i => new DbTableValuedParameterWrapper<T> { querytablevalue = i });
                 return ToTableParameter(TableValueTypeName<T>.TypeName, projectedSet);
-            } else if (o is SmartEnum) {
-                return new QuerySmartEnumComponent((SmartEnum)o);
             } else {
                 return null;
             }

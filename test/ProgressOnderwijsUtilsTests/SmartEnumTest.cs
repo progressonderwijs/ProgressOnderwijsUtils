@@ -2,6 +2,7 @@
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Business;
+using Progress.Business.Inschrijvingen;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 
