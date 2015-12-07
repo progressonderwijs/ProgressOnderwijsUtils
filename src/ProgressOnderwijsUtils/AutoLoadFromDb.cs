@@ -564,7 +564,7 @@ namespace ProgressOnderwijsUtils
                     if (!SupportsType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
-                                + getterMethodsByType.Keys.Select(ObjectToCode.GetCSharpFriendlyTypeName).JoinStrings(", ") + ") or a "
+                                + getterMethodsByType.Keys.Select(ObjectToCode.GetCSharpFriendlyTypeName).JoinStrings(", ") + ") or an "
                                 + nameof(ISmartEnum) + "!");
                     }
                 }
