@@ -19,7 +19,8 @@ namespace ProgressOnderwijsUtils
             QueryBuilder filterClause,
             OrderByColumns sortOrder,
             int skipNrows,
-            int takeNrows)
+            int takeNrows,
+            bool sqlOptimizeForUnknown)
         {
             projectedColumns = projectedColumns ?? AllColumns;
             if (!projectedColumns.Any()) {
@@ -46,7 +47,8 @@ from (
 
 ) as _g2) t
 where _row > {skipNrowsParam}
-order by _row");
+order by _row
+") + (sqlOptimizeForUnknown ? QueryBuilder.CreateDynamic("option (optimize for unknown)") : QueryBuilder.Empty);
         }
 
         [Pure]
