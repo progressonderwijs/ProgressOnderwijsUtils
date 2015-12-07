@@ -266,25 +266,34 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
+            static Expression GetCastExpression(Expression callExpression, Type type)
+            {
+                var underlyingType = type.GetNonNullableUnderlyingType();
+                if (SmartEnum.IsSmartEnum(underlyingType)) {
+                    return Expression.Call(null, typeof(SmartEnum).GetMethod(nameof(SmartEnum.GetById)).MakeGenericMethod(underlyingType), callExpression);
+                }
+                var needsCast = underlyingType != type.GetNonNullableType();
+                if (needsCast) {
+                    return Expression.Convert(callExpression, type.GetNonNullableType());
+                }
+                return callExpression;
+            }
+
             public static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, Type type)
             {
                 bool canBeNull = type.CanBeNull();
                 Type underlyingType = type.GetNonNullableUnderlyingType();
-                bool needsCast = (underlyingType != type.GetNonNullableType());
                 var iConstant = Expression.Constant(i);
                 var callExpr = underlyingType == typeof(byte[])
                     ? Expression.Call(GetGetterMethodByType(underlyingType), readerParamExpr, iConstant)
                     : Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
-                var castExpr =
-                    SmartEnum.IsSmartEnum(underlyingType) ? Expression.Call(null, typeof(SmartEnum).GetMethod(nameof(SmartEnum.GetById)).MakeGenericMethod(underlyingType), callExpr) : 
-                    !needsCast ? (Expression)callExpr : Expression.Convert(callExpr, type.GetNonNullableType());
                 Expression colValueExpr;
                 if (!canBeNull) {
-                    colValueExpr = castExpr;
+                    colValueExpr = GetCastExpression(callExpr, type);
                 } else {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
-                    var ifNotDbNull = Expression.Convert(castExpr, type);
+                    var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
 
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
                 }
