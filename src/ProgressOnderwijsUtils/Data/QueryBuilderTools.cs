@@ -46,8 +46,7 @@ from (
 
 ) as _g2) t
 where _row > {skipNrowsParam}
-order by _row
-");
+order by _row");
         }
 
         [Pure]
