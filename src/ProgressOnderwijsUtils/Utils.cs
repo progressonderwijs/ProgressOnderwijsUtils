@@ -459,7 +459,10 @@ namespace ProgressOnderwijsUtils
             var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));
             return Math.Ceiling(input * multiplier) / multiplier;
         }
-
+        /// <summary>
+        /// returns 0 if input is zero; otherwise returns the only int for which the postcondition holds
+        /// Postcondition: (1ul &lt;&lt; result) &lt;= x &lt; (1ul &lt;&lt; result+1)
+        /// </summary>
         public static int LogBase2RoundedDown(uint x)
         {
             int res = 0;
@@ -469,17 +472,16 @@ namespace ProgressOnderwijsUtils
             if (x >= (1 << 2)) { res += 2; x = x >> 2; }
             if (x >= (1 << 1)) { res += 1; x = x >> 1; }
             return res;
-            //returns 0 if input is zero; otherwise returns the only res for which the postcondition holds
-            //Postcondition: (1ul << res) <= x < (1ul << res+1)
         }
 
+        /// <summary>
+        /// returns 0 if input is zero; otherwise returns the only int for which the postcondition holds
+        /// Postcondition: (1ul &lt;&lt; result-1) &lt; x &lt;= (1ul &lt;&lt; result)
+        /// </summary>
         public static int LogBase2RoundedUp(uint x)
         {
             return x <= 1 ? 0 : LogBase2RoundedDown(x - 1) + 1;
-            //returns 0 if input is zero; otherwise returns the only res for which the postcondition holds
-            //Postcondition: (1ul << res-1) < x <= (1ul << res)
         }
-
     }
 
     public class LogBase2Test
