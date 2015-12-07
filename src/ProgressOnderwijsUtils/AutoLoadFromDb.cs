@@ -182,7 +182,7 @@ namespace ProgressOnderwijsUtils
 
         const BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
 
-        static readonly Dictionary<Type, MethodInfo> GetterMethodsByType =
+        static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
             new Dictionary<Type, MethodInfo> {
                 { typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
                 { typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
@@ -199,6 +199,15 @@ namespace ProgressOnderwijsUtils
                 { typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
             };
+
+        static MethodInfo GetGetterMethodByType(Type type)
+        {
+            if (SmartEnum.IsSmartEnum(type)) {
+                return getterMethodsByType[typeof(int)];
+            } else {
+                return getterMethodsByType[type];
+            }
+        }
 
         //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
         //static MethodInfo GetterForType(Type type) => GetterMethodsByType[type];
@@ -241,9 +250,9 @@ namespace ProgressOnderwijsUtils
             static bool SupportsType(Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                return GetterMethodsByType.ContainsKey(underlyingType) ||
-                    (isSqlDataReader
-                        && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
+                return getterMethodsByType.ContainsKey(underlyingType) ||
+                    SmartEnum.IsSmartEnum(underlyingType) ||
+                    (isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
             }
 
             static MethodInfo GetterForType(Type underlyingType)
@@ -253,27 +262,38 @@ namespace ProgressOnderwijsUtils
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
                 } else {
-                    return InterfaceMap[GetterMethodsByType[underlyingType]];
+                    return InterfaceMap[GetGetterMethodByType(underlyingType)];
                 }
+            }
+
+            static Expression GetCastExpression(Expression callExpression, Type type)
+            {
+                var underlyingType = type.GetNonNullableUnderlyingType();
+                if (SmartEnum.IsSmartEnum(underlyingType)) {
+                    return Expression.Call(null, typeof(SmartEnum).GetMethod(nameof(SmartEnum.GetById)).MakeGenericMethod(underlyingType), callExpression);
+                }
+                var needsCast = underlyingType != type.GetNonNullableType();
+                if (needsCast) {
+                    return Expression.Convert(callExpression, type.GetNonNullableType());
+                }
+                return callExpression;
             }
 
             public static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, Type type)
             {
                 bool canBeNull = type.CanBeNull();
                 Type underlyingType = type.GetNonNullableUnderlyingType();
-                bool needsCast = (underlyingType != type.GetNonNullableType());
                 var iConstant = Expression.Constant(i);
                 var callExpr = underlyingType == typeof(byte[])
-                    ? Expression.Call(GetterMethodsByType[underlyingType], readerParamExpr, iConstant)
+                    ? Expression.Call(GetGetterMethodByType(underlyingType), readerParamExpr, iConstant)
                     : Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
-                var castExpr = !needsCast ? (Expression)callExpr : Expression.Convert(callExpr, type.GetNonNullableType());
                 Expression colValueExpr;
                 if (!canBeNull) {
-                    colValueExpr = castExpr;
+                    colValueExpr = GetCastExpression(callExpr, type);
                 } else {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
-                    var ifNotDbNull = Expression.Convert(castExpr, type);
+                    var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
 
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
                 }
@@ -544,7 +564,8 @@ namespace ProgressOnderwijsUtils
                     if (!SupportsType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
-                                + GetterMethodsByType.Keys.Select(ObjectToCode.GetCSharpFriendlyTypeName).JoinStrings(", ") + ")!");
+                                + getterMethodsByType.Keys.Select(ObjectToCode.GetCSharpFriendlyTypeName).JoinStrings(", ") + ") or an "
+                                + nameof(ISmartEnum) + "!");
                     }
                 }
 
