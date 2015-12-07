@@ -35,7 +35,10 @@ namespace ProgressOnderwijsUtilsTests
             TestEnum(int id, ITranslatable text)
                 : base(id, text) { }
 
+            [SmartEnumMember]
             public static readonly TestEnum A = new TestEnum(0, Translatable.Raw("A"));
+
+            [SmartEnumMember]
             public static readonly TestEnum B = new TestEnum(1, Translatable.Raw("B"));
         }
 
@@ -56,10 +59,11 @@ namespace ProgressOnderwijsUtilsTests
             BrokenEnum(int id, ITranslatable text)
                 : base(id, text) { }
 
-            // ReSharper disable UnusedMember.Local
+            [SmartEnumMember]
             public static readonly BrokenEnum A = new BrokenEnum(0, Translatable.Raw("A"));
+
+            [SmartEnumMember]
             public static readonly BrokenEnum B = new BrokenEnum(0, Translatable.Raw("B"));
-            // ReSharper restore UnusedMember.Local
         }
 
         [Test]

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace ProgressOnderwijsUtils
 {
+    [AttributeUsage(AttributeTargets.Field)]
+    public sealed class SmartEnumMemberAttribute : Attribute { }
+
     public abstract class SmartEnum
     {
         static class Values<T>
@@ -11,7 +15,7 @@ namespace ProgressOnderwijsUtils
         {
             static readonly IReadOnlyDictionary<int, T> lookup = typeof(T)
                 .GetFields()
-                .Where(f => f.IsStatic && f.IsInitOnly && f.FieldType == typeof(T))
+                .Where(f => f.GetCustomAttribute<SmartEnumMemberAttribute>() != null)
                 .Select(f => f.GetValue(null))
                 .Cast<T>()
                 .ToDictionary(val => val.Id);
