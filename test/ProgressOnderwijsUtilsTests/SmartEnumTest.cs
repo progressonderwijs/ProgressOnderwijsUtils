@@ -6,9 +6,11 @@ using Progress.Business;
 using Progress.Business.Inschrijvingen;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
+    [Continuous]
     public sealed class SmartEnumTest : TestsWithBusinessConnection
     {
         struct MetaObjectWithNonNullableField : IMetaObject
