@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtilsTests
 {
     public sealed class SmartEnumTest : TestsWithBusinessConnection
     {
-        struct Inschrijving : IMetaObject
+        struct MetaObjectWithNonNullableField : IMetaObject
         {
             public SmartPeriodeStudiejaar PeriodeStudiejaarId { get; set; }
         }
@@ -19,15 +19,34 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void SmartEnum_can_be_read_using_QueryBuilder()
         {
-            var inschrijving = SafeSql.SQL($@"
+            var result = SafeSql.SQL($@"
                     select top 1
                         psj.periodestudiejaarid
                     from periodestudiejaar psj
                     where 1=1
                         and psj.periodestudiejaarid = {SmartPeriodeStudiejaar.C2015}
-                ").ReadMetaObjects<Inschrijving>(conn).Single();
+                ").ReadMetaObjects<MetaObjectWithNonNullableField>(conn).Single();
 
-            PAssert.That(() => inschrijving.PeriodeStudiejaarId == SmartPeriodeStudiejaar.C2015);
+            PAssert.That(() => result.PeriodeStudiejaarId == SmartPeriodeStudiejaar.C2015);
+        }
+
+        struct MetaObjectWithNullableField : IMetaObject
+        {
+            public SmartPeriodeStudiejaar? PeriodeStudiejaarId { get; set; }
+        }
+
+        [Test]
+        public void Nullable_SmartEnum_can_be_read_using_QueryBuilder()
+        {
+            var result = SafeSql.SQL($@"
+                    select top 1
+                        psj.periodestudiejaarid
+                    from periodestudiejaar psj
+                    where 1=1
+                        and psj.periodestudiejaarid = {SmartPeriodeStudiejaar.C2015}
+                ").ReadMetaObjects<MetaObjectWithNullableField>(conn).Single();
+
+            PAssert.That(() => result.PeriodeStudiejaarId == SmartPeriodeStudiejaar.C2015);
         }
 
         sealed class TestEnum : ISmartEnum

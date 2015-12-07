@@ -251,7 +251,7 @@ namespace ProgressOnderwijsUtils
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 return getterMethodsByType.ContainsKey(underlyingType) ||
-                    SmartEnum.IsSmartEnum(type) ||
+                    SmartEnum.IsSmartEnum(underlyingType) ||
                     (isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
             }
 
