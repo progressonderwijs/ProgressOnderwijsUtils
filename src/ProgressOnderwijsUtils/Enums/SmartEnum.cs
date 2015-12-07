@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    [AttributeUsage(AttributeTargets.Field)]
+    [AttributeUsage(AttributeTargets.Field), MeansImplicitUse]
     public sealed class SmartEnumMemberAttribute : Attribute { }
 
     public abstract class SmartEnum
@@ -13,12 +14,14 @@ namespace ProgressOnderwijsUtils
         static class Values<T>
             where T : SmartEnum
         {
-            static readonly IReadOnlyDictionary<int, T> lookup = typeof(T)
+            static readonly T[] values = typeof(T)
                 .GetFields()
                 .Where(f => f.GetCustomAttribute<SmartEnumMemberAttribute>() != null)
                 .Select(f => f.GetValue(null))
                 .Cast<T>()
-                .ToDictionary(val => val.Id);
+                .ToArray();
+
+            static readonly Dictionary<int, T> lookup = values.ToDictionary(val => val.Id);
 
             public static T GetById(int id)
             {
@@ -27,7 +30,7 @@ namespace ProgressOnderwijsUtils
 
             public static IEnumerable<T> GetValues()
             {
-                return lookup.Values;
+                return values;
             }
         }
 
@@ -49,7 +52,6 @@ namespace ProgressOnderwijsUtils
         }
 
         public int Id { get; }
-
         public ITranslatable Text { get; }
 
         protected SmartEnum(int id, ITranslatable text)
