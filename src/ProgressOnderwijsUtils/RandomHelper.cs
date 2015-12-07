@@ -104,6 +104,11 @@ namespace ProgressOnderwijsUtils
         {
             return new string(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
         }
+
+        public static string GetPasswordString(int length)
+        {
+            return System.Web.Security.Membership.GeneratePassword(length, 0);
+        }
     }
 
     [Continuous]
@@ -112,11 +117,11 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void CheckRandomBasic()
         {
-            HashSet<uint> numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
-            Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32()).Take(10000).Any(num => num > int.MaxValue));
-            Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetInt64()).Take(10000).Any(num => num > uint.MaxValue));
-            Assert.IsTrue(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt64()).Take(10000).Any(num => num > long.MaxValue));
-            Assert.IsTrue(numTo37.SetEquals(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32(37)).Take(10000))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
+            var numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
+            PAssert.That(() => MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32()).Take(10000).Any(num => num > int.MaxValue));
+            PAssert.That(() => MoreEnumerable.GenerateByIndex(i => RandomHelper.GetInt64()).Take(10000).Any(num => num > uint.MaxValue));
+            PAssert.That(() => MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt64()).Take(10000).Any(num => num > long.MaxValue));
+            PAssert.That(() => numTo37.SetEquals(MoreEnumerable.GenerateByIndex(i => RandomHelper.GetUInt32(37)).Take(10000))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
         }
 
         [Test]
@@ -128,8 +133,8 @@ namespace ProgressOnderwijsUtils
                 var StR = RandomHelper.GetStringOfLatinUpperOrLower(len);
                 Assert.That(str.Length == len);
                 Assert.That(StR.Length == len);
-                Assert.IsFalse(str.AsEnumerable().Any(c => c < 'a' || c > 'z'));
-                Assert.IsFalse(StR.AsEnumerable().Any(c => (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')));
+                PAssert.That(() => !str.AsEnumerable().Any(c => c < 'a' || c > 'z'));
+                PAssert.That(() => !StR.AsEnumerable().Any(c => (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')));
             }
         }
 

@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtilsTests
                 join sys.schemas s on s.schema_id = pt.schema_id
                 left join sys.index_columns ic on ic.object_id = kc.parent_object_id and ic.column_id = kc.parent_column_id
                 where ic.object_id is null
-                    and k.name not in (select val from {exceptions})
+                    and k.name not in {exceptions}
                 ").ReadPlain<string>(conn), Is.Empty, "Geen index op FK-kolom.");
         }
     }

@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 using Progress.Business;
-using Progress.Business.Data;
+using Progress.Business.DomainUnits;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;

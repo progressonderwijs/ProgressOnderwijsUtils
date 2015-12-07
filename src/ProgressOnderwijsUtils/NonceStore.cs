@@ -103,8 +103,7 @@ namespace ProgressOnderwijsUtils
         {
             lock (monitor) {
                 bool result = items.Add(item);
-                if (result) // to avoid as much busy looping during an attack as possible
-                {
+                if (result) { // to avoid as much busy looping during an attack as possible
                     CleanUp();
                 }
                 return result;

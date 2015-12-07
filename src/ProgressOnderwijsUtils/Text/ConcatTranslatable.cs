@@ -11,8 +11,7 @@ namespace ProgressOnderwijsUtils
         {
             this.parts = parts;
             foreach (ITranslatable p in parts) {
-                if (p == null) //Perf: no LINQ
-                {
+                if (p == null) { //Perf: no LINQ
                     throw new ArgumentNullException(nameof(parts), "element of parts is null");
                 }
             }

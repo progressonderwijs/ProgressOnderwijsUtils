@@ -178,7 +178,8 @@ namespace ProgressOnderwijsUtils
             } else if (obj is TextVal) {
                 return Translatable.Raw((TextVal)obj);
             } else if (obj is Enum) {
-                return EnumHelpers.GetLabel((Enum)obj); // TranslateEnum((Enum)obj);
+                return EnumHelpers.MetaData((Enum)obj)
+                    .Label; // TranslateEnum((Enum)obj);
             } else if (obj is SmartEnum) {
                 return ((SmartEnum)obj).Text;
             } else if (string.IsNullOrEmpty(extraformat)) {
@@ -252,8 +253,7 @@ namespace ProgressOnderwijsUtils
 
         // string naar datum conversie
         [Pure]
-        public static DateTime? ToDateTime(string s, DatumFormaat formaat, Taal taal = Taal.NL) //TODO:alleen VerwInfo en MT940 worden gebruikt?
-        {
+        public static DateTime? ToDateTime(string s, DatumFormaat formaat, Taal taal = Taal.NL) { //TODO:alleen VerwInfo en MT940 worden gebruikt?
             if (string.IsNullOrEmpty(s)) {
                 return null;
             }

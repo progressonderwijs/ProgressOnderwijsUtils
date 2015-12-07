@@ -125,23 +125,23 @@ namespace ProgressOnderwijsUtils
 
                 case BooleanComparer.In:
                     if (Waarde is GroupReference) {
-                        return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = ") + QueryBuilder.Param((Waarde as GroupReference).GroupId) + SQL($")");
+                        return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
                     } else {
-                        return KolomNaamSql() + SQL($" in (select val from ") + QueryBuilder.TableParamDynamic((Array)Waarde) + SQL($")");
+                        return KolomNaamSql() + SQL($" in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
                     }
                 case BooleanComparer.NotIn:
                     if (Waarde is GroupReference) {
-                        return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = ") + QueryBuilder.Param((Waarde as GroupReference).GroupId) + SQL($")");
+                        return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
                     } else {
-                        return KolomNaamSql() + SQL($" not in (select val from ") + QueryBuilder.TableParamDynamic((Array)Waarde) + SQL($")");
+                        return KolomNaamSql() + SQL($" not in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
                     }
 
                 case BooleanComparer.StartsWith:
-                    return KolomNaamSql() + SQL($" like ") + QueryBuilder.Param(Waarde + "%");
+                    return KolomNaamSql() + SQL($" like {Waarde + "%"}");
                 case BooleanComparer.EndsWith:
-                    return KolomNaamSql() + SQL($" like ") + QueryBuilder.Param("%" + Waarde);
+                    return KolomNaamSql() + SQL($" like {"%" + Waarde}");
                 case BooleanComparer.Contains:
-                    return KolomNaamSql() + SQL($" like ") + QueryBuilder.Param("%" + Waarde + "%");
+                    return KolomNaamSql() + SQL($" like {"%" + Waarde + "%"}");
                 case BooleanComparer.HasFlag:
                     return SQL($"({KolomNaamSql()} & {BuildParam()}) = {BuildParam()}");
                 default:
@@ -279,8 +279,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static Tuple<string, string> FindUptoNonDuplicatedTerminatorWithLeftover(string s, char terminator) //TODO: test strings ending with '*';
-        {
+        static Tuple<string, string> FindUptoNonDuplicatedTerminatorWithLeftover(string s, char terminator) { //TODO: test strings ending with '*';
             int i = 0;
             var waardeStr = new StringBuilder();
             while (true) {
@@ -466,8 +465,7 @@ namespace ProgressOnderwijsUtils
 
             bool isNullable = colIsNullable || waardeIsNullable;
 
-            if (waardeExpr.Type != coreExpr.Type) //e.g. enums
-            {
+            if (waardeExpr.Type != coreExpr.Type) { //e.g. enums
                 if (waardeExpr.Type.GetNonNullableUnderlyingType() == coreExpr.Type.GetNonNullableUnderlyingType()) {
                     var underlying = waardeExpr.Type.GetNonNullableUnderlyingType();
                     if (isNullable) {

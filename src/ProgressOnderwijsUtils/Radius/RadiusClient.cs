@@ -83,8 +83,7 @@ namespace ProgressOnderwijsUtils.Radius
                     requestStream.Write(serializedAttribute, 0, serializedAttribute.Length);
                 }
                 byte[] request = requestStream.ToArray();
-                if (request.Length > short.MaxValue) //perhaps actually ushort.Length is permitted, but we're taking no risks
-                {
+                if (request.Length > short.MaxValue) { //perhaps actually ushort.Length is permitted, but we're taking no risks
                     throw new Exception("nRadius request too large");
                 }
                 request[2] = (byte)(request.Length >> 8); //most significant byte first - big endian!
@@ -93,8 +92,7 @@ namespace ProgressOnderwijsUtils.Radius
                 byte[] response;
                 try {
                     response = AuthNetworkHelper(serverHostname, request);
-                } catch (SocketException) //one retry.
-                {
+                } catch (SocketException) { //one retry.
                     try {
                         response = AuthNetworkHelper(serverHostname, request);
                     } catch (SocketException) {

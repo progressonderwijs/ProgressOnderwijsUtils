@@ -182,24 +182,24 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test,
-         TestCase(DocumentLanguage.Dutch, Taal.NL, Result = true),
-         TestCase(DocumentLanguage.Dutch, Taal.EN, Result = false),
-         TestCase(DocumentLanguage.Dutch, Taal.DU, Result = false),
-         TestCase(DocumentLanguage.English, Taal.NL, Result = false),
-         TestCase(DocumentLanguage.English, Taal.EN, Result = true),
-         TestCase(DocumentLanguage.English, Taal.DU, Result = false),
-         TestCase(DocumentLanguage.German, Taal.NL, Result = false),
-         TestCase(DocumentLanguage.German, Taal.EN, Result = false),
-         TestCase(DocumentLanguage.German, Taal.DU, Result = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, Result = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, Result = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, Result = false),
-         TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, Result = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, Result = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, Result = true),
-         TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, Result = true),
-         TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, Result = true),
-         TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, Result = false), Continuous]
+         TestCase(DocumentLanguage.Dutch, Taal.NL, ExpectedResult = true),
+         TestCase(DocumentLanguage.Dutch, Taal.EN, ExpectedResult = false),
+         TestCase(DocumentLanguage.Dutch, Taal.DU, ExpectedResult = false),
+         TestCase(DocumentLanguage.English, Taal.NL, ExpectedResult = false),
+         TestCase(DocumentLanguage.English, Taal.EN, ExpectedResult = true),
+         TestCase(DocumentLanguage.English, Taal.DU, ExpectedResult = false),
+         TestCase(DocumentLanguage.German, Taal.NL, ExpectedResult = false),
+         TestCase(DocumentLanguage.German, Taal.EN, ExpectedResult = false),
+         TestCase(DocumentLanguage.German, Taal.DU, ExpectedResult = true),
+         TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, ExpectedResult = true),
+         TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, ExpectedResult = true),
+         TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, ExpectedResult = false),
+         TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, ExpectedResult = true),
+         TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, ExpectedResult = true),
+         TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, ExpectedResult = true),
+         TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, ExpectedResult = true),
+         TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, ExpectedResult = true),
+         TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, ExpectedResult = false), Continuous]
         public bool GenerateForLanguage(DocumentLanguage doc, Taal language)
         {
             return Utils.GenerateForLanguage(doc, language);

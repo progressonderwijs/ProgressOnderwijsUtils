@@ -3,17 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business.DomainUnits;
+using Progress.Business.Inschrijvingen;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
+    [Continuous]
     public class EnumerableExtensionsTests
     {
 #pragma warning disable 1720
         [Test]
         public void IndexOfCheck()
         {
+            // ReSharper disable NotAccessedVariable
             int ignore;
+            // ReSharper restore NotAccessedVariable
             PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(2) == 1);
             PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(4) == -1);
             PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(1) == 0);
@@ -46,7 +52,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void testIndexOf()
         {
-            List<string> lst = new List<string> { "een", "twee", "drie" };
+            var lst = new List<string> { "een", "twee", "drie" };
             //int[] ints = { 1, 2, 3, 4, 5 };
             Assert.That(lst.IndexOf("twee"), Is.EqualTo(1));
             Assert.That(lst.IndexOf("tweeeneenhalf"), Is.EqualTo(-1));
@@ -72,5 +78,24 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => arr.EmptyIfNull() == arr);
 #pragma warning restore 1720
         }
+
+
+        [Test]
+        public void PeriodeStudiejaar_opvolgende_enumwaarde() {
+            PAssert.That(() => PeriodeStudiejaar.C2014.NextPeriodeStudiejaar() == PeriodeStudiejaar.C2015);
+        }
+
+        [Test]
+        public void PeriodeStudiejaar_niet_opvolgende_enumwaarde()
+        {
+            PAssert.That(() => PeriodeStudiejaar.C2010.NextPeriodeStudiejaar() == PeriodeStudiejaar.C2011);
+        }
+
+        [Test]
+        public void PeriodeStudiejaar_niks_na_laatste()
+        {
+            Assert.That(() => EnumHelpers.GetValues<PeriodeStudiejaar>().Last().NextPeriodeStudiejaar(), Throws.InvalidOperationException);
+        }
+
     }
 }
