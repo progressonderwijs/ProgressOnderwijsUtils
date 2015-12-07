@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtilsTests
     {
         struct MetaObjectWithNonNullableField : IMetaObject
         {
-            public SmartPeriodeStudiejaar PeriodeStudiejaarId { get; set; }
+            public SmartStudiejaar PeriodeStudiejaarId { get; set; }
         }
 
         [Test]
@@ -24,15 +24,15 @@ namespace ProgressOnderwijsUtilsTests
                         psj.periodestudiejaarid
                     from periodestudiejaar psj
                     where 1=1
-                        and psj.periodestudiejaarid = {SmartPeriodeStudiejaar.C2015}
+                        and psj.periodestudiejaarid = {SmartStudiejaar.C2015}
                 ").ReadMetaObjects<MetaObjectWithNonNullableField>(conn).Single();
 
-            PAssert.That(() => result.PeriodeStudiejaarId == SmartPeriodeStudiejaar.C2015);
+            PAssert.That(() => result.PeriodeStudiejaarId == SmartStudiejaar.C2015);
         }
 
         struct MetaObjectWithNullableField : IMetaObject
         {
-            public SmartPeriodeStudiejaar? PeriodeStudiejaarId { get; set; }
+            public SmartStudiejaar? PeriodeStudiejaarId { get; set; }
         }
 
         [Test]
@@ -43,10 +43,10 @@ namespace ProgressOnderwijsUtilsTests
                         psj.periodestudiejaarid
                     from periodestudiejaar psj
                     where 1=1
-                        and psj.periodestudiejaarid = {SmartPeriodeStudiejaar.C2015}
+                        and psj.periodestudiejaarid = {SmartStudiejaar.C2015}
                 ").ReadMetaObjects<MetaObjectWithNullableField>(conn).Single();
 
-            PAssert.That(() => result.PeriodeStudiejaarId == SmartPeriodeStudiejaar.C2015);
+            PAssert.That(() => result.PeriodeStudiejaarId == SmartStudiejaar.C2015);
         }
 
         sealed class TestEnum : ISmartEnum
