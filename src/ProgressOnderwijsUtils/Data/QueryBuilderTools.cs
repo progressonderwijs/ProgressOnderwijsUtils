@@ -48,7 +48,7 @@ from (
 ) as _g2) t
 where _row > {skipNrowsParam}
 order by _row
-") + (sqlOptimizeForUnknown ? QueryBuilder.CreateDynamic("option (optimize for unknown)") : QueryBuilder.Empty);
+").AppendIf(sqlOptimizeForUnknown, SafeSql.SQL($"option (optimize for unknown)"));
         }
 
         [Pure]
