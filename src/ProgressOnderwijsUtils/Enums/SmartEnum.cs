@@ -9,10 +9,16 @@ namespace ProgressOnderwijsUtils
     [AttributeUsage(AttributeTargets.Field), MeansImplicitUse]
     public sealed class SmartEnumMemberAttribute : Attribute { }
 
-    public abstract class SmartEnum
+    public interface ISmartEnum
+    {
+        int Id { get; }
+        ITranslatable Text { get; }
+    }
+
+    public static class SmartEnum
     {
         static class Values<T>
-            where T : SmartEnum
+            where T : ISmartEnum
         {
             static readonly T[] values = typeof(T)
                 .GetFields()
@@ -35,34 +41,20 @@ namespace ProgressOnderwijsUtils
         }
 
         public static T GetById<T>(int id)
-            where T : SmartEnum
+            where T : ISmartEnum
         {
             return Values<T>.GetById(id);
         }
 
         public static IEnumerable<T> GetValues<T>()
-            where T : SmartEnum
+            where T : ISmartEnum
         {
             return Values<T>.GetValues();
         }
 
         public static bool IsSmartEnum(Type type)
         {
-            return typeof(SmartEnum).IsAssignableFrom(type);
-        }
-
-        public int Id { get; }
-        public ITranslatable Text { get; }
-
-        protected SmartEnum(int id, ITranslatable text)
-        {
-            Id = id;
-            Text = text;
-        }
-
-        public override string ToString()
-        {
-            return Text.Translate(Taal.NL).Text;
+            return typeof(ISmartEnum).IsAssignableFrom(type);
         }
     }
 }

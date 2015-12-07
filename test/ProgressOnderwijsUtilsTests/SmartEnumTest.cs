@@ -30,16 +30,16 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => inschrijving.PeriodeStudiejaarId == SmartPeriodeStudiejaar.C2015);
         }
 
-        sealed class TestEnum : SmartEnum
+        sealed class TestEnum : ISmartEnum
         {
-            TestEnum(int id, ITranslatable text)
-                : base(id, text) { }
+            public int Id { get; private set; }
+            public ITranslatable Text { get; private set; }
 
             [SmartEnumMember]
-            public static readonly TestEnum A = new TestEnum(0, Translatable.Raw("A"));
+            public static readonly TestEnum A = new TestEnum { Id = 0, Text = Translatable.Raw("A") };
 
             [SmartEnumMember]
-            public static readonly TestEnum B = new TestEnum(1, Translatable.Raw("B"));
+            public static readonly TestEnum B = new TestEnum { Id = 1, Text = Translatable.Raw("B") };
         }
 
         [Test]
@@ -54,16 +54,16 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => SmartEnum.GetById<TestEnum>(1) == TestEnum.B);
         }
 
-        sealed class BrokenEnum : SmartEnum
+        sealed class BrokenEnum : ISmartEnum
         {
-            BrokenEnum(int id, ITranslatable text)
-                : base(id, text) { }
+            public int Id { get; private set; }
+            public ITranslatable Text { get; private set; }
 
             [SmartEnumMember]
-            public static readonly BrokenEnum A = new BrokenEnum(0, Translatable.Raw("A"));
+            public static readonly BrokenEnum A = new BrokenEnum { Id = 0, Text = Translatable.Raw("A") };
 
             [SmartEnumMember]
-            public static readonly BrokenEnum B = new BrokenEnum(0, Translatable.Raw("B"));
+            public static readonly BrokenEnum B = new BrokenEnum { Id = 0, Text = Translatable.Raw("B") };
         }
 
         [Test]

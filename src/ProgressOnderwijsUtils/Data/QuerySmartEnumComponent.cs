@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
             return new SqlParameter {
                 IsNullable = EquatableValue == DBNull.Value,
                 ParameterName = paramName,
-                Value = (object)(EquatableValue as SmartEnum)?.Id ?? DBNull.Value,
+                Value = (object)(EquatableValue as ISmartEnum)?.Id ?? DBNull.Value,
             };
         }
 
