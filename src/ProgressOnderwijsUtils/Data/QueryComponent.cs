@@ -111,6 +111,8 @@ namespace ProgressOnderwijsUtils
                     return "TVar_Bigint";
                 } else if (typeof(double) == typeof(T)) {
                     return "TVar_Float";
+                } else if (typeof(byte[]) == typeof(T)) {
+                    return "TVar_Binary32";
                 }
 
                 throw new InvalidOperationException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " as a table valued parameter");
@@ -149,6 +151,7 @@ namespace ProgressOnderwijsUtils
                                                     ?? TryToTableParameter<short>(set)
                                                         ?? TryToTableParameter<long>(set)
                                                             ?? TryToTableParameter<double>(set)
+                                                                ?? TryToTableParameter<byte[]>(set)
                 ;
             if (retval == null) {
                 throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(set.GetType()) + " as a table valued parameter", nameof(set));
