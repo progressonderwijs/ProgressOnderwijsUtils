@@ -33,7 +33,8 @@ namespace ProgressOnderwijsUtils
             yield return TryToString<Enum>(
                 obj,
                 o => language =>
-                    EnumHelpers.GetLabel(o).Translate(language).Text);
+                    EnumHelpers.MetaData(o)
+                        .Label.Translate(language).Text);
             yield return TryToString<decimal>(
                 obj,
                 o => language =>
@@ -116,6 +117,10 @@ namespace ProgressOnderwijsUtils
                 obj,
                 o =>
                     ArrayToStringHelper(o, format));
+            yield return TryToString<ISmartEnum>(
+                obj,
+                o => language =>
+                    o.Text.Translate(language).Text);
         }
 
         [Pure]

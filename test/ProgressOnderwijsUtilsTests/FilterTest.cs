@@ -34,15 +34,22 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, null).ToQueryBuilder() == SQL($"test is null"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotEqual, null).ToQueryBuilder() == SQL($"test is not null"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNotNull, null).ToQueryBuilder() == SQL($"test is not null"));
-            PAssert.That(
-                () =>
-                    Filter.CreateCriterium("test", BooleanComparer.In, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder()
-                        == SQL($"test in {Enumerable.Range(1, 5)}"));
-            PAssert.That(
-                () =>
-                    Filter.CreateCriterium("test", BooleanComparer.NotIn, new[] { 1, 2, 3, 4, 5 }).ToQueryBuilder()
-                        == SQL($"test not in {Enumerable.Range(1, 5)}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.HasFlag, 3).ToQueryBuilder() == SQL($"(test & {3}) = {3}"));
+        }
+
+        [Test]
+        public void InFiltersGenerateCorrectSql()
+        {
+            //can't compare directly because IEnumerables such as TVP's aren't IEquatable<>
+            var exampleArray = new[] { 1, 2, 3, 4, 5 };
+            PAssert.That(
+                () =>
+                    Filter.CreateCriterium("test", BooleanComparer.In, exampleArray).ToQueryBuilder().DebugText()
+                        == SQL($"test in {exampleArray}").DebugText());
+            PAssert.That(
+                () =>
+                    Filter.CreateCriterium("test", BooleanComparer.NotIn, exampleArray).ToQueryBuilder().DebugText()
+                        == SQL($"test not in {exampleArray}").DebugText());
         }
 
         [Test]
@@ -182,14 +189,14 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => q == qAlt);
             PAssert.That(() => q.GetHashCode() == qAlt.GetHashCode());
             PAssert.That(() => q.ToString() == qAlt.ToString());
-            PAssert.That(() => q.DebugText(null) == qAlt.DebugText(null));
+            PAssert.That(() => q.DebugText() == qAlt.DebugText());
 
             PAssert.That(() => qAlt.CommandText() != qAltWrong.CommandText());
-            PAssert.That(() => qAlt.DebugText(null) != qAltWrong.DebugText(null));
+            PAssert.That(() => qAlt.DebugText() == qAltWrong.DebugText());
             PAssert.That(() => !qAlt.Equals(qAltWrong));
             PAssert.That(() => qAlt != qAltWrong);
             PAssert.That(() => qAlt.GetHashCode() != qAltWrong.GetHashCode());
-            PAssert.That(() => qAlt.ToString() != qAltWrong.ToString());
+            PAssert.That(() => qAlt.ToString() == qAltWrong.ToString());
         }
 
         [Test]

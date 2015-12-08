@@ -5,10 +5,10 @@ namespace ProgressOnderwijsUtils
 {
     public enum FlowStep
     {
-        CanEdit,
-        Partial,
-        Rejected,
-        Ok,
+        Partial = -2,
+        Rejected = -1,
+        CanEdit = 0,
+        Ok = 1,
     }
 
     public static class HtmlHelper
@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
             var hasToolTip = !string.IsNullOrWhiteSpace(toolTip);
             return XhtmlData.Create(
                 new XElement("span",
-                    new XAttribute("class", cssClass + (hasToolTip ? " hastooltip" : "")),
+                    new XAttribute("class", cssClass + (hasToolTip ? " hastooltip undashed" : "")),
                     hasToolTip ? new XAttribute("data-tiptext", toolTip) : null));
         }
 
@@ -71,6 +71,10 @@ namespace ProgressOnderwijsUtils
                     throw new ArgumentOutOfRangeException(nameof(step), step, null);
             }
         }
+
+        public static XhtmlData FlowStepSymbol(FlowStep? step, string toolTip) => step == null ? XhtmlData.Empty : FlowStepSymbol(step.Value, toolTip);
+
+        public static XhtmlData FlowStepSymbol(FlowStep? step) => FlowStepSymbol(step, null);
 
         public static XhtmlData RenderPercentageGrafisch(decimal percentage)
         {

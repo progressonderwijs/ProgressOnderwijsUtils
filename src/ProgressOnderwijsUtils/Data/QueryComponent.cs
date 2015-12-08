@@ -13,40 +13,26 @@ namespace ProgressOnderwijsUtils
 {
     static class QueryComponent
     {
-        public static IQueryComponent CreateString(string val)
+        public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object o)
+            where TCommandFactory : struct, ICommandFactory
         {
-            if (val == "") {
-                return null;
+            if (o is IEnumerable && !(o is string) && !(o is byte[])) {
+                ToTableParameter((IEnumerable)o).AppendTo(ref factory);
+            } else if (o is ISmartEnum) {
+                QuerySmartEnumComponent.AppendSmartEnumParameter(ref factory, o);
             } else {
-                return new QueryStringComponent(val);
-            }
-        }
-
-        public static IQueryComponent CreateParam(object o)
-        {
-            if (o is QueryBuilder) {
-                throw new ArgumentException("Cannot pass a querybuilder as a parameter");
-            } else if (o is IQueryParameter) {
-                return (IQueryComponent)o;
-            } else if (o is LiteralSqlInt) {
-                return new QueryStringComponent(((LiteralSqlInt)o).Value.ToStringInvariant());
-            } else if (o is IEnumerable && !(o is string) && !(o is byte[])) {
-                return ToTableParameter((IEnumerable)o);
-            } else {
-                return new QueryScalarParameterComponent(o);
+                QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
             }
         }
 
         public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
-        {
-            return new QueryTableValuedParameterComponent<T>(tableTypeName, set);
-        }
+            => new QueryTableValuedParameterComponent<T>(tableTypeName, set);
 
         static IQueryComponent TryToTableParameter<T>(IEnumerable set)
         {
             if (set is IEnumerable<T>) {
                 var typedSet = (IEnumerable<T>)set;
-                var projectedSet = typedSet.Select(i => new Internal.DbTableValuedParameterWrapper<T> { querytablevalue = i });
+                var projectedSet = typedSet.Select(i => new DbTableValuedParameterWrapper<T> { querytablevalue = i });
                 return ToTableParameter(TableValueTypeName<T>.TypeName, projectedSet);
             } else {
                 return null;

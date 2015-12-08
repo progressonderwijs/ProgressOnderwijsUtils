@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
+using ValueUtils;
 
 namespace ProgressOnderwijsUtils
 {
@@ -62,9 +63,9 @@ namespace ProgressOnderwijsUtils
             this.nodes = nodes;
         }
 
-        public bool Equals(XhtmlData other) => EqualsByMembers<XhtmlData>.Func(this, other);
+        public bool Equals(XhtmlData other) => FieldwiseEquality.AreEqual(this, other);
         public override bool Equals(object obj) => obj is XhtmlData && Equals((XhtmlData)obj);
-        public override int GetHashCode() => GetHashCodeByMembers<XhtmlData>.Func(this);
+        public override int GetHashCode() => FieldwiseHasher.Hash(this);
         public override string ToString() => Nodes.Select(x => x.ToString(SaveOptions.DisableFormatting)).JoinStrings();
 
         public string ToUiString()
