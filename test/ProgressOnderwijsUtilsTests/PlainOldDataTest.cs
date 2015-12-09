@@ -4,6 +4,7 @@ using System.Reflection;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Business.DomainUnits;
+using Progress.Business.Inschrijvingen.Studielink;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 using TheJoyOfCode.QualityTools;
