@@ -112,7 +112,7 @@ namespace ProgressOnderwijsUtils
                 } else if (typeof(double) == typeof(T)) {
                     return "TVar_Float";
                 } else if (typeof(byte[]) == typeof(T)) {
-                    return "TVar_Binary32";
+                    return "TVar_VarBinaryMax";
                 }
 
                 throw new InvalidOperationException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " as a table valued parameter");
