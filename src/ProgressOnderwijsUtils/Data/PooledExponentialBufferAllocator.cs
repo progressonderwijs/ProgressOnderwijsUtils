@@ -38,6 +38,8 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Releases an array array back into the pool.  It is an error for a caller to use the array after this call.
         /// Arrays that are not an exact power of two or are too large (more than 2^14) are never pooled; this operation is a no-op for such arrays.
+        /// 
+        /// It is inefficient to return "old" arrays into the pool; the most efficient usage is when the consumer only need needs few arrays simultaneously.
         /// </summary>
         public static void ReturnToPool(T[] arr)
         {
