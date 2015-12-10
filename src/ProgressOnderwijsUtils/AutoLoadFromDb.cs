@@ -302,6 +302,7 @@ namespace ProgressOnderwijsUtils
 
             static TRowReader<T> CreateLoadRowsMethod<T>(Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
             {
+                //read this method bottom-to-top, because expression trees need to be constructed inside-out.
                 var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
                 var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
                 var arrayBuilderOfRowsType = typeof(FastArrayBuilder<T>);
