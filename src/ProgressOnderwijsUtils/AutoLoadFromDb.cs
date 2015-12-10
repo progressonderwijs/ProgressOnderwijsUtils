@@ -303,46 +303,42 @@ namespace ProgressOnderwijsUtils
             static TRowReader<T> CreateLoadRowsMethod<T>(Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
             {
                 var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                var listType = typeof(FastArrayBuilder<T>);
-                var listVarExpr = Expression.Variable(listType, "rowList");
+                var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
 
-                var rowVar = Expression.Variable(typeof(T), "row");
-
-                var listAssignment = Expression.Assign(listVarExpr, Expression.Call(listType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static)));
-
-                var lastColumnReadParameter = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParameter);
-                var addRowExpr = Expression.Call(listVarExpr, listType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
+                var arrayBuilderOfRowsType = typeof(FastArrayBuilder<T>);
+                var arrayBuilderVarExpr = Expression.Variable(arrayBuilderOfRowsType, "rowList");
+                var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
+                var addRowToBuilderExpr = Expression.Call(arrayBuilderVarExpr, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
+                var callReader_Read = Expression.Call(dataReaderParamExpr, ReadMethod);
 
                 var loopExitLabel = Expression.Label("loopExit");
-
                 var loopAddRowThenReadExpr =
                     Expression.Loop(
                         Expression.Block(
-                            addRowExpr,
+                            addRowToBuilderExpr,
                             Expression.IfThen(
-                                Expression.Not(Expression.Call(dataReaderParamExpr, ReadMethod)),
+                                Expression.Not(callReader_Read),
                                 Expression.Break(loopExitLabel)
                                 )
                             ),
                         loopExitLabel
                         );
 
-                var listToArrayExpr = Expression.Call(listVarExpr, listType.GetMethod("ToArray", BindingFlags.Public | BindingFlags.Instance));
+                var finishArrayExpr = Expression.Call(arrayBuilderVarExpr, arrayBuilderOfRowsType.GetMethod("ToArray", BindingFlags.Public | BindingFlags.Instance));
 
-                var afterTwoReads = Expression.Block(
+                var initializeArrayBuilderExpr = Expression.Assign(arrayBuilderVarExpr, Expression.Call(arrayBuilderOfRowsType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static)));
+                var rowVar = Expression.Variable(typeof(T), "row");
+                var createArrayGivenRowInVarAndReaderAtValidRow = Expression.Block(
                     typeof(T[]),
-                    new[] { listVarExpr },
-                    listAssignment,
-                    Expression.Call(listVarExpr, listType.GetMethod("Add", new[] { typeof(T) }), rowVar),
+                    new[] { arrayBuilderVarExpr },
+                    initializeArrayBuilderExpr,
+                    Expression.Call(arrayBuilderVarExpr, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), rowVar),
                     loopAddRowThenReadExpr,
-                    listToArrayExpr
+                    finishArrayExpr
                     );
-                var afterFirstRead = Expression.Condition(
-                    Expression.Call(dataReaderParamExpr, ReadMethod),
-                    afterTwoReads,
-                    Expression.NewArrayInit(typeof(T), rowVar)
-                    );
+
+                var singleRowArrayExpr = Expression.NewArrayInit(typeof(T), rowVar);
+                var afterFirstRead = Expression.Condition(callReader_Read, createArrayGivenRowInVarAndReaderAtValidRow, singleRowArrayExpr);
                 var afterFirstPartialRead = Expression.Block(
                     typeof(T[]),
                     new[] { rowVar },
@@ -353,12 +349,12 @@ namespace ProgressOnderwijsUtils
                 Func<T[]> mkEmptyArray = ArrayExtensions.Empty<T>;
 
                 var body = Expression.Condition(
-                    Expression.Call(dataReaderParamExpr, ReadMethod),
+                    callReader_Read,
                     afterFirstPartialRead,
                     Expression.Call(mkEmptyArray.Method)
                     );
 
-                var loadRowFunc = Expression.Lambda<TRowReader<T>>(body, "LoadRows", new[] { dataReaderParamExpr, lastColumnReadParameter });
+                var loadRowFunc = Expression.Lambda<TRowReader<T>>(body, "LoadRows", new[] { dataReaderParamExpr, lastColumnReadParamExpr });
 
                 var typeBuilder = moduleBuilder.DefineType(
                     "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
