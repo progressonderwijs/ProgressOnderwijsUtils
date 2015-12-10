@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils
             }
             var bag = bagsByIndex[parameterCount];
             for (int i = 0; i < parameterCount; i++) {
-                parameters[i].Value = DBNull.Value;
+                parameters[i].Value = null;
                 parameters[i].TypeName = null;
             }
             cmd.CommandText = null;
