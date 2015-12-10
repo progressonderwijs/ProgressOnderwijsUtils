@@ -21,18 +21,18 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new ConcurrentQueue<Dictionary<object, string>>();
         char[] queryText; //faster than StringBuilder since we don't need insert-in-the-middle capability and can reuse this memory
         int queryLen;
-        readonly SqlCommand command;
-        readonly SqlParameterCollection commandParameters;
+        SqlCommand command;
+        SqlParameterCollection commandParameters;
         Dictionary<object, string> lookup;
 
-        public CommandFactory(int ignore)
+        public static void Initialize(ref CommandFactory that)
         {
-            queryText = PooledExponentialBufferAllocator<char>.GetByLength(2048);
-            queryLen = 0;
-            command = new SqlCommand();
-            commandParameters = command.Parameters;
-            if (!nameLookupBag.TryDequeue(out lookup)) {
-                lookup = new Dictionary<object, string>(8);
+            that.queryText = PooledExponentialBufferAllocator<char>.GetByLength(2048);
+            that.queryLen = 0;
+            that.command = new SqlCommand();
+            that.commandParameters = that.command.Parameters;
+            if (!nameLookupBag.TryDequeue(out that.lookup)) {
+                that.lookup = new Dictionary<object, string>(8);
             }
         }
 
