@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using NUnit.Framework;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -27,16 +25,14 @@ namespace ProgressOnderwijsUtils
     struct CommandFactory : ICommandFactory
     {
         static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new ConcurrentQueue<Dictionary<object, string>>();
-        char[] queryText; //faster than StringBuilder since we don't need insert-in-the-middle capability and can reuse this memory
-        int queryLen;
+        FastShortStringBuilder queryText;
         SqlCommand command;
         SqlParameterCollection commandParameters;
         Dictionary<object, string> lookup;
 
         public static void Initialize(ref CommandFactory that)
         {
-            that.queryText = PooledExponentialBufferAllocator<char>.GetByLength(2048);
-            that.queryLen = 0;
+            that.queryText = FastShortStringBuilder.Create();
             that.command = new SqlCommand();
             that.commandParameters = that.command.Parameters;
             if (!nameLookupBag.TryDequeue(out that.lookup)) {
@@ -48,9 +44,7 @@ namespace ProgressOnderwijsUtils
         {
             command.Connection = conn;
             command.CommandTimeout = commandTimeout; //60 by default
-            command.CommandText = new string(queryText, 0, queryLen);
-            PooledExponentialBufferAllocator<char>.ReturnToPool(queryText);
-            queryText = null;
+            command.CommandText = queryText.Finish();
             lookup.Clear();
             nameLookupBag.Enqueue(lookup);
             lookup = null;
@@ -79,60 +73,59 @@ namespace ProgressOnderwijsUtils
             return paramName;
         }
 
-        public void AppendSql(string sql, int startIndex, int length)
+        public void AppendSql(string sql, int startIndex, int length) => queryText.AppendText(sql, startIndex, length);
+    }
+
+    /// <summary>
+    /// faster than StringBuilder since we don't need insert-in-the-middle capability and can reuse this memory
+    /// </summary>
+    struct FastShortStringBuilder
+    {
+        char[] charBuffer;
+        int queryLen;
+        public static FastShortStringBuilder Create() => new FastShortStringBuilder { charBuffer = PooledExponentialBufferAllocator<char>.GetByLength(2048) };
+
+        public void AppendText(string text, int startIndex, int length)
         {
-            if (queryText.Length < queryLen + length) {
-                var newLen = (uint)Math.Max(queryText.Length * 3 / 2, queryLen + length + 5);
+            if (charBuffer.Length < queryLen + length) {
+                var newLen = (uint)Math.Max(charBuffer.Length * 3 / 2, queryLen + length + 5);
                 var newArray = PooledExponentialBufferAllocator<char>.GetByLength(newLen);
-                Array.Copy(queryText, newArray, queryLen);
-                PooledExponentialBufferAllocator<char>.ReturnToPool(queryText);
-                queryText = newArray;
+                Array.Copy(charBuffer, newArray, queryLen);
+                PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);
+                charBuffer = newArray;
             }
-            sql.CopyTo(startIndex, queryText, queryLen, length);
+            text.CopyTo(startIndex, charBuffer, queryLen, length);
             queryLen += length;
+        }
+
+        public string Finish()
+        {
+            var retval = new string(charBuffer, 0, queryLen);
+            PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);
+            charBuffer = null;
+            return retval;
         }
     }
 
     struct DebugCommandFactory : ICommandFactory
     {
-        readonly StringBuilder debugText;
-
-        DebugCommandFactory(int estimatedLength)
-        {
-            debugText = new StringBuilder(estimatedLength + 30); //extra length for argument values.
-        }
-
-        public static DebugCommandFactory Create(int estimatedLength) => new DebugCommandFactory(estimatedLength);
+        FastShortStringBuilder debugText;
         public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => QueryTracer.InsecureSqlDebugString(o.EquatableValue);
-        public void AppendSql(string sql, int startIndex, int length) => debugText.Append(sql, startIndex, length);
+        public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
-        public string DebugTextFor(IQueryComponent impl)
+        public static string DebugTextFor(IQueryComponent impl)
         {
-            impl?.AppendTo(ref this);
-            return debugText.ToString();
+            var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create() };
+            impl?.AppendTo(ref factory);
+            return factory.debugText.Finish();
         }
-    }
-
-    struct LengthEstimationCommandFactory : ICommandFactory
-    {
-        public int QueryLength;
-        static readonly string ExampleParameterName = CommandFactory.IndexToParameterName(9);
-        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => ExampleParameterName;
-        public void AppendSql(string sql, int startIndex, int length) => QueryLength += length;
     }
 
     struct EqualityKeyCommandFactory : ICommandFactory
     {
-        readonly StringBuilder debugText;
+        FastShortStringBuilder debugText;
         int argOffset;
         FastArrayBuilder<object> paramValues;
-
-        EqualityKeyCommandFactory(int estimatedLength)
-        {
-            debugText = new StringBuilder(estimatedLength + 30); //extra length for argument values.
-            argOffset = 0;
-            paramValues = FastArrayBuilder<object>.Create();
-        }
 
         public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter
         {
@@ -140,14 +133,18 @@ namespace ProgressOnderwijsUtils
             return CommandFactory.IndexToParameterName(argOffset++);
         }
 
-        public void AppendSql(string sql, int startIndex, int length) => debugText.Append(sql, startIndex, length);
+        public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
         public static QueryKey EqualityKey(IQueryComponent impl)
         {
-            var factory = new EqualityKeyCommandFactory(impl?.EstimateLength() ?? 0);
+            var factory = new EqualityKeyCommandFactory {
+                debugText = FastShortStringBuilder.Create(),
+                argOffset = 0,
+                paramValues = FastArrayBuilder<object>.Create(),
+            };
             impl?.AppendTo(ref factory);
             return new QueryKey {
-                SqlTextKey = factory.debugText.ToString(),
+                SqlTextKey = factory.debugText.Finish(),
                 Params = new ComparableArray<object>(factory.paramValues.ToArray()),
             };
         }

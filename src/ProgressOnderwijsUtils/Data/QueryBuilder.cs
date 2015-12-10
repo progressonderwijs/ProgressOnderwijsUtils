@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils
 
 
         public override string ToString() => DebugText();
-        public string DebugText() => DebugCommandFactory.Create(impl?.EstimateLength() ?? 0).DebugTextFor(impl);
+        public string DebugText() => DebugCommandFactory.DebugTextFor(impl);
 
         public string CommandText()
         {
@@ -150,13 +150,6 @@ namespace ProgressOnderwijsUtils
 
     static class SqlFactory
     {
-        public static int EstimateLength(this IQueryComponent q)
-        {
-            var lengthEstimator = new LengthEstimationCommandFactory();
-            q.AppendTo(ref lengthEstimator);
-            return lengthEstimator.QueryLength;
-        }
-
         public static QueryBuilder BuildableToQuery(this IQueryComponent q) => new QueryBuilder(q);
         public static QueryBuilder InterpolationToQuery(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
