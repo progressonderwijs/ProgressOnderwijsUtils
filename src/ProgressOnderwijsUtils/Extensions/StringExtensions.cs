@@ -58,5 +58,35 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static string Replace(this string s, IEnumerable<KeyValuePair<string, string>> replacements) => replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
+
+        /// <summary>
+        /// Zet string met alleen hoofdletters om 
+        /// naar Camel Case. Bv ADIS ABEBA -> Adis Abeba,
+        /// of JAN-BENJAMIN -> Jan-Benjamin, 
+        /// 'S-GRAVENHAGE -> 's-Gravenhage
+        /// </summary>
+        [Pure]
+        public static string ToCamelCase(this string s)
+        {
+            if (s.IsNullOrWhiteSpace()) {
+                return s;
+            }
+
+            // reguliere conversie 
+            // (patroon A t/m Z gevolgd door 1 of meer wordcharacters, A t/m Z blijft staan, rest lowercase)
+            var upc1 = Regex.Replace(
+                s,
+                @"[A-Z]\w+",
+                match => {
+                    var v = match.ToString();
+                    return char.ToUpper(v[0]) + v.Substring(1).ToLower();
+                }
+                );
+            // ... maar letters voorafgegaan door ' ('s, 't etc.) naar lowercase
+            return Regex.Replace(
+                upc1,
+                @"['][A-Z]",
+                match => match.ToString().ToLower());
+        }
     }
 }
