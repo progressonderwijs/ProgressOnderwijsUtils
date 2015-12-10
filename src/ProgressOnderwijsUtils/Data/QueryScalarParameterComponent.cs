@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
             => new SqlParameter {
                 IsNullable = EquatableValue == DBNull.Value,
                 ParameterName = paramName,
-                Value = EquatableValue is Filter.CurrentTimeToken ? DateTime.Now : EquatableValue,
+                Value = EquatableValue == Filter.CurrentTimeToken.Instance ? DateTime.Now : ((EquatableValue as ISmartEnum)?.Id ?? EquatableValue),
             };
 
         public static void AppendScalarParameter<TCommandFactory>(ref TCommandFactory factory, object o)
