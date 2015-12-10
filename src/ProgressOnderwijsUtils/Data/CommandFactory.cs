@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
     struct CommandFactory : ICommandFactory
     {
         static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new ConcurrentQueue<Dictionary<object, string>>();
-        char[] queryText; //faster than StringBuilder since we're append only and know the size quite reliably;
+        char[] queryText; //faster than StringBuilder since we don't need insert-in-the-middle capability and can reuse this memory
         int queryLen;
         readonly SqlCommand command;
         readonly SqlParameterCollection commandParameters;
@@ -154,34 +154,38 @@ namespace ProgressOnderwijsUtils
     static class PooledExponentialBufferAllocator<T>
     {
         static readonly int IndexCount = 15;
-        static readonly int MaxIndex = IndexCount-1;
+        static readonly int MaxIndex = IndexCount - 1;
         static readonly int MaxArrayLength = 1 << MaxIndex;
-
         static readonly ConcurrentQueue<T[]>[] bagsByIndex = InitBags();
 
-        static ConcurrentQueue<T[]>[] InitBags() {
+        static ConcurrentQueue<T[]>[] InitBags()
+        {
             var allBags = new ConcurrentQueue<T[]>[IndexCount];
-            for (int i = 0; i < IndexCount; i++)
+            for (int i = 0; i < IndexCount; i++) {
                 allBags[i] = new ConcurrentQueue<T[]>();
+            }
             return allBags;
         }
 
         public static T[] GetByLength(uint length)
         {
-            if (length > MaxArrayLength)
+            if (length > MaxArrayLength) {
                 return new T[length];
+            }
             var i = Utils.LogBase2RoundedUp(length);
             var bag = bagsByIndex[i];
             T[] result;
-            if (bag.TryDequeue(out result))
+            if (bag.TryDequeue(out result)) {
                 return result;
+            }
             return new T[1 << i];
         }
 
         public static void ReturnToPool(T[] arr)
         {
-            if (arr.Length > MaxArrayLength)
+            if (arr.Length > MaxArrayLength) {
                 return;
+            }
             var i = Utils.LogBase2RoundedUp((uint)arr.Length);
             var bag = bagsByIndex[i];
             //Array.Clear(arr,0,arr.Length);
