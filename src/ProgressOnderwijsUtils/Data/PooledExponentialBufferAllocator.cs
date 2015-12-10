@@ -32,6 +32,10 @@ namespace ProgressOnderwijsUtils
             return new T[1 << i];
         }
 
+        /// <summary>
+        /// Releases an array array back into the pool.  It is an error for a caller to use the array after this call.
+        /// Arrays that are not an exact power of two or are too large (more than 2^14) are never pooled; this operation is a no-op for such arrays.
+        /// </summary>
         public static void ReturnToPool(T[] arr)
         {
             if (arr.Length > MaxArrayLength) {
