@@ -107,18 +107,23 @@ namespace ProgressOnderwijsUtils
                 paramName = parameterIndex < CachedParameterNames.Length
                     ? CachedParameterNames[parameterIndex]
                     : IndexToParameterName(parameterIndex);
-                if (paramObjs.Length == paramCount) {
-                    var newArray = PooledExponentialBufferAllocator<SqlParamArgs>.GetByLength((uint)paramCount * 2);
-                    Array.Copy(paramObjs, newArray, paramCount);
-                    Array.Clear(paramObjs, 0, paramCount);
-                    PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
-                    paramObjs = newArray;
-                }
+                EnsureParamsArrayCanGrow();
                 o.ToSqlParameter(ref paramObjs[paramCount]);
                 paramCount++;
                 lookup.Add(o.EquatableValue, paramName);
             }
             return paramName;
+        }
+
+        void EnsureParamsArrayCanGrow()
+        {
+            if (paramObjs.Length == paramCount) {
+                var newArray = PooledExponentialBufferAllocator<SqlParamArgs>.GetByLength((uint)paramCount * 2);
+                Array.Copy(paramObjs, newArray, paramCount);
+                Array.Clear(paramObjs, 0, paramCount);
+                PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
+                paramObjs = newArray;
+            }
         }
 
         public void AppendSql(string sql, int startIndex, int length) => queryText.AppendText(sql, startIndex, length);
