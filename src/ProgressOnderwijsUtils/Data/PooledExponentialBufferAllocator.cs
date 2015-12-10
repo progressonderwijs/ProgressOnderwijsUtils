@@ -18,6 +18,9 @@ namespace ProgressOnderwijsUtils
             return allBags;
         }
 
+        /// <summary>
+        /// Provides a new or reused array of the given length (rounded up to the nearest power of 2)
+        /// </summary>
         public static T[] GetByLength(uint length)
         {
             if (length > MaxArrayLength) {
