@@ -71,12 +71,14 @@ namespace ProgressOnderwijsUtils
             command.CommandText = queryText.Finish();
             var cmdParams = command.Parameters;
             for (int i = 0; i < paramCount; i++) {
-                cmdParams[i].Value = paramObjs[i].Value;
-                cmdParams[i].IsNullable = paramObjs[i].Value == DBNull.Value;
                 if (paramObjs[i].TypeName != null) {
                     cmdParams[i].SqlDbType = SqlDbType.Structured;
                     cmdParams[i].TypeName = paramObjs[i].TypeName;
+                } else {
+                    cmdParams[i].ResetSqlDbType();
                 }
+                cmdParams[i].Value = paramObjs[i].Value;
+                cmdParams[i].IsNullable = paramObjs[i].Value == DBNull.Value;
                 paramObjs[i] = default(SqlParamArgs);
             }
 
