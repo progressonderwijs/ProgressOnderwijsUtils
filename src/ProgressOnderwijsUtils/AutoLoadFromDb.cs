@@ -302,60 +302,53 @@ namespace ProgressOnderwijsUtils
 
             static TRowReader<T> CreateLoadRowsMethod<T>(Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
             {
+                //read this method bottom-to-top, because expression trees need to be constructed inside-out.
                 var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                var listType = typeof(FastArrayBuilder<T>);
-                var listVarExpr = Expression.Variable(listType, "rowList");
-
-                var listAssignment = Expression.Assign(listVarExpr, Expression.Call(listType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static)));
-
-                var lastColumnReadParameter = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParameter);
-                var addRowExpr = Expression.Call(listVarExpr, listType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
-
+                var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
+                var arrayBuilderOfRowsType = typeof(FastArrayBuilder<T>);
+                var arrayBuilderVar = Expression.Variable(arrayBuilderOfRowsType, "rowList");
+                var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
+                var addRowToBuilderExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
+                var callReader_Read = Expression.Call(dataReaderParamExpr, ReadMethod);
                 var loopExitLabel = Expression.Label("loopExit");
-                var rowLoopExpr =
-                    Expression.Loop(
-                        Expression.IfThenElse(
-                            Expression.Call(dataReaderParamExpr, ReadMethod),
-                            addRowExpr,
-                            Expression.Break(loopExitLabel)
-                            ),
-                        loopExitLabel
-                        );
+                var breakIfAtEndOfReaderExpr = Expression.IfThen(Expression.Not(callReader_Read), Expression.Break(loopExitLabel));
+                var loopAddRowThenReadExpr = Expression.Loop(Expression.Block(addRowToBuilderExpr, breakIfAtEndOfReaderExpr), loopExitLabel);
+                var finishArrayExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("ToArray"));
+                var arrayBuilderCreateMethod = arrayBuilderOfRowsType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static);
+                var initializeArrayBuilderExpr = Expression.Assign(arrayBuilderVar, Expression.Call(arrayBuilderCreateMethod));
+                var rowVar = Expression.Variable(typeof(T), "row");
+                var addRowVarToArrayBuilder = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), rowVar);
+                var createArrayGivenRowInVarAndReaderAtValidRow =
+                    Expression.Block(initializeArrayBuilderExpr, addRowVarToArrayBuilder, loopAddRowThenReadExpr, finishArrayExpr);
+                var singleRowArrayExpr = Expression.NewArrayInit(typeof(T), rowVar);
+                var createArrayGivenFirstRowInVar = Expression.Condition(callReader_Read, createArrayGivenRowInVarAndReaderAtValidRow, singleRowArrayExpr);
+                var createArrayGivenReaderAtValidFirstRow = Expression.Block(Expression.Assign(rowVar, constructRowExpr), createArrayGivenFirstRowInVar);
+                var callEmptyArrayMethod = Expression.Call(((Func<T[]>)ArrayExtensions.Empty<T>).Method);
+                var returnEmptyArrayOrRunRestOfCode = Expression.Condition(callReader_Read, createArrayGivenReaderAtValidFirstRow, callEmptyArrayMethod);
+                var loadRowsMethodBody = Expression.Block(typeof(T[]), new[] { rowVar, arrayBuilderVar, }, returnEmptyArrayOrRunRestOfCode);
+                var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
+                var loadRowsLambda = Expression.Lambda<TRowReader<T>>(loadRowsMethodBody, "LoadRows", loadRowsParamExprs);
 
-                var listToArrayExpr = Expression.Call(listVarExpr, listType.GetMethod("ToArray", BindingFlags.Public | BindingFlags.Instance));
+                return ConvertLambdaExpressionIntoDelegate(loadRowsLambda);
+            }
 
-                //LoadRows = 
-                var loadRowFunc = Expression.Lambda<TRowReader<T>>(
-                    Expression.Block(
-                        typeof(T[]),
-                        new[] { listVarExpr },
-                        listAssignment,
-                        //listInit,
-                        rowLoopExpr,
-                        listToArrayExpr
-                        ),
-                    "LoadRows",
-                    new[] { dataReaderParamExpr, lastColumnReadParameter }
-                    );
-
-                TypeBuilder typeBuilder = moduleBuilder.DefineType(
-                    "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
-                    TypeAttributes.Public);
-                var methodBuilder = typeBuilder.DefineMethod("LoadRows", MethodAttributes.Public | MethodAttributes.Static);
+            static TRowReader<T> ConvertLambdaExpressionIntoDelegate<T>(Expression<TRowReader<T>> loadRowsLambda)
+            {
                 try {
-                    if (typeof(T).IsPublic) {
-                        loadRowFunc.CompileToMethod(methodBuilder); //faster
-                    } else {
-                        return loadRowFunc.Compile();
+                    if (!typeof(T).IsPublic) {
+                        return loadRowsLambda.Compile(); //generates slower code but works on non-public types
                     }
+                    var typeBuilder = moduleBuilder.DefineType(
+                        "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
+                        TypeAttributes.Public);
+                    var methodBuilder = typeBuilder.DefineMethod("LoadRows", MethodAttributes.Public | MethodAttributes.Static);
+                    loadRowsLambda.CompileToMethod(methodBuilder); //generates faster code
+                    var newType = typeBuilder.CreateType();
+
+                    return (TRowReader<T>)Delegate.CreateDelegate(typeof(TRowReader<T>), newType.GetMethod("LoadRows"));
                 } catch (Exception e) {
                     throw new ProgressNetException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
                 }
-                var newType = typeBuilder.CreateType();
-
-                var loadRows = (TRowReader<T>)Delegate.CreateDelegate(typeof(TRowReader<T>), newType.GetMethod("LoadRows"));
-                return loadRows;
             }
 
             public static class ByMetaObjectImpl<T>
