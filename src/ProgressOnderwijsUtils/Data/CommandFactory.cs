@@ -207,14 +207,14 @@ namespace ProgressOnderwijsUtils
     {
         static readonly int IndexCount = 129;
         static readonly int MaxArrayLength = IndexCount - 1;
-
         static readonly ConcurrentQueue<SqlCommand>[] bagsByIndex = new ConcurrentQueue<SqlCommand>[IndexCount];
 
         static ConcurrentQueue<SqlCommand> GetBag(int index)
         {
             var bag = bagsByIndex[index];
-            if (bag != null)
+            if (bag != null) {
                 return bag;
+            }
             var otherBag = Interlocked.CompareExchange(ref bagsByIndex[index], bag = new ConcurrentQueue<SqlCommand>(), null);
             //CompareExchange returns previous value
             //if that wasn't null, this was a no-op and that value shold be returned
@@ -227,13 +227,15 @@ namespace ProgressOnderwijsUtils
             if (length <= MaxArrayLength) {
                 var bag = GetBag(length);
                 SqlCommand result;
-                if (bag.TryDequeue(out result))
+                if (bag.TryDequeue(out result)) {
                     return result;
+                }
             }
             var cmd = new SqlCommand();
             var parameters = new SqlParameter[length];
-            for (int i = 0; i < length; i++)
+            for (int i = 0; i < length; i++) {
                 parameters[i] = new SqlParameter { ParameterName = CommandFactory.IndexToParameterName(i) };
+            }
             cmd.Parameters.AddRange(parameters);
             return cmd;
         }
@@ -242,8 +244,9 @@ namespace ProgressOnderwijsUtils
         {
             var parameters = cmd.Parameters;
             var parameterCount = parameters.Count;
-            if (parameterCount > MaxArrayLength)
+            if (parameterCount > MaxArrayLength) {
                 return;
+            }
             var bag = GetBag(parameterCount);
             for (int i = 0; i < parameterCount; i++) {
                 parameters[i].Value = DBNull.Value;
