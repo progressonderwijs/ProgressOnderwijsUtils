@@ -239,6 +239,12 @@ namespace ProgressOnderwijsUtils
         {
             public delegate T[] TRowReader<T>(TReader reader, out int lastColumnRead);
 
+            struct TRowReaderWithCols<T>
+            {
+                public string[] Cols;
+                public TRowReader<T> RowReader;
+            }
+
             static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(
                 typeof(TReader).GetInterfaceMap(typeof(IDataRecord)),
                 typeof(TReader).GetInterfaceMap(typeof(IDataReader)));
@@ -354,15 +360,15 @@ namespace ProgressOnderwijsUtils
             public static class ByMetaObjectImpl<T>
                 where T : IMetaObject, new()
             {
-                sealed class ColumnOrdering : IEquatable<ColumnOrdering>
+                struct ColumnOrdering : IEquatable<ColumnOrdering>
                 {
-                    public readonly string[] Cols;
                     readonly ulong cachedHash;
+                    public readonly string[] Cols;
 
                     public ColumnOrdering(TReader reader)
                     {
                         var primeArr = ColHashPrimes;
-                        Cols = new string[reader.FieldCount];
+                        Cols = PooledSmallBufferAllocator<string>.GetByLength(reader.FieldCount);
                         cachedHash = 0;
                         for (int i = 0; i < Cols.Length; i++) {
                             var name = reader.GetName(i);
@@ -389,7 +395,7 @@ namespace ProgressOnderwijsUtils
                     public override bool Equals(object obj) => obj is ColumnOrdering && Equals((ColumnOrdering)obj);
                 }
 
-                static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> LoadRows;
+                static readonly ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>> LoadRows;
                 static Type type => typeof(T);
                 static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 static readonly uint[] ColHashPrimes;
@@ -420,7 +426,7 @@ namespace ProgressOnderwijsUtils
                         }
                     }
 
-                    LoadRows = new ConcurrentDictionary<ColumnOrdering, TRowReader<T>>();
+                    LoadRows = new ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>>();
                 }
 
                 // ReSharper disable UnusedParameter.Local
@@ -440,14 +446,24 @@ namespace ProgressOnderwijsUtils
                     }
                     var ordering = new ColumnOrdering(reader);
 
-                    return LoadRows.GetOrAdd(
-                        ordering,
-                        orderingP =>
-                            CreateLoadRowsMethod<T>(
-                                (readerParamExpr, lastColumnReadParameter) =>
-                                    Expression.MemberInit(
-                                        Expression.New(type),
-                                        createColumnBindings(orderingP, readerParamExpr, lastColumnReadParameter))));
+                    var cachedRowReaderWithCols = LoadRows.GetOrAdd(ordering, ConstructTRowReaderWithCols);
+                    if (ordering.Cols != cachedRowReaderWithCols.Cols) {
+                        //our ordering isn't in the cache, so it's string array can be returned to the pool
+                        PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
+                    }
+                    return cachedRowReaderWithCols.RowReader;
+                }
+
+                static TRowReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
+                {
+                    return new TRowReaderWithCols<T> {
+                        Cols = ordering.Cols,
+                        RowReader = CreateLoadRowsMethod<T>(
+                            (readerParamExpr, lastColumnReadParameter) =>
+                                Expression.MemberInit(
+                                    Expression.New(type),
+                                    createColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
+                    };
                 }
 
                 static IEnumerable<MemberAssignment> createColumnBindings(
