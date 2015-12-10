@@ -78,9 +78,9 @@ namespace ProgressOnderwijsUtils
                 }
                 cmdParams[i].Value = paramObjs[i].Value;
                 cmdParams[i].IsNullable = paramObjs[i].Value == DBNull.Value;
-                paramObjs[i] = default(SqlParamArgs);
             }
 
+            Array.Clear(paramObjs, 0, paramCount);
             PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
             paramObjs = null;
 
