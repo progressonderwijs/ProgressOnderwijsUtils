@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -16,7 +17,6 @@ namespace ProgressOnderwijsUtils
     struct CommandFactory : ICommandFactory
     {
         static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new ConcurrentQueue<Dictionary<object, string>>();
-
         char[] queryText; //faster than StringBuilder since we're append only and know the size quite reliably;
         int queryLen;
         readonly SqlCommand command;
@@ -29,8 +29,9 @@ namespace ProgressOnderwijsUtils
             queryLen = 0;
             command = new SqlCommand();
             commandParameters = command.Parameters;
-            if (!nameLookupBag.TryDequeue(out lookup))
+            if (!nameLookupBag.TryDequeue(out lookup)) {
                 lookup = new Dictionary<object, string>(8);
+            }
         }
 
         public SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
