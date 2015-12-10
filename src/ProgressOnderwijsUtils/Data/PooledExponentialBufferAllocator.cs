@@ -38,9 +38,10 @@ namespace ProgressOnderwijsUtils
                 return;
             }
             var i = Utils.LogBase2RoundedUp((uint)arr.Length);
-            var bag = bagsByIndex[i];
-            //Array.Clear(arr,0,arr.Length);
-            bag.Enqueue(arr);
+            if (1 << i == arr.Length) {
+                var bag = bagsByIndex[i];
+                bag.Enqueue(arr);
+            }
         }
     }
 }
