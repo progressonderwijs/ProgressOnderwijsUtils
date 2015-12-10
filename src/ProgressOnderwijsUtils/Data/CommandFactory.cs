@@ -141,7 +141,7 @@ namespace ProgressOnderwijsUtils
         public void AppendText(string text, int startIndex, int length)
         {
             if (charBuffer.Length < queryLen + length) {
-                var newLen = (uint)Math.Max(charBuffer.Length * 3 / 2, queryLen + length + 5);
+                var newLen = (uint)Math.Max(charBuffer.Length * 2, queryLen + length);
                 var newArray = PooledExponentialBufferAllocator<char>.GetByLength(newLen);
                 Array.Copy(charBuffer, newArray, queryLen);
                 PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);
