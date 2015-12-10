@@ -4,10 +4,10 @@ using System.Threading;
 
 namespace ProgressOnderwijsUtils
 {
-    static class PooledSmallBufferAllocator<T>
+    public static class PooledSmallBufferAllocator<T>
     {
         static readonly int IndexCount = 129;
-        static readonly int MaxArrayLength = IndexCount-1;
+        static readonly int MaxArrayLength = IndexCount - 1;
 
         static readonly ConcurrentQueue<T[]>[] bagsByIndex = new ConcurrentQueue<T[]>[IndexCount];
 
@@ -23,6 +23,10 @@ namespace ProgressOnderwijsUtils
             return otherBag ?? bag;
         }
 
+
+        /// <summary>
+        /// Provides a new or reused array of the given length.
+        /// </summary>
         public static T[] GetByLength(int length)
         {
             if (length > MaxArrayLength)
@@ -34,6 +38,10 @@ namespace ProgressOnderwijsUtils
             return new T[length];
         }
 
+        /// <summary>
+        /// Releases an array array back into the pool.  It is an error for a caller to use the array after this call.
+        /// Large arrays (currently longer than 128 elements) are never pooled; this operation is a no-op for such arrays.
+        /// </summary>
         public static void ReturnToPool(T[] arr)
         {
             if (arr.Length > MaxArrayLength)
