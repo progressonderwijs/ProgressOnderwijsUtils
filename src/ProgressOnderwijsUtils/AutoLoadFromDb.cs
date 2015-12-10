@@ -238,6 +238,7 @@ namespace ProgressOnderwijsUtils
             where TReader : IDataReader
         {
             public delegate T[] TRowReader<T>(TReader reader, out int lastColumnRead);
+
             struct TRowReaderWithCols<T>
             {
                 public string[] Cols;
@@ -359,7 +360,6 @@ namespace ProgressOnderwijsUtils
             public static class ByMetaObjectImpl<T>
                 where T : IMetaObject, new()
             {
-
                 struct ColumnOrdering : IEquatable<ColumnOrdering>
                 {
                     readonly ulong cachedHash;
@@ -394,7 +394,6 @@ namespace ProgressOnderwijsUtils
                     public override int GetHashCode() => (int)(uint)((cachedHash >> 32) + cachedHash);
                     public override bool Equals(object obj) => obj is ColumnOrdering && Equals((ColumnOrdering)obj);
                 }
-
 
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>> LoadRows;
                 static Type type => typeof(T);
@@ -447,20 +446,23 @@ namespace ProgressOnderwijsUtils
                     }
                     var ordering = new ColumnOrdering(reader);
 
-                    var rowReaderWithCols = LoadRows.GetOrAdd(
-                        ordering,
-                        orderingP => 
-                            new TRowReaderWithCols<T> {
-                                 Cols = orderingP.Cols,
-                                 RowReader = CreateLoadRowsMethod<T>(
-                                    (readerParamExpr, lastColumnReadParameter) =>
-                                        Expression.MemberInit(
-                                            Expression.New(type),
-                                            createColumnBindings(orderingP, readerParamExpr, lastColumnReadParameter))),
-                            });
-                    if (rowReaderWithCols.Cols != ordering.Cols)
+                    var cachedRowReaderWithCols = LoadRows.GetOrAdd(ordering, ConstructTRowReaderWithCols);
+                    if (ordering.Cols != cachedRowReaderWithCols.Cols) {
                         PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
-                    return rowReaderWithCols.RowReader;
+                    }
+                    return cachedRowReaderWithCols.RowReader;
+                }
+
+                static TRowReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
+                {
+                    return new TRowReaderWithCols<T> {
+                        Cols = ordering.Cols,
+                        RowReader = CreateLoadRowsMethod<T>(
+                            (readerParamExpr, lastColumnReadParameter) =>
+                                Expression.MemberInit(
+                                    Expression.New(type),
+                                    createColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
+                    };
                 }
 
                 static IEnumerable<MemberAssignment> createColumnBindings(
