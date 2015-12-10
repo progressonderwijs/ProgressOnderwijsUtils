@@ -322,7 +322,7 @@ namespace ProgressOnderwijsUtils
                 var singleRowArrayExpr = Expression.NewArrayInit(typeof(T), rowVar);
                 var afterFirstRead = Expression.Condition(callReader_Read, createArrayGivenRowInVarAndReaderAtValidRow, singleRowArrayExpr);
                 var afterFirstPartialRead = Expression.Block(Expression.Assign(rowVar, constructRowExpr), afterFirstRead);
-                var emptyArrayMethod = ((Func < T[] > )ArrayExtensions.Empty<T>).Method;
+                var emptyArrayMethod = ((Func<T[]>)ArrayExtensions.Empty<T>).Method;
                 var returnEmptyArrayOrRunRestOfCode = Expression.Condition(callReader_Read, afterFirstPartialRead, Expression.Call(emptyArrayMethod));
                 var loadRowsMethodBody = Expression.Block(typeof(T[]), new[] { rowVar, arrayBuilderVarExpr, }, returnEmptyArrayOrRunRestOfCode);
                 var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
