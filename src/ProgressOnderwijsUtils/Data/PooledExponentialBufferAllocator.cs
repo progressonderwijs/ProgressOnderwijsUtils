@@ -40,6 +40,7 @@ namespace ProgressOnderwijsUtils
         /// Arrays that are not an exact power of two or are too large (more than 2^14) are never pooled; this operation is a no-op for such arrays.
         /// 
         /// It is inefficient to return "old" arrays into the pool; the most efficient usage is when the consumer only need needs few arrays simultaneously.
+        /// Note that arrays are *NOT* cleared when they are returned to the pool; for reference types it may be advisable to clear the array to avoid unnecessary gc load.
         /// </summary>
         public static void ReturnToPool(T[] arr)
         {
