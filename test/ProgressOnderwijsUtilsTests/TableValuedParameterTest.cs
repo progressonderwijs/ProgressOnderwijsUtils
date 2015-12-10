@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System.Data;
+using System.Data.Common;
+using System.Linq;
 using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Text;
@@ -55,6 +57,80 @@ namespace ProgressOnderwijsUtilsTests
                 from filedata fd
                 where fd.hashcode in {new[] { hashcode }}
             ").ReadPlain<Id.FileData>(conn).Single() == id);
+        }
+
+        public sealed class TestDataMetaObject : IMetaObject
+        {
+            public byte[] Data { get; set; }
+        }
+
+        static readonly byte[] testData = Enumerable.Range(0, 100).Select(i => (byte)i).ToArray();
+
+        [Test]
+        public void Test_DbDataReaderBase_GetBytes_works_the_same_as_in_SqlDataReader()
+        {
+            var testen = new[] { new TestDataMetaObject { Data =  testData } };
+            var reader = new MetaObjectDataReader<TestDataMetaObject>(testen);
+            Assert_DataReader_GetBytes_works(reader);
+        }
+
+        [Test]
+        public void Test_SqlDataReader_GetBytes_for_its_spec()
+        {
+            SQL($@"
+                create table get_bytes_test
+                (
+                    data varbinary(max) not null
+                );
+
+                insert into get_bytes_test
+                values ({testData});
+            ").ExecuteNonQuery(conn);
+
+            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(conn.PNetCommandCreationContext))
+            using (var reader = cmd.ExecuteReader(CommandBehavior.Default))
+                Assert_DataReader_GetBytes_works(reader);
+        }
+
+        static void Assert_DataReader_GetBytes_works(DbDataReader reader)
+        {
+            PAssert.That(() => reader.Read());
+
+            long nofRead;
+            var buffer = new byte[10];
+
+            // TODO: willen we dit ook zo ondersteunen?
+            //nofRead = reader.GetBytes(0, 0, null, 0, 1);
+            //PAssert.That(() => nofRead == 100);
+
+            nofRead = reader.GetBytes(0, 0, buffer, 0, 1);
+            PAssert.That(() => buffer[0] == 0);
+            PAssert.That(() => nofRead == 1);
+
+            nofRead = reader.GetBytes(0, 20, buffer, 0, 1);
+            PAssert.That(() => buffer[0] == 20);
+            PAssert.That(() => nofRead == 1);
+
+            nofRead = reader.GetBytes(0, 30, buffer, 0, 2);
+            PAssert.That(() => buffer[1] == 31);
+            PAssert.That(() => nofRead == 2);
+
+            nofRead = reader.GetBytes(0, 80, buffer, 5, 2);
+            PAssert.That(() => buffer[6] == 81);
+            PAssert.That(() => nofRead == 2);
+
+            nofRead = reader.GetBytes(0, 99, buffer, 0, 10);
+            PAssert.That(() => buffer[0] == 99);
+            PAssert.That(() => buffer[1] == 31);
+            PAssert.That(() => nofRead == 1);
+
+            nofRead = reader.GetBytes(0, 100, buffer, 0, 1);
+            PAssert.That(() => nofRead == 0);
+
+            nofRead = reader.GetBytes(0, 110, buffer, 0, 1);
+            PAssert.That(() => nofRead == 0);
+
+            PAssert.That(() => !reader.Read());
         }
     }
 }

@@ -8,16 +8,13 @@ namespace ProgressOnderwijsUtils
     {
         public override long GetBytes(int ordinal, long dataOffset, byte[] buffer, int bufferOffset, int length)
         {
-            var bytes = (byte[])GetValue(ordinal);
-            var maxLength = Math.Min(length, bytes.Length);
-            if (buffer.Length >= bufferOffset + maxLength) {
-                for (var i = dataOffset; i < maxLength; ++i) {
-                    buffer[bufferOffset + i] = bytes[i];
-                }
-                return Math.Max(0, maxLength - dataOffset);
-            } else {
-                throw new NotSupportedException();
+            long read = 0;
+            var data = (byte[])GetValue(ordinal);
+            while (read < length && read + dataOffset < data.Length) {
+                buffer[bufferOffset + read] = data[dataOffset + read];
+                ++read;
             }
+            return read;
         }
 
         public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length)
