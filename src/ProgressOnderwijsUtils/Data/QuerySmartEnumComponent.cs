@@ -8,11 +8,10 @@ namespace ProgressOnderwijsUtils
         public object EquatableValue { get; private set; }
 
         public SqlParameter ToSqlParameter(string paramName)
-            => new SqlParameter
-            {
+            => new SqlParameter {
                 IsNullable = EquatableValue == DBNull.Value,
                 ParameterName = paramName,
-                Value = (object) (EquatableValue as ISmartEnum)?.Id ?? DBNull.Value,
+                Value = (object)(EquatableValue as ISmartEnum)?.Id ?? DBNull.Value,
             };
 
         public static void AppendSmartEnumParameter<TCommandFactory>(ref TCommandFactory factory, object o)
