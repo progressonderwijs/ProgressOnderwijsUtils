@@ -328,26 +328,26 @@ namespace ProgressOnderwijsUtils
                 var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
                 var loadRowsLambda = Expression.Lambda<TRowReader<T>>(loadRowsMethodBody, "LoadRows", loadRowsParamExprs);
 
-                try {
-                    return ConvertLambdaExpressionIntoDelegate(loadRowsLambda);
-                } catch (Exception e) {
-                    throw new ProgressNetException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
-                }
+                return ConvertLambdaExpressionIntoDelegate(loadRowsLambda);
             }
 
             static TRowReader<T> ConvertLambdaExpressionIntoDelegate<T>(Expression<TRowReader<T>> loadRowsLambda)
             {
-                if (!typeof(T).IsPublic) {
-                    return loadRowsLambda.Compile(); //generates slower code but works on non-public types
-                }
-                var typeBuilder = moduleBuilder.DefineType(
-                    "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
-                    TypeAttributes.Public);
-                var methodBuilder = typeBuilder.DefineMethod("LoadRows", MethodAttributes.Public | MethodAttributes.Static);
-                loadRowsLambda.CompileToMethod(methodBuilder); //generates faster code
-                var newType = typeBuilder.CreateType();
+                try {
+                    if (!typeof(T).IsPublic) {
+                        return loadRowsLambda.Compile(); //generates slower code but works on non-public types
+                    }
+                    var typeBuilder = moduleBuilder.DefineType(
+                        "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
+                        TypeAttributes.Public);
+                    var methodBuilder = typeBuilder.DefineMethod("LoadRows", MethodAttributes.Public | MethodAttributes.Static);
+                    loadRowsLambda.CompileToMethod(methodBuilder); //generates faster code
+                    var newType = typeBuilder.CreateType();
 
-                return (TRowReader<T>)Delegate.CreateDelegate(typeof(TRowReader<T>), newType.GetMethod("LoadRows"));
+                    return (TRowReader<T>)Delegate.CreateDelegate(typeof(TRowReader<T>), newType.GetMethod("LoadRows"));
+                } catch (Exception e) {
+                    throw new ProgressNetException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
+                }
             }
 
             public static class ByMetaObjectImpl<T>
