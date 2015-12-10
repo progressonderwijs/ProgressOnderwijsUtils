@@ -8,8 +8,9 @@ namespace ProgressOnderwijsUtils
     {
         static readonly int IndexCount = 129;
         static readonly int MaxArrayLength = IndexCount - 1;
+        //Unfortunately, ConcurrentStacks and ConcurrentBags perform allocations when used in this fashion, and are thus unsuitable
+        //conceptually, a ConcurrentBag that doesn't allocation on .Add(...) is what we're looking for here, and a queue is close enough.
         static readonly ConcurrentQueue<T[]>[] bagsByIndex = InitBags();
-
         static ConcurrentQueue<T[]>[] InitBags()
         {
             var allBags = new ConcurrentQueue<T[]>[IndexCount];
