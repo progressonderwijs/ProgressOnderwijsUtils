@@ -14,10 +14,10 @@ namespace ProgressOnderwijsUtils
                 Value = (object)(EquatableValue as ISmartEnum)?.Id ?? DBNull.Value,
             };
 
-        public static void AppendSmartEnumParameter<TCommandFactory>(ref TCommandFactory factory, object o)
+        public static void AppendSmartEnumParameter<TCommandFactory>(ref TCommandFactory factory, ISmartEnum o)
             where TCommandFactory : struct, ICommandFactory
         {
-            var param = new QuerySmartEnumComponent { EquatableValue = o ?? DBNull.Value };
+            var param = new QuerySmartEnumComponent { EquatableValue = (object)o ?? DBNull.Value };
             SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
         }
     }
