@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
         {
             long read = 0;
             var data = (byte[])GetValue(ordinal);
-            while (read < length && read + dataOffset < data.Length && read + bufferOffset < buffer.Length) {
+            while (read < length && read + dataOffset < data.Length) {
                 buffer[bufferOffset + read] = data[dataOffset + read];
                 ++read;
             }
