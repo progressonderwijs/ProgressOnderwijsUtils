@@ -448,6 +448,7 @@ namespace ProgressOnderwijsUtils
 
                     var cachedRowReaderWithCols = LoadRows.GetOrAdd(ordering, ConstructTRowReaderWithCols);
                     if (ordering.Cols != cachedRowReaderWithCols.Cols) {
+                        //our ordering isn't in the cache, so it's string array can be returned to the pool
                         PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
                     }
                     return cachedRowReaderWithCols.RowReader;
