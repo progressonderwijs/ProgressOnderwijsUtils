@@ -5,8 +5,8 @@ namespace ProgressOnderwijsUtils
 {
     public static class PooledSmallBufferAllocator<T>
     {
-        static readonly int MaxArrayLength = 128;
-        static readonly int IndexCount = MaxArrayLength + 1;
+        const int MaxArrayLength = 128;
+        const int IndexCount = MaxArrayLength + 1;
 
         //Unfortunately, ConcurrentStacks and ConcurrentBags perform allocations when used in this fashion, and are thus unsuitable
         //conceptually, a ConcurrentBag that doesn't allocation on .Add(...) is what we're looking for here, and a queue is close enough.
