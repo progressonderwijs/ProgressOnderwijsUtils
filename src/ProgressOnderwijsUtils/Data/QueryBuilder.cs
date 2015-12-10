@@ -199,10 +199,11 @@ namespace ProgressOnderwijsUtils
             }
 
             var str = interpolatedQuery.Format;
+            var strLen = str.Length;
 
             var pos = 0;
             while (true) {
-                var paramRefMatch = ParamRefNextMatch(str, pos);
+                var paramRefMatch = ParamRefNextMatch(str, pos, strLen);
                 if (paramRefMatch.WasNotFound()) {
                     break;
                 }
@@ -215,17 +216,17 @@ namespace ProgressOnderwijsUtils
                 }
                 pos = paramRefMatch.EndIndex;
             }
-            factory.AppendSql(str, pos, str.Length - pos);
+            factory.AppendSql(str, pos, strLen - pos);
         }
 
-        static ParamRefSubString ParamRefNextMatch(string query, int pos)
+        static ParamRefSubString ParamRefNextMatch(string query, int pos, int length)
         {
-            while (pos < query.Length) {
+            while (pos < length) {
                 char c = query[pos];
                 if (c == '{') {
                     var startPos = pos;
                     int num = 0;
-                    for (pos++; pos < query.Length; pos++) {
+                    for (pos++; pos < length; pos++) {
                         c = query[pos];
                         if (c >= '0' && c <= '9') {
                             num = num * 10 + (c - '0');
