@@ -10,12 +10,20 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
+    /// <summary>
+    /// WARNING: all implementations are mutable value types, for QueryBuilder-internal use only!
+    /// 
+    /// It is an error to ever copy an ICommandFactory.
+    /// </summary>
     interface ICommandFactory
     {
         string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter;
         void AppendSql(string sql, int startIndex, int length);
     }
 
+    /// <summary>
+    /// Mutable value type - do not make copies!  Must call `Initialize(ref factory)` after construction.
+    /// </summary>
     struct CommandFactory : ICommandFactory
     {
         static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new ConcurrentQueue<Dictionary<object, string>>();
