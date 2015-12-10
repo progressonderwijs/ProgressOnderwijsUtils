@@ -5,7 +5,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -203,60 +202,5 @@ namespace ProgressOnderwijsUtils
     {
         public string SqlTextKey { get; set; }
         public ComparableArray<object> Params { get; set; }
-    }
-
-    static class PooledSqlCommandAllocator
-    {
-        static readonly int IndexCount = 129;
-        static readonly int MaxArrayLength = IndexCount - 1;
-        static readonly ConcurrentQueue<SqlCommand>[] bagsByIndex = new ConcurrentQueue<SqlCommand>[IndexCount];
-
-        static ConcurrentQueue<SqlCommand> GetBag(int index)
-        {
-            var bag = bagsByIndex[index];
-            if (bag != null) {
-                return bag;
-            }
-            var otherBag = Interlocked.CompareExchange(ref bagsByIndex[index], bag = new ConcurrentQueue<SqlCommand>(), null);
-            //CompareExchange returns previous value
-            //if that wasn't null, this was a no-op and that value shold be returned
-            //if that *was* null, we set that location, and return our bag
-            return otherBag ?? bag;
-        }
-
-        public static SqlCommand GetByLength(int length)
-        {
-            if (length <= MaxArrayLength) {
-                var bag = GetBag(length);
-                SqlCommand result;
-                if (bag.TryDequeue(out result)) {
-                    return result;
-                }
-            }
-            var cmd = new SqlCommand();
-            var parameters = new SqlParameter[length];
-            for (int i = 0; i < length; i++) {
-                parameters[i] = new SqlParameter { ParameterName = CommandFactory.IndexToParameterName(i) };
-            }
-            cmd.Parameters.AddRange(parameters);
-            return cmd;
-        }
-
-        public static void ReturnToPool(SqlCommand cmd)
-        {
-            var parameters = cmd.Parameters;
-            var parameterCount = parameters.Count;
-            if (parameterCount > MaxArrayLength) {
-                return;
-            }
-            var bag = GetBag(parameterCount);
-            for (int i = 0; i < parameterCount; i++) {
-                parameters[i].Value = DBNull.Value;
-                parameters[i].TypeName = null;
-            }
-            cmd.CommandText = null;
-            cmd.Connection = null;
-            bag.Enqueue(cmd);
-        }
     }
 }
