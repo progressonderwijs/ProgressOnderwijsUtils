@@ -308,8 +308,6 @@ namespace ProgressOnderwijsUtils
 
                 var rowVar = Expression.Variable(typeof(T), "row");
 
-                
-
                 var listAssignment = Expression.Assign(listVarExpr, Expression.Call(listType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static)));
 
                 var lastColumnReadParameter = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
@@ -317,16 +315,8 @@ namespace ProgressOnderwijsUtils
                 var addRowExpr = Expression.Call(listVarExpr, listType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
 
                 var loopExitLabel = Expression.Label("loopExit");
-                var rowLoopExpr =
-                    Expression.Loop(
-                        Expression.IfThenElse(
-                            Expression.Call(dataReaderParamExpr, ReadMethod),
-                            addRowExpr,
-                            Expression.Break(loopExitLabel)
-                            ),
-                        loopExitLabel
-                        );
-                var rowLoopAltExpr =
+
+                var loopAddRowThenReadExpr =
                     Expression.Loop(
                         Expression.Block(
                             addRowExpr,
@@ -346,7 +336,7 @@ namespace ProgressOnderwijsUtils
                                             listAssignment,
                                             //listInit,
                                             Expression.Call(listVarExpr, listType.GetMethod("Add", new[] { typeof(T) }), rowVar),
-                                            rowLoopAltExpr,
+                                            loopAddRowThenReadExpr,
                                             listToArrayExpr
                                             );
                 var afterFirstRead = Expression.Condition(
