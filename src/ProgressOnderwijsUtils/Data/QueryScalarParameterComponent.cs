@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
                 Value = EquatableValue is Filter.CurrentTimeToken ? DateTime.Now : EquatableValue,
             };
 
-        public static void AppendScalarParameter<TCommandFactory>(ref TCommandFactory factory, object o) 
+        public static void AppendScalarParameter<TCommandFactory>(ref TCommandFactory factory, object o)
             where TCommandFactory : struct, ICommandFactory
         {
             var param = new QueryScalarParameterComponent { EquatableValue = o ?? DBNull.Value };
