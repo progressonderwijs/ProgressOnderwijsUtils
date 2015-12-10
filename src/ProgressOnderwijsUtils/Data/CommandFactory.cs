@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
     }
 
     /// <summary>
-    /// Mutable value type - do not make copies!  Must call `Initialize(ref factory)` after construction.
+    /// Mutable value type - do not make copies!
     /// </summary>
     struct CommandFactory : ICommandFactory
     {
@@ -30,14 +30,16 @@ namespace ProgressOnderwijsUtils
         SqlParameterCollection commandParameters;
         Dictionary<object, string> lookup;
 
-        public static void Initialize(ref CommandFactory that)
+        public static CommandFactory Create()
         {
-            that.queryText = FastShortStringBuilder.Create();
-            that.command = new SqlCommand();
-            that.commandParameters = that.command.Parameters;
-            if (!nameLookupBag.TryDequeue(out that.lookup)) {
-                that.lookup = new Dictionary<object, string>(8);
+            var retval = new CommandFactory();
+            retval.queryText = FastShortStringBuilder.Create();
+            retval.command = new SqlCommand();
+            retval.commandParameters = retval.command.Parameters;
+            if (!nameLookupBag.TryDequeue(out retval.lookup)) {
+                retval.lookup = new Dictionary<object, string>(8);
             }
+            return retval;
         }
 
         public SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
