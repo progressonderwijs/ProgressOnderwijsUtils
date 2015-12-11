@@ -78,7 +78,7 @@ namespace ProgressOnderwijsUtils
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
     public sealed class MpVerplichtAttribute : Attribute { }
 
-    [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
     public sealed class HideAttribute : Attribute { }
 
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
