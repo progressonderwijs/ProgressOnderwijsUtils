@@ -75,7 +75,6 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override int GetHashCode() => EqualityKeyCommandFactory.EqualityKey(impl).GetHashCode();
 
-
         public override string ToString() => DebugText();
         public string DebugText() => DebugCommandFactory.DebugTextFor(impl);
 
@@ -195,6 +194,13 @@ namespace ProgressOnderwijsUtils
             }
 
             var str = interpolatedQuery.Format;
+
+#if DEBUG
+            if (string.IsInterned(str) == null) {
+                throw new Exception("Interpolated SQL statements must be compile time constants (e.g. do not use FormattableStringFactory!)");
+            }
+#endif
+
             var formatStringTokenization = GetFormatStringParamRefs(str);
             var pos = 0;
             foreach (var paramRefMatch in formatStringTokenization) {
