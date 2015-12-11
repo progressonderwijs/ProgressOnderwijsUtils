@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
             int index = 0;
             var propertyInfos = typeof(T).GetProperties();
             var metaProperties = new IMetaProperty<T>[propertyInfos.Length];
-            foreach (PropertyInfo propertyInfo in propertyInfos) {
+            foreach (var propertyInfo in propertyInfos) {
                 var customAttributes = propertyInfo.GetCustomAttributes(true);
                 bool isMapped = true;
                 foreach (var attr in customAttributes) {
