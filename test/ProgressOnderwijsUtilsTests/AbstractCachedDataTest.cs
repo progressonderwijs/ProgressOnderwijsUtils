@@ -31,9 +31,7 @@ namespace ProgressOnderwijsUtilsTests
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            if (file != null) {
-                file.Delete();
-            }
+            file?.Delete();
         }
     }
 

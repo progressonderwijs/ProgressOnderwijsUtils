@@ -39,9 +39,7 @@ namespace ProgressOnderwijsUtils
                     g.DrawImage(oldImage, new Rectangle(0, 0, newWidth, newHeight));
                 }
             } catch {
-                if (bitmap != null) {
-                    bitmap.Dispose();
-                }
+                bitmap?.Dispose();
                 throw;
             }
             return bitmap;
@@ -80,9 +78,7 @@ namespace ProgressOnderwijsUtils
                         GraphicsUnit.Pixel);
                 } //done with drawing on "g"
             } catch {
-                if (bitmap != null) {
-                    bitmap.Dispose();
-                }
+                bitmap?.Dispose();
                 throw;
             }
             return bitmap;

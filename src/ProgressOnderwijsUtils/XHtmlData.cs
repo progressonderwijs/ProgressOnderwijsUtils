@@ -28,11 +28,8 @@ namespace ProgressOnderwijsUtils
         public static XhtmlData? TryParseAndSanitize(string s)
         {
             var xml = XhtmlCleaner.TryParse(s);
-            if (xml == null) {
-                return null;
-            }
 
-            return xml.Value.Sanitize();
+            return xml?.Sanitize();
         }
 
         public static XhtmlData GenerateToolTipHtmlFragment(IEnumerable<XNode> text, IEnumerable<XNode> tooltip, ToolTipSettings settings)
