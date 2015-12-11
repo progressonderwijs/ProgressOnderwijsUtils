@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public Tree<T> Resolve(T rootNodeValue)
         {
-            Stack<NodeContainer> todoGenerateOutput = new Stack<NodeContainer>(); //in order of creation; so junctions always before their kids.
+            var todoGenerateOutput = new Stack<NodeContainer>(); //in order of creation; so junctions always before their kids.
 
             NodeContainer rootContainer;
             if (completedBranches.TryGetValue(rootNodeValue, out rootContainer)) {

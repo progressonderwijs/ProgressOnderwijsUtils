@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,25 @@ namespace ProgressOnderwijsUtils
         void AppendSql(string sql, int startIndex, int length);
     }
 
+    struct SqlParamArgs
+    {
+        public object Value;
+        public string TypeName;
+    }
+
+    public struct ReusableCommand : IDisposable
+    {
+        public SqlCommand Command;
+
+        public void Dispose()
+        {
+            if (Command != null) {
+                PooledSqlCommandAllocator.ReturnToPool(Command);
+                Command = null;
+            }
+        }
+    }
+
     /// <summary>
     /// Mutable value type - do not make copies!
     /// </summary>
@@ -26,31 +46,49 @@ namespace ProgressOnderwijsUtils
     {
         static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new ConcurrentQueue<Dictionary<object, string>>();
         FastShortStringBuilder queryText;
-        SqlCommand command;
-        SqlParameterCollection commandParameters;
+        SqlParamArgs[] paramObjs;
+        int paramCount;
         Dictionary<object, string> lookup;
 
         public static CommandFactory Create()
         {
             var retval = new CommandFactory();
             retval.queryText = FastShortStringBuilder.Create();
-            retval.command = new SqlCommand();
-            retval.commandParameters = retval.command.Parameters;
+            retval.paramObjs = PooledExponentialBufferAllocator<SqlParamArgs>.GetByLength(16);
+            retval.paramCount = 0;
             if (!nameLookupBag.TryDequeue(out retval.lookup)) {
                 retval.lookup = new Dictionary<object, string>(8);
             }
             return retval;
         }
 
-        public SqlCommand CreateCommand(SqlConnection conn, int commandTimeout)
+        public ReusableCommand CreateCommand(SqlConnection conn, int commandTimeout)
         {
+            var command = PooledSqlCommandAllocator.GetByLength(paramCount);
             command.Connection = conn;
             command.CommandTimeout = commandTimeout; //60 by default
             command.CommandText = queryText.Finish();
+            var cmdParams = command.Parameters;
+            for (int i = 0; i < paramCount; i++) {
+                if (paramObjs[i].TypeName != null) {
+                    cmdParams[i].SqlDbType = SqlDbType.Structured;
+                    cmdParams[i].TypeName = paramObjs[i].TypeName;
+                } else {
+                    cmdParams[i].ResetSqlDbType();
+                }
+                cmdParams[i].Value = paramObjs[i].Value;
+                cmdParams[i].IsNullable = paramObjs[i].Value == DBNull.Value;
+            }
+
+            Array.Clear(paramObjs, 0, paramCount);
+            PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
+            paramObjs = null;
+
             lookup.Clear();
             nameLookupBag.Enqueue(lookup);
             lookup = null;
-            return command;
+
+            return new ReusableCommand { Command = command };
         }
 
         const int ParameterNameCacheSize = 20;
@@ -69,10 +107,23 @@ namespace ProgressOnderwijsUtils
                 paramName = parameterIndex < CachedParameterNames.Length
                     ? CachedParameterNames[parameterIndex]
                     : IndexToParameterName(parameterIndex);
-                commandParameters.Add(o.ToSqlParameter(paramName));
+                EnsureParamsArrayCanGrow();
+                o.ToSqlParameter(ref paramObjs[paramCount]);
+                paramCount++;
                 lookup.Add(o.EquatableValue, paramName);
             }
             return paramName;
+        }
+
+        void EnsureParamsArrayCanGrow()
+        {
+            if (paramObjs.Length == paramCount) {
+                var newArray = PooledExponentialBufferAllocator<SqlParamArgs>.GetByLength((uint)paramCount * 2);
+                Array.Copy(paramObjs, newArray, paramCount);
+                Array.Clear(paramObjs, 0, paramCount);
+                PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
+                paramObjs = newArray;
+            }
         }
 
         public void AppendSql(string sql, int startIndex, int length) => queryText.AppendText(sql, startIndex, length);
@@ -90,7 +141,7 @@ namespace ProgressOnderwijsUtils
         public void AppendText(string text, int startIndex, int length)
         {
             if (charBuffer.Length < queryLen + length) {
-                var newLen = (uint)Math.Max(charBuffer.Length * 3 / 2, queryLen + length + 5);
+                var newLen = (uint)Math.Max(charBuffer.Length * 2, queryLen + length);
                 var newArray = PooledExponentialBufferAllocator<char>.GetByLength(newLen);
                 Array.Copy(charBuffer, newArray, queryLen);
                 PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);

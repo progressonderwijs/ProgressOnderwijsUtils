@@ -37,13 +37,10 @@ namespace ProgressOnderwijsUtils
             SqlFactory.AppendSql(ref factory, subselect_part5);
         }
 
-        public SqlParameter ToSqlParameter(string paramName)
-            => new SqlParameter {
-                IsNullable = false,
-                ParameterName = paramName,
-                Value = MetaObject.CreateDataReader(objs),
-                SqlDbType = SqlDbType.Structured,
-                TypeName = DbTypeName,
-            };
+        public void ToSqlParameter(ref SqlParamArgs paramArgs)
+        {
+            paramArgs.Value = MetaObject.CreateDataReader(objs);
+            paramArgs.TypeName = DbTypeName;
+        }
     }
 }

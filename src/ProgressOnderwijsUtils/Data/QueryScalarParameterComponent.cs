@@ -7,12 +7,9 @@ namespace ProgressOnderwijsUtils
     {
         public object EquatableValue { get; private set; }
 
-        public SqlParameter ToSqlParameter(string paramName)
-            => new SqlParameter {
-                IsNullable = EquatableValue == DBNull.Value,
-                ParameterName = paramName,
-                Value = EquatableValue == Filter.CurrentTimeToken.Instance ? DateTime.Now : ((EquatableValue as ISmartEnum)?.Id ?? EquatableValue),
-            };
+        public void ToSqlParameter(ref SqlParamArgs paramArgs) {
+            paramArgs.Value = EquatableValue == Filter.CurrentTimeToken.Instance ? DateTime.Now : ((EquatableValue as ISmartEnum)?.Id ?? EquatableValue);
+        }
 
         public static void AppendScalarParameter<TCommandFactory>(ref TCommandFactory factory, object o)
             where TCommandFactory : struct, ICommandFactory

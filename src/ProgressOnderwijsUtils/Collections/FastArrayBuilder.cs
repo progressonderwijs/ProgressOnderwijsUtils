@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils.Collections
         public T[] ToArray()
         {
             if (segments == null) {
-                T[] retval = current;
+                var retval = current;
                 Array.Resize(ref retval, idx);
                 return retval;
             } else {
