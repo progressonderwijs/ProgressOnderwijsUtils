@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtilsTests
 
         public static void ComparePod(object a, object b)
         {
-            object[] empty = new object[0];
+            var emptyArray = new object[0];
             const BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
             var getProperties =
                 MakeFunc(
@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtilsTests
                         o.GetType().GetProperties(flags)
                             .Select(
                                 pi =>
-                                    new { pi.Name, Value = pi.GetValue(o, empty) })
+                                    new { pi.Name, Value = pi.GetValue(o, emptyArray) })
                             .Concat(
                                 o.GetType().GetFields(flags).Select(
                                     fi =>

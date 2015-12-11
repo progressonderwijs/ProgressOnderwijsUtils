@@ -22,9 +22,9 @@ namespace ProgressOnderwijsUtils
         {
             using (var cmd = builder.CreateSqlCommand(commandCreationContext)) {
                 try {
-                    return action(cmd);
+                    return action(cmd.Command);
                 } catch (Exception e) {
-                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + QueryTracer.DebugFriendlyCommandText(cmd, QueryTracerParameterValues.Included), e);
+                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + QueryTracer.DebugFriendlyCommandText(cmd.Command, QueryTracerParameterValues.Included), e);
                 }
             }
         }

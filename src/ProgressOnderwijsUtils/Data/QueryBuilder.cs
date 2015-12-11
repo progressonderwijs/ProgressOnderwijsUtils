@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
             => impl?.AppendTo(ref factory);
 
-        public SqlCommand CreateSqlCommand(SqlCommandCreationContext conn)
+        public ReusableCommand CreateSqlCommand(SqlCommandCreationContext conn)
         {
             var factory = CommandFactory.Create();
             impl?.AppendTo(ref factory);
@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils
         public string CommandText()
         {
             using (var cmd = CreateSqlCommand(new SqlCommandCreationContext(null, 0, null)))
-                return cmd.CommandText;
+                return cmd.Command.CommandText;
         }
 
         public static QueryBuilder Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
@@ -140,7 +140,7 @@ namespace ProgressOnderwijsUtils
 
     interface IQueryParameter
     {
-        SqlParameter ToSqlParameter(string paramName);
+        void ToSqlParameter(ref SqlParamArgs paramArgs);
         object EquatableValue { get; }
     }
 

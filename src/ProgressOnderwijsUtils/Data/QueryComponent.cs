@@ -18,8 +18,6 @@ namespace ProgressOnderwijsUtils
         {
             if (o is IEnumerable && !(o is string) && !(o is byte[])) {
                 ToTableParameter((IEnumerable)o).AppendTo(ref factory);
-            } else if (o is ISmartEnum) {
-                QuerySmartEnumComponent.AppendSmartEnumParameter(ref factory, o);
             } else {
                 QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
             }

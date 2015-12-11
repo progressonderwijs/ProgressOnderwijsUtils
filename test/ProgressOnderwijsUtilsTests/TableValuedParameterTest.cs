@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtilsTests
             ").ExecuteNonQuery(conn);
 
             using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(conn.PNetCommandCreationContext))
-            using (var reader = cmd.ExecuteReader(CommandBehavior.Default))
+            using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default))
                 Assert_DataReader_GetBytes_works(reader);
         }
 
