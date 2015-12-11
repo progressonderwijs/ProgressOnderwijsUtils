@@ -17,8 +17,8 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static string ToAgeTag(DateTime datetime)
         {
-            uint granularTicks = (uint)(datetime.Ticks >> 23) & 0xffffff;
-            byte[] bytes = BitConverter.GetBytes(granularTicks).Reverse().ToArray(); //reverse so most significant first.
+            var granularTicks = (uint)(datetime.Ticks >> 23) & 0xffffff;
+            var bytes = BitConverter.GetBytes(granularTicks).Reverse().ToArray(); //reverse so most significant first.
             return Convert.ToBase64String(bytes).TrimStart(trimStart).TrimEnd(trimEnd); //we trim off unneeded preceding "zero" ('A') and trailing padding chars ('=')
         }
 
@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static string ToAgeTagCaseInsensitive(DateTime datetime)
         {
-            uint granularTicks = (uint)(datetime.Ticks >> 23) & 0xffffff; //3byte code
+            var granularTicks = (uint)(datetime.Ticks >> 23) & 0xffffff; //3byte code
 
             return granularTicks.ToString("x2", CultureInfo.InvariantCulture);
         }
