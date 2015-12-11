@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
         /// <exception cref="EndOfStreamException">thrown when EOF is reached before the needed number of bytes are read</exception>
         public static byte[] ReadUntil(this Stream stream, int size)
         {
-            byte[] result = new byte[size];
+            var result = new byte[size];
             int offset = 0;
             while (offset < result.Length) {
                 int n = stream.Read(result, offset, result.Length - offset);

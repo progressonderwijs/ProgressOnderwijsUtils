@@ -14,8 +14,8 @@ namespace ProgressOnderwijsUtilsTests
     {
         public static Saml20MetaData Saml20MetaData(IdentityProvider idp, ServiceProvider? sp, DatabaseVersion? db)
         {
-            IdentityProviderConfig server = MetaDataFactory.GetIdentityProvider(idp);
-            ServiceProviderConfig? client = sp.HasValue && db.HasValue
+            var server = MetaDataFactory.GetIdentityProvider(idp);
+            var client = sp.HasValue && db.HasValue
                 ? MetaDataFactory.GetServiceProvider(sp.Value, db.Value)
                 : default(ServiceProviderConfig?);
 
@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void Generate()
         {
-            XmlDocument md = MetaDataFactory.Generate();
+            var md = MetaDataFactory.Generate();
             Assert.That(md, Is.Not.Null);
         }
 
@@ -161,7 +161,7 @@ namespace ProgressOnderwijsUtilsTests
                 idp = IdentityProvider.Conext,
                 uri = "https://localhost/webstatic/fontys?pc=123",
             };
-            var sut = SingleSignOnHandler.GeneratePostToRedirect(state, new XElement("assertion"));
+            SingleSignOnHandler.GeneratePostToRedirect(state, new XElement("assertion"));
         }
     }
 }
