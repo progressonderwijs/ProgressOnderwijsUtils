@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -71,7 +74,6 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public override int GetHashCode() => EqualityKeyCommandFactory.EqualityKey(impl).GetHashCode();
-
 
         public override string ToString() => DebugText();
         public string DebugText() => DebugCommandFactory.DebugTextFor(impl);
@@ -192,14 +194,16 @@ namespace ProgressOnderwijsUtils
             }
 
             var str = interpolatedQuery.Format;
-            var strLen = str.Length;
 
+#if DEBUG
+            if (string.IsInterned(str) == null) {
+                throw new Exception("Interpolated SQL statements must be compile time constants (e.g. do not use FormattableStringFactory!)");
+            }
+#endif
+
+            var formatStringTokenization = GetFormatStringParamRefs(str);
             var pos = 0;
-            while (true) {
-                var paramRefMatch = ParamRefNextMatch(str, pos, strLen);
-                if (paramRefMatch.WasNotFound()) {
-                    break;
-                }
+            foreach (var paramRefMatch in formatStringTokenization) {
                 factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos);
                 var argument = interpolatedQuery.GetArgument(paramRefMatch.ReferencedParameterIndex);
                 if (argument is QueryBuilder) {
@@ -209,7 +213,30 @@ namespace ProgressOnderwijsUtils
                 }
                 pos = paramRefMatch.EndIndex;
             }
-            factory.AppendSql(str, pos, strLen - pos);
+            factory.AppendSql(str, pos, str.Length - pos);
+        }
+
+        static readonly ConcurrentDictionary<string, ParamRefSubString[]> parsedFormatStrings
+            = new ConcurrentDictionary<string, ParamRefSubString[]>(new ReferenceEqualityComparer<string>());
+
+        static ParamRefSubString[] GetFormatStringParamRefs(string formatstring)
+        {
+            return parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString);
+        }
+
+        static ParamRefSubString[] ParseFormatString(string formatstring)
+        {
+            var arrayBuilder = FastArrayBuilder<ParamRefSubString>.Create();
+            var pos = 0;
+            var strLen = formatstring.Length;
+            while (true) {
+                var paramRefMatch = ParamRefNextMatch(formatstring, pos, strLen);
+                if (paramRefMatch.WasNotFound()) {
+                    return arrayBuilder.ToArray();
+                }
+                arrayBuilder.Add(paramRefMatch);
+                pos = paramRefMatch.EndIndex;
+            }
         }
 
         static ParamRefSubString ParamRefNextMatch(string query, int pos, int length)
