@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reflection;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business.Bsa.BsaDtos;
 using Progress.Business.DomainUnits;
 using Progress.Business.Inschrijvingen.Studielink;
 using ProgressOnderwijsUtils;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Data.SqlClient;
-using System.Threading;
 
 namespace ProgressOnderwijsUtils
 {
