@@ -40,32 +40,6 @@ namespace ProgressOnderwijsUtils
     }
 
     [Serializable]
-    [CodeDieAlleenWordtGebruiktInTests]
-    public class TemplateException : Exception
-    {
-        public int Line { get; }
-        public int Position { get; }
-
-        public TemplateException(int _Line, int _Position, string message)
-            : base(message)
-        {
-            Line = _Line;
-            Position = _Position;
-        }
-
-        public TemplateException() { }
-
-        public TemplateException(string message)
-            : base(message) { }
-
-        public TemplateException(string message, Exception innerexception)
-            : base(message, innerexception) { }
-
-        protected TemplateException(SerializationInfo serializationinfo, StreamingContext streamingcontext)
-            : base(serializationinfo, streamingcontext) { }
-    }
-
-    [Serializable]
     public class GenericMetaDataException : ProgressNetException
     { //TODO: this exception should provide for naming the table and the type of metadata where the error occured.
 
