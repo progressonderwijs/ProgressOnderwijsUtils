@@ -48,17 +48,8 @@ namespace ProgressOnderwijsUtils
             var metaProperties = new IMetaProperty<T>[propertyInfos.Length];
             foreach (var propertyInfo in propertyInfos) {
                 var customAttributes = propertyInfo.GetCustomAttributes(true);
-                bool isMapped = true;
-                foreach (var attr in customAttributes) {
-                    if (attr is MpNotMappedAttribute) {
-                        isMapped = false;
-                        break;
-                    }
-                }
-                if (isMapped) {
-                    metaProperties[index] = new MetaProperty.Impl<T>(propertyInfo, index, customAttributes);
-                    index++;
-                }
+                metaProperties[index] = new MetaProperty.Impl<T>(propertyInfo, index, customAttributes);
+                index++;
             }
             Array.Resize(ref metaProperties, index);
             return metaProperties;
