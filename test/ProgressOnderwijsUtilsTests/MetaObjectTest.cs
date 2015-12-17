@@ -18,8 +18,7 @@ namespace ProgressOnderwijsUtilsTests
         public int Field;
         public string Property { get; set; }
 
-        [MpNotMapped]
-        public string IgnoredProperty { get; set; }
+        internal string IgnoredProperty { get; set; }
 
         [Hide]
         public string HiddenProperty { get; set; }

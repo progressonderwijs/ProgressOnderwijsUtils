@@ -50,9 +50,6 @@ namespace ProgressOnderwijsUtils
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, Inherited = true, AllowMultiple = false)]
     public sealed class MpLabelsRequiredAttribute : Attribute { }
 
-    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
-    public sealed class MpNotMappedAttribute : Attribute { }
-
     [AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
     public sealed class MpMaxLengthAttribute : Attribute
     {
