@@ -46,10 +46,9 @@ namespace ProgressOnderwijsUtils
             return filename.TrimToLength(maxFileNameLength);
         }
 
-        [MpNotMapped]
-        public bool ContainsFile => Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0);
+        public bool ContainsFile() => Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0);
 
-        public override string ToString() => ContainsFile ? $"{FileName} ({Content.Length / 1000m} KB)" : "";
+        public override string ToString() => ContainsFile() ? $"{FileName} ({Content.Length / 1000m} KB)" : "";
         public override bool Equals(object other) => other is FileData && Equals((FileData)other);
 
         public override int GetHashCode()
@@ -106,7 +105,7 @@ namespace ProgressOnderwijsUtils
 
         public static T Deserialize<T>(FileData file)
         {
-            if (file.ContainsFile) {
+            if (file.ContainsFile()) {
                 using (var stream = new MemoryStream(file.Content)) {
                     var formatter = new BinaryFormatter();
                     return (T)formatter.Deserialize(stream);

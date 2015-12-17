@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils
             yield return TryToString<FileData>(
                 obj,
                 o => language =>
-                    o.ContainsFile ? $"{o.FileName} ({o.Content.Length / 1000m} KB)" : "");
+                    o.ContainsFile() ? $"{o.FileName} ({o.Content.Length / 1000m} KB)" : "");
             yield return TryToString<double>(
                 obj,
                 o => language =>
