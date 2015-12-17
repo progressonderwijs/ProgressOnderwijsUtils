@@ -100,10 +100,6 @@ namespace ProgressOnderwijsUtils
         public static ITranslatable LimitLength(this ITranslatable translatable, int? maxwidth) => maxwidth.HasValue ? LimitLength(translatable, maxwidth.Value) : translatable;
 
         [Pure]
-        public static ITranslatable ForceLanguage(this ITranslatable translatable, Taal taal)
-            => (translatable as ForcedLanguageTranslatable) ?? new ForcedLanguageTranslatable(translatable, taal);
-
-        [Pure]
         public static ITranslatable CreateTranslatable(Func<Taal, string> text) => new SingleTranslatable(text);
 
         [Pure]
@@ -214,22 +210,6 @@ namespace ProgressOnderwijsUtils
 
             public string GenerateUid() => Translate(Taal.NL).ToString();
             public TextVal Translate(Taal lang) => translator(lang);
-            public override string ToString() => GenerateUid();
-        }
-
-        sealed class ForcedLanguageTranslatable : ITranslatable
-        {
-            readonly ITranslatable underlying;
-            readonly Taal taal;
-
-            public ForcedLanguageTranslatable(ITranslatable underlying, Taal taal)
-            {
-                this.underlying = underlying;
-                this.taal = taal;
-            }
-
-            public string GenerateUid() => underlying.GenerateUid();
-            public TextVal Translate(Taal lang) => underlying.Translate(taal);
             public override string ToString() => GenerateUid();
         }
 
