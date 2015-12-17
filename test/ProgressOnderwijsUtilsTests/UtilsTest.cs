@@ -5,6 +5,7 @@ using System.Linq;
 using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
+using Progress.Business.Documenten;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
@@ -202,7 +203,7 @@ namespace ProgressOnderwijsUtilsTests
          TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, ExpectedResult = false), Continuous]
         public bool GenerateForLanguage(DocumentLanguage doc, Taal language)
         {
-            return Utils.GenerateForLanguage(doc, language);
+            return doc.GenerateForLanguage(language);
         }
 
         public static IEnumerable<TestCaseData> RoundUpData()

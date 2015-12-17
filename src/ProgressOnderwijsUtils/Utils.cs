@@ -433,26 +433,6 @@ namespace ProgressOnderwijsUtils
             return d2 > d1 ? d2 : d1;
         }
 
-        public static bool GenerateForLanguage(DocumentLanguage doc, Taal language)
-        {
-            switch (doc) {
-                case DocumentLanguage.Dutch:
-                    return language == Taal.NL;
-                case DocumentLanguage.English:
-                    return language == Taal.EN;
-                case DocumentLanguage.German:
-                    return language == Taal.DU;
-                case DocumentLanguage.StudentPreferenceNlEn:
-                case DocumentLanguage.CoursePreferenceNlEn:
-                case DocumentLanguage.ProgramPreferenceNlEn:
-                    return language == Taal.NL || language == Taal.EN;
-                case DocumentLanguage.StudentPreferenceNlEnDu:
-                    return language == Taal.NL || language == Taal.EN || language == Taal.DU;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
         [CodeDieAlleenWordtGebruiktInTests]
         public static decimal RoundUp(decimal input, int places)
         {
