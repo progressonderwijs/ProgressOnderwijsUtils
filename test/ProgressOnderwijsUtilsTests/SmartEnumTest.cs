@@ -1,71 +1,28 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization.Formatters.Binary;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using NUnit.Framework;
 using Progress.Business;
-using Progress.Business.Inschrijvingen;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
-using ValueUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
     [Continuous]
     public sealed class SmartEnumTest : TestsWithBusinessConnection
     {
-        struct MetaObjectWithNonNullableField : IMetaObject
-        {
-            public SmartStudiejaar PeriodeStudiejaarId { get; set; }
-        }
-
-        [Test]
-        public void SmartEnum_can_be_read_using_QueryBuilder()
-        {
-            var result = SafeSql.SQL($@"
-                    select top 1
-                        psj.periodestudiejaarid
-                    from periodestudiejaar psj
-                    where 1=1
-                        and psj.periodestudiejaarid = {SmartStudiejaar.C2015}
-                ").ReadMetaObjects<MetaObjectWithNonNullableField>(conn).Single();
-
-            PAssert.That(() => result.PeriodeStudiejaarId == SmartStudiejaar.C2015);
-        }
-
-        struct MetaObjectWithNullableField : IMetaObject
-        {
-            public SmartStudiejaar? PeriodeStudiejaarId { get; set; }
-        }
-
-        [Test]
-        public void Nullable_SmartEnum_can_be_read_using_QueryBuilder()
-        {
-            var result = SafeSql.SQL($@"
-                    select top 1
-                        psj.periodestudiejaarid
-                    from periodestudiejaar psj
-                    where 1=1
-                        and psj.periodestudiejaarid = {SmartStudiejaar.C2015}
-                ").ReadMetaObjects<MetaObjectWithNullableField>(conn).Single();
-
-            PAssert.That(() => result.PeriodeStudiejaarId == SmartStudiejaar.C2015);
-        }
-
         sealed class TestEnum : ISmartEnum
         {
             public int Id { get; private set; }
-            public ITranslatable Text { get; private set; }
 
             [SmartEnumMember]
-            public static readonly TestEnum A = new TestEnum { Id = 0, Text = Translatable.Raw("A") };
+            public static readonly TestEnum A = new TestEnum { Id = 0 };
 
             [SmartEnumMember]
-            public static readonly TestEnum B = new TestEnum { Id = 1, Text = Translatable.Raw("B") };
+            public static readonly TestEnum B = new TestEnum { Id = 1 };
         }
 
         [Test]
@@ -83,13 +40,12 @@ namespace ProgressOnderwijsUtilsTests
         sealed class BrokenEnum : ISmartEnum
         {
             public int Id { get; private set; }
-            public ITranslatable Text { get; private set; }
 
             [SmartEnumMember]
-            public static readonly BrokenEnum A = new BrokenEnum { Id = 0, Text = Translatable.Raw("A") };
+            public static readonly BrokenEnum A = new BrokenEnum { Id = 0 };
 
             [SmartEnumMember]
-            public static readonly BrokenEnum B = new BrokenEnum { Id = 0, Text = Translatable.Raw("B") };
+            public static readonly BrokenEnum B = new BrokenEnum { Id = 0 };
         }
 
         [Test]
@@ -134,37 +90,6 @@ namespace ProgressOnderwijsUtilsTests
             return SmartEnum
                 .GetValues<T>()
                 .All(v1 => Equals(v1, v1) && SmartEnum.GetValues<T>().Count(v2 => Equals(v1, v2)) == 1);
-        }
-
-        [Test]
-        public void All_serializable_SmartEnums_deserialize_correctly()
-        {
-            var smartEnumsTypesThatDeserializeIncorrectly = allSmartEnumTypes
-                .Where(t => t.GetCustomAttribute<SerializableAttribute>() != null)
-                .Where(t => !InvokeGenericCheck(nameof(AllSmartEnumMembersRemainEqualAfterDeserialization), t));
-
-            PAssert.That(() => smartEnumsTypesThatDeserializeIncorrectly.None());
-        }
-
-        [UsedImplicitly]
-        static bool AllSmartEnumMembersRemainEqualAfterDeserialization<T>()
-            where T : ISmartEnum
-        {
-            return SmartEnum
-                .GetValues<T>()
-                .Select(v => new { Original = v, Deserialized = (T)SerializeAndDeserialize(v) })
-                .All(vals => Equals(vals.Original, vals.Deserialized) &&
-                    FieldwiseEquality.AreEqual(vals.Original, vals.Deserialized) /*Test fieldwise in case Equals only checks id*/);
-        }
-
-        static object SerializeAndDeserialize(object obj)
-        {
-            using (var stream = new MemoryStream()) {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(stream, obj);
-                stream.Position = 0;
-                return formatter.Deserialize(stream);
-            }
         }
     }
 }

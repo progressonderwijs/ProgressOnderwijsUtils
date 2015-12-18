@@ -200,15 +200,6 @@ namespace ProgressOnderwijsUtils
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
             };
 
-        static MethodInfo GetGetterMethodByType(Type type)
-        {
-            if (SmartEnum.IsSmartEnum(type)) {
-                return getterMethodsByType[typeof(int)];
-            } else {
-                return getterMethodsByType[type];
-            }
-        }
-
         //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
         //static MethodInfo GetterForType(Type type) => GetterMethodsByType[type];
 
@@ -257,7 +248,6 @@ namespace ProgressOnderwijsUtils
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 return getterMethodsByType.ContainsKey(underlyingType) ||
-                    SmartEnum.IsSmartEnum(underlyingType) ||
                     (isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
             }
 
@@ -268,16 +258,13 @@ namespace ProgressOnderwijsUtils
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
                 } else {
-                    return InterfaceMap[GetGetterMethodByType(underlyingType)];
+                    return InterfaceMap[getterMethodsByType[underlyingType]];
                 }
             }
 
             static Expression GetCastExpression(Expression callExpression, Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                if (SmartEnum.IsSmartEnum(underlyingType)) {
-                    return Expression.Call(null, typeof(SmartEnum).GetMethod(nameof(SmartEnum.GetById)).MakeGenericMethod(underlyingType), callExpression);
-                }
                 var needsCast = underlyingType != type.GetNonNullableType();
                 if (needsCast) {
                     return Expression.Convert(callExpression, type.GetNonNullableType());
@@ -291,7 +278,7 @@ namespace ProgressOnderwijsUtils
                 Type underlyingType = type.GetNonNullableUnderlyingType();
                 var iConstant = Expression.Constant(i);
                 var callExpr = underlyingType == typeof(byte[])
-                    ? Expression.Call(GetGetterMethodByType(underlyingType), readerParamExpr, iConstant)
+                    ? Expression.Call(getterMethodsByType[underlyingType], readerParamExpr, iConstant)
                     : Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
                 Expression colValueExpr;
                 if (!canBeNull) {
@@ -573,8 +560,7 @@ namespace ProgressOnderwijsUtils
                     if (!SupportsType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
-                                + getterMethodsByType.Keys.Select(ObjectToCode.GetCSharpFriendlyTypeName).JoinStrings(", ") + ") or an "
-                                + nameof(ISmartEnum) + "!");
+                                + getterMethodsByType.Keys.Select(ObjectToCode.GetCSharpFriendlyTypeName).JoinStrings(", ") + ")!");
                     }
                 }
 
