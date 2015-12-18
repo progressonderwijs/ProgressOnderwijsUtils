@@ -488,7 +488,8 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Waardepapier templates")]
         WaardepapierTemplates = 201,
 
-        [MpLabel("Examen waardepapier generatie"), Toekenbaar]
+        [MpLabel("Examen waardepapier generatie"), Toekenbaar,
+         Implies(ExamenWaardepapierBekijken)]
         ExamenWaardepapierGeneratie = 202,
 
         [MpLabel("Examen waardepapier bekijken")]
