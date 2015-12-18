@@ -117,10 +117,6 @@ namespace ProgressOnderwijsUtils
                 obj,
                 o =>
                     ArrayToStringHelper(o, format));
-            yield return TryToString<ISmartEnum>(
-                obj,
-                o => language =>
-                    o.Text.Translate(language).Text);
         }
 
         [Pure]

@@ -12,7 +12,6 @@ namespace ProgressOnderwijsUtils
     public interface ISmartEnum
     {
         int Id { get; }
-        ITranslatable Text { get; }
     }
 
     public static class SmartEnum
@@ -50,11 +49,6 @@ namespace ProgressOnderwijsUtils
             where T : ISmartEnum
         {
             return Values<T>.GetValues();
-        }
-
-        public static bool IsSmartEnum(Type type)
-        {
-            return typeof(ISmartEnum).IsAssignableFrom(type);
         }
     }
 }

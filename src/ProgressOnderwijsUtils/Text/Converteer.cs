@@ -180,8 +180,6 @@ namespace ProgressOnderwijsUtils
             } else if (obj is Enum) {
                 return EnumHelpers.MetaData((Enum)obj)
                     .Label; // TranslateEnum((Enum)obj);
-            } else if (obj is ISmartEnum) {
-                return ((ISmartEnum)obj).Text;
             } else if (string.IsNullOrEmpty(extraformat)) {
                 return Translatable.CreateTranslatable(ConverteerHelper.ToStringDynamic(obj, format));
             } else {
