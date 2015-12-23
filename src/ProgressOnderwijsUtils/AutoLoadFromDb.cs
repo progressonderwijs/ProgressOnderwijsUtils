@@ -225,6 +225,38 @@ namespace ProgressOnderwijsUtils
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
 
+        static ulong CaseInsensitiveHash(string s)
+        {
+            var hash = 0ul;
+            foreach (char c in s) {
+                uint code = c;
+                if (code >= 'a' && code <= 'z')
+                    code = code + 'A' - 'a' ;
+                hash = (hash << 5) - hash + code;
+            }
+            return hash;
+        }
+
+        static bool CaseInsensitiveEquality(string a, string b)
+        {
+            if (a.Length != b.Length)
+                return false;
+            for (int i = 0; i < a.Length; i++) {
+                int aChar = a[i];
+                int bChar = b[i];
+                if (aChar != bChar) {
+                    if (aChar >= 'a' && aChar <= 'z')
+                        aChar = aChar + 'A' - 'a';
+                    if (bChar >= 'a' && bChar <= 'z')
+                        bChar = bChar + 'A' - 'a';
+
+                    if (aChar != bChar)
+                        return false;
+                }
+            }
+            return true;
+        }
+
         static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
         {
@@ -360,7 +392,7 @@ namespace ProgressOnderwijsUtils
                         for (int i = 0; i < Cols.Length; i++) {
                             var name = reader.GetName(i);
                             Cols[i] = name;
-                            cachedHash += (ulong)primeArr[i] * (uint)StringComparer.OrdinalIgnoreCase.GetHashCode(name);
+                            cachedHash += (ulong)primeArr[i] * CaseInsensitiveHash(name);
                         }
                     }
 
@@ -371,7 +403,7 @@ namespace ProgressOnderwijsUtils
                             return false;
                         }
                         for (int i = 0; i < Cols.Length; i++) {
-                            if (!Cols[i].Equals(oCols[i], StringComparison.OrdinalIgnoreCase)) {
+                            if (!CaseInsensitiveEquality(Cols[i], oCols[i])) {
                                 return false;
                             }
                         }
