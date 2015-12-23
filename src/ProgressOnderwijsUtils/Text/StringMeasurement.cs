@@ -43,6 +43,9 @@ namespace ProgressOnderwijsUtils
         {
             GlyphTypeface gFont;
             new Typeface("Verdana").TryGetGlyphTypeface(out gFont);
+            if (gFont == null) {
+                new Typeface("Tahoma").TryGetGlyphTypeface(out gFont);
+            }
             char_to_width = new double[char.MaxValue + 1];
             for (int i = 0; i < char_to_width.Length; i++) {
                 var c = (char)i;
