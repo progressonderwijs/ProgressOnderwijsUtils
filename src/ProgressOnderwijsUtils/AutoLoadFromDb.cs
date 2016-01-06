@@ -433,7 +433,7 @@ namespace ProgressOnderwijsUtils
                     }
                     var ordering = new ColumnOrdering(reader);
 
-                    var cachedRowReaderWithCols = LoadRows.GetOrAdd(ordering, ConstructTRowReaderWithCols);
+                    var cachedRowReaderWithCols = LoadRows.GetOrAdd(ordering, Delegate_ConstructTRowReaderWithCols);
                     if (ordering.Cols != cachedRowReaderWithCols.Cols) {
                         //our ordering isn't in the cache, so it's string array can be returned to the pool
                         PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
@@ -441,6 +441,10 @@ namespace ProgressOnderwijsUtils
                     return cachedRowReaderWithCols.RowReader;
                 }
 
+                /// <summary>
+                /// Methodgroup-to-delegate conversion shows up on the profiles as COMDelegate::DelegateConstruct as around 4% of query exection.
+                /// </summary>
+                static readonly Func<ColumnOrdering, TRowReaderWithCols<T>> Delegate_ConstructTRowReaderWithCols = ConstructTRowReaderWithCols;
                 static TRowReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
                 {
                     return new TRowReaderWithCols<T> {
