@@ -225,13 +225,13 @@ namespace ProgressOnderwijsUtils
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
 
+        const int AsciiUpperToLowerDiff = 'a' - 'A';
+
         static ulong CaseInsensitiveHash(string s)
         {
             var hash = 0ul;
-            foreach (char c in s) {
-                uint code = c;
-                if (code >= 'a' && code <= 'z')
-                    code = code + 'A' - 'a' ;
+            foreach (var c in s) {
+                var code = c > 'Z' || c < 'A' ? c : c + (uint)AsciiUpperToLowerDiff;
                 hash = (hash << 5) - hash + code;
             }
             return hash;
@@ -239,19 +239,19 @@ namespace ProgressOnderwijsUtils
 
         static bool CaseInsensitiveEquality(string a, string b)
         {
-            if (a.Length != b.Length)
+            if (a.Length != b.Length) {
                 return false;
+            }
             for (int i = 0; i < a.Length; i++) {
                 int aChar = a[i];
                 int bChar = b[i];
                 if (aChar != bChar) {
-                    if (aChar >= 'a' && aChar <= 'z')
-                        aChar = aChar + 'A' - 'a';
-                    if (bChar >= 'a' && bChar <= 'z')
-                        bChar = bChar + 'A' - 'a';
+                    var aCode = aChar > 'Z' || aChar < 'A' ? aChar : aChar + AsciiUpperToLowerDiff;
+                    var bCode = bChar > 'Z' || bChar < 'A' ? bChar : bChar + AsciiUpperToLowerDiff;
 
-                    if (aChar != bChar)
+                    if (aCode != bCode) {
                         return false;
+                    }
                 }
             }
             return true;
