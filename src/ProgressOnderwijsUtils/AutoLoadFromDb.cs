@@ -443,6 +443,7 @@ namespace ProgressOnderwijsUtils
 
                 /// <summary>
                 /// Methodgroup-to-delegate conversion shows up on the profiles as COMDelegate::DelegateConstruct as around 4% of query exection.
+                /// See also: http://blogs.msmvps.com/jonskeet/2011/08/22/optimization-and-generics-part-2-lambda-expressions-and-reference-types/
                 /// </summary>
                 static readonly Func<ColumnOrdering, TRowReaderWithCols<T>> Delegate_ConstructTRowReaderWithCols = ConstructTRowReaderWithCols;
                 static TRowReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
