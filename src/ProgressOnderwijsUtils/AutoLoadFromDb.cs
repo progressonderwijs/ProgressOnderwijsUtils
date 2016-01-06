@@ -229,6 +229,10 @@ namespace ProgressOnderwijsUtils
 
         static ulong CaseInsensitiveHash(string s)
         {
+            //Much faster than StringComparer.OrdinalIgnoreCase.GetHashCode(...)
+            //Based on java's String.hashCode(): http://docs.oracle.com/javase/6/docs/api/java/lang/String.html#hashCode%28%29
+            //In particularly, need not produce great hash quality since column names are non-hostile (and it's good enough for the largest language on the planet...)
+
             var hash = 0ul;
             foreach (var c in s) {
                 var code = c > 'Z' || c < 'A' ? c : c + (uint)AsciiUpperToLowerDiff;
@@ -239,6 +243,8 @@ namespace ProgressOnderwijsUtils
 
         static bool CaseInsensitiveEquality(string a, string b)
         {
+            //Much faster than StringComparer.OrdinalIgnoreCase.Equals(a,b)
+            //optimized for strings that are equal, because that's the expected use case.
             if (a.Length != b.Length) {
                 return false;
             }
@@ -246,6 +252,8 @@ namespace ProgressOnderwijsUtils
                 int aChar = a[i];
                 int bChar = b[i];
                 if (aChar != bChar) {
+                    //although comparison is case insensitve, exact equality implies case insensitive equality
+                    //exact equality is commonly true and faster, so we test that first.
                     var aCode = aChar > 'Z' || aChar < 'A' ? aChar : aChar + AsciiUpperToLowerDiff;
                     var bCode = bChar > 'Z' || bChar < 'A' ? bChar : bChar + AsciiUpperToLowerDiff;
 
