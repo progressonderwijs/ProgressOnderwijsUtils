@@ -24,7 +24,9 @@ namespace ProgressOnderwijsUtils
         {
             var factory = CommandFactory.Create();
             impl?.AppendTo(ref factory);
-            return factory.CreateCommand(conn.Connection, conn.CommandTimeoutInS);
+            var command = factory.CreateCommand(conn);
+            factory.ReturnToPool();
+            return command;
         }
 
         public static readonly QueryBuilder Empty = new QueryBuilder(null);
@@ -77,8 +79,11 @@ namespace ProgressOnderwijsUtils
 
         public string CommandText()
         {
-            using (var cmd = CreateSqlCommand(new SqlCommandCreationContext(null, 0, null)))
-                return cmd.Command.CommandText;
+            var factory = CommandFactory.Create();
+            impl?.AppendTo(ref factory);
+            var commandText = factory.CommandText;
+            factory.ReturnToPool();
+            return commandText;
         }
 
         public static QueryBuilder Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
