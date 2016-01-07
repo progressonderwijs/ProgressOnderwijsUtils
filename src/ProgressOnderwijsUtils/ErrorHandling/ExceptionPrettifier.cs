@@ -15,8 +15,7 @@ namespace ProgressOnderwijsUtils.ErrorHandling
                 var sb = new StringBuilder();
                 PrettyPrintException(sb, value);
                 return sb.ToString();
-            } catch //This code is used in diagnostics and anything is better than nothing.
-            {
+            } catch { //This code is used in diagnostics and anything is better than nothing.
                 return value.ToString();
             }
         }
