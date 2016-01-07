@@ -93,36 +93,36 @@ namespace ProgressOnderwijsUtils
     }
 
 #if false
-		sealed class IndentingLogger
-		{
-			StringBuilder text = new StringBuilder();
-			int indent = 0;
-			bool isLocked;
-			public void Add(string line)
-			{
-				if (isLocked) throw new InvalidOperationException("Cannot add line; indented section is busy!");
-				text.AppendLine(new string('\t', indent) + line);
-			}
-			public void Add(params string[] lines)
-			{
-				if (isLocked) throw new InvalidOperationException("Cannot add line; indented section is busy!");
-				foreach (var line in lines)
-					text.AppendLine(new string('\t', indent) + line);
-			}
-			public void Indent(Action<IndentingLogger> todo)
-			{
-				isLocked = true;
-				try
-				{
-					todo(new IndentingLogger { indent = indent + 1, text = text });
-				}
-				finally
-				{
-					isLocked = false;
-				}
-			}
-			public override string ToString() => text.ToString();
-		}
+        sealed class IndentingLogger
+        {
+            StringBuilder text = new StringBuilder();
+            int indent = 0;
+            bool isLocked;
+            public void Add(string line)
+            {
+                if (isLocked) throw new InvalidOperationException("Cannot add line; indented section is busy!");
+                text.AppendLine(new string('\t', indent) + line);
+            }
+            public void Add(params string[] lines)
+            {
+                if (isLocked) throw new InvalidOperationException("Cannot add line; indented section is busy!");
+                foreach (var line in lines)
+                    text.AppendLine(new string('\t', indent) + line);
+            }
+            public void Indent(Action<IndentingLogger> todo)
+            {
+                isLocked = true;
+                try
+                {
+                    todo(new IndentingLogger { indent = indent + 1, text = text });
+                }
+                finally
+                {
+                    isLocked = false;
+                }
+            }
+            public override string ToString() => text.ToString();
+        }
 #endif
 
     // ReSharper restore UnusedMember.Global

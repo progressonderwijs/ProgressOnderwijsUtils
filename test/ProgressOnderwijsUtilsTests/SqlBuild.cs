@@ -12,9 +12,9 @@ namespace ProgressOnderwijsUtilsTests
         public void EenmaligeScripts()
         {
             var names = SQL($@"
-				select Naam
-				from SqlBuild.EenmaligScript
-				where DatumControle > DatumUitvoerProductie")
+                select Naam
+                from SqlBuild.EenmaligScript
+                where DatumControle > DatumUitvoerProductie")
                 .ReadPlain<string>(conn);
 
             Assert.That(names, Is.Empty, "Er zijn eenmalige scripts die op productie zijn uitgevoerd waarvan de scripts nog steeds draaien.");

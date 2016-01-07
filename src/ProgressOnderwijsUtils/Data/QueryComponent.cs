@@ -196,7 +196,7 @@ namespace ProgressOnderwijsUtils
         grant exec on TYPE::TVar_StudentStudielast to [webprogress]
         grant exec on TYPE::TVar_Time to [webprogress]
         grant exec on TYPE::TVar_Tinyint to [webprogress]
-		 
+         
 
         TODO: once we're using Sql2014, the following types appear to be considerably faster:
          CREATE TYPE TVar_Int AS TABLE ( 
@@ -207,7 +207,7 @@ namespace ProgressOnderwijsUtils
          
          Memory optimized types also need a new MEMORY_OPTIMIZED_DATA filegroup, even if we're not going to store anything in that filegroup.
          
-		 */
+         */
     }
 
     namespace Internal

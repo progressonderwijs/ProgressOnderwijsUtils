@@ -52,8 +52,8 @@ namespace ProgressOnderwijsUtils
 
             static readonly Regex
                 SafeStyleRegex = new Regex(@"^
-	\s*margin(-(left|right|top|bottom))?	\s*:\s*
-		\d+(px|em|cm|mm|)\s*;?\s*
+    \s*margin(-(left|right|top|bottom))?	\s*:\s*
+        \d+(px|em|cm|mm|)\s*;?\s*
 $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 
             static bool IsSafeStyleAttribute(XAttribute attr) => attr.Name.LocalName == "style" && SafeStyleRegex.IsMatch(attr.Value);

@@ -49,38 +49,38 @@ is.mac=is.ua.indexOf('mac')>=0;if(is.ua.indexOf('opera')>=0){is.ie=is.ns=false;i
 if(is.ua.indexOf('gecko')>=0){is.ie=is.ns=false;is.gecko=true;}";*/
 
         const string inputCss = @".noxslt {
-	background-color: #faf !important;
-	font-family: MS Sans Serif, Sans-Serif;
-	font-size: smaller;
-	color: #000;
+    background-color: #faf !important;
+    font-family: MS Sans Serif, Sans-Serif;
+    font-size: smaller;
+    color: #000;
 }
 
 #reqTime {
-	color: black;
-	background: #eee;
-	padding: 0.2em;
-	white-space: pre-wrap;
-	font-family: Segoe UI, Verdana, Helvetica, sans-serif;
-	font-size: 130%;
+    color: black;
+    background: #eee;
+    padding: 0.2em;
+    white-space: pre-wrap;
+    font-family: Segoe UI, Verdana, Helvetica, sans-serif;
+    font-size: 130%;
 }
 
 .adisabled {
-	color: Gray !important;
+    color: Gray !important;
 }
 
 .KleinVet {
-	font-weight: bold;
-	font-size: 80%;
-	color: Gray;
+    font-weight: bold;
+    font-size: 80%;
+    color: Gray;
 }
 a.KleinVet {
-	color: #365a9c;
+    color: #365a9c;
 }
 
 .treebuttons, .taallinks, .statusmodule a {
-	font-weight: bold;
-	font-size: 80%;
-	color: #365a9c;
+    font-weight: bold;
+    font-size: 80%;
+    color: #365a9c;
 }
 ",
             outputCss =
