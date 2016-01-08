@@ -26,6 +26,9 @@ namespace ProgressOnderwijsUtils
         public static byte GetByte() => GetBytes(1)[0];
 
         [UsefulToKeep("library method")]
+        public static int GetPositiveInt32() => (int)GetUInt32((uint)int.MaxValue + 1);
+
+        [UsefulToKeep("library method")]
         public static int GetInt32() => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
 
         [UsefulToKeep("library method")]
@@ -44,15 +47,16 @@ namespace ProgressOnderwijsUtils
         }
 
         [CLSCompliant(false), UsefulToKeep("library method")]
-        public static uint GetUInt32(uint bound)
+        public static uint GetUInt32(uint excludedBound)
         {
-            uint modErr = (uint.MaxValue % bound + 1) % bound;
+            // Proved in: http://www.google.com/url?q=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F11758809%2Fwhat-is-the-optimal-algorithm-for-generating-an-unbiased-random-integer-within-a&sa=D&sntz=1&usg=AFQjCNEtQkf0HYEkTn6Npvmyu2TDKPQCxA
+            uint modErr = (uint.MaxValue % excludedBound + 1) % excludedBound;
             uint safeIncBound = uint.MaxValue - modErr;
 
             while (true) {
                 uint val = GetUInt32();
                 if (val <= safeIncBound) {
-                    return val % bound;
+                    return val % excludedBound;
                 }
             }
         }
