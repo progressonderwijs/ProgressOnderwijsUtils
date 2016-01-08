@@ -467,7 +467,7 @@ namespace ProgressOnderwijsUtils
     public class LogBase2Test
     {
         [Test]
-        void logBase2RoundedDown_exhaustive_test()
+        public void LogBase2RoundedDown_exhaustive_test()
         {
             for (uint i = 1; i < uint.MaxValue; i++) {
                 var res = Utils.LogBase2RoundedDown(i);
@@ -481,7 +481,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Test]
-        void logBase2RoundedUp_exhaustive_test()
+        public void LogBase2RoundedUp_exhaustive_test()
         {
             for (uint i = 2; i < uint.MaxValue; i++) {
                 var res = Utils.LogBase2RoundedUp(i);
