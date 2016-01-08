@@ -28,9 +28,11 @@ namespace ProgressOnderwijsUtils
     public struct ReusableCommand : IDisposable
     {
         public SqlCommand Command;
+        public IDisposable QueryTimer;
 
         public void Dispose()
         {
+            QueryTimer?.Dispose();
             if (Command != null) {
                 PooledSqlCommandAllocator.ReturnToPool(Command);
                 Command = null;
@@ -44,29 +46,36 @@ namespace ProgressOnderwijsUtils
     struct CommandFactory : ICommandFactory
     {
         static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new ConcurrentQueue<Dictionary<object, string>>();
+
+        static Dictionary<object, string> GetLookup()
+        {
+            Dictionary<object, string> lookup;
+            if (nameLookupBag.TryDequeue(out lookup)) {
+                return lookup;
+            }
+            return new Dictionary<object, string>(8);
+        }
+
         FastShortStringBuilder queryText;
         SqlParamArgs[] paramObjs;
         int paramCount;
         Dictionary<object, string> lookup;
 
         public static CommandFactory Create()
-        {
-            var retval = new CommandFactory();
-            retval.queryText = FastShortStringBuilder.Create();
-            retval.paramObjs = PooledExponentialBufferAllocator<SqlParamArgs>.GetByLength(16);
-            retval.paramCount = 0;
-            if (!nameLookupBag.TryDequeue(out retval.lookup)) {
-                retval.lookup = new Dictionary<object, string>(8);
-            }
-            return retval;
-        }
+            =>
+                new CommandFactory {
+                    queryText = FastShortStringBuilder.Create(),
+                    paramObjs = PooledExponentialBufferAllocator<SqlParamArgs>.GetByLength(16),
+                    paramCount = 0,
+                    lookup = GetLookup()
+                };
 
-        public ReusableCommand CreateCommand(SqlConnection conn, int commandTimeout)
+        public ReusableCommand CreateCommand(SqlCommandCreationContext conn)
         {
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);
-            command.Connection = conn;
-            command.CommandTimeout = commandTimeout; //60 by default
-            command.CommandText = queryText.Finish();
+            command.Connection = conn.Connection;
+            command.CommandTimeout = conn.CommandTimeoutInS; //60 by default
+            command.CommandText = queryText.Value;
             var cmdParams = command.Parameters;
             for (int i = 0; i < paramCount; i++) {
                 if (paramObjs[i].TypeName != null) {
@@ -78,6 +87,14 @@ namespace ProgressOnderwijsUtils
                 cmdParams[i].Value = paramObjs[i].Value;
                 cmdParams[i].IsNullable = paramObjs[i].Value == DBNull.Value;
             }
+            var timer = conn.Tracer?.StartQueryTimer(command);
+
+            return new ReusableCommand { Command = command, QueryTimer = timer };
+        }
+
+        public void ReturnToPool()
+        {
+            queryText.ReturnToPool();
 
             Array.Clear(paramObjs, 0, paramCount);
             PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
@@ -86,10 +103,9 @@ namespace ProgressOnderwijsUtils
             lookup.Clear();
             nameLookupBag.Enqueue(lookup);
             lookup = null;
-
-            return new ReusableCommand { Command = command };
         }
 
+        public string CommandText => queryText.Value;
         const int ParameterNameCacheSize = 20;
 
         static readonly string[] CachedParameterNames =
@@ -150,12 +166,12 @@ namespace ProgressOnderwijsUtils
             queryLen += length;
         }
 
-        public string Finish()
+        public string Value => new string(charBuffer, 0, queryLen);
+
+        public void ReturnToPool()
         {
-            var retval = new string(charBuffer, 0, queryLen);
             PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);
             charBuffer = null;
-            return retval;
         }
     }
 
@@ -169,7 +185,9 @@ namespace ProgressOnderwijsUtils
         {
             var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create() };
             impl?.AppendTo(ref factory);
-            return factory.debugText.Finish();
+            var text = factory.debugText.Value;
+            factory.debugText.ReturnToPool();
+            return text;
         }
     }
 
@@ -195,10 +213,12 @@ namespace ProgressOnderwijsUtils
                 paramValues = FastArrayBuilder<object>.Create(),
             };
             impl?.AppendTo(ref factory);
-            return new QueryKey {
-                SqlTextKey = factory.debugText.Finish(),
+            var key = new QueryKey {
+                SqlTextKey = factory.debugText.Value,
                 Params = new ComparableArray<object>(factory.paramValues.ToArray()),
             };
+            factory.debugText.ReturnToPool();
+            return key;
         }
     }
 

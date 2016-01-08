@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void CurrentTimeTest()
+        public void CurrentTime_IsBetweenNowAnd2millisecondsAgo()
         {
             var filter = Filter.CreateCriterium("test", BooleanComparer.Equal, Filter.CurrentTimeToken.Instance);
             var q = filter.ToQueryBuilder();

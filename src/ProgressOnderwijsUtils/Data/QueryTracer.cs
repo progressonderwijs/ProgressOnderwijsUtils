@@ -53,22 +53,8 @@ namespace ProgressOnderwijsUtils
             public int QueryCount => 0;
             public TimeSpan SlowestQueryDuration => TimeSpan.Zero;
             public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration) { }
-
-            public IDisposable StartQueryTimer(string commandText)
-            {
-                return NullDisposable.Instance;
-            }
-
-            public IDisposable StartQueryTimer(SqlCommand sqlCommand)
-            {
-                return NullDisposable.Instance;
-            }
-        }
-
-        class NullDisposable : IDisposable
-        {
-            public void Dispose() { }
-            public static readonly NullDisposable Instance = new NullDisposable();
+            public IDisposable StartQueryTimer(string commandText) => null;
+            public IDisposable StartQueryTimer(SqlCommand sqlCommand) => null;
         }
 
         public static string DebugFriendlyCommandText(SqlCommand sqlCommand, QueryTracerParameterValues includeSensitiveInfo)
