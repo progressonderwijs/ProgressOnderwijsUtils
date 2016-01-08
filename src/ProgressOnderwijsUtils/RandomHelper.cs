@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
         public static byte GetByte() => GetBytes(1)[0];
 
         [UsefulToKeep("library method")]
-        public static int GetPositiveInt32() => (int)GetUInt32((uint)int.MaxValue + 1);
+        public static int GetNonNegativeInt32() => (int)GetUInt32((uint)int.MaxValue + 1);
 
         [UsefulToKeep("library method")]
         public static int GetInt32() => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
