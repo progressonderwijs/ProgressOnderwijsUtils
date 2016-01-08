@@ -77,24 +77,5 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => arr.EmptyIfNull() == arr);
 #pragma warning restore 1720
         }
-
-
-        [Test]
-        public void PeriodeStudiejaar_opvolgende_enumwaarde() {
-            PAssert.That(() => PeriodeStudiejaar.C2014.NextPeriodeStudiejaar() == PeriodeStudiejaar.C2015);
-        }
-
-        [Test]
-        public void PeriodeStudiejaar_niet_opvolgende_enumwaarde()
-        {
-            PAssert.That(() => PeriodeStudiejaar.C2010.NextPeriodeStudiejaar() == PeriodeStudiejaar.C2011);
-        }
-
-        [Test]
-        public void PeriodeStudiejaar_niks_na_laatste()
-        {
-            Assert.That(() => EnumHelpers.GetValues<PeriodeStudiejaar>().Last().NextPeriodeStudiejaar(), Throws.InvalidOperationException);
-        }
-
     }
 }
