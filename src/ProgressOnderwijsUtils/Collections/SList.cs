@@ -132,7 +132,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static SList<T> Reverse<T>(this SList<T> self)
         {
-            var retval = SList<T>.Empty;
+            var retval = default(SList<T>);
             for (var cur = self; !cur.IsEmpty; cur = cur.Tail) {
                 retval = retval.Prepend(cur.Head);
             }
@@ -148,7 +148,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static SList<TR> SelectReverse<T, TR>(this SList<T> self, Func<T, TR> map)
         {
-            var retval = SList<TR>.Empty;
+            var retval = default(SList<TR>);
             for (var cur = self; !cur.IsEmpty; cur = cur.Tail) {
                 retval = retval.Prepend(map(cur.Head));
             }
@@ -158,7 +158,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure, UsefulToKeep("library method")]
         public static SList<T> WhereReverse<T>(this SList<T> self, Func<T, bool> filter)
         {
-            var retval = SList<T>.Empty;
+            var retval = default(SList<T>);
             for (var cur = self; !cur.IsEmpty; cur = cur.Tail) {
                 if (filter(cur.Head)) {
                     retval = retval.Prepend(cur.Head);
@@ -193,7 +193,7 @@ namespace ProgressOnderwijsUtils.Collections
             if (list is T[]) {
                 return Create((T[])list);
             }
-            var retval = SList<T>.Empty;
+            var retval = default(SList<T>);
             for (var i = list.Count - 1; i >= 0; i--) {
                 retval = retval.Prepend(list[i]);
             }
@@ -203,7 +203,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static SList<T> Create<T>(T[] list)
         {
-            var retval = SList<T>.Empty;
+            var retval = default(SList<T>);
             for (var i = list.Length - 1; i >= 0; i--) {
                 retval = retval.Prepend(list[i]);
             }
@@ -211,12 +211,9 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> SingleElement<T>(T element)
-        {
-            return SList<T>.Empty.Prepend(element);
-        }
+        public static SList<T> SingleElement<T>(T element) => new SList<T>(element, default(SList<T>));
 
         [UsefulToKeep("library method")]
-        public static SList<T> Empty<T>() => SList<T>.Empty;
+        public static SList<T> Empty<T>() => default(SList<T>);
     }
 }
