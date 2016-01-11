@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtilsTests
                 Organisatie = RootOrganisatie.RUG,
                 Student = 2,
                 StudielinkberichtId = 3,
-                StudielinkNummer = 4,
+                StudielinkNummer = (ExternalId.StudielinkNummer)4,
                 Tekst = "asdfg",
                 Zender = "zxcvb",
             }.FinishBuilding();
@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtilsTests
                 Organisatie = RootOrganisatie.RUG,
                 Student = 2,
                 StudielinkberichtId = 3,
-                StudielinkNummer = 4,
+                StudielinkNummer = (ExternalId.StudielinkNummer)4,
                 Tekst = "asdfg",
                 Zender = "zxcvb",
             }.FinishBuilding();
@@ -100,7 +100,7 @@ namespace ProgressOnderwijsUtilsTests
                     Organisatie = RootOrganisatie.RUG,
                     Student = 2,
                     StudielinkberichtId = 3,
-                    StudielinkNummer = 4,
+                    StudielinkNummer = (ExternalId.StudielinkNummer)4,
                     Tekst = "asdfg",
                     Zender = "zxcvb",
                 };
