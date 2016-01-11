@@ -27,8 +27,10 @@ namespace ProgressOnderwijsUtilsTests
                 join sys.columns c on c.object_id = kc.parent_object_id and c.column_id = kc.parent_column_id
                 join sys.schemas s on s.schema_id = pt.schema_id
                 left join sys.index_columns ic on ic.object_id = kc.parent_object_id and ic.column_id = kc.parent_column_id
-                where ic.object_id is null
+                where 1=1
+                    and ic.object_id is null
                     and k.name not in {exceptions}
+                    and k.name not like 'fk_pnetlog_%%_Log_ActieTypeId' -- exclude al die actietype indexes in de log tabellen; deze zitten meer in de weg dan dat ze iets opleveren
                 ").ReadPlain<string>(conn), Is.Empty, "Geen index op FK-kolom.");
         }
     }
