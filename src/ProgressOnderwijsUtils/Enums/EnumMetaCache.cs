@@ -234,8 +234,10 @@ namespace ProgressOnderwijsUtils
 
             if (typeof(int) == underlying) {
                 toInt64 = CreateDelegate<Func<TEnum, long>>(FlagsEnumOperationMethodInfos.forInt32.ToInt64);
-            } else {
+            } else if (typeof(long) == underlying) {
                 toInt64 = CreateDelegate<Func<TEnum, long>>(FlagsEnumOperationMethodInfos.forInt64.ToInt64);
+            } else {
+                toInt64 = v => v.ToInt64(null);//slow fallback
             }
 
             //TODO: some documentation of invariants here might be in order.
