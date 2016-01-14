@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils.WebSupport
             if (!context.Request.IsSecureConnection) {
                 context.Response.RedirectPermanent(new UriBuilder(context.Request.Url) { Scheme = Uri.UriSchemeHttps, Port = -1 }.Uri.ToString());
                 context.Response.End();
-            } else if (context.Request.Headers.Get("Host") == "localhost") {
+            } else if (context.Request.Headers.Get("Host") != "localhost") {
                 context.Response.AddHeader("Strict-Transport-Security", "max-age=31536000");
             }
         }
