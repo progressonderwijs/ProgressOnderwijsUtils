@@ -15,6 +15,8 @@ namespace ProgressOnderwijsUtils
                     return "StudentInschrijvingBetalingInformatieId";
                 case "VolgOnderwijs":
                     return "onderwijsid";
+                case "OverigeVordering":
+                    return "vorderingoverigid";
                 default:
                     return typeof(T).Name + "Id";
             }
