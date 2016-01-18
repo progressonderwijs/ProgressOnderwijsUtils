@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
@@ -46,6 +47,18 @@ namespace ProgressOnderwijsUtils
                 retval[i] = list[i];
             }
             return retval;
+        }
+
+        /// <summary>
+        /// Like Enumerable.Select, but faster due to specialization for arrays.
+        /// </summary>
+        [Pure]
+        public static TR[] ArraySelect<T,TR>(this T[] array, Func<T, TR> mappingFunction)
+        {
+            var output = new TR[array.Length];
+            for (int i = 0; i < array.Length; ++i)
+                output[i] = mappingFunction(array[i]);
+            return output;
         }
     }
 }
