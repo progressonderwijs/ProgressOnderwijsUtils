@@ -7,7 +7,6 @@ namespace ProgressOnderwijsUtils
         public string Text { get; }
         public string ExtraText { get; }
         public static string UndefinedExtraText => "Sorry, this text is not available in your language";
-        [CodeDieAlleenWordtGebruiktInTests]
         public bool IsDefined => !(UndefinedExtraText == ExtraText || Text != null && Text.StartsWith("~") && ExtraText != null && ExtraText.StartsWith("~"));
         public bool IsEmpty => string.IsNullOrEmpty(Text) && string.IsNullOrEmpty(ExtraText);
         public bool HasExtraText => !string.IsNullOrEmpty(ExtraText);
