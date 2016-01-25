@@ -5,6 +5,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
+using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
@@ -12,118 +13,153 @@ namespace ProgressOnderwijsUtils
         where T : IMetaObject
     {
         readonly IEnumerator<T> metaObjects;
-        static readonly IMetaProperty<T>[] fields;
-        static readonly Action<T, object[]> ReadValues;
-        static readonly Dictionary<string, int> indexLookup;
-        static readonly DataTable schemaTable;
-
-        static MetaObjectDataReader()
-        {
-            fields = MetaObject.GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
-            indexLookup = fields.Select((mp, i) => new { Naam = mp.Name, i }).ToDictionary(x => x.Naam, x => x.i);
-
-            var parExpr = Expression.Parameter(typeof(T));
-            var arrExpr = Expression.Parameter(typeof(object[]));
-
-            var arrFiller = Expression.Lambda<Action<T, object[]>>(
-                Expression.Block(
-                    fields.Select(
-                        (field, i) =>
-                            Expression.Assign(Expression.ArrayAccess(arrExpr, Expression.Constant(i)), Expression.Convert(field.GetterExpression(parExpr), typeof(object)))
-                        )),
-                parExpr,
-                arrExpr);
-
-            var ab = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("MetaObjectDataReader_Helper"), AssemblyBuilderAccess.Run);
-            var mod = ab.DefineDynamicModule("MetaObjectDataReader_HelperModule");
-            var tb = mod.DefineType("MetaObjectDataReader_HelperType", TypeAttributes.Public);
-            var mb = tb.DefineMethod("FillArray", MethodAttributes.Public | MethodAttributes.Static);
-            arrFiller.CompileToMethod(mb);
-            var t = tb.CreateType();
-
-            ReadValues = (Action<T, object[]>)Delegate.CreateDelegate(typeof(Action<T, object[]>), t.GetMethod("FillArray"));
-
-            schemaTable = CreateSchemaTable();
-
-            //ReadValues = arrFiller.Compile();
-        }
-
         public override DataTable GetSchemaTable() => schemaTable;
-
-        static DataTable CreateSchemaTable()
-        {
-            var dt = new DataTable();
-            dt.Columns.Add("ColumnName", typeof(string));
-            dt.Columns.Add("ColumnOrdinal", typeof(int));
-            dt.Columns.Add("ColumnSize", typeof(int));
-            dt.Columns.Add("NumericPrecision", typeof(short));
-            dt.Columns.Add("NumericScale", typeof(short));
-            dt.Columns.Add("DataType", typeof(Type));
-            dt.Columns.Add("ProviderType", typeof(int));
-            dt.Columns.Add("IsLong", typeof(bool));
-            dt.Columns.Add("AllowDBNull", typeof(bool));
-            dt.Columns.Add("IsReadOnly", typeof(bool));
-            dt.Columns.Add("IsRowVersion", typeof(bool));
-            dt.Columns.Add("IsUnique", typeof(bool));
-            dt.Columns.Add("IsKey", typeof(bool));
-            dt.Columns.Add("IsAutoIncrement", typeof(bool));
-            dt.Columns.Add("BaseCatalogName", typeof(string));
-            dt.Columns.Add("BaseSchemaName", typeof(string));
-            dt.Columns.Add("BaseTableName", typeof(string));
-            dt.Columns.Add("BaseColumnName", typeof(string));
-
-            for (int i = 0; i < fields.Length; i++) {
-                dt.Rows.Add(
-                    fields[i].Name,
-                    i,
-                    -1,
-                    null,
-                    null,
-                    fields[i].DataType,
-                    null,
-                    false,
-                    fields[i].AllowNullInEditor,
-                    true,
-                    false,
-                    fields[i].IsKey && fields.Count(mp => mp.IsKey) == 1,
-                    fields[i].IsKey,
-                    false,
-                    null,
-                    null,
-                    null,
-                    "val");
-            }
-            return dt;
-        }
 
         public override void Close()
         {
             metaObjects.Dispose();
             isClosed = true;
+            current = default(T);
         }
+
+        T current;
 
         public MetaObjectDataReader(IEnumerable<T> objects)
         {
             metaObjects = objects.GetEnumerator();
         }
 
-        object[] cache;
-
         protected override bool ReadImpl()
         {
             bool hasnext = metaObjects.MoveNext();
             if (hasnext) {
-                cache = cache ?? new object[fields.Length];
-                ReadValues(metaObjects.Current, cache);
+                current = metaObjects.Current;
             }
             return hasnext;
         }
 
-        public override int FieldCount => fields.Length;
-        public override Type GetFieldType(int ordinal) => fields[ordinal].DataType;
-        public override string GetName(int ordinal) => fields[ordinal].Name;
-        public override int GetOrdinal(string name) => indexLookup[name];
-        public override object GetValue(int ordinal) => cache[ordinal] ?? DBNull.Value;
-        public override bool IsDBNull(int ordinal) => cache[ordinal] == null;
+        public override int FieldCount => cols.Length;
+        public override Type GetFieldType(int ordinal) => cols[ordinal].DataType;
+        public override string GetName(int ordinal) => cols[ordinal].Name;
+        public override int GetOrdinal(string name) => colIndexByName[name];
+        public override int GetInt32(int ordinal) => ((Func<T, int>)cols[ordinal].TypedGetter)(current);
+        public override object GetValue(int ordinal) => cols[ordinal].GetAsObject(current) ?? DBNull.Value;
+
+        public override bool IsDBNull(int ordinal)
+        {
+            var func = cols[ordinal].IsFieldNull;
+            return func != null && func(current);
+        }
+
+        public override TCol GetFieldValue<TCol>(int ordinal)
+        {
+            var getter = cols[ordinal].TypedGetter as Func<T, TCol>;
+            if (getter != null) {
+                return getter(current);
+            } else {
+                throw new InvalidOperationException($"Tried to access field {cols[ordinal].Name} of type {ObjectToCode.GetCSharpFriendlyTypeName(cols[ordinal].DataType)} as type {ObjectToCode.GetCSharpFriendlyTypeName(typeof(TCol))}.");
+            }
+        }
+
+        struct ColumnInfo
+        {
+            public string Name;
+            public Type DataType;
+            public Func<T, object> GetAsObject;
+            public Func<T, bool> IsFieldNull;
+            public Delegate TypedGetter;
+        }
+
+        static readonly ColumnInfo[] cols;
+        static readonly Dictionary<string, int> colIndexByName;
+        static readonly DataTable schemaTable;
+
+        static MetaObjectDataReader()
+        {
+            var metaProperties = MetaObject.GetMetaProperties<T>();
+            var colsBuilder = new List<ColumnInfo>(metaProperties.Count);
+            colIndexByName = new Dictionary<string, int>(metaProperties.Count, StringComparer.OrdinalIgnoreCase);
+            schemaTable = MetaObjectDataReaderHelpers.CreateEmptySchemaTable();
+            var i = 0;
+            foreach (var mp in metaProperties) {
+                if (mp.CanRead) {
+                    var name = mp.Name;
+                    var type = mp.DataType;
+                    var isKey = mp.IsKey;
+                    var fieldIsNullDelegate = FieldIsNullDelegate(mp);
+                    var getter = mp.Getter;//safe for enum to int conversion?
+                    var typedFieldGetter = TypedFieldGetter(mp);
+                    var allowDbNull = fieldIsNullDelegate != null;
+                    var isUnique = isKey && !metaProperties.Any(other => other != mp && other.IsKey);
+
+                    colIndexByName.Add(mp.Name, i);
+                    schemaTable.Rows.Add(name, i, -1, null, null, type, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
+                    colsBuilder.Add(new ColumnInfo {
+                        Name = name,
+                        DataType = type,
+                        GetAsObject = getter,
+                        IsFieldNull = fieldIsNullDelegate,
+                        TypedGetter = typedFieldGetter,
+                    });
+                    i++;
+                }
+            }
+
+            cols = colsBuilder.ToArray();
+        }
+
+        static Delegate TypedFieldGetter(IMetaProperty<T> mp)
+        {
+            var typeForDb = mp.DataType.GetNonNullableUnderlyingType();
+            var rowParExpr = Expression.Parameter(typeof(T));
+            var memberExpr = mp.GetterExpression(rowParExpr);
+            var convertedMemberExpr = Expression.Convert(memberExpr, typeForDb);
+            var delegateType = typeof(Func<,>).MakeGenericType(typeof(T), typeForDb);
+            var typedGetter = Expression.Lambda(delegateType, convertedMemberExpr, rowParExpr);
+            return typedGetter.Compile();
+        }
+
+        static Func<T, bool> FieldIsNullDelegate(IMetaProperty<T> mp)
+        {
+            var dataType = mp.DataType;
+
+            if (dataType.IsValueType && dataType.IfNullableGetNonNullableType() == null) {
+                return null;
+            }
+
+            var rowParExpr = Expression.Parameter(typeof(T));
+            var memberExpr = mp.GetterExpression(rowParExpr);
+            var typedIsNullChecker = Expression.Lambda<Func<T, bool>>(Expression.Equal(Expression.Default(dataType), memberExpr), rowParExpr);
+            return typedIsNullChecker.Compile();
+        }
+    }
+
+    static class MetaObjectDataReaderHelpers
+    {
+        public static DataTable CreateEmptySchemaTable()
+        {
+            var dt = new DataTable();
+            dt.Columns.AddRange(new[] {
+                new DataColumn("ColumnName", typeof(string)),
+                new DataColumn("ColumnOrdinal", typeof(int)),
+                new DataColumn("ColumnSize", typeof(int)),
+                new DataColumn("NumericPrecision", typeof(short)),
+                new DataColumn("NumericScale", typeof(short)),
+                new DataColumn("DataType", typeof(Type)),
+                new DataColumn("ProviderType", typeof(int)),
+                new DataColumn("IsLong", typeof(bool)),
+                new DataColumn("AllowDBNull", typeof(bool)),
+                new DataColumn("IsReadOnly", typeof(bool)),
+                new DataColumn("IsRowVersion", typeof(bool)),
+                new DataColumn("IsUnique", typeof(bool)),
+                new DataColumn("IsKey", typeof(bool)),
+                new DataColumn("IsAutoIncrement", typeof(bool)),
+                new DataColumn("BaseCatalogName", typeof(string)),
+                new DataColumn("BaseSchemaName", typeof(string)),
+                new DataColumn("BaseTableName", typeof(string)),
+                new DataColumn("BaseColumnName", typeof(string)),
+            });
+            return dt;
+        }
     }
 }
