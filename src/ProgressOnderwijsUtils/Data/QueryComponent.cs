@@ -243,7 +243,7 @@ namespace ProgressOnderwijsUtils
                     } else {
                         var projectedArray = new DbTableValuedParameterWrapper<T>[typedList.Count];
                         for (int i = 0; i < projectedArray.Length; i++) {
-                            projectedArray[i].querytablevalue = typedArray[i];
+                            projectedArray[i].querytablevalue = typedList[i];
                         }
                         return projectedArray;
                     }
