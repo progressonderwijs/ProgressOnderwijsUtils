@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
         readonly string DbTypeName;
         public object EquatableValue => Tuple.Create(objs, DbTypeName);
 
-        internal QueryTableValuedParameterComponent(string dbTypeName, IEnumerable<T> list)
+        internal QueryTableValuedParameterComponent(string dbTypeName, T[] list)
         {
             objs = list;
             DbTypeName = dbTypeName;
