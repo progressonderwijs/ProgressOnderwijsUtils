@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
 
         public override long GetChars(int ordinal, long dataOffset, char[] buffer, int bufferOffset, int length)
         {
-            var str = (string)GetValue(ordinal);
+            var str = GetString(ordinal);
             length = Math.Min(length, str.Length);
             if (buffer != null && buffer.Length >= bufferOffset + length) {
                 for (int i = (int)dataOffset; i < length; i++) {
