@@ -224,36 +224,35 @@ namespace ProgressOnderwijsUtils
 
         public static class DbTableValuedParameterWrapperHelper
         {
-
             /// <summary>
             /// Efficiently wraps an enumerable of objects in DbTableValuedParameterWrapper and materialized the sequence as array.
             /// Effectively it's like .Select(x => new DbTableValuedParameterWrapper { querytablevalue = x }).ToArray() but faster.
             /// </summary>
             public static DbTableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>(IEnumerable<T> typedEnumerable)
             {
+                var typedArray = typedEnumerable as T[];
+                if (typedArray != null) {
+                    var projectedArray = new DbTableValuedParameterWrapper<T>[typedArray.Length];
+                    for (int i = 0; i < projectedArray.Length; i++) {
+                        projectedArray[i].querytablevalue = typedArray[i];
+                    }
+                    return projectedArray;
+                }
+
                 var typedList = typedEnumerable as IReadOnlyList<T>;
                 if (typedList != null) {
-                    var typedArray = typedEnumerable as T[];
-                    if (typedArray != null) {
-                        var projectedArray = new DbTableValuedParameterWrapper<T>[typedArray.Length];
-                        for (int i = 0; i < projectedArray.Length; i++) {
-                            projectedArray[i].querytablevalue = typedArray[i];
-                        }
-                        return projectedArray;
-                    } else {
-                        var projectedArray = new DbTableValuedParameterWrapper<T>[typedList.Count];
-                        for (int i = 0; i < projectedArray.Length; i++) {
-                            projectedArray[i].querytablevalue = typedList[i];
-                        }
-                        return projectedArray;
+                    var projectedArray = new DbTableValuedParameterWrapper<T>[typedList.Count];
+                    for (int i = 0; i < projectedArray.Length; i++) {
+                        projectedArray[i].querytablevalue = typedList[i];
                     }
-                } else {
-                    var arrayBuilder = FastArrayBuilder<DbTableValuedParameterWrapper<T>>.Create();
-                    foreach (var item in typedEnumerable) {
-                        arrayBuilder.Add(new DbTableValuedParameterWrapper<T> { querytablevalue = item });
-                    }
-                    return arrayBuilder.ToArray();
+                    return projectedArray;
                 }
+
+                var arrayBuilder = FastArrayBuilder<DbTableValuedParameterWrapper<T>>.Create();
+                foreach (var item in typedEnumerable) {
+                    arrayBuilder.Add(new DbTableValuedParameterWrapper<T> { querytablevalue = item });
+                }
+                return arrayBuilder.ToArray();
             }
         }
     }
