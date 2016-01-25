@@ -97,12 +97,12 @@ namespace ProgressOnderwijsUtils
         ///   You need to define a corresponding type in the database (see QueryComponent.ToTableParameter for details).
         /// </summary>
         /// <param name="typeName">name of the db-type e.g. IntValues</param>
-        /// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
+        /// <param name="objects">the list of meta-objects with shape corresponding to the DB type</param>
         /// <returns>a composable query-component</returns>
         [Pure]
-        public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o)
+        public static QueryBuilder TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => QueryComponent.ToTableParameter(typeName, o).BuildableToQuery();
+            => QueryComponent.ToTableParameter(typeName, objects).BuildableToQuery();
     }
 
     interface IQueryComponent
