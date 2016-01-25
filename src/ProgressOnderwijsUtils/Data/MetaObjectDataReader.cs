@@ -124,5 +124,6 @@ namespace ProgressOnderwijsUtils
         public override string GetName(int ordinal) => fields[ordinal].Name;
         public override int GetOrdinal(string name) => indexLookup[name];
         public override object GetValue(int ordinal) => cache[ordinal] ?? DBNull.Value;
+        public override bool IsDBNull(int ordinal) => cache[ordinal] == null;
     }
 }
