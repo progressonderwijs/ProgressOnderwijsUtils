@@ -11,6 +11,7 @@ using Progress.Business.Data;
 using Progress.Business.DomainUnits;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Internal;
 using ProgressOnderwijsUtils.Test;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -69,7 +70,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void Test_DbDataReaderBase_GetBytes_works_the_same_as_in_SqlDataReader()
         {
-            var testen = new[] { new TestDataMetaObject { Data =  testData } };
+            var testen = new[] { new TestDataMetaObject { Data = testData } };
             var reader = new MetaObjectDataReader<TestDataMetaObject>(testen);
             Assert_DataReader_GetBytes_works(reader);
         }
@@ -131,6 +132,34 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => nofRead == 0);
 
             PAssert.That(() => !reader.Read());
+        }
+
+        [Test]
+        public void WrapSupportsEnumerableOfInt()
+        {
+            var internalArray = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7));
+            PAssert.That(() => internalArray.Select(o => o.querytablevalue).SequenceEqual(Enumerable.Range(7, 7)));
+        }
+
+        [Test]
+        public void WrapSupportsEnumerableOfString()
+        {
+            var internalArray = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).Select(n => n.ToString()));
+            PAssert.That(() => internalArray.Select(o => o.querytablevalue).SequenceEqual(Enumerable.Range(7, 7).Select(n => n.ToString())));
+        }
+
+        [Test]
+        public void WrapSupportsReadonlyListOfInt()
+        {
+            var internalArray = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToList());
+            PAssert.That(() => internalArray.Select(o => o.querytablevalue).SequenceEqual(Enumerable.Range(7, 7)));
+        }
+
+        [Test]
+        public void WrapSupportsArrayOfInt()
+        {
+            var internalArray = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToArray());
+            PAssert.That(() => internalArray.Select(o => o.querytablevalue).SequenceEqual(Enumerable.Range(7, 7)));
         }
     }
 }
