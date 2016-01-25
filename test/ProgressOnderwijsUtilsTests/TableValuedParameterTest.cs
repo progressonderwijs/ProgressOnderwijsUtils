@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Net.Mime;
@@ -35,6 +36,48 @@ namespace ProgressOnderwijsUtilsTests
             int sum = q.ReadScalar<int>(conn);
             Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
         }
+
+        [Test]
+        public void QueryBuildersCanIncludeEnumTvps()
+        {
+            var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => (Id.Student)i)} x");
+            int sum = (int)q.ReadScalar<Id.Student>(conn);
+            Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
+        }
+
+        [Test]
+        public void QueryBuildersCanCountDaysOfWeek()
+        {
+            var q = SQL($@"select count(x.querytablevalue) from {EnumHelpers.GetValues<DayOfWeek>()} x");
+            int dayCount = q.ReadScalar<int>(conn);
+            Assert.That(dayCount, Is.EqualTo(7));
+        }
+
+        [Test]
+        public void QueryBuildersCanCountStrings()
+        {
+            var q = SQL($@"select count(distinct x.querytablevalue) from {new [] {"foo", "bar", "foo" }} x");
+            int dayCount = q.ReadScalar<int>(conn);
+            Assert.That(dayCount, Is.EqualTo(2));
+        }
+
+
+        [Test]
+        public void MetaObjectReadersCanIncludeNull()
+        {
+
+            var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
+            var metaObjects = stringsWithNull.ArraySelect(s=>new DbTableValuedParameterWrapper<string> { querytablevalue =s });
+
+            SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(conn);
+            //manual bulk insert because our default TVP types explicitly forbid null
+            MetaObject.SqlBulkCopy(metaObjects, conn.PNetCommandCreationContext.Connection, "#strings");
+
+            var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(conn);
+            SQL($@"drop table #strings").ExecuteNonQuery(conn);
+            PAssert.That(() => stringsWithNull.SetEqual(output));
+        }
+
 
         [Test]
         public void Binary_columns_can_be_used_in_tvps()
