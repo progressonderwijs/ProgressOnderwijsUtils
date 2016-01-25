@@ -221,11 +221,8 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentDictionary<string, ParamRefSubString[]> parsedFormatStrings
             = new ConcurrentDictionary<string, ParamRefSubString[]>(new ReferenceEqualityComparer<string>());
 
-        static ParamRefSubString[] GetFormatStringParamRefs(string formatstring)
-        {
-            return parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString);
-        }
-
+        static ParamRefSubString[] GetFormatStringParamRefs(string formatstring) => parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString_Delegate);
+        static readonly Func<string, ParamRefSubString[]> ParseFormatString_Delegate = ParseFormatString;
         static ParamRefSubString[] ParseFormatString(string formatstring)
         {
             var arrayBuilder = FastArrayBuilder<ParamRefSubString>.Create();
