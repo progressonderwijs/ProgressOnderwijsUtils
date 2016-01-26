@@ -59,24 +59,37 @@ namespace ProgressOnderwijsUtils
 
         struct ColumnInfo
         {
-            public string Name;
-            public Type ColumnType;
-            public Func<T, object> GetAsObject;
-            public Func<T, bool> IsFieldNull;
-            public Delegate TypedGetter;
+            public readonly string Name;
+            public readonly Type ColumnType;
+            public readonly Func<T, object> GetAsObject;
+            public readonly Func<T, bool> IsFieldNull;
+            public readonly Delegate TypedGetter;
 
-            public static ColumnInfo MkColumnInfo(IMetaProperty<T> mp) 
+            public ColumnInfo(IMetaProperty<T> mp)
             {
                 var rowParExpr = Expression.Parameter(typeof(T));
                 var memberExpr = mp.GetterExpression(rowParExpr);
-                var columnInfo = new ColumnInfo {
-                    Name = mp.Name,
-                    ColumnType = mp.DataType.GetNonNullableUnderlyingType(),
-                    GetAsObject = mp.Getter, //but what about enums then?
-                    IsFieldNull = FieldIsNullDelegate(mp.DataType, rowParExpr, memberExpr),
-                    TypedGetter = TypedFieldGetter(mp.DataType, rowParExpr, memberExpr),
-                };
-                return columnInfo;
+                Name = mp.Name;
+                ColumnType = mp.DataType.GetNonNullableUnderlyingType();
+                GetAsObject = mp.Getter; //but what about enums then?
+                IsFieldNull = FieldIsNullDelegate(mp.DataType, rowParExpr, memberExpr);
+                TypedGetter = TypedFieldGetter(mp.DataType, rowParExpr, memberExpr);
+            }
+
+            static Delegate TypedFieldGetter(Type propType, ParameterExpression rowParExpr, Expression memberExpr)
+            {
+                var typeForDb = propType.GetNonNullableUnderlyingType();
+                var delegateType = typeof(Func<,>).MakeGenericType(typeof(T), typeForDb);
+                return Expression.Lambda(delegateType, Expression.Convert(memberExpr, typeForDb), rowParExpr).Compile();
+            }
+
+            static Func<T, bool> FieldIsNullDelegate(Type propType, ParameterExpression rowParExpr, Expression memberExpr)
+            {
+                if (propType.IsValueType && propType.IfNullableGetNonNullableType() == null) {
+                    return null;
+                }
+                var memberIsDefault = Expression.Equal(Expression.Default(propType), memberExpr);
+                return Expression.Lambda<Func<T, bool>>(memberIsDefault, rowParExpr).Compile();
             }
         }
 
@@ -93,7 +106,7 @@ namespace ProgressOnderwijsUtils
             var i = 0;
             foreach (var mp in metaProperties) {
                 if (mp.CanRead) {
-                    var columnInfo = ColumnInfo.MkColumnInfo(mp);
+                    var columnInfo = new ColumnInfo(mp);
                     var isKey = mp.IsKey;
                     var allowDbNull = columnInfo.IsFieldNull != null;
                     var isUnique = isKey && !metaProperties.Any(other => other != mp && other.IsKey);
@@ -104,22 +117,6 @@ namespace ProgressOnderwijsUtils
                 }
             }
             cols = colsBuilder.ToArray();
-        }
-
-        static Delegate TypedFieldGetter(Type propType, ParameterExpression rowParExpr, Expression memberExpr)
-        {
-            var typeForDb = propType.GetNonNullableUnderlyingType();
-            var delegateType = typeof(Func<,>).MakeGenericType(typeof(T), typeForDb);
-            return Expression.Lambda(delegateType, Expression.Convert(memberExpr, typeForDb), rowParExpr).Compile();
-        }
-
-        static Func<T, bool> FieldIsNullDelegate(Type propType, ParameterExpression rowParExpr, Expression memberExpr)
-        {
-            if (propType.IsValueType && propType.IfNullableGetNonNullableType() == null) {
-                return null;
-            }
-            var memberIsDefault = Expression.Equal(Expression.Default(propType), memberExpr);
-            return Expression.Lambda<Func<T, bool>>(memberIsDefault, rowParExpr).Compile();
         }
 
         static DataTable CreateEmptySchemaTable()
