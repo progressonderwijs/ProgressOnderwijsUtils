@@ -52,11 +52,10 @@ namespace ProgressOnderwijsUtils
         public override TCol GetFieldValue<TCol>(int ordinal)
         {
             var getter = cols[ordinal].TypedGetter as Func<T, TCol>;
-            if (getter != null) {
-                return getter(current);
-            } else {
+            if (getter == null) {
                 throw new InvalidOperationException($"Tried to access field {cols[ordinal].Name} of type {ObjectToCode.GetCSharpFriendlyTypeName(cols[ordinal].DataType)} as type {ObjectToCode.GetCSharpFriendlyTypeName(typeof(TCol))}.");
             }
+            return getter(current);
         }
 
         struct ColumnInfo
