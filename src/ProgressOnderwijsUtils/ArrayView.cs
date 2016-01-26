@@ -1,31 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-    public sealed class ArrayView<T> : IReadOnlyList<T>
-    {
-        readonly T[] vals;
-
-        public ArrayView(T[] vals)
-        {
-            this.vals = vals;
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            foreach (var item in vals) {
-                yield return item;
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator() => vals.GetEnumerator();
-        public T this[int index] => vals[index];
-        public int Count => vals.Length;
-    }
-
     public sealed class CollectionView_Mapped<T, TOut> : IReadOnlyCollection<TOut>
     {
         readonly ICollection<T> source;
@@ -98,11 +76,6 @@ namespace ProgressOnderwijsUtils
 
     public static class CollectionViewExtensions
     {
-        public static IReadOnlyList<T> AsReadView<T>(this T[] vals)
-        {
-            return new ArrayView<T>(vals);
-        }
-
         public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, TOut> map)
         {
             return new ArrayView_MappedByElement<T, TOut>(vals, map);
