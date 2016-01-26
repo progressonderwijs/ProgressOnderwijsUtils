@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
                     var type = mp.DataType;
                     var isKey = mp.IsKey;
                     var fieldIsNullDelegate = FieldIsNullDelegate(mp);
-                    var getter = mp.Getter;//safe for enum to int conversion?
+                    var getter = mp.Getter; //safe for enum to int conversion?
                     var typedFieldGetter = TypedFieldGetter(mp);
                     var allowDbNull = fieldIsNullDelegate != null;
                     var isUnique = isKey && !metaProperties.Any(other => other != mp && other.IsKey);
