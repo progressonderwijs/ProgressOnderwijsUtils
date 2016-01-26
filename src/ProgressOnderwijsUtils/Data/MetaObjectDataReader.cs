@@ -40,11 +40,11 @@ namespace ProgressOnderwijsUtils
         public override string GetName(int ordinal) => cols[ordinal].Name;
         public override int GetOrdinal(string name) => colIndexByName[name];
         public override int GetInt32(int ordinal) => ((Func<T, int>)cols[ordinal].TypedNonNullableGetter)(current);
-        public override object GetValue(int ordinal) => cols[ordinal].GetAsObject(current) ?? DBNull.Value;
+        public override object GetValue(int ordinal) => cols[ordinal].GetUntypedColumnValue(current) ?? DBNull.Value;
 
         public override bool IsDBNull(int ordinal)
         {
-            var func = cols[ordinal].IsFieldNull;
+            var func = cols[ordinal].WhenNullable_IsColumnDBNull;
             return func != null && func(current);
         }
 
@@ -60,33 +60,36 @@ namespace ProgressOnderwijsUtils
         struct ColumnInfo
         {
             public readonly string Name;
+            //ColumnType is non nullable with enum types replaced by their underlying type
             public readonly Type ColumnType;
-            public readonly Func<T, object> GetAsObject;
-            public readonly Func<T, bool> IsFieldNull; //delegate is null if column non-nullable
+            public readonly Func<T, object> GetUntypedColumnValue;
+            //WhenNullable_IsColumnDBNull is itself null if column non-nullable
+            public readonly Func<T, bool> WhenNullable_IsColumnDBNull;
+            //TypedNonNullableGetter is of type Func<T, _> such that typeof(_) == ColumnType - therefor cannot return nulls!
             public readonly Delegate TypedNonNullableGetter;
 
             public ColumnInfo(IMetaProperty<T> mp)
             {
-                var propType = mp.DataType;
-                var rowParExpr = Expression.Parameter(typeof(T));
-                var memberExpr = mp.GetterExpression(rowParExpr);
+                var propertyType = mp.DataType;
+                var objParamExpr = Expression.Parameter(typeof(T));
+                var propertyExpr = mp.PropertyAccessExpression(objParamExpr);
                 Name = mp.Name;
-                ColumnType = propType.GetNonNullableUnderlyingType();
-                var memberIsDefault = Expression.Equal(Expression.Default(propType), memberExpr);
+                ColumnType = propertyType.GetNonNullableUnderlyingType();
+                var memberIsDefault = Expression.Equal(Expression.Default(propertyType), propertyExpr);
                 var nonNullableGetterType = typeof(Func<,>).MakeGenericType(typeof(T), ColumnType);
-                var colAsDbType = Expression.Convert(memberExpr, ColumnType);
-                var colAsUnderlyingType = Expression.Convert(memberExpr, propType.GetUnderlyingType());
-                var isNonNullable = propType.IsValueType && propType.IfNullableGetNonNullableType() == null;
+                var colAsDbType = Expression.Convert(propertyExpr, ColumnType);
+                var colAsUnderlyingType = Expression.Convert(propertyExpr, propertyType.GetUnderlyingType());
+                var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
                 Expression colAsBoxedDbType;
                 if (isNonNullable) {
                     colAsBoxedDbType = Expression.Convert(colAsUnderlyingType, typeof(object));
-                    IsFieldNull = null;
+                    WhenNullable_IsColumnDBNull = null;
                 } else {
                     colAsBoxedDbType = Expression.Coalesce(colAsUnderlyingType, Expression.Constant(DBNull.Value, typeof(object)));
-                    IsFieldNull = Expression.Lambda<Func<T, bool>>(memberIsDefault, rowParExpr).Compile();
+                    WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(memberIsDefault, objParamExpr).Compile();
                 }
-                TypedNonNullableGetter = Expression.Lambda(nonNullableGetterType, colAsDbType, rowParExpr).Compile();
-                GetAsObject = Expression.Lambda<Func<T, object>>(colAsBoxedDbType, rowParExpr).Compile();
+                TypedNonNullableGetter = Expression.Lambda(nonNullableGetterType, colAsDbType, objParamExpr).Compile();
+                GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(colAsBoxedDbType, objParamExpr).Compile();
             }
         }
 
@@ -101,12 +104,12 @@ namespace ProgressOnderwijsUtils
             colIndexByName = new Dictionary<string, int>(metaProperties.Count, StringComparer.OrdinalIgnoreCase);
             schemaTable = CreateEmptySchemaTable();
             var i = 0;
-            foreach (var mp in metaProperties) {
-                if (mp.CanRead) {
-                    var columnInfo = new ColumnInfo(mp);
-                    var isKey = mp.IsKey;
-                    var allowDbNull = columnInfo.IsFieldNull != null;
-                    var isUnique = isKey && !metaProperties.Any(other => other != mp && other.IsKey);
+            foreach (var metaProperty in metaProperties) {
+                if (metaProperty.CanRead) {
+                    var columnInfo = new ColumnInfo(metaProperty);
+                    var isKey = metaProperty.IsKey;
+                    var allowDbNull = columnInfo.WhenNullable_IsColumnDBNull != null;
+                    var isUnique = isKey && !metaProperties.Any(other => other != metaProperty && other.IsKey);
                     colIndexByName.Add(columnInfo.Name, i);
                     schemaTable.Rows.Add(columnInfo.Name, i, -1, null, null, columnInfo.ColumnType, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
                     colsBuilder.Add(columnInfo);
