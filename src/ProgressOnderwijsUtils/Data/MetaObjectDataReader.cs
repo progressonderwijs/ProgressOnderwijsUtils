@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
 
         public override DataTable GetSchemaTable() => schemaTable;
         public override int FieldCount => cols.Length;
-        public override Type GetFieldType(int ordinal) => cols[ordinal].DataType;
+        public override Type GetFieldType(int ordinal) => cols[ordinal].ColumnType;
         public override string GetName(int ordinal) => cols[ordinal].Name;
         public override int GetOrdinal(string name) => colIndexByName[name];
         public override int GetInt32(int ordinal) => ((Func<T, int>)cols[ordinal].TypedGetter)(current);
@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils
         {
             var getter = cols[ordinal].TypedGetter as Func<T, TCol>;
             if (getter == null) {
-                throw new InvalidOperationException($"Tried to access field {cols[ordinal].Name} of type {ObjectToCode.GetCSharpFriendlyTypeName(cols[ordinal].DataType)} as type {ObjectToCode.GetCSharpFriendlyTypeName(typeof(TCol))}.");
+                throw new InvalidOperationException($"Tried to access field {cols[ordinal].Name} of type {ObjectToCode.GetCSharpFriendlyTypeName(cols[ordinal].ColumnType)} as type {ObjectToCode.GetCSharpFriendlyTypeName(typeof(TCol))}.");
             }
             return getter(current);
         }
@@ -60,10 +60,24 @@ namespace ProgressOnderwijsUtils
         struct ColumnInfo
         {
             public string Name;
-            public Type DataType;
+            public Type ColumnType;
             public Func<T, object> GetAsObject;
             public Func<T, bool> IsFieldNull;
             public Delegate TypedGetter;
+
+            public static ColumnInfo MkColumnInfo(IMetaProperty<T> mp) 
+            {
+                var rowParExpr = Expression.Parameter(typeof(T));
+                var memberExpr = mp.GetterExpression(rowParExpr);
+                var columnInfo = new ColumnInfo {
+                    Name = mp.Name,
+                    ColumnType = mp.DataType.GetNonNullableUnderlyingType(),
+                    GetAsObject = mp.Getter, //but what about enums then?
+                    IsFieldNull = FieldIsNullDelegate(mp.DataType, rowParExpr, memberExpr),
+                    TypedGetter = TypedFieldGetter(mp.DataType, rowParExpr, memberExpr),
+                };
+                return columnInfo;
+            }
         }
 
         static readonly ColumnInfo[] cols;
@@ -79,48 +93,31 @@ namespace ProgressOnderwijsUtils
             var i = 0;
             foreach (var mp in metaProperties) {
                 if (mp.CanRead) {
-                    var name = mp.Name;
-                    var type = mp.DataType;
+                    var columnInfo = ColumnInfo.MkColumnInfo(mp);
                     var isKey = mp.IsKey;
-                    var fieldIsNullDelegate = FieldIsNullDelegate(mp);
-                    var getter = mp.Getter; //safe for enum to int conversion?
-                    var typedFieldGetter = TypedFieldGetter(mp);
-                    var allowDbNull = fieldIsNullDelegate != null;
+                    var allowDbNull = columnInfo.IsFieldNull != null;
                     var isUnique = isKey && !metaProperties.Any(other => other != mp && other.IsKey);
-
-                    colIndexByName.Add(mp.Name, i);
-                    schemaTable.Rows.Add(name, i, -1, null, null, type, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
-                    colsBuilder.Add(new ColumnInfo {
-                        Name = name,
-                        DataType = type,
-                        GetAsObject = getter,
-                        IsFieldNull = fieldIsNullDelegate,
-                        TypedGetter = typedFieldGetter,
-                    });
+                    colIndexByName.Add(columnInfo.Name, i);
+                    schemaTable.Rows.Add(columnInfo.Name, i, -1, null, null, columnInfo.ColumnType, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
+                    colsBuilder.Add(columnInfo);
                     i++;
                 }
             }
-
             cols = colsBuilder.ToArray();
         }
 
-        static Delegate TypedFieldGetter(IMetaProperty<T> mp)
+        static Delegate TypedFieldGetter(Type propType, ParameterExpression rowParExpr, Expression memberExpr)
         {
-            var typeForDb = mp.DataType.GetNonNullableUnderlyingType();
-            var rowParExpr = Expression.Parameter(typeof(T));
-            var convertedMemberExpr = Expression.Convert(mp.GetterExpression(rowParExpr), typeForDb);
+            var typeForDb = propType.GetNonNullableUnderlyingType();
             var delegateType = typeof(Func<,>).MakeGenericType(typeof(T), typeForDb);
-            return Expression.Lambda(delegateType, convertedMemberExpr, rowParExpr).Compile();
+            return Expression.Lambda(delegateType, Expression.Convert(memberExpr, typeForDb), rowParExpr).Compile();
         }
 
-        static Func<T, bool> FieldIsNullDelegate(IMetaProperty<T> mp)
+        static Func<T, bool> FieldIsNullDelegate(Type propType, ParameterExpression rowParExpr, Expression memberExpr)
         {
-            var propType = mp.DataType;
             if (propType.IsValueType && propType.IfNullableGetNonNullableType() == null) {
                 return null;
             }
-            var rowParExpr = Expression.Parameter(typeof(T));
-            var memberExpr = mp.GetterExpression(rowParExpr);
             var memberIsDefault = Expression.Equal(Expression.Default(propType), memberExpr);
             return Expression.Lambda<Func<T, bool>>(memberIsDefault, rowParExpr).Compile();
         }
