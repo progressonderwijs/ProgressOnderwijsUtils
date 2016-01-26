@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils
             var metaProperties = MetaObject.GetMetaProperties<T>();
             var colsBuilder = new List<ColumnInfo>(metaProperties.Count);
             colIndexByName = new Dictionary<string, int>(metaProperties.Count, StringComparer.OrdinalIgnoreCase);
-            schemaTable = MetaObjectDataReaderHelpers.CreateEmptySchemaTable();
+            schemaTable = CreateEmptySchemaTable();
             var i = 0;
             foreach (var mp in metaProperties) {
                 if (mp.CanRead) {
@@ -124,11 +124,8 @@ namespace ProgressOnderwijsUtils
             var memberIsDefault = Expression.Equal(Expression.Default(propType), memberExpr);
             return Expression.Lambda<Func<T, bool>>(memberIsDefault, rowParExpr).Compile();
         }
-    }
 
-    static class MetaObjectDataReaderHelpers
-    {
-        public static DataTable CreateEmptySchemaTable()
+        static DataTable CreateEmptySchemaTable()
         {
             var dt = new DataTable();
             dt.Columns.AddRange(new[] {
