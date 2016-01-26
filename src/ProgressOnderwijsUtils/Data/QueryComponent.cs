@@ -57,7 +57,8 @@ namespace ProgressOnderwijsUtils
             return (IWrappedTableParameterFactory)Activator.CreateInstance(factoryType, sqlTableTypeName);
         }
 
-        interface IWrappedTableParameterFactory {
+        interface IWrappedTableParameterFactory
+        {
             IQueryComponent ToWrappedTableParameter(IEnumerable enumerable);
         }
 
@@ -121,7 +122,6 @@ namespace ProgressOnderwijsUtils
                 return null;
             }
         }
-
 
         /*
         create type TVar_Bigint as table(querytablevalue bigint not null)
