@@ -34,6 +34,17 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
+        public void AsReadOnlyTest()
+        {
+            var nums = Enumerable.Range(1, 5).Reverse().ToArray();
+            var copy = nums.ToReadOnly();
+            PAssert.That(() => nums.SequenceEqual(copy));
+            Array.Sort(nums);
+            PAssert.That(() => !nums.SequenceEqual(copy));
+            PAssert.That(() => copy.SequenceEqual(Enumerable.Range(1, 5).Reverse()));
+        }
+
+        [Test]
         public void testIndexOf()
         {
             var lst = new List<string> { "een", "twee", "drie" };
