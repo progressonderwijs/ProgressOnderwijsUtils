@@ -56,6 +56,10 @@ namespace ProgressOnderwijsUtils
 
         public static XhtmlData CheckmarkOrangeSymbol(string toolTip) => Symbol("CheckmarkOrangeSymbol", toolTip);
 
+        public static XhtmlData NotYetGreySymbol(string toolTip) => Symbol("NotyetGreySymbol", toolTip);
+
+        public static XhtmlData NotOkSymbol(string toolTip) => Symbol("NotOkSymbol", toolTip);
+
         public static XhtmlData FlowStepSymbol(FlowStep step, string toolTip)
         {
             switch (step) {
