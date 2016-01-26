@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
         public override Type GetFieldType(int ordinal) => cols[ordinal].ColumnType;
         public override string GetName(int ordinal) => cols[ordinal].Name;
         public override int GetOrdinal(string name) => colIndexByName[name];
-        public override int GetInt32(int ordinal) => ((Func<T, int>)cols[ordinal].TypedGetter)(current);
+        public override int GetInt32(int ordinal) => ((Func<T, int>)cols[ordinal].TypedNonNullableGetter)(current);
         public override object GetValue(int ordinal) => cols[ordinal].GetAsObject(current) ?? DBNull.Value;
 
         public override bool IsDBNull(int ordinal)
@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils
 
         public override TCol GetFieldValue<TCol>(int ordinal)
         {
-            var getter = cols[ordinal].TypedGetter as Func<T, TCol>;
+            var getter = cols[ordinal].TypedNonNullableGetter as Func<T, TCol>;
             if (getter == null) {
                 throw new InvalidOperationException($"Tried to access field {cols[ordinal].Name} of type {ObjectToCode.GetCSharpFriendlyTypeName(cols[ordinal].ColumnType)} as type {ObjectToCode.GetCSharpFriendlyTypeName(typeof(TCol))}.");
             }
@@ -62,34 +62,31 @@ namespace ProgressOnderwijsUtils
             public readonly string Name;
             public readonly Type ColumnType;
             public readonly Func<T, object> GetAsObject;
-            public readonly Func<T, bool> IsFieldNull;
-            public readonly Delegate TypedGetter;
+            public readonly Func<T, bool> IsFieldNull; //delegate is null if column non-nullable
+            public readonly Delegate TypedNonNullableGetter;
 
             public ColumnInfo(IMetaProperty<T> mp)
             {
+                var propType = mp.DataType;
                 var rowParExpr = Expression.Parameter(typeof(T));
                 var memberExpr = mp.GetterExpression(rowParExpr);
                 Name = mp.Name;
-                ColumnType = mp.DataType.GetNonNullableUnderlyingType();
-                GetAsObject = mp.Getter; //but what about enums then?
-                IsFieldNull = FieldIsNullDelegate(mp.DataType, rowParExpr, memberExpr);
-                TypedGetter = TypedFieldGetter(mp.DataType, rowParExpr, memberExpr);
-            }
-
-            static Delegate TypedFieldGetter(Type propType, ParameterExpression rowParExpr, Expression memberExpr)
-            {
-                var typeForDb = propType.GetNonNullableUnderlyingType();
-                var delegateType = typeof(Func<,>).MakeGenericType(typeof(T), typeForDb);
-                return Expression.Lambda(delegateType, Expression.Convert(memberExpr, typeForDb), rowParExpr).Compile();
-            }
-
-            static Func<T, bool> FieldIsNullDelegate(Type propType, ParameterExpression rowParExpr, Expression memberExpr)
-            {
-                if (propType.IsValueType && propType.IfNullableGetNonNullableType() == null) {
-                    return null;
-                }
+                ColumnType = propType.GetNonNullableUnderlyingType();
                 var memberIsDefault = Expression.Equal(Expression.Default(propType), memberExpr);
-                return Expression.Lambda<Func<T, bool>>(memberIsDefault, rowParExpr).Compile();
+                var nonNullableGetterType = typeof(Func<,>).MakeGenericType(typeof(T), ColumnType);
+                var colAsDbType = Expression.Convert(memberExpr, ColumnType);
+                var colAsUnderlyingType = Expression.Convert(memberExpr, propType.GetUnderlyingType());
+                var isNonNullable = propType.IsValueType && propType.IfNullableGetNonNullableType() == null;
+                Expression colAsBoxedDbType;
+                if (isNonNullable) {
+                    colAsBoxedDbType = Expression.Convert(colAsUnderlyingType, typeof(object));
+                    IsFieldNull = null;
+                } else {
+                    colAsBoxedDbType = Expression.Coalesce(colAsUnderlyingType, Expression.Constant(DBNull.Value, typeof(object)));
+                    IsFieldNull = Expression.Lambda<Func<T, bool>>(memberIsDefault, rowParExpr).Compile();
+                }
+                TypedNonNullableGetter = Expression.Lambda(nonNullableGetterType, colAsDbType, rowParExpr).Compile();
+                GetAsObject = Expression.Lambda<Func<T, object>>(colAsBoxedDbType, rowParExpr).Compile();
             }
         }
 
