@@ -31,7 +31,11 @@ namespace ProgressOnderwijsUtils.ErrorHandling
             }
             sb.Append(value.Message);
             sb.Append('\n');
-            foreach (StackFrame frame in new StackTrace(value, true).GetFrames()) {
+            var stackFrames = new StackTrace(value, true).GetFrames();
+            if (stackFrames == null) {
+                return;
+            }
+            foreach (StackFrame frame in stackFrames) {
                 MethodBase method = frame.GetMethod();
                 Type type = method.DeclaringType;
                 sb.Append("   at ");
