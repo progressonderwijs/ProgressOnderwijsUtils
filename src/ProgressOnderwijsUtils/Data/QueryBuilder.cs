@@ -97,12 +97,12 @@ namespace ProgressOnderwijsUtils
         ///   You need to define a corresponding type in the database (see QueryComponent.ToTableParameter for details).
         /// </summary>
         /// <param name="typeName">name of the db-type e.g. IntValues</param>
-        /// <param name="o">the list of meta-objects with shape corresponding to the DB type</param>
+        /// <param name="objects">the list of meta-objects with shape corresponding to the DB type</param>
         /// <returns>a composable query-component</returns>
         [Pure]
-        public static QueryBuilder TableParam<T>(string typeName, IEnumerable<T> o)
+        public static QueryBuilder TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => QueryComponent.ToTableParameter(typeName, o).BuildableToQuery();
+            => QueryComponent.ToTableParameter(typeName, objects).BuildableToQuery();
     }
 
     interface IQueryComponent
@@ -221,11 +221,8 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentDictionary<string, ParamRefSubString[]> parsedFormatStrings
             = new ConcurrentDictionary<string, ParamRefSubString[]>(new ReferenceEqualityComparer<string>());
 
-        static ParamRefSubString[] GetFormatStringParamRefs(string formatstring)
-        {
-            return parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString);
-        }
-
+        static ParamRefSubString[] GetFormatStringParamRefs(string formatstring) => parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString_Delegate);
+        static readonly Func<string, ParamRefSubString[]> ParseFormatString_Delegate = ParseFormatString;
         static ParamRefSubString[] ParseFormatString(string formatstring)
         {
             var arrayBuilder = FastArrayBuilder<ParamRefSubString>.Create();

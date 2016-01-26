@@ -7,6 +7,7 @@ using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Internal;
 
 namespace ProgressOnderwijsUtils
@@ -23,18 +24,18 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static IQueryComponent ToTableParameter<T>(string tableTypeName, IEnumerable<T> set) where T : IMetaObject, new()
+        public static IQueryComponent ToTableParameter<T>(string tableTypeName, T[] set) where T : IMetaObject, new()
             => new QueryTableValuedParameterComponent<T>(tableTypeName, set);
 
         static IQueryComponent TryToTableParameter<T>(IEnumerable set)
         {
-            if (set is IEnumerable<T>) {
-                var typedSet = (IEnumerable<T>)set;
-                var projectedSet = typedSet.Select(i => new DbTableValuedParameterWrapper<T> { querytablevalue = i });
-                return ToTableParameter(TableValueTypeName<T>.TypeName, projectedSet);
-            } else {
+            var typedEnumerable = set as IEnumerable<T>;
+            if (typedEnumerable == null) {
                 return null;
             }
+
+            var projectedArray = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(typedEnumerable);
+            return ToTableParameter(TableValueTypeName<T>.TypeName, projectedArray);
         }
 
         static IQueryComponent TryToEnumTableParameter(IEnumerable set)
@@ -76,7 +77,7 @@ namespace ProgressOnderwijsUtils
         static IQueryComponent ToEnumTableParameter<TEnum, TOut>(IEnumerable set)
         {
             var typedSet = (IEnumerable<TEnum>)set;
-            var projectedSet = typedSet.Select(Converter<TEnum, TOut>.Func);
+            var projectedSet = typedSet.Select(Converter<TEnum, TOut>.Func).ToArray();
 
             return ToTableParameter(TableValueTypeName<TOut>.TypeName, projectedSet);
         }
@@ -219,6 +220,40 @@ namespace ProgressOnderwijsUtils
             public T querytablevalue { get; set; }
 
             public override string ToString() => querytablevalue == null ? "NULL" : querytablevalue.ToString();
+        }
+
+        public static class DbTableValuedParameterWrapperHelper
+        {
+            /// <summary>
+            /// Efficiently wraps an enumerable of objects in DbTableValuedParameterWrapper and materialized the sequence as array.
+            /// Effectively it's like .Select(x => new DbTableValuedParameterWrapper { querytablevalue = x }).ToArray() but faster.
+            /// </summary>
+            public static DbTableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>(IEnumerable<T> typedEnumerable)
+            {
+                var typedArray = typedEnumerable as T[];
+                if (typedArray != null) {
+                    var projectedArray = new DbTableValuedParameterWrapper<T>[typedArray.Length];
+                    for (int i = 0; i < projectedArray.Length; i++) {
+                        projectedArray[i].querytablevalue = typedArray[i];
+                    }
+                    return projectedArray;
+                }
+
+                var typedList = typedEnumerable as IReadOnlyList<T>;
+                if (typedList != null) {
+                    var projectedArray = new DbTableValuedParameterWrapper<T>[typedList.Count];
+                    for (int i = 0; i < projectedArray.Length; i++) {
+                        projectedArray[i].querytablevalue = typedList[i];
+                    }
+                    return projectedArray;
+                }
+
+                var arrayBuilder = FastArrayBuilder<DbTableValuedParameterWrapper<T>>.Create();
+                foreach (var item in typedEnumerable) {
+                    arrayBuilder.Add(new DbTableValuedParameterWrapper<T> { querytablevalue = item });
+                }
+                return arrayBuilder.ToArray();
+            }
         }
     }
 }
