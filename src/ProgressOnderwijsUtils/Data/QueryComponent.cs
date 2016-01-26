@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Collections.Generic;
 using System;
 using System.Collections.Concurrent;
-using System.Reflection;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Internal;
@@ -17,19 +15,34 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
         {
             if (o is IEnumerable && !(o is string) && !(o is byte[])) {
-                ToTableParameter((IEnumerable)o).AppendTo(ref factory);
+                ToTableParameterFromPlainValues((IEnumerable)o).AppendTo(ref factory);
             } else {
                 QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
             }
         }
 
+        public static IQueryComponent ToTableParameterFromPlainValues(IEnumerable set)
+        {
+            var enumerableType = set.GetType();
+            IWrappedTableParameterFactory factory;
+            if (!tvpFactoryCache.TryGetValue(enumerableType, out factory)) {
+                factory = TvpFactoryForEnumerableType(enumerableType);
+                tvpFactoryCache.TryAdd(enumerableType, factory);
+            }
+            if (factory == null) {
+                throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(enumerableType) + " as a table valued parameter", nameof(set));
+            }
+            return factory.ToWrappedTableParameter(set);
+        }
+
         public static IQueryComponent ToTableParameter<T>(string tableTypeName, T[] set) where T : IMetaObject, new()
             => new QueryTableValuedParameterComponent<T>(tableTypeName, set);
 
-        static IQueryComponent TryToTableParameter(IEnumerable enumerable)
+        static readonly ConcurrentDictionary<Type, IWrappedTableParameterFactory> tvpFactoryCache = new ConcurrentDictionary<Type, IWrappedTableParameterFactory>();
+
+        static IWrappedTableParameterFactory TvpFactoryForEnumerableType(Type enumerableType)
         {
-            var enumerableType = enumerable.GetType();
-            var elementType = GetEnumerableElementType(enumerableType);
+            var elementType = TryGetNonAmbiguousEnumerableElementType(enumerableType);
             if (elementType == null) {
                 return null;
             }
@@ -40,43 +53,41 @@ namespace ProgressOnderwijsUtils
             if (sqlTableTypeName == null) {
                 return null;
             }
-            var specializedMethod = ToWrappedTableParameter_Method.MakeGenericMethod(elementType);
-            var func = (Func<string, IEnumerable, IQueryComponent>)Delegate.CreateDelegate(typeof(Func<string, IEnumerable, IQueryComponent>), specializedMethod);
-
-            return func(sqlTableTypeName, enumerable);
+            var factoryType = typeof(WrappedTableParameterFactory<>).MakeGenericType(elementType);
+            return (IWrappedTableParameterFactory)Activator.CreateInstance(factoryType, sqlTableTypeName);
         }
 
-        static readonly MethodInfo ToWrappedTableParameter_Method =
-            ((Func<string, IEnumerable, IQueryComponent>)ToWrappedTableParameter<int>)
-                .Method
-                .GetGenericMethodDefinition();
-
-        static IQueryComponent ToWrappedTableParameter<T>(string sqlTableTypeName, IEnumerable enumerable)
-        {
-            var metaObjects = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject((IEnumerable<T>)enumerable);
-            return ToTableParameter(sqlTableTypeName, metaObjects);
+        interface IWrappedTableParameterFactory {
+            IQueryComponent ToWrappedTableParameter(IEnumerable enumerable);
         }
 
-        static readonly ConcurrentDictionary<Type, Type> itemTypeByEnumerableType = new ConcurrentDictionary<Type, Type>();
-
-        static Type GetEnumerableElementType(Type enumerableType)
+        class WrappedTableParameterFactory<T> : IWrappedTableParameterFactory
         {
-            Type elementType;
-            if (itemTypeByEnumerableType.TryGetValue(enumerableType, out elementType)) {
-                return elementType;
+            readonly string sqlTableTypeName;
+
+            public WrappedTableParameterFactory(string sqlTableTypeName)
+            {
+                this.sqlTableTypeName = sqlTableTypeName;
             }
 
+            public IQueryComponent ToWrappedTableParameter(IEnumerable enumerable)
+            {
+                var metaObjects = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject((IEnumerable<T>)enumerable);
+                return ToTableParameter(sqlTableTypeName, metaObjects);
+            }
+        }
+
+        static Type TryGetNonAmbiguousEnumerableElementType(Type enumerableType)
+        {
+            Type elementType = null;
             foreach (var interfaceType in enumerableType.GetInterfaces()) {
                 if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)) {
                     if (elementType != null) {
-                        itemTypeByEnumerableType.TryAdd(enumerableType, null);
                         return null; //non-unique, no best match
                     }
-
                     elementType = interfaceType.GetGenericArguments()[0];
                 }
             }
-            itemTypeByEnumerableType.TryAdd(enumerableType, elementType);
             return elementType;
         }
 
@@ -111,14 +122,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static IQueryComponent ToTableParameter(IEnumerable set)
-        {
-            var retval = TryToTableParameter(set);
-            if (retval == null) {
-                throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(set.GetType()) + " as a table valued parameter", nameof(set));
-            }
-            return retval;
-        }
 
         /*
         create type TVar_Bigint as table(querytablevalue bigint not null)
