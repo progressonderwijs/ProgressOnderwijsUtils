@@ -11,20 +11,18 @@ namespace ProgressOnderwijsUtils
         where T : IMetaObject
     {
         readonly IEnumerator<T> metaObjects;
-        public override DataTable GetSchemaTable() => schemaTable;
+        T current;
+
+        public MetaObjectDataReader(IEnumerable<T> objects)
+        {
+            metaObjects = objects.GetEnumerator();
+        }
 
         public override void Close()
         {
             metaObjects.Dispose();
             isClosed = true;
             current = default(T);
-        }
-
-        T current;
-
-        public MetaObjectDataReader(IEnumerable<T> objects)
-        {
-            metaObjects = objects.GetEnumerator();
         }
 
         protected override bool ReadImpl()
@@ -36,6 +34,7 @@ namespace ProgressOnderwijsUtils
             return hasnext;
         }
 
+        public override DataTable GetSchemaTable() => schemaTable;
         public override int FieldCount => cols.Length;
         public override Type GetFieldType(int ordinal) => cols[ordinal].DataType;
         public override string GetName(int ordinal) => cols[ordinal].Name;
