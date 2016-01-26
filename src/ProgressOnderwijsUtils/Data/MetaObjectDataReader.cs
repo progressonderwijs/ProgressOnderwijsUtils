@@ -108,11 +108,9 @@ namespace ProgressOnderwijsUtils
         {
             var typeForDb = mp.DataType.GetNonNullableUnderlyingType();
             var rowParExpr = Expression.Parameter(typeof(T));
-            var memberExpr = mp.GetterExpression(rowParExpr);
-            var convertedMemberExpr = Expression.Convert(memberExpr, typeForDb);
+            var convertedMemberExpr = Expression.Convert(mp.GetterExpression(rowParExpr), typeForDb);
             var delegateType = typeof(Func<,>).MakeGenericType(typeof(T), typeForDb);
-            var typedGetter = Expression.Lambda(delegateType, convertedMemberExpr, rowParExpr);
-            return typedGetter.Compile();
+            return Expression.Lambda(delegateType, convertedMemberExpr, rowParExpr).Compile();
         }
 
         static Func<T, bool> FieldIsNullDelegate(IMetaProperty<T> mp)
