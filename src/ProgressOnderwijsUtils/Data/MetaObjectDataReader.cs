@@ -115,16 +115,14 @@ namespace ProgressOnderwijsUtils
 
         static Func<T, bool> FieldIsNullDelegate(IMetaProperty<T> mp)
         {
-            var dataType = mp.DataType;
-
-            if (dataType.IsValueType && dataType.IfNullableGetNonNullableType() == null) {
+            var propType = mp.DataType;
+            if (propType.IsValueType && propType.IfNullableGetNonNullableType() == null) {
                 return null;
             }
-
             var rowParExpr = Expression.Parameter(typeof(T));
             var memberExpr = mp.GetterExpression(rowParExpr);
-            var typedIsNullChecker = Expression.Lambda<Func<T, bool>>(Expression.Equal(Expression.Default(dataType), memberExpr), rowParExpr);
-            return typedIsNullChecker.Compile();
+            var memberIsDefault = Expression.Equal(Expression.Default(propType), memberExpr);
+            return Expression.Lambda<Func<T, bool>>(memberIsDefault, rowParExpr).Compile();
         }
     }
 
