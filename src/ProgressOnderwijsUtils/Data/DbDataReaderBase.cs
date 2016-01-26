@@ -84,18 +84,18 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public override bool GetBoolean(int ordinal) => (bool)GetValue(ordinal);
-        public override byte GetByte(int ordinal) => (byte)GetValue(ordinal);
-        public override char GetChar(int ordinal) => (char)GetValue(ordinal);
-        public override DateTime GetDateTime(int ordinal) => (DateTime)GetValue(ordinal);
-        public override decimal GetDecimal(int ordinal) => (decimal)GetValue(ordinal);
-        public override double GetDouble(int ordinal) => (double)GetValue(ordinal);
-        public override float GetFloat(int ordinal) => (float)GetValue(ordinal);
-        public override Guid GetGuid(int ordinal) => (Guid)GetValue(ordinal);
-        public override short GetInt16(int ordinal) => (short)GetValue(ordinal);
-        public override int GetInt32(int ordinal) => (int)GetValue(ordinal);
-        public override long GetInt64(int ordinal) => (long)GetValue(ordinal);
-        public override string GetString(int ordinal) => (string)GetValue(ordinal);
+        public override bool GetBoolean(int ordinal) => GetFieldValue<bool>(ordinal);
+        public override byte GetByte(int ordinal) => GetFieldValue<byte>(ordinal);
+        public override char GetChar(int ordinal) => GetFieldValue<char>(ordinal);
+        public override DateTime GetDateTime(int ordinal) => GetFieldValue<DateTime>(ordinal);
+        public override decimal GetDecimal(int ordinal) => GetFieldValue<decimal>(ordinal);
+        public override double GetDouble(int ordinal) => GetFieldValue<double>(ordinal);
+        public override float GetFloat(int ordinal) => GetFieldValue<float>(ordinal);
+        public override Guid GetGuid(int ordinal) => GetFieldValue<Guid>(ordinal);
+        public override short GetInt16(int ordinal) => GetFieldValue<short>(ordinal);
+        public override int GetInt32(int ordinal) => GetFieldValue<int>(ordinal);
+        public override long GetInt64(int ordinal) => GetFieldValue<long>(ordinal);
+        public override string GetString(int ordinal) => GetFieldValue<string>(ordinal);
 
         public override int GetValues(object[] values)
         {
