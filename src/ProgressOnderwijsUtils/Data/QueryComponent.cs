@@ -106,55 +106,13 @@ namespace ProgressOnderwijsUtils
         }
 
         /*
-        create type TVar_Bigint as table(querytablevalue bigint not null)
-        create type TVar_Bit as table(querytablevalue bit not null)
-        create type TVar_DateTime2 as table(querytablevalue datetime2(7) not null)
-        create type TVar_Decimal as table(querytablevalue decimal(18, 0) not null)
-        create type TVar_Float as table(querytablevalue float not null)
-        create type TVar_Int as table(querytablevalue int not null, primary key clustered (querytablevalue asc) with (ignore_dup_key = off))
-        create type TVar_NChar1 as table(querytablevalue nchar(1) not null)
-        create type TVar_NVarcharMax as table(querytablevalue nvarchar(max) not null)
-        create type TVar_Smallint as table(querytablevalue smallint not null)
-        create type TVar_StudentStudielast as table(studentid int not null, studielast int not null)
-        create type TVar_Time as table(querytablevalue time(7) not null)
-        create type TVar_Tinyint as table(querytablevalue tinyint not null)
-
-        grant exec on TYPE::TVar_Bigint to [webprogress-readonly]
-        grant exec on TYPE::TVar_Bit to [webprogress-readonly]
-        grant exec on TYPE::TVar_DateTime2 to [webprogress-readonly]
-        grant exec on TYPE::TVar_Decimal to [webprogress-readonly]
-        grant exec on TYPE::TVar_Float to [webprogress-readonly]
-        grant exec on TYPE::TVar_Int to [webprogress-readonly]
-        grant exec on TYPE::TVar_NChar1 to [webprogress-readonly]
-        grant exec on TYPE::TVar_NVarcharMax to [webprogress-readonly]
-        grant exec on TYPE::TVar_Smallint to [webprogress-readonly]
-        grant exec on TYPE::TVar_StudentStudielast to [webprogress-readonly]
-        grant exec on TYPE::TVar_Time to [webprogress-readonly]
-        grant exec on TYPE::TVar_Tinyint to [webprogress-readonly]
-
-        grant exec on TYPE::TVar_Bigint to [webprogress]
-        grant exec on TYPE::TVar_Bit to [webprogress]
-        grant exec on TYPE::TVar_DateTime2 to [webprogress]
-        grant exec on TYPE::TVar_Decimal to [webprogress]
-        grant exec on TYPE::TVar_Float to [webprogress]
-        grant exec on TYPE::TVar_Int to [webprogress]
-        grant exec on TYPE::TVar_NChar1 to [webprogress]
-        grant exec on TYPE::TVar_NVarcharMax to [webprogress]
-        grant exec on TYPE::TVar_Smallint to [webprogress]
-        grant exec on TYPE::TVar_StudentStudielast to [webprogress]
-        grant exec on TYPE::TVar_Time to [webprogress]
-        grant exec on TYPE::TVar_Tinyint to [webprogress]
-         
-
-        TODO: once we're using Sql2014, the following types appear to be considerably faster:
+        TODO: once we're using Sql2014, memory optimization appears considerably faster, ala:
          CREATE TYPE TVar_Int AS TABLE ( 
              val int NOT NULL, 
              PRIMARY KEY NONCLUSTERED (val ASC)
-         )
-         WITH ( MEMORY_OPTIMIZED = ON )
+         ) WITH ( MEMORY_OPTIMIZED = ON )
          
          Memory optimized types also need a new MEMORY_OPTIMIZED_DATA filegroup, even if we're not going to store anything in that filegroup.
-         
          */
     }
 
