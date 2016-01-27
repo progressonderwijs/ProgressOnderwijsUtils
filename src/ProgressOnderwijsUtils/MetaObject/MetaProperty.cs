@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils
         bool CanRead { get; }
         bool CanWrite { get; }
         PropertyInfo PropertyInfo { get; }
-        Expression GetterExpression(Expression paramExpr);
+        Expression PropertyAccessExpression(Expression paramExpr);
         HtmlEditMode HtmlMode { get; }
     }
 
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            public Expression GetterExpression(Expression paramExpr) => Expression.Property(paramExpr, propertyInfo);
+            public Expression PropertyAccessExpression(Expression paramExpr) => Expression.Property(paramExpr, propertyInfo);
 
             public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
             {
