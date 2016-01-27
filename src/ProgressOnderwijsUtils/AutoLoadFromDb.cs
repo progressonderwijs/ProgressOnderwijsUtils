@@ -494,6 +494,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
+            [UsefulToKeep("This might be a nice thing to stick in an OSS library")]
             public static class ReadByConstructorImpl<T>
             {
                 public static T[] VerifyShapeAndLoadRows<T>(SqlDataReader reader)
