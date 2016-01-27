@@ -250,6 +250,13 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
+        public void BooleansSerializeOk()
+        {
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, true).SerializeToString() == @"test[=]bTrue*");
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, false).SerializeToString() == @"test[=]bFalse*");
+        }
+
+        [Test]
         public void StarsAndHashesInArraysSerializeOk()
         {
             var filters = new[] {

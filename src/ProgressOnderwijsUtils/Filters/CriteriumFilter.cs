@@ -200,6 +200,7 @@ namespace ProgressOnderwijsUtils
         static CriteriumFilter()
         {
             var helpers = new[] {
+                Serializer('b', bool.Parse, b => b.ToString()),
                 Serializer('i', s => int.Parse(s, CultureInfo.InvariantCulture), i => i.ToStringInvariant()),
                 Serializer('d', s => new DateTime(long.Parse(s, CultureInfo.InvariantCulture), DateTimeKind.Utc), d => d.ToUniversalTime().Ticks.ToStringInvariant()),
                 Serializer('t', s => new TimeSpan(long.Parse(s, CultureInfo.InvariantCulture)), t => t.Ticks.ToStringInvariant()),
