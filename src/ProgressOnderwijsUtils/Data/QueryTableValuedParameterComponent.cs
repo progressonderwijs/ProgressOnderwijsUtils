@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         const string subselect_part1 = "(select ";
         const string subselect_part3 = " from ";
         const string subselect_part5 = " TVP)";
-        readonly IEnumerable<T> objs;
+        readonly T[] objs;
         readonly string DbTypeName;
         public object EquatableValue => Tuple.Create(objs, DbTypeName);
 
@@ -33,6 +33,11 @@ namespace ProgressOnderwijsUtils
             SqlFactory.AppendSql(ref factory, subselect_part3);
             SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(this));
             SqlFactory.AppendSql(ref factory, subselect_part5);
+
+            //Insert length category token in TVP sql output, so that the query
+            //optimizer uses differing query plans for arrays.  In effect, every
+            //factor of 8 a new query plan is used.
+            SqlFactory.AppendSql(ref factory, querySizeToken[LengthToCategory(objs.Length)]);
         }
 
         public void ToSqlParameter(ref SqlParamArgs paramArgs)
@@ -40,5 +45,9 @@ namespace ProgressOnderwijsUtils
             paramArgs.Value = MetaObject.CreateDataReader(objs);
             paramArgs.TypeName = DbTypeName;
         }
+
+        static int LengthToCategory(int length) => Utils.LogBase2RoundedDown((uint)length) / 3;
+        static readonly int maxCategory = LengthToCategory(int.MaxValue);
+        static readonly string[] querySizeToken = Enumerable.Range(0, maxCategory + 1).Select(n => $"/*{n}*/").ToArray();
     }
 }
