@@ -104,16 +104,6 @@ namespace ProgressOnderwijsUtils
             }
             return elementType;
         }
-
-        /*
-        TODO: once we're using Sql2014, memory optimization appears considerably faster, ala:
-         CREATE TYPE TVar_Int AS TABLE ( 
-             val int NOT NULL, 
-             PRIMARY KEY NONCLUSTERED (val ASC)
-         ) WITH ( MEMORY_OPTIMIZED = ON )
-         
-         Memory optimized types also need a new MEMORY_OPTIMIZED_DATA filegroup, even if we're not going to store anything in that filegroup.
-         */
     }
 
     namespace Internal
