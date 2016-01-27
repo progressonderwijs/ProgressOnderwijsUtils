@@ -138,7 +138,7 @@ namespace ProgressOnderwijsUtils
                 var typedArray = typedEnumerable as T[];
                 if (typedArray != null) {
                     var projectedArray = new TableValuedParameterWrapper<T>[typedArray.Length];
-                    for (int i = 0; i < projectedArray.Length; i++) {
+                    for (var i = 0; i < projectedArray.Length; i++) {
                         projectedArray[i].QueryTableValue = typedArray[i];
                     }
                     return projectedArray;
@@ -147,7 +147,7 @@ namespace ProgressOnderwijsUtils
                 var typedList = typedEnumerable as IReadOnlyList<T>;
                 if (typedList != null) {
                     var projectedArray = new TableValuedParameterWrapper<T>[typedList.Count];
-                    for (int i = 0; i < projectedArray.Length; i++) {
+                    for (var i = 0; i < projectedArray.Length; i++) {
                         projectedArray[i].QueryTableValue = typedList[i];
                     }
                     return projectedArray;
