@@ -56,18 +56,16 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void QueryBuildersCanCountStrings()
         {
-            var q = SQL($@"select count(distinct x.querytablevalue) from {new [] {"foo", "bar", "foo" }} x");
+            var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo" }} x");
             int dayCount = q.ReadScalar<int>(conn);
             Assert.That(dayCount, Is.EqualTo(2));
         }
 
-
         [Test]
         public void MetaObjectReadersCanIncludeNull()
         {
-
             var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
-            var metaObjects = stringsWithNull.ArraySelect(s=>new TableValuedParameterWrapper<string> { QueryTableValue =s });
+            var metaObjects = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string> { QueryTableValue = s });
 
             SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(conn);
             //manual bulk insert because our default TVP types explicitly forbid null
@@ -77,7 +75,6 @@ namespace ProgressOnderwijsUtilsTests
             SQL($@"drop table #strings").ExecuteNonQuery(conn);
             PAssert.That(() => stringsWithNull.SetEqual(output));
         }
-
 
         [Test]
         public void Binary_columns_can_be_used_in_tvps()
