@@ -33,6 +33,10 @@ namespace ProgressOnderwijsUtils
             SqlFactory.AppendSql(ref factory, subselect_part3);
             SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(this));
             SqlFactory.AppendSql(ref factory, subselect_part5);
+
+            //Insert length category token in TVP sql output, so that the query
+            //optimizer uses differing query plans for arrays.  In effect, every
+            //factor of 8 a new query plan is used.
             SqlFactory.AppendSql(ref factory, querySizeToken[LengthToCategory(objs.Length)]);
         }
 
