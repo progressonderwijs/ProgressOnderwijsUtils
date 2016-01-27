@@ -15,66 +15,79 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
         {
             if (o is IEnumerable && !(o is string) && !(o is byte[])) {
-                ToTableParameterFromPlainValues((IEnumerable)o).AppendTo(ref factory);
+                ToTableValuedParameterFromPlainValues((IEnumerable)o).AppendTo(ref factory);
             } else {
                 QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
             }
         }
 
-        public static IQueryComponent ToTableParameterFromPlainValues(IEnumerable set)
+        public static IQueryComponent ToTableValuedParameterFromPlainValues(IEnumerable set)
         {
             var enumerableType = set.GetType();
-            IWrappedTableParameterFactory factory;
-            if (!tvpFactoryCache.TryGetValue(enumerableType, out factory)) {
-                factory = TvpFactoryForEnumerableType(enumerableType);
-                tvpFactoryCache.TryAdd(enumerableType, factory);
+            ITableValuedParameterFactory factory;
+            if (!tableValuedParameterFactoryCache.TryGetValue(enumerableType, out factory)) {
+                factory = CreateTableValuedParameterFactory(enumerableType);
+                tableValuedParameterFactoryCache.TryAdd(enumerableType, factory);
             }
             if (factory == null) {
                 throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(enumerableType) + " as a table valued parameter", nameof(set));
             }
-            return factory.ToWrappedTableParameter(set);
+            return factory.CreateFromPlainValues(set);
         }
 
-        public static IQueryComponent ToTableParameter<T>(string tableTypeName, T[] set) where T : IMetaObject, new()
+        public static IQueryComponent ToTableValuedParameter<T>(string tableTypeName, T[] set) where T : IMetaObject, new()
             => new QueryTableValuedParameterComponent<T>(tableTypeName, set);
 
-        static readonly ConcurrentDictionary<Type, IWrappedTableParameterFactory> tvpFactoryCache = new ConcurrentDictionary<Type, IWrappedTableParameterFactory>();
+        static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
 
-        static IWrappedTableParameterFactory TvpFactoryForEnumerableType(Type enumerableType)
+        static ITableValuedParameterFactory CreateTableValuedParameterFactory(Type enumerableType)
         {
             var elementType = TryGetNonAmbiguousEnumerableElementType(enumerableType);
             if (elementType == null) {
                 return null;
             }
             var underlyingType = elementType.GetUnderlyingType();
-
-            var sqlTableTypeName = TryGetSqlTableTypeName(underlyingType);
-
+            var sqlTableTypeName = SqlTableTypeNameByDotnetType.GetOrDefault(underlyingType);
             if (sqlTableTypeName == null) {
                 return null;
             }
-            var factoryType = typeof(WrappedTableParameterFactory<>).MakeGenericType(elementType);
-            return (IWrappedTableParameterFactory)Activator.CreateInstance(factoryType, sqlTableTypeName);
+            var factoryType = typeof(TableValuedParameterFactory<>).MakeGenericType(elementType);
+            return (ITableValuedParameterFactory)Activator.CreateInstance(factoryType, sqlTableTypeName);
         }
 
-        interface IWrappedTableParameterFactory
+        static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = new Dictionary<Type, string> {
+            { typeof(int), "TVar_Int" },
+            { typeof(string), "TVar_NVarcharMax" },
+            { typeof(DateTime), "TVar_DateTime2" },
+            { typeof(TimeSpan), "TVar_Time" },
+            { typeof(decimal), "TVar_Decimal" },
+            { typeof(char), "TVar_NChar1" },
+            { typeof(bool), "TVar_Bit" },
+            { typeof(byte), "TVar_Tinyint" },
+            { typeof(short), "TVar_Smallint" },
+            { typeof(long), "TVar_Bigint" },
+            { typeof(double), "TVar_Float" },
+            { typeof(byte[]), "TVar_VarBinaryMax" },
+        };
+
+        interface ITableValuedParameterFactory
         {
-            IQueryComponent ToWrappedTableParameter(IEnumerable enumerable);
+            IQueryComponent CreateFromPlainValues(IEnumerable enumerable);
         }
 
-        class WrappedTableParameterFactory<T> : IWrappedTableParameterFactory
+        class TableValuedParameterFactory<T> : ITableValuedParameterFactory
         {
             readonly string sqlTableTypeName;
 
-            public WrappedTableParameterFactory(string sqlTableTypeName)
+            public TableValuedParameterFactory(string sqlTableTypeName)
             {
                 this.sqlTableTypeName = sqlTableTypeName;
             }
 
-            public IQueryComponent ToWrappedTableParameter(IEnumerable enumerable)
+            public IQueryComponent CreateFromPlainValues(IEnumerable enumerable)
             {
-                var metaObjects = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject((IEnumerable<T>)enumerable);
-                return ToTableParameter(sqlTableTypeName, metaObjects);
+                var metaObjects = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject((IEnumerable<T>)enumerable);
+                return ToTableValuedParameter(sqlTableTypeName, metaObjects);
             }
         }
 
@@ -92,130 +105,57 @@ namespace ProgressOnderwijsUtils
             return elementType;
         }
 
-        static string TryGetSqlTableTypeName(Type dotnetElementType)
-        {
-            if (typeof(int) == dotnetElementType) {
-                return "TVar_Int";
-            } else if (typeof(string) == dotnetElementType) {
-                return "TVar_NVarcharMax";
-            } else if (typeof(DateTime) == dotnetElementType) {
-                return "TVar_DateTime2";
-            } else if (typeof(TimeSpan) == dotnetElementType) {
-                return "TVar_Time";
-            } else if (typeof(decimal) == dotnetElementType) {
-                return "TVar_Decimal";
-            } else if (typeof(char) == dotnetElementType) {
-                return "TVar_NChar1";
-            } else if (typeof(bool) == dotnetElementType) {
-                return "TVar_Bit";
-            } else if (typeof(byte) == dotnetElementType) {
-                return "TVar_Tinyint";
-            } else if (typeof(short) == dotnetElementType) {
-                return "TVar_Smallint";
-            } else if (typeof(long) == dotnetElementType) {
-                return "TVar_Bigint";
-            } else if (typeof(double) == dotnetElementType) {
-                return "TVar_Float";
-            } else if (typeof(byte[]) == dotnetElementType) {
-                return "TVar_VarBinaryMax";
-            } else {
-                return null;
-            }
-        }
-
         /*
-        create type TVar_Bigint as table(querytablevalue bigint not null)
-        create type TVar_Bit as table(querytablevalue bit not null)
-        create type TVar_DateTime2 as table(querytablevalue datetime2(7) not null)
-        create type TVar_Decimal as table(querytablevalue decimal(18, 0) not null)
-        create type TVar_Float as table(querytablevalue float not null)
-        create type TVar_Int as table(querytablevalue int not null, primary key clustered (querytablevalue asc) with (ignore_dup_key = off))
-        create type TVar_NChar1 as table(querytablevalue nchar(1) not null)
-        create type TVar_NVarcharMax as table(querytablevalue nvarchar(max) not null)
-        create type TVar_Smallint as table(querytablevalue smallint not null)
-        create type TVar_StudentStudielast as table(studentid int not null, studielast int not null)
-        create type TVar_Time as table(querytablevalue time(7) not null)
-        create type TVar_Tinyint as table(querytablevalue tinyint not null)
-
-        grant exec on TYPE::TVar_Bigint to [webprogress-readonly]
-        grant exec on TYPE::TVar_Bit to [webprogress-readonly]
-        grant exec on TYPE::TVar_DateTime2 to [webprogress-readonly]
-        grant exec on TYPE::TVar_Decimal to [webprogress-readonly]
-        grant exec on TYPE::TVar_Float to [webprogress-readonly]
-        grant exec on TYPE::TVar_Int to [webprogress-readonly]
-        grant exec on TYPE::TVar_NChar1 to [webprogress-readonly]
-        grant exec on TYPE::TVar_NVarcharMax to [webprogress-readonly]
-        grant exec on TYPE::TVar_Smallint to [webprogress-readonly]
-        grant exec on TYPE::TVar_StudentStudielast to [webprogress-readonly]
-        grant exec on TYPE::TVar_Time to [webprogress-readonly]
-        grant exec on TYPE::TVar_Tinyint to [webprogress-readonly]
-
-        grant exec on TYPE::TVar_Bigint to [webprogress]
-        grant exec on TYPE::TVar_Bit to [webprogress]
-        grant exec on TYPE::TVar_DateTime2 to [webprogress]
-        grant exec on TYPE::TVar_Decimal to [webprogress]
-        grant exec on TYPE::TVar_Float to [webprogress]
-        grant exec on TYPE::TVar_Int to [webprogress]
-        grant exec on TYPE::TVar_NChar1 to [webprogress]
-        grant exec on TYPE::TVar_NVarcharMax to [webprogress]
-        grant exec on TYPE::TVar_Smallint to [webprogress]
-        grant exec on TYPE::TVar_StudentStudielast to [webprogress]
-        grant exec on TYPE::TVar_Time to [webprogress]
-        grant exec on TYPE::TVar_Tinyint to [webprogress]
-         
-
-        TODO: once we're using Sql2014, the following types appear to be considerably faster:
+        TODO: once we're using Sql2014, memory optimization appears considerably faster, ala:
          CREATE TYPE TVar_Int AS TABLE ( 
              val int NOT NULL, 
              PRIMARY KEY NONCLUSTERED (val ASC)
-         )
-         WITH ( MEMORY_OPTIMIZED = ON )
+         ) WITH ( MEMORY_OPTIMIZED = ON )
          
          Memory optimized types also need a new MEMORY_OPTIMIZED_DATA filegroup, even if we're not going to store anything in that filegroup.
-         
          */
     }
 
     namespace Internal
     {
         //public needed for auto-mapping
-        public struct DbTableValuedParameterWrapper<T> : IMetaObject
+        public struct TableValuedParameterWrapper<T> : IMetaObject
         {
             [Key]
-            public T querytablevalue { get; set; }
+            public T QueryTableValue { get; set; }
 
-            public override string ToString() => querytablevalue == null ? "NULL" : querytablevalue.ToString();
+            public override string ToString() => QueryTableValue == null ? "NULL" : QueryTableValue.ToString();
         }
 
-        public static class DbTableValuedParameterWrapperHelper
+        public static class TableValuedParameterWrapperHelper
         {
             /// <summary>
             /// Efficiently wraps an enumerable of objects in DbTableValuedParameterWrapper and materialized the sequence as array.
             /// Effectively it's like .Select(x => new DbTableValuedParameterWrapper { querytablevalue = x }).ToArray() but faster.
             /// </summary>
-            public static DbTableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>(IEnumerable<T> typedEnumerable)
+            public static TableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>(IEnumerable<T> typedEnumerable)
             {
                 var typedArray = typedEnumerable as T[];
                 if (typedArray != null) {
-                    var projectedArray = new DbTableValuedParameterWrapper<T>[typedArray.Length];
-                    for (int i = 0; i < projectedArray.Length; i++) {
-                        projectedArray[i].querytablevalue = typedArray[i];
+                    var projectedArray = new TableValuedParameterWrapper<T>[typedArray.Length];
+                    for (var i = 0; i < projectedArray.Length; i++) {
+                        projectedArray[i].QueryTableValue = typedArray[i];
                     }
                     return projectedArray;
                 }
 
                 var typedList = typedEnumerable as IReadOnlyList<T>;
                 if (typedList != null) {
-                    var projectedArray = new DbTableValuedParameterWrapper<T>[typedList.Count];
-                    for (int i = 0; i < projectedArray.Length; i++) {
-                        projectedArray[i].querytablevalue = typedList[i];
+                    var projectedArray = new TableValuedParameterWrapper<T>[typedList.Count];
+                    for (var i = 0; i < projectedArray.Length; i++) {
+                        projectedArray[i].QueryTableValue = typedList[i];
                     }
                     return projectedArray;
                 }
 
-                var arrayBuilder = FastArrayBuilder<DbTableValuedParameterWrapper<T>>.Create();
+                var arrayBuilder = FastArrayBuilder<TableValuedParameterWrapper<T>>.Create();
                 foreach (var item in typedEnumerable) {
-                    arrayBuilder.Add(new DbTableValuedParameterWrapper<T> { querytablevalue = item });
+                    arrayBuilder.Add(new TableValuedParameterWrapper<T> { QueryTableValue = item });
                 }
                 return arrayBuilder.ToArray();
             }
