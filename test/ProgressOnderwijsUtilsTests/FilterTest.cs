@@ -7,10 +7,12 @@ using Progress.Business.Data;
 using Progress.Business.Organisaties;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
+using ProgressOnderwijsUtils.Test;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
+    [Continuous]
     public sealed class FilterTest : TestSuiteBase
     {
         [Test]
@@ -247,6 +249,20 @@ namespace ProgressOnderwijsUtilsTests
         {
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, Taal.NL).SerializeToString() == @"test[=]i1*");
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, DatabaseVersion.TestDB | DatabaseVersion.DuoTestDB).SerializeToString() == @"test[=]i66*");
+        }
+
+        [Test]
+        public void BooleansSerializeOk()
+        {
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, true).SerializeToString() == "test[=]bTrue*");
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, false).SerializeToString() == "test[=]bFalse*");
+        }
+
+        [Test]
+        public void BooleansDeserializeOk()
+        {
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, true).Equals(Filter.TryParseSerializedFilter("test[=]bTrue*")));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, false).Equals(Filter.TryParseSerializedFilter("test[=]bFalse*")));
         }
 
         [Test]
