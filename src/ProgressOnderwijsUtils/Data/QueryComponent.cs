@@ -47,15 +47,28 @@ namespace ProgressOnderwijsUtils
                 return null;
             }
             var underlyingType = elementType.GetUnderlyingType();
-
-            var sqlTableTypeName = TryGetSqlTableTypeName(underlyingType);
-
+            var sqlTableTypeName = SqlTableTypeNameByDotnetType.GetOrDefault(underlyingType);
             if (sqlTableTypeName == null) {
                 return null;
             }
             var factoryType = typeof(WrappedTableParameterFactory<>).MakeGenericType(elementType);
             return (IWrappedTableParameterFactory)Activator.CreateInstance(factoryType, sqlTableTypeName);
         }
+
+        static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = new Dictionary<Type, string> {
+            { typeof(int), "TVar_Int" },
+            { typeof(string), "TVar_NVarcharMax" },
+            { typeof(DateTime), "TVar_DateTime2" },
+            { typeof(TimeSpan), "TVar_Time" },
+            { typeof(decimal), "TVar_Decimal" },
+            { typeof(char), "TVar_NChar1" },
+            { typeof(bool), "TVar_Bit" },
+            { typeof(byte), "TVar_Tinyint" },
+            { typeof(short), "TVar_Smallint" },
+            { typeof(long), "TVar_Bigint" },
+            { typeof(double), "TVar_Float" },
+            { typeof(byte[]), "TVar_VarBinaryMax" },
+        };
 
         interface IWrappedTableParameterFactory
         {
@@ -90,37 +103,6 @@ namespace ProgressOnderwijsUtils
                 }
             }
             return elementType;
-        }
-
-        static string TryGetSqlTableTypeName(Type dotnetElementType)
-        {
-            if (typeof(int) == dotnetElementType) {
-                return "TVar_Int";
-            } else if (typeof(string) == dotnetElementType) {
-                return "TVar_NVarcharMax";
-            } else if (typeof(DateTime) == dotnetElementType) {
-                return "TVar_DateTime2";
-            } else if (typeof(TimeSpan) == dotnetElementType) {
-                return "TVar_Time";
-            } else if (typeof(decimal) == dotnetElementType) {
-                return "TVar_Decimal";
-            } else if (typeof(char) == dotnetElementType) {
-                return "TVar_NChar1";
-            } else if (typeof(bool) == dotnetElementType) {
-                return "TVar_Bit";
-            } else if (typeof(byte) == dotnetElementType) {
-                return "TVar_Tinyint";
-            } else if (typeof(short) == dotnetElementType) {
-                return "TVar_Smallint";
-            } else if (typeof(long) == dotnetElementType) {
-                return "TVar_Bigint";
-            } else if (typeof(double) == dotnetElementType) {
-                return "TVar_Float";
-            } else if (typeof(byte[]) == dotnetElementType) {
-                return "TVar_VarBinaryMax";
-            } else {
-                return null;
-            }
         }
 
         /*
