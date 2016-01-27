@@ -15,9 +15,6 @@ namespace ProgressOnderwijsUtils
     [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
     public interface IMetaObject { }
 
-    [UsedImplicitly(ImplicitUseKindFlags.InstantiatedNoFixedConstructorSignature, ImplicitUseTargetFlags.Members)]
-    public interface IReadByConstructor { }
-
     public static class MetaObject
     {
         [Pure]

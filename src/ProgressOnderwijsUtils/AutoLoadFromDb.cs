@@ -81,33 +81,6 @@ namespace ProgressOnderwijsUtils
         }
 
         /// <summary>
-        /// Reads all records of the given query from the database, unpacking into a C# array using each item's constructor.
-        /// Supports structs and classes.
-        /// Type T must have a constructor whose parameters match the columns of the query.  Matching is case insensitive.  The order of the columns must be the same.
-        /// </summary>
-        /// <typeparam name="T">The type to unpack each record into</typeparam>
-        /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The database connection</param>
-        /// <returns>An array of strongly-typed objects; never null</returns>
-        public static T[] ReadByConstructor<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IReadByConstructor
-        {
-            return ExecuteQuery(
-                q,
-                qCommandCreationContext,
-                () => "ReadByConstructor<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
-                ReadByConstructorUnpacker<T>);
-        }
-
-        public static T[] ReadByConstructorUnpacker<T>(SqlCommand cmd) where T : IReadByConstructor
-        {
-            using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
-                DataReaderSpecialization<SqlDataReader>.Impl<T>.VerifyDataReaderShape(reader);
-                var lastColumnRead = 0;
-                return DataReaderSpecialization<SqlDataReader>.Impl<T>.LoadRows(reader, out lastColumnRead);
-            }
-        }
-
-        /// <summary>
         /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
         /// Type T must have a public parameterless constructor; both structs and classes are supported
         /// The type T must match the queries columns by name (the order is not relevant).  Matching columns to properties/fields is case insensitive.
@@ -521,16 +494,22 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            public static class Impl<T>
-                where T : IReadByConstructor
+            public static class ReadByConstructorImpl<T>
             {
+                public static T[] VerifyShapeAndLoadRows<T>(SqlDataReader reader)
+                {
+                    DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.VerifyDataReaderShape(reader);
+                    var lastColumnRead = 0;
+                    return DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.LoadRows(reader, out lastColumnRead);
+                }
+
                 public static readonly TRowReader<T> LoadRows;
                 static Type type => typeof(T);
                 static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
                 static readonly ConstructorInfo constructor;
                 static ParameterInfo[] ConstructorParameters => constructor.GetParameters();
 
-                static Impl()
+                static ReadByConstructorImpl()
                 {
                     constructor = VerifyTypeValidityAndGetConstructor();
                     LoadRows = CreateLoadRowsMethod<T>(
