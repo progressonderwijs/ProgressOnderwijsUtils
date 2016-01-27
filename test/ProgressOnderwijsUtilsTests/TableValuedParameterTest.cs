@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtilsTests
         public void DatabaseCanProcessTableValuedParameters()
         {
             var q = SQL($@"select sum(x.querytablevalue) from ") + QueryBuilder.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
-            int sum = q.ReadScalar<int>(conn);
+            var sum = q.ReadScalar<int>(conn);
             Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
         }
 
@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtilsTests
         public void QueryBuildersCanIncludeTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
-            int sum = q.ReadScalar<int>(conn);
+            var sum = q.ReadScalar<int>(conn);
             Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
         }
 
@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtilsTests
         public void QueryBuildersCanIncludeEnumTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => (Id.Student)i)} x");
-            int sum = (int)q.ReadScalar<Id.Student>(conn);
+            var sum = (int)q.ReadScalar<Id.Student>(conn);
             Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
         }
 
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtilsTests
         public void QueryBuildersCanCountDaysOfWeek()
         {
             var q = SQL($@"select count(x.querytablevalue) from {EnumHelpers.GetValues<DayOfWeek>()} x");
-            int dayCount = q.ReadScalar<int>(conn);
+            var dayCount = q.ReadScalar<int>(conn);
             Assert.That(dayCount, Is.EqualTo(7));
         }
 
@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtilsTests
         public void QueryBuildersCanCountStrings()
         {
             var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo" }} x");
-            int dayCount = q.ReadScalar<int>(conn);
+            var dayCount = q.ReadScalar<int>(conn);
             Assert.That(dayCount, Is.EqualTo(2));
         }
 
