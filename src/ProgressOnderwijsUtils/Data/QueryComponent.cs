@@ -15,32 +15,32 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
         {
             if (o is IEnumerable && !(o is string) && !(o is byte[])) {
-                ToTableParameterFromPlainValues((IEnumerable)o).AppendTo(ref factory);
+                ToTableValuedParameterFromPlainValues((IEnumerable)o).AppendTo(ref factory);
             } else {
                 QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
             }
         }
 
-        public static IQueryComponent ToTableParameterFromPlainValues(IEnumerable set)
+        public static IQueryComponent ToTableValuedParameterFromPlainValues(IEnumerable set)
         {
             var enumerableType = set.GetType();
-            IWrappedTableParameterFactory factory;
-            if (!tvpFactoryCache.TryGetValue(enumerableType, out factory)) {
-                factory = TvpFactoryForEnumerableType(enumerableType);
-                tvpFactoryCache.TryAdd(enumerableType, factory);
+            ITableValuedParameterFactory factory;
+            if (!tableValuedParameterFactoryCache.TryGetValue(enumerableType, out factory)) {
+                factory = CreateTableValuedParameterFactory(enumerableType);
+                tableValuedParameterFactoryCache.TryAdd(enumerableType, factory);
             }
             if (factory == null) {
                 throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(enumerableType) + " as a table valued parameter", nameof(set));
             }
-            return factory.ToWrappedTableParameter(set);
+            return factory.CreateFromPlainValues(set);
         }
 
-        public static IQueryComponent ToTableParameter<T>(string tableTypeName, T[] set) where T : IMetaObject, new()
+        public static IQueryComponent ToTableValuedParameter<T>(string tableTypeName, T[] set) where T : IMetaObject, new()
             => new QueryTableValuedParameterComponent<T>(tableTypeName, set);
 
-        static readonly ConcurrentDictionary<Type, IWrappedTableParameterFactory> tvpFactoryCache = new ConcurrentDictionary<Type, IWrappedTableParameterFactory>();
+        static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
 
-        static IWrappedTableParameterFactory TvpFactoryForEnumerableType(Type enumerableType)
+        static ITableValuedParameterFactory CreateTableValuedParameterFactory(Type enumerableType)
         {
             var elementType = TryGetNonAmbiguousEnumerableElementType(enumerableType);
             if (elementType == null) {
@@ -51,8 +51,8 @@ namespace ProgressOnderwijsUtils
             if (sqlTableTypeName == null) {
                 return null;
             }
-            var factoryType = typeof(WrappedTableParameterFactory<>).MakeGenericType(elementType);
-            return (IWrappedTableParameterFactory)Activator.CreateInstance(factoryType, sqlTableTypeName);
+            var factoryType = typeof(TableValuedParameterFactory<>).MakeGenericType(elementType);
+            return (ITableValuedParameterFactory)Activator.CreateInstance(factoryType, sqlTableTypeName);
         }
 
         static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = new Dictionary<Type, string> {
@@ -70,24 +70,24 @@ namespace ProgressOnderwijsUtils
             { typeof(byte[]), "TVar_VarBinaryMax" },
         };
 
-        interface IWrappedTableParameterFactory
+        interface ITableValuedParameterFactory
         {
-            IQueryComponent ToWrappedTableParameter(IEnumerable enumerable);
+            IQueryComponent CreateFromPlainValues(IEnumerable enumerable);
         }
 
-        class WrappedTableParameterFactory<T> : IWrappedTableParameterFactory
+        class TableValuedParameterFactory<T> : ITableValuedParameterFactory
         {
             readonly string sqlTableTypeName;
 
-            public WrappedTableParameterFactory(string sqlTableTypeName)
+            public TableValuedParameterFactory(string sqlTableTypeName)
             {
                 this.sqlTableTypeName = sqlTableTypeName;
             }
 
-            public IQueryComponent ToWrappedTableParameter(IEnumerable enumerable)
+            public IQueryComponent CreateFromPlainValues(IEnumerable enumerable)
             {
-                var metaObjects = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject((IEnumerable<T>)enumerable);
-                return ToTableParameter(sqlTableTypeName, metaObjects);
+                var metaObjects = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject((IEnumerable<T>)enumerable);
+                return ToTableValuedParameter(sqlTableTypeName, metaObjects);
             }
         }
 
@@ -119,43 +119,43 @@ namespace ProgressOnderwijsUtils
     namespace Internal
     {
         //public needed for auto-mapping
-        public struct DbTableValuedParameterWrapper<T> : IMetaObject
+        public struct TableValuedParameterWrapper<T> : IMetaObject
         {
             [Key]
-            public T querytablevalue { get; set; }
+            public T QueryTableValue { get; set; }
 
-            public override string ToString() => querytablevalue == null ? "NULL" : querytablevalue.ToString();
+            public override string ToString() => QueryTableValue == null ? "NULL" : QueryTableValue.ToString();
         }
 
-        public static class DbTableValuedParameterWrapperHelper
+        public static class TableValuedParameterWrapperHelper
         {
             /// <summary>
             /// Efficiently wraps an enumerable of objects in DbTableValuedParameterWrapper and materialized the sequence as array.
             /// Effectively it's like .Select(x => new DbTableValuedParameterWrapper { querytablevalue = x }).ToArray() but faster.
             /// </summary>
-            public static DbTableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>(IEnumerable<T> typedEnumerable)
+            public static TableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>(IEnumerable<T> typedEnumerable)
             {
                 var typedArray = typedEnumerable as T[];
                 if (typedArray != null) {
-                    var projectedArray = new DbTableValuedParameterWrapper<T>[typedArray.Length];
+                    var projectedArray = new TableValuedParameterWrapper<T>[typedArray.Length];
                     for (int i = 0; i < projectedArray.Length; i++) {
-                        projectedArray[i].querytablevalue = typedArray[i];
+                        projectedArray[i].QueryTableValue = typedArray[i];
                     }
                     return projectedArray;
                 }
 
                 var typedList = typedEnumerable as IReadOnlyList<T>;
                 if (typedList != null) {
-                    var projectedArray = new DbTableValuedParameterWrapper<T>[typedList.Count];
+                    var projectedArray = new TableValuedParameterWrapper<T>[typedList.Count];
                     for (int i = 0; i < projectedArray.Length; i++) {
-                        projectedArray[i].querytablevalue = typedList[i];
+                        projectedArray[i].QueryTableValue = typedList[i];
                     }
                     return projectedArray;
                 }
 
-                var arrayBuilder = FastArrayBuilder<DbTableValuedParameterWrapper<T>>.Create();
+                var arrayBuilder = FastArrayBuilder<TableValuedParameterWrapper<T>>.Create();
                 foreach (var item in typedEnumerable) {
-                    arrayBuilder.Add(new DbTableValuedParameterWrapper<T> { querytablevalue = item });
+                    arrayBuilder.Add(new TableValuedParameterWrapper<T> { QueryTableValue = item });
                 }
                 return arrayBuilder.ToArray();
             }

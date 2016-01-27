@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]
-        public static QueryBuilder TableParamDynamic(Array o) => QueryComponent.ToTableParameterFromPlainValues(o).BuildableToQuery();
+        public static QueryBuilder TableParamDynamic(Array o) => QueryComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
 
         /// <summary>
         /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static QueryBuilder TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => QueryComponent.ToTableParameter(typeName, objects).BuildableToQuery();
+            => QueryComponent.ToTableValuedParameter(typeName, objects).BuildableToQuery();
     }
 
     interface IQueryComponent

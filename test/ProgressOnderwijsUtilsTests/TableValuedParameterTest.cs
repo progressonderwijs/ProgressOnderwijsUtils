@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtilsTests
         {
 
             var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
-            var metaObjects = stringsWithNull.ArraySelect(s=>new DbTableValuedParameterWrapper<string> { querytablevalue =s });
+            var metaObjects = stringsWithNull.ArraySelect(s=>new TableValuedParameterWrapper<string> { QueryTableValue =s });
 
             SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(conn);
             //manual bulk insert because our default TVP types explicitly forbid null
@@ -180,29 +180,29 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void WrapSupportsEnumerableOfInt()
         {
-            var internalArray = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7));
-            PAssert.That(() => internalArray.Select(o => o.querytablevalue).SequenceEqual(Enumerable.Range(7, 7)));
+            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7));
+            PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7)));
         }
 
         [Test]
         public void WrapSupportsEnumerableOfString()
         {
-            var internalArray = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).Select(n => n.ToString()));
-            PAssert.That(() => internalArray.Select(o => o.querytablevalue).SequenceEqual(Enumerable.Range(7, 7).Select(n => n.ToString())));
+            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).Select(n => n.ToString()));
+            PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7).Select(n => n.ToString())));
         }
 
         [Test]
         public void WrapSupportsReadonlyListOfInt()
         {
-            var internalArray = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToList());
-            PAssert.That(() => internalArray.Select(o => o.querytablevalue).SequenceEqual(Enumerable.Range(7, 7)));
+            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToList());
+            PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7)));
         }
 
         [Test]
         public void WrapSupportsArrayOfInt()
         {
-            var internalArray = DbTableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToArray());
-            PAssert.That(() => internalArray.Select(o => o.querytablevalue).SequenceEqual(Enumerable.Range(7, 7)));
+            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToArray());
+            PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7)));
         }
     }
 }
