@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
@@ -32,11 +33,11 @@ namespace ProgressOnderwijsUtils
             var skipNrowsParam = QueryBuilder.Param((long)skipNrows);
 
             var sortorder = sortOrder;
-            var orderClause = sortorder == OrderByColumns.Empty ? SafeSql.SQL($"order by (select 1)") : CreateFromSortOrder(sortorder);
+            var orderClause = sortorder == OrderByColumns.Empty ? SQL($"order by (select 1)") : CreateFromSortOrder(sortorder);
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
 
-            var topNSubQuery = SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + SafeSql.SQL($"+") + skipNrowsParam);
-            return SafeSql.SQL($@"
+            var topNSubQuery = SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + SQL($"+") + skipNrowsParam);
+            return SQL($@"
 select top ({takeRowsParam}) {projectedColumnsClause}
 from (select _row=row_number() over ({orderClause}),
       _g2.*
@@ -59,10 +60,10 @@ order by _row");
         {
             projectedColumns = projectedColumns ?? AllColumns;
 
-            var topClause = topRowsOrNull != null ? SafeSql.SQL($"top ({topRowsOrNull}) ") : QueryBuilder.Empty;
+            var topClause = topRowsOrNull != null ? SQL($"top ({topRowsOrNull}) ") : QueryBuilder.Empty;
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
             return
-                SafeSql.SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
+                SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateFromSortOrder(sortOrder);
         }
 
@@ -91,9 +92,8 @@ order by _row");
 
         [Pure]
         static QueryBuilder CreateProjectedColumnsClause(IEnumerable<QueryBuilder> projectedColumns)
-            => projectedColumns.Aggregate((a, b) => a.Append(Comma_ColumnSeperator).Append(b));
+            => projectedColumns.Aggregate((a, b) => SQL($"{a}\n, {b}"));
 
-        static readonly QueryBuilder[] AllColumns = { SafeSql.SQL($"*") };
-        static readonly QueryBuilder Comma_ColumnSeperator = SafeSql.SQL($", ");
+        static readonly QueryBuilder[] AllColumns = { SQL($"*") };
     }
 }

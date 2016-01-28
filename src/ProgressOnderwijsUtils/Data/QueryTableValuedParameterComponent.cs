@@ -4,24 +4,27 @@ using System;
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class QueryTableValuedParameterComponent<T> : IQueryParameter, IQueryComponent
-        where T : IMetaObject
+    sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, IQueryComponent
+        where TOut : IMetaObject
     {
         static readonly string columnListClause =
-            MetaObject.GetMetaProperties<T>()
+            MetaObject.GetMetaProperties<TOut>()
                 .Select(mp => "TVP." + mp.Name)
                 .JoinStrings(", ");
 
         const string subselect_part1 = "(select ";
         const string subselect_part3 = " from ";
         const string subselect_part5 = " TVP)";
-        readonly T[] objs;
         readonly string DbTypeName;
-        public object EquatableValue => Tuple.Create(objs, DbTypeName);
+        readonly IEnumerable<TIn> values;
+        readonly Func<IEnumerable<TIn>, TOut[]> projection;
+        int cachedProjectedLength;
+        public object EquatableValue => Tuple.Create(values, DbTypeName);
 
-        internal QueryTableValuedParameterComponent(string dbTypeName, T[] list)
+        internal QueryTableValuedParameterComponent(string dbTypeName, IEnumerable<TIn> values, Func<IEnumerable<TIn>, TOut[]> projection)
         {
-            objs = list;
+            this.values = values;
+            this.projection = projection;
             DbTypeName = dbTypeName;
         }
 
@@ -34,16 +37,20 @@ namespace ProgressOnderwijsUtils
             SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(this));
             SqlFactory.AppendSql(ref factory, subselect_part5);
 
-            //Insert length category token in TVP sql output, so that the query
-            //optimizer uses differing query plans for arrays.  In effect, every
-            //factor of 8 a new query plan is used.
-            SqlFactory.AppendSql(ref factory, querySizeToken[LengthToCategory(objs.Length)]);
+            if (cachedProjectedLength > 0) {
+                //Insert length category token in TVP sql output, so that the query
+                //optimizer uses differing query plans for arrays.  In effect, every
+                //factor of 8 a new query plan is used.
+                SqlFactory.AppendSql(ref factory, querySizeToken[LengthToCategory(cachedProjectedLength)]);
+            }
         }
 
         public void ToSqlParameter(ref SqlParamArgs paramArgs)
         {
+            var objs = projection(values);
             paramArgs.Value = MetaObject.CreateDataReader(objs);
             paramArgs.TypeName = DbTypeName;
+            cachedProjectedLength = objs.Length;
         }
 
         static int LengthToCategory(int length) => Utils.LogBase2RoundedDown((uint)length) / 3;

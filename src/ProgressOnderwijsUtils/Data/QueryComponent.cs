@@ -35,8 +35,9 @@ namespace ProgressOnderwijsUtils
             return factory.CreateFromPlainValues(set);
         }
 
-        public static IQueryComponent ToTableValuedParameter<T>(string tableTypeName, T[] set) where T : IMetaObject, new()
-            => new QueryTableValuedParameterComponent<T>(tableTypeName, set);
+        public static IQueryComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection) 
+            where TOut : IMetaObject, new()
+            => new QueryTableValuedParameterComponent<TIn,TOut>(tableTypeName, set, projection);
 
         static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
 
@@ -86,8 +87,7 @@ namespace ProgressOnderwijsUtils
 
             public IQueryComponent CreateFromPlainValues(IEnumerable enumerable)
             {
-                var metaObjects = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject((IEnumerable<T>)enumerable);
-                return ToTableValuedParameter(sqlTableTypeName, metaObjects);
+                return ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject);
             }
         }
 

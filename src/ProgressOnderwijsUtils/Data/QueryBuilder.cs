@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static QueryBuilder TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => QueryComponent.ToTableValuedParameter(typeName, objects).BuildableToQuery();
+            => QueryComponent.ToTableValuedParameter<T,T>(typeName, objects, o=>(T[])o).BuildableToQuery();
     }
 
     interface IQueryComponent
