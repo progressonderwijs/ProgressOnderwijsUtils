@@ -452,7 +452,7 @@ namespace ProgressOnderwijsUtils
                                 .AppendAuto(s)
                                 .Append(Translatable.Literal("' niet uniek interpreteren!", "' cannot be interpreted unambiguously!")));
             }
-            /*catch (OverflowException) { return ParseResult.Overflow; }*/
+            // catch (OverflowException) { return ParseResult.Overflow; }
             else if (fundamentalType == typeof(double)) {
                 try {
                     return ParseResult.Ok((double)ParseDecimal(s));
