@@ -43,6 +43,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="builder">De uit-te-voeren query</param>
         /// <param name="conn">De database om tegen te query-en</param>
+        /// <param name="missingSchemaAction"></param>
         public static DataTable ReadDataTable(this QueryBuilder builder, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
         {
             return ExecuteQuery(
@@ -133,7 +134,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
-        /// <param name="conn">The database connection</param>
+        /// <param name="qCommandCreationContext">The command creation context</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         public static T[] ReadPlain<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext)
         {
