@@ -127,15 +127,33 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static bool CanReferenceColumn(this BooleanComparer comparer)
+        public static readonly IReadOnlyCollection<BooleanComparer> ComparersThatCanReferenceColumns = new[] {
+            BooleanComparer.Equal,
+            BooleanComparer.GreaterThan,
+            BooleanComparer.GreaterThanOrEqual,
+            BooleanComparer.LessThan,
+            BooleanComparer.LessThanOrEqual,
+            BooleanComparer.NotEqual,
+        };
+
+        public static readonly IReadOnlyCollection<BooleanComparer> ComparersThatCanReferenceGroups = new[] {
+            BooleanComparer.In,
+            BooleanComparer.NotIn,
+        };
+
+        public static BooleanComparer[] GetTypeComparers(Type datatype)
         {
-            return comparer.In(
-                BooleanComparer.Equal,
-                BooleanComparer.GreaterThan,
-                BooleanComparer.GreaterThanOrEqual,
-                BooleanComparer.LessThan,
-                BooleanComparer.LessThanOrEqual,
-                BooleanComparer.NotEqual);
+            if (datatype == typeof(string)) {
+                return CriteriumFilter.StringComparers;
+            }
+            // TODO: uitzoeken waarom byte een boolean is
+            if (datatype == typeof(bool) || datatype == typeof(byte)) {
+                return CriteriumFilter.BooleanComparers;
+            }
+
+            // TODO: uitbreiden datatypes en fout retourneren bij onbekend datatype
+            // TODO: onderscheid maken tussen nullable en niet nullable
+            return CriteriumFilter.NumericComparers;
         }
 
         public static string NiceString(this BooleanComparer comparer)
