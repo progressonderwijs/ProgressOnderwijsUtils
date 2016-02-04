@@ -127,23 +127,19 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static bool CanReferenceColumn(this BooleanComparer comparer)
-        {
-            return comparer.In(
-                BooleanComparer.Equal,
-                BooleanComparer.GreaterThan,
-                BooleanComparer.GreaterThanOrEqual,
-                BooleanComparer.LessThan,
-                BooleanComparer.LessThanOrEqual,
-                BooleanComparer.NotEqual);
-        }
+        public static readonly IReadOnlyCollection<BooleanComparer> ComparersThatCanReferenceColumns = new[] {
+            BooleanComparer.Equal,
+            BooleanComparer.GreaterThan,
+            BooleanComparer.GreaterThanOrEqual,
+            BooleanComparer.LessThan,
+            BooleanComparer.LessThanOrEqual,
+            BooleanComparer.NotEqual,
+        };
 
-        public static bool CanReferenceGroup(this BooleanComparer comparer)
-        {
-            return comparer.In(
-                BooleanComparer.In,
-                BooleanComparer.NotIn);
-        }
+        public static readonly IReadOnlyCollection<BooleanComparer> ComparersThatCanReferenceGroups = new[] {
+            BooleanComparer.In,
+            BooleanComparer.NotIn,
+        };
 
         public static BooleanComparer[] GetTypeComparers(Type datatype)
         {

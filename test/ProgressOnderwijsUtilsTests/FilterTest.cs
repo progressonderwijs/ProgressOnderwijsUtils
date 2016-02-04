@@ -150,9 +150,9 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void ColRef()
         {
-            PAssert.That(() => !BooleanComparer.In.CanReferenceColumn());
-            PAssert.That(() => !BooleanComparer.NotIn.CanReferenceColumn());
-            PAssert.That(() => BooleanComparer.Equal.CanReferenceColumn());
+            PAssert.That(() => !Filter.ComparersThatCanReferenceColumns.Contains(BooleanComparer.In));
+            PAssert.That(() => !Filter.ComparersThatCanReferenceColumns.Contains(BooleanComparer.NotIn));
+            PAssert.That(() => Filter.ComparersThatCanReferenceColumns.Contains(BooleanComparer.Equal));
             Assert.Throws<ArgumentNullException>(() => new ColumnReference(null));
             Assert.Throws<ArgumentException>(() => new ColumnReference("a b"));
             Assert.Throws<ArgumentException>(() => new ColumnReference("a.b"));
