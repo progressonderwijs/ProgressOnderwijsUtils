@@ -138,6 +138,19 @@ namespace ProgressOnderwijsUtils
                 BooleanComparer.NotEqual);
         }
 
+        public static BooleanComparer[] GetTypeComparers(Type datatype)
+        {
+            if (datatype == typeof(string)) {
+                return CriteriumFilter.StringComparers;
+            }
+            if (datatype == typeof(bool) || datatype == typeof(bool?) || datatype == typeof(byte) || datatype == typeof(byte?)) {
+                return CriteriumFilter.BooleanComparers;
+            }
+
+            // TODO: uitbreiden datatypes en fout retourneren bij onbekend datatype 
+            return CriteriumFilter.NumericComparers;
+        }
+
         public static string NiceString(this BooleanComparer comparer)
         {
             switch (comparer) {
