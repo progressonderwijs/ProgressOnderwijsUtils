@@ -1,9 +1,9 @@
 ﻿using ApprovalTests.Reporters;
 
 /*
- * Workaround voor https://github.com/approvals/ApprovalTests.Net/issues/91
- * zie ook: https://github.com/PowerAssert/PowerAssert.Net/commit/2aa7b64808c6c7bdc01449795fb56362c95f0731
- * werkt omdat: visual studio diff reporter niet wordt gebruikt
+ Workaround voor https://github.com/approvals/ApprovalTests.Net/issues/91
+ zie ook: https://github.com/PowerAssert/PowerAssert.Net/commit/2aa7b64808c6c7bdc01449795fb56362c95f0731
+ werkt omdat: visual studio diff reporter niet wordt gebruikt
  */
 
 namespace ProgressOnderwijsUtils
