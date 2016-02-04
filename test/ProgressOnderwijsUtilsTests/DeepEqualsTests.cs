@@ -45,6 +45,7 @@ namespace ProgressOnderwijsUtilsTests
             // ReSharper disable UnusedAutoPropertyAccessor.Local
             // ReSharper disable UnaccessedField.Local
 #pragma warning disable 649
+#pragma warning disable 414
             public decimal BC;
             public string XYZ { get; set; }
         }
@@ -60,6 +61,8 @@ namespace ProgressOnderwijsUtilsTests
             public int V = 3;
             public Recursive Next;
         }
+#pragma warning restore 649
+#pragma warning restore 414
 
         [Test]
         public void SimpleTypes()
