@@ -147,7 +147,7 @@ namespace ProgressOnderwijsUtils
                 return CriteriumFilter.StringComparers;
             }
             // TODO: uitzoeken waarom byte een boolean is
-            if (datatype == typeof(bool) || datatype == typeof(bool?) || datatype == typeof(byte) || datatype == typeof(byte?)) {
+            if (datatype == typeof(bool) || datatype == typeof(byte)) {
                 return CriteriumFilter.BooleanComparers;
             }
 
