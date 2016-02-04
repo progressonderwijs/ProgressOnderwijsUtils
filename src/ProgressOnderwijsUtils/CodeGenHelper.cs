@@ -54,10 +54,10 @@ namespace ProgressOnderwijsUtils
                             var isKey = dt.PrimaryKey.Contains(dc);
                             var verplicht = !dc.AllowDBNull && !isKey && columnDefinition.DataType.CanBeNull();
                             var attrs = new[] {
-                                (isKey ? "Key" : null),
-                                (verplicht ? "MpVerplicht" : null),
-                                (dc.ReadOnly ? "MpReadonly" : null),
-                                (dc.MaxLength >= 0 && dc.MaxLength < int.MaxValue ? "MpMaxLength(" + dc.MaxLength + ")" : null),
+                                isKey ? "Key" : null,
+                                verplicht ? "MpVerplicht" : null,
+                                dc.ReadOnly ? "MpReadonly" : null,
+                                dc.MaxLength >= 0 && dc.MaxLength < int.MaxValue ? "MpMaxLength(" + dc.MaxLength + ")" : null,
                             }.Where(a => a != null).ToArray();
                             return (attrs.Any() ? "[" + attrs.JoinStrings(", ") + "]\n" : "")
                                 + GetColumnProperty(columnDefinition)

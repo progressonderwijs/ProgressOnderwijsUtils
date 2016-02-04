@@ -199,7 +199,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override int GetHashCode()
         {
-            return (int)(DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Aggregate(12345L, (a, b) => a + b));
+            return (int)DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Aggregate(12345L, (a, b) => a + b);
         }
 
         public override string ToString() => "{" + DirectAcessColumns.Select(col => col.ToString()).JoinStrings(", ") + "}";

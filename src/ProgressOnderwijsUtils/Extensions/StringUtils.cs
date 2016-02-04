@@ -90,7 +90,7 @@ namespace ProgressOnderwijsUtils
             var withSpace =
                 PrettyPrintValues.capLetter.Replace(
                     rawString,
-                    m => (m.Index == 0 ? m.Value : " " + (IsUpperAscii(m.Value) ? m.Value : DecapitalizeAscii(m.Value)))
+                    m => m.Index == 0 ? m.Value : " " + (IsUpperAscii(m.Value) ? m.Value : DecapitalizeAscii(m.Value))
                     );
             return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
         }
@@ -142,7 +142,7 @@ namespace ProgressOnderwijsUtils
             }
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < m; j++) {
-                    int cost = (t[j] == s[i] ? 0 : subsCost); // cost
+                    int cost = t[j] == s[i] ? 0 : subsCost; // cost
                     d[i + 1, j + 1] = Math.Min(Math.Min(d[i, j + 1] + 1, d[i + 1, j] + 1), d[i, j] + cost);
                 }
             }

@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils.Radius
                     throw new Exception("nRadius request too large");
                 }
                 request[2] = (byte)(request.Length >> 8); //most significant byte first - big endian!
-                request[3] = (byte)(request.Length);
+                request[3] = (byte)request.Length;
 
                 byte[] response;
                 try {

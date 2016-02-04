@@ -54,8 +54,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !(a != b));
             PAssert.That(() => a != c);
             PAssert.That(() => !(a == c));
-            PAssert.That(() => !(a.Equals(c)));
-            PAssert.That(() => !(a.Equals((object)c)));
+            PAssert.That(() => !a.Equals(c));
+            PAssert.That(() => !a.Equals((object)c));
             PAssert.That(() => !a.Equals(SList<int>.Empty));
         }
 
@@ -131,7 +131,7 @@ namespace ProgressOnderwijsUtilsTests
                 () =>
                     (from aList in lists
                         from bList in lists
-                        select (aList == bList) == (aList.GetHashCode() == bList.GetHashCode())).All(x => x));
+                        select aList == bList == (aList.GetHashCode() == bList.GetHashCode())).All(x => x));
         }
     }
 }

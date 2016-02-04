@@ -46,14 +46,13 @@ namespace ProgressOnderwijsUtils
                 var nameMatchedCols = srcFieldsByName.Keys.Where(dstFieldsByName.ContainsKey);
                 var typeMismatchCols = nameMatchedCols.Where(name => srcFieldsByName[name].UnderlyingType != dstFieldsByName[name].UnderlyingType);
 
-                string typeMismatchMessage = (!typeMismatchCols.Any()
+                string typeMismatchMessage = !typeMismatchCols.Any()
                     ? ""
                     : "\n\nType mismatches (src <> dst):\n"
                         + typeMismatchCols.Select(
                             name => "  " +
                                 srcFieldsByName[name].Def.ToString() + "  <>  " + dstFieldsByName[name].Def.ToString() + "\n"
-                            ).JoinStrings()
-                    );
+                            ).JoinStrings();
 
                 throw new InvalidOperationException(
                     "Source " + srcSetDebugName + " has different shape than destination " + dstSetDebugName + " with mode " + mode + ":\n"

@@ -64,11 +64,10 @@ namespace ProgressOnderwijsUtilsTests
         {
             PAssert.That(() => img1.Size == img2.Size);
 
-            var pixelsDiffs = (
-                from y in Enumerable.Range(0, img1.Height)
+            var pixelsDiffs = from y in Enumerable.Range(0, img1.Height)
                 from x in Enumerable.Range(0, img1.Width)
                 let err = img1.GetPixel(x, y).Distance(img2.GetPixel(x, y))
-                select new { x, y, err });
+                select new { x, y, err };
 
             var bitness = 8 * IntPtr.Size;
             var accuracy = bitness == 32 ? 0.1 : 0.025; //for some odd reason, the 32-bit clr has much lower image scaling accuracy...

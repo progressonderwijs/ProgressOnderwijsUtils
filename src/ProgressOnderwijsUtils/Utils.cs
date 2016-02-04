@@ -181,7 +181,7 @@ namespace ProgressOnderwijsUtils
             } else if (e is DBConcurrencyException) {
                 return e.Message.StartsWith("Concurrency violation:");
             } else if (e is EntityException) {
-                return (e.Message == "The underlying provider failed on Open.");
+                return e.Message == "The underlying provider failed on Open.";
             } else if (e is AggregateException) {
                 return ((AggregateException)e).Flatten().InnerExceptions.DefaultIfEmpty().All(IsDbConnectionFailure);
             } else {
@@ -302,7 +302,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static int MaandSpan(DateTime d1, DateTime d2)
         {
-            return Math.Abs(d1 > d2 ? (12 * (d1.Year - d2.Year) + d1.Month) - d2.Month : (12 * (d2.Year - d1.Year) + d2.Month) - d1.Month);
+            return Math.Abs(d1 > d2 ? 12 * (d1.Year - d2.Year) + d1.Month - d2.Month : 12 * (d2.Year - d1.Year) + d2.Month - d1.Month);
         }
 
         /// <summary>
@@ -446,11 +446,11 @@ namespace ProgressOnderwijsUtils
         public static int LogBase2RoundedDown(uint x)
         {
             int res = 0;
-            if (x >= (1 << 16)) { res += 16; x = x >> 16; }
-            if (x >= (1 << 8)) { res += 8; x = x >> 8; }
-            if (x >= (1 << 4)) { res += 4; x = x >> 4; }
-            if (x >= (1 << 2)) { res += 2; x = x >> 2; }
-            if (x >= (1 << 1)) { res += 1; x = x >> 1; }
+            if (x >= 1 << 16) { res += 16; x = x >> 16; }
+            if (x >= 1 << 8) { res += 8; x = x >> 8; }
+            if (x >= 1 << 4) { res += 4; x = x >> 4; }
+            if (x >= 1 << 2) { res += 2; x = x >> 2; }
+            if (x >= 1 << 1) { res += 1; x = x >> 1; }
             return res;
         }
 
@@ -471,9 +471,9 @@ namespace ProgressOnderwijsUtils
         {
             for (uint i = 1; i < uint.MaxValue; i++) {
                 var res = Utils.LogBase2RoundedDown(i);
-                if (!(i < (1ul << res + 1)))
+                if (!(i < 1ul << res + 1))
                     throw new Exception($"i < (1ul << res + 1) FAILED for i:{i}; res: {res}");
-                if (!((1ul << res) <= i))
+                if (!(1ul << res <= i))
                     throw new Exception($"(1ul << res) <= i FAILED for i:{i}; res: {res}");
             }
             PAssert.That(() => Utils.LogBase2RoundedDown(0) == 0);
@@ -485,9 +485,9 @@ namespace ProgressOnderwijsUtils
         {
             for (uint i = 2; i < uint.MaxValue; i++) {
                 var res = Utils.LogBase2RoundedUp(i);
-                if (!(i <= (1ul << res)))
+                if (!(i <= 1ul << res))
                     throw new Exception($"i <= (1ul << res) FAILED for i:{i}; res: {res}");
-                if (!((1ul << res - 1) < i))
+                if (!(1ul << res - 1 < i))
                     throw new Exception($"(1ul << res - 1) < i FAILED for i:{i}; res: {res}");
             }
             PAssert.That(() => Utils.LogBase2RoundedUp(0) == 0);

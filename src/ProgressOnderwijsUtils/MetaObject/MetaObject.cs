@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils
                     "To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
                         "The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
             }
-            var membExpr = ((MemberExpression)innerExpr);
+            var membExpr = (MemberExpression)innerExpr;
 
             //*
             var targetExpr = UnwrapCast(membExpr.Expression);
@@ -161,7 +161,7 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentException("MetaObject " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " must be public (accessable to other assemblies)");
             }
 
-            SqlBulkCopyOptions effectiveOptions = options ?? (SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction);
+            SqlBulkCopyOptions effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction;
             ColumnDefinition[] dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
 
             using (var objectReader = CreateDataReader(metaObjects))

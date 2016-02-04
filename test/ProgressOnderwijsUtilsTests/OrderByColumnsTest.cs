@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtilsTests
             }
 
             PAssert.That(() => colSort.Columns.SequenceEqual(new[] { ziggyA, abcA, acolD }));
-            PAssert.That(() => Equals(colSort, new OrderByColumns((new[] { ziggyA, abcA, acolD }))));
+            PAssert.That(() => Equals(colSort, new OrderByColumns(new[] { ziggyA, abcA, acolD })));
         }
 
         [Test]
