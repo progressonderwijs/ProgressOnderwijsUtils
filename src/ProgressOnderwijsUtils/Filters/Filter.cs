@@ -138,6 +138,13 @@ namespace ProgressOnderwijsUtils
                 BooleanComparer.NotEqual);
         }
 
+        public static bool CanReferenceGroup(this BooleanComparer comparer)
+        {
+            return comparer.In(
+                BooleanComparer.In,
+                BooleanComparer.NotIn);
+        }
+
         public static BooleanComparer[] GetTypeComparers(Type datatype)
         {
             if (datatype == typeof(string)) {
