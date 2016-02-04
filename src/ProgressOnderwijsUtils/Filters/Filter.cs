@@ -150,11 +150,13 @@ namespace ProgressOnderwijsUtils
             if (datatype == typeof(string)) {
                 return CriteriumFilter.StringComparers;
             }
+            // TODO: uitzoeken waarom byte een boolean is
             if (datatype == typeof(bool) || datatype == typeof(bool?) || datatype == typeof(byte) || datatype == typeof(byte?)) {
                 return CriteriumFilter.BooleanComparers;
             }
 
-            // TODO: uitbreiden datatypes en fout retourneren bij onbekend datatype 
+            // TODO: uitbreiden datatypes en fout retourneren bij onbekend datatype
+            // TODO: onderscheid maken tussen nullable en niet nullable
             return CriteriumFilter.NumericComparers;
         }
 
