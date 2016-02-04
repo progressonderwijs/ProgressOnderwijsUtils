@@ -64,7 +64,8 @@ namespace ProgressOnderwijsUtilsTests
         {
             PAssert.That(() => img1.Size == img2.Size);
 
-            var pixelsDiffs = from y in Enumerable.Range(0, img1.Height)
+            var pixelsDiffs = 
+                from y in Enumerable.Range(0, img1.Height)
                 from x in Enumerable.Range(0, img1.Width)
                 let err = img1.GetPixel(x, y).Distance(img2.GetPixel(x, y))
                 select new { x, y, err };
