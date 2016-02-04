@@ -227,13 +227,9 @@ namespace ProgressOnderwijsUtils
 
         public static int? StringToNullableInt(string input)
         {
-            if (string.IsNullOrWhiteSpace(input)) {
-                return null;
-            }
-
-            int result;
-            if (int.TryParse(input, out result)) {
-                return result;
+            int output;
+            if (int.TryParse(input, out output)) {
+                return output;
             } else {
                 return null;
             }
