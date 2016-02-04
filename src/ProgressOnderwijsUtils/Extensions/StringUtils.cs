@@ -224,5 +224,15 @@ namespace ProgressOnderwijsUtils
                 return pluralstring;
             }
         }
+
+        public static int? StringToNullableInt(string input)
+        {
+            int output;
+            if (int.TryParse(input, out output)) {
+                return output;
+            } else {
+                return null;
+            }
+        }
     }
 }
