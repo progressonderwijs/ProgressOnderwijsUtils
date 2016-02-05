@@ -35,18 +35,6 @@ namespace ProgressOnderwijsUtils
         public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b)
             => (a.impl == null || b.impl == null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
 
-        [Pure, Obsolete("Implicitly converts to SQL", true)]
-        public static QueryBuilder operator +(QueryBuilder a, string b)
-        {
-            throw new InvalidOperationException("Cannot concatenate sql with strings");
-        }
-
-        [Pure, Obsolete("Implicitly converts to SQL", true)]
-        public static QueryBuilder operator +(string a, QueryBuilder b)
-        {
-            throw new InvalidOperationException("Cannot concatenate sql with strings");
-        }
-
         public static QueryBuilder CreateDynamic(string rawSqlString)
         {
             if (rawSqlString == null) {
