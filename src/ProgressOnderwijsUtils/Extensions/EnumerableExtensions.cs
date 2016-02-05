@@ -190,7 +190,7 @@ namespace ProgressOnderwijsUtils
             string csvValueWithoutQuotes = item?.ToString() ?? "";
 
             if (csvValueWithoutQuotes.Contains(delimiter) && !useQuotesForStrings) {
-                throw new ArgumentException("item contains illegal characters, use useQuotesForStrings=true");
+                new ArgumentException("item contains illegal characters, use useQuotesForStrings=true").ThrowPreconditionViolation();
             }
 
             if (!useQuotesForStrings) {
