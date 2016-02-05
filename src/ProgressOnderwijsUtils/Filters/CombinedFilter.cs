@@ -34,8 +34,8 @@ namespace ProgressOnderwijsUtils
                     .Aggregate(andor == BooleanOperator.And ? Expression.AndAlso : (Func<Expression, Expression, Expression>)Expression.OrElse);
         }
 
-        static readonly ParameterizedSql sql_and_keyword = SQL($" and ");
-        static readonly ParameterizedSql sql_or_keyword = SQL($" or ");
+        static readonly ParameterizedSql sql_and_keyword = SQL($"and");
+        static readonly ParameterizedSql sql_or_keyword = SQL($"or");
         ParameterizedSql OperatorToSql() => andor == BooleanOperator.Or ? sql_or_keyword : sql_and_keyword;
 
         protected internal override ParameterizedSql ToParameterizedSqlImpl()
