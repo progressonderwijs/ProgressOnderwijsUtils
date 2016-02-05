@@ -141,6 +141,16 @@ namespace ProgressOnderwijsUtils
             BooleanComparer.NotIn,
         };
 
+        public static readonly IReadOnlyCollection<BooleanComparer> ComparersThatTakeAnArrayArgument = new[] {
+            BooleanComparer.In,
+            BooleanComparer.NotIn,
+        };
+
+        public static readonly IReadOnlyCollection<BooleanComparer> ComparersThatTakeNoArguments = new[] {
+            BooleanComparer.IsNull,
+            BooleanComparer.IsNotNull,
+        };
+
         public static BooleanComparer[] GetTypeComparers(Type datatype)
         {
             if (datatype == typeof(string)) {

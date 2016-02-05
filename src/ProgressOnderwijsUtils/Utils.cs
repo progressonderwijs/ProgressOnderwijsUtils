@@ -17,6 +17,8 @@ namespace ProgressOnderwijsUtils
 {
     public static class ErrorUtils
     {
+        // ReSharper disable once FunctionRecursiveOnAllPaths
+        // ReSharper disable once UnusedParameter.Global
         public static string TestErrorStackOverflow(int rounds)
         {
             //This is intended for testing error-handling in case of dramatic errors.
@@ -25,6 +27,7 @@ namespace ProgressOnderwijsUtils
 
         public static void TestErrorOutOfMemory()
         {
+            // ReSharper disable once CollectionNeverQueried.Local
             var memorySlurper = new List<byte[]>();
             for (long i = 0; i < long.MaxValue; i++) { //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
                 memorySlurper.Add(
