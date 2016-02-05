@@ -90,7 +90,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => SqlParameterComponent.ToTableValuedParameter(typeName, objects, o=>(T[])o).BuildableToQuery();
+            => SqlParameterComponent.ToTableValuedParameter(typeName, objects, o => (T[])o).BuildableToQuery();
     }
 
     interface ISqlComponent
@@ -163,6 +163,7 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
         {
             a.AppendTo(ref factory);
+            factory.AppendSql(" ", 0, 1);
             b.AppendTo(ref factory);
         }
     }
@@ -211,6 +212,7 @@ namespace ProgressOnderwijsUtils
 
         static ParamRefSubString[] GetFormatStringParamRefs(string formatstring) => parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString_Delegate);
         static readonly Func<string, ParamRefSubString[]> ParseFormatString_Delegate = ParseFormatString;
+
         static ParamRefSubString[] ParseFormatString(string formatstring)
         {
             var arrayBuilder = FastArrayBuilder<ParamRefSubString>.Create();

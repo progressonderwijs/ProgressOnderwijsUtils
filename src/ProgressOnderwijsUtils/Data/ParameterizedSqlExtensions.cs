@@ -1,17 +1,14 @@
 ﻿using System;
 using JetBrains.Annotations;
-using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
     public static class ParameterizedSqlExtensions
     {
-        static readonly ParameterizedSql newline = SQL($"\r\n");
-
         [Pure]
         public static ParameterizedSql Append(this ParameterizedSql source, ParameterizedSql extra)
         {
-            return source + newline + extra;
+            return source + extra;
         }
 
         [Pure]
