@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils.Test;
 namespace ProgressOnderwijsUtils
 {
     [Continuous]
-    public sealed class TestQueryComponent
+    public sealed class TestSqlParameterComponent
     {
         [Test]
         public void ValidatesArgumentsOK()
