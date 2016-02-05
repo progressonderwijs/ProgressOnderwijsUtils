@@ -12,6 +12,6 @@ namespace ProgressOnderwijsUtils
     [AttributeUsage(AttributeTargets.All), UsefulToKeep("library attribute"), MeansImplicitUse]
     public class UsefulToKeepAttribute : Attribute
     {
-        public UsefulToKeepAttribute(string reason) { }
+        public UsefulToKeepAttribute([UsefulToKeep("for documentation")] string reason) { }
     }
 }
