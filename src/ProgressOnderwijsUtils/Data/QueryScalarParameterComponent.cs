@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
         {
             var param = new QueryScalarParameterComponent { EquatableValue = o ?? DBNull.Value };
-            SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
+            ParameterizedSqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
         }
     }
 }
