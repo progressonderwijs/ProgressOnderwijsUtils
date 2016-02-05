@@ -47,6 +47,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Delete all duplicate records from this table that have the same key.
         /// </summary>
+        /// <param name="table">The table to delete from</param>
         /// <param name="key">The primary key of the tabel is set to this then unique key.</param>
         /// <param name="comparator">Optional delegate to choose the records to keep.</param>
         /// <param name="primary">Optional flag denoting whether to set the primary key to the key specified or not.</param>
