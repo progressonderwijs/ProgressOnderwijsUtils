@@ -22,13 +22,13 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => default(FilterBase).ToParameterizedSql() == SQL($"1=1")); //shouldn't throw and should be equal
 #pragma warning restore 1720
 
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).ToParameterizedSql() == SQL($"test<{3}"));
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThanOrEqual, 3).ToParameterizedSql() == SQL($"test<={3}"));
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, 3).ToParameterizedSql() == SQL($"test={3}"));
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.GreaterThanOrEqual, 3).ToParameterizedSql() == SQL($"test>={3}"));
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.GreaterThan, 3).ToParameterizedSql() == SQL($"test>{3}"));
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotEqual, 3).ToParameterizedSql() == SQL($"test!={3}"));
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, Taal.NL).ToParameterizedSql() == SQL($"test={Taal.NL}"));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).ToParameterizedSql() == SQL($"test < {3}"));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThanOrEqual, 3).ToParameterizedSql() == SQL($"test <= {3}"));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, 3).ToParameterizedSql() == SQL($"test = {3}"));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.GreaterThanOrEqual, 3).ToParameterizedSql() == SQL($"test >= {3}"));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.GreaterThan, 3).ToParameterizedSql() == SQL($"test > {3}"));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotEqual, 3).ToParameterizedSql() == SQL($"test != {3}"));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, Taal.NL).ToParameterizedSql() == SQL($"test = {Taal.NL}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Contains, "world").ToParameterizedSql() == SQL($"test like {"%world%"}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.StartsWith, "world").ToParameterizedSql() == SQL($"test like {"world%"}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.EndsWith, "world").ToParameterizedSql() == SQL($"test like {"%world"}"));
@@ -60,7 +60,7 @@ namespace ProgressOnderwijsUtilsTests
             var filter = Filter.CreateCriterium("test", BooleanComparer.Equal, Filter.CurrentTimeToken.Instance);
             var q = filter.ToParameterizedSql();
             var time = DateTime.Now;
-            bool matcheSomeOldTime = Enumerable.Range(0, 20000).Select(offset => SQL($"test={time.AddTicks(-offset)}")).Any(qIdeal => q == qIdeal);
+            bool matcheSomeOldTime = Enumerable.Range(0, 20000).Select(offset => SQL($"test = {time.AddTicks(-offset)}")).Any(qIdeal => q == qIdeal);
             Assert.True(matcheSomeOldTime, "Kon geen tijd dichtbij DateTime.Now vinden die de CurrentTimeToken matched!");
         }
 
@@ -117,26 +117,26 @@ namespace ProgressOnderwijsUtilsTests
             var testFilter = Filter.CreateCriterium("test", BooleanComparer.LessThan, 3);
             var test2Filter = Filter.CreateCriterium("test2", BooleanComparer.LessThan, 3);
             var combFilter = Filter.CreateCombined(BooleanOperator.And, testFilter, test2Filter);
-            PAssert.That(() => combFilter.ToParameterizedSql() == SQL($"(test<{3} and test2<{3})")); //initial check
+            PAssert.That(() => combFilter.ToParameterizedSql() == SQL($"( test < {3} and test2 < {3} )")); //initial check
 
             var modFilter =
                 combFilter
                     .Replace(testFilter, Filter.CreateCriterium("ziggy", BooleanComparer.LessThan, 3))
                     .AddTo(test2Filter, BooleanOperator.And, Filter.CreateCriterium("stardust", BooleanComparer.GreaterThan, 37));
 
-            PAssert.That(() => modFilter.ToParameterizedSql() == SQL($"(ziggy<{3} and test2<{3} and stardust>{37})")); //note no nested brackets!
-            PAssert.That(() => combFilter.ToParameterizedSql() == SQL($"(test<{3} and test2<{3})")); // side-effect free
+            PAssert.That(() => modFilter.ToParameterizedSql() == SQL($"( ziggy < {3} and test2 < {3} and stardust > {37} )")); //note no nested brackets!
+            PAssert.That(() => combFilter.ToParameterizedSql() == SQL($"( test < {3} and test2 < {3} )")); // side-effect free
             PAssert.That(
                 () =>
                     Filter.CreateCombined(BooleanOperator.And, combFilter, null, modFilter).ToParameterizedSql()
-                        == SQL($"(test<{3} and test2<{3} and ziggy<{3} and test2<{3} and stardust>{37})")); // no unnecessary brackets!
+                        == SQL($"( test < {3} and test2 < {3} and ziggy < {3} and test2 < {3} and stardust > {37} )")); // no unnecessary brackets!
 
             PAssert.That(() => combFilter.Remove(test2Filter) == testFilter && combFilter.Remove(testFilter) == test2Filter); // no unnecessary brackets!
 
             PAssert.That(
                 () =>
                     combFilter.AddTo(testFilter, BooleanOperator.Or, Filter.CreateCriterium("abc", BooleanComparer.GreaterThan, 42)).ToParameterizedSql()
-                        == SQL($"((test<{3} or abc>{42}) and test2<{3})")); //does include nested brackets!
+                        == SQL($"( ( test < {3} or abc > {42} ) and test2 < {3} )")); //does include nested brackets!
 
             var colTypes = new[] { "stardust", "ziggy", "test", "test2" }.ToDictionary(n => n, n => typeof(int));
             PAssert.That(() => modFilter.ClearFilterWhenItContainsInvalidColumns(s => colTypes.GetOrDefault(s, null)) == modFilter);
@@ -166,7 +166,7 @@ namespace ProgressOnderwijsUtilsTests
                     Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant"))
                         .ClearFilterWhenItContainsInvalidColumns(s => s == "relevant" || s == "blabla" ? typeof(int) : null) != null);
             PAssert.That(
-                () => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ToParameterizedSql() == SQL($"blabla<relevant"));
+                () => Filter.CreateCriterium("blabla", BooleanComparer.LessThan, new ColumnReference("relevant")).ToParameterizedSql() == SQL($"blabla < relevant"));
         }
 
         [Test]
@@ -177,8 +177,8 @@ namespace ProgressOnderwijsUtilsTests
             var combFilter = Filter.CreateCombined(BooleanOperator.And, testFilter, test2Filter);
 
             var q = combFilter.ToParameterizedSql();
-            var qAlt = SQL($"(test<{3} and test2<{3})");
-            var qAltWrong = SQL($"(test<{3} and test2<{3.0})");
+            var qAlt = SQL($"( test < {3} and test2 < {3} )");
+            var qAltWrong = SQL($"( test < {3} and test2 < {3.0} )");
 
             PAssert.That(() => q.CommandText() == qAlt.CommandText());
             PAssert.That(() => q.CommandText().GetHashCode() == qAlt.CommandText().GetHashCode());
@@ -411,7 +411,7 @@ namespace ProgressOnderwijsUtilsTests
         public void MetaObjectFiltersWork()
         {
             var filter = helper.FilterOn(o => o.EnumNullable).Equal(BlaFilterEnumTest.Test);
-            PAssert.That(() => filter.ToParameterizedSql() == SQL($"EnumNullable={BlaFilterEnumTest.Test}"));
+            PAssert.That(() => filter.ToParameterizedSql() == SQL($"EnumNullable = {BlaFilterEnumTest.Test}"));
 
             PAssert.That(() => run(filter).Count() == 2);
         }
@@ -582,7 +582,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => filter.ToParameterizedSql() == SQL($"IntNullable is null"));
 
             var filter2 = new FilterFactory<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).Equal(3);
-            PAssert.That(() => filter2.ToParameterizedSql() == SQL($"IntNullable={3}"));
+            PAssert.That(() => filter2.ToParameterizedSql() == SQL($"IntNullable = {3}"));
         }
     }
 
