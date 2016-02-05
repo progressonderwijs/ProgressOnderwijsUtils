@@ -205,7 +205,7 @@ namespace ProgressOnderwijsUtils
 
         public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
-        public static QueryKey EqualityKey(IQueryComponent impl)
+        public static ParameterizedSqlEquatableKey EqualityKey(IQueryComponent impl)
         {
             var factory = new EqualityKeyCommandFactory {
                 debugText = FastShortStringBuilder.Create(),
@@ -213,7 +213,7 @@ namespace ProgressOnderwijsUtils
                 paramValues = FastArrayBuilder<object>.Create(),
             };
             impl?.AppendTo(ref factory);
-            var key = new QueryKey {
+            var key = new ParameterizedSqlEquatableKey {
                 SqlTextKey = factory.debugText.Value,
                 Params = new ComparableArray<object>(factory.paramValues.ToArray()),
             };
@@ -222,7 +222,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    sealed class QueryKey : ValueBase<QueryKey>
+    sealed class ParameterizedSqlEquatableKey : ValueBase<ParameterizedSqlEquatableKey>
     {
         public string SqlTextKey { get; set; }
         public ComparableArray<object> Params { get; set; }
