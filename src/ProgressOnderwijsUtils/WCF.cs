@@ -26,10 +26,10 @@ namespace ProgressOnderwijsUtils
         void Create()
         {
             client = factory();
-            client.InnerChannel.Faulted += Faulted;
+            client.InnerChannel.Faulted += (o, args) => Faulted();
         }
 
-        void Faulted(object sender, EventArgs e)
+        void Faulted()
         {
             lock (monitor) {
                 client.Abort();
@@ -76,10 +76,10 @@ namespace ProgressOnderwijsUtils
         void Create()
         {
             client = factory.CreateChannel();
-            Client.Faulted += Faulted;
+            Client.Faulted += (o, args) => Faulted();
         }
 
-        void Faulted(object sender, EventArgs e)
+        void Faulted()
         {
             lock (monitor) {
                 Client.Abort();
