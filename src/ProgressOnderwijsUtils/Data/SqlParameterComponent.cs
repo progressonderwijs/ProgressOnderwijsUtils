@@ -9,7 +9,7 @@ using ProgressOnderwijsUtils.Internal;
 
 namespace ProgressOnderwijsUtils
 {
-    static class SqlComponent
+    static class SqlParameterComponent
     {
         public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object o)
             where TCommandFactory : struct, ICommandFactory

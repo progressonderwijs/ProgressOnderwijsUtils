@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils
             if ((Comparer == BooleanComparer.In || Comparer == BooleanComparer.NotIn)
                 && !(Waarde is GroupReference)) {
                 try {
-                    SqlComponent.ToTableValuedParameterFromPlainValues((Array)Waarde);
+                    SqlParameterComponent.ToTableValuedParameterFromPlainValues((Array)Waarde);
                 } catch (Exception e) {
                     throw new ArgumentException("Cannot create an in filter with this value", e);
                 }

@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSql Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]
-        public static ParameterizedSql TableParamDynamic(Array o) => SqlComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
+        public static ParameterizedSql TableParamDynamic(Array o) => SqlParameterComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
 
         /// <summary>
         /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -90,7 +90,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => SqlComponent.ToTableValuedParameter(typeName, objects, o=>(T[])o).BuildableToQuery();
+            => SqlParameterComponent.ToTableValuedParameter(typeName, objects, o=>(T[])o).BuildableToQuery();
     }
 
     interface ISqlComponent
@@ -124,7 +124,7 @@ namespace ProgressOnderwijsUtils
 
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
-            => SqlComponent.AppendParamTo(ref factory, paramVal);
+            => SqlParameterComponent.AppendParamTo(ref factory, paramVal);
     }
 
     interface IQueryParameter
@@ -199,7 +199,7 @@ namespace ProgressOnderwijsUtils
                 if (argument is ParameterizedSql) {
                     ((ParameterizedSql)argument).AppendTo(ref factory);
                 } else {
-                    SqlComponent.AppendParamTo(ref factory, argument);
+                    SqlParameterComponent.AppendParamTo(ref factory, argument);
                 }
                 pos = paramRefMatch.EndIndex;
             }
