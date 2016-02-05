@@ -40,7 +40,9 @@ namespace ProgressOnderwijsUtils
             if (rawSqlString == null) {
                 throw new ArgumentNullException(nameof(rawSqlString));
             }
-
+            if (rawSqlString == "") {
+                return ParameterizedSql.Empty;
+            }
             return new StringSqlFragment(rawSqlString).BuildableToQuery();
         }
 
@@ -142,7 +144,10 @@ namespace ProgressOnderwijsUtils
     static class ParameterizedSqlFactory
     {
         public static ParameterizedSql BuildableToQuery(this ISqlComponent q) => new ParameterizedSql(q);
-        public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
+
+        public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery) =>
+            interpolatedQuery.Format == "" ? ParameterizedSql.Empty :
+                new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
         public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, string sql)
             where TCommandFactory : struct, ICommandFactory
