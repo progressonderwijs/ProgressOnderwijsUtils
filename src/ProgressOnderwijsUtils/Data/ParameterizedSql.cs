@@ -90,7 +90,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => SqlComponent.ToTableValuedParameter<T,T>(typeName, objects, o=>(T[])o).BuildableToQuery();
+            => SqlComponent.ToTableValuedParameter(typeName, objects, o=>(T[])o).BuildableToQuery();
     }
 
     interface ISqlComponent

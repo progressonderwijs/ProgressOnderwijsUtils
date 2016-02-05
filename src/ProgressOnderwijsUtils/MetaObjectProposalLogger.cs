@@ -14,9 +14,9 @@ namespace ProgressOnderwijsUtils
         static Action<string> writer;
 
         [Conditional("DEBUG")]
-        public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, IQueryTracer tracer)
+        public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, ISqlCommandTracer tracer)
         {
-            var commandText = QueryTracer.DebugFriendlyCommandText(command, QueryTracerParameterValues.Excluded);
+            var commandText = SqlCommandTracer.DebugFriendlyCommandText(command, QueryTracerParameterValues.Excluded);
             bool wasAdded = false;
 
             var metaObjectClass = metaObjectProposals.GetOrAdd(

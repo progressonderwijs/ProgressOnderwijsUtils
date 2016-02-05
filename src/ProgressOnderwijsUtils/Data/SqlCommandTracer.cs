@@ -10,7 +10,7 @@ using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
-    public interface IQueryTracer
+    public interface ISqlCommandTracer
     {
         IEnumerable<Tuple<string, TimeSpan>> AllQueries { get; }
         TimeSpan AllQueryDurations { get; }
@@ -34,19 +34,19 @@ namespace ProgressOnderwijsUtils
         Included
     }
 
-    public static class QueryTracer
+    public static class SqlCommandTracer
     {
-        public static IQueryTracer CreateTracer(QueryTracerParameterValues includeSensitiveInfo)
+        public static ISqlCommandTracer CreateTracer(QueryTracerParameterValues includeSensitiveInfo)
         {
-            return new QueryTracerImpl(includeSensitiveInfo);
+            return new SqlCommandTracerImpl(includeSensitiveInfo);
         }
 
-        public static IQueryTracer CreateNullTracer()
+        public static ISqlCommandTracer CreateNullTracer()
         {
             return new NullTracer();
         }
 
-        class NullTracer : IQueryTracer
+        class NullTracer : ISqlCommandTracer
         {
             public IEnumerable<Tuple<string, TimeSpan>> AllQueries => ArrayExtensions.Empty<Tuple<string, TimeSpan>>();
             public TimeSpan AllQueryDurations => TimeSpan.Zero;
@@ -111,14 +111,14 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public sealed class QueryTracerImpl : IQueryTracer
+        public sealed class SqlCommandTracerImpl : ISqlCommandTracer
         {
             public int QueryCount => queryCount;
             int queryCount;
             int queriesCompleted;
             readonly QueryTracerParameterValues IncludeSensitiveInfo;
 
-            public QueryTracerImpl(QueryTracerParameterValues inlcudeSensiveInfo)
+            public SqlCommandTracerImpl(QueryTracerParameterValues inlcudeSensiveInfo)
             {
                 IncludeSensitiveInfo = inlcudeSensiveInfo;
             }
@@ -152,7 +152,7 @@ namespace ProgressOnderwijsUtils
                 return StartQueryTimer(() => commandText);
             }
 
-            public IDisposable StartQueryTimer(SqlCommand sqlCommand) => StartQueryTimer(QueryTracer.DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
+            public IDisposable StartQueryTimer(SqlCommand sqlCommand) => StartQueryTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
 
             public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)
             {
@@ -169,11 +169,11 @@ namespace ProgressOnderwijsUtils
 
             sealed class QueryTimer : IDisposable
             {
-                readonly QueryTracerImpl tracer;
+                readonly SqlCommandTracerImpl tracer;
                 readonly Func<string> query;
                 readonly Stopwatch queryTimer;
 
-                internal QueryTimer(QueryTracerImpl tracer, Func<string> query)
+                internal QueryTimer(SqlCommandTracerImpl tracer, Func<string> query)
                 {
                     this.tracer = tracer;
                     this.query = query;
