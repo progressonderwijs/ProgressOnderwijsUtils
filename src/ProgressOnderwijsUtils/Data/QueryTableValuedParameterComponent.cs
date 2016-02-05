@@ -4,7 +4,7 @@ using System;
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, IQueryComponent
+    sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, ISqlComponent
         where TOut : IMetaObject
     {
         static readonly string columnListClause =

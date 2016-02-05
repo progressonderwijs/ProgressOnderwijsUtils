@@ -9,9 +9,9 @@ namespace ProgressOnderwijsUtils
 {
     public struct ParameterizedSql
     {
-        readonly IQueryComponent impl;
+        readonly ISqlComponent impl;
 
-        internal ParameterizedSql(IQueryComponent impl)
+        internal ParameterizedSql(ISqlComponent impl)
         {
             this.impl = impl;
         }
@@ -93,13 +93,13 @@ namespace ProgressOnderwijsUtils
             => QueryComponent.ToTableValuedParameter<T,T>(typeName, objects, o=>(T[])o).BuildableToQuery();
     }
 
-    interface IQueryComponent
+    interface ISqlComponent
     {
         void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory;
     }
 
-    class StringSqlFragment : IQueryComponent
+    class StringSqlFragment : ISqlComponent
     {
         readonly string rawSqlString;
 
@@ -113,7 +113,7 @@ namespace ProgressOnderwijsUtils
             => SqlFactory.AppendSql(ref factory, rawSqlString);
     }
 
-    class SingleParameterSqlFragment : IQueryComponent
+    class SingleParameterSqlFragment : ISqlComponent
     {
         readonly object paramVal;
 
@@ -141,7 +141,7 @@ namespace ProgressOnderwijsUtils
 
     static class SqlFactory
     {
-        public static ParameterizedSql BuildableToQuery(this IQueryComponent q) => new ParameterizedSql(q);
+        public static ParameterizedSql BuildableToQuery(this ISqlComponent q) => new ParameterizedSql(q);
         public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
         public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, string sql)
@@ -149,11 +149,11 @@ namespace ProgressOnderwijsUtils
             => factory.AppendSql(sql, 0, sql.Length);
     }
 
-    class TwoSqlFragments : IQueryComponent
+    class TwoSqlFragments : ISqlComponent
     {
-        readonly IQueryComponent a, b;
+        readonly ISqlComponent a, b;
 
-        public TwoSqlFragments(IQueryComponent a, IQueryComponent b)
+        public TwoSqlFragments(ISqlComponent a, ISqlComponent b)
         {
             this.a = a;
             this.b = b;
@@ -167,7 +167,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    class InterpolatedSqlFragment : IQueryComponent
+    class InterpolatedSqlFragment : ISqlComponent
     {
         readonly FormattableString interpolatedQuery;
 

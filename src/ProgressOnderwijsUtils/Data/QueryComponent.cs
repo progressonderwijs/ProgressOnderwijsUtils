@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static IQueryComponent ToTableValuedParameterFromPlainValues(IEnumerable set)
+        public static ISqlComponent ToTableValuedParameterFromPlainValues(IEnumerable set)
         {
             var enumerableType = set.GetType();
             ITableValuedParameterFactory factory;
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils
             return factory.CreateFromPlainValues(set);
         }
 
-        public static IQueryComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection) 
+        public static ISqlComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection) 
             where TOut : IMetaObject, new()
             => new QueryTableValuedParameterComponent<TIn,TOut>(tableTypeName, set, projection);
 
@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils
 
         interface ITableValuedParameterFactory
         {
-            IQueryComponent CreateFromPlainValues(IEnumerable enumerable);
+            ISqlComponent CreateFromPlainValues(IEnumerable enumerable);
         }
 
         class TableValuedParameterFactory<T> : ITableValuedParameterFactory
@@ -85,7 +85,7 @@ namespace ProgressOnderwijsUtils
                 this.sqlTableTypeName = sqlTableTypeName;
             }
 
-            public IQueryComponent CreateFromPlainValues(IEnumerable enumerable)
+            public ISqlComponent CreateFromPlainValues(IEnumerable enumerable)
             {
                 return ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject);
             }
