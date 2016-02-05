@@ -147,7 +147,7 @@ namespace ProgressOnderwijsUtils
         /// Merges two dictionaries. When both dictionaries contain the same key, the last value is used
         /// </summary>
         /// <param name="old">This dictionary</param>
-        /// <param name="other">The dictionary which should be merged into this array</param>
+        /// <param name="others">The dictionary which should be merged into this array</param>
         public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old, params Dictionary<TKey, TValue>[] others)
         {
             if (old == null) {
