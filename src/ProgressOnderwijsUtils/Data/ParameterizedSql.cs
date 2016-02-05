@@ -110,7 +110,7 @@ namespace ProgressOnderwijsUtils
 
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
-            => SqlFactory.AppendSql(ref factory, rawSqlString);
+            => ParameterizedSqlFactory.AppendSql(ref factory, rawSqlString);
     }
 
     class SingleParameterSqlFragment : ISqlComponent
@@ -136,10 +136,10 @@ namespace ProgressOnderwijsUtils
     public static class SafeSql
     {
         [Pure]
-        public static ParameterizedSql SQL(FormattableString interpolatedQuery) => SqlFactory.InterpolationToQuery(interpolatedQuery);
+        public static ParameterizedSql SQL(FormattableString interpolatedQuery) => ParameterizedSqlFactory.InterpolationToQuery(interpolatedQuery);
     }
 
-    static class SqlFactory
+    static class ParameterizedSqlFactory
     {
         public static ParameterizedSql BuildableToQuery(this ISqlComponent q) => new ParameterizedSql(q);
         public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
