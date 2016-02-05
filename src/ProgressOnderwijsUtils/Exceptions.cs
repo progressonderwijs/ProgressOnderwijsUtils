@@ -23,19 +23,19 @@ namespace ProgressOnderwijsUtils
     }
 
     [Serializable]
-    public class QueryException : ProgressNetException
+    public class ParameterizedSqlExecutionException : ProgressNetException
     {
         [CodeDieAlleenWordtGebruiktInTests]
-        public QueryException(string msg)
+        public ParameterizedSqlExecutionException(string msg)
             : base(msg) { }
 
         [CodeDieAlleenWordtGebruiktInTests]
-        public QueryException() { }
+        public ParameterizedSqlExecutionException() { }
 
-        public QueryException(string msg, Exception inner)
+        public ParameterizedSqlExecutionException(string msg, Exception inner)
             : base(msg, inner) { }
 
-        protected QueryException(SerializationInfo serializationinfo, StreamingContext streamingcontext)
+        protected ParameterizedSqlExecutionException(SerializationInfo serializationinfo, StreamingContext streamingcontext)
             : base(serializationinfo, streamingcontext) { }
     }
 

@@ -21,9 +21,9 @@ namespace ProgressOnderwijsUtilsTests
         {
             Assert.AreEqual("bla", Assert.Throws<GeenRechtException>(() => { throw new GeenRechtException("bla"); }).Message);
 
-            Assert.Throws<QueryException>(() => { throw new QueryException(); });
-            Assert.AreEqual("bla", Assert.Throws<QueryException>(() => { throw new QueryException("bla"); }).Message);
-            Assert.AreEqual("bla2", Assert.Throws<QueryException>(() => { throw new QueryException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
+            Assert.Throws<ParameterizedSqlExecutionException>(() => { throw new ParameterizedSqlExecutionException(); });
+            Assert.AreEqual("bla", Assert.Throws<ParameterizedSqlExecutionException>(() => { throw new ParameterizedSqlExecutionException("bla"); }).Message);
+            Assert.AreEqual("bla2", Assert.Throws<ParameterizedSqlExecutionException>(() => { throw new ParameterizedSqlExecutionException("bla", new ProgressNetException("bla2")); }).InnerException.Message);
 
             Assert.AreEqual("bla", Assert.Throws<GenericMetaDataException>(() => { throw new GenericMetaDataException("bla"); }).Message);
             Assert.AreEqual(
