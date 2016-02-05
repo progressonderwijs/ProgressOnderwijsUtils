@@ -7,7 +7,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class QueryBuilderTools
+    public static class ParameterizedSqlTools
     {
         [Pure]
         public static ParameterizedSql CreateSubQuery(ParameterizedSql subQuery, IEnumerable<ParameterizedSql> projectedColumns, ParameterizedSql filterClause, OrderByColumns sortOrder)
