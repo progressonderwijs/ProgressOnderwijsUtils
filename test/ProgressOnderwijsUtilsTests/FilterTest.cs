@@ -170,7 +170,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void QueryBuilderSerializesOk()
+        public void ParameterizedSqlSerializesOk()
         {
             var testFilter = Filter.CreateCriterium("test", BooleanComparer.LessThan, 3);
             var test2Filter = Filter.CreateCriterium("test2", BooleanComparer.LessThan, 3);
