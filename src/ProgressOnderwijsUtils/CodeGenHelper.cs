@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
         public static string GetMetaObjectClassDef(this ParameterizedSql q, SqlCommandCreationContext conn, string name = null)
         {
             var wrapped = SQL($"select top 0 q.* from ({q}) q");
-            var dt = AutoLoadFromDb.ReadDataTableWithSqlMetadata(wrapped, conn);
+            var dt = ParameterizedSqlObjectMapper.ReadDataTableWithSqlMetadata(wrapped, conn);
             return DataTableToMetaObjectClassDef(dt, name);
         }
 
@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils
         public static string GetILoadFromDbByConstructorDefinition(SqlCommandCreationContext conn, ParameterizedSql q, string name = null)
         {
             var wrapped = SQL($"select top 0 q.* from ({q}) q");
-            var dt = AutoLoadFromDb.ReadDataTableWithSqlMetadata(wrapped, conn);
+            var dt = ParameterizedSqlObjectMapper.ReadDataTableWithSqlMetadata(wrapped, conn);
             var columns = dt.Columns.Cast<DataColumn>().Select(ColumnDefinition.Create).ToArray();
             name = name ?? (string.IsNullOrEmpty(dt.TableName) ? "ZZ_SAMPLE_CLASS" : dt.TableName);
             return (

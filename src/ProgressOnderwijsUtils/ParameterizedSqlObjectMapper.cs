@@ -16,7 +16,7 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class AutoLoadFromDb
+    public static class ParameterizedSqlObjectMapper
     {
         public static T ExecuteQuery<T>(ParameterizedSql sql, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, Func<SqlCommand, T> action)
         {
@@ -190,7 +190,7 @@ namespace ProgressOnderwijsUtils
         static readonly ModuleBuilder moduleBuilder;
         static int counter;
 
-        static AutoLoadFromDb()
+        static ParameterizedSqlObjectMapper()
         {
             assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
             moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
