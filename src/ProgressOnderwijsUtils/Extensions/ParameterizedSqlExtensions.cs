@@ -4,7 +4,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class QueryBuilderExtensions
+    public static class ParameterizedSqlExtensions
     {
         static readonly ParameterizedSql newline = SQL($"\r\n");
 
