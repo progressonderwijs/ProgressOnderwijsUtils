@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void DatabaseCanProcessTableValuedParameters()
         {
-            var q = SQL($@"select sum(x.querytablevalue) from ") + QueryBuilder.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
+            var q = SQL($@"select sum(x.querytablevalue) from ") + ParameterizedSql.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
             var sum = q.ReadScalar<int>(conn);
             Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
         }

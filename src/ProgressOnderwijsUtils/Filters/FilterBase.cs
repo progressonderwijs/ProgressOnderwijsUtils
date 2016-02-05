@@ -6,7 +6,7 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public abstract class FilterBase : IEquatable<FilterBase>
     {
-        protected internal abstract QueryBuilder ToQueryBuilderImpl();
+        protected internal abstract ParameterizedSql ToQueryBuilderImpl();
         protected internal abstract FilterBase ReplaceImpl(FilterBase toReplace, FilterBase replaceWith);
         protected internal abstract FilterBase AddToImpl(FilterBase filterInEditMode, BooleanOperator booleanOperator, FilterBase c);
         protected internal abstract bool IsFilterValid(Func<string, Type> colTypeLookup);

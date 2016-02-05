@@ -7,11 +7,11 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-    public struct QueryBuilder
+    public struct ParameterizedSql
     {
         readonly IQueryComponent impl;
 
-        internal QueryBuilder(IQueryComponent impl)
+        internal ParameterizedSql(IQueryComponent impl)
         {
             this.impl = impl;
         }
@@ -29,13 +29,13 @@ namespace ProgressOnderwijsUtils
             return command;
         }
 
-        public static readonly QueryBuilder Empty = new QueryBuilder(null);
+        public static readonly ParameterizedSql Empty = new ParameterizedSql(null);
 
         [Pure]
-        public static QueryBuilder operator +(QueryBuilder a, QueryBuilder b)
+        public static ParameterizedSql operator +(ParameterizedSql a, ParameterizedSql b)
             => (a.impl == null || b.impl == null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
 
-        public static QueryBuilder CreateDynamic(string rawSqlString)
+        public static ParameterizedSql CreateDynamic(string rawSqlString)
         {
             if (rawSqlString == null) {
                 throw new ArgumentNullException(nameof(rawSqlString));
@@ -46,18 +46,18 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public override bool Equals(object obj)
-            => obj is QueryBuilder && (QueryBuilder)obj == this;
+            => obj is ParameterizedSql && (ParameterizedSql)obj == this;
 
         [Pure]
-        public static bool operator ==(QueryBuilder a, QueryBuilder b)
+        public static bool operator ==(ParameterizedSql a, ParameterizedSql b)
             => ReferenceEquals(a.impl, b.impl)
                 || EqualityKeyCommandFactory.EqualityKey(a.impl).Equals(EqualityKeyCommandFactory.EqualityKey(b.impl));
 
         [Pure]
-        public bool Equals(QueryBuilder other) => this == other;
+        public bool Equals(ParameterizedSql other) => this == other;
 
         [Pure]
-        public static bool operator !=(QueryBuilder a, QueryBuilder b) => !(a == b);
+        public static bool operator !=(ParameterizedSql a, ParameterizedSql b) => !(a == b);
 
         [Pure]
         public override int GetHashCode() => EqualityKeyCommandFactory.EqualityKey(impl).GetHashCode();
@@ -74,10 +74,10 @@ namespace ProgressOnderwijsUtils
             return commandText;
         }
 
-        public static QueryBuilder Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
+        public static ParameterizedSql Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]
-        public static QueryBuilder TableParamDynamic(Array o) => QueryComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
+        public static ParameterizedSql TableParamDynamic(Array o) => QueryComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
 
         /// <summary>
         /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="objects">the list of meta-objects with shape corresponding to the DB type</param>
         /// <returns>a composable query-component</returns>
         [Pure]
-        public static QueryBuilder TableParam<T>(string typeName, T[] objects)
+        public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
             => QueryComponent.ToTableValuedParameter<T,T>(typeName, objects, o=>(T[])o).BuildableToQuery();
     }
@@ -136,13 +136,13 @@ namespace ProgressOnderwijsUtils
     public static class SafeSql
     {
         [Pure]
-        public static QueryBuilder SQL(FormattableString interpolatedQuery) => SqlFactory.InterpolationToQuery(interpolatedQuery);
+        public static ParameterizedSql SQL(FormattableString interpolatedQuery) => SqlFactory.InterpolationToQuery(interpolatedQuery);
     }
 
     static class SqlFactory
     {
-        public static QueryBuilder BuildableToQuery(this IQueryComponent q) => new QueryBuilder(q);
-        public static QueryBuilder InterpolationToQuery(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
+        public static ParameterizedSql BuildableToQuery(this IQueryComponent q) => new ParameterizedSql(q);
+        public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery) => new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
         public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, string sql)
             where TCommandFactory : struct, ICommandFactory
@@ -196,8 +196,8 @@ namespace ProgressOnderwijsUtils
             foreach (var paramRefMatch in formatStringTokenization) {
                 factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos);
                 var argument = interpolatedQuery.GetArgument(paramRefMatch.ReferencedParameterIndex);
-                if (argument is QueryBuilder) {
-                    ((QueryBuilder)argument).AppendTo(ref factory);
+                if (argument is ParameterizedSql) {
+                    ((ParameterizedSql)argument).AppendTo(ref factory);
                 } else {
                     QueryComponent.AppendParamTo(ref factory, argument);
                 }

@@ -6,22 +6,22 @@ namespace ProgressOnderwijsUtils
 {
     public static class QueryBuilderExtensions
     {
-        static readonly QueryBuilder newline = SQL($"\r\n");
+        static readonly ParameterizedSql newline = SQL($"\r\n");
 
         [Pure]
-        public static QueryBuilder Append(this QueryBuilder source, QueryBuilder extra)
+        public static ParameterizedSql Append(this ParameterizedSql source, ParameterizedSql extra)
         {
             return source + newline + extra;
         }
 
         [Pure]
-        public static QueryBuilder AppendIf(this QueryBuilder source, bool condition, QueryBuilder extra)
+        public static ParameterizedSql AppendIf(this ParameterizedSql source, bool condition, ParameterizedSql extra)
         {
             return condition ? source.Append(extra) : source;
         }
 
         [Pure, UsefulToKeep("Library function, other overloads used")]
-        public static QueryBuilder AppendIf(this QueryBuilder source, bool condition, Func<QueryBuilder> extra)
+        public static ParameterizedSql AppendIf(this ParameterizedSql source, bool condition, Func<ParameterizedSql> extra)
         {
             return condition ? source.Append(extra()) : source;
         }

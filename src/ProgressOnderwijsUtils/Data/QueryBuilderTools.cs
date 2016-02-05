@@ -10,14 +10,14 @@ namespace ProgressOnderwijsUtils
     public static class QueryBuilderTools
     {
         [Pure]
-        public static QueryBuilder CreateSubQuery(QueryBuilder subQuery, IEnumerable<QueryBuilder> projectedColumns, QueryBuilder filterClause, OrderByColumns sortOrder)
+        public static ParameterizedSql CreateSubQuery(ParameterizedSql subQuery, IEnumerable<ParameterizedSql> projectedColumns, ParameterizedSql filterClause, OrderByColumns sortOrder)
             => SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, null);
 
         [Pure]
-        public static QueryBuilder CreatePagedSubQuery(
-            QueryBuilder subQuery,
-            IEnumerable<QueryBuilder> projectedColumns,
-            QueryBuilder filterClause,
+        public static ParameterizedSql CreatePagedSubQuery(
+            ParameterizedSql subQuery,
+            IEnumerable<ParameterizedSql> projectedColumns,
+            ParameterizedSql filterClause,
             OrderByColumns sortOrder,
             int skipNrows,
             int takeNrows)
@@ -29,8 +29,8 @@ namespace ProgressOnderwijsUtils
                         + subQuery.DebugText());
             }
 
-            var takeRowsParam = QueryBuilder.Param((long)takeNrows);
-            var skipNrowsParam = QueryBuilder.Param((long)skipNrows);
+            var takeRowsParam = ParameterizedSql.Param((long)takeNrows);
+            var skipNrowsParam = ParameterizedSql.Param((long)skipNrows);
 
             var sortorder = sortOrder;
             var orderClause = sortorder == OrderByColumns.Empty ? SQL($"order by (select 1)") : CreateFromSortOrder(sortorder);
@@ -51,16 +51,16 @@ order by _row");
         }
 
         [Pure]
-        static QueryBuilder SubQueryHelper(
-            QueryBuilder subquery,
-            IEnumerable<QueryBuilder> projectedColumns,
-            QueryBuilder filterClause,
+        static ParameterizedSql SubQueryHelper(
+            ParameterizedSql subquery,
+            IEnumerable<ParameterizedSql> projectedColumns,
+            ParameterizedSql filterClause,
             OrderByColumns sortOrder,
-            QueryBuilder? topRowsOrNull)
+            ParameterizedSql? topRowsOrNull)
         {
             projectedColumns = projectedColumns ?? AllColumns;
 
-            var topClause = topRowsOrNull != null ? SQL($"top ({topRowsOrNull}) ") : QueryBuilder.Empty;
+            var topClause = topRowsOrNull != null ? SQL($"top ({topRowsOrNull}) ") : ParameterizedSql.Empty;
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
             return
                 SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
@@ -69,31 +69,31 @@ order by _row");
 
         //TODO: dit aanzetten voor datasource tests
         // ReSharper disable once UnusedMember.Global
-        public static void AssertNoVariableColumns(QueryBuilder queryBuilder)
+        public static void AssertNoVariableColumns(ParameterizedSql parameterizedSql)
         {
-            var commandText = queryBuilder.CommandText();
+            var commandText = parameterizedSql.CommandText();
             var commandTextWithoutComments = Regex.Replace(
                 commandText,
                 @"/\*.*?\*/|--.*?$",
                 "",
                 RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Multiline);
             if (Regex.IsMatch(commandTextWithoutComments, @"(?<!count\()\*")) {
-                throw new InvalidOperationException(queryBuilder.GetType().FullName + ": Query may not use * as that might cause runtime exceptions in productie when DB changes:\n" + commandText);
+                throw new InvalidOperationException(parameterizedSql.GetType().FullName + ": Query may not use * as that might cause runtime exceptions in productie when DB changes:\n" + commandText);
             }
         }
 
         [Pure]
-        static QueryBuilder CreateFromSortOrder(OrderByColumns sortOrder)
+        static ParameterizedSql CreateFromSortOrder(OrderByColumns sortOrder)
         {
             return !sortOrder.Columns.Any()
-                ? QueryBuilder.Empty
-                : QueryBuilder.CreateDynamic("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
+                ? ParameterizedSql.Empty
+                : ParameterizedSql.CreateDynamic("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
         }
 
         [Pure]
-        static QueryBuilder CreateProjectedColumnsClause(IEnumerable<QueryBuilder> projectedColumns)
+        static ParameterizedSql CreateProjectedColumnsClause(IEnumerable<ParameterizedSql> projectedColumns)
             => projectedColumns.Aggregate((a, b) => SQL($"{a}\n, {b}"));
 
-        static readonly QueryBuilder[] AllColumns = { SQL($"*") };
+        static readonly ParameterizedSql[] AllColumns = { SQL($"*") };
     }
 }

@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils
         static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
         public static string Indent(string str, int indentCount = 1) => newLine.Replace(str, new string(' ', indentCount * 4));
 
-        public static string GetMetaObjectClassDef(this QueryBuilder q, SqlCommandCreationContext conn, string name = null)
+        public static string GetMetaObjectClassDef(this ParameterizedSql q, SqlCommandCreationContext conn, string name = null)
         {
             var wrapped = SQL($"select top 0 q.* from ({q}) q");
             var dt = AutoLoadFromDb.ReadDataTableWithSqlMetadata(wrapped, conn);
@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils
                 ).Replace("\n", "\r\n");
         }
 
-        public static string GetILoadFromDbByConstructorDefinition(SqlCommandCreationContext conn, QueryBuilder q, string name = null)
+        public static string GetILoadFromDbByConstructorDefinition(SqlCommandCreationContext conn, ParameterizedSql q, string name = null)
         {
             var wrapped = SQL($"select top 0 q.* from ({q}) q");
             var dt = AutoLoadFromDb.ReadDataTableWithSqlMetadata(wrapped, conn);
