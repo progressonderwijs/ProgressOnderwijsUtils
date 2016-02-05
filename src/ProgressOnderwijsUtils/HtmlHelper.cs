@@ -40,7 +40,11 @@ namespace ProgressOnderwijsUtils
 
         public static XhtmlData ExclamationBlackSymbol(string toolTip) => Symbol("ExclamationBlackSymbol", toolTip);
 
+        public static XhtmlData LedGreenSymbol() => LedGreenSymbol(null);
+
         public static XhtmlData LedGreenSymbol(string toolTip) => Symbol("LedGreenSymbol", toolTip);
+
+        public static XhtmlData LedRedSymbol() => LedRedSymbol(null);
 
         public static XhtmlData LedRedSymbol(string toolTip) => Symbol("LedRedSymbol", toolTip);
 
