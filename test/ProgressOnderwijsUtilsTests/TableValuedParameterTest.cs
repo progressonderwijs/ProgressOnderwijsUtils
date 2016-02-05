@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void QueryBuildersCanIncludeTvps()
+        public void ParameterizedSqlCanIncludeTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
             var sum = q.ReadScalar<int>(conn);
@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void QueryBuildersCanIncludeEnumTvps()
+        public void ParameterizedSqlCanIncludeEnumTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => (Id.Student)i)} x");
             var sum = (int)q.ReadScalar<Id.Student>(conn);
@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void QueryBuildersCanCountDaysOfWeek()
+        public void ParameterizedSqlTvpsCanCountDaysOfWeek()
         {
             var q = SQL($@"select count(x.querytablevalue) from {EnumHelpers.GetValues<DayOfWeek>()} x");
             var dayCount = q.ReadScalar<int>(conn);
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void QueryBuildersCanCountStrings()
+        public void ParameterizedSqlTvpsCanCountStrings()
         {
             var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo" }} x");
             var dayCount = q.ReadScalar<int>(conn);
