@@ -7,12 +7,12 @@ namespace ProgressOnderwijsUtils.WebSupport
     {
         public void Init(HttpApplication app)
         {
-            app.BeginRequest += RemoveIdentifyingHeaders;
+            app.BeginRequest += (o, args) => RemoveIdentifyingHeaders((HttpApplication)o);
         }
 
-        static void RemoveIdentifyingHeaders(object sender, EventArgs e)
+        static void RemoveIdentifyingHeaders(HttpApplication sender)
         {
-            var context = ((HttpApplication)sender).Context;
+            var context = sender.Context;
             var responseHeaders = context.Response.Headers;
 
             responseHeaders.Remove("Server");
