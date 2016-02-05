@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return action(cmd.Command);
                 } catch (Exception e) {
-                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + SqlCommandTracer.DebugFriendlyCommandText(cmd.Command, QueryTracerParameterValues.Included), e);
+                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + SqlCommandTracer.DebugFriendlyCommandText(cmd.Command, SqlCommandTracerOptions.IncludeArgumentValuesInLog), e);
                 }
             }
         }

@@ -21,22 +21,15 @@ namespace ProgressOnderwijsUtils
         IDisposable StartQueryTimer(SqlCommand sqlCommand);
     }
 
-    public enum QueryTracerParameterValues
+    public enum SqlCommandTracerOptions
     {
-        /// <summary>
-        /// Don't log query argument values
-        /// </summary>
-        Excluded,
-
-        /// <summary>
-        /// Include query argument values (even things like passwords)
-        /// </summary>
-        Included
+        ExcludeArgumentValuesFromLog,
+        IncludeArgumentValuesInLog
     }
 
     public static class SqlCommandTracer
     {
-        public static ISqlCommandTracer CreateTracer(QueryTracerParameterValues includeSensitiveInfo)
+        public static ISqlCommandTracer CreateTracer(SqlCommandTracerOptions includeSensitiveInfo)
         {
             return new SqlCommandTracerImpl(includeSensitiveInfo);
         }
@@ -57,14 +50,14 @@ namespace ProgressOnderwijsUtils
             public IDisposable StartQueryTimer(SqlCommand sqlCommand) => null;
         }
 
-        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, QueryTracerParameterValues includeSensitiveInfo)
+        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo)
         {
             return CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
         }
 
-        static string CommandParamStringOrEmpty(SqlCommand sqlCommand, QueryTracerParameterValues includeSensitiveInfo)
+        static string CommandParamStringOrEmpty(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo)
         {
-            if (includeSensitiveInfo == QueryTracerParameterValues.Included) {
+            if (includeSensitiveInfo == SqlCommandTracerOptions.IncludeArgumentValuesInLog) {
                 return CommandParamString(sqlCommand);
             } else {
                 return "";
@@ -116,9 +109,9 @@ namespace ProgressOnderwijsUtils
             public int QueryCount => queryCount;
             int queryCount;
             int queriesCompleted;
-            readonly QueryTracerParameterValues IncludeSensitiveInfo;
+            readonly SqlCommandTracerOptions IncludeSensitiveInfo;
 
-            public SqlCommandTracerImpl(QueryTracerParameterValues inlcudeSensiveInfo)
+            public SqlCommandTracerImpl(SqlCommandTracerOptions inlcudeSensiveInfo)
             {
                 IncludeSensitiveInfo = inlcudeSensiveInfo;
             }
