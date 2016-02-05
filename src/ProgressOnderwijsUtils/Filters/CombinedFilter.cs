@@ -38,12 +38,12 @@ namespace ProgressOnderwijsUtils
         static readonly ParameterizedSql sql_or_keyword = SQL($" or ");
         ParameterizedSql OperatorToSql() => andor == BooleanOperator.Or ? sql_or_keyword : sql_and_keyword;
 
-        protected internal override ParameterizedSql ToQueryBuilderImpl()
+        protected internal override ParameterizedSql ToParameterizedSqlImpl()
         {
             var andorQ = OperatorToSql();
-            var result = SQL($"(") + filterLijst[0].ToQueryBuilder();
+            var result = SQL($"(") + filterLijst[0].ToParameterizedSql();
             for (int i = 1; i < filterLijst.Length; i++) {
-                result += andorQ + filterLijst[i].ToQueryBuilder();
+                result += andorQ + filterLijst[i].ToParameterizedSql();
             }
             result += SQL($")");
             return result;

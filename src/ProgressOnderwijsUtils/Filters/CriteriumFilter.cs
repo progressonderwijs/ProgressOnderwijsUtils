@@ -96,7 +96,7 @@ namespace ProgressOnderwijsUtils
 
         ParameterizedSql KolomNaamSql() => ParameterizedSql.CreateDynamic(KolomNaam);
 
-        protected internal override ParameterizedSql ToQueryBuilderImpl()
+        protected internal override ParameterizedSql ToParameterizedSqlImpl()
         {
             switch (Comparer) {
                 case BooleanComparer.Equal:
