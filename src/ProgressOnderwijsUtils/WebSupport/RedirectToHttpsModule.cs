@@ -7,12 +7,12 @@ namespace ProgressOnderwijsUtils.WebSupport
     {
         public void Init(HttpApplication app)
         {
-            app.BeginRequest += context_BeginRequest;
+            app.BeginRequest += (o, args) => context_BeginRequest((HttpApplication)o);
         }
 
-        static void context_BeginRequest(object sender, EventArgs e)
+        static void context_BeginRequest(HttpApplication sender)
         {
-            var context = ((HttpApplication)sender).Context;
+            var context = sender.Context;
 
             if (!context.Request.IsSecureConnection) {
                 context.Response.RedirectPermanent(new UriBuilder(context.Request.Url) { Scheme = Uri.UriSchemeHttps, Port = -1 }.Uri.ToString());
