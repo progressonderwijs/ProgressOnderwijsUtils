@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils
                 cmdParams[i].Value = paramObjs[i].Value;
                 cmdParams[i].IsNullable = paramObjs[i].Value == DBNull.Value;
             }
-            var timer = conn.Tracer?.StartQueryTimer(command);
+            var timer = conn.Tracer?.StartCommandTimer(command);
 
             return new ReusableCommand { Command = command, QueryTimer = timer };
         }
