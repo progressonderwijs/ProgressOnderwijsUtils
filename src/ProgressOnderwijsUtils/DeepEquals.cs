@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using NUnit.Framework;
 using ProgressOnderwijsUtils.Test;
 
@@ -163,22 +164,21 @@ namespace ProgressOnderwijsUtils
             //OK, members are of same type
         }
 
+        [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
         class XT
         {
-            // ReSharper disable UnaccessedField.Local
-#pragma warning disable 649
             public decimal BC;
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public string XYZ { get; set; }
         }
 
+        [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
         struct YT
         {
             public decimal BC;
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public string XYZ { get; set; }
         }
 
+        [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
         class Recursive
         {
             public int V = 3;
