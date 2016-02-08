@@ -15,6 +15,8 @@ namespace ProgressOnderwijsUtils
                     return "StudentInschrijvingBetalingInformatieId";
                 case "VolgOnderwijs":
                     return "onderwijsid";
+                case "InschrijvingOnderwijs": //TODO: move uit tools en nameof(Id.InschrijvingOnderwijs):
+                    return "onderwijsid";
                 case "OverigeVordering":
                     return "vorderingoverigid";
                 default:
