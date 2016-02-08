@@ -34,16 +34,16 @@ namespace ProgressOnderwijsUtils
                     .Aggregate(andor == BooleanOperator.And ? Expression.AndAlso : (Func<Expression, Expression, Expression>)Expression.OrElse);
         }
 
-        static readonly QueryBuilder sql_and_keyword = SQL($" and ");
-        static readonly QueryBuilder sql_or_keyword = SQL($" or ");
-        QueryBuilder OperatorToSql() => andor == BooleanOperator.Or ? sql_or_keyword : sql_and_keyword;
+        static readonly ParameterizedSql sql_and_keyword = SQL($" and ");
+        static readonly ParameterizedSql sql_or_keyword = SQL($" or ");
+        ParameterizedSql OperatorToSql() => andor == BooleanOperator.Or ? sql_or_keyword : sql_and_keyword;
 
-        protected internal override QueryBuilder ToQueryBuilderImpl()
+        protected internal override ParameterizedSql ToParameterizedSqlImpl()
         {
             var andorQ = OperatorToSql();
-            var result = SQL($"(") + filterLijst[0].ToQueryBuilder();
+            var result = SQL($"(") + filterLijst[0].ToParameterizedSql();
             for (int i = 1; i < filterLijst.Length; i++) {
-                result += andorQ + filterLijst[i].ToQueryBuilder();
+                result += andorQ + filterLijst[i].ToParameterizedSql();
             }
             result += SQL($")");
             return result;

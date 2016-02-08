@@ -4,7 +4,7 @@ using System;
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, IQueryComponent
+    sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, ISqlComponent
         where TOut : IMetaObject
     {
         static readonly string columnListClause =
@@ -31,17 +31,17 @@ namespace ProgressOnderwijsUtils
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
         {
-            SqlFactory.AppendSql(ref factory, subselect_part1);
-            SqlFactory.AppendSql(ref factory, columnListClause);
-            SqlFactory.AppendSql(ref factory, subselect_part3);
-            SqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(this));
-            SqlFactory.AppendSql(ref factory, subselect_part5);
+            ParameterizedSqlFactory.AppendSql(ref factory, subselect_part1);
+            ParameterizedSqlFactory.AppendSql(ref factory, columnListClause);
+            ParameterizedSqlFactory.AppendSql(ref factory, subselect_part3);
+            ParameterizedSqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(this));
+            ParameterizedSqlFactory.AppendSql(ref factory, subselect_part5);
 
             if (cachedProjectedLength > 0) {
                 //Insert length category token in TVP sql output, so that the query
                 //optimizer uses differing query plans for arrays.  In effect, every
                 //factor of 8 a new query plan is used.
-                SqlFactory.AppendSql(ref factory, querySizeToken[LengthToCategory(cachedProjectedLength)]);
+                ParameterizedSqlFactory.AppendSql(ref factory, querySizeToken[LengthToCategory(cachedProjectedLength)]);
             }
         }
 

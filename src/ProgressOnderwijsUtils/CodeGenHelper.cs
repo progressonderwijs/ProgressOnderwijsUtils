@@ -31,10 +31,10 @@ namespace ProgressOnderwijsUtils
         static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
         public static string Indent(string str, int indentCount = 1) => newLine.Replace(str, new string(' ', indentCount * 4));
 
-        public static string GetMetaObjectClassDef(this QueryBuilder q, SqlCommandCreationContext conn, string name = null)
+        public static string GetMetaObjectClassDef(this ParameterizedSql q, SqlCommandCreationContext conn, string name = null)
         {
             var wrapped = SQL($"select top 0 q.* from ({q}) q");
-            var dt = AutoLoadFromDb.ReadDataTableWithSqlMetadata(wrapped, conn);
+            var dt = ParameterizedSqlObjectMapper.ReadDataTableWithSqlMetadata(wrapped, conn);
             return DataTableToMetaObjectClassDef(dt, name);
         }
 
@@ -67,10 +67,10 @@ namespace ProgressOnderwijsUtils
                 ).Replace("\n", "\r\n");
         }
 
-        public static string GetILoadFromDbByConstructorDefinition(SqlCommandCreationContext conn, QueryBuilder q, string name = null)
+        public static string GetILoadFromDbByConstructorDefinition(SqlCommandCreationContext conn, ParameterizedSql q, string name = null)
         {
             var wrapped = SQL($"select top 0 q.* from ({q}) q");
-            var dt = AutoLoadFromDb.ReadDataTableWithSqlMetadata(wrapped, conn);
+            var dt = ParameterizedSqlObjectMapper.ReadDataTableWithSqlMetadata(wrapped, conn);
             var columns = dt.Columns.Cast<DataColumn>().Select(ColumnDefinition.Create).ToArray();
             name = name ?? (string.IsNullOrEmpty(dt.TableName) ? "ZZ_SAMPLE_CLASS" : dt.TableName);
             return (

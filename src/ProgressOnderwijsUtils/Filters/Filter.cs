@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static QueryBuilder ToQueryBuilder(this FilterBase filter) => filter == null ? SQL($"1=1") : filter.ToQueryBuilderImpl();
+        public static ParameterizedSql ToParameterizedSql(this FilterBase filter) => filter == null ? SQL($"1=1") : filter.ToParameterizedSqlImpl();
 
         public static Func<T, bool> ToMetaObjectFilter<T>(this FilterBase filter, Func<int, Func<int, bool>> getStaticGroupContainmentVerifier) { //where T : IMetaObject
             if (filter == null) {
@@ -234,6 +234,6 @@ namespace ProgressOnderwijsUtils
             return parsed != null && parsed.Item2 == "" ? parsed.Item1 : null;
         }
 
-        public static QueryBuilder ToFilterClause(this IEnumerable<FilterBase> filters) => CreateCombined(BooleanOperator.And, filters.EmptyIfNull()).ToQueryBuilder();
+        public static ParameterizedSql ToFilterClause(this IEnumerable<FilterBase> filters) => CreateCombined(BooleanOperator.And, filters.EmptyIfNull()).ToParameterizedSql();
     }
 }

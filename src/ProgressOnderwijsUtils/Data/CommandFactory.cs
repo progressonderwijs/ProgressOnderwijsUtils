@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils
                 cmdParams[i].Value = paramObjs[i].Value;
                 cmdParams[i].IsNullable = paramObjs[i].Value == DBNull.Value;
             }
-            var timer = conn.Tracer?.StartQueryTimer(command);
+            var timer = conn.Tracer?.StartCommandTimer(command);
 
             return new ReusableCommand { Command = command, QueryTimer = timer };
         }
@@ -178,10 +178,10 @@ namespace ProgressOnderwijsUtils
     struct DebugCommandFactory : ICommandFactory
     {
         FastShortStringBuilder debugText;
-        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => QueryTracer.InsecureSqlDebugString(o.EquatableValue);
+        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => SqlCommandTracer.InsecureSqlDebugString(o.EquatableValue);
         public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
-        public static string DebugTextFor(IQueryComponent impl)
+        public static string DebugTextFor(ISqlComponent impl)
         {
             var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create() };
             impl?.AppendTo(ref factory);
@@ -205,7 +205,7 @@ namespace ProgressOnderwijsUtils
 
         public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
-        public static QueryKey EqualityKey(IQueryComponent impl)
+        public static ParameterizedSqlEquatableKey EqualityKey(ISqlComponent impl)
         {
             var factory = new EqualityKeyCommandFactory {
                 debugText = FastShortStringBuilder.Create(),
@@ -213,7 +213,7 @@ namespace ProgressOnderwijsUtils
                 paramValues = FastArrayBuilder<object>.Create(),
             };
             impl?.AppendTo(ref factory);
-            var key = new QueryKey {
+            var key = new ParameterizedSqlEquatableKey {
                 SqlTextKey = factory.debugText.Value,
                 Params = new ComparableArray<object>(factory.paramValues.ToArray()),
             };
@@ -222,7 +222,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    sealed class QueryKey : ValueBase<QueryKey>
+    sealed class ParameterizedSqlEquatableKey : ValueBase<ParameterizedSqlEquatableKey>
     {
         public string SqlTextKey { get; set; }
         public ComparableArray<object> Params { get; set; }

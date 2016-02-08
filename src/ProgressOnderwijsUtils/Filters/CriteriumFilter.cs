@@ -87,16 +87,16 @@ namespace ProgressOnderwijsUtils
             if ((Comparer == BooleanComparer.In || Comparer == BooleanComparer.NotIn)
                 && !(Waarde is GroupReference)) {
                 try {
-                    QueryComponent.ToTableValuedParameterFromPlainValues((Array)Waarde);
+                    SqlParameterComponent.ToTableValuedParameterFromPlainValues((Array)Waarde);
                 } catch (Exception e) {
                     throw new ArgumentException("Cannot create an in filter with this value", e);
                 }
             }
         }
 
-        QueryBuilder KolomNaamSql() => QueryBuilder.CreateDynamic(KolomNaam);
+        ParameterizedSql KolomNaamSql() => ParameterizedSql.CreateDynamic(KolomNaam);
 
-        protected internal override QueryBuilder ToQueryBuilderImpl()
+        protected internal override ParameterizedSql ToParameterizedSqlImpl()
         {
             switch (Comparer) {
                 case BooleanComparer.Equal:
@@ -127,13 +127,13 @@ namespace ProgressOnderwijsUtils
                     if (Waarde is GroupReference) {
                         return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
                     } else {
-                        return KolomNaamSql() + SQL($" in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
+                        return KolomNaamSql() + SQL($" in ") + ParameterizedSql.TableParamDynamic((Array)Waarde);
                     }
                 case BooleanComparer.NotIn:
                     if (Waarde is GroupReference) {
                         return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
                     } else {
-                        return KolomNaamSql() + SQL($" not in ") + QueryBuilder.TableParamDynamic((Array)Waarde);
+                        return KolomNaamSql() + SQL($" not in ") + ParameterizedSql.TableParamDynamic((Array)Waarde);
                     }
 
                 case BooleanComparer.StartsWith:
@@ -322,14 +322,14 @@ namespace ProgressOnderwijsUtils
             return Tuple.Create(Filter.CreateCriterium(kolomNaam, comparer.Value, waarde), SerializedRep);
         }
 
-        QueryBuilder BuildParam()
+        ParameterizedSql BuildParam()
         {
             if (Waarde is ColumnReference) {
-                return QueryBuilder.CreateDynamic(((ColumnReference)Waarde).ColumnName);
+                return ParameterizedSql.CreateDynamic(((ColumnReference)Waarde).ColumnName);
             } else if (Waarde is Filter.CurrentTimeToken) {
-                return QueryBuilder.Param(DateTime.Now);
+                return ParameterizedSql.Param(DateTime.Now);
             } else {
-                return QueryBuilder.Param(Waarde);
+                return ParameterizedSql.Param(Waarde);
             }
         }
 

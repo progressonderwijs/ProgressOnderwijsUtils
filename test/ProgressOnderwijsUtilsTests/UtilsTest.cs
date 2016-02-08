@@ -134,13 +134,13 @@ namespace ProgressOnderwijsUtilsTests
         {
             PAssert.That(() => !Utils.IsDbConnectionFailure(new Exception()));
             PAssert.That(() => !Utils.IsDbConnectionFailure(new EntityException()));
-            PAssert.That(() => !Utils.IsDbConnectionFailure(new QueryException()));
-            PAssert.That(() => Utils.IsDbConnectionFailure(new QueryException("bla", new EntityException("The underlying provider failed on Open."))));
+            PAssert.That(() => !Utils.IsDbConnectionFailure(new ParameterizedSqlExecutionException()));
+            PAssert.That(() => Utils.IsDbConnectionFailure(new ParameterizedSqlExecutionException("bla", new EntityException("The underlying provider failed on Open."))));
             PAssert.That(
                 () =>
                     Utils.IsDbConnectionFailure(
                         new AggregateException(
-                            new QueryException("bla", new EntityException("The underlying provider failed on Open.")),
+                            new ParameterizedSqlExecutionException("bla", new EntityException("The underlying provider failed on Open.")),
                             new EntityException("The underlying provider failed on Open."))));
             PAssert.That(() => !Utils.IsDbConnectionFailure(new AggregateException()));
             PAssert.That(() => !Utils.IsDbConnectionFailure(null));

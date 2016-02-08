@@ -16,23 +16,23 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class AutoLoadFromDb
+    public static class ParameterizedSqlObjectMapper
     {
-        public static T ExecuteQuery<T>(QueryBuilder builder, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, Func<SqlCommand, T> action)
+        public static T ExecuteQuery<T>(ParameterizedSql sql, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, Func<SqlCommand, T> action)
         {
-            using (var cmd = builder.CreateSqlCommand(commandCreationContext)) {
+            using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
                 try {
                     return action(cmd.Command);
                 } catch (Exception e) {
-                    throw new QueryException(exceptionMessage() + "\n\nQUERY:\n\n" + QueryTracer.DebugFriendlyCommandText(cmd.Command, QueryTracerParameterValues.Included), e);
+                    throw new ParameterizedSqlExecutionException(exceptionMessage() + "\n\nQUERY:\n\n" + SqlCommandTracer.DebugFriendlyCommandText(cmd.Command, SqlCommandTracerOptions.IncludeArgumentValuesInLog), e);
                 }
             }
         }
 
-        public static T ReadScalar<T>(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
+        public static T ReadScalar<T>(this ParameterizedSql sql, SqlCommandCreationContext commandCreationContext)
         {
             return ExecuteQuery(
-                builder,
+                sql,
                 commandCreationContext,
                 () => "ReadScalar<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
                 command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
@@ -41,13 +41,13 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Leest DataTable op basis van het huidige commando met de huidige parameters
         /// </summary>
-        /// <param name="builder">De uit-te-voeren query</param>
+        /// <param name="sql">De uit-te-voeren query</param>
         /// <param name="conn">De database om tegen te query-en</param>
         /// <param name="missingSchemaAction"></param>
-        public static DataTable ReadDataTable(this QueryBuilder builder, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
+        public static DataTable ReadDataTable(this ParameterizedSql sql, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
         {
             return ExecuteQuery(
-                builder,
+                sql,
                 conn,
                 () => "ReadDataTable failed",
                 command => {
@@ -65,17 +65,17 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Leest DataTable op basis van het huidige commando met de huidige parameters; neemt ook schema informatie in de DataTable op.
         /// </summary>
-        /// <param name="builder">De uit-te-voeren query</param>
+        /// <param name="sql">De uit-te-voeren query</param>
         /// <param name="conn">De database om tegen te query-en</param>
-        public static DataTable ReadDataTableWithSqlMetadata(QueryBuilder builder, SqlCommandCreationContext conn)
+        public static DataTable ReadDataTableWithSqlMetadata(ParameterizedSql sql, SqlCommandCreationContext conn)
         {
-            return builder.ReadDataTable(conn, MissingSchemaAction.AddWithKey);
+            return sql.ReadDataTable(conn, MissingSchemaAction.AddWithKey);
         }
 
-        public static int ExecuteNonQuery(this QueryBuilder builder, SqlCommandCreationContext commandCreationContext)
+        public static int ExecuteNonQuery(this ParameterizedSql sql, SqlCommandCreationContext commandCreationContext)
         {
             return ExecuteQuery(
-                builder,
+                sql,
                 commandCreationContext,
                 () => "Non-query failed",
                 command => command.ExecuteNonQuery());
@@ -91,7 +91,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The database connection</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
-        public static T[] ReadMetaObjects<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
+        public static T[] ReadMetaObjects<T>(this ParameterizedSql q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
         {
             return ExecuteQuery(
                 q,
@@ -136,7 +136,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The command creation context</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
-        public static T[] ReadPlain<T>(this QueryBuilder q, SqlCommandCreationContext qCommandCreationContext)
+        public static T[] ReadPlain<T>(this ParameterizedSql q, SqlCommandCreationContext qCommandCreationContext)
         {
             return ExecuteQuery(
                 q,
@@ -190,7 +190,7 @@ namespace ProgressOnderwijsUtils
         static readonly ModuleBuilder moduleBuilder;
         static int counter;
 
-        static AutoLoadFromDb()
+        static ParameterizedSqlObjectMapper()
         {
             assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
             moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
