@@ -105,14 +105,14 @@ namespace ProgressOnderwijsUtils
                     }
                     return KolomNaamSql() + SQL($"=") + BuildParam();
                 case BooleanComparer.IsNull:
-                    return KolomNaamSql() + SQL($" is null");
+                    return KolomNaamSql() + SQL($"is null");
                 case BooleanComparer.NotEqual:
                     if (Waarde == null) {
                         goto case BooleanComparer.IsNotNull;
                     }
                     return KolomNaamSql() + SQL($"!=") + BuildParam();
                 case BooleanComparer.IsNotNull:
-                    return KolomNaamSql() + SQL($" is not null");
+                    return KolomNaamSql() + SQL($"is not null");
 
                 case BooleanComparer.LessThan:
                     return KolomNaamSql() + SQL($"<") + BuildParam();
@@ -125,23 +125,23 @@ namespace ProgressOnderwijsUtils
 
                 case BooleanComparer.In:
                     if (Waarde is GroupReference) {
-                        return KolomNaamSql() + SQL($" in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
+                        return SQL($"{KolomNaamSql()} in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
                     } else {
-                        return KolomNaamSql() + SQL($" in ") + ParameterizedSql.TableParamDynamic((Array)Waarde);
+                        return SQL($"{KolomNaamSql()} in {ParameterizedSql.TableParamDynamic((Array)Waarde)}");
                     }
                 case BooleanComparer.NotIn:
                     if (Waarde is GroupReference) {
-                        return KolomNaamSql() + SQL($" not in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
+                        return SQL($"{KolomNaamSql()} not in (select keyint0 from statischegroepslid where groep = {((GroupReference)Waarde).GroupId})");
                     } else {
-                        return KolomNaamSql() + SQL($" not in ") + ParameterizedSql.TableParamDynamic((Array)Waarde);
+                        return SQL($"{KolomNaamSql()} not in {ParameterizedSql.TableParamDynamic((Array)Waarde)}");
                     }
 
                 case BooleanComparer.StartsWith:
-                    return KolomNaamSql() + SQL($" like {Waarde + "%"}");
+                    return SQL($"{KolomNaamSql()} like {Waarde + "%"}");
                 case BooleanComparer.EndsWith:
-                    return KolomNaamSql() + SQL($" like {"%" + Waarde}");
+                    return SQL($"{KolomNaamSql()} like {"%" + Waarde}");
                 case BooleanComparer.Contains:
-                    return KolomNaamSql() + SQL($" like {"%" + Waarde + "%"}");
+                    return SQL($"{KolomNaamSql()} like {"%" + Waarde + "%"}");
                 case BooleanComparer.HasFlag:
                     return SQL($"({KolomNaamSql()} & {BuildParam()}) = {BuildParam()}");
                 default:
