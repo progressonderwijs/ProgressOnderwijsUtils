@@ -15,8 +15,8 @@ namespace ProgressOnderwijsUtils
             FinancieelCollegegeldBekijken, FinancieelMachtigingBekijken)]
         FinanciëleAdministratieAlleenInkijken = -23,
 
-        [Obsolete, MpLabel("Financiële administratie"), Implies(FinanciëleAdministratieAlleenInkijken, FinancieelClieopToevoegenVerwijderenWijzigen,
-            FinancieelClieopBekijken, FinancieelBetalingenToevoegenVerwijderenWijzigen, FinancieelCollegegeldToevoegenVerwijderenWijzigen,
+        [Obsolete, MpLabel("Financiële administratie"), Implies(FinanciëleAdministratieAlleenInkijken, FinancieelBankBatchToevoegenVerwijderenWijzigen,
+            FinancieelBankBatchBekijken, FinancieelBetalingenToevoegenVerwijderenWijzigen, FinancieelCollegegeldToevoegenVerwijderenWijzigen,
             FinancieelMachtingToevoegenVerwijderenWijzigen)]
         FinanciëleAdministratie = -22,
 
@@ -176,11 +176,11 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Student identificatie bekijken")]
         StudentIdentificatieBekijken = 81,
 
-        [MpLabel("Financieel clieop toevoegen verwijderen wijzigen")]
-        FinancieelClieopToevoegenVerwijderenWijzigen = 82,
+        [MpLabel("Financieel bankbatch toevoegen verwijderen wijzigen")]
+        FinancieelBankBatchToevoegenVerwijderenWijzigen = 82,
 
-        [MpLabel("Financieel clieop bekijken")]
-        FinancieelClieopBekijken = 83,
+        [MpLabel("Financieel bankbatch bekijken")]
+        FinancieelBankBatchBekijken = 83,
 
         [MpLabel("Niet reguliere inschrijvingen bekijken")]
         NietReguliereInschrijvingenBekijken = 84,
@@ -333,7 +333,7 @@ namespace ProgressOnderwijsUtils
         WijzigenToevoegenAfdrukkenBbc = 133,
 
         [MpLabel("Beheer financieel"), Toekenbaar,
-         Implies(FinancieelClieopToevoegenVerwijderenWijzigen, FinancieelClieopBekijken, OrganisatieFinancieelCollegegeldTabelBeheer, WijzigenFinancieel)]
+         Implies(FinancieelBankBatchToevoegenVerwijderenWijzigen, FinancieelBankBatchBekijken, OrganisatieFinancieelCollegegeldTabelBeheer, WijzigenFinancieel)]
         BeheerFinancieel = 134,
 
         [MpLabel("Beheer inschrijvingen"), Toekenbaar,
