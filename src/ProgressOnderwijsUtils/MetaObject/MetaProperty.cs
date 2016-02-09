@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
     {
         ColumnCss LijstCssClass { get; }
         Func<object, object> UntypedGetter { get; }
-        Func<object, object, object> UntypedSetter { get; }
+        object UnsafeSetPropertyAndReturnObject(object obj, object newValue);
         int Index { get; }
         bool Required { get; }
         bool AllowNullInEditor { get; }
@@ -101,22 +101,10 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            Func<object, object, object> untypedSetter;
-
-            public Func<object, object, object> UntypedSetter
-            {
-                get
-                {
-                    if (untypedSetter == null) {
-                        var localSetter = Setter;
-                        untypedSetter = localSetter == null ? default(Func<object, object, object>) : (o, v) => {
-                            var typedObj = (TOwner)o;
-                            localSetter(ref typedObj, v);
-                            return typedObj;
-                        };
-                    }
-                    return untypedSetter;
-                }
+            public object UnsafeSetPropertyAndReturnObject(object o, object newValue) {
+                var typedObj = (TOwner)o;
+                Setter(ref typedObj, newValue);
+                return typedObj;
             }
 
             public Expression PropertyAccessExpression(Expression paramExpr) => Expression.Property(paramExpr, propertyInfo);
