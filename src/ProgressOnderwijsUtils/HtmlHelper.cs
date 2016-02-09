@@ -5,9 +5,16 @@ namespace ProgressOnderwijsUtils
 {
     public enum FlowStep
     {
+        [MpLabelUntranslated("-2")]
         Partial = -2,
+
+        [MpLabelUntranslated("-1")]
         Rejected = -1,
+
+        [MpLabelUntranslated("0")]
         CanEdit = 0,
+
+        [MpLabelUntranslated("1")]
         Ok = 1,
     }
 
