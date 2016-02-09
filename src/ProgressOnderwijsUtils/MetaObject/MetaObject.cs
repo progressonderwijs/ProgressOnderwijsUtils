@@ -20,6 +20,8 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) => GetCache(metaobj.GetType());
 
+        public static MetaInfo<T> GetMetaInfo<T>(this T metaobj) where T : IMetaObject => MetaInfo<T>.Instance;
+
         //public static object DynamicGet(this IMetaObject metaobj, string propertyName) => GetCache(metaobj.GetType()).DynGet(metaobj, propertyName);
         [Pure]
         public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject
@@ -29,7 +31,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         [CodeDieAlleenWordtGebruiktInTests]
-        public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
+        public static ISettableMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
             where TMetaObject : IMetaObject
         {
             return MetaInfo<TMetaObject>.Instance.GetByExpression(propertyExpression);

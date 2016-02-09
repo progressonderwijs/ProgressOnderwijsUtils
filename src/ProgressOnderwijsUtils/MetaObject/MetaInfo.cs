@@ -9,13 +9,12 @@ namespace ProgressOnderwijsUtils
     public interface IMetaPropCache<out T> : IReadOnlyList<T>
         where T : IMetaProperty
     {
-        IReadOnlyDictionary<string, int> IndexByName { get; }
     }
 
-    public sealed class MetaInfo<T> : IMetaPropCache<IMetaProperty<T>>
+    public sealed class MetaInfo<T> : IMetaPropCache<ISettableMetaProperty<T>>
         where T : IMetaObject
     {
-        readonly IMetaProperty<T>[] MetaProperties;
+        readonly ISettableMetaProperty<T>[] MetaProperties;
         readonly IReadOnlyDictionary<string, int> indexByName;
         public IReadOnlyDictionary<string, int> IndexByName => indexByName;
         public static readonly MetaInfo<T> Instance = new MetaInfo<T>();
@@ -38,14 +37,14 @@ namespace ProgressOnderwijsUtils
             indexByName = dictionary;
         }
 
-        public IMetaProperty<T> GetByName(string name) => MetaProperties[indexByName[name]];
+        public ISettableMetaProperty<T> GetByName(string name) => MetaProperties[indexByName[name]];
         public int Count => MetaProperties.Length;
 
-        static IMetaProperty<T>[] GetMetaPropertiesImpl()
+        static ISettableMetaProperty<T>[] GetMetaPropertiesImpl()
         {
             int index = 0;
             var propertyInfos = typeof(T).GetProperties();
-            var metaProperties = new IMetaProperty<T>[propertyInfos.Length];
+            var metaProperties = new ISettableMetaProperty<T>[propertyInfos.Length];
             foreach (var propertyInfo in propertyInfos) {
                 var customAttributes = propertyInfo.GetCustomAttributes(true);
                 metaProperties[index] = new MetaProperty.Impl<T>(propertyInfo, index, customAttributes);
@@ -55,7 +54,7 @@ namespace ProgressOnderwijsUtils
             return metaProperties;
         }
 
-        public IMetaProperty<T> GetByExpression<TProp>(Expression<Func<T, TProp>> propertyExpression)
+        public ISettableMetaProperty<T> GetByExpression<TProp>(Expression<Func<T, TProp>> propertyExpression)
         {
             var memberInfo = MetaObject.GetMemberInfo(propertyExpression);
             var retval = MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo); //TODO:get by name.
@@ -73,7 +72,7 @@ namespace ProgressOnderwijsUtils
             return indexByName.TryGetValue(colName, out index) ? MetaProperties[index] : null;
         }
 
-        public IEnumerator<IMetaProperty<T>> GetEnumerator()
+        public IEnumerator<ISettableMetaProperty<T>> GetEnumerator()
         {
             foreach (var mp in MetaProperties) {
                 yield return mp;
@@ -81,6 +80,6 @@ namespace ProgressOnderwijsUtils
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public IMetaProperty<T> this[int index] => MetaProperties[index];
+        public ISettableMetaProperty<T> this[int index] => MetaProperties[index];
     }
 }
