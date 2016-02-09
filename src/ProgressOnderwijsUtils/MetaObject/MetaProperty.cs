@@ -32,19 +32,19 @@ namespace ProgressOnderwijsUtils
         HtmlEditMode HtmlMode { get; }
     }
 
-    public interface IMetaProperty<in TOwner> : IMetaProperty
+    public interface IReadonlyMetaProperty<in TOwner> : IMetaProperty
     {
         Func<TOwner, object> Getter { get; }
     }
 
-    public interface ISettableMetaProperty<TOwner> : IMetaProperty<TOwner>
+    public interface IMetaProperty<TOwner> : IReadonlyMetaProperty<TOwner>
     {
         Setter<TOwner> Setter { get; }
     }
 
     public static class MetaProperty
     {
-        public sealed class Impl<TOwner> : ISettableMetaProperty<TOwner>
+        public sealed class Impl<TOwner> : IMetaProperty<TOwner>
         {
             readonly string name;
             public string Name => name;

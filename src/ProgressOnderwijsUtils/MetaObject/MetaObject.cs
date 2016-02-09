@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         [CodeDieAlleenWordtGebruiktInTests]
-        public static ISettableMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
+        public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
             where TMetaObject : IMetaObject
         {
             return MetaInfo<TMetaObject>.Instance.GetByExpression(propertyExpression);
@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
         {
             [UsefulToKeep("library method for getting base-class metaproperty")]
             [Pure]
-            public static IMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
+            public static IReadonlyMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
             {
                 var memberInfo = GetMemberInfo(propertyExpression);
                 if (typeof(TParent).IsClass || typeof(TParent) == typeof(TMetaObject)) {
