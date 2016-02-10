@@ -29,13 +29,24 @@ namespace ProgressOnderwijsUtils
             var cache = EnumMetaDataCache<TEnum>.Instance;
             return !cache.IsFlags
                 ? ParseLabels[taal][s.Trim()]
-                : new[] {
-                    s.Split(',')
-                        .Select(sub => sub.Trim())
-                        .Where(sub => sub.Length > 0)
+                : LookupFlagsEnum(s, taal);
+        }
+
+        static IEnumerable<TEnum> LookupFlagsEnum(string s, Taal taal)
+        {
+            var labels = s.Split(',')
+                .Select(sub => sub.Trim())
+                .Where(sub => sub.Length > 0)
+                .ToArray();
+            if (labels.Any(label => ParseLabels[taal][label].None())) {
+                return Enumerable.Empty<TEnum>();
+            } else {
+                return new[] {
+                    labels
                         .Select(sub => ParseLabels[taal][sub].Single())
-                        .Aggregate(default(TEnum), cache.AddFlag)
+                        .Aggregate(default(TEnum), EnumMetaDataCache<TEnum>.Instance.AddFlag)
                 };
+            }
         }
 
         public IEnumerable<Enum> UntypedLookup(string s, Taal taal) => Lookup(s, taal).Select(e => (Enum)(object)e);
