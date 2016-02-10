@@ -26,10 +26,9 @@ namespace ProgressOnderwijsUtils
             if (taal == Taal.None) {
                 throw new ArgumentOutOfRangeException(nameof(taal), "Taal is niet gezet.  (== Taal.None)");
             }
-            var cache = EnumMetaDataCache<TEnum>.Instance;
-            return !cache.IsFlags
-                ? ParseLabels[taal][s.Trim()]
-                : LookupFlagsEnum(s, taal);
+            return EnumMetaDataCache<TEnum>.Instance.IsFlags
+                ? LookupFlagsEnum(s, taal)
+                : ParseLabels[taal][s.Trim()];
         }
 
         static IEnumerable<TEnum> LookupFlagsEnum(string s, Taal taal)
