@@ -272,15 +272,9 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void EnumArraysSerializeOk()
+        public void EnumArraysSerializeAsIntegerArrays()
         {
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new[] { TestEnum.A, TestEnum.B, }).SerializeToString() == "test[in]#i1#;2#;*");
-        }
-
-        [Test]
-        public void EnumArraysDeserializeOk()
-        {
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.In, new[] { TestEnum.A, TestEnum.B, }).Equals(Filter.TryParseSerializedFilter("test[in]#i1#;2#;*")));
         }
 
         [Test]
