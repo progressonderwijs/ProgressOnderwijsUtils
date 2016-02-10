@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtils
             //TypedNonNullableGetter is of type Func<T, _> such that typeof(_) == ColumnType - therefore cannot return nulls!
             public readonly Delegate TypedNonNullableGetter;
 
-            public ColumnInfo(IMetaProperty<T> mp)
+            public ColumnInfo(IReadonlyMetaProperty<T> mp)
             {
                 var propertyType = mp.DataType;
                 var metaObjectParameter = Expression.Parameter(typeof(T));

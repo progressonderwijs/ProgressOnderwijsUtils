@@ -47,6 +47,18 @@ namespace ProgressOnderwijsUtilsTests
         public object PrivateGetter { set; private get; }
     }
 
+    struct SetterTestStruct : IMetaObject
+    {
+        public int IntProperty { get; set; }
+        public string StringProperty { get; set; }
+    }
+
+    class SetterTestClass : IMetaObject
+    {
+        public int IntProperty { get; set; }
+        public string StringProperty { get; set; }
+    }
+
     [Continuous]
     public sealed class MetaObjectTest
     {
@@ -118,8 +130,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => (string)moDef.GetByName("Property").Getter(o) == "foo");
             PAssert.That(() => (string)moDef.GetByName("labelledProperty").Getter(o) == "bar");
 
-            moDef.GetByName("property").Setter(o, "aha");
-            moDef.GetByName("LabelledProperty").Setter(o, "really");
+            moDef.GetByName("property").Setter(ref o, "aha");
+            moDef.GetByName("LabelledProperty").Setter(ref o, "really");
 
             PAssert.That(() => o.Equals(new SimpleObject { Property = "aha", LabelledProperty = "really" }));
         }
@@ -140,6 +152,50 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => mpReadonlyPropertyMp.IsReadonly && mpReadonlyPropertyMp.CanWrite);
             var propertyMp = MetaObject.GetByExpression((SimpleObject o) => o.Property);
             PAssert.That(() => !propertyMp.IsReadonly && propertyMp.CanWrite);
+        }
+
+        [Test]
+        public void CanReadWrite_ValueTypedProperty_On_ValueTypeObject()
+        {
+            var obj = new SetterTestStruct();
+            var prop = MetaObject.GetByExpression((SetterTestStruct o) => o.IntProperty);
+
+            PAssert.That(() => (int)prop.Getter(obj) == 0);
+            prop.Setter(ref obj, 42);
+            PAssert.That(() => (int)prop.Getter(obj) == 42);
+        }
+
+        [Test]
+        public void CanReadWrite_ReferenceTypedProperty_On_ValueTypeObject()
+        {
+            var obj = new SetterTestStruct();
+            var prop = MetaObject.GetByExpression((SetterTestStruct o) => o.StringProperty);
+
+            PAssert.That(() => prop.Getter(obj) == null);
+            prop.Setter(ref obj, "42");
+            PAssert.That(() => (string)prop.Getter(obj) == "42");
+        }
+
+        [Test]
+        public void CanReadWrite_ValueTypedProperty_On_ReferenceTypeObject()
+        {
+            var obj = new SetterTestClass();
+            var prop = MetaObject.GetByExpression((SetterTestClass o) => o.IntProperty);
+
+            PAssert.That(() => (int)prop.Getter(obj) == 0);
+            prop.Setter(ref obj, 42);
+            PAssert.That(() => (int)prop.Getter(obj) == 42);
+        }
+
+        [Test]
+        public void CanReadWrite_ReferenceTypedProperty_On_ReferenceTypeObject()
+        {
+            var obj = new SetterTestClass();
+            var prop = MetaObject.GetByExpression((SetterTestClass o) => o.StringProperty);
+
+            PAssert.That(() => prop.Getter(obj) == null);
+            prop.Setter(ref obj, "42");
+            PAssert.That(() => (string)prop.Getter(obj) == "42");
         }
     }
 }

@@ -20,6 +20,8 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) => GetCache(metaobj.GetType());
 
+        public static MetaInfo<T> GetMetaInfo<T>(this T metaobj) where T : IMetaObject => MetaInfo<T>.Instance;
+
         //public static object DynamicGet(this IMetaObject metaobj, string propertyName) => GetCache(metaobj.GetType()).DynGet(metaobj, propertyName);
         [Pure]
         public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject
@@ -40,7 +42,7 @@ namespace ProgressOnderwijsUtils
         {
             [UsefulToKeep("library method for getting base-class metaproperty")]
             [Pure]
-            public static IMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
+            public static IReadonlyMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
             {
                 var memberInfo = GetMemberInfo(propertyExpression);
                 if (typeof(TParent).IsClass || typeof(TParent) == typeof(TMetaObject)) {

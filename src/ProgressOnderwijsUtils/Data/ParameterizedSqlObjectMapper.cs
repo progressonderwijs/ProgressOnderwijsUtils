@@ -480,7 +480,7 @@ namespace ProgressOnderwijsUtils
                     var cols = orderingP.Cols;
                     for (int i = 0; i < cols.Length; i++) {
                         var colName = cols[i];
-                        IMetaProperty<T> member = metadata.GetByNameOrNull(colName);
+                        IReadonlyMetaProperty<T> member = metadata.GetByNameOrNull(colName);
                         if (member == null) {
                             throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
                         }

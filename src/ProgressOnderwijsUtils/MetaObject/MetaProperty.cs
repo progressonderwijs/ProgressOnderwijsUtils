@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
     {
         ColumnCss LijstCssClass { get; }
         Func<object, object> UntypedGetter { get; }
-        Action<object, object> UntypedSetter { get; }
+        object UnsafeSetPropertyAndReturnObject(object obj, object newValue);
         int Index { get; }
         bool Required { get; }
         int? MaxLength { get; }
@@ -31,10 +31,14 @@ namespace ProgressOnderwijsUtils
         HtmlEditMode HtmlMode { get; }
     }
 
-    public interface IMetaProperty<in TOwner> : IMetaProperty
+    public interface IReadonlyMetaProperty<in TOwner> : IMetaProperty
     {
         Func<TOwner, object> Getter { get; }
-        Action<TOwner, object> Setter { get; }
+    }
+
+    public interface IMetaProperty<TOwner> : IReadonlyMetaProperty<TOwner>
+    {
+        Setter<TOwner> Setter { get; }
     }
 
     public static class MetaProperty
@@ -78,8 +82,8 @@ namespace ProgressOnderwijsUtils
             public bool CanWrite => setterMethod != null;
             Func<TOwner, object> getter;
             public Func<TOwner, object> Getter => getter ?? (getter = MkGetter(getterMethod, propertyInfo.PropertyType));
-            Action<TOwner, object> setter;
-            public Action<TOwner, object> Setter => setter ?? (setter = MkSetter(setterMethod, propertyInfo.PropertyType));
+            Setter<TOwner> setter;
+            public Setter<TOwner> Setter => setter ?? (setter = MkSetter(setterMethod, propertyInfo.PropertyType));
             Func<object, object> untypedGetter;
 
             public Func<object, object> UntypedGetter
@@ -94,18 +98,10 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            Action<object, object> untypedSetter;
-
-            public Action<object, object> UntypedSetter
-            {
-                get
-                {
-                    if (untypedSetter == null) {
-                        var localSetter = Setter;
-                        untypedSetter = localSetter == null ? default(Action<object, object>) : (o, v) => localSetter((TOwner)o, v);
-                    }
-                    return untypedSetter;
-                }
+            public object UnsafeSetPropertyAndReturnObject(object o, object newValue) {
+                var typedObj = (TOwner)o;
+                Setter(ref typedObj, newValue);
+                return typedObj;
             }
 
             public Expression PropertyAccessExpression(Expression paramExpr) => Expression.Property(paramExpr, propertyInfo);
@@ -175,7 +171,7 @@ namespace ProgressOnderwijsUtils
                 return labelNoTt;
             }
 
-            static Action<TOwner, object> MkSetter(MethodInfo setterMethod, Type propertyType)
+            static Setter<TOwner> MkSetter(MethodInfo setterMethod, Type propertyType)
             {
                 if (setterMethod == null) {
                     return null;
@@ -240,8 +236,8 @@ namespace ProgressOnderwijsUtils
         {
             Func<TObj, object> GetterBoxed<TObj>(MethodInfo method);
             Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method);
-            Action<TObj, object> SetterChecked<TObj>(MethodInfo method);
-            Action<TObj, object> StructSetterChecked<TObj>(MethodInfo method);
+            Setter<TObj> SetterChecked<TObj>(MethodInfo method);
+            Setter<TObj> StructSetterChecked<TObj>(MethodInfo method);
         }
 
         delegate TVal StructGetterDel<TOwner, out TVal>(ref TOwner obj);
@@ -262,16 +258,16 @@ namespace ProgressOnderwijsUtils
                 return o => f(ref o);
             }
 
-            public Action<TObj, object> SetterChecked<TObj>(MethodInfo method)
+            public Setter<TObj> SetterChecked<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<Action<TObj, TOut>>(method);
-                return (o, v) => f(o, (TOut)v);
+                return (ref TObj o, object v) => f(o, (TOut)v);
             }
 
-            public Action<TObj, object> StructSetterChecked<TObj>(MethodInfo method)
+            public Setter<TObj> StructSetterChecked<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<StructSetterDel<TObj, TOut>>(method);
-                return (o, v) => f(ref o, (TOut)v);
+                return (ref TObj o, object v) => f(ref o, (TOut)v);
             }
         }
 
@@ -283,4 +279,6 @@ namespace ProgressOnderwijsUtils
             return CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
         }
     }
+
+    public delegate void Setter<T>(ref T obj, object value);
 }

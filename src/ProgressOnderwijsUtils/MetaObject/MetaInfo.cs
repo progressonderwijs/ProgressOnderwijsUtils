@@ -9,7 +9,6 @@ namespace ProgressOnderwijsUtils
     public interface IMetaPropCache<out T> : IReadOnlyList<T>
         where T : IMetaProperty
     {
-        IReadOnlyDictionary<string, int> IndexByName { get; }
     }
 
     public sealed class MetaInfo<T> : IMetaPropCache<IMetaProperty<T>>
@@ -67,7 +66,7 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
-        public IMetaProperty<T> GetByNameOrNull(string colName)
+        public IReadonlyMetaProperty<T> GetByNameOrNull(string colName)
         {
             int index;
             return indexByName.TryGetValue(colName, out index) ? MetaProperties[index] : null;
