@@ -236,7 +236,7 @@ namespace ProgressOnderwijsUtils
                         return retval;
                     },
                     arr => {
-                        var underlying = serializerByType[arr.GetType().GetElementType()];
+                        var underlying = serializerByType[arr.GetType().GetElementType().GetUnderlyingType()];
                         return underlying.Code + arr.Cast<object>().Select(elem => underlying.Serialize(elem).Replace("#", "##") + "#;").JoinStrings();
                     }
                     ),
