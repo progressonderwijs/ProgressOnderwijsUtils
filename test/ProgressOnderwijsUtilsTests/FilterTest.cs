@@ -76,7 +76,7 @@ namespace ProgressOnderwijsUtilsTests
         public void BooleanComparers()
         {
             var comparers = EnumHelpers.GetValues<BooleanComparer>();
-            PAssert.That(() => comparers.Count() == comparers.Select(c => c.NiceString()).Distinct().Count(), "all nicestrings don't throw and are distinct");
+            PAssert.That(() => comparers.Count() == comparers.Select(c => c.SerializationString()).Distinct().Count(), "all nicestrings don't throw and are distinct");
             PAssert.That(
                 () => comparers.OrderBy(x => x).SequenceEqual(CriteriumFilter.NumericComparers.Concat(CriteriumFilter.StringComparers).Distinct().OrderBy(x => x)),
                 "all comparers either numeric or string or both.");
@@ -205,7 +205,7 @@ namespace ProgressOnderwijsUtilsTests
         public void FilterValidation()
         {
             Assert.Throws<InvalidOperationException>(() => Filter.CreateCriterium("test", (BooleanComparer)12345, 3).ToParameterizedSql());
-            Assert.Throws<InvalidOperationException>(() => ((BooleanComparer)12345).NiceString());
+            Assert.Throws<InvalidOperationException>(() => ((BooleanComparer)12345).SerializationString());
         }
 
         [Test]

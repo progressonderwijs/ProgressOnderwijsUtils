@@ -166,7 +166,7 @@ namespace ProgressOnderwijsUtils
             return CriteriumFilter.NumericComparers;
         }
 
-        public static string NiceString(this BooleanComparer comparer)
+        public static string SerializationString(this BooleanComparer comparer)
         {
             switch (comparer) {
                 case BooleanComparer.LessThan:
@@ -205,10 +205,10 @@ namespace ProgressOnderwijsUtils
         static class ComparerLookup
         {
             public static readonly Dictionary<string, BooleanComparer> ComparerByString = EnumHelpers.GetValues<BooleanComparer>()
-                .ToDictionary(NiceString, StringComparer.Ordinal);
+                .ToDictionary(SerializationString, StringComparer.Ordinal);
         }
 
-        public static BooleanComparer? ParseComparerNiceString(string s) => ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?));
+        public static BooleanComparer? ParseComparerSerializationString(string s) => ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?));
 
         public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, Type> typeIfPresent)
         {
