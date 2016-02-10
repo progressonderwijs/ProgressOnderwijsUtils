@@ -152,13 +152,13 @@ namespace ProgressOnderwijsUtils
         public override string SerializeToString()
         {
             Debug.Assert(!KolomNaam.Contains('[') && !KolomNaam.Contains('&') && !KolomNaam.Contains('|') && !KolomNaam.Contains(';') && !KolomNaam.Contains(','));
-            Debug.Assert(!Comparer.NiceString().Contains(']'));
+            Debug.Assert(!Comparer.SerializationString().Contains(']'));
             if (!ColumnReference.IsOkName.IsMatch(KolomNaam)) {
                 throw new Exception("invalid column name");
             }
             string waardeString = SerializeWaarde(Waarde);
             waardeString = waardeString.Replace(@"*", @"**");
-            return KolomNaam + "[" + Comparer.NiceString() + "]" + waardeString + "*";
+            return KolomNaam + "[" + Comparer.SerializationString() + "]" + waardeString + "*";
         }
 
         interface IValSerializer
