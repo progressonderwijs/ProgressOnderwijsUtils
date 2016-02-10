@@ -208,7 +208,7 @@ namespace ProgressOnderwijsUtils
                 .ToDictionary(SerializationString, StringComparer.Ordinal);
         }
 
-        public static BooleanComparer? ParseComparerNiceString(string s) => ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?));
+        public static BooleanComparer? ParseComparerSerializationString(string s) => ComparerLookup.ComparerByString.GetOrDefaultR(s, default(BooleanComparer?));
 
         public static FilterBase ClearFilterWhenItContainsInvalidColumns(this FilterBase filter, Func<string, Type> typeIfPresent)
         {

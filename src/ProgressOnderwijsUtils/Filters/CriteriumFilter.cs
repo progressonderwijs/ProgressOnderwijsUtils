@@ -311,7 +311,7 @@ namespace ProgressOnderwijsUtils
             if (cmpEnd < 0) {
                 return null;
             }
-            BooleanComparer? comparer = Filter.ParseComparerNiceString(SerializedRep.Substring(0, cmpEnd));
+            BooleanComparer? comparer = Filter.ParseComparerSerializationString(SerializedRep.Substring(0, cmpEnd));
             if (comparer == null) {
                 return null;
             }
