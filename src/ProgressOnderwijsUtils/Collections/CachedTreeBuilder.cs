@@ -4,89 +4,78 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    sealed class CachedTreeBuilder<T>
+    static class CachedTreeBuilder<T>
     {
-        readonly Dictionary<T, NodeContainer> completedBranches = new Dictionary<T, NodeContainer>();
-        readonly Func<T, IEnumerable<T>> kidLookup;
+        static readonly TreeNodeBuilder[] Empty = new TreeNodeBuilder[0];
 
-        public CachedTreeBuilder(Func<T, IEnumerable<T>> kidLookup)
-        {
-            this.kidLookup = kidLookup;
-        }
-
-        static readonly NodeContainer[] Empty = new NodeContainer[0];
-
-        sealed class NodeContainer
+        sealed class TreeNodeBuilder
         {
             public T value;
-            public NodeContainer[] tempKids;
-            public Tree<T> output;
+            public TreeNodeBuilder[] tempKids;
+            public Tree<T> finishedNode;
 
             public void GenerateOutput()
             {
-                var branches = new Tree<T>[tempKids.Length];
-                for (int i = 0; i < branches.Length; i++) {
-                    branches[i] = tempKids[i].output;
-                    if (branches[i] == null) {
+                var finishedKidsNodes = new Tree<T>[tempKids.Length];
+                for (int i = 0; i < finishedKidsNodes.Length; i++) {
+                    finishedKidsNodes[i] = tempKids[i].finishedNode;
+                    if (finishedKidsNodes[i] == null) {
                         throw new InvalidOperationException("Cycle detected!");
                     }
                 }
-                output = Tree.Node(value, branches);
+                finishedNode = Tree.Node(value, finishedKidsNodes);
 
                 tempKids = Empty;
             }
         }
 
         [Pure]
-        public Tree<T> Resolve(T rootNodeValue)
+        public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>> kidLookup)
         {
-            var todoGenerateOutput = new Stack<NodeContainer>(); //in order of creation; so junctions always before their kids.
+            var todo_needsGenerateOutput = new Stack<TreeNodeBuilder>(); //in order of creation; so junctions always before their kids.
 
-            NodeContainer rootContainer;
-            if (completedBranches.TryGetValue(rootNodeValue, out rootContainer)) {
-                return rootContainer.output;
-            }
-            rootContainer = new NodeContainer { value = rootNodeValue, };
-            todoGenerateOutput.Push(rootContainer);
-            completedBranches.Add(rootNodeValue, rootContainer);
+            var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
+            todo_needsGenerateOutput.Push(rootBuilder);
+            var branchesWithBuilders = new Dictionary<T, TreeNodeBuilder> { { rootNodeValue, rootBuilder } };
 
-            var todo = new Stack<NodeContainer>();
-            todo.Push(rootContainer);
-            var tempKidBuilder = new NodeContainer[15];
-            while (todo.Count > 0) {
-                var nodeContainer = todo.Pop();
-                if (nodeContainer.tempKids == null) {
-                    var kids = kidLookup(nodeContainer.value);
-                    if (kids != null) {
+            var todo_needsKids = new Stack<TreeNodeBuilder>();
+            todo_needsKids.Push(rootBuilder);
+            var tempKidBuilder = new TreeNodeBuilder[15];
+
+            while (todo_needsKids.Count > 0) {
+                var nodeBuilderThatWantsKids = todo_needsKids.Pop();
+                if (nodeBuilderThatWantsKids.tempKids == null) {
+                    var kids = kidLookup(nodeBuilderThatWantsKids.value);
+                    if (kids == null) {
+                        nodeBuilderThatWantsKids.tempKids = Empty;
+                    } else {
                         int kidCount = 0;
                         foreach (var kid in kids) {
-                            NodeContainer con;
-                            if (!completedBranches.TryGetValue(kid, out con)) {
-                                con = new NodeContainer { value = kid, };
-                                todoGenerateOutput.Push(con);
-                                completedBranches.Add(kid, con);
-                                todo.Push(con);
-                            } else if (con.tempKids == null) {
-                                todo.Push(con);
+                            TreeNodeBuilder builderForKid;
+                            if (!branchesWithBuilders.TryGetValue(kid, out builderForKid)) {
+                                builderForKid = new TreeNodeBuilder { value = kid, };
+                                todo_needsGenerateOutput.Push(builderForKid);
+                                branchesWithBuilders.Add(kid, builderForKid);
+                                todo_needsKids.Push(builderForKid);
+                            } else if (builderForKid.tempKids == null) {
+                                todo_needsKids.Push(builderForKid);
                             }
                             if (tempKidBuilder.Length == kidCount + 1) {
                                 Array.Resize(ref tempKidBuilder, tempKidBuilder.Length * 2 + 1); //will eventually precisely reach int.MaxValue.
                             }
-                            tempKidBuilder[kidCount++] = con;
+                            tempKidBuilder[kidCount++] = builderForKid;
                         }
-                        nodeContainer.tempKids = tempKidBuilder;
-                        Array.Resize(ref nodeContainer.tempKids, kidCount);
-                    } else {
-                        nodeContainer.tempKids = Empty;
+                        nodeBuilderThatWantsKids.tempKids = tempKidBuilder;
+                        Array.Resize(ref nodeBuilderThatWantsKids.tempKids, kidCount);
                     }
                 }
             }
 
-            while (todoGenerateOutput.Count > 0) {
-                todoGenerateOutput.Pop().GenerateOutput();
+            while (todo_needsGenerateOutput.Count > 0) {
+                todo_needsGenerateOutput.Pop().GenerateOutput();
             }
 
-            return rootContainer.output;
+            return rootBuilder.finishedNode;
         }
     }
 }

@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> Node<T>(T value) => new Tree<T>(value, null);
 
         [Pure]
-        public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup) => new CachedTreeBuilder<T>(kidLookup).Resolve(root);
+        public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup) => CachedTreeBuilder<T>.Resolve(root, kidLookup);
 
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) => BuildRecursively(root, id => kidLookup.GetOrDefaultR(id));
