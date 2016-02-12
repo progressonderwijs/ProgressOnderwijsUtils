@@ -32,18 +32,18 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>> kidLookup)
         {
-            var todo_needsGenerateOutput = new Stack<TreeNodeBuilder>(); //in order of creation; so junctions always before their kids.
+            var needsGenerateOutput = new Stack<TreeNodeBuilder>(); //in order of creation; so junctions always before their kids.
 
             var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
-            todo_needsGenerateOutput.Push(rootBuilder);
+            needsGenerateOutput.Push(rootBuilder);
             var branchesWithBuilders = new Dictionary<T, TreeNodeBuilder> { { rootNodeValue, rootBuilder } };
 
-            var todo_needsKids = new Stack<TreeNodeBuilder>();
-            todo_needsKids.Push(rootBuilder);
+            var needsKids = new Stack<TreeNodeBuilder>();
+            needsKids.Push(rootBuilder);
             var tempKidBuilder = new TreeNodeBuilder[15];
 
-            while (todo_needsKids.Count > 0) {
-                var nodeBuilderThatWantsKids = todo_needsKids.Pop();
+            while (needsKids.Count > 0) {
+                var nodeBuilderThatWantsKids = needsKids.Pop();
                 if (nodeBuilderThatWantsKids.tempKids == null) {
                     var kids = kidLookup(nodeBuilderThatWantsKids.value);
                     if (kids == null) {
@@ -54,11 +54,11 @@ namespace ProgressOnderwijsUtils.Collections
                             TreeNodeBuilder builderForKid;
                             if (!branchesWithBuilders.TryGetValue(kid, out builderForKid)) {
                                 builderForKid = new TreeNodeBuilder { value = kid, };
-                                todo_needsGenerateOutput.Push(builderForKid);
+                                needsGenerateOutput.Push(builderForKid);
                                 branchesWithBuilders.Add(kid, builderForKid);
-                                todo_needsKids.Push(builderForKid);
+                                needsKids.Push(builderForKid);
                             } else if (builderForKid.tempKids == null) {
-                                todo_needsKids.Push(builderForKid);
+                                needsKids.Push(builderForKid);
                             }
                             if (tempKidBuilder.Length == kidCount + 1) {
                                 Array.Resize(ref tempKidBuilder, tempKidBuilder.Length * 2 + 1); //will eventually precisely reach int.MaxValue.
@@ -71,8 +71,8 @@ namespace ProgressOnderwijsUtils.Collections
                 }
             }
 
-            while (todo_needsGenerateOutput.Count > 0) {
-                todo_needsGenerateOutput.Pop().GenerateOutput();
+            while (needsGenerateOutput.Count > 0) {
+                needsGenerateOutput.Pop().GenerateOutput();
             }
 
             return rootBuilder.finishedNode;
