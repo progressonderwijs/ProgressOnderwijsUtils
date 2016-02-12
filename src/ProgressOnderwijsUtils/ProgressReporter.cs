@@ -43,21 +43,24 @@ namespace ProgressOnderwijsUtils
                     Console.WriteLine(
                         actionName + ": " + report.PercentDone + "%, " + report.TimeLeft.TotalSeconds.ToString("f1") + "s left (" + report.Start + " - " + report.Eta + ")")) { }
 
-        public void Step()
+        public void Step(int steps=1)
         {
-            int newProgressVal = Interlocked.Increment(ref stepsDone); //stepsDone++; is thread unsafe.
+            int newProgressVal = Interlocked.Add(ref stepsDone,steps); //stepsDone++; is thread unsafe.
+            var oldProgressVal = newProgressVal - steps;
             var percentProgress = PercentProgress(newProgressVal);
-            if (percentProgress / 5 > PercentProgress(newProgressVal - 1) / 5) {
+            if (percentProgress / 5 > PercentProgress(oldProgressVal) / 5) {
                 var elapsed = sw.Elapsed;
-                double elapsedMS = elapsed.TotalMilliseconds;
-                double scaledMS = elapsedMS * TotalSteps / newProgressVal;
-                var scaled = TimeSpan.FromMilliseconds(scaledMS);
+                var elapsedMS = elapsed.TotalMilliseconds;
+                var totalMS = elapsedMS * TotalSteps / newProgressVal;
+                var scaled = TimeSpan.FromMilliseconds(totalMS);
                 var leftOver = scaled - elapsed;
-                DateTime now = start + elapsed;
-                DateTime eta = start + scaled;
+                var now = start + elapsed;
+                var eta = start + scaled;
                 report(new ProgressReport(start, now, eta, newProgressVal, percentProgress, leftOver));
             }
         }
+
+        public int StepsDone => Volatile.Read(ref stepsDone);
 
         int PercentProgress(int newProgressVal) => 100 * newProgressVal / TotalSteps;
     }
