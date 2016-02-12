@@ -16,6 +16,9 @@ namespace ProgressOnderwijsUtils.Collections
 
             public void GenerateOutput()
             {
+                if (finishedNode != null) {
+                    return;
+                }
                 var finishedKidsNodes = new Tree<T>[tempKids.Length];
                 for (int i = 0; i < finishedKidsNodes.Length; i++) {
                     finishedKidsNodes[i] = tempKids[i].finishedNode;
@@ -59,6 +62,7 @@ namespace ProgressOnderwijsUtils.Collections
                                 needsKids.Push(builderForKid);
                             } else if (builderForKid.tempKids == null) {
                                 needsKids.Push(builderForKid);
+                                needsGenerateOutput.Push(builderForKid);
                             }
                             if (tempKidBuilder.Length == kidCount + 1) {
                                 Array.Resize(ref tempKidBuilder, tempKidBuilder.Length * 2 + 1); //will eventually precisely reach int.MaxValue.
