@@ -18,12 +18,5 @@ namespace ProgressOnderwijsUtils
         public override string ToString() => ToParameterizedSqlImpl().DebugText();
         public abstract string SerializeToString();
         public abstract bool Equals(FilterBase other);
-
-        public ITranslatable ToText()
-        {
-            var q = ToParameterizedSqlImpl();
-
-            return Translatable.Raw(q.DebugText());
-        }
     }
 }
