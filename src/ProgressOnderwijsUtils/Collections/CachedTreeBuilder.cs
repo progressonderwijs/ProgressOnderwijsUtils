@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils.Collections
         sealed class TreeNodeBuilder
         {
             public T value;
-            public TreeNodeBuilder[] tempKids;
+            public IList<TreeNodeBuilder> tempKids;
             public Tree<T> finishedNode;
 
             public void GenerateOutput()
@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils.Collections
                 if (finishedNode != null) {
                     return;
                 }
-                var finishedKidsNodes = new Tree<T>[tempKids.Length];
+                var finishedKidsNodes = new Tree<T>[tempKids.Count];
                 for (int i = 0; i < finishedKidsNodes.Length; i++) {
                     finishedKidsNodes[i] = tempKids[i].finishedNode;
                     if (finishedKidsNodes[i] == null) {
@@ -43,7 +43,6 @@ namespace ProgressOnderwijsUtils.Collections
 
             var needsKids = new Stack<TreeNodeBuilder>();
             needsKids.Push(rootBuilder);
-            var tempKidBuilder = new TreeNodeBuilder[15];
 
             while (needsKids.Count > 0) {
                 var nodeBuilderThatWantsKids = needsKids.Pop();
@@ -52,7 +51,7 @@ namespace ProgressOnderwijsUtils.Collections
                     if (kids == null) {
                         nodeBuilderThatWantsKids.tempKids = Empty;
                     } else {
-                        int kidCount = 0;
+                        var tempKidBuilders = new List<TreeNodeBuilder>();
                         foreach (var kid in kids) {
                             TreeNodeBuilder builderForKid;
                             if (!branchesWithBuilders.TryGetValue(kid, out builderForKid)) {
@@ -64,13 +63,9 @@ namespace ProgressOnderwijsUtils.Collections
                                 needsKids.Push(builderForKid);
                                 needsGenerateOutput.Push(builderForKid);
                             }
-                            if (tempKidBuilder.Length == kidCount + 1) {
-                                Array.Resize(ref tempKidBuilder, tempKidBuilder.Length * 2 + 1); //will eventually precisely reach int.MaxValue.
-                            }
-                            tempKidBuilder[kidCount++] = builderForKid;
+                            tempKidBuilders.Add(builderForKid);
                         }
-                        nodeBuilderThatWantsKids.tempKids = tempKidBuilder;
-                        Array.Resize(ref nodeBuilderThatWantsKids.tempKids, kidCount);
+                        nodeBuilderThatWantsKids.tempKids = tempKidBuilders;
                     }
                 }
             }
