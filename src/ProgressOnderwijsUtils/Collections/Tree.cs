@@ -77,9 +77,8 @@ namespace ProgressOnderwijsUtils.Collections
 
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
     {
-        static readonly IReadOnlyList<Tree<T>> EmptyArray = new Tree<T>[0]; // cache this since it will be used very commonly.
         readonly T nodeValue;
-        readonly IReadOnlyList<Tree<T>> kidArray;
+        readonly Tree<T>[] kidArray;
         public T NodeValue => nodeValue;
         public IReadOnlyList<Tree<T>> Children => kidArray;
 
@@ -100,7 +99,7 @@ namespace ProgressOnderwijsUtils.Collections
         public Tree(T value, Tree<T>[] children)
         {
             nodeValue = value;
-            kidArray = children ?? EmptyArray;
+            kidArray = children ?? ArrayExtensions.Empty<Tree<T>>();
         }
 
         public static readonly Comparer DefaultComparer = new Comparer(EqualityComparer<T>.Default);
