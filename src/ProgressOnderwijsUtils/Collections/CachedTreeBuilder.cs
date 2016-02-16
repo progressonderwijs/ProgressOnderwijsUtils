@@ -6,12 +6,10 @@ namespace ProgressOnderwijsUtils.Collections
 {
     static class CachedTreeBuilder<T>
     {
-        static readonly TreeNodeBuilder[] Empty = new TreeNodeBuilder[0];
-
         sealed class TreeNodeBuilder
         {
             public T value;
-            public IList<TreeNodeBuilder> tempKids;
+            public List<TreeNodeBuilder> tempKids;
             public Tree<T> finishedNode;
 
             public void GenerateOutput()
@@ -27,8 +25,7 @@ namespace ProgressOnderwijsUtils.Collections
                     }
                 }
                 finishedNode = Tree.Node(value, finishedKidsNodes);
-
-                tempKids = Empty;
+                tempKids = null;
             }
         }
 
@@ -48,25 +45,21 @@ namespace ProgressOnderwijsUtils.Collections
                 var nodeBuilderThatWantsKids = needsKids.Pop();
                 if (nodeBuilderThatWantsKids.tempKids == null) {
                     var kids = kidLookup(nodeBuilderThatWantsKids.value);
-                    if (kids == null) {
-                        nodeBuilderThatWantsKids.tempKids = Empty;
-                    } else {
-                        var tempKidBuilders = new List<TreeNodeBuilder>();
-                        foreach (var kid in kids) {
-                            TreeNodeBuilder builderForKid;
-                            if (!branchesWithBuilders.TryGetValue(kid, out builderForKid)) {
-                                builderForKid = new TreeNodeBuilder { value = kid, };
-                                needsGenerateOutput.Push(builderForKid);
-                                branchesWithBuilders.Add(kid, builderForKid);
-                                needsKids.Push(builderForKid);
-                            } else if (builderForKid.tempKids == null) {
-                                needsKids.Push(builderForKid);
-                                needsGenerateOutput.Push(builderForKid);
-                            }
-                            tempKidBuilders.Add(builderForKid);
+                    var tempKidBuilders = new List<TreeNodeBuilder>();
+                    foreach (var kid in kids.EmptyIfNull()) {
+                        TreeNodeBuilder builderForKid;
+                        if (!branchesWithBuilders.TryGetValue(kid, out builderForKid)) {
+                            builderForKid = new TreeNodeBuilder { value = kid, };
+                            needsGenerateOutput.Push(builderForKid);
+                            branchesWithBuilders.Add(kid, builderForKid);
+                            needsKids.Push(builderForKid);
+                        } else if (builderForKid.tempKids == null) {
+                            needsKids.Push(builderForKid);
+                            needsGenerateOutput.Push(builderForKid);
                         }
-                        nodeBuilderThatWantsKids.tempKids = tempKidBuilders;
+                        tempKidBuilders.Add(builderForKid);
                     }
+                    nodeBuilderThatWantsKids.tempKids = tempKidBuilders;
                 }
             }
 
