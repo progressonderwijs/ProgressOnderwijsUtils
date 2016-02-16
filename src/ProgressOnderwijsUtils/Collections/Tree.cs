@@ -42,10 +42,6 @@ namespace ProgressOnderwijsUtils.Collections
 
         [Pure]
         [CodeDieAlleenWordtGebruiktInTests]
-        public static Tree<T> BuildRecursively<T>(T root, ILookup<T, T> kidLookup) => BuildRecursively(root, id => kidLookup[id]);
-
-        [Pure]
-        [CodeDieAlleenWordtGebruiktInTests]
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) => new Tree<T>.Comparer(valueComparer);
 
         /// <summary>
