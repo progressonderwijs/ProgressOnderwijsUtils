@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
@@ -9,7 +10,7 @@ namespace ProgressOnderwijsUtils.Collections
         sealed class TreeNodeBuilder
         {
             public T value;
-            public List<TreeNodeBuilder> tempKids;
+            public TreeNodeBuilder[] tempKids;
             public Tree<T> finishedNode;
 
             public void GenerateOutput()
@@ -17,11 +18,11 @@ namespace ProgressOnderwijsUtils.Collections
                 if (finishedNode != null) {
                     return;
                 }
-                var finishedKidsNodes = new Tree<T>[tempKids.Count];
+                var finishedKidsNodes = new Tree<T>[tempKids.Length];
                 for (int i = 0; i < finishedKidsNodes.Length; i++) {
                     finishedKidsNodes[i] = tempKids[i].finishedNode;
                     if (finishedKidsNodes[i] == null) {
-                        throw new InvalidOperationException("Cycle detected!");
+                        throw new InvalidOperationException("Internal error detected!");
                     }
                 }
                 finishedNode = Tree.Node(value, finishedKidsNodes);
@@ -36,31 +37,26 @@ namespace ProgressOnderwijsUtils.Collections
 
             var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
             needsGenerateOutput.Push(rootBuilder);
-            var branchesWithBuilders = new Dictionary<T, TreeNodeBuilder> { { rootNodeValue, rootBuilder } };
 
             var needsKids = new Stack<TreeNodeBuilder>();
             needsKids.Push(rootBuilder);
 
             while (needsKids.Count > 0) {
                 var nodeBuilderThatWantsKids = needsKids.Pop();
-                if (nodeBuilderThatWantsKids.tempKids == null) {
-                    var kids = kidLookup(nodeBuilderThatWantsKids.value);
+                var kids = kidLookup(nodeBuilderThatWantsKids.value);
+                if (kids != null) { //allow null to represent absence of kids 
                     var tempKidBuilders = new List<TreeNodeBuilder>();
-                    foreach (var kid in kids.EmptyIfNull()) {
-                        TreeNodeBuilder builderForKid;
-                        if (!branchesWithBuilders.TryGetValue(kid, out builderForKid)) {
-                            builderForKid = new TreeNodeBuilder { value = kid, };
-                            needsGenerateOutput.Push(builderForKid);
-                            branchesWithBuilders.Add(kid, builderForKid);
-                            needsKids.Push(builderForKid);
-                        } else if (builderForKid.tempKids == null) {
-                            needsKids.Push(builderForKid);
-                            needsGenerateOutput.Push(builderForKid);
-                        }
+                    foreach (var kid in kids) {
+                        var builderForKid = new TreeNodeBuilder { value = kid, };
+                        if (needsGenerateOutput.Count >= 100 * 1000 * 1000)
+                            throw new InvalidOperationException("Tree too large (possibly a cycle?)");
+                        needsGenerateOutput.Push(builderForKid);
+                        needsKids.Push(builderForKid);
                         tempKidBuilders.Add(builderForKid);
                     }
-                    nodeBuilderThatWantsKids.tempKids = tempKidBuilders;
-                }
+                    nodeBuilderThatWantsKids.tempKids = tempKidBuilders.ToArray();
+                } else
+                    nodeBuilderThatWantsKids.tempKids = ArrayExtensions.Empty<TreeNodeBuilder>();
             }
 
             while (needsGenerateOutput.Count > 0) {
