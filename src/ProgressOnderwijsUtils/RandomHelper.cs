@@ -28,7 +28,6 @@ namespace ProgressOnderwijsUtils
         [UsefulToKeep("library method")]
         public static int GetNonNegativeInt32() => (int)GetUInt32((uint)int.MaxValue + 1);
 
-        [UsefulToKeep("library method")]
         public static int GetInt32() => BitConverter.ToInt32(GetBytes(sizeof(int)), 0);
 
         [UsefulToKeep("library method")]
