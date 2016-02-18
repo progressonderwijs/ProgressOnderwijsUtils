@@ -336,6 +336,7 @@ namespace ProgressOnderwijsUtils
             }
 
             var tooltip = attrs.OfType<MpTooltipAttribute>().SingleOrDefault();
+            var untranslatedTooltip = attrs.OfType<MpTooltipUntranslatedAttribute>().SingleOrDefault();
 
             var translatable =
                 translatedlabel != null
@@ -346,6 +347,8 @@ namespace ProgressOnderwijsUtils
 
             if (tooltip != null) {
                 translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
+            } else if (untranslatedTooltip != null) {
+                translatable = translatable.ReplaceTooltipWithText(Translatable.Raw(untranslatedTooltip.Tooltip));
             }
 
             if (validIdx) {
