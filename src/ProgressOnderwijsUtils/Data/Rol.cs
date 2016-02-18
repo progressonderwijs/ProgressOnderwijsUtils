@@ -379,8 +379,11 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Bekijken financieel uitgebreid"), Toekenbaar, Implies(BekijkenFinancieel)]
         BekijkenFinancieelUitgebreid = 163,
 
-        [MpLabel("Beheer accounts en rollen"), Toekenbaar]
+        [MpLabel("Beheer accounts en rollen"), Toekenbaar, Implies(BekijkenAccountsEnRollen)]
         BeheerAccountsEnRollen = 165,
+
+        [MpLabel("Bekijken accounts en rollen"), Toekenbaar]
+        BekijkenAccountsEnRollen = 257,
 
         [MpLabel("Beheer studielink"), Toekenbaar, Implies(StudielinkberichtenBeheer, BekijkenStudielinkberichten)]
         BeheerStudielink = 166,
@@ -618,6 +621,6 @@ namespace ProgressOnderwijsUtils
         WijzigenSelectieEnPlaatsing = 256,
 
         [Obsolete("Dit id overnemen voor een nieuwe rol, en dan hier een ophogen; niet extern gebruiken", true), UsedImplicitly]
-        META_EerstVolgendVrijRolId = 257,
+        META_EerstVolgendVrijRolId = 258,
     }
 }
