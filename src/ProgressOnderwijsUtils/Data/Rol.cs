@@ -74,7 +74,7 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Opleidingen bekijken"), Implies(NietReguliereOpleidingenBekijken)]
         OpleidingenBekijken = 35,
 
-        [MpLabel("Opleidingen toevoegen verwijderen wijzigen"), Implies(Rol.NietReguliereOpleidingenWijzigen)]
+        [MpLabel("Opleidingen toevoegen verwijderen wijzigen"), Implies(NietReguliereOpleidingenWijzigen)]
         OpleidingenToevoegenVerwijderenWijzigen = 36,
 
         [MpLabel("Student tabblad")]
@@ -560,11 +560,11 @@ namespace ProgressOnderwijsUtils
             BeheerUitwisselingDuo, BeheerWaardepapierenSjablonen, BeheerCursusaanbodCursusdeelnames, BeheerGetuigschriften)]
         Combi_BeheerAlles = 224,
 
-        [MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(Rol.BekijkenInschrijvingen, Rol.StudentCommunicatieTabblad)]
+        [MpLabel("Wijzigen documenten vooropleidingen"), Toekenbaar, Implies(BekijkenInschrijvingen, StudentCommunicatieTabblad)]
         WijzigenDocumentenVooropleidingen = 225,
 
         [MpLabel("COMBI: Fontys Beheer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, BeheerGetuigschriften,
-            Rol.StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
+            StatischeGroepenAanmakenWijzigenVerwijderen, StudentRichtingToevoegenWijzigenVerwijderen)]
         Combi_FontysBeheerFO = 226,
 
         [MpLabel("COMBI: Fontys Muteer FO"), Toekenbaar, Implies(Combi_BekijkInschrijvingFinancieelStudielinkCursus, WijzigenCursusdeelnames,
@@ -589,10 +589,10 @@ namespace ProgressOnderwijsUtils
         [MpLabel("Wijzigen/toevoegen communicatie financieel")]
         WijzigenCommunicatieFinancieel = 233,
 
-        [MpLabel("Wijzigen/toevoegen groepen"), Toekenbaar, Implies(Rol.StatischeGroepenAanmakenWijzigenVerwijderen)]
+        [MpLabel("Wijzigen/toevoegen groepen"), Toekenbaar, Implies(StatischeGroepenAanmakenWijzigenVerwijderen)]
         WijzigenGroepen = 234,
 
-        [MpLabel("Wijzigen Matching"), Toekenbaar, Implies(Rol.BekijkenInschrijvingen)]
+        [MpLabel("Wijzigen Matching"), Toekenbaar, Implies(BekijkenInschrijvingen)]
         WijzigenMatching = 235,
 
         [MpLabel("Bekijken student basis"),
