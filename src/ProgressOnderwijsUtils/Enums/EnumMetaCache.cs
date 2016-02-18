@@ -332,10 +332,14 @@ namespace ProgressOnderwijsUtils
             var translatedlabel = attrs.OfType<MpLabelAttribute>().SingleOrDefault();
             var untranslatedlabel = attrs.OfType<MpLabelUntranslatedAttribute>().SingleOrDefault();
             if (translatedlabel != null && untranslatedlabel != null) {
-                throw new Exception("Cannot define both an untranslated and a translated label on the same enum: " + f);
+                throw new Exception("Cannot define both an untranslated and a translated label on the same enum member: " + f);
             }
 
             var tooltip = attrs.OfType<MpTooltipAttribute>().SingleOrDefault();
+            var untranslatedTooltip = attrs.OfType<MpTooltipUntranslatedAttribute>().SingleOrDefault();
+            if (tooltip != null && untranslatedTooltip != null) {
+                throw new Exception("Cannot define both an untranslated and a translated tooltip on the same enum member: " + f);
+            }
 
             var translatable =
                 translatedlabel != null
@@ -346,6 +350,8 @@ namespace ProgressOnderwijsUtils
 
             if (tooltip != null) {
                 translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
+            } else if (untranslatedTooltip != null) {
+                translatable = translatable.ReplaceTooltipWithText(Translatable.Raw(untranslatedTooltip.Tooltip));
             }
 
             if (validIdx) {
