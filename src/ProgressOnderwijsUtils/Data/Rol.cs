@@ -347,7 +347,7 @@ namespace ProgressOnderwijsUtils
         WijzigenAccorderenToelatingseisen = 136,
 
         [MpLabel("Superuser"), Implies(Combi_BeheerAlles, BeheerStudievolg, BeheerBsaStudiebegeleiding, WijzigenStudentdecaan,
-            WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenBekijken, Student, WijzigenGroepen,
+            WijzigenAlumniNetwerk, WijzigenDocumentenVooropleidingen, RapportenBekijken, WijzigenGroepen,
             Combi_FontysBeheerFO, Combi_FontysMuteerFO, StudiebegeleidingNotities, StudievoortgangNotities, DecaanNotities, FinancieelNotities, InschrijvingNotities,
             StudentDecanaatNotities, PsycholoogNotities, StudiekeuzeAdviseurNotities, WijzigenGradingTable, ToegangTotOds
             )]
@@ -576,9 +576,6 @@ namespace ProgressOnderwijsUtils
 
         [MpLabel("Wijzigen batchregels student"), Toekenbaar, Implies(BekijkenInschrijvingenUitgebreid)]
         WijzigenStudentBatchRegel = 229,
-
-        [MpLabel("Student"), MpTooltip("Virtuele rol voor studenten die extern inloggen")]
-        Student = 230,
 
         [MpLabel("Wijzigen/toevoegen communicatie aanmelding/inschrijving/uitschrijving/examen"), Toekenbaar]
         WijzigenCommunicatieAanmeldingInschrijvingUitschrijvingExamen = 231,
