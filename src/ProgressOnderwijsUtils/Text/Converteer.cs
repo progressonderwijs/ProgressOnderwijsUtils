@@ -176,7 +176,7 @@ namespace ProgressOnderwijsUtils
             } else if (obj is ITranslatable) {
                 return (ITranslatable)obj;
             } else if (obj is TextVal) {
-                return Translatable.Raw((TextVal)obj);
+                return Translatable.CreateTranslatable(taal => (TextVal)obj);
             } else if (obj is Enum) {
                 return EnumHelpers.MetaData((Enum)obj)
                     .Label; // TranslateEnum((Enum)obj);

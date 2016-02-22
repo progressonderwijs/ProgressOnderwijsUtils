@@ -121,13 +121,13 @@ namespace ProgressOnderwijsUtils
         public static LiteralTranslatable Literal(string nl, string en, string du) => new LiteralTranslatable(nl, en, du);
 
         [Pure]
-        public static ITranslatable Raw(string text) => Raw(text, null);
+        public static ITranslatable Raw(string text) => Converteer.ToText(text); // TODO inlinen
 
         [Pure]
-        public static ITranslatable Raw(string text, string extratext) => Raw(TextVal.Create(text, extratext));
+        public static ITranslatable Raw(string text, string extratext) => Converteer.ToText(TextVal.Create(text, extratext)); // TODO inlinen
 
         [Pure]
-        public static ITranslatable Raw(TextVal tv) => new RawTranslatable(tv);
+        public static ITranslatable Raw(TextVal tv) => Converteer.ToText(tv); // TODO inlinen
 
         [Pure]
         public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable, ITranslatable tt)
@@ -211,20 +211,6 @@ namespace ProgressOnderwijsUtils
             public string GenerateUid() => Translate(Taal.NL).ToString();
             public TextVal Translate(Taal lang) => translator(lang);
             public override string ToString() => GenerateUid();
-        }
-
-        sealed class RawTranslatable : ITranslatable
-        {
-            readonly TextVal tv;
-
-            public RawTranslatable(TextVal tv)
-            {
-                this.tv = tv;
-            }
-
-            public string GenerateUid() => "TV:" + tv.Text + "\n" + tv.ExtraText;
-            public override string ToString() => GenerateUid();
-            public TextVal Translate(Taal taal) => tv;
         }
     }
 }
