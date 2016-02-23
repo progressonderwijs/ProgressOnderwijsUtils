@@ -22,6 +22,7 @@ namespace ProgressOnderwijsUtils
         public bool IsEmpty => nodes == null || nodes.Length == 0;
         public static XhtmlData Empty => default(XhtmlData);
         public static XhtmlData Create(IEnumerable<XNode> nodes) => new XhtmlData(nodes.ToArray());
+        public static XhtmlData Create(params XNode[] nodes) => new XhtmlData(nodes);
         public static XhtmlData Create(params object[] contents) => Create(new XElement("x", contents).Nodes());
         public static XhtmlData ParseAndSanitize(string s) => XhtmlCleaner.HeuristicParse(s).Sanitize();
 
