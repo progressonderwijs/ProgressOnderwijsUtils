@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
 
     public static class HtmlHelper
     {
-        static XhtmlData Symbol(string cssClass, string toolTip)
+        public static XhtmlData Symbol(string cssClass, string toolTip)
         {
             var hasToolTip = !string.IsNullOrWhiteSpace(toolTip);
             return XhtmlData.Create(
