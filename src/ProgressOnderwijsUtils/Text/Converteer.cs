@@ -212,7 +212,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static ITranslatable ToCheckmarkOrEmpty(bool value) => value ? Translatable.Raw("✔") : Translatable.Empty;
+        public static ITranslatable ToCheckmarkOrEmpty(bool value) => value ? Converteer.ToText("✔") : Translatable.Empty;
 
         /// <summary>
         /// Utility functie die de DatumFormaat enum vertaald naar de overeenkomstige format string.

@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
             : this(message, null) { }
 
         public NietZoErgeException(string message, Exception inner)
-            : this(Translatable.Raw(message + (inner != null ? " (" + inner.Message + ")" : "")), inner) { }
+            : this(Converteer.ToText(message + (inner != null ? " (" + inner.Message + ")" : "")), inner) { }
 
 
         [UsefulToKeep("als de string handig is zonder inner, is deze dat ook")]

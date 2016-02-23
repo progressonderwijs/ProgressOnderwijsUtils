@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils
     static class EnumMetaDataStaticHelpers
     {
         //this class is separate from EnumMetaDataCache itself to avoid multiple copies of this static fields
-        public static readonly ITranslatable translatableComma = Translatable.Raw(", ");
+        public static readonly ITranslatable translatableComma = Converteer.ToText(", ");
     }
 
     class EnumMetaDataCache<TEnum> : IEnumMetaDataCache<TEnum>
@@ -351,7 +351,7 @@ namespace ProgressOnderwijsUtils
             if (tooltip != null) {
                 translatable = translatable.ReplaceTooltipWithText(Translatable.Literal(tooltip.NL, tooltip.EN, tooltip.DE));
             } else if (untranslatedTooltip != null) {
-                translatable = translatable.ReplaceTooltipWithText(Translatable.Raw(untranslatedTooltip.Tooltip));
+                translatable = translatable.ReplaceTooltipWithText(Converteer.ToText(untranslatedTooltip.Tooltip));
             }
 
             if (validIdx) {

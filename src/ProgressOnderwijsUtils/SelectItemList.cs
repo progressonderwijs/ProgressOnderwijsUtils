@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
         {
             return dt == null
                 ? Enumerable.Empty<SelectItem<T>>()
-                : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)dr[idColumn], Translatable.Raw(dr[textColumn].ToString())));
+                : dt.Rows.Cast<DataRow>().Select(dr => SelectItem.Create((T)dr[idColumn], Converteer.ToText(dr[textColumn].ToString())));
         }
 
         public static SelectItem<T> GetItem<T>(this IReadOnlyList<SelectItem<T>> list, T value)

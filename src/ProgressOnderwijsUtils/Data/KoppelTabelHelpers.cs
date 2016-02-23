@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
         public int Id { get; set; }
         public string Tekst { get; set; }
         public int CompareTo(KoppelTabelEntry other) => Id.CompareTo(other.Id);
-        public SelectItem<int?> ToSelectItem() => SelectItem.Create((int?)Id, Translatable.Raw(Tekst));
+        public SelectItem<int?> ToSelectItem() => SelectItem.Create((int?)Id, Converteer.ToText(Tekst));
     }
 
     public struct KoppelTabelTaalEntry : IMetaObject
