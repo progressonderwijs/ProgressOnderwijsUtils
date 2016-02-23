@@ -37,6 +37,7 @@ namespace ProgressOnderwijsUtils
 
         public static XhtmlData CrossRedSymbol(string toolTip) => Symbol("CrossRedSymbol", toolTip);
 
+        public static XhtmlData CrossRedLargerSymbol(string toolTip) => Symbol("CrossRedSymbol LargerSymbol", toolTip);
         public static XhtmlData CrossGreenSymbol(string toolTip) => Symbol("CrossGreenSymbol", toolTip);
 
         public static XhtmlData ExclamationGreenSymbol(string toolTip) => Symbol("ExclamationGreenSymbol", toolTip);
