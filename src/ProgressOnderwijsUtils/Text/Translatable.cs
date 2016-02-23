@@ -127,9 +127,6 @@ namespace ProgressOnderwijsUtils
         public static ITranslatable Raw(string text, string extratext) => Converteer.ToText(TextVal.Create(text, extratext)); // TODO inlinen
 
         [Pure]
-        public static ITranslatable Raw(TextVal tv) => Converteer.ToText(tv); // TODO inlinen
-
-        [Pure]
         public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable, ITranslatable tt)
             => CreateTranslatable(taal => translatable.Translate(taal).Text, taal => tt.Translate(taal).Text);
 
