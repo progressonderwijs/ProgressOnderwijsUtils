@@ -1,14 +1,15 @@
 grammar FilterLanguage;
 
 combined:
-    criterium (AndOp criterium)*
-    | criterium (OrOp criterium)*
+    criterium (AndOp criterium)* # AndCombined
+    | criterium (OrOp criterium)* # OrCombined
     ;
 
 criterium:
-    columnName unaryComparer
-    | columnName binaryComparer (columnName | Number)
-    | LP combined RP 
+    columnName unaryComparer # UnaryCriterium
+    | Left=columnName binaryComparer Right=columnName # BinaryColumnCriterium
+    | Left=columnName binaryComparer Right=Number # BinaryNumberCriterium
+    | LP combined RP # NestedCombined
     ;
 
 unaryComparer:
