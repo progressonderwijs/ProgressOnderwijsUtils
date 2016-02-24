@@ -7,7 +7,7 @@ combined:
 
 criterium:
     columnName unaryComparer
-    |   columnName binaryComparer (columnName | Number)
+    | columnName binaryComparer (columnName | Number)
     | LP combined RP 
     ;
 
