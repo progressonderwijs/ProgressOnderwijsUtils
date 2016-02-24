@@ -36,6 +36,7 @@ columnName:
     ColumnName
     | AndOp
     | OrOp
+    | In
     | Contains
     ;
 
