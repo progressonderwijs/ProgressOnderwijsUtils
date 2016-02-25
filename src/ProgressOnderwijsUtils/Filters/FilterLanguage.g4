@@ -7,8 +7,8 @@ combined:
 
 criterium:
     columnName unaryComparer # UnaryCriterium
-    | Left=columnName binaryComparer Right=columnName # BinaryColumnCriterium
-    | Left=columnName binaryComparer Right=Number # BinaryNumberCriterium
+    | Left=columnName binaryComparer Right=columnName # BinaryCriteriumWithColumn
+    | Left=columnName binaryComparer Right=Number # BinaryCriteriumWithNumber
     | LP combined RP # NestedCombined
     ;
 

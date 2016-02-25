@@ -5,7 +5,7 @@ namespace ProgressOnderwijsUtils
 {
     sealed class FilterLanguageVisitor : FilterLanguageBaseVisitor<FilterBase>
     {
-        public override FilterBase VisitBinaryColumnCriterium(FilterLanguageParser.BinaryColumnCriteriumContext context)
+        public override FilterBase VisitBinaryCriteriumWithColumn(FilterLanguageParser.BinaryCriteriumWithColumnContext context)
         {
             return Filter.CreateCriterium(
                 context.Left.GetText(),
