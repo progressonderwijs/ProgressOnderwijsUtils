@@ -60,4 +60,4 @@ ColumnName: [a-zA-Z_][a-zA-Z0-9_]*;
 Number: [0-9]+(.[0-9]+)?;
 LP: '(';
 RP: ')';
-WS: [ \r\n\t] + -> skip;
+WS: [ \r\n\t]+ -> skip;
