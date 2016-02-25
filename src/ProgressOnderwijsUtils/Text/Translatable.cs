@@ -126,10 +126,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static LiteralTranslatable Format(FormattableString nl, FormattableString en, FormattableString du)
-            => new LiteralTranslatable(
-                nl == null ? null : string.Format(TaalFormatter.NL, nl.Format, nl.GetArguments()),
-                en == null ? null : string.Format(TaalFormatter.EN, en.Format, en.GetArguments()),
-                du == null ? null : string.Format(TaalFormatter.DU, du.Format, du.GetArguments()));
+            => new LiteralTranslatable(nl?.ToString(TaalFormatter.NL), en?.ToString(TaalFormatter.EN), du?.ToString(TaalFormatter.DU));
 
         [Pure]
         public static ITranslatable ReplaceTooltipWithText(this ITranslatable translatable, ITranslatable tt)
