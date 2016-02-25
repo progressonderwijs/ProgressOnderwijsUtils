@@ -163,7 +163,7 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentException("MetaObject " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " must be public (accessable to other assemblies)");
             }
 
-            SqlBulkCopyOptions effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction;
+            SqlBulkCopyOptions effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction;
             ColumnDefinition[] dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
 
             using (var objectReader = CreateDataReader(metaObjects))
