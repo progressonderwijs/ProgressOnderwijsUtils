@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
+using Antlr4.Runtime;
 using ProgressOnderwijsUtils.Collections;
+using ProgressOnderwijsUtils.FilterLanguage;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
@@ -235,5 +238,15 @@ namespace ProgressOnderwijsUtils
         }
 
         public static ParameterizedSql ToFilterClause(this IEnumerable<FilterBase> filters) => CreateCombined(BooleanOperator.And, filters.EmptyIfNull()).ToParameterizedSql();
+
+        public static FilterBase ParseFilterLanguage(string filterText)
+        {
+            using (var reader = new StringReader(filterText)) {
+                var lexer = new FilterLanguageLexer(new AntlrInputStream(reader));
+                var parser = new FilterLanguageParser(new UnbufferedTokenStream(lexer));
+                var visitor = new FilterLanguageVisitor();
+                return visitor.Visit(parser.combined());
+            }
+        }
     }
 }
