@@ -3,7 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using Progress.Business.Data;
-using Progress.Sso;
+using Progress.Business.ProgressSso;
 using ProgressOnderwijsUtils;
 using Progress.WebApp.RequestRouting;
 
