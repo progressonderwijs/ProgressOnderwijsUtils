@@ -3,9 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using NUnit.Framework;
 using Progress.Business.Data;
-using Progress.Business.ProgressSso;
 using Progress.Business.SingleSignOn;
-using ProgressOnderwijsUtils;
 using Progress.WebApp.RequestRouting;
 
 namespace ProgressOnderwijsUtilsTests
