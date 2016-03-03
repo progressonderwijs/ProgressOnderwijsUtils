@@ -14,11 +14,11 @@ namespace ProgressOnderwijsUtilsTests
         {
             FileData
                 empty = default(FileData),
-                basic = new FileData { Content = new byte[] { 1, 2, 3 }, ContentType = "ab", FileName = "xyz" },
-                same = new FileData { Content = new byte[] { 1, 2, 3 }, ContentType = "aab".Substring(1), FileName = "Xxyz".Substring(1) },
-                diffdata = new FileData { Content = new byte[] { 1, 2, 4 }, ContentType = "ab", FileName = "xyz" },
-                difftype = new FileData { Content = new byte[] { 1, 2, 3 }, ContentType = "abc", FileName = "xyz" },
-                diffname = new FileData { Content = new byte[] { 1, 2, 3 }, ContentType = "ab", FileName = "xYz" }
+                basic = new FileData("xyz", new byte[] { 1, 2, 3 }, "ab"),
+                same = new FileData("Xxyz".Substring(1), new byte[] { 1, 2, 3 }, "aab".Substring(1)),
+                diffdata = new FileData("xyz", new byte[] { 1, 2, 4 }, "ab"),
+                difftype = new FileData("xyz", new byte[] { 1, 2, 3 }, "abc"),
+                diffname = new FileData("xYz", new byte[] { 1, 2, 3 }, "ab")
                 ;
 
             PAssert.That(() => same == basic && basic == same);
