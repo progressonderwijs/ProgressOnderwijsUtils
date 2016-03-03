@@ -156,10 +156,10 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void CheckStrings()
         {
-            Assert.That(RandomHelper.GetStringOfNumbers(10), Is.StringMatching("[0-9]{10}"));
-            Assert.That(RandomHelper.GetStringCapitalized(10), Is.StringMatching("[A-Z][a-z]{9}"));
-            Assert.That(RandomHelper.GetStringOfLatinLower(7), Is.StringMatching("[a-z]{7}"));
-            Assert.That(RandomHelper.GetStringOfLatinUpperOrLower(10), Is.StringMatching("[a-zA-Z]{10}"));
+            PAssert.That(() => Regex.IsMatch(RandomHelper.GetStringOfNumbers(10), "[0-9]{10}"));
+            PAssert.That(() => Regex.IsMatch(RandomHelper.GetStringCapitalized(10), "[A-Z][a-z]{9}"));
+            PAssert.That(() => Regex.IsMatch(RandomHelper.GetStringOfLatinLower(7), "[a-z]{7}"));
+            PAssert.That(() => Regex.IsMatch(RandomHelper.GetStringOfLatinUpperOrLower(10), "[a-zA-Z]{10}"));
         }
     }
 }
