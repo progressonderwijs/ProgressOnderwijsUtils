@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils.Test;
 namespace ProgressOnderwijsUtilsTests
 {
     [Continuous]
-    public class SimplerHashTest
+    public class Md5HelpersTest
     {
         [Test]
         public void BasicChecks()
