@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class SimplerHash
+    public static class Md5Helpers
     {
         public static bool MD5VerifyHash(string plainText, string hashString) => hashString == MD5ComputeHash(plainText);
 

@@ -14,8 +14,8 @@ namespace ProgressOnderwijsUtilsTests
             const string strA = @" ASDF#VA#Q$T*B#$%(DFB	<script>";
             PAssert.That(
                 () =>
-                    SimplerHash.MD5ComputeHash(strA) != strA && SimplerHash.MD5VerifyHash(strA, SimplerHash.MD5ComputeHash(strA))
-                        && !SimplerHash.MD5VerifyHash(strA.Substring(1), SimplerHash.MD5ComputeHash(strA)));
+                    Md5Helpers.MD5ComputeHash(strA) != strA && Md5Helpers.MD5VerifyHash(strA, Md5Helpers.MD5ComputeHash(strA))
+                        && !Md5Helpers.MD5VerifyHash(strA.Substring(1), Md5Helpers.MD5ComputeHash(strA)));
         }
     }
 }
