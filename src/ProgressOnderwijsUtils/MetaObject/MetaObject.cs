@@ -178,11 +178,10 @@ namespace ProgressOnderwijsUtils
 
                     try {
                         bulkCopy.WriteToServer(objectReader);
-                        var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message);
-                            throw new Exception(
-                                $"Received an invalid column length from the bcp client for column name {mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name}",
-                                ex);
                     } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
+                        var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
+                        var metaPropName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
+                        throw new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
                     }
                 }
             }
