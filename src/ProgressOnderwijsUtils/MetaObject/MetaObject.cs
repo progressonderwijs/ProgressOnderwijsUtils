@@ -118,7 +118,7 @@ namespace ProgressOnderwijsUtils
             var dt = new DataTable();
             var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
             dt.Columns.AddRange(
-                properties.Select(mp => new DataColumn(mp.Name, mp.DataType.GetNonNullableType()) { AllowDBNull = !mp.Required && mp.DataType.CanBeNull() }).ToArray());
+                properties.Select(mp => new DataColumn(mp.Name, mp.DataType.GetNonNullableType()) { AllowDBNull = !mp.ExtraMetaData().Required && mp.DataType.CanBeNull() }).ToArray());
 
             foreach (var obj in objs) {
                 dt.Rows.Add(properties.Select(mp => mp.Getter(obj) ?? DBNull.Value).ToArray());

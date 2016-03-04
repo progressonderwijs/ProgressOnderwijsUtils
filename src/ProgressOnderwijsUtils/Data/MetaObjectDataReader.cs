@@ -107,9 +107,9 @@ namespace ProgressOnderwijsUtils
             foreach (var metaProperty in metaProperties) {
                 if (metaProperty.CanRead) {
                     var columnInfo = new ColumnInfo(metaProperty);
-                    var isKey = metaProperty.IsKey;
+                    var isKey = metaProperty.ExtraMetaData().IsKey;
                     var allowDbNull = columnInfo.WhenNullable_IsColumnDBNull != null;
-                    var isUnique = isKey && !metaProperties.Any(other => other != metaProperty && other.IsKey);
+                    var isUnique = isKey && !metaProperties.Any(other => other != metaProperty && other.ExtraMetaData().IsKey);
                     columnIndexByName.Add(columnInfo.Name, i);
                     schemaTable.Rows.Add(columnInfo.Name, i, -1, null, null, columnInfo.ColumnType, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
                     columnInfosBuilder.Add(columnInfo);
