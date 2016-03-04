@@ -130,12 +130,6 @@ namespace ProgressOnderwijsUtils
             return dt;
         }
 
-        [Pure]
-        public static MetaObjectDataReader<T> CreateDataReader<T>(IEnumerable<T> entities) where T : IMetaObject
-        {
-            return new MetaObjectDataReader<T>(entities);
-        }
-
         /// <summary>
         /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout.
         /// Default SqlBulkCopyOptions are SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction
@@ -177,9 +171,9 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
         /// </summary>
-        static void WriteMetaObjectsToServer<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject
+        public static void WriteMetaObjectsToServer<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject
         {
-            using (var objectReader = CreateDataReader(metaObjects)) {
+            using (var objectReader = new MetaObjectDataReader<T>(metaObjects)) {
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
 
                 try {
@@ -192,9 +186,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
+        public static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
 
-        static int? ParseDestinationColumnIndexFromMessage(string message)
+        public static int? ParseDestinationColumnIndexFromMessage(string message)
         {
             //note: sql colid is 1-based!
             var match = colidMessageRegex.Match(message);
