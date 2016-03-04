@@ -180,7 +180,7 @@ namespace ProgressOnderwijsUtils
         static void WriteMetaObjectsToServer<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject
         {
             using (var objectReader = CreateDataReader(metaObjects)) {
-                var mapping = ApplyMetaObjectColumnMapping(sqlconn, tableName, objectReader, bulkCopy);
+                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
 
                 try {
                     bulkCopy.WriteToServer(objectReader);
@@ -201,7 +201,7 @@ namespace ProgressOnderwijsUtils
             return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
         }
 
-        static FieldMapping[] ApplyMetaObjectColumnMapping<T>(SqlConnection sqlconn, string tableName, MetaObjectDataReader<T> objectReader, SqlBulkCopy bulkCopy) where T : IMetaObject
+        public static FieldMapping[] ApplyMetaObjectColumnMapping<T>(SqlBulkCopy bulkCopy, MetaObjectDataReader<T> objectReader, SqlConnection sqlconn, string tableName) where T : IMetaObject
         {
             var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
             var clrColumns = ColumnDefinition.GetFromReader(objectReader);
