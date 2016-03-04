@@ -168,7 +168,7 @@ namespace ProgressOnderwijsUtils
 
             using (var objectReader = CreateDataReader(metaObjects))
             using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null)) {
-                ColumnDefinition[] clrColumns = ColumnDefinition.GetFromReader(objectReader);
+                var clrColumns = ColumnDefinition.GetFromReader(objectReader);
                 bulkCopy.BulkCopyTimeout = 3600;
                 bulkCopy.DestinationTableName = tableName;
 
