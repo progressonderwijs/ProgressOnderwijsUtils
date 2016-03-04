@@ -14,6 +14,9 @@ namespace ProgressOnderwijsUtils
 
     public sealed class ColumnDefinition : IColumnDefinition
     {
+        public Type DataType { get; }
+        public string Name { get; }
+
         public static ColumnDefinition Create(DataColumn col) 
             => new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName);
 
@@ -29,17 +32,12 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        readonly Type dataType;
-        readonly string name;
-
-        public ColumnDefinition(Type dataType, string name)
+        ColumnDefinition(Type dataType, string name)
         {
-            this.dataType = dataType;
-            this.name = name;
+            DataType = dataType;
+            Name = name;
         }
 
         public override string ToString() => ObjectToCode.GetCSharpFriendlyTypeName(DataType) + " " + Name;
-        public Type DataType => dataType;
-        public string Name => name;
     }
 }
