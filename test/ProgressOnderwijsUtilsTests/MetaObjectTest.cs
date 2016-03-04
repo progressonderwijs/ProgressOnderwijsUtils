@@ -2,6 +2,7 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business;
 using Progress.Test.CodeStyle;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
