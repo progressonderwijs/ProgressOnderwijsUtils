@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
 
         public static ColumnDefinition[] GetFromTable(SqlConnection sqlconn, string tableName)
         {
-            using (SqlCommand cmd = sqlconn.CreateCommand()) {
+            using (var cmd = sqlconn.CreateCommand()) {
                 cmd.CommandText = "SET FMTONLY ON; select * from " + tableName + "; SET FMTONLY OFF";
                 using (var fmtReader = cmd.ExecuteReader())
                     return GetFromReader(fmtReader);
