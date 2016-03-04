@@ -187,6 +187,15 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
+
+        static int? ParseDestinationColumnIndexFromMessage(string message)
+        {
+            //note: sql colid is 1-based!
+            var match = colidMessageRegex.Match(message);
+            return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
+        }
+
         static FieldMapping[] ApplyMetaObjectColumnMapping<T>(SqlConnection sqlconn, string tableName, MetaObjectDataReader<T> objectReader, SqlBulkCopy bulkCopy) where T : IMetaObject
         {
             var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
@@ -217,14 +226,6 @@ namespace ProgressOnderwijsUtils
         }
 
         static readonly MethodInfo genGetCache = Utils.F(GetMetaProperties<IMetaObject>).Method.GetGenericMethodDefinition();
-        static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
-
-        static int? ParseDestinationColumnIndexFromMessage(string message)
-        {
-            //note: sql colid is 1-based!
-            var match = colidMessageRegex.Match(message);
-            return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
-        }
 
         [Pure]
         static IMetaPropCache<IMetaProperty> GetCache(Type t) => (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
