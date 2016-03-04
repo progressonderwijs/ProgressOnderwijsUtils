@@ -14,15 +14,11 @@ namespace ProgressOnderwijsUtils
 
     public sealed class ColumnDefinition : IColumnDefinition
     {
-        public static ColumnDefinition Create(DataColumn col)
-        {
-            return new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName);
-        }
+        public static ColumnDefinition Create(DataColumn col) 
+            => new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName);
 
-        public static ColumnDefinition[] GetFromReader(IDataRecord reader)
-        {
-            return Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
-        }
+        public static ColumnDefinition[] GetFromReader(IDataRecord reader) 
+            => Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
 
         public static ColumnDefinition[] GetFromTable(SqlConnection sqlconn, string tableName)
         {
