@@ -56,7 +56,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
         /// </summary>
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static bool FuzzyEquals(double x, double y)
         {
             const double relativeEpsilon = 1.0 / (1ul << 32);
@@ -239,7 +239,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Executes a test body, marking a test as inconclusive rather than failed when a timeout occurs.
         /// </summary>
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static void IgnoreTimeouts(Action test)
         {
             //Ideally, we'd retry the test, however, since lots of test are in a complex inheritance chain
@@ -422,7 +422,7 @@ namespace ProgressOnderwijsUtils
             return new string(str, 0, idx);
         }
 
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static DateTime? DateMax(DateTime? d1, DateTime? d2)
         {
             if (d1 == null) {
@@ -436,7 +436,7 @@ namespace ProgressOnderwijsUtils
             return d2 > d1 ? d2 : d1;
         }
 
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static decimal RoundUp(decimal input, int places)
         {
             var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));

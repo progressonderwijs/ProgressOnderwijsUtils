@@ -6,6 +6,12 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
+    public enum SortDirection
+    {
+        Asc,
+        Desc
+    }
+
     [Serializable]
     public struct ColumnSort : IEquatable<ColumnSort>
     {

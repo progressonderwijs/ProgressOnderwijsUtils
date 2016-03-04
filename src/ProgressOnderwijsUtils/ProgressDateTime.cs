@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
         /// De datum die vanaf nu als huidige datum moet gelden 
         /// (de Datetime wordt afgerond naar hele dagen)
         /// </summary>
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public void TimeTravelToDate(DateTime value)
         {
             // Als het nu 21-9 is en value is 21-8 dan is DaysToAdd -31

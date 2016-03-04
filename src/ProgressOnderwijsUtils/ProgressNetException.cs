@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
     /// This exception is thrown when an impossible program state is encountered - i.e. when a programmer made a mistake and violated a assumption.
     /// </summary>
     [Serializable]
-    [CodeDieAlleenWordtGebruiktInTests]
+    [CodeThatsOnlyUsedForTests]
     public class PNAssertException : ProgressNetException
     {
         public PNAssertException() { }

@@ -25,11 +25,11 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public class ParameterizedSqlExecutionException : ProgressNetException
     {
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public ParameterizedSqlExecutionException(string msg)
             : base(msg) { }
 
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public ParameterizedSqlExecutionException() { }
 
         public ParameterizedSqlExecutionException(string msg, Exception inner)
@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
         public GenericMetaDataException(string debugMessage)
             : base(debugMessage) { }
 
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public GenericMetaDataException(string debugMessage, Exception innerException)
             : base(debugMessage, innerException) { }
 
