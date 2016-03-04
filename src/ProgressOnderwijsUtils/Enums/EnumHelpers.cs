@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Reflection;
 using ExpressionToCodeLib;
@@ -73,69 +72,6 @@ namespace ProgressOnderwijsUtils
             return EnumMetaDataCache<TEnum>.Instance.MetaData(enumValue);
         }
 
-        public static SelectItem<TEnum> GetSelectItem<TEnum>(TEnum f)
-            where TEnum : struct, IConvertible, IComparable
-        {
-            return SelectItem.Create(f, GetLabel(f));
-        }
-
-        public static IReadOnlyList<SelectItem<TEnum>> CreateSelectItemList<TEnum>(this IEnumerable<TEnum> values)
-            where TEnum : struct, IConvertible, IComparable
-        {
-            return values.Select(GetSelectItem).ToArray();
-        }
-
-        public static DataTable ToIntKoppelTabel<TEnum>(IEnumerable<TEnum> values, Taal taal)
-            where TEnum : struct, IConvertible, IComparable
-        {
-            //TODO:EMN:improve this API.
-            return values.CreateSelectItemList()
-                .Select(v => new KoppelTabelEntry { Id = v.Value.ToInt32(null), Tekst = v.Label.Translate(taal).Text }
-                ).ToDataTable();
-        }
-
-        public static DataTable ToIntKoppelTabel_OrderedByText<TEnum>(IEnumerable<TEnum> values, Taal taal)
-            where TEnum : struct, IConvertible, IComparable
-        {
-            return values.Select(
-                v =>
-                    new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = GetLabel(v).Translate(taal).Text }
-                )
-                .OrderBy(entry => entry.Tekst)
-                .ToDataTable();
-        }
-
-        public static DataTable ToIntKoppelTabelExpandedText<TEnum>(IEnumerable<TEnum> values, Taal taal)
-            where TEnum : struct, IConvertible, IComparable
-        {
-            return values.Select(
-                v => {
-                    var tv = GetLabel(v).Translate(taal);
-                    return new KoppelTabelEntry { Id = v.ToInt32(null), Tekst = tv.Text + ": " + tv.ExtraText };
-                }).ToDataTable();
-        }
-
-        public static SelectItem<TEnum?> GetSelectItem<TEnum>(TEnum? f)
-            where TEnum : struct, IConvertible, IComparable
-        {
-            return SelectItem.Create(f, f == null ? Translatable.Empty : GetLabel(f.Value));
-        }
-
-        public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
-            this IEnumerable<SelectItem<TEnum?>> enumSelectItemList)
-            where TEnum : struct, IConvertible
-        {
-            return enumSelectItemList.Select(item => SelectItem.Create(item.Value.HasValue ? item.Value.Value.ToInt32(null) : default(int?), item.Label))
-                .ToArray();
-        }
-
-        public static IReadOnlyList<SelectItem<int?>> ToIntSelectItemList<TEnum>(
-            this IEnumerable<SelectItem<TEnum>> enumSelectItemList)
-            where TEnum : struct, IConvertible
-        {
-            return enumSelectItemList.Select(item => SelectItem.Create((int?)item.Value.ToInt32(null), item.Label))
-                .ToArray();
-        }
 
         public static TEnum? TryParse<TEnum>(string s) where TEnum : struct, IConvertible
         {
