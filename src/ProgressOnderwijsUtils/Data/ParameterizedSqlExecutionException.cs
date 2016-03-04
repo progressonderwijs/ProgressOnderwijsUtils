@@ -6,11 +6,9 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public class ParameterizedSqlExecutionException : Exception
     {
-        [CodeThatsOnlyUsedForTests]
         public ParameterizedSqlExecutionException(string msg)
             : base(msg) { }
 
-        [CodeThatsOnlyUsedForTests]
         public ParameterizedSqlExecutionException() { }
 
         public ParameterizedSqlExecutionException(string msg, Exception inner)
