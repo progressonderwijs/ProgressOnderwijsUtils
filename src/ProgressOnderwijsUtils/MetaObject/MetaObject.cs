@@ -167,38 +167,40 @@ namespace ProgressOnderwijsUtils
             var effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction;
             var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
 
-            using (var objectReader = CreateDataReader(metaObjects))
+
             using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null)) {
-                var clrColumns = ColumnDefinition.GetFromReader(objectReader);
                 if (rowsCopiedEventHandler != null) {
                     bulkCopy.SqlRowsCopied += rowsCopiedEventHandler;
                 }
                 bulkCopy.BulkCopyTimeout = 3600;
                 bulkCopy.DestinationTableName = tableName;
 
-                var mapping = FieldMapping.VerifyAndCreate(
-                    clrColumns,
-                    ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)),
-                    dataColumns,
-                    "table " + tableName,
-                    FieldMappingMode.IgnoreExtraDestinationFields);
+                using (var objectReader = CreateDataReader(metaObjects)) {
+                    var clrColumns = ColumnDefinition.GetFromReader(objectReader);
+                    var mapping = FieldMapping.VerifyAndCreate(
+                        clrColumns,
+                        ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)),
+                        dataColumns,
+                        "table " + tableName,
+                        FieldMappingMode.IgnoreExtraDestinationFields);
 
-                foreach (var mapEntry in mapping) {
-                    bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
-                }
-
-                try {
-                    bulkCopy.WriteToServer(objectReader);
-                } catch (SqlException ex) {
-                    var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid (\d+).");
-                    var match = colid_message.Match(ex.Message);
-                    if (match.Success) {
-                        var col_id = int.Parse(match.Groups[1].Value);
-                        throw new Exception(
-                            $"Received an invalid column length from the bcp client for column name {clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name}",
-                            ex);
+                    foreach (var mapEntry in mapping) {
+                        bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
                     }
-                    throw;
+
+                    try {
+                        bulkCopy.WriteToServer(objectReader);
+                    } catch (SqlException ex) {
+                        var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid (\d+).");
+                        var match = colid_message.Match(ex.Message);
+                        if (match.Success) {
+                            var col_id = int.Parse(match.Groups[1].Value);
+                            throw new Exception(
+                                $"Received an invalid column length from the bcp client for column name {clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name}",
+                                ex);
+                        }
+                        throw;
+                    }
                 }
             }
         }
