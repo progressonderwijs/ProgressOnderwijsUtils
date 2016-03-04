@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtils
         public void ToSqlParameter(ref SqlParamArgs paramArgs)
         {
             var objs = projection(values);
-            paramArgs.Value = MetaObject.CreateDataReader(objs);
+            paramArgs.Value = new MetaObjectDataReader<TOut>(objs);
             paramArgs.TypeName = DbTypeName;
             cachedProjectedLength = objs.Length;
         }

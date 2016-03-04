@@ -11,10 +11,12 @@ namespace ProgressOnderwijsUtils
 
     public struct FieldMapping
     {
+        public readonly IColumnDefinition SourceColumnDefinition;
         public readonly int SrcIndex, DstIndex;
 
-        FieldMapping(int srcIndex, int dstIndex)
+        FieldMapping(IColumnDefinition sourceColumnDefinition, int srcIndex, int dstIndex)
         {
+            SourceColumnDefinition = sourceColumnDefinition;
             SrcIndex = srcIndex;
             DstIndex = dstIndex;
         }
@@ -64,7 +66,7 @@ namespace ProgressOnderwijsUtils
                     );
             }
 
-            return srcFieldsByName.Values.Select(srcCol => new FieldMapping(srcCol.Index, dstFieldsByName[srcCol.Def.Name].Index)).ToArray();
+            return srcFieldsByName.Values.Select(srcCol => new FieldMapping(srcCol.Def, srcCol.Index, dstFieldsByName[srcCol.Def.Name].Index)).ToArray();
         }
     }
 }

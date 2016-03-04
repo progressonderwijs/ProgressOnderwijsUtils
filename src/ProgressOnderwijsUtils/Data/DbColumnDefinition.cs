@@ -14,36 +14,30 @@ namespace ProgressOnderwijsUtils
 
     public sealed class ColumnDefinition : IColumnDefinition
     {
-        public static ColumnDefinition Create(DataColumn col)
-        {
-            return new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName);
-        }
+        public Type DataType { get; }
+        public string Name { get; }
 
-        public static ColumnDefinition[] GetFromReader(IDataRecord reader)
-        {
-            return Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
-        }
+        public static ColumnDefinition Create(DataColumn col) 
+            => new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName);
+
+        public static ColumnDefinition[] GetFromReader(IDataRecord reader) 
+            => Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
 
         public static ColumnDefinition[] GetFromTable(SqlConnection sqlconn, string tableName)
         {
-            using (SqlCommand cmd = sqlconn.CreateCommand()) {
+            using (var cmd = sqlconn.CreateCommand()) {
                 cmd.CommandText = "SET FMTONLY ON; select * from " + tableName + "; SET FMTONLY OFF";
                 using (var fmtReader = cmd.ExecuteReader())
                     return GetFromReader(fmtReader);
             }
         }
 
-        readonly Type dataType;
-        readonly string name;
-
-        public ColumnDefinition(Type dataType, string name)
+        ColumnDefinition(Type dataType, string name)
         {
-            this.dataType = dataType;
-            this.name = name;
+            DataType = dataType;
+            Name = name;
         }
 
         public override string ToString() => ObjectToCode.GetCSharpFriendlyTypeName(DataType) + " " + Name;
-        public Type DataType => dataType;
-        public string Name => name;
     }
 }
