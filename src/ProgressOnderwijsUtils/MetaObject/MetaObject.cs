@@ -175,18 +175,7 @@ namespace ProgressOnderwijsUtils
                 bulkCopy.DestinationTableName = tableName;
 
                 using (var objectReader = CreateDataReader(metaObjects)) {
-                    var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
-                    var clrColumns = ColumnDefinition.GetFromReader(objectReader);
-                    var mapping = FieldMapping.VerifyAndCreate(
-                        clrColumns,
-                        ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)),
-                        dataColumns,
-                        "table " + tableName,
-                        FieldMappingMode.IgnoreExtraDestinationFields);
-
-                    foreach (var mapEntry in mapping) {
-                        bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
-                    }
+                    var mapping = ApplyMetaObjectColumnMapping(sqlconn, tableName, objectReader, bulkCopy);
 
                     try {
                         bulkCopy.WriteToServer(objectReader);
@@ -194,15 +183,33 @@ namespace ProgressOnderwijsUtils
                         var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid (\d+).");
                         var match = colid_message.Match(ex.Message);
                         if (match.Success) {
-                            var col_id = int.Parse(match.Groups[1].Value);
+                            var oneBasedColId = int.Parse(match.Groups[1].Value);
+                            var destinationColumnIndex = oneBasedColId - 1;
                             throw new Exception(
-                                $"Received an invalid column length from the bcp client for column name {clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name}",
+                                $"Received an invalid column length from the bcp client for column name {mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name}",
                                 ex);
                         }
                         throw;
                     }
                 }
             }
+        }
+
+        static FieldMapping[] ApplyMetaObjectColumnMapping<T>(SqlConnection sqlconn, string tableName, MetaObjectDataReader<T> objectReader, SqlBulkCopy bulkCopy) where T : IMetaObject
+        {
+            var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
+            var clrColumns = ColumnDefinition.GetFromReader(objectReader);
+            var mapping = FieldMapping.VerifyAndCreate(
+                clrColumns,
+                ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)),
+                dataColumns,
+                "table " + tableName,
+                FieldMappingMode.IgnoreExtraDestinationFields);
+
+            foreach (var mapEntry in mapping) {
+                bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
+            }
+            return mapping;
         }
 
         [Pure]
