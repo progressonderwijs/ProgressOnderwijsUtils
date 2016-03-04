@@ -160,9 +160,6 @@ namespace ProgressOnderwijsUtils
             if (sqlconn.State != ConnectionState.Open) {
                 throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
             }
-            if (!typeof(T).IsVisible) {
-                throw new ArgumentException("MetaObject " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " must be public (accessable to other assemblies)");
-            }
 
             var effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction;
 
