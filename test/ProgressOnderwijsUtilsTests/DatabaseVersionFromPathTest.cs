@@ -5,7 +5,7 @@ using Progress.Business.AppVersion;
 using Progress.Business.Data;
 using ProgressOnderwijsUtils;
 
-namespace Progress.Business.Test.Tools
+namespace ProgressOnderwijsUtilsTests
 {
     class DatabaseVersionFromPathTest
     {

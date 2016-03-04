@@ -7,7 +7,7 @@ using Progress.Business.DomainUnits;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
-namespace Progress.Business.Test.Tools
+namespace ProgressOnderwijsUtilsTests
 {
     public class EnumHelpersTest
     {

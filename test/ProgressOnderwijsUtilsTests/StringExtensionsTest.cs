@@ -7,7 +7,7 @@ using NUnit.Framework;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
-namespace Progress.Business.Test.Tools
+namespace ProgressOnderwijsUtilsTests
 {
     [Continuous]
     public class StringExtensionsTest

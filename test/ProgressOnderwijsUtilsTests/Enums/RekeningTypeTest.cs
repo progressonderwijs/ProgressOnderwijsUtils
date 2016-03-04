@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using Progress.Business.Studenten.Financieel;
 
-namespace Progress.Business.Test.Tools.Enums
+namespace ProgressOnderwijsUtilsTests.Enums
 {
     class RekeningTypeTest
     {

@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Test;
 
-namespace Progress.Business.Test.Tools
+namespace ProgressOnderwijsUtilsTests
 {
     public sealed class TreeTest
     {

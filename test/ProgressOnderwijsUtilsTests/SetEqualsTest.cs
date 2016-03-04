@@ -5,7 +5,7 @@ using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 
-namespace Progress.Business.Test.Tools
+namespace ProgressOnderwijsUtilsTests
 {
     class SetEqualsTest
     {

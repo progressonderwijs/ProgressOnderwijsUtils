@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq.Expressions;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils;
 using NUnit.Framework;
+using ProgressOnderwijsUtils;
 
-namespace Progress.Business.Test.Tools
+namespace ProgressOnderwijsUtilsTests
 {
     public sealed class ExampleValue : ValueBase<ExampleValue>
     {
