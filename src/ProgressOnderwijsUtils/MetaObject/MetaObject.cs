@@ -180,7 +180,7 @@ namespace ProgressOnderwijsUtils
                     try {
                         bulkCopy.WriteToServer(objectReader);
                     } catch (SqlException ex) {
-                        var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid (\d+).");
+                        var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
                         var match = colid_message.Match(ex.Message);
                         if (match.Success) {
                             var oneBasedColId = int.Parse(match.Groups[1].Value);
