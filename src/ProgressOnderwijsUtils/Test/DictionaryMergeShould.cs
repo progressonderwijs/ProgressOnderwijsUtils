@@ -5,7 +5,6 @@ using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils.Test
 {
-    [Continuous]
     public class DictionaryMergeShould
     {
         [Test]

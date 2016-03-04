@@ -5,7 +5,6 @@ using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
-    [Continuous]
     public sealed class TestSqlParameterComponent
     {
         [Test]

@@ -59,7 +59,6 @@ namespace ProgressOnderwijsUtils
         } //!ReferenceEquals(a, b) && (null == (object)a || 
     }
 
-    [Continuous]
     public class SortColumnTest
     {
         [Test]

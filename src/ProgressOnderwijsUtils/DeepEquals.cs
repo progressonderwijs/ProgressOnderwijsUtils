@@ -132,7 +132,6 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    [Continuous]
     public class DeepEqualsTest
     {
         [Test]

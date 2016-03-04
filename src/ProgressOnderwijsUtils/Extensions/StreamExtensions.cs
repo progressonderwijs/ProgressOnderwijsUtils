@@ -27,7 +27,6 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    [Continuous]
     public class StreamExtensionsTestClass
     {
         [Test]

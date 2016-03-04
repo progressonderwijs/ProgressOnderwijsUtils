@@ -24,8 +24,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    [Continuous]
-    public class BTTester
+    public class BenchmarkTimerTests
     {
         [Test]
         public void ArgVerify()

@@ -84,7 +84,6 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    [Continuous]
     public class DataTableExtensionsTest
     {
         DataTable sut;
