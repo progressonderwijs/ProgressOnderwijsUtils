@@ -170,14 +170,12 @@ namespace ProgressOnderwijsUtils
             using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null)) {
                 ColumnDefinition[] clrColumns = ColumnDefinition.GetFromReader(objectReader);
 
-                // ReSharper disable CoVariantArrayConversion
                 var mapping = FieldMapping.VerifyAndCreate(
                     clrColumns,
                     ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)),
                     dataColumns,
                     "table " + tableName,
                     FieldMappingMode.IgnoreExtraDestinationFields);
-                // ReSharper restore CoVariantArrayConversion
 
                 bulkCopy.BulkCopyTimeout = 3600;
                 bulkCopy.DestinationTableName = tableName;
