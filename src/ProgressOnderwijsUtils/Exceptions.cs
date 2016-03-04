@@ -13,16 +13,6 @@ namespace ProgressOnderwijsUtils
     }
 
     [Serializable]
-    public class GeenRechtException : ProgressNetException
-    {
-        public GeenRechtException(string msg)
-            : base(msg) { }
-
-        protected GeenRechtException(SerializationInfo serializationinfo, StreamingContext streamingcontext)
-            : base(serializationinfo, streamingcontext) { }
-    }
-
-    [Serializable]
     public class ParameterizedSqlExecutionException : ProgressNetException
     {
         [CodeThatsOnlyUsedForTests]
