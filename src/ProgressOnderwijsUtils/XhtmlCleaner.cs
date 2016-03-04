@@ -308,7 +308,7 @@ $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnoreP
                                 ),
                             1);
                 } else {
-                    throw new ProgressNetException("enum error: " + safety + " is not a legal value");
+                    throw new InvalidOperationException("enum error: " + safety + " is not a legal value");
                 }
             } else {
                 return Enumerable.Empty<XNode>(); //don't copy comments, processing instructions, etc.
