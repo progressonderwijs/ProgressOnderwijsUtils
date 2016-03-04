@@ -19,8 +19,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="sqlconn">The Sql connection to write to</param>
         /// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
         /// <param name="options">The SqlBulkCopyOptions to use.  If unspecified, uses SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction which is NOT SqlBulkCopyOptions.Default</param>
-        /// <param name="rowsCopiedEventHandler">An event handler to call periodically for progress reporting.</param>
-        public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null, SqlRowsCopiedEventHandler rowsCopiedEventHandler = null) where T : IMetaObject
+        public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
         {
             if (metaObjects == null) {
                 throw new ArgumentNullException(nameof(metaObjects));
@@ -38,9 +37,6 @@ namespace ProgressOnderwijsUtils
             var effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction;
 
             using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null)) {
-                if (rowsCopiedEventHandler != null) {
-                    bulkCopy.SqlRowsCopied += rowsCopiedEventHandler;
-                }
                 bulkCopy.BulkCopyTimeout = 3600;
                 bulkCopy.DestinationTableName = tableName;
 
