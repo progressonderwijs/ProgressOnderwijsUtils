@@ -165,7 +165,6 @@ namespace ProgressOnderwijsUtils
             }
 
             var effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction;
-            var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
 
 
             using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null)) {
@@ -176,6 +175,7 @@ namespace ProgressOnderwijsUtils
                 bulkCopy.DestinationTableName = tableName;
 
                 using (var objectReader = CreateDataReader(metaObjects)) {
+                    var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
                     var clrColumns = ColumnDefinition.GetFromReader(objectReader);
                     var mapping = FieldMapping.VerifyAndCreate(
                         clrColumns,
