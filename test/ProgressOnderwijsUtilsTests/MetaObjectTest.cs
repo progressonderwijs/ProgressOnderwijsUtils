@@ -2,6 +2,7 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business;
 using Progress.Test.CodeStyle;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
@@ -147,11 +148,11 @@ namespace ProgressOnderwijsUtilsTests
         public void ReadonlyWorks()
         {
             var readonlyPropertyMp = MetaObject.GetByExpression((SimpleObject o) => o.ReadonlyProperty);
-            PAssert.That(() => readonlyPropertyMp.IsReadonly && !readonlyPropertyMp.CanWrite);
+            PAssert.That(() => readonlyPropertyMp.ExtraMetaData().IsReadonly && !readonlyPropertyMp.CanWrite);
             var mpReadonlyPropertyMp = MetaObject.GetByExpression((SimpleObject o) => o.MpReadonlyProperty);
-            PAssert.That(() => mpReadonlyPropertyMp.IsReadonly && mpReadonlyPropertyMp.CanWrite);
+            PAssert.That(() => mpReadonlyPropertyMp.ExtraMetaData().IsReadonly && mpReadonlyPropertyMp.CanWrite);
             var propertyMp = MetaObject.GetByExpression((SimpleObject o) => o.Property);
-            PAssert.That(() => !propertyMp.IsReadonly && propertyMp.CanWrite);
+            PAssert.That(() => !propertyMp.ExtraMetaData().IsReadonly && propertyMp.CanWrite);
         }
 
         [Test]

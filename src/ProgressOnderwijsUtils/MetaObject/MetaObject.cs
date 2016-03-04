@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
@@ -117,8 +115,7 @@ namespace ProgressOnderwijsUtils
         {
             var dt = new DataTable();
             var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
-            dt.Columns.AddRange(
-                properties.Select(mp => new DataColumn(mp.Name, mp.DataType.GetNonNullableType()) { AllowDBNull = !mp.Required && mp.DataType.CanBeNull() }).ToArray());
+            dt.Columns.AddRange(properties.Select(mp => new DataColumn(mp.Name, mp.DataType.GetNonNullableType()) { AllowDBNull = mp.DataType.CanBeNull() }).ToArray());
 
             foreach (var obj in objs) {
                 dt.Rows.Add(properties.Select(mp => mp.Getter(obj) ?? DBNull.Value).ToArray());
