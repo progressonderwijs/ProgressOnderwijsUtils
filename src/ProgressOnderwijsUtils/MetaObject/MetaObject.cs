@@ -169,6 +169,8 @@ namespace ProgressOnderwijsUtils
             using (var objectReader = CreateDataReader(metaObjects))
             using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null)) {
                 ColumnDefinition[] clrColumns = ColumnDefinition.GetFromReader(objectReader);
+                bulkCopy.BulkCopyTimeout = 3600;
+                bulkCopy.DestinationTableName = tableName;
 
                 var mapping = FieldMapping.VerifyAndCreate(
                     clrColumns,
@@ -177,8 +179,6 @@ namespace ProgressOnderwijsUtils
                     "table " + tableName,
                     FieldMappingMode.IgnoreExtraDestinationFields);
 
-                bulkCopy.BulkCopyTimeout = 3600;
-                bulkCopy.DestinationTableName = tableName;
                 foreach (var mapEntry in mapping) {
                     bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
                 }
