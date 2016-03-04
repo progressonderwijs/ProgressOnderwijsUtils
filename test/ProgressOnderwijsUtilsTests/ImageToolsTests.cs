@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Test.Properties;
+using Progress.Test.Resources;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void CanResaveImage()
         {
-            var resImage = Resources.rainbow;
+            var resImage = TestResources.rainbow;
             using (var ms = new MemoryStream()) {
                 ImageTools.SaveImageAsJpeg(resImage, ms, 100);
                 using (var loadedImage = (Bitmap)ImageTools.ToImage(ms.ToArray())) {
@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void CanResizeImage()
         {
-            var resImage = Resources.rainbow;
+            var resImage = TestResources.rainbow;
             using (var down_W = ImageTools.Resize(resImage, 100, resImage.Height))
             using (var down_H = ImageTools.Resize(resImage, resImage.Width, 100))
             using (var down_W_H = ImageTools.Resize(down_W, 50, 50))
@@ -56,7 +56,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void CannotResizeToZero()
         {
-            var resImage = Resources.rainbow;
+            var resImage = TestResources.rainbow;
             Assert.Throws<ArgumentException>(() => ImageTools.Resize(resImage, 100, 0));
         }
 
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void CanDownscaleImage()
         {
-            var resImage = Resources.rainbow;
+            var resImage = TestResources.rainbow;
             using (var down_W = ImageTools.DownscaleAndClip(resImage, 100, 50))
             using (var down_H = ImageTools.DownscaleAndClip(resImage, 2000, 1000))
             using (var down_W_H = ImageTools.DownscaleAndClip(down_W, 50, 50))
