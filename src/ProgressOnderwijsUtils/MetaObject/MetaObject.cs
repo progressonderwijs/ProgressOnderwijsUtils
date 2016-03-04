@@ -170,16 +170,24 @@ namespace ProgressOnderwijsUtils
                 bulkCopy.BulkCopyTimeout = 3600;
                 bulkCopy.DestinationTableName = tableName;
 
-                using (var objectReader = CreateDataReader(metaObjects)) {
-                    var mapping = ApplyMetaObjectColumnMapping(sqlconn, tableName, objectReader, bulkCopy);
+                WriteMetaObjectsToServer(bulkCopy, metaObjects, sqlconn, tableName);
+            }
+        }
 
-                    try {
-                        bulkCopy.WriteToServer(objectReader);
-                    } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
-                        var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
-                        var metaPropName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
-                        throw new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
-                    }
+        /// <summary>
+        /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
+        /// </summary>
+        static void WriteMetaObjectsToServer<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject
+        {
+            using (var objectReader = CreateDataReader(metaObjects)) {
+                var mapping = ApplyMetaObjectColumnMapping(sqlconn, tableName, objectReader, bulkCopy);
+
+                try {
+                    bulkCopy.WriteToServer(objectReader);
+                } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
+                    var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
+                    var metaPropName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
+                    throw new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
                 }
             }
         }
