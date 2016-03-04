@@ -7,23 +7,18 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace ProgressOnderwijsUtils
 {
     [Serializable]
-    public struct FileData : IEquatable<FileData>, IMetaObject
+    public struct FileData : IEquatable<FileData>
     {
         const int MAX_FILE_NAME = 64;
-        string fileName;
-        public byte[] Content { get; set; }
-        public string ContentType { get; set; }
+        public readonly byte[] Content;
+        public readonly string MimeType;
+        public readonly string FileName;
 
-        public string FileName
+        public FileData(string fileName, byte[] content, string mimeType)
         {
-            get
-            {
-                return fileName;
-            }
-            set
-            {
-                fileName = TrimNameToLength(value, MAX_FILE_NAME);
-            }
+            Content = content;
+            MimeType = mimeType;
+            FileName = TrimNameToLength(fileName, MAX_FILE_NAME);
         }
 
         public static string TrimNameToLength(string filePath, int maxFileNameLength)
@@ -47,7 +42,6 @@ namespace ProgressOnderwijsUtils
         }
 
         public bool ContainsFile() => Content != null && FileName != null && (FileName.Length > 0 || Content.Length > 0);
-
         public override string ToString() => ContainsFile() ? $"{FileName} ({Content.Length / 1000m} KB)" : "";
         public override bool Equals(object other) => other is FileData && Equals((FileData)other);
 
@@ -61,7 +55,7 @@ namespace ProgressOnderwijsUtils
                         (Content[Content.Length * 2 / 3] << 16) +
                         (Content[Content.Length - 1] << 24) +
                         Content.Length;
-                result = (result * 397) ^ (ContentType != null ? ContentType.GetHashCode() : 0);
+                result = (result * 397) ^ (MimeType != null ? MimeType.GetHashCode() : 0);
                 result = (result * 397) ^ (FileName != null ? FileName.GetHashCode() : 0);
                 return result;
             }
@@ -69,7 +63,7 @@ namespace ProgressOnderwijsUtils
 
         public bool Equals(FileData other)
         {
-            return Equals(other.ContentType, ContentType) &&
+            return Equals(other.MimeType, MimeType) &&
                 Equals(other.FileName, FileName) &&
                 ContentEqual(other);
         }
@@ -95,11 +89,7 @@ namespace ProgressOnderwijsUtils
             using (var stream = new MemoryStream()) {
                 var formatter = new BinaryFormatter();
                 formatter.Serialize(stream, obj);
-                return new FileData {
-                    Content = stream.ToArray(),
-                    ContentType = MediaTypeNames.Application.Octet,
-                    FileName = fileName ?? GetFileName<T>(),
-                };
+                return new FileData(fileName ?? GetFileName<T>(), stream.ToArray(), MediaTypeNames.Application.Octet);
             }
         }
 

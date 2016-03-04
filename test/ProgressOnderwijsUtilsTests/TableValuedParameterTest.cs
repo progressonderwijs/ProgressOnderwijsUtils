@@ -79,11 +79,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void Binary_columns_can_be_used_in_tvps()
         {
-            var filedata = new FileData {
-                FileName = "testje.txt",
-                ContentType = MediaTypeNames.Text.Plain,
-                Content = Encoding.ASCII.GetBytes("Iets om te kunnen testen die nog niet bestaat"),
-            };
+            var filedata = new FileData("testje.txt", Encoding.ASCII.GetBytes("Iets om te kunnen testen die nog niet bestaat"), MediaTypeNames.Text.Plain);
             var hashcode = new SHA256Managed().ComputeHash(filedata.Content);
 
             PAssert.That(() => SQL($@"
