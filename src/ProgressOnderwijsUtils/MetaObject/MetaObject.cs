@@ -166,7 +166,6 @@ namespace ProgressOnderwijsUtils
 
             var effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction;
 
-
             using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null)) {
                 if (rowsCopiedEventHandler != null) {
                     bulkCopy.SqlRowsCopied += rowsCopiedEventHandler;
@@ -180,11 +179,8 @@ namespace ProgressOnderwijsUtils
                     try {
                         bulkCopy.WriteToServer(objectReader);
                     } catch (SqlException ex) {
-                        var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
-                        var match = colid_message.Match(ex.Message);
-                        if (match.Success) {
-                            var oneBasedColId = int.Parse(match.Groups[1].Value);
-                            var destinationColumnIndex = oneBasedColId - 1;
+                        var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message);
+                        if (destinationColumnIndex.HasValue) {
                             throw new Exception(
                                 $"Received an invalid column length from the bcp client for column name {mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name}",
                                 ex);
@@ -225,6 +221,14 @@ namespace ProgressOnderwijsUtils
         }
 
         static readonly MethodInfo genGetCache = Utils.F(GetMetaProperties<IMetaObject>).Method.GetGenericMethodDefinition();
+        static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
+
+        static int? ParseDestinationColumnIndexFromMessage(string message)
+        {
+            //note: sql colid is 1-based!
+            var match = colidMessageRegex.Match(message);
+            return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
+        }
 
         [Pure]
         static IMetaPropCache<IMetaProperty> GetCache(Type t) => (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
