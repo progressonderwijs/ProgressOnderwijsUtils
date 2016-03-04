@@ -11,35 +11,17 @@ namespace ProgressOnderwijsUtils
     public static class MetaObjectBulkCopy
     {
         /// <summary>
-        /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout.
-        /// Default SqlBulkCopyOptions are SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction
+        /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout, and options CheckConstraints | UseInternalTransaction.
+        /// For more fine-grained control, create an SqlBulkCopy instance manually, and call bulkCopy.WriteMetaObjectsToServer(objs, sqlConnection, tableName)
         /// </summary>
         /// <typeparam name="T">The type of metaobject to be inserted</typeparam>
         /// <param name="metaObjects">The list of entities to insert</param>
         /// <param name="sqlconn">The Sql connection to write to</param>
         /// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
-        /// <param name="options">The SqlBulkCopyOptions to use.  If unspecified, uses SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction which is NOT SqlBulkCopyOptions.Default</param>
         public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
         {
-            if (metaObjects == null) {
-                throw new ArgumentNullException(nameof(metaObjects));
-            }
-            if (tableName.Contains('[') || tableName.Contains(']')) {
-                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, nameof(tableName));
-            }
-            if (sqlconn == null) {
-                throw new ArgumentNullException(nameof(sqlconn));
-            }
-            if (sqlconn.State != ConnectionState.Open) {
-                throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
-            }
-
-            var effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction;
-
-            using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null)) {
+            using (var bulkCopy = new SqlBulkCopy(sqlconn, SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction, null)) {
                 bulkCopy.BulkCopyTimeout = 3600;
-                bulkCopy.DestinationTableName = tableName;
-
                 bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn, tableName);
             }
         }
@@ -49,6 +31,20 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static void WriteMetaObjectsToServer<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject
         {
+            if (metaObjects == null) {
+                throw new ArgumentNullException(nameof(metaObjects));
+            }
+            if (sqlconn == null) {
+                throw new ArgumentNullException(nameof(sqlconn));
+            }
+            if (sqlconn.State != ConnectionState.Open) {
+                throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
+            }
+            if (tableName.Contains('[') || tableName.Contains(']')) {
+                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, nameof(tableName));
+            }
+            bulkCopy.DestinationTableName = tableName;
+
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects)) {
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
 
