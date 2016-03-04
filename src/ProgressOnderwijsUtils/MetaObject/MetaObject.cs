@@ -178,14 +178,11 @@ namespace ProgressOnderwijsUtils
 
                     try {
                         bulkCopy.WriteToServer(objectReader);
-                    } catch (SqlException ex) {
                         var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message);
-                        if (destinationColumnIndex.HasValue) {
                             throw new Exception(
                                 $"Received an invalid column length from the bcp client for column name {mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name}",
                                 ex);
-                        }
-                        throw;
+                    } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     }
                 }
             }
