@@ -328,11 +328,11 @@ namespace ProgressOnderwijsUtils
         public static string ToSortableShortString(long value)
         {
             var sb = new StringBuilder();
-            ToSortableShortString(sb, value);
+            sb.AppendSortableShortString(value);
             return sb.ToString();
         }
 
-        public static void ToSortableShortString(StringBuilder target, long value)
+        public static void AppendSortableShortString(this StringBuilder target, long value)
         {
             //This function is used on a hot-path in Programma and Resultaten export - it needs to be fast.
             if (value < 0) {
