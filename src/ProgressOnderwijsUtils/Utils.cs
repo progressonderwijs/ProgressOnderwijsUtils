@@ -327,35 +327,43 @@ namespace ProgressOnderwijsUtils
 
         public static string ToSortableShortString(long value)
         {
+            var sb = new StringBuilder();
+            ToSortableShortString(sb, value);
+            return sb.ToString();
+        }
+
+        public static void ToSortableShortString(StringBuilder target, long value)
+        {
             //This function is used on a hot-path in Programma and Resultaten export - it needs to be fast.
-
-            char[] buffer = new char[14]; // log(2^31)/log(36) < 6 char; +1 for length+sign.
-            int index = 0;
-            bool isNeg = value < 0;
-            if (isNeg) {
-                while (value < 0) {
-                    int digit = (int)(value % 36); //in range -35..0!!
-                    value = value / 36;
-                    buffer[index++] = MapToBase36Char(35 + digit);
-                }
+            if (value < 0) {
+                SssNegHelper(target, value, 0);
             } else {
-                while (value > 0) {
-                    int digit = (int)(value % 36);
-                    value = value / 36;
-                    buffer[index++] = MapToBase36Char(digit);
-                }
+                SssHelper(target, value, 0);
             }
-            Debug.Assert(index <= 13);
-            int encodedLength = (isNeg ? -index : index) + 13; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
-            buffer[index++] = MapToBase36Char(encodedLength);
+        }
 
-            for (int i = 0, j = index - 1; i < j; i++, j--) {
-                var tmp = buffer[i];
-                buffer[i] = buffer[j];
-                buffer[j] = tmp;
+        static void SssHelper(StringBuilder target, long value, int index)
+        {
+            if (value != 0) {
+                int digit = (int)(value % 36);
+                SssHelper(target, value / 36, index + 1);
+                target.Append(MapToBase36Char(digit));
+            } else {
+                int encodedLength = index + 13; //-6..6 for int32; but for 64-bit -13..13 so to futureproof this offset by 13
+                target.Append(MapToBase36Char(encodedLength));
             }
+        }
 
-            return new string(buffer, 0, index);
+        static void SssNegHelper(StringBuilder target, long value, int index)
+        {
+            if (value != 0) {
+                int digit = (int)(value % 36); //in range -35..0!!
+                SssNegHelper(target, value / 36, index + 1);
+                target.Append(MapToBase36Char(35 + digit));
+            } else {
+                int encodedLength = 13 - index; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
+                target.Append(MapToBase36Char(encodedLength));
+            }
         }
 
         static char MapToBase36Char(int digit) => (char)((digit < 10 ? '0' : 'a' - 10) + digit);
