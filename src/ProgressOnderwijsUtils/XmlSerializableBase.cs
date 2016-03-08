@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
@@ -70,7 +71,7 @@ namespace ProgressOnderwijsUtils
                 return (T)serializer.Deserialize(reader);
         }
 
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static string Serialize(T val)
         {
             using (var writer = new StringWriter()) {

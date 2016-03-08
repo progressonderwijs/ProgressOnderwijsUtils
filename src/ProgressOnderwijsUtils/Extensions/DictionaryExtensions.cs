@@ -167,7 +167,6 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    [Continuous]
     public sealed class DictionaryExtensionsTests
     {
         [Test]

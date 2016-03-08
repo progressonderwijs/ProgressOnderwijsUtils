@@ -78,7 +78,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public int? GetColumnSortRank(string col)
         {
             int index = DirectAcessColumns.IndexOf(sc => sc.ColumnName.Equals(col, StringComparison.OrdinalIgnoreCase));

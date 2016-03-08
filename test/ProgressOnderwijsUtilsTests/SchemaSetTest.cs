@@ -2,6 +2,7 @@
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
+using Progress.Business.Schemas;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Test;
 

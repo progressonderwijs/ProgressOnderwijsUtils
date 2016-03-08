@@ -114,7 +114,6 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    [Continuous]
     sealed class RndTest
     {
         [Test]
