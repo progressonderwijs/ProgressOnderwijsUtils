@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static string PrettyPrintCamelCased(string rawString)
         {
             var withSpace =
@@ -150,7 +150,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static double LevenshteinDistanceScaled(string s, string t) => LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length));
 
         [Pure]
@@ -173,7 +173,7 @@ namespace ProgressOnderwijsUtils
         /// [SELECT voorvoegsels FROM student group by voorvoegsels]
         /// </remarks>
         [Pure]
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static string Name2UpperCasedName(string inp)
         {
             //string wat opschonen

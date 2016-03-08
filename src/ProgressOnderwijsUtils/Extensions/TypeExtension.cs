@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils
         public static string FriendlyName(this Type type) => ObjectToCode.GetCSharpFriendlyTypeName(type);
 
         [Pure]
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static T Attr<T>(this MemberInfo mi) where T : Attribute
         {
             var customAttributes = mi.GetCustomAttributes(typeof(T), true);

@@ -4,10 +4,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ProgressOnderwijsUtils
 {
-    [CodeDieAlleenWordtGebruiktInTests]
+    [CodeThatsOnlyUsedForTests]
     public static class SerializationCloner
     {
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static T Clone<T>(T obj)
         {
             if (!typeof(T).IsSerializable) {

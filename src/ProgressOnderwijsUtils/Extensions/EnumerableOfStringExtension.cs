@@ -24,7 +24,6 @@ namespace ProgressOnderwijsUtils
         public static string JoinStrings(this IEnumerable<string> strings, string separator) => string.Join(separator, strings);
     }
 
-    [Continuous]
     public sealed class EnumerableOfStringExtensionTest
     {
         [Test]
