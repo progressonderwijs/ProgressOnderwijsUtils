@@ -277,8 +277,9 @@ namespace ProgressOnderwijsUtils
 
         static bool IsTimeoutException(Exception e)
         {
-            if (e is AggregateException) {
-                return (e as AggregateException).InnerExceptions.All(IsTimeoutException);
+            var aggregateException = e as AggregateException;
+            if (aggregateException != null) {
+                return aggregateException.InnerExceptions.All(IsTimeoutException);
             }
 
             for (var current = e; current != null; current = current.InnerException) {
