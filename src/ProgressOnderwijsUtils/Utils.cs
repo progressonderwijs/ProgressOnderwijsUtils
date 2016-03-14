@@ -253,22 +253,8 @@ namespace ProgressOnderwijsUtils
                     Assert.Inconclusive("TIMEOUT DETECTED\n\n" + e);
                 } else if (e is AggregateException) {
                     // re-order de inner-exceptions zodat we tenminste de eerste non-timeout exceptie te zien krijgen
-                    var ae = e as AggregateException;
-                    throw new AggregateException(
-                        ae.InnerExceptions.OrderBy(
-                            x => x,
-                            new ComparisonComparer<Exception>(
-                                (a, b) => {
-                                    if (IsTimeoutException(a) && IsTimeoutException(b)) {
-                                        return 0;
-                                    } else if (IsTimeoutException(b)) {
-                                        return -1;
-                                    } else if (IsTimeoutException(a)) {
-                                        return 1;
-                                    } else {
-                                        return 0;
-                                    }
-                                })));
+                    var ae = (AggregateException)e;
+                    throw new AggregateException(ae.InnerExceptions.OrderBy(IsTimeoutException));
                 } else {
                     throw;
                 }
@@ -277,8 +263,9 @@ namespace ProgressOnderwijsUtils
 
         static bool IsTimeoutException(Exception e)
         {
-            if (e is AggregateException) {
-                return (e as AggregateException).InnerExceptions.All(IsTimeoutException);
+            var aggregateException = e as AggregateException;
+            if (aggregateException != null) {
+                return aggregateException.InnerExceptions.All(IsTimeoutException);
             }
 
             for (var current = e; current != null; current = current.InnerException) {
