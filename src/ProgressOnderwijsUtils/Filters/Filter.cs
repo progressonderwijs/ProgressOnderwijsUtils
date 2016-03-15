@@ -233,8 +233,12 @@ namespace ProgressOnderwijsUtils
 
         public static FilterBase TryParseSerializedFilter(string serialized)
         {
-            var parsed = TryParseSerializedFilterWithLeftovers(serialized);
-            return parsed != null && parsed.Item2 == "" ? parsed.Item1 : null;
+            try {
+                var parsed = TryParseSerializedFilterWithLeftovers(serialized);
+                return parsed != null && parsed.Item2 == "" ? parsed.Item1 : null;
+            } catch (Exception) {
+                return null;
+            }
         }
 
         public static ParameterizedSql ToFilterClause(this IEnumerable<FilterBase> filters) => CreateCombined(BooleanOperator.And, filters.EmptyIfNull()).ToParameterizedSql();
