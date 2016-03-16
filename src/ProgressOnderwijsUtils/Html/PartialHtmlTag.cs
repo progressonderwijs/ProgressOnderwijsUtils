@@ -170,9 +170,10 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlStartTag<TNamedTagType> withAttribute(string attrName, string attrValue)
             => new HtmlStartTag<TNamedTagType>((Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue));
 
+        [Pure]
         public HtmlElement AddContent() => AddContent(null);
+        [Pure]
         public HtmlElement AddContent(params HtmlElementOrTextContent[] content) => new HtmlElement(TagName, Attributes, content);
-        public HtmlElement this[params HtmlElementOrTextContent[] content] => AddContent(content);
         public static implicit operator HtmlElementOrTextContent(HtmlStartTag<TNamedTagType> startTag) => HtmlElementOrTextContent.HtmlElement(startTag.TagName, startTag.Attributes, null);
     }
 
