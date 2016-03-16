@@ -172,7 +172,7 @@ namespace ProgressOnderwijsUtils.Html
 
         public HtmlElement AddContent() => AddContent(null);
         public HtmlElement AddContent(params HtmlElementOrTextContent[] content) => new HtmlElement(TagName, Attributes, content);
-        public HtmlElement this[params HtmlElementOrTextContent[] content] => new HtmlElement(TagName, Attributes, content);
+        public HtmlElement this[params HtmlElementOrTextContent[] content] => AddContent(content);
         public static implicit operator HtmlElementOrTextContent(HtmlStartTag<TNamedTagType> startTag) => HtmlElementOrTextContent.HtmlElement(startTag.TagName, startTag.Attributes, null);
     }
 
@@ -198,7 +198,6 @@ namespace ProgressOnderwijsUtils.Html
 
         public HtmlElement AddContent() => AddContent(null);
         public HtmlElement AddContent(params HtmlElementOrTextContent[] content) => new HtmlElement(TagName, Attributes, content);
-        public HtmlElement this[params HtmlElementOrTextContent[] content] => new HtmlElement(TagName, Attributes, content);
         public static implicit operator HtmlElementOrTextContent(GeneralStartTag startTag) => HtmlElementOrTextContent.HtmlElement(startTag.TagName, startTag.Attributes, null);
     }
 }
