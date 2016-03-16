@@ -131,7 +131,11 @@ namespace ProgressOnderwijsUtils.Html
     public interface IFluentHtmlTagExpression<out TExpression>
         where TExpression : IFluentHtmlTagExpression<TExpression>
     {
+        [Pure]
         TExpression withAttribute(string attrName, string attrValue);
+
+        [Pure]
+        HtmlElement AddContent(params HtmlFragment[] content);
     }
 
     public static class HtmlTagHelpers
