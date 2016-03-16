@@ -197,6 +197,3 @@ using (var client = new HttpClient(new WebRequestHandler {
 //	globalAttributes.Dump();
 //	elements.Where(el => el.attributes.Any()).Dump();
 }
-/*.QuerySelectorAll("h3")
-	.Where(el=>el.TextContent == "Elements")*/
-//new HtmlParser().Parse(
