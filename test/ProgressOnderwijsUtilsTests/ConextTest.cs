@@ -143,7 +143,6 @@ namespace ProgressOnderwijsUtilsTests
         public void RelayStateSerialization()
         {
             var sut = new SingleSignOnHandler.RelayState {
-                newSession = false,
                 idp = IdentityProvider.Conext,
                 uri = "http://www.nrc.nl",
             };
@@ -155,7 +154,6 @@ namespace ProgressOnderwijsUtilsTests
         public void GeneratePostToRedirect([Values(false, true)] bool newSession)
         {
             var state = new SingleSignOnHandler.RelayState {
-                newSession = newSession,
                 idp = IdentityProvider.Conext,
                 uri = "https://localhost/webstatic/fontys?pc=123",
             };
