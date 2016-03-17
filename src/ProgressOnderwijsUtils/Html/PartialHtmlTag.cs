@@ -46,13 +46,23 @@ namespace ProgressOnderwijsUtils.Html
 
     public struct HtmlFragment
     {
-        //This is a union type of EITHER a text content node OR an html element node.
-        //When attributes == null: this  is a text content node
-        //When attributes != null: this is an html element node
-        readonly string tagNameOrTextContent;
-        readonly HtmlAttribute[] attributesWhenTag;
-        readonly HtmlFragment[] childNodes;
-        readonly XElement embeddedContent;
+        //This is a union type of...
+        // - An xml node
+        //      (WITH embeddedContent, without tagNameOrTextContent, without attributesWhenTag, without childNodes)
+        public bool IsXmlElement => embeddedContent != null && tagNameOrTextContent == null && attributesWhenTag == null && childNodes == null;
+        // - A text content node:
+        //      (without embeddedContent, WITH tagNameOrTextContent, without attributesWhenTag, without childNodes)
+        public bool IsTextContent => tagNameOrTextContent != null && attributesWhenTag == null && embeddedContent == null && childNodes == null;
+        // - A single element node    
+        //      (without embeddedContent, WITH tagNameOrTextContent, WITH attributesWhenTag, ? childNodes)
+        public bool IsHtmlElement => attributesWhenTag != null && embeddedContent == null && tagNameOrTextContent != null;
+        // - A collection of fragments
+        //      (without embeddedContent, without tagNameOrTextContent, without attributesWhenTag, ? childNodes)
+        public bool IsCollectionOfFragments => embeddedContent == null && tagNameOrTextContent == null && attributesWhenTag == null;
+        readonly string tagNameOrTextContent; //iff text or element node
+        readonly HtmlAttribute[] attributesWhenTag; // iff elementnode
+        readonly HtmlFragment[] childNodes; //only if element node or collection; null means "empty".
+        readonly XElement embeddedContent; //iff xml node
 
         public HtmlFragment(string tagNameOrTextContent, HtmlAttribute[] attributesWhenTag, HtmlFragment[] childNodes, XElement embeddedContent)
         {
@@ -60,6 +70,7 @@ namespace ProgressOnderwijsUtils.Html
             this.attributesWhenTag = attributesWhenTag;
             this.childNodes = childNodes;
             this.embeddedContent = embeddedContent;
+            Debug.Assert((IsXmlElement ? 1 : 0) + (IsTextContent ? 1 : 0) + (IsHtmlElement ? 1 : 0) + (IsCollectionOfFragments ? 1 : 0) == 1);
         }
 
         public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent, null, null, null);
@@ -75,36 +86,22 @@ namespace ProgressOnderwijsUtils.Html
 
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
-        public bool IsTextContent => embeddedContent == null && attributesWhenTag == null;
-        public bool IsHtmlElement => embeddedContent == null && attributesWhenTag != null;
-        public bool IsXmlElement => embeddedContent != null;
 
-        public string GetTextContent()
+        public object ToXDocumentFragment()
         {
-            if (!IsTextContent) {
-                throw new InvalidOperationException("Cannot convert html element node into text content node");
-            }
-            return tagNameOrTextContent;
-        }
-
-        public HtmlElement GetHtmlElement()
-        {
-            if (!IsHtmlElement) {
-                throw new InvalidOperationException("Cannot convert text content node into html element node");
-            }
-            return new HtmlElement(tagNameOrTextContent, attributesWhenTag, childNodes);
-        }
-
-        public XNode ToXNode()
-        {
-            if (IsXmlElement) {
+            if (embeddedContent != null) {
+                Debug.Assert(IsXmlElement);
                 return embeddedContent;
-            }
-            if (IsTextContent) {
+            } else if (tagNameOrTextContent == null) {
+                Debug.Assert(IsCollectionOfFragments);
+                return childNodes?.ArraySelect(node => node.ToXDocumentFragment());
+            } else if (attributesWhenTag == null) {
+                Debug.Assert(IsTextContent);
                 return new XText(tagNameOrTextContent);
+            } else {
+                Debug.Assert(IsHtmlElement);
+                return new XElement(tagNameOrTextContent, attributesWhenTag.ToXAttributes(), childNodes?.ArraySelect(childNode => childNode.ToXDocumentFragment()));
             }
-            Debug.Assert(IsHtmlElement);
-            return new HtmlElement(tagNameOrTextContent, attributesWhenTag, childNodes).ToXElement();
         }
     }
 
@@ -135,7 +132,7 @@ namespace ProgressOnderwijsUtils.Html
         public XElement ToXElement() => new XElement(
             TagName,
             Attributes.ToXAttributes(),
-            ChildNodes?.Select(childNode => childNode.ToXNode())
+            ChildNodes?.ArraySelect(childNode => childNode.ToXDocumentFragment())
             );
     }
 
