@@ -132,35 +132,35 @@ namespace ProgressOnderwijsUtils.Html
         where TExpression : IFluentHtmlTagExpression<TExpression>
     {
         [Pure]
-        TExpression withAttribute(string attrName, string attrValue);
+        TExpression Attribute(string attrName, string attrValue);
 
         [Pure]
-        HtmlElement AddContent(params HtmlFragment[] content);
+        HtmlElement Content(params HtmlFragment[] content);
     }
 
     public static class HtmlTagHelpers
     {
         /// <summary>Creates an html data attribute.  E.g. setDataAttribute("foo", "bar") creates data-foo="bar". </summary>
-        public static TExpression withDataAttribute<TExpression>(this TExpression htmlTagExpr, string dataAttrName, string attrValue)
+        public static TExpression DataAttribute<TExpression>(this TExpression htmlTagExpr, string dataAttrName, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("data-" + dataAttrName, attrValue);
+            => htmlTagExpr.Attribute("data-" + dataAttrName, attrValue);
 
-        public static TExpression withAttributes<TExpression>(this TExpression htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
+        public static TExpression Attributes<TExpression>(this TExpression htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
         {
             foreach (var attribute in attributes) {
-                htmlTagExpr = htmlTagExpr.withAttribute(attribute.Name, attribute.Value);
+                htmlTagExpr = htmlTagExpr.Attribute(attribute.Name, attribute.Value);
             }
             return htmlTagExpr;
         }
 
-        public static TExpression withAttribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute attribute)
+        public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute attribute)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute(attribute.Name, attribute.Value);
+            => htmlTagExpr.Attribute(attribute.Name, attribute.Value);
 
-        public static TExpression withAttribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute? attributeOrNull)
+        public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute? attributeOrNull)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.withAttribute(attributeOrNull.Value);
+            => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
     }
@@ -184,19 +184,19 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public HtmlStartTag<TNamedTagType> withAttribute(string attrName, string attrValue)
+        public HtmlStartTag<TNamedTagType> Attribute(string attrName, string attrValue)
             => attrValue == null ? this : new HtmlStartTag<TNamedTagType>((Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue));
 
         [Pure]
-        public HtmlElement AddContent(params HtmlFragment[] content) => new HtmlElement(TagName, Attributes, content);
+        public HtmlElement Content(params HtmlFragment[] content) => new HtmlElement(TagName, Attributes, content);
 
         [Pure]
-        public HtmlElement AddContent() => AddContent(default(HtmlFragment[]));
+        public HtmlElement Content() => Content(default(HtmlFragment[]));
 
         public static implicit operator HtmlFragment(HtmlStartTag<TNamedTagType> startTag) => HtmlFragment.HtmlElement(startTag.TagName, startTag.Attributes, null);
 
         [Pure]
-        public HtmlElement AddContent(IEnumerable<HtmlElement> menuItemLiElements) => AddContent(menuItemLiElements.Select(el => (HtmlFragment)el).ToArray());
+        public HtmlElement Content(IEnumerable<HtmlElement> menuItemLiElements) => Content(menuItemLiElements.Select(el => (HtmlFragment)el).ToArray());
     }
 
     public struct GeneralStartTag
@@ -216,14 +216,14 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public GeneralStartTag withAttribute(string attrName, string attrValue)
+        public GeneralStartTag Attribute(string attrName, string attrValue)
             => new GeneralStartTag(TagName, Attributes.appendAttr(attrName, attrValue));
 
         [Pure]
-        public HtmlElement AddContent() => AddContent(null);
+        public HtmlElement AddContent() => Content(null);
 
         [Pure]
-        public HtmlElement AddContent(params HtmlFragment[] content) => new HtmlElement(TagName, Attributes, content);
+        public HtmlElement Content(params HtmlFragment[] content) => new HtmlElement(TagName, Attributes, content);
 
         public static implicit operator HtmlFragment(GeneralStartTag startTag) => HtmlFragment.HtmlElement(startTag.TagName, startTag.Attributes, null);
     }

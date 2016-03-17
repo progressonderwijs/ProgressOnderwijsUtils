@@ -121,408 +121,408 @@
 
     public static class AttributeConstructionMethods
     {
-        public static TExpression with_accesskey<TExpression>(this TExpression htmlTagExpr, string attrValue)
+        public static TExpression _accesskey<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("accesskey", attrValue);
-        public static TExpression with_class<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("accesskey", attrValue);
+        public static TExpression _class<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("class", attrValue);
-        public static TExpression with_contenteditable<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("class", attrValue);
+        public static TExpression _contenteditable<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("contenteditable", attrValue);
-        public static TExpression with_contextmenu<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("contenteditable", attrValue);
+        public static TExpression _contextmenu<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("contextmenu", attrValue);
-        public static TExpression with_dir<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("contextmenu", attrValue);
+        public static TExpression _dir<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("dir", attrValue);
-        public static TExpression with_draggable<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("dir", attrValue);
+        public static TExpression _draggable<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("draggable", attrValue);
-        public static TExpression with_dropzone<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("draggable", attrValue);
+        public static TExpression _dropzone<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("dropzone", attrValue);
-        public static TExpression with_hidden<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("dropzone", attrValue);
+        public static TExpression _hidden<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("hidden", attrValue);
-        public static TExpression with_id<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("hidden", attrValue);
+        public static TExpression _id<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("id", attrValue);
-        public static TExpression with_itemid<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("id", attrValue);
+        public static TExpression _itemid<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("itemid", attrValue);
-        public static TExpression with_itemprop<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("itemid", attrValue);
+        public static TExpression _itemprop<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("itemprop", attrValue);
-        public static TExpression with_itemref<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("itemprop", attrValue);
+        public static TExpression _itemref<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("itemref", attrValue);
-        public static TExpression with_itemscope<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("itemref", attrValue);
+        public static TExpression _itemscope<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("itemscope", attrValue);
-        public static TExpression with_itemtype<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("itemscope", attrValue);
+        public static TExpression _itemtype<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("itemtype", attrValue);
-        public static TExpression with_lang<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("itemtype", attrValue);
+        public static TExpression _lang<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("lang", attrValue);
-        public static TExpression with_spellcheck<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("lang", attrValue);
+        public static TExpression _spellcheck<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("spellcheck", attrValue);
-        public static TExpression with_style<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("spellcheck", attrValue);
+        public static TExpression _style<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("style", attrValue);
-        public static TExpression with_tabindex<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("style", attrValue);
+        public static TExpression _tabindex<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("tabindex", attrValue);
-        public static TExpression with_title<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("tabindex", attrValue);
+        public static TExpression _title<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("title", attrValue);
-        public static TExpression with_translate<TExpression>(this TExpression htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("title", attrValue);
+        public static TExpression _translate<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute("translate", attrValue);
-        public static HtmlStartTag<TTagType> with_href<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("translate", attrValue);
+        public static HtmlStartTag<TTagType> _href<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_href, IHtmlTagName
-            => htmlTagExpr.withAttribute("href", attrValue);
-        public static HtmlStartTag<TTagType> with_target<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("href", attrValue);
+        public static HtmlStartTag<TTagType> _target<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_target, IHtmlTagName
-            => htmlTagExpr.withAttribute("target", attrValue);
-        public static HtmlStartTag<TTagType> with_download<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("target", attrValue);
+        public static HtmlStartTag<TTagType> _download<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_download, IHtmlTagName
-            => htmlTagExpr.withAttribute("download", attrValue);
-        public static HtmlStartTag<TTagType> with_ping<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("download", attrValue);
+        public static HtmlStartTag<TTagType> _ping<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_ping, IHtmlTagName
-            => htmlTagExpr.withAttribute("ping", attrValue);
-        public static HtmlStartTag<TTagType> with_rel<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("ping", attrValue);
+        public static HtmlStartTag<TTagType> _rel<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_rel, IHtmlTagName
-            => htmlTagExpr.withAttribute("rel", attrValue);
-        public static HtmlStartTag<TTagType> with_hreflang<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("rel", attrValue);
+        public static HtmlStartTag<TTagType> _hreflang<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_hreflang, IHtmlTagName
-            => htmlTagExpr.withAttribute("hreflang", attrValue);
-        public static HtmlStartTag<TTagType> with_type<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("hreflang", attrValue);
+        public static HtmlStartTag<TTagType> _type<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_type, IHtmlTagName
-            => htmlTagExpr.withAttribute("type", attrValue);
-        public static HtmlStartTag<TTagType> with_alt<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("type", attrValue);
+        public static HtmlStartTag<TTagType> _alt<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_alt, IHtmlTagName
-            => htmlTagExpr.withAttribute("alt", attrValue);
-        public static HtmlStartTag<TTagType> with_coords<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("alt", attrValue);
+        public static HtmlStartTag<TTagType> _coords<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_coords, IHtmlTagName
-            => htmlTagExpr.withAttribute("coords", attrValue);
-        public static HtmlStartTag<TTagType> with_shape<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("coords", attrValue);
+        public static HtmlStartTag<TTagType> _shape<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_shape, IHtmlTagName
-            => htmlTagExpr.withAttribute("shape", attrValue);
-        public static HtmlStartTag<TTagType> with_src<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("shape", attrValue);
+        public static HtmlStartTag<TTagType> _src<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_src, IHtmlTagName
-            => htmlTagExpr.withAttribute("src", attrValue);
-        public static HtmlStartTag<TTagType> with_crossorigin<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("src", attrValue);
+        public static HtmlStartTag<TTagType> _crossorigin<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_crossorigin, IHtmlTagName
-            => htmlTagExpr.withAttribute("crossorigin", attrValue);
-        public static HtmlStartTag<TTagType> with_preload<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("crossorigin", attrValue);
+        public static HtmlStartTag<TTagType> _preload<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_preload, IHtmlTagName
-            => htmlTagExpr.withAttribute("preload", attrValue);
-        public static HtmlStartTag<TTagType> with_autoplay<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("preload", attrValue);
+        public static HtmlStartTag<TTagType> _autoplay<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_autoplay, IHtmlTagName
-            => htmlTagExpr.withAttribute("autoplay", attrValue);
-        public static HtmlStartTag<TTagType> with_mediagroup<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("autoplay", attrValue);
+        public static HtmlStartTag<TTagType> _mediagroup<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_mediagroup, IHtmlTagName
-            => htmlTagExpr.withAttribute("mediagroup", attrValue);
-        public static HtmlStartTag<TTagType> with_loop<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("mediagroup", attrValue);
+        public static HtmlStartTag<TTagType> _loop<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_loop, IHtmlTagName
-            => htmlTagExpr.withAttribute("loop", attrValue);
-        public static HtmlStartTag<TTagType> with_muted<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("loop", attrValue);
+        public static HtmlStartTag<TTagType> _muted<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_muted, IHtmlTagName
-            => htmlTagExpr.withAttribute("muted", attrValue);
-        public static HtmlStartTag<TTagType> with_controls<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("muted", attrValue);
+        public static HtmlStartTag<TTagType> _controls<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_controls, IHtmlTagName
-            => htmlTagExpr.withAttribute("controls", attrValue);
-        public static HtmlStartTag<TTagType> with_cite<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("controls", attrValue);
+        public static HtmlStartTag<TTagType> _cite<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_cite, IHtmlTagName
-            => htmlTagExpr.withAttribute("cite", attrValue);
-        public static HtmlStartTag<TTagType> with_onafterprint<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("cite", attrValue);
+        public static HtmlStartTag<TTagType> _onafterprint<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onafterprint, IHtmlTagName
-            => htmlTagExpr.withAttribute("onafterprint", attrValue);
-        public static HtmlStartTag<TTagType> with_onbeforeprint<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onafterprint", attrValue);
+        public static HtmlStartTag<TTagType> _onbeforeprint<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onbeforeprint, IHtmlTagName
-            => htmlTagExpr.withAttribute("onbeforeprint", attrValue);
-        public static HtmlStartTag<TTagType> with_onbeforeunload<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onbeforeprint", attrValue);
+        public static HtmlStartTag<TTagType> _onbeforeunload<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onbeforeunload, IHtmlTagName
-            => htmlTagExpr.withAttribute("onbeforeunload", attrValue);
-        public static HtmlStartTag<TTagType> with_onhashchange<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onbeforeunload", attrValue);
+        public static HtmlStartTag<TTagType> _onhashchange<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onhashchange, IHtmlTagName
-            => htmlTagExpr.withAttribute("onhashchange", attrValue);
-        public static HtmlStartTag<TTagType> with_onlanguagechange<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onhashchange", attrValue);
+        public static HtmlStartTag<TTagType> _onlanguagechange<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onlanguagechange, IHtmlTagName
-            => htmlTagExpr.withAttribute("onlanguagechange", attrValue);
-        public static HtmlStartTag<TTagType> with_onmessage<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onlanguagechange", attrValue);
+        public static HtmlStartTag<TTagType> _onmessage<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onmessage, IHtmlTagName
-            => htmlTagExpr.withAttribute("onmessage", attrValue);
-        public static HtmlStartTag<TTagType> with_onoffline<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onmessage", attrValue);
+        public static HtmlStartTag<TTagType> _onoffline<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onoffline, IHtmlTagName
-            => htmlTagExpr.withAttribute("onoffline", attrValue);
-        public static HtmlStartTag<TTagType> with_ononline<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onoffline", attrValue);
+        public static HtmlStartTag<TTagType> _ononline<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_ononline, IHtmlTagName
-            => htmlTagExpr.withAttribute("ononline", attrValue);
-        public static HtmlStartTag<TTagType> with_onpagehide<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("ononline", attrValue);
+        public static HtmlStartTag<TTagType> _onpagehide<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onpagehide, IHtmlTagName
-            => htmlTagExpr.withAttribute("onpagehide", attrValue);
-        public static HtmlStartTag<TTagType> with_onpageshow<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onpagehide", attrValue);
+        public static HtmlStartTag<TTagType> _onpageshow<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onpageshow, IHtmlTagName
-            => htmlTagExpr.withAttribute("onpageshow", attrValue);
-        public static HtmlStartTag<TTagType> with_onpopstate<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onpageshow", attrValue);
+        public static HtmlStartTag<TTagType> _onpopstate<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onpopstate, IHtmlTagName
-            => htmlTagExpr.withAttribute("onpopstate", attrValue);
-        public static HtmlStartTag<TTagType> with_onrejectionhandled<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onpopstate", attrValue);
+        public static HtmlStartTag<TTagType> _onrejectionhandled<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onrejectionhandled, IHtmlTagName
-            => htmlTagExpr.withAttribute("onrejectionhandled", attrValue);
-        public static HtmlStartTag<TTagType> with_onstorage<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onrejectionhandled", attrValue);
+        public static HtmlStartTag<TTagType> _onstorage<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onstorage, IHtmlTagName
-            => htmlTagExpr.withAttribute("onstorage", attrValue);
-        public static HtmlStartTag<TTagType> with_onunhandledrejection<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onstorage", attrValue);
+        public static HtmlStartTag<TTagType> _onunhandledrejection<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onunhandledrejection, IHtmlTagName
-            => htmlTagExpr.withAttribute("onunhandledrejection", attrValue);
-        public static HtmlStartTag<TTagType> with_onunload<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onunhandledrejection", attrValue);
+        public static HtmlStartTag<TTagType> _onunload<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_onunload, IHtmlTagName
-            => htmlTagExpr.withAttribute("onunload", attrValue);
-        public static HtmlStartTag<TTagType> with_autofocus<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("onunload", attrValue);
+        public static HtmlStartTag<TTagType> _autofocus<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_autofocus, IHtmlTagName
-            => htmlTagExpr.withAttribute("autofocus", attrValue);
-        public static HtmlStartTag<TTagType> with_disabled<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("autofocus", attrValue);
+        public static HtmlStartTag<TTagType> _disabled<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_disabled, IHtmlTagName
-            => htmlTagExpr.withAttribute("disabled", attrValue);
-        public static HtmlStartTag<TTagType> with_form<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("disabled", attrValue);
+        public static HtmlStartTag<TTagType> _form<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_form, IHtmlTagName
-            => htmlTagExpr.withAttribute("form", attrValue);
-        public static HtmlStartTag<TTagType> with_formaction<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("form", attrValue);
+        public static HtmlStartTag<TTagType> _formaction<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_formaction, IHtmlTagName
-            => htmlTagExpr.withAttribute("formaction", attrValue);
-        public static HtmlStartTag<TTagType> with_formenctype<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("formaction", attrValue);
+        public static HtmlStartTag<TTagType> _formenctype<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_formenctype, IHtmlTagName
-            => htmlTagExpr.withAttribute("formenctype", attrValue);
-        public static HtmlStartTag<TTagType> with_formmethod<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("formenctype", attrValue);
+        public static HtmlStartTag<TTagType> _formmethod<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_formmethod, IHtmlTagName
-            => htmlTagExpr.withAttribute("formmethod", attrValue);
-        public static HtmlStartTag<TTagType> with_formnovalidate<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("formmethod", attrValue);
+        public static HtmlStartTag<TTagType> _formnovalidate<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_formnovalidate, IHtmlTagName
-            => htmlTagExpr.withAttribute("formnovalidate", attrValue);
-        public static HtmlStartTag<TTagType> with_formtarget<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("formnovalidate", attrValue);
+        public static HtmlStartTag<TTagType> _formtarget<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_formtarget, IHtmlTagName
-            => htmlTagExpr.withAttribute("formtarget", attrValue);
-        public static HtmlStartTag<TTagType> with_menu<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("formtarget", attrValue);
+        public static HtmlStartTag<TTagType> _menu<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_menu, IHtmlTagName
-            => htmlTagExpr.withAttribute("menu", attrValue);
-        public static HtmlStartTag<TTagType> with_name<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("menu", attrValue);
+        public static HtmlStartTag<TTagType> _name<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_name, IHtmlTagName
-            => htmlTagExpr.withAttribute("name", attrValue);
-        public static HtmlStartTag<TTagType> with_value<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("name", attrValue);
+        public static HtmlStartTag<TTagType> _value<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_value, IHtmlTagName
-            => htmlTagExpr.withAttribute("value", attrValue);
-        public static HtmlStartTag<TTagType> with_width<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("value", attrValue);
+        public static HtmlStartTag<TTagType> _width<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_width, IHtmlTagName
-            => htmlTagExpr.withAttribute("width", attrValue);
-        public static HtmlStartTag<TTagType> with_height<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("width", attrValue);
+        public static HtmlStartTag<TTagType> _height<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_height, IHtmlTagName
-            => htmlTagExpr.withAttribute("height", attrValue);
-        public static HtmlStartTag<TTagType> with_span<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("height", attrValue);
+        public static HtmlStartTag<TTagType> _span<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_span, IHtmlTagName
-            => htmlTagExpr.withAttribute("span", attrValue);
-        public static HtmlStartTag<TTagType> with_datetime<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("span", attrValue);
+        public static HtmlStartTag<TTagType> _datetime<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_datetime, IHtmlTagName
-            => htmlTagExpr.withAttribute("datetime", attrValue);
-        public static HtmlStartTag<TTagType> with_open<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("datetime", attrValue);
+        public static HtmlStartTag<TTagType> _open<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_open, IHtmlTagName
-            => htmlTagExpr.withAttribute("open", attrValue);
-        public static HtmlStartTag<TTagType> with_accept_charset<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("open", attrValue);
+        public static HtmlStartTag<TTagType> _accept_charset<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_accept_charset, IHtmlTagName
-            => htmlTagExpr.withAttribute("accept-charset", attrValue);
-        public static HtmlStartTag<TTagType> with_action<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("accept-charset", attrValue);
+        public static HtmlStartTag<TTagType> _action<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_action, IHtmlTagName
-            => htmlTagExpr.withAttribute("action", attrValue);
-        public static HtmlStartTag<TTagType> with_autocomplete<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("action", attrValue);
+        public static HtmlStartTag<TTagType> _autocomplete<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_autocomplete, IHtmlTagName
-            => htmlTagExpr.withAttribute("autocomplete", attrValue);
-        public static HtmlStartTag<TTagType> with_enctype<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("autocomplete", attrValue);
+        public static HtmlStartTag<TTagType> _enctype<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_enctype, IHtmlTagName
-            => htmlTagExpr.withAttribute("enctype", attrValue);
-        public static HtmlStartTag<TTagType> with_method<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("enctype", attrValue);
+        public static HtmlStartTag<TTagType> _method<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_method, IHtmlTagName
-            => htmlTagExpr.withAttribute("method", attrValue);
-        public static HtmlStartTag<TTagType> with_novalidate<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("method", attrValue);
+        public static HtmlStartTag<TTagType> _novalidate<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_novalidate, IHtmlTagName
-            => htmlTagExpr.withAttribute("novalidate", attrValue);
-        public static HtmlStartTag<TTagType> with_manifest<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("novalidate", attrValue);
+        public static HtmlStartTag<TTagType> _manifest<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_manifest, IHtmlTagName
-            => htmlTagExpr.withAttribute("manifest", attrValue);
-        public static HtmlStartTag<TTagType> with_srcdoc<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("manifest", attrValue);
+        public static HtmlStartTag<TTagType> _srcdoc<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_srcdoc, IHtmlTagName
-            => htmlTagExpr.withAttribute("srcdoc", attrValue);
-        public static HtmlStartTag<TTagType> with_sandbox<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("srcdoc", attrValue);
+        public static HtmlStartTag<TTagType> _sandbox<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_sandbox, IHtmlTagName
-            => htmlTagExpr.withAttribute("sandbox", attrValue);
-        public static HtmlStartTag<TTagType> with_allowfullscreen<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("sandbox", attrValue);
+        public static HtmlStartTag<TTagType> _allowfullscreen<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_allowfullscreen, IHtmlTagName
-            => htmlTagExpr.withAttribute("allowfullscreen", attrValue);
-        public static HtmlStartTag<TTagType> with_srcset<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("allowfullscreen", attrValue);
+        public static HtmlStartTag<TTagType> _srcset<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_srcset, IHtmlTagName
-            => htmlTagExpr.withAttribute("srcset", attrValue);
-        public static HtmlStartTag<TTagType> with_usemap<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("srcset", attrValue);
+        public static HtmlStartTag<TTagType> _usemap<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_usemap, IHtmlTagName
-            => htmlTagExpr.withAttribute("usemap", attrValue);
-        public static HtmlStartTag<TTagType> with_ismap<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("usemap", attrValue);
+        public static HtmlStartTag<TTagType> _ismap<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_ismap, IHtmlTagName
-            => htmlTagExpr.withAttribute("ismap", attrValue);
-        public static HtmlStartTag<TTagType> with_accept<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("ismap", attrValue);
+        public static HtmlStartTag<TTagType> _accept<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_accept, IHtmlTagName
-            => htmlTagExpr.withAttribute("accept", attrValue);
-        public static HtmlStartTag<TTagType> with_checked<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("accept", attrValue);
+        public static HtmlStartTag<TTagType> _checked<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_checked, IHtmlTagName
-            => htmlTagExpr.withAttribute("checked", attrValue);
-        public static HtmlStartTag<TTagType> with_dirname<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("checked", attrValue);
+        public static HtmlStartTag<TTagType> _dirname<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_dirname, IHtmlTagName
-            => htmlTagExpr.withAttribute("dirname", attrValue);
-        public static HtmlStartTag<TTagType> with_inputmode<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("dirname", attrValue);
+        public static HtmlStartTag<TTagType> _inputmode<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_inputmode, IHtmlTagName
-            => htmlTagExpr.withAttribute("inputmode", attrValue);
-        public static HtmlStartTag<TTagType> with_list<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("inputmode", attrValue);
+        public static HtmlStartTag<TTagType> _list<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_list, IHtmlTagName
-            => htmlTagExpr.withAttribute("list", attrValue);
-        public static HtmlStartTag<TTagType> with_max<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("list", attrValue);
+        public static HtmlStartTag<TTagType> _max<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_max, IHtmlTagName
-            => htmlTagExpr.withAttribute("max", attrValue);
-        public static HtmlStartTag<TTagType> with_maxlength<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("max", attrValue);
+        public static HtmlStartTag<TTagType> _maxlength<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_maxlength, IHtmlTagName
-            => htmlTagExpr.withAttribute("maxlength", attrValue);
-        public static HtmlStartTag<TTagType> with_min<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("maxlength", attrValue);
+        public static HtmlStartTag<TTagType> _min<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_min, IHtmlTagName
-            => htmlTagExpr.withAttribute("min", attrValue);
-        public static HtmlStartTag<TTagType> with_minlength<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("min", attrValue);
+        public static HtmlStartTag<TTagType> _minlength<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_minlength, IHtmlTagName
-            => htmlTagExpr.withAttribute("minlength", attrValue);
-        public static HtmlStartTag<TTagType> with_multiple<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("minlength", attrValue);
+        public static HtmlStartTag<TTagType> _multiple<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_multiple, IHtmlTagName
-            => htmlTagExpr.withAttribute("multiple", attrValue);
-        public static HtmlStartTag<TTagType> with_pattern<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("multiple", attrValue);
+        public static HtmlStartTag<TTagType> _pattern<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_pattern, IHtmlTagName
-            => htmlTagExpr.withAttribute("pattern", attrValue);
-        public static HtmlStartTag<TTagType> with_placeholder<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("pattern", attrValue);
+        public static HtmlStartTag<TTagType> _placeholder<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_placeholder, IHtmlTagName
-            => htmlTagExpr.withAttribute("placeholder", attrValue);
-        public static HtmlStartTag<TTagType> with_readonly<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("placeholder", attrValue);
+        public static HtmlStartTag<TTagType> _readonly<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_readonly, IHtmlTagName
-            => htmlTagExpr.withAttribute("readonly", attrValue);
-        public static HtmlStartTag<TTagType> with_required<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("readonly", attrValue);
+        public static HtmlStartTag<TTagType> _required<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_required, IHtmlTagName
-            => htmlTagExpr.withAttribute("required", attrValue);
-        public static HtmlStartTag<TTagType> with_size<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("required", attrValue);
+        public static HtmlStartTag<TTagType> _size<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_size, IHtmlTagName
-            => htmlTagExpr.withAttribute("size", attrValue);
-        public static HtmlStartTag<TTagType> with_step<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("size", attrValue);
+        public static HtmlStartTag<TTagType> _step<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_step, IHtmlTagName
-            => htmlTagExpr.withAttribute("step", attrValue);
-        public static HtmlStartTag<TTagType> with_challenge<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("step", attrValue);
+        public static HtmlStartTag<TTagType> _challenge<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_challenge, IHtmlTagName
-            => htmlTagExpr.withAttribute("challenge", attrValue);
-        public static HtmlStartTag<TTagType> with_keytype<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("challenge", attrValue);
+        public static HtmlStartTag<TTagType> _keytype<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_keytype, IHtmlTagName
-            => htmlTagExpr.withAttribute("keytype", attrValue);
-        public static HtmlStartTag<TTagType> with_for<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("keytype", attrValue);
+        public static HtmlStartTag<TTagType> _for<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_for, IHtmlTagName
-            => htmlTagExpr.withAttribute("for", attrValue);
-        public static HtmlStartTag<TTagType> with_media<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("for", attrValue);
+        public static HtmlStartTag<TTagType> _media<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_media, IHtmlTagName
-            => htmlTagExpr.withAttribute("media", attrValue);
-        public static HtmlStartTag<TTagType> with_sizes<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("media", attrValue);
+        public static HtmlStartTag<TTagType> _sizes<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_sizes, IHtmlTagName
-            => htmlTagExpr.withAttribute("sizes", attrValue);
-        public static HtmlStartTag<TTagType> with_label<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("sizes", attrValue);
+        public static HtmlStartTag<TTagType> _label<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_label, IHtmlTagName
-            => htmlTagExpr.withAttribute("label", attrValue);
-        public static HtmlStartTag<TTagType> with_icon<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("label", attrValue);
+        public static HtmlStartTag<TTagType> _icon<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_icon, IHtmlTagName
-            => htmlTagExpr.withAttribute("icon", attrValue);
-        public static HtmlStartTag<TTagType> with_radiogroup<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("icon", attrValue);
+        public static HtmlStartTag<TTagType> _radiogroup<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_radiogroup, IHtmlTagName
-            => htmlTagExpr.withAttribute("radiogroup", attrValue);
-        public static HtmlStartTag<TTagType> with_default<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("radiogroup", attrValue);
+        public static HtmlStartTag<TTagType> _default<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_default, IHtmlTagName
-            => htmlTagExpr.withAttribute("default", attrValue);
-        public static HtmlStartTag<TTagType> with_http_equiv<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("default", attrValue);
+        public static HtmlStartTag<TTagType> _http_equiv<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_http_equiv, IHtmlTagName
-            => htmlTagExpr.withAttribute("http-equiv", attrValue);
-        public static HtmlStartTag<TTagType> with_content<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("http-equiv", attrValue);
+        public static HtmlStartTag<TTagType> _content<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_content, IHtmlTagName
-            => htmlTagExpr.withAttribute("content", attrValue);
-        public static HtmlStartTag<TTagType> with_charset<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("content", attrValue);
+        public static HtmlStartTag<TTagType> _charset<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_charset, IHtmlTagName
-            => htmlTagExpr.withAttribute("charset", attrValue);
-        public static HtmlStartTag<TTagType> with_low<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("charset", attrValue);
+        public static HtmlStartTag<TTagType> _low<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_low, IHtmlTagName
-            => htmlTagExpr.withAttribute("low", attrValue);
-        public static HtmlStartTag<TTagType> with_high<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("low", attrValue);
+        public static HtmlStartTag<TTagType> _high<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_high, IHtmlTagName
-            => htmlTagExpr.withAttribute("high", attrValue);
-        public static HtmlStartTag<TTagType> with_optimum<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("high", attrValue);
+        public static HtmlStartTag<TTagType> _optimum<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_optimum, IHtmlTagName
-            => htmlTagExpr.withAttribute("optimum", attrValue);
-        public static HtmlStartTag<TTagType> with_data<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("optimum", attrValue);
+        public static HtmlStartTag<TTagType> _data<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_data, IHtmlTagName
-            => htmlTagExpr.withAttribute("data", attrValue);
-        public static HtmlStartTag<TTagType> with_typemustmatch<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("data", attrValue);
+        public static HtmlStartTag<TTagType> _typemustmatch<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_typemustmatch, IHtmlTagName
-            => htmlTagExpr.withAttribute("typemustmatch", attrValue);
-        public static HtmlStartTag<TTagType> with_reversed<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("typemustmatch", attrValue);
+        public static HtmlStartTag<TTagType> _reversed<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_reversed, IHtmlTagName
-            => htmlTagExpr.withAttribute("reversed", attrValue);
-        public static HtmlStartTag<TTagType> with_start<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("reversed", attrValue);
+        public static HtmlStartTag<TTagType> _start<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_start, IHtmlTagName
-            => htmlTagExpr.withAttribute("start", attrValue);
-        public static HtmlStartTag<TTagType> with_selected<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("start", attrValue);
+        public static HtmlStartTag<TTagType> _selected<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_selected, IHtmlTagName
-            => htmlTagExpr.withAttribute("selected", attrValue);
-        public static HtmlStartTag<TTagType> with_async<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("selected", attrValue);
+        public static HtmlStartTag<TTagType> _async<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_async, IHtmlTagName
-            => htmlTagExpr.withAttribute("async", attrValue);
-        public static HtmlStartTag<TTagType> with_defer<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("async", attrValue);
+        public static HtmlStartTag<TTagType> _defer<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_defer, IHtmlTagName
-            => htmlTagExpr.withAttribute("defer", attrValue);
-        public static HtmlStartTag<TTagType> with_nonce<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("defer", attrValue);
+        public static HtmlStartTag<TTagType> _nonce<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_nonce, IHtmlTagName
-            => htmlTagExpr.withAttribute("nonce", attrValue);
-        public static HtmlStartTag<TTagType> with_scoped<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("nonce", attrValue);
+        public static HtmlStartTag<TTagType> _scoped<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_scoped, IHtmlTagName
-            => htmlTagExpr.withAttribute("scoped", attrValue);
-        public static HtmlStartTag<TTagType> with_colspan<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("scoped", attrValue);
+        public static HtmlStartTag<TTagType> _colspan<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_colspan, IHtmlTagName
-            => htmlTagExpr.withAttribute("colspan", attrValue);
-        public static HtmlStartTag<TTagType> with_rowspan<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("colspan", attrValue);
+        public static HtmlStartTag<TTagType> _rowspan<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_rowspan, IHtmlTagName
-            => htmlTagExpr.withAttribute("rowspan", attrValue);
-        public static HtmlStartTag<TTagType> with_headers<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("rowspan", attrValue);
+        public static HtmlStartTag<TTagType> _headers<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_headers, IHtmlTagName
-            => htmlTagExpr.withAttribute("headers", attrValue);
-        public static HtmlStartTag<TTagType> with_cols<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("headers", attrValue);
+        public static HtmlStartTag<TTagType> _cols<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_cols, IHtmlTagName
-            => htmlTagExpr.withAttribute("cols", attrValue);
-        public static HtmlStartTag<TTagType> with_rows<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("cols", attrValue);
+        public static HtmlStartTag<TTagType> _rows<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_rows, IHtmlTagName
-            => htmlTagExpr.withAttribute("rows", attrValue);
-        public static HtmlStartTag<TTagType> with_wrap<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("rows", attrValue);
+        public static HtmlStartTag<TTagType> _wrap<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_wrap, IHtmlTagName
-            => htmlTagExpr.withAttribute("wrap", attrValue);
-        public static HtmlStartTag<TTagType> with_scope<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("wrap", attrValue);
+        public static HtmlStartTag<TTagType> _scope<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_scope, IHtmlTagName
-            => htmlTagExpr.withAttribute("scope", attrValue);
-        public static HtmlStartTag<TTagType> with_abbr<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("scope", attrValue);
+        public static HtmlStartTag<TTagType> _abbr<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_abbr, IHtmlTagName
-            => htmlTagExpr.withAttribute("abbr", attrValue);
-        public static HtmlStartTag<TTagType> with_kind<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("abbr", attrValue);
+        public static HtmlStartTag<TTagType> _kind<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_kind, IHtmlTagName
-            => htmlTagExpr.withAttribute("kind", attrValue);
-        public static HtmlStartTag<TTagType> with_srclang<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("kind", attrValue);
+        public static HtmlStartTag<TTagType> _srclang<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_srclang, IHtmlTagName
-            => htmlTagExpr.withAttribute("srclang", attrValue);
-        public static HtmlStartTag<TTagType> with_poster<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+            => htmlTagExpr.Attribute("srclang", attrValue);
+        public static HtmlStartTag<TTagType> _poster<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_poster, IHtmlTagName
-            => htmlTagExpr.withAttribute("poster", attrValue);
+            => htmlTagExpr.Attribute("poster", attrValue);
     }
 
     public static class TagNames

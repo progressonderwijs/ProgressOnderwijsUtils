@@ -134,9 +134,9 @@ using (var client = new HttpClient(new WebRequestHandler {
 
 	var globalAttributeExtensionMethods = globalAttributes
 		.Select(attrName => $@"
-        public static TExpression with_{toClassName(attrName)}<TExpression>(this TExpression htmlTagExpr, string attrValue)
+        public static TExpression _{toClassName(attrName)}<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.withAttribute(""{attrName}"", attrValue);"
+            => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
 
 
@@ -148,9 +148,9 @@ using (var client = new HttpClient(new WebRequestHandler {
 );
 	var elAttrExtensionMethods = specificAttributes
 		.Select(attrName => $@"
-        public static HtmlStartTag<TTagType> with_{toClassName(attrName)}<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
+        public static HtmlStartTag<TTagType> _{toClassName(attrName)}<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
             where TTagType : struct, IHasAttr_{toClassName(attrName)}, IHtmlTagName
-            => htmlTagExpr.withAttribute(""{attrName}"", attrValue);"
+            => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
 
 	var attrNamesClass = $@"
