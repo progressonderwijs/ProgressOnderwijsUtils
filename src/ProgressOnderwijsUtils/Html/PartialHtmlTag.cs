@@ -91,6 +91,7 @@ namespace ProgressOnderwijsUtils.Html
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
 
+        [Pure]
         public object ToXDocumentFragment()
         {
             if (embeddedContent != null) {
@@ -115,6 +116,7 @@ namespace ProgressOnderwijsUtils.Html
         public readonly HtmlAttribute[] Attributes;
         public readonly HtmlFragment[] ChildNodes;
 
+        [Pure]
         public HtmlElement MoreContent(params HtmlFragment[] content)
         {
             if (ChildNodes == null || content == null) {
@@ -133,11 +135,15 @@ namespace ProgressOnderwijsUtils.Html
             ChildNodes = childNodes;
         }
 
+        [Pure]
         public XElement ToXElement() => new XElement(
             TagName,
             Attributes.ToXAttributes(),
             ChildNodes?.ArraySelect(childNode => childNode.ToXDocumentFragment())
             );
+
+        [Pure]
+        public HtmlFragment Finish() => HtmlFragment.HtmlElement(this);
     }
 
     public interface IFluentHtmlTagExpression<out TExpression>
