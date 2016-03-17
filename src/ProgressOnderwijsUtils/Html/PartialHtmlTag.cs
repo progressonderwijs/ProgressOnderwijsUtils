@@ -114,6 +114,17 @@ namespace ProgressOnderwijsUtils.Html
         public readonly HtmlAttribute[] Attributes;
         public readonly HtmlFragment[] ChildNodes;
 
+        public HtmlElement MoreContent(params HtmlFragment[] content)
+        {
+            if (ChildNodes == null || content == null) {
+                return new HtmlElement(TagName, Attributes, ChildNodes ?? content);
+            }
+            var newChildNodes = new HtmlFragment[ChildNodes.Length + content.Length];
+            Array.Copy(ChildNodes, 0, newChildNodes, 0, ChildNodes.Length);
+            Array.Copy(content, 0, newChildNodes, ChildNodes.Length, content.Length);
+            return new HtmlElement(TagName, Attributes, newChildNodes);
+        }
+
         public HtmlElement(string tagName, [NotNull] HtmlAttribute[] attributes, HtmlFragment[] childNodes)
         {
             TagName = tagName;
@@ -169,8 +180,8 @@ namespace ProgressOnderwijsUtils.Html
         : IFluentHtmlTagExpression<HtmlStartTag<TNamedTagType>>
         where TNamedTagType : struct, IHtmlTagName
     {
-        public string TagName => default(TNamedTagType).TagName;
-        public HtmlAttribute[] Attributes { get; }
+        string TagName => default(TNamedTagType).TagName;
+        HtmlAttribute[] Attributes { get; }
 
         HtmlStartTag(HtmlAttribute[] attributes)
         {
