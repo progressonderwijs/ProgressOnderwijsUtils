@@ -136,13 +136,6 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public XElement ToXElement() => new XElement(
-            TagName,
-            Attributes.ToXAttributes(),
-            ChildNodes?.ArraySelect(childNode => childNode.ToXDocumentFragment())
-            );
-
-        [Pure]
         public HtmlFragment Finish() => HtmlFragment.HtmlElement(this);
     }
 
