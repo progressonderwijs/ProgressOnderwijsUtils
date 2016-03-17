@@ -85,6 +85,9 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment XmlElement(XElement xmlElement)
             => new HtmlFragment(null, null, null, xmlElement);
 
+        public static HtmlFragment HtmlElements(HtmlFragment[] htmlEls)
+            => new HtmlFragment(null, null, htmlEls, null);
+
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
 
@@ -172,6 +175,7 @@ namespace ProgressOnderwijsUtils.Html
             => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
+        public static HtmlFragment WrapInHtmlFragment(this IEnumerable<HtmlElement> htmlEls) => HtmlFragment.HtmlElements(htmlEls.Select(el => (HtmlFragment)el).ToArray());
     }
 
     public struct HtmlStartTag<TNamedTagType>
