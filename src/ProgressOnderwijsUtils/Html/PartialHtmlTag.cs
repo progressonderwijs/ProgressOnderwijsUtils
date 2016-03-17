@@ -165,14 +165,8 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
     }
 
-    interface IHtmlStartTag
-    {
-        HtmlAttribute[] Attributes { get; }
-        string TagName { get; }
-    }
-
     public struct HtmlStartTag<TNamedTagType>
-        : IHtmlStartTag, IFluentHtmlTagExpression<HtmlStartTag<TNamedTagType>>
+        : IFluentHtmlTagExpression<HtmlStartTag<TNamedTagType>>
         where TNamedTagType : struct, IHtmlTagName
     {
         public string TagName => default(TNamedTagType).TagName;
@@ -197,34 +191,5 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         public HtmlElement Content(IEnumerable<HtmlElement> menuItemLiElements) => Content(menuItemLiElements.Select(el => (HtmlFragment)el).ToArray());
-    }
-
-    public struct GeneralStartTag
-        : IHtmlStartTag
-            , IFluentHtmlTagExpression<GeneralStartTag>
-    {
-        public string TagName { get; }
-        public HtmlAttribute[] Attributes { get; }
-
-        public GeneralStartTag(string tagName)
-            : this(tagName, HtmlAttributeHelpers.EmptyAttributes) { }
-
-        GeneralStartTag(string tagName, HtmlAttribute[] attributes)
-        {
-            TagName = tagName;
-            Attributes = attributes ?? HtmlAttributeHelpers.EmptyAttributes;
-        }
-
-        [Pure]
-        public GeneralStartTag Attribute(string attrName, string attrValue)
-            => new GeneralStartTag(TagName, Attributes.appendAttr(attrName, attrValue));
-
-        [Pure]
-        public HtmlElement Content() => Content(null);
-
-        [Pure]
-        public HtmlElement Content(params HtmlFragment[] content) => new HtmlElement(TagName, Attributes, content);
-
-        public static implicit operator HtmlFragment(GeneralStartTag startTag) => HtmlFragment.HtmlElement(startTag.TagName, startTag.Attributes, null);
     }
 }
