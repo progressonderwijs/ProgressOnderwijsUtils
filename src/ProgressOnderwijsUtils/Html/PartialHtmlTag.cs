@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils.Html
         }
     }
 
-    public struct HtmlFragment
+    public struct HtmlFragment : IConvertibleToFragment
     {
         readonly string tagNameOrTextContent; //iff text or element node
         readonly HtmlAttribute[] attributesWhenTag; // iff elementnode
@@ -120,23 +120,19 @@ namespace ProgressOnderwijsUtils.Html
                 return new XElement(tagNameOrTextContent, attributesWhenTag.ToXAttributes(), childNodes?.ArraySelect(childNode => childNode.ToXDocumentFragment()));
             }
         }
+
+        public HtmlFragment ToFragment() => this;
     }
 
-    public struct HtmlElement
+    public struct HtmlElement : IConvertibleToFragment
     {
         public readonly string TagName;
         public readonly HtmlAttribute[] Attributes;
         public readonly HtmlFragment[] ChildNodes;
 
         [Pure]
-        public HtmlElement MoreContent(params HtmlFragment[] content)
-        {
-            if (ChildNodes == null || content == null) {
-                return new HtmlElement(TagName, Attributes, ChildNodes ?? content);
-            }
-            var newChildNodes = HtmlTagHelpers.AppendArrays(ChildNodes, content);
-            return new HtmlElement(TagName, Attributes, newChildNodes);
-        }
+        public HtmlElement Content(params HtmlFragment[] content) 
+            => new HtmlElement(TagName, Attributes, HtmlTagHelpers.AppendArrays(ChildNodes, content));
 
         public HtmlElement(string tagName, [NotNull] HtmlAttribute[] attributes, HtmlFragment[] childNodes)
         {
@@ -146,10 +142,10 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public HtmlFragment Finish() => HtmlFragment.HtmlElement(this);
+        public HtmlFragment ToFragment() => this;
     }
 
-    public interface IFluentHtmlTagExpression<out TExpression>
+    public interface IFluentHtmlTagExpression<out TExpression> : IConvertibleToFragment
         where TExpression : IFluentHtmlTagExpression<TExpression>
     {
         [Pure]
@@ -181,7 +177,9 @@ namespace ProgressOnderwijsUtils.Html
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
-        public static HtmlFragment WrapInHtmlFragment(this IEnumerable<HtmlElement> htmlEls) => HtmlFragment.Fragment(htmlEls.Select(el => (HtmlFragment)el).ToArray());
+        public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)
+            where T :IConvertibleToFragment
+            => HtmlFragment.Fragment(htmlEls.Select(el => el.ToFragment()).ToArray());
 
         public static HtmlFragment Finish<TExpression>(this TExpression htmlTagExpr)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Content().Finish();
@@ -200,8 +198,12 @@ namespace ProgressOnderwijsUtils.Html
         }
     }
 
+    public interface IConvertibleToFragment {
+        HtmlFragment ToFragment();
+    }
+
     public struct HtmlTag<TName>
-        : IFluentHtmlTagExpression<HtmlTag<TName>>
+        : IFluentHtmlTagExpression<HtmlTag<TName>>, IConvertibleToFragment
         where TName : struct, IHtmlTagName
     {
         readonly HtmlAttribute[] Attributes;
@@ -225,7 +227,11 @@ namespace ProgressOnderwijsUtils.Html
 
         public static implicit operator HtmlFragment(HtmlTag<TName> tag) => HtmlFragment.HtmlElement(default(TName).TagName, tag.Attributes, tag.childNodes);
 
+        public HtmlFragment ToFragment() => this;
+
         [Pure]
-        public HtmlTag<TName> Content(IEnumerable<HtmlElement> menuItemLiElements) => Content(menuItemLiElements.Select(el => (HtmlFragment)el).ToArray());
+        public HtmlTag<TName> Contents<T>(IEnumerable<T> items)
+            where T : IConvertibleToFragment
+            => Content(items.Select(el => el.ToFragment()).ToArray());
     }
 }
