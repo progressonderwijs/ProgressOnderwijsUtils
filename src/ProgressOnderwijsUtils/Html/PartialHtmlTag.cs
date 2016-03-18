@@ -27,6 +27,7 @@ namespace ProgressOnderwijsUtils.Html
     {
         public static readonly HtmlAttribute[] EmptyAttributes = new HtmlAttribute[0];
 
+        [Pure]
         public static HtmlAttribute[] appendAttr(this HtmlAttribute[] attributes, string attrName, string attrValue)
         {
             //performance assumption: the list of attributes is short.
@@ -38,6 +39,7 @@ namespace ProgressOnderwijsUtils.Html
             return retval;
         }
 
+        [Pure]
         public static IEnumerable<XAttribute> ToXAttributes(this HtmlAttribute[] htmlAttributes)
         {
             string className = null;
@@ -84,22 +86,26 @@ namespace ProgressOnderwijsUtils.Html
             Debug.Assert((IsXmlElement ? 1 : 0) + (IsTextContent ? 1 : 0) + (IsHtmlElement ? 1 : 0) + (IsCollectionOfFragments ? 1 : 0) == 1);
         }
 
+        [Pure]
         public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent, null, null, null);
 
+        [Pure]
         public static HtmlFragment HtmlElement(HtmlElement element)
             => new HtmlFragment(element.TagName, element.Attributes ?? HtmlAttributeHelpers.EmptyAttributes, element.ChildNodes, null);
 
+        [Pure]
         public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
             => new HtmlFragment(tagName, attributes ?? HtmlAttributeHelpers.EmptyAttributes, childNodes, null);
 
+        [Pure]
         public static HtmlFragment XmlElement(XElement xmlElement)
             => new HtmlFragment(null, null, null, xmlElement);
 
+        [Pure]
         public static HtmlFragment Fragment(HtmlFragment[] htmlEls)
             => new HtmlFragment(null, null, htmlEls, null);
 
         public static HtmlFragment Empty => default(HtmlFragment);
-
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
 
@@ -121,6 +127,7 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
+        [Pure]
         public HtmlFragment ToFragment() => this;
     }
 
@@ -161,6 +168,7 @@ namespace ProgressOnderwijsUtils.Html
         public static TExpression DataAttribute<TExpression>(this TExpression htmlTagExpr, string dataAttrName, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Attribute("data-" + dataAttrName, attrValue);
 
+        [Pure]
         public static TExpression Attributes<TExpression>(this TExpression htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
         {
@@ -170,13 +178,18 @@ namespace ProgressOnderwijsUtils.Html
             return htmlTagExpr;
         }
 
+        [Pure]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute attribute)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Attribute(attribute.Name, attribute.Value);
 
+        [Pure]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute? attributeOrNull)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
+        [Pure]
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
+
+        [Pure]
         public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
             => HtmlFragment.Fragment(htmlEls.Select(el => el.ToFragment()).ToArray());
@@ -200,6 +213,7 @@ namespace ProgressOnderwijsUtils.Html
 
     public interface IConvertibleToFragment
     {
+        [Pure]
         HtmlFragment ToFragment();
     }
 
@@ -227,7 +241,6 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlTag<TName> Content() => this;
 
         public static implicit operator HtmlFragment(HtmlTag<TName> tag) => HtmlFragment.HtmlElement(default(TName).TagName, tag.Attributes, tag.childNodes);
-
         public HtmlFragment ToFragment() => this;
 
         [Pure]
