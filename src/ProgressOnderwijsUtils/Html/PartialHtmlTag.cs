@@ -188,9 +188,6 @@ namespace ProgressOnderwijsUtils.Html
             where T : IConvertibleToFragment
             => HtmlFragment.Fragment(htmlEls.Select(el => el.ToFragment()).ToArray());
 
-        public static HtmlFragment Finish<TExpression>(this TExpression htmlTagExpr)
-            where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Content().Finish();
-
         internal static T[] AppendArrays<T>(T[] beginning, T[] end)
         {
             if (beginning == null) {
