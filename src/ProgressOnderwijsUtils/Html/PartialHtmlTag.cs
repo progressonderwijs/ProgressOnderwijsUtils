@@ -40,7 +40,16 @@ namespace ProgressOnderwijsUtils.Html
 
         public static IEnumerable<XAttribute> ToXAttributes(this HtmlAttribute[] htmlAttributes)
         {
-            return htmlAttributes.Select(htmlAttr => new XAttribute(htmlAttr.Name, htmlAttr.Value));
+            string className = null;
+            foreach (var htmlAttr in htmlAttributes) {
+                if (htmlAttr.Name == "class") {
+                    className = className == null ? htmlAttr.Value : className + " " + htmlAttr.Value;
+                }
+                yield return new XAttribute(htmlAttr.Name, htmlAttr.Value);
+            }
+            if (className != null) {
+                yield return new XAttribute("class", className);
+            }
         }
     }
 
@@ -90,7 +99,6 @@ namespace ProgressOnderwijsUtils.Html
             => new HtmlFragment(null, null, htmlEls, null);
 
         public static HtmlFragment Empty => default(HtmlFragment);
-
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
 
