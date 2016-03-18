@@ -220,7 +220,7 @@ namespace ProgressOnderwijsUtils.Html
             => new GeneralStartTag(TagName, Attributes.appendAttr(attrName, attrValue));
 
         [Pure]
-        public HtmlElement AddContent() => Content(null);
+        public HtmlElement Content() => Content(null);
 
         [Pure]
         public HtmlElement Content(params HtmlFragment[] content) => new HtmlElement(TagName, Attributes, content);
