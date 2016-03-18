@@ -10,6 +10,12 @@ namespace ProgressOnderwijsUtils.Html
     public struct HtmlAttribute
     {
         public string Name, Value;
+
+        public HtmlAttribute(string name, string value)
+        {
+            Name = name;
+            Value = value;
+        }
     }
 
     public interface IHtmlTagName
@@ -135,7 +141,6 @@ namespace ProgressOnderwijsUtils.Html
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
             => htmlTagExpr.withAttribute("data-" + dataAttrName, attrValue);
 
-        /// <summary>Creates an html data attribute.  E.g. setDataAttribute("foo", "bar") creates data-foo="bar". </summary>
         public static TExpression withAttributes<TExpression>(this TExpression htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
         {
@@ -144,6 +149,14 @@ namespace ProgressOnderwijsUtils.Html
             }
             return htmlTagExpr;
         }
+
+        public static TExpression withAttribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute attribute)
+            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
+            => htmlTagExpr.withAttribute(attribute.Name, attribute.Value);
+
+        public static TExpression withAttribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute? attributeOrNull)
+            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
+            => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.withAttribute(attributeOrNull.Value);
 
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
     }
@@ -169,7 +182,6 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public HtmlStartTag<TNamedTagType> withAttribute(string attrName, string attrValue)
             => attrValue == null ? this : new HtmlStartTag<TNamedTagType>((Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue));
-
 
         [Pure]
         public HtmlElement AddContent(params HtmlFragment[] content) => new HtmlElement(TagName, Attributes, content);
@@ -205,8 +217,10 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         public HtmlElement AddContent() => AddContent(null);
+
         [Pure]
         public HtmlElement AddContent(params HtmlFragment[] content) => new HtmlElement(TagName, Attributes, content);
+
         public static implicit operator HtmlFragment(GeneralStartTag startTag) => HtmlFragment.HtmlElement(startTag.TagName, startTag.Attributes, null);
     }
 }
