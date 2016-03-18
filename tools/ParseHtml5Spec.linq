@@ -38,7 +38,6 @@
   <Namespace>Progress.Test.CodeStyle</Namespace>
   <Namespace>Progress.Test.GenericTests</Namespace>
   <Namespace>Progress.Tools</Namespace>
-  <Namespace>Progress.Tools.ErrorHandling</Namespace>
   <Namespace>Progress.WebApp</Namespace>
   <Namespace>Progress.WebApp.Base</Namespace>
   <Namespace>Progress.WebFramework</Namespace>
@@ -168,7 +167,7 @@ using (var client = new HttpClient(new WebRequestHandler {
 
 	var elTagNameClasses = elements
 		.Select(el => $@"
-        public struct @{el.csName} : IHtmlTagName{
+        public struct {el.csName.ToUpper(CultureInfo.InvariantCulture)} : IHtmlTagName{
 	el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings()
 			} {{ public string TagName => ""{el.elementName}""; }}"
 );
@@ -183,7 +182,7 @@ using (var client = new HttpClient(new WebRequestHandler {
 		.Select(el => $@"
 
 {Regex.Replace(el.elementMetaData.ToString(SaveOptions.None),@"^|(?<=\n)","        ///")}
-		public static readonly HtmlStartTag<TagNames.@{el.csName}> _{el.csName} = new HtmlStartTag<TagNames.@{el.csName}>();"
+		public static readonly HtmlStartTag<TagNames.{el.csName.ToUpper(CultureInfo.InvariantCulture)}> _{el.csName} = new HtmlStartTag<TagNames.{el.csName.ToUpper(CultureInfo.InvariantCulture}>();"
 );
 	var tagsClass = $@"
 	public static class Tags
