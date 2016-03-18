@@ -65,6 +65,8 @@ namespace ProgressOnderwijsUtils.Html
         //      (without embeddedContent, without tagNameOrTextContent, without attributesWhenTag, ? childNodes)
         public bool IsCollectionOfFragments => embeddedContent == null && tagNameOrTextContent == null && attributesWhenTag == null;
 
+        public bool IsEmpty => attributesWhenTag == null && embeddedContent == null && childNodes == null && string.IsNullOrEmpty(tagNameOrTextContent);
+
         public HtmlFragment(string tagNameOrTextContent, HtmlAttribute[] attributesWhenTag, HtmlFragment[] childNodes, XElement embeddedContent)
         {
             this.tagNameOrTextContent = tagNameOrTextContent;
@@ -175,6 +177,9 @@ namespace ProgressOnderwijsUtils.Html
 
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
         public static HtmlFragment WrapInHtmlFragment(this IEnumerable<HtmlElement> htmlEls) => HtmlFragment.HtmlElements(htmlEls.Select(el => (HtmlFragment)el).ToArray());
+        public static HtmlFragment Finish<TExpression>(this TExpression htmlTagExpr)
+            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
+            => htmlTagExpr.Content().Finish();
     }
 
     public struct HtmlStartTag<TNamedTagType>
