@@ -46,6 +46,11 @@ namespace ProgressOnderwijsUtils.Html
 
     public struct HtmlFragment
     {
+        readonly string tagNameOrTextContent; //iff text or element node
+        readonly HtmlAttribute[] attributesWhenTag; // iff elementnode
+        readonly HtmlFragment[] childNodes; //only if element node or collection; null means "empty".
+        readonly XElement embeddedContent; //iff xml node
+
         //This is a union type of...
         // - An xml node
         //      (WITH embeddedContent, without tagNameOrTextContent, without attributesWhenTag, without childNodes)
@@ -59,10 +64,6 @@ namespace ProgressOnderwijsUtils.Html
         // - A collection of fragments
         //      (without embeddedContent, without tagNameOrTextContent, without attributesWhenTag, ? childNodes)
         public bool IsCollectionOfFragments => embeddedContent == null && tagNameOrTextContent == null && attributesWhenTag == null;
-        readonly string tagNameOrTextContent; //iff text or element node
-        readonly HtmlAttribute[] attributesWhenTag; // iff elementnode
-        readonly HtmlFragment[] childNodes; //only if element node or collection; null means "empty".
-        readonly XElement embeddedContent; //iff xml node
 
         public HtmlFragment(string tagNameOrTextContent, HtmlAttribute[] attributesWhenTag, HtmlFragment[] childNodes, XElement embeddedContent)
         {
