@@ -64,7 +64,6 @@ namespace ProgressOnderwijsUtils.Html
         // - A collection of fragments
         //      (without embeddedContent, without tagNameOrTextContent, without attributesWhenTag, ? childNodes)
         public bool IsCollectionOfFragments => embeddedContent == null && tagNameOrTextContent == null && attributesWhenTag == null;
-
         public bool IsEmpty => attributesWhenTag == null && embeddedContent == null && childNodes == null && string.IsNullOrEmpty(tagNameOrTextContent);
 
         public HtmlFragment(string tagNameOrTextContent, HtmlAttribute[] attributesWhenTag, HtmlFragment[] childNodes, XElement embeddedContent)
@@ -87,8 +86,10 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment XmlElement(XElement xmlElement)
             => new HtmlFragment(null, null, null, xmlElement);
 
-        public static HtmlFragment HtmlElements(HtmlFragment[] htmlEls)
+        public static HtmlFragment Fragment(HtmlFragment[] htmlEls)
             => new HtmlFragment(null, null, htmlEls, null);
+
+        public static HtmlFragment Empty => default(HtmlFragment);
 
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
@@ -176,7 +177,8 @@ namespace ProgressOnderwijsUtils.Html
             => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
-        public static HtmlFragment WrapInHtmlFragment(this IEnumerable<HtmlElement> htmlEls) => HtmlFragment.HtmlElements(htmlEls.Select(el => (HtmlFragment)el).ToArray());
+        public static HtmlFragment WrapInHtmlFragment(this IEnumerable<HtmlElement> htmlEls) => HtmlFragment.Fragment(htmlEls.Select(el => (HtmlFragment)el).ToArray());
+
         public static HtmlFragment Finish<TExpression>(this TExpression htmlTagExpr)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
             => htmlTagExpr.Content().Finish();
@@ -186,7 +188,6 @@ namespace ProgressOnderwijsUtils.Html
         : IFluentHtmlTagExpression<HtmlStartTag<TNamedTagType>>
         where TNamedTagType : struct, IHtmlTagName
     {
-        string TagName => default(TNamedTagType).TagName;
         HtmlAttribute[] Attributes { get; }
 
         HtmlStartTag(HtmlAttribute[] attributes)
@@ -199,12 +200,12 @@ namespace ProgressOnderwijsUtils.Html
             => attrValue == null ? this : new HtmlStartTag<TNamedTagType>((Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue));
 
         [Pure]
-        public HtmlElement Content(params HtmlFragment[] content) => new HtmlElement(TagName, Attributes, content);
+        public HtmlElement Content(params HtmlFragment[] content) => new HtmlElement(default(TNamedTagType).TagName, Attributes, content);
 
         [Pure]
         public HtmlElement Content() => Content(default(HtmlFragment[]));
 
-        public static implicit operator HtmlFragment(HtmlStartTag<TNamedTagType> startTag) => HtmlFragment.HtmlElement(startTag.TagName, startTag.Attributes, null);
+        public static implicit operator HtmlFragment(HtmlStartTag<TNamedTagType> startTag) => HtmlFragment.HtmlElement(default(TNamedTagType).TagName, startTag.Attributes, null);
 
         [Pure]
         public HtmlElement Content(IEnumerable<HtmlElement> menuItemLiElements) => Content(menuItemLiElements.Select(el => (HtmlFragment)el).ToArray());
