@@ -203,7 +203,7 @@ namespace ProgressOnderwijsUtils.Html
     }
 
     public struct HtmlTag<TName>
-        : IFluentHtmlTagExpression<HtmlTag<TName>>, IConvertibleToFragment
+        : IFluentHtmlTagExpression<HtmlTag<TName>>
         where TName : struct, IHtmlTagName
     {
         readonly HtmlAttribute[] Attributes;
