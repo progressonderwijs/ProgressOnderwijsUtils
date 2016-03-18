@@ -3,8 +3,8 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using ApprovalTests;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.ErrorHandling;
-using ProgressOnderwijsUtils.Test;
+using Progress.Business.Test;
+using Progress.Business.Tools;
 
 namespace ProgressOnderwijsUtilsTests
 {

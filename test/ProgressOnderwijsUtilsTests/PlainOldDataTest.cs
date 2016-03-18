@@ -6,8 +6,8 @@ using NUnit.Framework;
 using Progress.Business.Bsa.BsaDtos;
 using Progress.Business.DomainUnits;
 using Progress.Business.Inschrijvingen.Studielink;
+using Progress.Business.Test;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 using TheJoyOfCode.QualityTools;
 
 namespace ProgressOnderwijsUtilsTests

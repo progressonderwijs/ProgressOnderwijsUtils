@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business;
 using Progress.Business.Data;
+using Progress.Business.DomainUnits;
+using Progress.Business.Filters;
 using Progress.Business.Organisaties;
 using Progress.Business.Test;
+using Progress.Business.Text;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests

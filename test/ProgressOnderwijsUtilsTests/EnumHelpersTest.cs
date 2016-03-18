@@ -3,9 +3,11 @@ using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using NUnit.Framework;
+using Progress.Business;
 using Progress.Business.DomainUnits;
+using Progress.Business.Test;
+using Progress.Business.Text;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {

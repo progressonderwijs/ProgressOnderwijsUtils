@@ -1,5 +1,6 @@
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business.Filters;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests

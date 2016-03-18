@@ -1,6 +1,6 @@
 ﻿using ExpressionToCodeLib;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.WebSupport;
+using Progress.WebFramework.Tools;
 
 namespace ProgressOnderwijsUtilsTests
 {

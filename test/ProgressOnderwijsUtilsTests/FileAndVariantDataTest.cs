@@ -1,8 +1,8 @@
 ﻿using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Business.Data;
-using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
+using Progress.Business.GenericEdit;
+using Progress.Business.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {

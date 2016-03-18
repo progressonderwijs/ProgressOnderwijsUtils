@@ -2,7 +2,6 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {

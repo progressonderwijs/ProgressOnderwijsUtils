@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business.Test;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 using ProgressOnderwijsUtils.WebSupport;
 
 namespace ProgressOnderwijsUtilsTests
