@@ -100,7 +100,7 @@ namespace ProgressOnderwijsUtils.Html
             => new HtmlFragment(null, null, null, xmlElement);
 
         [Pure]
-        public static HtmlFragment Fragment(HtmlFragment[] htmlEls)
+        public static HtmlFragment Fragment(params HtmlFragment[] htmlEls)
             => new HtmlFragment(null, null, htmlEls, null);
 
         public static HtmlFragment Empty => default(HtmlFragment);
