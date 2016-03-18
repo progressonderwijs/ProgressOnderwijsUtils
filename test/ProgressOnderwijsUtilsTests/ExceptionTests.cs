@@ -1,7 +1,10 @@
 ﻿using System;
 using NUnit.Framework;
+using Progress.Business.Data.GenericEdit;
+using Progress.Business.Test;
+using Progress.Business.Text;
+using Progress.Business.Tools;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {

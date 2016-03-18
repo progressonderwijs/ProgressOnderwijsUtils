@@ -2,8 +2,7 @@
 using Progress.Business;
 using Progress.Business.DomainUnits;
 using Progress.Business.Test;
-using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
+using Progress.Business.Text;
 
 namespace ProgressOnderwijsUtilsTests
 {
