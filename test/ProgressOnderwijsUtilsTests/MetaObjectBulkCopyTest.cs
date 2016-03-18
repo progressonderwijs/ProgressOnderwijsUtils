@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Progress.Business;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests

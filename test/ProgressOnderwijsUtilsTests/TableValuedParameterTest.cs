@@ -10,10 +10,11 @@ using NUnit.Framework;
 using Progress.Business;
 using Progress.Business.Data;
 using Progress.Business.DomainUnits;
+using Progress.Business.GenericEdit;
 using Progress.Business.Test;
+using Progress.Business.Text;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Internal;
-using ProgressOnderwijsUtils.Test;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests

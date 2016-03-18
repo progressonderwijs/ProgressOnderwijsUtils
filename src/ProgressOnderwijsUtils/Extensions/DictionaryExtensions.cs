@@ -5,7 +5,6 @@ using System.Linq;
 using JetBrains.Annotations;
 using MoreLinq;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {

@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Threading;
 using NUnit.Framework;
+using Progress.Business.Test;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {

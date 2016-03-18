@@ -7,7 +7,6 @@ using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {

@@ -3,7 +3,6 @@ using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Business.AppVersion;
 using Progress.Business.Data;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {

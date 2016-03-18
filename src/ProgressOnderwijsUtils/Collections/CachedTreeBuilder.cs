@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System;
-using System.Linq;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
