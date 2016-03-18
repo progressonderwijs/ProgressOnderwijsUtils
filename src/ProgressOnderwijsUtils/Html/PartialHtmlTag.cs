@@ -173,6 +173,12 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
+        public static TExpression Contents<TExpression, TContent>(this TExpression htmlTagExpr, IEnumerable<TContent> items)
+            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
+            where TContent : IConvertibleToFragment
+            => htmlTagExpr.Content(items.Select(el => el.ToFragment()).ToArray());
+
+        [Pure]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute attribute)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Attribute(attribute.Name, attribute.Value);
 
@@ -233,10 +239,5 @@ namespace ProgressOnderwijsUtils.Html
 
         public static implicit operator HtmlFragment(HtmlTag<TName> tag) => HtmlFragment.HtmlElement(default(TName).TagName, tag.Attributes, tag.childNodes);
         public HtmlFragment ToFragment() => this;
-
-        [Pure]
-        public HtmlTag<TName> Contents<T>(IEnumerable<T> items)
-            where T : IConvertibleToFragment
-            => Content(items.Select(el => el.ToFragment()).ToArray());
     }
 }
