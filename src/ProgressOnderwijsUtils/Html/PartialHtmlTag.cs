@@ -133,9 +133,7 @@ namespace ProgressOnderwijsUtils.Html
             if (ChildNodes == null || content == null) {
                 return new HtmlElement(TagName, Attributes, ChildNodes ?? content);
             }
-            var newChildNodes = new HtmlFragment[ChildNodes.Length + content.Length];
-            Array.Copy(ChildNodes, 0, newChildNodes, 0, ChildNodes.Length);
-            Array.Copy(content, 0, newChildNodes, ChildNodes.Length, content.Length);
+            var newChildNodes = HtmlTagHelpers.AppendArrays(ChildNodes, content);
             return new HtmlElement(TagName, Attributes, newChildNodes);
         }
 
@@ -157,15 +155,14 @@ namespace ProgressOnderwijsUtils.Html
         TExpression Attribute(string attrName, string attrValue);
 
         [Pure]
-        HtmlElement Content(params HtmlFragment[] content);
+        TExpression Content(params HtmlFragment[] content);
     }
 
     public static class HtmlTagHelpers
     {
         /// <summary>Creates an html data attribute.  E.g. setDataAttribute("foo", "bar") creates data-foo="bar". </summary>
         public static TExpression DataAttribute<TExpression>(this TExpression htmlTagExpr, string dataAttrName, string attrValue)
-            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.Attribute("data-" + dataAttrName, attrValue);
+            where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Attribute("data-" + dataAttrName, attrValue);
 
         public static TExpression Attributes<TExpression>(this TExpression htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
@@ -177,45 +174,57 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute attribute)
-            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.Attribute(attribute.Name, attribute.Value);
+            where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Attribute(attribute.Name, attribute.Value);
 
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute? attributeOrNull)
-            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
+            where TExpression : struct, IFluentHtmlTagExpression<TExpression> => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
         public static HtmlFragment WrapInHtmlFragment(this IEnumerable<HtmlElement> htmlEls) => HtmlFragment.Fragment(htmlEls.Select(el => (HtmlFragment)el).ToArray());
 
         public static HtmlFragment Finish<TExpression>(this TExpression htmlTagExpr)
-            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
-            => htmlTagExpr.Content().Finish();
+            where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Content().Finish();
+
+        internal static T[] AppendArrays<T>(T[] beginning, T[] end)
+        {
+            if (beginning == null) {
+                return end;
+            } else if (end == null) {
+                return beginning;
+            }
+            var newChildNodes = new T[beginning.Length + end.Length];
+            Array.Copy(beginning, 0, newChildNodes, 0, beginning.Length);
+            Array.Copy(end, 0, newChildNodes, beginning.Length, end.Length);
+            return newChildNodes;
+        }
     }
 
-    public struct HtmlStartTag<TNamedTagType>
-        : IFluentHtmlTagExpression<HtmlStartTag<TNamedTagType>>
-        where TNamedTagType : struct, IHtmlTagName
+    public struct HtmlTag<TName>
+        : IFluentHtmlTagExpression<HtmlTag<TName>>
+        where TName : struct, IHtmlTagName
     {
-        HtmlAttribute[] Attributes { get; }
+        readonly HtmlAttribute[] Attributes;
+        readonly HtmlFragment[] childNodes;
 
-        HtmlStartTag(HtmlAttribute[] attributes)
+        HtmlTag(HtmlAttribute[] attributes, HtmlFragment[] childNodes)
         {
             Attributes = attributes;
+            this.childNodes = childNodes;
         }
 
         [Pure]
-        public HtmlStartTag<TNamedTagType> Attribute(string attrName, string attrValue)
-            => attrValue == null ? this : new HtmlStartTag<TNamedTagType>((Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue));
+        public HtmlTag<TName> Attribute(string attrName, string attrValue)
+            => attrValue == null ? this : new HtmlTag<TName>((Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue), childNodes);
 
         [Pure]
-        public HtmlElement Content(params HtmlFragment[] content) => new HtmlElement(default(TNamedTagType).TagName, Attributes, content);
+        public HtmlTag<TName> Content(params HtmlFragment[] content) => new HtmlTag<TName>(Attributes, HtmlTagHelpers.AppendArrays(childNodes, content));
 
         [Pure]
-        public HtmlElement Content() => Content(default(HtmlFragment[]));
+        public HtmlTag<TName> Content() => this;
 
-        public static implicit operator HtmlFragment(HtmlStartTag<TNamedTagType> startTag) => HtmlFragment.HtmlElement(default(TNamedTagType).TagName, startTag.Attributes, null);
+        public static implicit operator HtmlFragment(HtmlTag<TName> tag) => HtmlFragment.HtmlElement(default(TName).TagName, tag.Attributes, tag.childNodes);
 
         [Pure]
-        public HtmlElement Content(IEnumerable<HtmlElement> menuItemLiElements) => Content(menuItemLiElements.Select(el => (HtmlFragment)el).ToArray());
+        public HtmlTag<TName> Content(IEnumerable<HtmlElement> menuItemLiElements) => Content(menuItemLiElements.Select(el => (HtmlFragment)el).ToArray());
     }
 }

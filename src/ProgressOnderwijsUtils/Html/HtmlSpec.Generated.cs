@@ -181,347 +181,347 @@
         public static TExpression _translate<TExpression>(this TExpression htmlTagExpr, string attrValue)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
             => htmlTagExpr.Attribute("translate", attrValue);
-        public static HtmlStartTag<TTagType> _href<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_href, IHtmlTagName
+        public static HtmlTag<TName> _href<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_href, IHtmlTagName
             => htmlTagExpr.Attribute("href", attrValue);
-        public static HtmlStartTag<TTagType> _target<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_target, IHtmlTagName
+        public static HtmlTag<TName> _target<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_target, IHtmlTagName
             => htmlTagExpr.Attribute("target", attrValue);
-        public static HtmlStartTag<TTagType> _download<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_download, IHtmlTagName
+        public static HtmlTag<TName> _download<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_download, IHtmlTagName
             => htmlTagExpr.Attribute("download", attrValue);
-        public static HtmlStartTag<TTagType> _ping<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_ping, IHtmlTagName
+        public static HtmlTag<TName> _ping<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_ping, IHtmlTagName
             => htmlTagExpr.Attribute("ping", attrValue);
-        public static HtmlStartTag<TTagType> _rel<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_rel, IHtmlTagName
+        public static HtmlTag<TName> _rel<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_rel, IHtmlTagName
             => htmlTagExpr.Attribute("rel", attrValue);
-        public static HtmlStartTag<TTagType> _hreflang<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_hreflang, IHtmlTagName
+        public static HtmlTag<TName> _hreflang<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_hreflang, IHtmlTagName
             => htmlTagExpr.Attribute("hreflang", attrValue);
-        public static HtmlStartTag<TTagType> _type<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_type, IHtmlTagName
+        public static HtmlTag<TName> _type<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_type, IHtmlTagName
             => htmlTagExpr.Attribute("type", attrValue);
-        public static HtmlStartTag<TTagType> _alt<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_alt, IHtmlTagName
+        public static HtmlTag<TName> _alt<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_alt, IHtmlTagName
             => htmlTagExpr.Attribute("alt", attrValue);
-        public static HtmlStartTag<TTagType> _coords<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_coords, IHtmlTagName
+        public static HtmlTag<TName> _coords<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_coords, IHtmlTagName
             => htmlTagExpr.Attribute("coords", attrValue);
-        public static HtmlStartTag<TTagType> _shape<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_shape, IHtmlTagName
+        public static HtmlTag<TName> _shape<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_shape, IHtmlTagName
             => htmlTagExpr.Attribute("shape", attrValue);
-        public static HtmlStartTag<TTagType> _src<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_src, IHtmlTagName
+        public static HtmlTag<TName> _src<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_src, IHtmlTagName
             => htmlTagExpr.Attribute("src", attrValue);
-        public static HtmlStartTag<TTagType> _crossorigin<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_crossorigin, IHtmlTagName
+        public static HtmlTag<TName> _crossorigin<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_crossorigin, IHtmlTagName
             => htmlTagExpr.Attribute("crossorigin", attrValue);
-        public static HtmlStartTag<TTagType> _preload<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_preload, IHtmlTagName
+        public static HtmlTag<TName> _preload<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_preload, IHtmlTagName
             => htmlTagExpr.Attribute("preload", attrValue);
-        public static HtmlStartTag<TTagType> _autoplay<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_autoplay, IHtmlTagName
+        public static HtmlTag<TName> _autoplay<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_autoplay, IHtmlTagName
             => htmlTagExpr.Attribute("autoplay", attrValue);
-        public static HtmlStartTag<TTagType> _mediagroup<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_mediagroup, IHtmlTagName
+        public static HtmlTag<TName> _mediagroup<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_mediagroup, IHtmlTagName
             => htmlTagExpr.Attribute("mediagroup", attrValue);
-        public static HtmlStartTag<TTagType> _loop<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_loop, IHtmlTagName
+        public static HtmlTag<TName> _loop<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_loop, IHtmlTagName
             => htmlTagExpr.Attribute("loop", attrValue);
-        public static HtmlStartTag<TTagType> _muted<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_muted, IHtmlTagName
+        public static HtmlTag<TName> _muted<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_muted, IHtmlTagName
             => htmlTagExpr.Attribute("muted", attrValue);
-        public static HtmlStartTag<TTagType> _controls<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_controls, IHtmlTagName
+        public static HtmlTag<TName> _controls<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_controls, IHtmlTagName
             => htmlTagExpr.Attribute("controls", attrValue);
-        public static HtmlStartTag<TTagType> _cite<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_cite, IHtmlTagName
+        public static HtmlTag<TName> _cite<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_cite, IHtmlTagName
             => htmlTagExpr.Attribute("cite", attrValue);
-        public static HtmlStartTag<TTagType> _onafterprint<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onafterprint, IHtmlTagName
+        public static HtmlTag<TName> _onafterprint<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onafterprint, IHtmlTagName
             => htmlTagExpr.Attribute("onafterprint", attrValue);
-        public static HtmlStartTag<TTagType> _onbeforeprint<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onbeforeprint, IHtmlTagName
+        public static HtmlTag<TName> _onbeforeprint<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onbeforeprint, IHtmlTagName
             => htmlTagExpr.Attribute("onbeforeprint", attrValue);
-        public static HtmlStartTag<TTagType> _onbeforeunload<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onbeforeunload, IHtmlTagName
+        public static HtmlTag<TName> _onbeforeunload<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onbeforeunload, IHtmlTagName
             => htmlTagExpr.Attribute("onbeforeunload", attrValue);
-        public static HtmlStartTag<TTagType> _onhashchange<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onhashchange, IHtmlTagName
+        public static HtmlTag<TName> _onhashchange<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onhashchange, IHtmlTagName
             => htmlTagExpr.Attribute("onhashchange", attrValue);
-        public static HtmlStartTag<TTagType> _onlanguagechange<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onlanguagechange, IHtmlTagName
+        public static HtmlTag<TName> _onlanguagechange<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onlanguagechange, IHtmlTagName
             => htmlTagExpr.Attribute("onlanguagechange", attrValue);
-        public static HtmlStartTag<TTagType> _onmessage<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onmessage, IHtmlTagName
+        public static HtmlTag<TName> _onmessage<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onmessage, IHtmlTagName
             => htmlTagExpr.Attribute("onmessage", attrValue);
-        public static HtmlStartTag<TTagType> _onoffline<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onoffline, IHtmlTagName
+        public static HtmlTag<TName> _onoffline<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onoffline, IHtmlTagName
             => htmlTagExpr.Attribute("onoffline", attrValue);
-        public static HtmlStartTag<TTagType> _ononline<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_ononline, IHtmlTagName
+        public static HtmlTag<TName> _ononline<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_ononline, IHtmlTagName
             => htmlTagExpr.Attribute("ononline", attrValue);
-        public static HtmlStartTag<TTagType> _onpagehide<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onpagehide, IHtmlTagName
+        public static HtmlTag<TName> _onpagehide<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onpagehide, IHtmlTagName
             => htmlTagExpr.Attribute("onpagehide", attrValue);
-        public static HtmlStartTag<TTagType> _onpageshow<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onpageshow, IHtmlTagName
+        public static HtmlTag<TName> _onpageshow<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onpageshow, IHtmlTagName
             => htmlTagExpr.Attribute("onpageshow", attrValue);
-        public static HtmlStartTag<TTagType> _onpopstate<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onpopstate, IHtmlTagName
+        public static HtmlTag<TName> _onpopstate<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onpopstate, IHtmlTagName
             => htmlTagExpr.Attribute("onpopstate", attrValue);
-        public static HtmlStartTag<TTagType> _onrejectionhandled<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onrejectionhandled, IHtmlTagName
+        public static HtmlTag<TName> _onrejectionhandled<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onrejectionhandled, IHtmlTagName
             => htmlTagExpr.Attribute("onrejectionhandled", attrValue);
-        public static HtmlStartTag<TTagType> _onstorage<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onstorage, IHtmlTagName
+        public static HtmlTag<TName> _onstorage<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onstorage, IHtmlTagName
             => htmlTagExpr.Attribute("onstorage", attrValue);
-        public static HtmlStartTag<TTagType> _onunhandledrejection<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onunhandledrejection, IHtmlTagName
+        public static HtmlTag<TName> _onunhandledrejection<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onunhandledrejection, IHtmlTagName
             => htmlTagExpr.Attribute("onunhandledrejection", attrValue);
-        public static HtmlStartTag<TTagType> _onunload<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_onunload, IHtmlTagName
+        public static HtmlTag<TName> _onunload<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_onunload, IHtmlTagName
             => htmlTagExpr.Attribute("onunload", attrValue);
-        public static HtmlStartTag<TTagType> _autofocus<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_autofocus, IHtmlTagName
+        public static HtmlTag<TName> _autofocus<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_autofocus, IHtmlTagName
             => htmlTagExpr.Attribute("autofocus", attrValue);
-        public static HtmlStartTag<TTagType> _disabled<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_disabled, IHtmlTagName
+        public static HtmlTag<TName> _disabled<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_disabled, IHtmlTagName
             => htmlTagExpr.Attribute("disabled", attrValue);
-        public static HtmlStartTag<TTagType> _form<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_form, IHtmlTagName
+        public static HtmlTag<TName> _form<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_form, IHtmlTagName
             => htmlTagExpr.Attribute("form", attrValue);
-        public static HtmlStartTag<TTagType> _formaction<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_formaction, IHtmlTagName
+        public static HtmlTag<TName> _formaction<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_formaction, IHtmlTagName
             => htmlTagExpr.Attribute("formaction", attrValue);
-        public static HtmlStartTag<TTagType> _formenctype<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_formenctype, IHtmlTagName
+        public static HtmlTag<TName> _formenctype<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_formenctype, IHtmlTagName
             => htmlTagExpr.Attribute("formenctype", attrValue);
-        public static HtmlStartTag<TTagType> _formmethod<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_formmethod, IHtmlTagName
+        public static HtmlTag<TName> _formmethod<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_formmethod, IHtmlTagName
             => htmlTagExpr.Attribute("formmethod", attrValue);
-        public static HtmlStartTag<TTagType> _formnovalidate<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_formnovalidate, IHtmlTagName
+        public static HtmlTag<TName> _formnovalidate<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_formnovalidate, IHtmlTagName
             => htmlTagExpr.Attribute("formnovalidate", attrValue);
-        public static HtmlStartTag<TTagType> _formtarget<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_formtarget, IHtmlTagName
+        public static HtmlTag<TName> _formtarget<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_formtarget, IHtmlTagName
             => htmlTagExpr.Attribute("formtarget", attrValue);
-        public static HtmlStartTag<TTagType> _menu<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_menu, IHtmlTagName
+        public static HtmlTag<TName> _menu<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_menu, IHtmlTagName
             => htmlTagExpr.Attribute("menu", attrValue);
-        public static HtmlStartTag<TTagType> _name<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_name, IHtmlTagName
+        public static HtmlTag<TName> _name<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_name, IHtmlTagName
             => htmlTagExpr.Attribute("name", attrValue);
-        public static HtmlStartTag<TTagType> _value<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_value, IHtmlTagName
+        public static HtmlTag<TName> _value<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_value, IHtmlTagName
             => htmlTagExpr.Attribute("value", attrValue);
-        public static HtmlStartTag<TTagType> _width<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_width, IHtmlTagName
+        public static HtmlTag<TName> _width<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_width, IHtmlTagName
             => htmlTagExpr.Attribute("width", attrValue);
-        public static HtmlStartTag<TTagType> _height<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_height, IHtmlTagName
+        public static HtmlTag<TName> _height<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_height, IHtmlTagName
             => htmlTagExpr.Attribute("height", attrValue);
-        public static HtmlStartTag<TTagType> _span<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_span, IHtmlTagName
+        public static HtmlTag<TName> _span<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_span, IHtmlTagName
             => htmlTagExpr.Attribute("span", attrValue);
-        public static HtmlStartTag<TTagType> _datetime<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_datetime, IHtmlTagName
+        public static HtmlTag<TName> _datetime<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_datetime, IHtmlTagName
             => htmlTagExpr.Attribute("datetime", attrValue);
-        public static HtmlStartTag<TTagType> _open<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_open, IHtmlTagName
+        public static HtmlTag<TName> _open<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_open, IHtmlTagName
             => htmlTagExpr.Attribute("open", attrValue);
-        public static HtmlStartTag<TTagType> _accept_charset<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_accept_charset, IHtmlTagName
+        public static HtmlTag<TName> _accept_charset<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_accept_charset, IHtmlTagName
             => htmlTagExpr.Attribute("accept-charset", attrValue);
-        public static HtmlStartTag<TTagType> _action<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_action, IHtmlTagName
+        public static HtmlTag<TName> _action<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_action, IHtmlTagName
             => htmlTagExpr.Attribute("action", attrValue);
-        public static HtmlStartTag<TTagType> _autocomplete<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_autocomplete, IHtmlTagName
+        public static HtmlTag<TName> _autocomplete<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_autocomplete, IHtmlTagName
             => htmlTagExpr.Attribute("autocomplete", attrValue);
-        public static HtmlStartTag<TTagType> _enctype<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_enctype, IHtmlTagName
+        public static HtmlTag<TName> _enctype<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_enctype, IHtmlTagName
             => htmlTagExpr.Attribute("enctype", attrValue);
-        public static HtmlStartTag<TTagType> _method<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_method, IHtmlTagName
+        public static HtmlTag<TName> _method<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_method, IHtmlTagName
             => htmlTagExpr.Attribute("method", attrValue);
-        public static HtmlStartTag<TTagType> _novalidate<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_novalidate, IHtmlTagName
+        public static HtmlTag<TName> _novalidate<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_novalidate, IHtmlTagName
             => htmlTagExpr.Attribute("novalidate", attrValue);
-        public static HtmlStartTag<TTagType> _manifest<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_manifest, IHtmlTagName
+        public static HtmlTag<TName> _manifest<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_manifest, IHtmlTagName
             => htmlTagExpr.Attribute("manifest", attrValue);
-        public static HtmlStartTag<TTagType> _srcdoc<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_srcdoc, IHtmlTagName
+        public static HtmlTag<TName> _srcdoc<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_srcdoc, IHtmlTagName
             => htmlTagExpr.Attribute("srcdoc", attrValue);
-        public static HtmlStartTag<TTagType> _sandbox<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_sandbox, IHtmlTagName
+        public static HtmlTag<TName> _sandbox<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_sandbox, IHtmlTagName
             => htmlTagExpr.Attribute("sandbox", attrValue);
-        public static HtmlStartTag<TTagType> _allowfullscreen<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_allowfullscreen, IHtmlTagName
+        public static HtmlTag<TName> _allowfullscreen<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_allowfullscreen, IHtmlTagName
             => htmlTagExpr.Attribute("allowfullscreen", attrValue);
-        public static HtmlStartTag<TTagType> _srcset<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_srcset, IHtmlTagName
+        public static HtmlTag<TName> _srcset<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_srcset, IHtmlTagName
             => htmlTagExpr.Attribute("srcset", attrValue);
-        public static HtmlStartTag<TTagType> _usemap<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_usemap, IHtmlTagName
+        public static HtmlTag<TName> _usemap<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_usemap, IHtmlTagName
             => htmlTagExpr.Attribute("usemap", attrValue);
-        public static HtmlStartTag<TTagType> _ismap<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_ismap, IHtmlTagName
+        public static HtmlTag<TName> _ismap<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_ismap, IHtmlTagName
             => htmlTagExpr.Attribute("ismap", attrValue);
-        public static HtmlStartTag<TTagType> _accept<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_accept, IHtmlTagName
+        public static HtmlTag<TName> _accept<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_accept, IHtmlTagName
             => htmlTagExpr.Attribute("accept", attrValue);
-        public static HtmlStartTag<TTagType> _checked<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_checked, IHtmlTagName
+        public static HtmlTag<TName> _checked<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_checked, IHtmlTagName
             => htmlTagExpr.Attribute("checked", attrValue);
-        public static HtmlStartTag<TTagType> _dirname<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_dirname, IHtmlTagName
+        public static HtmlTag<TName> _dirname<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_dirname, IHtmlTagName
             => htmlTagExpr.Attribute("dirname", attrValue);
-        public static HtmlStartTag<TTagType> _inputmode<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_inputmode, IHtmlTagName
+        public static HtmlTag<TName> _inputmode<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_inputmode, IHtmlTagName
             => htmlTagExpr.Attribute("inputmode", attrValue);
-        public static HtmlStartTag<TTagType> _list<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_list, IHtmlTagName
+        public static HtmlTag<TName> _list<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_list, IHtmlTagName
             => htmlTagExpr.Attribute("list", attrValue);
-        public static HtmlStartTag<TTagType> _max<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_max, IHtmlTagName
+        public static HtmlTag<TName> _max<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_max, IHtmlTagName
             => htmlTagExpr.Attribute("max", attrValue);
-        public static HtmlStartTag<TTagType> _maxlength<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_maxlength, IHtmlTagName
+        public static HtmlTag<TName> _maxlength<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_maxlength, IHtmlTagName
             => htmlTagExpr.Attribute("maxlength", attrValue);
-        public static HtmlStartTag<TTagType> _min<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_min, IHtmlTagName
+        public static HtmlTag<TName> _min<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_min, IHtmlTagName
             => htmlTagExpr.Attribute("min", attrValue);
-        public static HtmlStartTag<TTagType> _minlength<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_minlength, IHtmlTagName
+        public static HtmlTag<TName> _minlength<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_minlength, IHtmlTagName
             => htmlTagExpr.Attribute("minlength", attrValue);
-        public static HtmlStartTag<TTagType> _multiple<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_multiple, IHtmlTagName
+        public static HtmlTag<TName> _multiple<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_multiple, IHtmlTagName
             => htmlTagExpr.Attribute("multiple", attrValue);
-        public static HtmlStartTag<TTagType> _pattern<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_pattern, IHtmlTagName
+        public static HtmlTag<TName> _pattern<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_pattern, IHtmlTagName
             => htmlTagExpr.Attribute("pattern", attrValue);
-        public static HtmlStartTag<TTagType> _placeholder<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_placeholder, IHtmlTagName
+        public static HtmlTag<TName> _placeholder<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_placeholder, IHtmlTagName
             => htmlTagExpr.Attribute("placeholder", attrValue);
-        public static HtmlStartTag<TTagType> _readonly<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_readonly, IHtmlTagName
+        public static HtmlTag<TName> _readonly<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_readonly, IHtmlTagName
             => htmlTagExpr.Attribute("readonly", attrValue);
-        public static HtmlStartTag<TTagType> _required<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_required, IHtmlTagName
+        public static HtmlTag<TName> _required<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_required, IHtmlTagName
             => htmlTagExpr.Attribute("required", attrValue);
-        public static HtmlStartTag<TTagType> _size<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_size, IHtmlTagName
+        public static HtmlTag<TName> _size<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_size, IHtmlTagName
             => htmlTagExpr.Attribute("size", attrValue);
-        public static HtmlStartTag<TTagType> _step<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_step, IHtmlTagName
+        public static HtmlTag<TName> _step<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_step, IHtmlTagName
             => htmlTagExpr.Attribute("step", attrValue);
-        public static HtmlStartTag<TTagType> _challenge<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_challenge, IHtmlTagName
+        public static HtmlTag<TName> _challenge<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_challenge, IHtmlTagName
             => htmlTagExpr.Attribute("challenge", attrValue);
-        public static HtmlStartTag<TTagType> _keytype<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_keytype, IHtmlTagName
+        public static HtmlTag<TName> _keytype<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_keytype, IHtmlTagName
             => htmlTagExpr.Attribute("keytype", attrValue);
-        public static HtmlStartTag<TTagType> _for<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_for, IHtmlTagName
+        public static HtmlTag<TName> _for<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_for, IHtmlTagName
             => htmlTagExpr.Attribute("for", attrValue);
-        public static HtmlStartTag<TTagType> _media<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_media, IHtmlTagName
+        public static HtmlTag<TName> _media<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_media, IHtmlTagName
             => htmlTagExpr.Attribute("media", attrValue);
-        public static HtmlStartTag<TTagType> _sizes<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_sizes, IHtmlTagName
+        public static HtmlTag<TName> _sizes<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_sizes, IHtmlTagName
             => htmlTagExpr.Attribute("sizes", attrValue);
-        public static HtmlStartTag<TTagType> _label<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_label, IHtmlTagName
+        public static HtmlTag<TName> _label<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_label, IHtmlTagName
             => htmlTagExpr.Attribute("label", attrValue);
-        public static HtmlStartTag<TTagType> _icon<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_icon, IHtmlTagName
+        public static HtmlTag<TName> _icon<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_icon, IHtmlTagName
             => htmlTagExpr.Attribute("icon", attrValue);
-        public static HtmlStartTag<TTagType> _radiogroup<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_radiogroup, IHtmlTagName
+        public static HtmlTag<TName> _radiogroup<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_radiogroup, IHtmlTagName
             => htmlTagExpr.Attribute("radiogroup", attrValue);
-        public static HtmlStartTag<TTagType> _default<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_default, IHtmlTagName
+        public static HtmlTag<TName> _default<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_default, IHtmlTagName
             => htmlTagExpr.Attribute("default", attrValue);
-        public static HtmlStartTag<TTagType> _http_equiv<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_http_equiv, IHtmlTagName
+        public static HtmlTag<TName> _http_equiv<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_http_equiv, IHtmlTagName
             => htmlTagExpr.Attribute("http-equiv", attrValue);
-        public static HtmlStartTag<TTagType> _content<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_content, IHtmlTagName
+        public static HtmlTag<TName> _content<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_content, IHtmlTagName
             => htmlTagExpr.Attribute("content", attrValue);
-        public static HtmlStartTag<TTagType> _charset<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_charset, IHtmlTagName
+        public static HtmlTag<TName> _charset<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_charset, IHtmlTagName
             => htmlTagExpr.Attribute("charset", attrValue);
-        public static HtmlStartTag<TTagType> _low<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_low, IHtmlTagName
+        public static HtmlTag<TName> _low<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_low, IHtmlTagName
             => htmlTagExpr.Attribute("low", attrValue);
-        public static HtmlStartTag<TTagType> _high<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_high, IHtmlTagName
+        public static HtmlTag<TName> _high<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_high, IHtmlTagName
             => htmlTagExpr.Attribute("high", attrValue);
-        public static HtmlStartTag<TTagType> _optimum<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_optimum, IHtmlTagName
+        public static HtmlTag<TName> _optimum<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_optimum, IHtmlTagName
             => htmlTagExpr.Attribute("optimum", attrValue);
-        public static HtmlStartTag<TTagType> _data<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_data, IHtmlTagName
+        public static HtmlTag<TName> _data<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_data, IHtmlTagName
             => htmlTagExpr.Attribute("data", attrValue);
-        public static HtmlStartTag<TTagType> _typemustmatch<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_typemustmatch, IHtmlTagName
+        public static HtmlTag<TName> _typemustmatch<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_typemustmatch, IHtmlTagName
             => htmlTagExpr.Attribute("typemustmatch", attrValue);
-        public static HtmlStartTag<TTagType> _reversed<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_reversed, IHtmlTagName
+        public static HtmlTag<TName> _reversed<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_reversed, IHtmlTagName
             => htmlTagExpr.Attribute("reversed", attrValue);
-        public static HtmlStartTag<TTagType> _start<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_start, IHtmlTagName
+        public static HtmlTag<TName> _start<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_start, IHtmlTagName
             => htmlTagExpr.Attribute("start", attrValue);
-        public static HtmlStartTag<TTagType> _selected<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_selected, IHtmlTagName
+        public static HtmlTag<TName> _selected<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_selected, IHtmlTagName
             => htmlTagExpr.Attribute("selected", attrValue);
-        public static HtmlStartTag<TTagType> _async<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_async, IHtmlTagName
+        public static HtmlTag<TName> _async<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_async, IHtmlTagName
             => htmlTagExpr.Attribute("async", attrValue);
-        public static HtmlStartTag<TTagType> _defer<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_defer, IHtmlTagName
+        public static HtmlTag<TName> _defer<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_defer, IHtmlTagName
             => htmlTagExpr.Attribute("defer", attrValue);
-        public static HtmlStartTag<TTagType> _nonce<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_nonce, IHtmlTagName
+        public static HtmlTag<TName> _nonce<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_nonce, IHtmlTagName
             => htmlTagExpr.Attribute("nonce", attrValue);
-        public static HtmlStartTag<TTagType> _scoped<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_scoped, IHtmlTagName
+        public static HtmlTag<TName> _scoped<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_scoped, IHtmlTagName
             => htmlTagExpr.Attribute("scoped", attrValue);
-        public static HtmlStartTag<TTagType> _colspan<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_colspan, IHtmlTagName
+        public static HtmlTag<TName> _colspan<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_colspan, IHtmlTagName
             => htmlTagExpr.Attribute("colspan", attrValue);
-        public static HtmlStartTag<TTagType> _rowspan<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_rowspan, IHtmlTagName
+        public static HtmlTag<TName> _rowspan<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_rowspan, IHtmlTagName
             => htmlTagExpr.Attribute("rowspan", attrValue);
-        public static HtmlStartTag<TTagType> _headers<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_headers, IHtmlTagName
+        public static HtmlTag<TName> _headers<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_headers, IHtmlTagName
             => htmlTagExpr.Attribute("headers", attrValue);
-        public static HtmlStartTag<TTagType> _cols<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_cols, IHtmlTagName
+        public static HtmlTag<TName> _cols<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_cols, IHtmlTagName
             => htmlTagExpr.Attribute("cols", attrValue);
-        public static HtmlStartTag<TTagType> _rows<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_rows, IHtmlTagName
+        public static HtmlTag<TName> _rows<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_rows, IHtmlTagName
             => htmlTagExpr.Attribute("rows", attrValue);
-        public static HtmlStartTag<TTagType> _wrap<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_wrap, IHtmlTagName
+        public static HtmlTag<TName> _wrap<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_wrap, IHtmlTagName
             => htmlTagExpr.Attribute("wrap", attrValue);
-        public static HtmlStartTag<TTagType> _scope<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_scope, IHtmlTagName
+        public static HtmlTag<TName> _scope<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_scope, IHtmlTagName
             => htmlTagExpr.Attribute("scope", attrValue);
-        public static HtmlStartTag<TTagType> _abbr<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_abbr, IHtmlTagName
+        public static HtmlTag<TName> _abbr<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_abbr, IHtmlTagName
             => htmlTagExpr.Attribute("abbr", attrValue);
-        public static HtmlStartTag<TTagType> _kind<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_kind, IHtmlTagName
+        public static HtmlTag<TName> _kind<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_kind, IHtmlTagName
             => htmlTagExpr.Attribute("kind", attrValue);
-        public static HtmlStartTag<TTagType> _srclang<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_srclang, IHtmlTagName
+        public static HtmlTag<TName> _srclang<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_srclang, IHtmlTagName
             => htmlTagExpr.Attribute("srclang", attrValue);
-        public static HtmlStartTag<TTagType> _poster<TTagType>(this HtmlStartTag<TTagType> htmlTagExpr, string attrValue)
-            where TTagType : struct, IHasAttr_poster, IHtmlTagName
+        public static HtmlTag<TName> _poster<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
+            where TName : struct, IHasAttr_poster, IHtmlTagName
             => htmlTagExpr.Attribute("poster", attrValue);
     }
 
@@ -648,349 +648,349 @@
     {
 
         ///<summary>Hyperlink. See: <a href="https://html.spec.whatwg.org/#the-a-element">https://html.spec.whatwg.org/#the-a-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.A> _a = new HtmlStartTag<TagNames.A>();
+        public static readonly HtmlTag<TagNames.A> _a = new HtmlTag<TagNames.A>();
 
         ///<summary>Abbreviation. See: <a href="https://html.spec.whatwg.org/#the-abbr-element">https://html.spec.whatwg.org/#the-abbr-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.ABBR> _abbr = new HtmlStartTag<TagNames.ABBR>();
+        public static readonly HtmlTag<TagNames.ABBR> _abbr = new HtmlTag<TagNames.ABBR>();
 
         ///<summary>Contact information for a page or article element. See: <a href="https://html.spec.whatwg.org/#the-address-element">https://html.spec.whatwg.org/#the-address-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.ADDRESS> _address = new HtmlStartTag<TagNames.ADDRESS>();
+        public static readonly HtmlTag<TagNames.ADDRESS> _address = new HtmlTag<TagNames.ADDRESS>();
 
         ///<summary>Hyperlink or dead area on an image map. See: <a href="https://html.spec.whatwg.org/#the-area-element">https://html.spec.whatwg.org/#the-area-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.AREA> _area = new HtmlStartTag<TagNames.AREA>();
+        public static readonly HtmlTag<TagNames.AREA> _area = new HtmlTag<TagNames.AREA>();
 
         ///<summary>Self-contained syndicatable or reusable composition. See: <a href="https://html.spec.whatwg.org/#the-article-element">https://html.spec.whatwg.org/#the-article-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.ARTICLE> _article = new HtmlStartTag<TagNames.ARTICLE>();
+        public static readonly HtmlTag<TagNames.ARTICLE> _article = new HtmlTag<TagNames.ARTICLE>();
 
         ///<summary>Sidebar for tangentially related content. See: <a href="https://html.spec.whatwg.org/#the-aside-element">https://html.spec.whatwg.org/#the-aside-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.ASIDE> _aside = new HtmlStartTag<TagNames.ASIDE>();
+        public static readonly HtmlTag<TagNames.ASIDE> _aside = new HtmlTag<TagNames.ASIDE>();
 
         ///<summary>Audio player. See: <a href="https://html.spec.whatwg.org/#the-audio-element">https://html.spec.whatwg.org/#the-audio-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.AUDIO> _audio = new HtmlStartTag<TagNames.AUDIO>();
+        public static readonly HtmlTag<TagNames.AUDIO> _audio = new HtmlTag<TagNames.AUDIO>();
 
         ///<summary>Keywords. See: <a href="https://html.spec.whatwg.org/#the-b-element">https://html.spec.whatwg.org/#the-b-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.B> _b = new HtmlStartTag<TagNames.B>();
+        public static readonly HtmlTag<TagNames.B> _b = new HtmlTag<TagNames.B>();
 
         ///<summary>Base URL and default target browsing context for hyperlinks and forms. See: <a href="https://html.spec.whatwg.org/#the-base-element">https://html.spec.whatwg.org/#the-base-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.BASE> _base = new HtmlStartTag<TagNames.BASE>();
+        public static readonly HtmlTag<TagNames.BASE> _base = new HtmlTag<TagNames.BASE>();
 
         ///<summary>Text directionality isolation. See: <a href="https://html.spec.whatwg.org/#the-bdi-element">https://html.spec.whatwg.org/#the-bdi-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.BDI> _bdi = new HtmlStartTag<TagNames.BDI>();
+        public static readonly HtmlTag<TagNames.BDI> _bdi = new HtmlTag<TagNames.BDI>();
 
         ///<summary>Text directionality formatting. See: <a href="https://html.spec.whatwg.org/#the-bdo-element">https://html.spec.whatwg.org/#the-bdo-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.BDO> _bdo = new HtmlStartTag<TagNames.BDO>();
+        public static readonly HtmlTag<TagNames.BDO> _bdo = new HtmlTag<TagNames.BDO>();
 
         ///<summary>A section quoted from another source. See: <a href="https://html.spec.whatwg.org/#the-blockquote-element">https://html.spec.whatwg.org/#the-blockquote-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.BLOCKQUOTE> _blockquote = new HtmlStartTag<TagNames.BLOCKQUOTE>();
+        public static readonly HtmlTag<TagNames.BLOCKQUOTE> _blockquote = new HtmlTag<TagNames.BLOCKQUOTE>();
 
         ///<summary>Document body. See: <a href="https://html.spec.whatwg.org/#the-body-element">https://html.spec.whatwg.org/#the-body-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.BODY> _body = new HtmlStartTag<TagNames.BODY>();
+        public static readonly HtmlTag<TagNames.BODY> _body = new HtmlTag<TagNames.BODY>();
 
         ///<summary>Line break, e.g. in poem or postal address. See: <a href="https://html.spec.whatwg.org/#the-br-element">https://html.spec.whatwg.org/#the-br-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.BR> _br = new HtmlStartTag<TagNames.BR>();
+        public static readonly HtmlTag<TagNames.BR> _br = new HtmlTag<TagNames.BR>();
 
         ///<summary>Button control. See: <a href="https://html.spec.whatwg.org/#the-button-element">https://html.spec.whatwg.org/#the-button-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.BUTTON> _button = new HtmlStartTag<TagNames.BUTTON>();
+        public static readonly HtmlTag<TagNames.BUTTON> _button = new HtmlTag<TagNames.BUTTON>();
 
         ///<summary>Scriptable bitmap canvas. See: <a href="https://html.spec.whatwg.org/#the-canvas-element">https://html.spec.whatwg.org/#the-canvas-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.CANVAS> _canvas = new HtmlStartTag<TagNames.CANVAS>();
+        public static readonly HtmlTag<TagNames.CANVAS> _canvas = new HtmlTag<TagNames.CANVAS>();
 
         ///<summary>Table caption. See: <a href="https://html.spec.whatwg.org/#the-caption-element">https://html.spec.whatwg.org/#the-caption-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.CAPTION> _caption = new HtmlStartTag<TagNames.CAPTION>();
+        public static readonly HtmlTag<TagNames.CAPTION> _caption = new HtmlTag<TagNames.CAPTION>();
 
         ///<summary>Title of a work. See: <a href="https://html.spec.whatwg.org/#the-cite-element">https://html.spec.whatwg.org/#the-cite-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.CITE> _cite = new HtmlStartTag<TagNames.CITE>();
+        public static readonly HtmlTag<TagNames.CITE> _cite = new HtmlTag<TagNames.CITE>();
 
         ///<summary>Computer code. See: <a href="https://html.spec.whatwg.org/#the-code-element">https://html.spec.whatwg.org/#the-code-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.CODE> _code = new HtmlStartTag<TagNames.CODE>();
+        public static readonly HtmlTag<TagNames.CODE> _code = new HtmlTag<TagNames.CODE>();
 
         ///<summary>Table column. See: <a href="https://html.spec.whatwg.org/#the-col-element">https://html.spec.whatwg.org/#the-col-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.COL> _col = new HtmlStartTag<TagNames.COL>();
+        public static readonly HtmlTag<TagNames.COL> _col = new HtmlTag<TagNames.COL>();
 
         ///<summary>Group of columns in a table. See: <a href="https://html.spec.whatwg.org/#the-colgroup-element">https://html.spec.whatwg.org/#the-colgroup-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.COLGROUP> _colgroup = new HtmlStartTag<TagNames.COLGROUP>();
+        public static readonly HtmlTag<TagNames.COLGROUP> _colgroup = new HtmlTag<TagNames.COLGROUP>();
 
         ///<summary>Machine-readable equivalent. See: <a href="https://html.spec.whatwg.org/#the-data-element">https://html.spec.whatwg.org/#the-data-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DATA> _data = new HtmlStartTag<TagNames.DATA>();
+        public static readonly HtmlTag<TagNames.DATA> _data = new HtmlTag<TagNames.DATA>();
 
         ///<summary>Container for options for combo box control. See: <a href="https://html.spec.whatwg.org/#the-datalist-element">https://html.spec.whatwg.org/#the-datalist-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DATALIST> _datalist = new HtmlStartTag<TagNames.DATALIST>();
+        public static readonly HtmlTag<TagNames.DATALIST> _datalist = new HtmlTag<TagNames.DATALIST>();
 
         ///<summary>Content for corresponding dt element(s). See: <a href="https://html.spec.whatwg.org/#the-dd-element">https://html.spec.whatwg.org/#the-dd-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DD> _dd = new HtmlStartTag<TagNames.DD>();
+        public static readonly HtmlTag<TagNames.DD> _dd = new HtmlTag<TagNames.DD>();
 
         ///<summary>A removal from the document. See: <a href="https://html.spec.whatwg.org/#the-del-element">https://html.spec.whatwg.org/#the-del-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DEL> _del = new HtmlStartTag<TagNames.DEL>();
+        public static readonly HtmlTag<TagNames.DEL> _del = new HtmlTag<TagNames.DEL>();
 
         ///<summary>Disclosure control for hiding details. See: <a href="https://html.spec.whatwg.org/#the-details-element">https://html.spec.whatwg.org/#the-details-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DETAILS> _details = new HtmlStartTag<TagNames.DETAILS>();
+        public static readonly HtmlTag<TagNames.DETAILS> _details = new HtmlTag<TagNames.DETAILS>();
 
         ///<summary>Defining instance. See: <a href="https://html.spec.whatwg.org/#the-dfn-element">https://html.spec.whatwg.org/#the-dfn-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DFN> _dfn = new HtmlStartTag<TagNames.DFN>();
+        public static readonly HtmlTag<TagNames.DFN> _dfn = new HtmlTag<TagNames.DFN>();
 
         ///<summary>Dialog box or window. See: <a href="https://html.spec.whatwg.org/#the-dialog-element">https://html.spec.whatwg.org/#the-dialog-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DIALOG> _dialog = new HtmlStartTag<TagNames.DIALOG>();
+        public static readonly HtmlTag<TagNames.DIALOG> _dialog = new HtmlTag<TagNames.DIALOG>();
 
         ///<summary>Generic flow container. See: <a href="https://html.spec.whatwg.org/#the-div-element">https://html.spec.whatwg.org/#the-div-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DIV> _div = new HtmlStartTag<TagNames.DIV>();
+        public static readonly HtmlTag<TagNames.DIV> _div = new HtmlTag<TagNames.DIV>();
 
         ///<summary>Association list consisting of zero or more name-value groups. See: <a href="https://html.spec.whatwg.org/#the-dl-element">https://html.spec.whatwg.org/#the-dl-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DL> _dl = new HtmlStartTag<TagNames.DL>();
+        public static readonly HtmlTag<TagNames.DL> _dl = new HtmlTag<TagNames.DL>();
 
         ///<summary>Legend for corresponding dd element(s). See: <a href="https://html.spec.whatwg.org/#the-dt-element">https://html.spec.whatwg.org/#the-dt-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.DT> _dt = new HtmlStartTag<TagNames.DT>();
+        public static readonly HtmlTag<TagNames.DT> _dt = new HtmlTag<TagNames.DT>();
 
         ///<summary>Stress emphasis. See: <a href="https://html.spec.whatwg.org/#the-em-element">https://html.spec.whatwg.org/#the-em-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.EM> _em = new HtmlStartTag<TagNames.EM>();
+        public static readonly HtmlTag<TagNames.EM> _em = new HtmlTag<TagNames.EM>();
 
         ///<summary>Plugin. See: <a href="https://html.spec.whatwg.org/#the-embed-element">https://html.spec.whatwg.org/#the-embed-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.EMBED> _embed = new HtmlStartTag<TagNames.EMBED>();
+        public static readonly HtmlTag<TagNames.EMBED> _embed = new HtmlTag<TagNames.EMBED>();
 
         ///<summary>Group of form controls. See: <a href="https://html.spec.whatwg.org/#the-fieldset-element">https://html.spec.whatwg.org/#the-fieldset-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.FIELDSET> _fieldset = new HtmlStartTag<TagNames.FIELDSET>();
+        public static readonly HtmlTag<TagNames.FIELDSET> _fieldset = new HtmlTag<TagNames.FIELDSET>();
 
         ///<summary>Caption for figure. See: <a href="https://html.spec.whatwg.org/#the-figcaption-element">https://html.spec.whatwg.org/#the-figcaption-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.FIGCAPTION> _figcaption = new HtmlStartTag<TagNames.FIGCAPTION>();
+        public static readonly HtmlTag<TagNames.FIGCAPTION> _figcaption = new HtmlTag<TagNames.FIGCAPTION>();
 
         ///<summary>Figure with optional caption. See: <a href="https://html.spec.whatwg.org/#the-figure-element">https://html.spec.whatwg.org/#the-figure-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.FIGURE> _figure = new HtmlStartTag<TagNames.FIGURE>();
+        public static readonly HtmlTag<TagNames.FIGURE> _figure = new HtmlTag<TagNames.FIGURE>();
 
         ///<summary>Footer for a page or section. See: <a href="https://html.spec.whatwg.org/#the-footer-element">https://html.spec.whatwg.org/#the-footer-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.FOOTER> _footer = new HtmlStartTag<TagNames.FOOTER>();
+        public static readonly HtmlTag<TagNames.FOOTER> _footer = new HtmlTag<TagNames.FOOTER>();
 
         ///<summary>User-submittable form. See: <a href="https://html.spec.whatwg.org/#the-form-element">https://html.spec.whatwg.org/#the-form-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.FORM> _form = new HtmlStartTag<TagNames.FORM>();
+        public static readonly HtmlTag<TagNames.FORM> _form = new HtmlTag<TagNames.FORM>();
 
         ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.H1> _h1 = new HtmlStartTag<TagNames.H1>();
+        public static readonly HtmlTag<TagNames.H1> _h1 = new HtmlTag<TagNames.H1>();
 
         ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.H2> _h2 = new HtmlStartTag<TagNames.H2>();
+        public static readonly HtmlTag<TagNames.H2> _h2 = new HtmlTag<TagNames.H2>();
 
         ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.H3> _h3 = new HtmlStartTag<TagNames.H3>();
+        public static readonly HtmlTag<TagNames.H3> _h3 = new HtmlTag<TagNames.H3>();
 
         ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.H4> _h4 = new HtmlStartTag<TagNames.H4>();
+        public static readonly HtmlTag<TagNames.H4> _h4 = new HtmlTag<TagNames.H4>();
 
         ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.H5> _h5 = new HtmlStartTag<TagNames.H5>();
+        public static readonly HtmlTag<TagNames.H5> _h5 = new HtmlTag<TagNames.H5>();
 
         ///<summary>Section heading. See: <a href="https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements">https://html.spec.whatwg.org/#the-h1,-h2,-h3,-h4,-h5,-and-h6-elements</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.H6> _h6 = new HtmlStartTag<TagNames.H6>();
+        public static readonly HtmlTag<TagNames.H6> _h6 = new HtmlTag<TagNames.H6>();
 
         ///<summary>Container for document metadata. See: <a href="https://html.spec.whatwg.org/#the-head-element">https://html.spec.whatwg.org/#the-head-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.HEAD> _head = new HtmlStartTag<TagNames.HEAD>();
+        public static readonly HtmlTag<TagNames.HEAD> _head = new HtmlTag<TagNames.HEAD>();
 
         ///<summary>Introductory or navigational aids for a page or section. See: <a href="https://html.spec.whatwg.org/#the-header-element">https://html.spec.whatwg.org/#the-header-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.HEADER> _header = new HtmlStartTag<TagNames.HEADER>();
+        public static readonly HtmlTag<TagNames.HEADER> _header = new HtmlTag<TagNames.HEADER>();
 
         ///<summary>heading group. See: <a href="https://html.spec.whatwg.org/#the-hgroup-element">https://html.spec.whatwg.org/#the-hgroup-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.HGROUP> _hgroup = new HtmlStartTag<TagNames.HGROUP>();
+        public static readonly HtmlTag<TagNames.HGROUP> _hgroup = new HtmlTag<TagNames.HGROUP>();
 
         ///<summary>Thematic break. See: <a href="https://html.spec.whatwg.org/#the-hr-element">https://html.spec.whatwg.org/#the-hr-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.HR> _hr = new HtmlStartTag<TagNames.HR>();
+        public static readonly HtmlTag<TagNames.HR> _hr = new HtmlTag<TagNames.HR>();
 
         ///<summary>Root element. See: <a href="https://html.spec.whatwg.org/#the-html-element">https://html.spec.whatwg.org/#the-html-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.HTML> _html = new HtmlStartTag<TagNames.HTML>();
+        public static readonly HtmlTag<TagNames.HTML> _html = new HtmlTag<TagNames.HTML>();
 
         ///<summary>Alternate voice. See: <a href="https://html.spec.whatwg.org/#the-i-element">https://html.spec.whatwg.org/#the-i-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.I> _i = new HtmlStartTag<TagNames.I>();
+        public static readonly HtmlTag<TagNames.I> _i = new HtmlTag<TagNames.I>();
 
         ///<summary>Nested browsing context. See: <a href="https://html.spec.whatwg.org/#the-iframe-element">https://html.spec.whatwg.org/#the-iframe-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.IFRAME> _iframe = new HtmlStartTag<TagNames.IFRAME>();
+        public static readonly HtmlTag<TagNames.IFRAME> _iframe = new HtmlTag<TagNames.IFRAME>();
 
         ///<summary>Image. See: <a href="https://html.spec.whatwg.org/#the-img-element">https://html.spec.whatwg.org/#the-img-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.IMG> _img = new HtmlStartTag<TagNames.IMG>();
+        public static readonly HtmlTag<TagNames.IMG> _img = new HtmlTag<TagNames.IMG>();
 
         ///<summary>Form control. See: <a href="https://html.spec.whatwg.org/#the-input-element">https://html.spec.whatwg.org/#the-input-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.INPUT> _input = new HtmlStartTag<TagNames.INPUT>();
+        public static readonly HtmlTag<TagNames.INPUT> _input = new HtmlTag<TagNames.INPUT>();
 
         ///<summary>An addition to the document. See: <a href="https://html.spec.whatwg.org/#the-ins-element">https://html.spec.whatwg.org/#the-ins-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.INS> _ins = new HtmlStartTag<TagNames.INS>();
+        public static readonly HtmlTag<TagNames.INS> _ins = new HtmlTag<TagNames.INS>();
 
         ///<summary>User input. See: <a href="https://html.spec.whatwg.org/#the-kbd-element">https://html.spec.whatwg.org/#the-kbd-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.KBD> _kbd = new HtmlStartTag<TagNames.KBD>();
+        public static readonly HtmlTag<TagNames.KBD> _kbd = new HtmlTag<TagNames.KBD>();
 
         ///<summary>Cryptographic key-pair generator form control. See: <a href="https://html.spec.whatwg.org/#the-keygen-element">https://html.spec.whatwg.org/#the-keygen-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.KEYGEN> _keygen = new HtmlStartTag<TagNames.KEYGEN>();
+        public static readonly HtmlTag<TagNames.KEYGEN> _keygen = new HtmlTag<TagNames.KEYGEN>();
 
         ///<summary>Caption for a form control. See: <a href="https://html.spec.whatwg.org/#the-label-element">https://html.spec.whatwg.org/#the-label-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.LABEL> _label = new HtmlStartTag<TagNames.LABEL>();
+        public static readonly HtmlTag<TagNames.LABEL> _label = new HtmlTag<TagNames.LABEL>();
 
         ///<summary>Caption for fieldset. See: <a href="https://html.spec.whatwg.org/#the-legend-element">https://html.spec.whatwg.org/#the-legend-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.LEGEND> _legend = new HtmlStartTag<TagNames.LEGEND>();
+        public static readonly HtmlTag<TagNames.LEGEND> _legend = new HtmlTag<TagNames.LEGEND>();
 
         ///<summary>List item. See: <a href="https://html.spec.whatwg.org/#the-li-element">https://html.spec.whatwg.org/#the-li-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.LI> _li = new HtmlStartTag<TagNames.LI>();
+        public static readonly HtmlTag<TagNames.LI> _li = new HtmlTag<TagNames.LI>();
 
         ///<summary>Link metadata. See: <a href="https://html.spec.whatwg.org/#the-link-element">https://html.spec.whatwg.org/#the-link-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.LINK> _link = new HtmlStartTag<TagNames.LINK>();
+        public static readonly HtmlTag<TagNames.LINK> _link = new HtmlTag<TagNames.LINK>();
 
         ///<summary>Container for the dominant contents of another element. See: <a href="https://html.spec.whatwg.org/#the-main-element">https://html.spec.whatwg.org/#the-main-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.MAIN> _main = new HtmlStartTag<TagNames.MAIN>();
+        public static readonly HtmlTag<TagNames.MAIN> _main = new HtmlTag<TagNames.MAIN>();
 
         ///<summary>Image map. See: <a href="https://html.spec.whatwg.org/#the-map-element">https://html.spec.whatwg.org/#the-map-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.MAP> _map = new HtmlStartTag<TagNames.MAP>();
+        public static readonly HtmlTag<TagNames.MAP> _map = new HtmlTag<TagNames.MAP>();
 
         ///<summary>Highlight. See: <a href="https://html.spec.whatwg.org/#the-mark-element">https://html.spec.whatwg.org/#the-mark-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.MARK> _mark = new HtmlStartTag<TagNames.MARK>();
+        public static readonly HtmlTag<TagNames.MARK> _mark = new HtmlTag<TagNames.MARK>();
 
         ///<summary>MathML root. See: <a href="https://html.spec.whatwg.org/#math">https://html.spec.whatwg.org/#math</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.MATH> _math = new HtmlStartTag<TagNames.MATH>();
+        public static readonly HtmlTag<TagNames.MATH> _math = new HtmlTag<TagNames.MATH>();
 
         ///<summary>Menu of commands. See: <a href="https://html.spec.whatwg.org/#the-menu-element">https://html.spec.whatwg.org/#the-menu-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.MENU> _menu = new HtmlStartTag<TagNames.MENU>();
+        public static readonly HtmlTag<TagNames.MENU> _menu = new HtmlTag<TagNames.MENU>();
 
         ///<summary>Menu command. See: <a href="https://html.spec.whatwg.org/#the-menuitem-element">https://html.spec.whatwg.org/#the-menuitem-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.MENUITEM> _menuitem = new HtmlStartTag<TagNames.MENUITEM>();
+        public static readonly HtmlTag<TagNames.MENUITEM> _menuitem = new HtmlTag<TagNames.MENUITEM>();
 
         ///<summary>Text metadata. See: <a href="https://html.spec.whatwg.org/#the-meta-element">https://html.spec.whatwg.org/#the-meta-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.META> _meta = new HtmlStartTag<TagNames.META>();
+        public static readonly HtmlTag<TagNames.META> _meta = new HtmlTag<TagNames.META>();
 
         ///<summary>Gauge. See: <a href="https://html.spec.whatwg.org/#the-meter-element">https://html.spec.whatwg.org/#the-meter-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.METER> _meter = new HtmlStartTag<TagNames.METER>();
+        public static readonly HtmlTag<TagNames.METER> _meter = new HtmlTag<TagNames.METER>();
 
         ///<summary>Section with navigational links. See: <a href="https://html.spec.whatwg.org/#the-nav-element">https://html.spec.whatwg.org/#the-nav-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.NAV> _nav = new HtmlStartTag<TagNames.NAV>();
+        public static readonly HtmlTag<TagNames.NAV> _nav = new HtmlTag<TagNames.NAV>();
 
         ///<summary>Fallback content for script. See: <a href="https://html.spec.whatwg.org/#the-noscript-element">https://html.spec.whatwg.org/#the-noscript-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.NOSCRIPT> _noscript = new HtmlStartTag<TagNames.NOSCRIPT>();
+        public static readonly HtmlTag<TagNames.NOSCRIPT> _noscript = new HtmlTag<TagNames.NOSCRIPT>();
 
         ///<summary>Image, nested browsing context, or plugin. See: <a href="https://html.spec.whatwg.org/#the-object-element">https://html.spec.whatwg.org/#the-object-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.OBJECT> _object = new HtmlStartTag<TagNames.OBJECT>();
+        public static readonly HtmlTag<TagNames.OBJECT> _object = new HtmlTag<TagNames.OBJECT>();
 
         ///<summary>Ordered list. See: <a href="https://html.spec.whatwg.org/#the-ol-element">https://html.spec.whatwg.org/#the-ol-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.OL> _ol = new HtmlStartTag<TagNames.OL>();
+        public static readonly HtmlTag<TagNames.OL> _ol = new HtmlTag<TagNames.OL>();
 
         ///<summary>Group of options in a list box. See: <a href="https://html.spec.whatwg.org/#the-optgroup-element">https://html.spec.whatwg.org/#the-optgroup-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.OPTGROUP> _optgroup = new HtmlStartTag<TagNames.OPTGROUP>();
+        public static readonly HtmlTag<TagNames.OPTGROUP> _optgroup = new HtmlTag<TagNames.OPTGROUP>();
 
         ///<summary>Option in a list box or combo box control. See: <a href="https://html.spec.whatwg.org/#the-option-element">https://html.spec.whatwg.org/#the-option-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.OPTION> _option = new HtmlStartTag<TagNames.OPTION>();
+        public static readonly HtmlTag<TagNames.OPTION> _option = new HtmlTag<TagNames.OPTION>();
 
         ///<summary>Calculated output value. See: <a href="https://html.spec.whatwg.org/#the-output-element">https://html.spec.whatwg.org/#the-output-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.OUTPUT> _output = new HtmlStartTag<TagNames.OUTPUT>();
+        public static readonly HtmlTag<TagNames.OUTPUT> _output = new HtmlTag<TagNames.OUTPUT>();
 
         ///<summary>Paragraph. See: <a href="https://html.spec.whatwg.org/#the-p-element">https://html.spec.whatwg.org/#the-p-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.P> _p = new HtmlStartTag<TagNames.P>();
+        public static readonly HtmlTag<TagNames.P> _p = new HtmlTag<TagNames.P>();
 
         ///<summary>Parameter for object. See: <a href="https://html.spec.whatwg.org/#the-param-element">https://html.spec.whatwg.org/#the-param-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.PARAM> _param = new HtmlStartTag<TagNames.PARAM>();
+        public static readonly HtmlTag<TagNames.PARAM> _param = new HtmlTag<TagNames.PARAM>();
 
         ///<summary>Image. See: <a href="https://html.spec.whatwg.org/#the-picture-element">https://html.spec.whatwg.org/#the-picture-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.PICTURE> _picture = new HtmlStartTag<TagNames.PICTURE>();
+        public static readonly HtmlTag<TagNames.PICTURE> _picture = new HtmlTag<TagNames.PICTURE>();
 
         ///<summary>Block of preformatted text. See: <a href="https://html.spec.whatwg.org/#the-pre-element">https://html.spec.whatwg.org/#the-pre-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.PRE> _pre = new HtmlStartTag<TagNames.PRE>();
+        public static readonly HtmlTag<TagNames.PRE> _pre = new HtmlTag<TagNames.PRE>();
 
         ///<summary>Progress bar. See: <a href="https://html.spec.whatwg.org/#the-progress-element">https://html.spec.whatwg.org/#the-progress-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.PROGRESS> _progress = new HtmlStartTag<TagNames.PROGRESS>();
+        public static readonly HtmlTag<TagNames.PROGRESS> _progress = new HtmlTag<TagNames.PROGRESS>();
 
         ///<summary>Quotation. See: <a href="https://html.spec.whatwg.org/#the-q-element">https://html.spec.whatwg.org/#the-q-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.Q> _q = new HtmlStartTag<TagNames.Q>();
+        public static readonly HtmlTag<TagNames.Q> _q = new HtmlTag<TagNames.Q>();
 
         ///<summary>Parenthesis for ruby annotation text. See: <a href="https://html.spec.whatwg.org/#the-rp-element">https://html.spec.whatwg.org/#the-rp-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.RP> _rp = new HtmlStartTag<TagNames.RP>();
+        public static readonly HtmlTag<TagNames.RP> _rp = new HtmlTag<TagNames.RP>();
 
         ///<summary>Ruby annotation text. See: <a href="https://html.spec.whatwg.org/#the-rt-element">https://html.spec.whatwg.org/#the-rt-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.RT> _rt = new HtmlStartTag<TagNames.RT>();
+        public static readonly HtmlTag<TagNames.RT> _rt = new HtmlTag<TagNames.RT>();
 
         ///<summary>Ruby annotation(s). See: <a href="https://html.spec.whatwg.org/#the-ruby-element">https://html.spec.whatwg.org/#the-ruby-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.RUBY> _ruby = new HtmlStartTag<TagNames.RUBY>();
+        public static readonly HtmlTag<TagNames.RUBY> _ruby = new HtmlTag<TagNames.RUBY>();
 
         ///<summary>Inaccurate text. See: <a href="https://html.spec.whatwg.org/#the-s-element">https://html.spec.whatwg.org/#the-s-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.S> _s = new HtmlStartTag<TagNames.S>();
+        public static readonly HtmlTag<TagNames.S> _s = new HtmlTag<TagNames.S>();
 
         ///<summary>Computer output. See: <a href="https://html.spec.whatwg.org/#the-samp-element">https://html.spec.whatwg.org/#the-samp-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SAMP> _samp = new HtmlStartTag<TagNames.SAMP>();
+        public static readonly HtmlTag<TagNames.SAMP> _samp = new HtmlTag<TagNames.SAMP>();
 
         ///<summary>Embedded script. See: <a href="https://html.spec.whatwg.org/#the-script-element">https://html.spec.whatwg.org/#the-script-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SCRIPT> _script = new HtmlStartTag<TagNames.SCRIPT>();
+        public static readonly HtmlTag<TagNames.SCRIPT> _script = new HtmlTag<TagNames.SCRIPT>();
 
         ///<summary>Generic document or application section. See: <a href="https://html.spec.whatwg.org/#the-section-element">https://html.spec.whatwg.org/#the-section-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SECTION> _section = new HtmlStartTag<TagNames.SECTION>();
+        public static readonly HtmlTag<TagNames.SECTION> _section = new HtmlTag<TagNames.SECTION>();
 
         ///<summary>List box control. See: <a href="https://html.spec.whatwg.org/#the-select-element">https://html.spec.whatwg.org/#the-select-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SELECT> _select = new HtmlStartTag<TagNames.SELECT>();
+        public static readonly HtmlTag<TagNames.SELECT> _select = new HtmlTag<TagNames.SELECT>();
 
         ///<summary>Side comment. See: <a href="https://html.spec.whatwg.org/#the-small-element">https://html.spec.whatwg.org/#the-small-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SMALL> _small = new HtmlStartTag<TagNames.SMALL>();
+        public static readonly HtmlTag<TagNames.SMALL> _small = new HtmlTag<TagNames.SMALL>();
 
         ///<summary>Media source for video or audio. See: <a href="https://html.spec.whatwg.org/#the-source-element">https://html.spec.whatwg.org/#the-source-element</a><br />Image source for an img. See: <a href="https://html.spec.whatwg.org/#the-source-element-when-used-with-the-picture-element">https://html.spec.whatwg.org/#the-source-element-when-used-with-the-picture-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SOURCE> _source = new HtmlStartTag<TagNames.SOURCE>();
+        public static readonly HtmlTag<TagNames.SOURCE> _source = new HtmlTag<TagNames.SOURCE>();
 
         ///<summary>Generic phrasing container. See: <a href="https://html.spec.whatwg.org/#the-span-element">https://html.spec.whatwg.org/#the-span-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SPAN> _span = new HtmlStartTag<TagNames.SPAN>();
+        public static readonly HtmlTag<TagNames.SPAN> _span = new HtmlTag<TagNames.SPAN>();
 
         ///<summary>Importance. See: <a href="https://html.spec.whatwg.org/#the-strong-element">https://html.spec.whatwg.org/#the-strong-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.STRONG> _strong = new HtmlStartTag<TagNames.STRONG>();
+        public static readonly HtmlTag<TagNames.STRONG> _strong = new HtmlTag<TagNames.STRONG>();
 
         ///<summary>Embedded styling information. See: <a href="https://html.spec.whatwg.org/#the-style-element">https://html.spec.whatwg.org/#the-style-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.STYLE> _style = new HtmlStartTag<TagNames.STYLE>();
+        public static readonly HtmlTag<TagNames.STYLE> _style = new HtmlTag<TagNames.STYLE>();
 
         ///<summary>Subscript. See: <a href="https://html.spec.whatwg.org/#the-sub-and-sup-elements">https://html.spec.whatwg.org/#the-sub-and-sup-elements</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SUB> _sub = new HtmlStartTag<TagNames.SUB>();
+        public static readonly HtmlTag<TagNames.SUB> _sub = new HtmlTag<TagNames.SUB>();
 
         ///<summary>Caption for details. See: <a href="https://html.spec.whatwg.org/#the-summary-element">https://html.spec.whatwg.org/#the-summary-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SUMMARY> _summary = new HtmlStartTag<TagNames.SUMMARY>();
+        public static readonly HtmlTag<TagNames.SUMMARY> _summary = new HtmlTag<TagNames.SUMMARY>();
 
         ///<summary>Superscript. See: <a href="https://html.spec.whatwg.org/#the-sub-and-sup-elements">https://html.spec.whatwg.org/#the-sub-and-sup-elements</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SUP> _sup = new HtmlStartTag<TagNames.SUP>();
+        public static readonly HtmlTag<TagNames.SUP> _sup = new HtmlTag<TagNames.SUP>();
 
         ///<summary>SVG root. See: <a href="https://html.spec.whatwg.org/#svg">https://html.spec.whatwg.org/#svg</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.SVG> _svg = new HtmlStartTag<TagNames.SVG>();
+        public static readonly HtmlTag<TagNames.SVG> _svg = new HtmlTag<TagNames.SVG>();
 
         ///<summary>Table. See: <a href="https://html.spec.whatwg.org/#the-table-element">https://html.spec.whatwg.org/#the-table-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TABLE> _table = new HtmlStartTag<TagNames.TABLE>();
+        public static readonly HtmlTag<TagNames.TABLE> _table = new HtmlTag<TagNames.TABLE>();
 
         ///<summary>Group of rows in a table. See: <a href="https://html.spec.whatwg.org/#the-tbody-element">https://html.spec.whatwg.org/#the-tbody-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TBODY> _tbody = new HtmlStartTag<TagNames.TBODY>();
+        public static readonly HtmlTag<TagNames.TBODY> _tbody = new HtmlTag<TagNames.TBODY>();
 
         ///<summary>Table cell. See: <a href="https://html.spec.whatwg.org/#the-td-element">https://html.spec.whatwg.org/#the-td-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TD> _td = new HtmlStartTag<TagNames.TD>();
+        public static readonly HtmlTag<TagNames.TD> _td = new HtmlTag<TagNames.TD>();
 
         ///<summary>Template. See: <a href="https://html.spec.whatwg.org/#the-template-element">https://html.spec.whatwg.org/#the-template-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TEMPLATE> _template = new HtmlStartTag<TagNames.TEMPLATE>();
+        public static readonly HtmlTag<TagNames.TEMPLATE> _template = new HtmlTag<TagNames.TEMPLATE>();
 
         ///<summary>Multiline text field. See: <a href="https://html.spec.whatwg.org/#the-textarea-element">https://html.spec.whatwg.org/#the-textarea-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TEXTAREA> _textarea = new HtmlStartTag<TagNames.TEXTAREA>();
+        public static readonly HtmlTag<TagNames.TEXTAREA> _textarea = new HtmlTag<TagNames.TEXTAREA>();
 
         ///<summary>Group of footer rows in a table. See: <a href="https://html.spec.whatwg.org/#the-tfoot-element">https://html.spec.whatwg.org/#the-tfoot-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TFOOT> _tfoot = new HtmlStartTag<TagNames.TFOOT>();
+        public static readonly HtmlTag<TagNames.TFOOT> _tfoot = new HtmlTag<TagNames.TFOOT>();
 
         ///<summary>Table header cell. See: <a href="https://html.spec.whatwg.org/#the-th-element">https://html.spec.whatwg.org/#the-th-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TH> _th = new HtmlStartTag<TagNames.TH>();
+        public static readonly HtmlTag<TagNames.TH> _th = new HtmlTag<TagNames.TH>();
 
         ///<summary>Group of heading rows in a table. See: <a href="https://html.spec.whatwg.org/#the-thead-element">https://html.spec.whatwg.org/#the-thead-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.THEAD> _thead = new HtmlStartTag<TagNames.THEAD>();
+        public static readonly HtmlTag<TagNames.THEAD> _thead = new HtmlTag<TagNames.THEAD>();
 
         ///<summary>Machine-readable equivalent of date- or time-related data. See: <a href="https://html.spec.whatwg.org/#the-time-element">https://html.spec.whatwg.org/#the-time-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TIME> _time = new HtmlStartTag<TagNames.TIME>();
+        public static readonly HtmlTag<TagNames.TIME> _time = new HtmlTag<TagNames.TIME>();
 
         ///<summary>Document title. See: <a href="https://html.spec.whatwg.org/#the-title-element">https://html.spec.whatwg.org/#the-title-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TITLE> _title = new HtmlStartTag<TagNames.TITLE>();
+        public static readonly HtmlTag<TagNames.TITLE> _title = new HtmlTag<TagNames.TITLE>();
 
         ///<summary>Table row. See: <a href="https://html.spec.whatwg.org/#the-tr-element">https://html.spec.whatwg.org/#the-tr-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TR> _tr = new HtmlStartTag<TagNames.TR>();
+        public static readonly HtmlTag<TagNames.TR> _tr = new HtmlTag<TagNames.TR>();
 
         ///<summary>Timed text track. See: <a href="https://html.spec.whatwg.org/#the-track-element">https://html.spec.whatwg.org/#the-track-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.TRACK> _track = new HtmlStartTag<TagNames.TRACK>();
+        public static readonly HtmlTag<TagNames.TRACK> _track = new HtmlTag<TagNames.TRACK>();
 
         ///<summary>Keywords. See: <a href="https://html.spec.whatwg.org/#the-u-element">https://html.spec.whatwg.org/#the-u-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.U> _u = new HtmlStartTag<TagNames.U>();
+        public static readonly HtmlTag<TagNames.U> _u = new HtmlTag<TagNames.U>();
 
         ///<summary>List. See: <a href="https://html.spec.whatwg.org/#the-ul-element">https://html.spec.whatwg.org/#the-ul-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.UL> _ul = new HtmlStartTag<TagNames.UL>();
+        public static readonly HtmlTag<TagNames.UL> _ul = new HtmlTag<TagNames.UL>();
 
         ///<summary>Variable. See: <a href="https://html.spec.whatwg.org/#the-var-element">https://html.spec.whatwg.org/#the-var-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.VAR> _var = new HtmlStartTag<TagNames.VAR>();
+        public static readonly HtmlTag<TagNames.VAR> _var = new HtmlTag<TagNames.VAR>();
 
         ///<summary>Video player. See: <a href="https://html.spec.whatwg.org/#the-video-element">https://html.spec.whatwg.org/#the-video-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.VIDEO> _video = new HtmlStartTag<TagNames.VIDEO>();
+        public static readonly HtmlTag<TagNames.VIDEO> _video = new HtmlTag<TagNames.VIDEO>();
 
         ///<summary>Line breaking opportunity. See: <a href="https://html.spec.whatwg.org/#the-wbr-element">https://html.spec.whatwg.org/#the-wbr-element</a><br /></summary>
-        public static readonly HtmlStartTag<TagNames.WBR> _wbr = new HtmlStartTag<TagNames.WBR>();
+        public static readonly HtmlTag<TagNames.WBR> _wbr = new HtmlTag<TagNames.WBR>();
     }
 }
 
