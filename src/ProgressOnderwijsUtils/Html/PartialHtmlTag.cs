@@ -43,8 +43,9 @@ namespace ProgressOnderwijsUtils.Html
             foreach (var htmlAttr in htmlAttributes) {
                 if (htmlAttr.Name == "class") {
                     className = className == null ? htmlAttr.Value : className + " " + htmlAttr.Value;
+                } else {
+                    yield return new XAttribute(htmlAttr.Name, htmlAttr.Value);
                 }
-                yield return new XAttribute(htmlAttr.Name, htmlAttr.Value);
             }
             if (className != null) {
                 yield return new XAttribute("class", className);
