@@ -136,7 +136,7 @@ namespace ProgressOnderwijsUtils.Html
         public readonly HtmlFragment[] ChildNodes;
 
         [Pure]
-        public HtmlElement Content(params HtmlFragment[] content) 
+        public HtmlElement Content(params HtmlFragment[] content)
             => new HtmlElement(TagName, Attributes, HtmlTagHelpers.AppendArrays(ChildNodes, content));
 
         public HtmlElement(string tagName, [NotNull] HtmlAttribute[] attributes, HtmlFragment[] childNodes)
@@ -191,7 +191,7 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)
-            where T :IConvertibleToFragment
+            where T : IConvertibleToFragment
             => HtmlFragment.Fragment(htmlEls.Select(el => el.ToFragment()).ToArray());
 
         internal static T[] AppendArrays<T>(T[] beginning, T[] end)
@@ -208,7 +208,8 @@ namespace ProgressOnderwijsUtils.Html
         }
     }
 
-    public interface IConvertibleToFragment {
+    public interface IConvertibleToFragment
+    {
         [Pure]
         HtmlFragment ToFragment();
     }
