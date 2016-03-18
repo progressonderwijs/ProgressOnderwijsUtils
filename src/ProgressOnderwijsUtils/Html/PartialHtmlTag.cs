@@ -162,10 +162,6 @@ namespace ProgressOnderwijsUtils.Html
 
     public static class HtmlTagHelpers
     {
-        /// <summary>Creates an html data attribute.  E.g. setDataAttribute("foo", "bar") creates data-foo="bar". </summary>
-        public static TExpression DataAttribute<TExpression>(this TExpression htmlTagExpr, string dataAttrName, string attrValue)
-            where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Attribute("data-" + dataAttrName, attrValue);
-
         [Pure]
         public static TExpression Attributes<TExpression>(this TExpression htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
