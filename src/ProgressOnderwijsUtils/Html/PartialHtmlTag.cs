@@ -31,12 +31,9 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlAttribute[] appendAttr(this HtmlAttribute[] attributes, string attrName, string attrValue)
         {
             //performance assumption: the list of attributes is short.
-            var retval = new HtmlAttribute[attributes.Length + 1];
-            for (int i = 0; i < attributes.Length; i++) {
-                retval[i] = attributes[i];
-            }
-            retval[attributes.Length] = new HtmlAttribute { Name = attrName, Value = attrValue };
-            return retval;
+            Array.Resize(ref attributes, attributes.Length + 1);
+            attributes[attributes.Length - 1] = new HtmlAttribute { Name = attrName, Value = attrValue };
+            return attributes;
         }
 
         [Pure]
