@@ -27,25 +27,25 @@ namespace ProgressOnderwijsUtils.Html
     {
         public static readonly HtmlAttribute[] EmptyAttributes = new HtmlAttribute[0];
 
+        [Pure]
         public static HtmlAttribute[] appendAttr(this HtmlAttribute[] attributes, string attrName, string attrValue)
         {
             //performance assumption: the list of attributes is short.
-            var retval = new HtmlAttribute[attributes.Length + 1];
-            for (int i = 0; i < attributes.Length; i++) {
-                retval[i] = attributes[i];
-            }
-            retval[attributes.Length] = new HtmlAttribute { Name = attrName, Value = attrValue };
-            return retval;
+            Array.Resize(ref attributes, attributes.Length + 1);
+            attributes[attributes.Length - 1] = new HtmlAttribute { Name = attrName, Value = attrValue };
+            return attributes;
         }
 
+        [Pure]
         public static IEnumerable<XAttribute> ToXAttributes(this HtmlAttribute[] htmlAttributes)
         {
             string className = null;
             foreach (var htmlAttr in htmlAttributes) {
                 if (htmlAttr.Name == "class") {
                     className = className == null ? htmlAttr.Value : className + " " + htmlAttr.Value;
+                } else {
+                    yield return new XAttribute(htmlAttr.Name, htmlAttr.Value);
                 }
-                yield return new XAttribute(htmlAttr.Name, htmlAttr.Value);
             }
             if (className != null) {
                 yield return new XAttribute("class", className);
@@ -84,22 +84,26 @@ namespace ProgressOnderwijsUtils.Html
             Debug.Assert((IsXmlElement ? 1 : 0) + (IsTextContent ? 1 : 0) + (IsHtmlElement ? 1 : 0) + (IsCollectionOfFragments ? 1 : 0) == 1);
         }
 
+        [Pure]
         public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent, null, null, null);
 
+        [Pure]
         public static HtmlFragment HtmlElement(HtmlElement element)
             => new HtmlFragment(element.TagName, element.Attributes ?? HtmlAttributeHelpers.EmptyAttributes, element.ChildNodes, null);
 
+        [Pure]
         public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
             => new HtmlFragment(tagName, attributes ?? HtmlAttributeHelpers.EmptyAttributes, childNodes, null);
 
+        [Pure]
         public static HtmlFragment XmlElement(XElement xmlElement)
             => new HtmlFragment(null, null, null, xmlElement);
 
+        [Pure]
         public static HtmlFragment Fragment(HtmlFragment[] htmlEls)
             => new HtmlFragment(null, null, htmlEls, null);
 
         public static HtmlFragment Empty => default(HtmlFragment);
-
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
 
@@ -121,6 +125,7 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
+        [Pure]
         public HtmlFragment ToFragment() => this;
     }
 
@@ -157,10 +162,7 @@ namespace ProgressOnderwijsUtils.Html
 
     public static class HtmlTagHelpers
     {
-        /// <summary>Creates an html data attribute.  E.g. setDataAttribute("foo", "bar") creates data-foo="bar". </summary>
-        public static TExpression DataAttribute<TExpression>(this TExpression htmlTagExpr, string dataAttrName, string attrValue)
-            where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Attribute("data-" + dataAttrName, attrValue);
-
+        [Pure]
         public static TExpression Attributes<TExpression>(this TExpression htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
         {
@@ -170,19 +172,27 @@ namespace ProgressOnderwijsUtils.Html
             return htmlTagExpr;
         }
 
+        [Pure]
+        public static TExpression Contents<TExpression, TContent>(this TExpression htmlTagExpr, IEnumerable<TContent> items)
+            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
+            where TContent : IConvertibleToFragment
+            => htmlTagExpr.Content(items.Select(el => el.ToFragment()).ToArray());
+
+        [Pure]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute attribute)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Attribute(attribute.Name, attribute.Value);
 
+        [Pure]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute? attributeOrNull)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
+        [Pure]
         public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
+
+        [Pure]
         public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)
             where T :IConvertibleToFragment
             => HtmlFragment.Fragment(htmlEls.Select(el => el.ToFragment()).ToArray());
-
-        public static HtmlFragment Finish<TExpression>(this TExpression htmlTagExpr)
-            where TExpression : struct, IFluentHtmlTagExpression<TExpression> => htmlTagExpr.Content().Finish();
 
         internal static T[] AppendArrays<T>(T[] beginning, T[] end)
         {
@@ -199,6 +209,7 @@ namespace ProgressOnderwijsUtils.Html
     }
 
     public interface IConvertibleToFragment {
+        [Pure]
         HtmlFragment ToFragment();
     }
 
@@ -226,12 +237,6 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlTag<TName> Content() => this;
 
         public static implicit operator HtmlFragment(HtmlTag<TName> tag) => HtmlFragment.HtmlElement(default(TName).TagName, tag.Attributes, tag.childNodes);
-
         public HtmlFragment ToFragment() => this;
-
-        [Pure]
-        public HtmlTag<TName> Contents<T>(IEnumerable<T> items)
-            where T : IConvertibleToFragment
-            => Content(items.Select(el => el.ToFragment()).ToArray());
     }
 }
