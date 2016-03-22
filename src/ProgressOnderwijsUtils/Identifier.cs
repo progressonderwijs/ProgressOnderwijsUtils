@@ -6,6 +6,9 @@ namespace ProgressOnderwijsUtils
     {
         public static string DbPrimaryKeyName<T>() where T : struct, IComparable, IFormattable, IConvertible
         {
+            if (!typeof(T).IsEnum) {
+                throw new ArgumentException("Id-type moet een enum zijn");
+            }
             switch (typeof(T).Name) {
                 case "RootOrganisatie":
                     return "organisatieid";
