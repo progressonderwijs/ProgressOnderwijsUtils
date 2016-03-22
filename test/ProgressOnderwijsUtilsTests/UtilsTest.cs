@@ -6,8 +6,9 @@ using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
 using Progress.Business.Documenten;
+using Progress.Business.Test;
+using Progress.Business.Text;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {

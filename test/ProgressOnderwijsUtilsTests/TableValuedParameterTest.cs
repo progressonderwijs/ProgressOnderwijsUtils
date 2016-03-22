@@ -10,10 +10,11 @@ using NUnit.Framework;
 using Progress.Business;
 using Progress.Business.Data;
 using Progress.Business.DomainUnits;
+using Progress.Business.GenericEdit;
 using Progress.Business.Test;
+using Progress.Business.Text;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Internal;
-using ProgressOnderwijsUtils.Test;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
@@ -69,7 +70,7 @@ namespace ProgressOnderwijsUtilsTests
 
             SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(conn);
             //manual bulk insert because our default TVP types explicitly forbid null
-            MetaObject.SqlBulkCopy(metaObjects, conn.PNetCommandCreationContext.Connection, "#strings");
+            metaObjects.BulkCopyToSqlServer(conn.PNetCommandCreationContext.Connection, "#strings");
 
             var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(conn);
             SQL($@"drop table #strings").ExecuteNonQuery(conn);
@@ -79,11 +80,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void Binary_columns_can_be_used_in_tvps()
         {
-            var filedata = new FileData {
-                FileName = "testje.txt",
-                ContentType = MediaTypeNames.Text.Plain,
-                Content = Encoding.ASCII.GetBytes("Iets om te kunnen testen die nog niet bestaat"),
-            };
+            var filedata = new FileData("testje.txt", Encoding.ASCII.GetBytes("Iets om te kunnen testen die nog niet bestaat"), MediaTypeNames.Text.Plain);
             var hashcode = new SHA256Managed().ComputeHash(filedata.Content);
 
             PAssert.That(() => SQL($@"

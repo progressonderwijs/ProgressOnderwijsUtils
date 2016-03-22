@@ -2,8 +2,7 @@
 using Progress.Business;
 using Progress.Business.DomainUnits;
 using Progress.Business.Test;
-using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
+using Progress.Business.Text;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -13,14 +12,14 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void GetItemByValue()
         {
-            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToOrganisatieId(), Taal.NL, RootOrganisatie.Dummy);
+            var sut = Applicatie.KoppelTabel(conn, KoppelTabel.land, RootOrganisatie.Dummy.ToOrganisatieId(), Taal.NL, RootOrganisatie.Dummy);
             Assert.That(sut.GetItem((int)Land.Nederland).Value, Is.EqualTo((int?)(int)Land.Nederland));
         }
 
         [Test]
         public void GetItemByText()
         {
-            var sut = Applicatie.KoppelTabel(conn, "land", RootOrganisatie.Dummy.ToOrganisatieId(), Taal.NL, RootOrganisatie.Dummy);
+            var sut = Applicatie.KoppelTabel(conn, KoppelTabel.land, RootOrganisatie.Dummy.ToOrganisatieId(), Taal.NL, RootOrganisatie.Dummy);
             Assert.That(sut.GetItem(Taal.NL, "Nederland").Value, Is.EqualTo((int?)(int)Land.Nederland));
         }
     }

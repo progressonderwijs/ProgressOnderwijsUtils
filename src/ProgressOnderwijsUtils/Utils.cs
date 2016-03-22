@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.Core;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -56,7 +55,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
         /// </summary>
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static bool FuzzyEquals(double x, double y)
         {
             const double relativeEpsilon = 1.0 / (1ul << 32);
@@ -239,7 +238,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Executes a test body, marking a test as inconclusive rather than failed when a timeout occurs.
         /// </summary>
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static void IgnoreTimeouts(Action test)
         {
             //Ideally, we'd retry the test, however, since lots of test are in a complex inheritance chain
@@ -253,22 +252,8 @@ namespace ProgressOnderwijsUtils
                     Assert.Inconclusive("TIMEOUT DETECTED\n\n" + e);
                 } else if (e is AggregateException) {
                     // re-order de inner-exceptions zodat we tenminste de eerste non-timeout exceptie te zien krijgen
-                    var ae = e as AggregateException;
-                    throw new AggregateException(
-                        ae.InnerExceptions.OrderBy(
-                            x => x,
-                            new ComparisonComparer<Exception>(
-                                (a, b) => {
-                                    if (IsTimeoutException(a) && IsTimeoutException(b)) {
-                                        return 0;
-                                    } else if (IsTimeoutException(b)) {
-                                        return -1;
-                                    } else if (IsTimeoutException(a)) {
-                                        return 1;
-                                    } else {
-                                        return 0;
-                                    }
-                                })));
+                    var ae = (AggregateException)e;
+                    throw new AggregateException(ae.InnerExceptions.OrderBy(IsTimeoutException));
                 } else {
                     throw;
                 }
@@ -277,8 +262,9 @@ namespace ProgressOnderwijsUtils
 
         static bool IsTimeoutException(Exception e)
         {
-            if (e is AggregateException) {
-                return (e as AggregateException).InnerExceptions.All(IsTimeoutException);
+            var aggregateException = e as AggregateException;
+            if (aggregateException != null) {
+                return aggregateException.InnerExceptions.All(IsTimeoutException);
             }
 
             for (var current = e; current != null; current = current.InnerException) {
@@ -327,35 +313,43 @@ namespace ProgressOnderwijsUtils
 
         public static string ToSortableShortString(long value)
         {
+            var sb = new StringBuilder();
+            sb.AppendSortableShortString(value);
+            return sb.ToString();
+        }
+
+        public static void AppendSortableShortString(this StringBuilder target, long value)
+        {
             //This function is used on a hot-path in Programma and Resultaten export - it needs to be fast.
-
-            char[] buffer = new char[14]; // log(2^31)/log(36) < 6 char; +1 for length+sign.
-            int index = 0;
-            bool isNeg = value < 0;
-            if (isNeg) {
-                while (value < 0) {
-                    int digit = (int)(value % 36); //in range -35..0!!
-                    value = value / 36;
-                    buffer[index++] = MapToBase36Char(35 + digit);
-                }
+            if (value < 0) {
+                SssNegHelper(target, value, 0);
             } else {
-                while (value > 0) {
-                    int digit = (int)(value % 36);
-                    value = value / 36;
-                    buffer[index++] = MapToBase36Char(digit);
-                }
+                SssHelper(target, value, 0);
             }
-            Debug.Assert(index <= 13);
-            int encodedLength = (isNeg ? -index : index) + 13; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
-            buffer[index++] = MapToBase36Char(encodedLength);
+        }
 
-            for (int i = 0, j = index - 1; i < j; i++, j--) {
-                var tmp = buffer[i];
-                buffer[i] = buffer[j];
-                buffer[j] = tmp;
+        static void SssHelper(StringBuilder target, long value, int index)
+        {
+            if (value != 0) {
+                int digit = (int)(value % 36);
+                SssHelper(target, value / 36, index + 1);
+                target.Append(MapToBase36Char(digit));
+            } else {
+                int encodedLength = index + 13; //-6..6 for int32; but for 64-bit -13..13 so to futureproof this offset by 13
+                target.Append(MapToBase36Char(encodedLength));
             }
+        }
 
-            return new string(buffer, 0, index);
+        static void SssNegHelper(StringBuilder target, long value, int index)
+        {
+            if (value != 0) {
+                int digit = (int)(value % 36); //in range -35..0!!
+                SssNegHelper(target, value / 36, index + 1);
+                target.Append(MapToBase36Char(35 + digit));
+            } else {
+                int encodedLength = 13 - index; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
+                target.Append(MapToBase36Char(encodedLength));
+            }
         }
 
         static char MapToBase36Char(int digit) => (char)((digit < 10 ? '0' : 'a' - 10) + digit);
@@ -422,7 +416,7 @@ namespace ProgressOnderwijsUtils
             return new string(str, 0, idx);
         }
 
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static DateTime? DateMax(DateTime? d1, DateTime? d2)
         {
             if (d1 == null) {
@@ -436,7 +430,7 @@ namespace ProgressOnderwijsUtils
             return d2 > d1 ? d2 : d1;
         }
 
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static decimal RoundUp(decimal input, int places)
         {
             var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));

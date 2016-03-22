@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils
                 return (T)serializer.Deserialize(reader);
         }
 
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static string Serialize(T val)
         {
             using (var writer = new StringWriter()) {

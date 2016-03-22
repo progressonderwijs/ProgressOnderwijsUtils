@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -9,26 +10,15 @@ namespace ProgressOnderwijsUtils
 {
     public interface IMetaProperty : IColumnDefinition
     {
-        ColumnCss LijstCssClass { get; }
         Func<object, object> UntypedGetter { get; }
         object UnsafeSetPropertyAndReturnObject(object obj, object newValue);
         int Index { get; }
-        bool Required { get; }
-        int? MaxLength { get; }
-        int? DisplayLength { get; }
-        string Regex { get; }
-        DatumFormaat? DatumTijd { get; }
-        ITranslatable Label { get; }
-        string KoppelTabelNaam { get; }
-        bool IsReadonly { get; }
+        Expression PropertyAccessExpression(Expression paramExpr);
         bool IsKey { get; }
-        bool Hide { get; }
-        bool ShowDefaultOnNew { get; }
         bool CanRead { get; }
         bool CanWrite { get; }
         PropertyInfo PropertyInfo { get; }
-        Expression PropertyAccessExpression(Expression paramExpr);
-        HtmlEditMode HtmlMode { get; }
+        IReadOnlyList<object> CustomAttributes { get; }
     }
 
     public interface IReadonlyMetaProperty<in TOwner> : IMetaProperty
@@ -45,45 +35,19 @@ namespace ProgressOnderwijsUtils
     {
         public sealed class Impl<TOwner> : IMetaProperty<TOwner>
         {
-            readonly string name;
-            public string Name => name;
-            readonly ColumnCss lijstCssClass;
-            public ColumnCss LijstCssClass => lijstCssClass;
-            readonly HtmlEditMode htmlMode;
-            public HtmlEditMode HtmlMode => htmlMode;
-            readonly int index;
-            public int Index => index;
-            readonly bool required;
-            public bool Required => required;
-            readonly bool hide;
-            public bool Hide => hide;
-            readonly int? maxLength;
-            public int? MaxLength => maxLength;
-            readonly int? displayLength;
-            public int? DisplayLength => displayLength;
-            readonly string regex;
-            public string Regex => regex;
-            readonly DatumFormaat? datumtijd;
-            public DatumFormaat? DatumTijd => datumtijd;
-            readonly ITranslatable label;
-            public ITranslatable Label => label;
-            readonly string koppelTabelNaam;
-            public string KoppelTabelNaam => koppelTabelNaam;
-            readonly bool isReadonly;
-            public bool IsReadonly => isReadonly;
-            readonly bool showDefaultOnNew;
-            public bool ShowDefaultOnNew => showDefaultOnNew;
-            public Type DataType => propertyInfo.PropertyType;
-            readonly PropertyInfo propertyInfo;
-            public PropertyInfo PropertyInfo => propertyInfo;
-            readonly bool isKey;
-            public bool IsKey => isKey;
+            public bool IsKey { get; }
+
+            public string Name { get; }
+            public IReadOnlyList<object> CustomAttributes { get; }
+            public int Index { get; }
+            public Type DataType => PropertyInfo.PropertyType;
+            public PropertyInfo PropertyInfo { get; }
             public bool CanRead => getterMethod != null;
             public bool CanWrite => setterMethod != null;
             Func<TOwner, object> getter;
-            public Func<TOwner, object> Getter => getter ?? (getter = MkGetter(getterMethod, propertyInfo.PropertyType));
+            public Func<TOwner, object> Getter => getter ?? (getter = MkGetter(getterMethod, PropertyInfo.PropertyType));
             Setter<TOwner> setter;
-            public Setter<TOwner> Setter => setter ?? (setter = MkSetter(setterMethod, propertyInfo.PropertyType));
+            public Setter<TOwner> Setter => setter ?? (setter = MkSetter(setterMethod, PropertyInfo.PropertyType));
             Func<object, object> untypedGetter;
 
             public Func<object, object> UntypedGetter
@@ -104,72 +68,25 @@ namespace ProgressOnderwijsUtils
                 return typedObj;
             }
 
-            public Expression PropertyAccessExpression(Expression paramExpr) => Expression.Property(paramExpr, propertyInfo);
+            public Expression PropertyAccessExpression(Expression paramExpr) => Expression.Property(paramExpr, PropertyInfo);
 
             public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
             {
-                propertyInfo = pi;
-                name = pi.Name;
-                index = implicitOrder;
+                PropertyInfo = pi;
+                Name = pi.Name;
+                Index = implicitOrder;
+                CustomAttributes = attrs;
                 getterMethod = pi.GetGetMethod();
                 setterMethod = pi.GetSetMethod();
-
-                var mpKoppelTabelAttribute = attrs.AttrH<MpKoppelTabelAttribute>();
-                koppelTabelNaam = mpKoppelTabelAttribute == null ? null : (mpKoppelTabelAttribute.KoppelTabelNaam ?? propertyInfo.Name);
-                var mpColumnCssAttribute = attrs.AttrH<MpColumnCssAttribute>();
-                lijstCssClass = mpColumnCssAttribute == null ? default(ColumnCss) : mpColumnCssAttribute.CssClass;
-                var mpHtmlEditModeAttribute = attrs.AttrH<MpHtmlEditModeAttribute>();
-                htmlMode = mpHtmlEditModeAttribute == null ? default(HtmlEditMode) : mpHtmlEditModeAttribute.HtmlMode;
-                required = attrs.AttrH<MpVerplichtAttribute>() != null;
-                hide = attrs.AttrH<HideAttribute>() != null;
-                isKey = attrs.AttrH<KeyAttribute>() != null;
-                var mpShowDefaultOnNewAttribute = attrs.AttrH<MpShowDefaultOnNewAttribute>();
-                showDefaultOnNew = mpShowDefaultOnNewAttribute != null;
-                isReadonly = !pi.CanWrite || (attrs.AttrH<MpReadonlyAttribute>() != null);
-                var mpLengteAttribute = attrs.AttrH<MpMaxLengthAttribute>();
-                maxLength = mpLengteAttribute == null ? default(int?) : mpLengteAttribute.MaxLength;
-                var mpDisplayLengthAttribute = attrs.AttrH<MpDisplayLengthAttribute>();
-                displayLength = mpDisplayLengthAttribute == null ? maxLength : mpDisplayLengthAttribute.DisplayLength;
-                var mpRegexAttribute = attrs.AttrH<MpRegexAttribute>();
-                regex = mpRegexAttribute == null ? null : mpRegexAttribute.Regex;
-                var mpDatumFormaatAttribute = attrs.AttrH<MpDatumFormaatAttribute>();
-                datumtijd = mpDatumFormaatAttribute == null ? default(DatumFormaat?) : mpDatumFormaatAttribute.Formaat;
-
-                var labelNoTt = LabelNoTt(attrs);
-                var mpTooltipAttribute = attrs.AttrH<MpTooltipAttribute>();
-                label = mpTooltipAttribute == null ? labelNoTt : labelNoTt.WithTooltip(mpTooltipAttribute.NL, mpTooltipAttribute.EN, mpTooltipAttribute.DE);
-
-                if (KoppelTabelNaam != null && DataType.GetNonNullableUnderlyingType() != typeof(int)) {
-                    throw new ProgressNetException(
-                        typeof(TOwner) + " heeft Kolom " + Name + " heeft koppeltabel " +
-                            KoppelTabelNaam + " maar is van type " + DataType + "!");
-                }
-            }
-
-            public override string ToString() => ObjectToCode.GetCSharpFriendlyTypeName(typeof(TOwner)) + "." + name;
-
-            LiteralTranslatable LabelNoTt(object[] attrs)
-            {
-                var mpLabelAttribute = attrs.AttrH<MpLabelAttribute>();
-                var labelNoTt = mpLabelAttribute == null ? null : mpLabelAttribute.ToTranslatable();
-                var mpLabelUntranslatedAttribute = attrs.AttrH<MpLabelUntranslatedAttribute>();
-                var untranslatedLabelNoTt = mpLabelUntranslatedAttribute == null ? null : mpLabelUntranslatedAttribute.ToTranslatable();
-                if (untranslatedLabelNoTt != null) {
-                    if (labelNoTt != null) {
-                        throw new Exception(
-                            "Cannot define both an untranslated and a translated label on the same property " +
-                                ObjectToCode.GetCSharpFriendlyTypeName(propertyInfo.DeclaringType) + "." + Name);
-                    } else {
-                        labelNoTt = untranslatedLabelNoTt;
+                foreach (var attr in attrs) {
+                    if (attr is KeyAttribute) {
+                        IsKey = true;
+                        break;
                     }
                 }
-
-                if (labelNoTt == null) {
-                    var prettyName = StringUtils.PrettyCapitalizedPrintCamelCased(propertyInfo.Name);
-                    labelNoTt = Translatable.Literal(prettyName, prettyName, prettyName);
-                }
-                return labelNoTt;
             }
+
+            public override string ToString() => ObjectToCode.GetCSharpFriendlyTypeName(typeof(TOwner)) + "." + Name;
 
             static Setter<TOwner> MkSetter(MethodInfo setterMethod, Type propertyType)
             {
@@ -220,16 +137,6 @@ namespace ProgressOnderwijsUtils
         static T MkDelegate<T>(MethodInfo mi)
         {
             return (T)(object)Delegate.CreateDelegate(typeof(T), mi);
-        }
-
-        static T AttrH<T>(this object[] attrs) where T : class
-        {
-            foreach (var obj in attrs) {
-                if (obj is T) {
-                    return (T)obj;
-                }
-            }
-            return null;
         }
 
         interface IOutCaster

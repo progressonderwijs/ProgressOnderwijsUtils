@@ -4,10 +4,10 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    [CodeDieAlleenWordtGebruiktInTests]
+    [CodeThatsOnlyUsedForTests]
     public class ArrayComparer<T> : IEqualityComparer<T[]>
     {
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
 
         readonly IEqualityComparer<T> underlying;

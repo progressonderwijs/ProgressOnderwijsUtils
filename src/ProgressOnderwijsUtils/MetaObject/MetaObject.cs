@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
@@ -30,7 +28,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        [CodeDieAlleenWordtGebruiktInTests]
+        [CodeThatsOnlyUsedForTests]
         public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
             where TMetaObject : IMetaObject
         {
@@ -117,8 +115,7 @@ namespace ProgressOnderwijsUtils
         {
             var dt = new DataTable();
             var properties = GetMetaProperties<T>().Where(mp => mp.CanRead).ToArray();
-            dt.Columns.AddRange(
-                properties.Select(mp => new DataColumn(mp.Name, mp.DataType.GetNonNullableType()) { AllowDBNull = !mp.Required && mp.DataType.CanBeNull() }).ToArray());
+            dt.Columns.AddRange(properties.Select(mp => new DataColumn(mp.Name, mp.DataType.GetNonNullableType()) { AllowDBNull = mp.DataType.CanBeNull() }).ToArray());
 
             foreach (var obj in objs) {
                 dt.Rows.Add(properties.Select(mp => mp.Getter(obj) ?? DBNull.Value).ToArray());
@@ -128,77 +125,6 @@ namespace ProgressOnderwijsUtils
                 dt.PrimaryKey = optionalPrimaryKey.Select(name => dt.Columns[name]).ToArray();
             }
             return dt;
-        }
-
-        [Pure]
-        public static MetaObjectDataReader<T> CreateDataReader<T>(IEnumerable<T> entities) where T : IMetaObject
-        {
-            return new MetaObjectDataReader<T>(entities);
-        }
-
-        /// <summary>
-        /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout.
-        /// Default SqlBulkCopyOptions are SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction
-        /// </summary>
-        /// <typeparam name="T">The type of metaobject to be inserted</typeparam>
-        /// <param name="metaObjects">The list of entities to insert</param>
-        /// <param name="sqlconn">The Sql connection to write to</param>
-        /// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
-        /// <param name="options">The SqlBulkCopyOptions to use.  If unspecified, uses SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.UseInternalTransaction which is NOT SqlBulkCopyOptions.Default</param>
-        public static void SqlBulkCopy<T>(IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, SqlBulkCopyOptions? options = null) where T : IMetaObject
-        {
-            if (metaObjects == null) {
-                throw new ArgumentNullException(nameof(metaObjects));
-            }
-            if (tableName.Contains('[') || tableName.Contains(']')) {
-                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, nameof(tableName));
-            }
-            if (sqlconn == null) {
-                throw new ArgumentNullException(nameof(sqlconn));
-            }
-            if (sqlconn.State != ConnectionState.Open) {
-                throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
-            }
-            if (!typeof(T).IsVisible) {
-                throw new ArgumentException("MetaObject " + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + " must be public (accessable to other assemblies)");
-            }
-
-            SqlBulkCopyOptions effectiveOptions = options ?? SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction;
-            ColumnDefinition[] dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
-
-            using (var objectReader = CreateDataReader(metaObjects))
-            using (var bulkCopy = new SqlBulkCopy(sqlconn, effectiveOptions, null)) {
-                ColumnDefinition[] clrColumns = ColumnDefinition.GetFromReader(objectReader);
-
-                // ReSharper disable CoVariantArrayConversion
-                var mapping = FieldMapping.VerifyAndCreate(
-                    clrColumns,
-                    ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)),
-                    dataColumns,
-                    "table " + tableName,
-                    FieldMappingMode.IgnoreExtraDestinationFields);
-                // ReSharper restore CoVariantArrayConversion
-
-                bulkCopy.BulkCopyTimeout = 3600;
-                bulkCopy.DestinationTableName = tableName;
-                foreach (var mapEntry in mapping) {
-                    bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
-                }
-
-                try {
-                    bulkCopy.WriteToServer(objectReader);
-                } catch (SqlException ex) {
-                    var colid_message = new Regex(@"Received an invalid column length from the bcp client for colid (\d+).");
-                    var match = colid_message.Match(ex.Message);
-                    if (match.Success) {
-                        var col_id = int.Parse(match.Groups[1].Value);
-                        throw new Exception(
-                            $"Received an invalid column length from the bcp client for column name {clrColumns[mapping.OrderBy(m => m.DstIndex).ToArray()[col_id - 1].SrcIndex].Name}",
-                            ex);
-                    }
-                    throw;
-                }
-            }
         }
 
         [Pure]

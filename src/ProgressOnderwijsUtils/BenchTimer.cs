@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using NUnit.Framework;
-using ProgressOnderwijsUtils.Test;
 
 namespace ProgressOnderwijsUtils
 {
@@ -24,8 +23,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    [Continuous]
-    public class BTTester
+    public class BenchmarkTimerTests
     {
         [Test]
         public void ArgVerify()

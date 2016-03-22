@@ -1,8 +1,8 @@
-﻿using System;
-using ExpressionToCodeLib;
+﻿using ExpressionToCodeLib;
 using NUnit.Framework;
-using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
+using Progress.Business.DomainUnits;
+using Progress.Business.Filters;
+using Progress.Business.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {

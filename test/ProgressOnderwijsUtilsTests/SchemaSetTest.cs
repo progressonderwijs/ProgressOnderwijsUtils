@@ -2,8 +2,8 @@
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
-using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
+using Progress.Business.Schemas;
+using Progress.Business.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {

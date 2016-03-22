@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business;
 using Progress.Business.Data;
+using Progress.Business.DomainUnits;
+using Progress.Business.Filters;
 using Progress.Business.Organisaties;
 using Progress.Business.Test;
+using Progress.Business.Text;
 using ProgressOnderwijsUtils;
-using ProgressOnderwijsUtils.Test;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
@@ -57,7 +60,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void CurrentTime_IsBetweenNowAnd2millisecondsAgo()
         {
-            var filter = Filter.CreateCriterium("test", BooleanComparer.Equal, Filter.CurrentTimeToken.Instance);
+            var filter = Filter.CreateCriterium("test", BooleanComparer.Equal, CurrentTimeToken.Instance);
             var q = filter.ToParameterizedSql();
             var time = DateTime.Now;
             bool matcheSomeOldTime = Enumerable.Range(0, 20000).Select(offset => SQL($"test = {time.AddTicks(-offset)}")).Any(qIdeal => q == qIdeal);
@@ -222,7 +225,7 @@ namespace ProgressOnderwijsUtilsTests
                     Filter.CreateCriterium("test", BooleanComparer.NotIn, new GroupReference(12345, "blablablaGroup")).SerializeToString()
                         == @"test[!in]g12345:blablablaGroup*");
 
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, Filter.CurrentTimeToken.Instance).SerializeToString() == @"test[<]n*");
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, CurrentTimeToken.Instance).SerializeToString() == @"test[<]n*");
 
             PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<]i3* ") == null); //extra space!
             PAssert.That(() => Filter.TryParseSerializedFilter(@"test<]i3*") == null); //missing [
@@ -318,7 +321,7 @@ namespace ProgressOnderwijsUtilsTests
                 Filter.CreateCriterium("test", BooleanComparer.NotIn, new GroupReference(12345, "blablablaGroup")),
                 Filter.CreateCriterium("test", BooleanComparer.Equal, ""),
                 Filter.CreateCriterium("test", BooleanComparer.Equal, "*1"),
-                Filter.CreateCriterium("test", BooleanComparer.Equal, Filter.CurrentTimeToken.Instance),
+                Filter.CreateCriterium("test", BooleanComparer.Equal, CurrentTimeToken.Instance),
                 Filter.CreateCriterium("test", BooleanComparer.Equal, "1*"),
                 Filter.CreateCriterium("test", BooleanComparer.Equal, "1**2*"),
                 Filter.CreateCriterium("test", BooleanComparer.In, new[] { 1, 2, 3, 4, 5, }),
