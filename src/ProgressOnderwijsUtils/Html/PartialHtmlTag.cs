@@ -73,7 +73,26 @@ namespace ProgressOnderwijsUtils.Html
         // - A collection of fragments
         //      (without embeddedContent, without tagNameOrTextContent, without attributesWhenTag, ? childNodes)
         public bool IsCollectionOfFragments => embeddedContent == null && tagNameOrTextContent == null && attributesWhenTag == null;
-        public bool IsEmpty => attributesWhenTag == null && embeddedContent == null && childNodes == null && string.IsNullOrEmpty(tagNameOrTextContent);
+
+        public bool IsEmpty
+        {
+            get
+            {
+                if (attributesWhenTag != null || embeddedContent != null || !string.IsNullOrEmpty(tagNameOrTextContent)) {
+                    return false;
+                }
+                //we're dealing with a fragment
+                if (childNodes == null) {
+                    return true;
+                }
+                for (int i = 0; i < childNodes.Length; i++) {
+                    if (!childNodes[i].IsEmpty) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
 
         public HtmlFragment(string tagNameOrTextContent, HtmlAttribute[] attributesWhenTag, HtmlFragment[] childNodes, XElement embeddedContent)
         {
@@ -101,7 +120,11 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         public static HtmlFragment Fragment(params HtmlFragment[] htmlEls)
-            => new HtmlFragment(null, null, htmlEls, null);
+            => htmlEls == null || htmlEls.Length == 0
+                ? Empty
+                : htmlEls.Length == 1
+                    ? htmlEls[0]
+                    : new HtmlFragment(null, null, htmlEls, null);
 
         public static HtmlFragment Empty => default(HtmlFragment);
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
@@ -205,6 +228,32 @@ namespace ProgressOnderwijsUtils.Html
             Array.Copy(beginning, 0, newChildNodes, 0, beginning.Length);
             Array.Copy(end, 0, newChildNodes, beginning.Length, end.Length);
             return newChildNodes;
+        }
+
+        public static HtmlFragment JoinHtml<T>(this IEnumerable<T> htmlEls, HtmlFragment joiner)
+            where T : IConvertibleToFragment
+        {
+            if (joiner.IsEmpty) {
+                var retval = new List<HtmlFragment>();
+                foreach (var item in htmlEls) {
+                    retval.Add(item.ToFragment());
+                }
+                return HtmlFragment.Fragment(retval.ToArray());
+            }
+            using (var enumerator = htmlEls.GetEnumerator()) {
+                if (!enumerator.MoveNext()) {
+                    return HtmlFragment.Empty;
+                }
+                var firstNode = enumerator.Current.ToFragment();
+
+                var retval = new List<HtmlFragment> { firstNode };
+
+                while (enumerator.MoveNext()) {
+                    retval.Add(joiner);
+                    retval.Add(enumerator.Current.ToFragment());
+                }
+                return HtmlFragment.Fragment(retval.ToArray());
+            }
         }
     }
 
