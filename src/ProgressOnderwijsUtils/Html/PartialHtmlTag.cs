@@ -121,11 +121,15 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlFragment ToFragment() => this;
     }
 
-    public struct HtmlElement : IConvertibleToFragment
+    public struct HtmlElement : IFluentHtmlTagExpression<HtmlElement>
     {
         public readonly string TagName;
         public readonly HtmlAttribute[] Attributes;
         public readonly HtmlFragment[] ChildNodes;
+
+        [Pure]
+        public HtmlElement Attribute(string attrName, string attrValue)
+            => attrValue == null ? this : new HtmlElement(TagName, (Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue), ChildNodes);
 
         [Pure]
         public HtmlElement Content(params HtmlFragment[] content)
@@ -248,9 +252,6 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         public HtmlTag<TName> Content(params HtmlFragment[] content) => new HtmlTag<TName>(Attributes, HtmlTagHelpers.AppendArrays(childNodes, content));
-
-        [Pure]
-        public HtmlTag<TName> Content() => this;
 
         public static implicit operator HtmlFragment(HtmlTag<TName> tag) => HtmlFragment.HtmlElement(default(TName).TagName, tag.Attributes, tag.childNodes);
         public HtmlFragment ToFragment() => this;
