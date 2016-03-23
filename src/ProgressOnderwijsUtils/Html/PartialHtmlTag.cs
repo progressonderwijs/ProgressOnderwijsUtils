@@ -73,26 +73,7 @@ namespace ProgressOnderwijsUtils.Html
         // - A collection of fragments
         //      (without embeddedContent, without tagNameOrTextContent, without attributesWhenTag, ? childNodes)
         public bool IsCollectionOfFragments => embeddedContent == null && tagNameOrTextContent == null && attributesWhenTag == null;
-
-        public bool IsEmpty
-        {
-            get
-            {
-                if (attributesWhenTag != null || embeddedContent != null || !string.IsNullOrEmpty(tagNameOrTextContent)) {
-                    return false;
-                }
-                //we're dealing with a fragment
-                if (childNodes == null) {
-                    return true;
-                }
-                for (int i = 0; i < childNodes.Length; i++) {
-                    if (!childNodes[i].IsEmpty) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
+        public bool IsEmpty => IsCollectionOfFragments && childNodes == null;
 
         public HtmlFragment(string tagNameOrTextContent, HtmlAttribute[] attributesWhenTag, HtmlFragment[] childNodes, XElement embeddedContent)
         {
