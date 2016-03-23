@@ -58,46 +58,37 @@ namespace ProgressOnderwijsUtils.Html
         readonly string tagNameOrTextContent; //iff text or element node
         readonly HtmlAttribute[] attributesWhenTag; // iff elementnode
         readonly HtmlFragment[] childNodes; //only if element node or collection; null means "empty".
-        readonly XElement embeddedContent; //iff xml node
 
         //This is a union type of...
-        // - An xml node
-        //      (WITH embeddedContent, without tagNameOrTextContent, without attributesWhenTag, without childNodes)
-        public bool IsXmlElement => embeddedContent != null && tagNameOrTextContent == null && attributesWhenTag == null && childNodes == null;
         // - A text content node:
         //      (without embeddedContent, WITH tagNameOrTextContent, without attributesWhenTag, without childNodes)
-        public bool IsTextContent => tagNameOrTextContent != null && attributesWhenTag == null && embeddedContent == null && childNodes == null;
+        public bool IsTextContent => tagNameOrTextContent != null && attributesWhenTag == null && childNodes == null;
         // - A single element node    
         //      (without embeddedContent, WITH tagNameOrTextContent, WITH attributesWhenTag, ? childNodes)
-        public bool IsHtmlElement => attributesWhenTag != null && embeddedContent == null && tagNameOrTextContent != null;
+        public bool IsHtmlElement => attributesWhenTag != null && tagNameOrTextContent != null;
         // - A collection of fragments
         //      (without embeddedContent, without tagNameOrTextContent, without attributesWhenTag, ? childNodes)
-        public bool IsCollectionOfFragments => embeddedContent == null && tagNameOrTextContent == null && attributesWhenTag == null;
+        public bool IsCollectionOfFragments => tagNameOrTextContent == null && attributesWhenTag == null;
         public bool IsEmpty => IsCollectionOfFragments && childNodes == null;
 
-        public HtmlFragment(string tagNameOrTextContent, HtmlAttribute[] attributesWhenTag, HtmlFragment[] childNodes, XElement embeddedContent)
+        HtmlFragment(string tagNameOrTextContent, HtmlAttribute[] attributesWhenTag, HtmlFragment[] childNodes)
         {
             this.tagNameOrTextContent = tagNameOrTextContent;
             this.attributesWhenTag = attributesWhenTag;
             this.childNodes = childNodes;
-            this.embeddedContent = embeddedContent;
-            Debug.Assert((IsXmlElement ? 1 : 0) + (IsTextContent ? 1 : 0) + (IsHtmlElement ? 1 : 0) + (IsCollectionOfFragments ? 1 : 0) == 1);
+            Debug.Assert((IsTextContent ? 1 : 0) + (IsHtmlElement ? 1 : 0) + (IsCollectionOfFragments ? 1 : 0) == 1);
         }
 
         [Pure]
-        public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent, null, null, null);
+        public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent, null, null);
 
         [Pure]
         public static HtmlFragment HtmlElement(HtmlElement element)
-            => new HtmlFragment(element.TagName, element.Attributes ?? HtmlAttributeHelpers.EmptyAttributes, element.ChildNodes, null);
+            => new HtmlFragment(element.TagName, element.Attributes ?? HtmlAttributeHelpers.EmptyAttributes, element.ChildNodes);
 
         [Pure]
         public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
-            => new HtmlFragment(tagName, attributes ?? HtmlAttributeHelpers.EmptyAttributes, childNodes, null);
-
-        [Pure]
-        public static HtmlFragment XmlElement(XElement xmlElement)
-            => new HtmlFragment(null, null, null, xmlElement);
+            => new HtmlFragment(tagName, attributes ?? HtmlAttributeHelpers.EmptyAttributes, childNodes);
 
         [Pure]
         public static HtmlFragment Fragment(params HtmlFragment[] htmlEls)
@@ -105,7 +96,7 @@ namespace ProgressOnderwijsUtils.Html
                 ? Empty
                 : htmlEls.Length == 1
                     ? htmlEls[0]
-                    : new HtmlFragment(null, null, htmlEls, null);
+                    : new HtmlFragment(null, null, htmlEls);
 
         public static HtmlFragment Empty => default(HtmlFragment);
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
@@ -114,10 +105,7 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public object ToXDocumentFragment()
         {
-            if (embeddedContent != null) {
-                Debug.Assert(IsXmlElement);
-                return embeddedContent;
-            } else if (tagNameOrTextContent == null) {
+            if (tagNameOrTextContent == null) {
                 Debug.Assert(IsCollectionOfFragments);
                 return childNodes?.ArraySelect(node => node.ToXDocumentFragment());
             } else if (attributesWhenTag == null) {
@@ -189,9 +177,6 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute? attributeOrNull)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
-
-        [Pure]
-        public static HtmlFragment WrapInHtmlFragment(this XElement xEl) => HtmlFragment.XmlElement(xEl);
 
         [Pure]
         public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)
