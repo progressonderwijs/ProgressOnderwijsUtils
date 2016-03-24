@@ -98,6 +98,11 @@ namespace ProgressOnderwijsUtils.Html
                     ? htmlEls[0]
                     : new HtmlFragment(null, null, htmlEls);
 
+        [Pure]
+        public static HtmlFragment Fragment<T>(IEnumerable<T> htmlEls)
+            where T : IConvertibleToFragment
+            => Fragment(htmlEls.Select(el => el.ToFragment()).ToArray());
+
         public static HtmlFragment Empty => default(HtmlFragment);
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
