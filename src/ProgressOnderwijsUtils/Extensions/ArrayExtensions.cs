@@ -36,23 +36,6 @@ namespace ProgressOnderwijsUtils
             return array ?? Helper<T>.EmptyArray;
         }
 
-        [Pure]
-        public static T[] ToArrayFast<T>(this IReadOnlyList<T> list)
-        {
-            var collection = list as ICollection<T>;
-            if (collection != null) {
-                var retval = new T[list.Count];
-                collection.CopyTo(retval,0);
-                return retval;
-            } else {
-                var retval = new T[list.Count];
-                for (int i = 0; i < retval.Length; i++) {
-                    retval[i] = list[i];
-                }
-                return retval;
-            }
-        }
-
         /// <summary>
         /// Like Enumerable.Select, but faster due to specialization for arrays.
         /// </summary>
@@ -61,6 +44,15 @@ namespace ProgressOnderwijsUtils
         {
             var output = new TR[array.Length];
             for (int i = 0; i < array.Length; ++i)
+                output[i] = mappingFunction(array[i]);
+            return output;
+        }
+
+        [Pure]
+        public static TR[] ArraySelect<T, TR>(this IReadOnlyList<T> array, Func<T, TR> mappingFunction)
+        {
+            var output = new TR[array.Count];
+            for (int i = 0; i < output.Length; ++i)
                 output[i] = mappingFunction(array[i]);
             return output;
         }
