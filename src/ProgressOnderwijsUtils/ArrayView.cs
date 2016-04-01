@@ -90,27 +90,5 @@ namespace ProgressOnderwijsUtils
         {
             return new CollectionView_Mapped<T, TOut>(vals, map);
         }
-
-        public static T[] ToArray<T>(this IReadOnlyList<T> list)
-        {
-            var retval = new T[list.Count];
-            for (int i = 0; i < retval.Length; i++) {
-                retval[i] = list[i];
-            }
-            return retval;
-        }
-
-        public static T[] ToArray<T>(this IReadOnlyCollection<T> list)
-        {
-            var retval = new T[list.Count];
-            int i = 0;
-            foreach (var item in list) {
-                retval[i++] = item;
-            }
-            if (i != retval.Length) {
-                throw new InvalidOperationException("collection claimed to have Count = " + retval.Length + ", but is actually only " + i + " long.");
-            }
-            return retval;
-        }
     }
 }

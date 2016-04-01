@@ -36,17 +36,21 @@ namespace ProgressOnderwijsUtils
             return array ?? Helper<T>.EmptyArray;
         }
 
-        [Pure, UsefulToKeep("This is indeed a faster ToArray, which could be useful for optimizations")]
+        [Pure]
         public static T[] ToArrayFast<T>(this IReadOnlyList<T> list)
         {
-            if (list is T[]) {
-                return (T[])((T[])list).Clone();
+            var collection = list as ICollection<T>;
+            if (collection != null) {
+                var retval = new T[list.Count];
+                collection.CopyTo(retval,0);
+                return retval;
+            } else {
+                var retval = new T[list.Count];
+                for (int i = 0; i < retval.Length; i++) {
+                    retval[i] = list[i];
+                }
+                return retval;
             }
-            var retval = new T[list.Count];
-            for (int i = 0; i < retval.Length; i++) {
-                retval[i] = list[i];
-            }
-            return retval;
         }
 
         /// <summary>
