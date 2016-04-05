@@ -1,66 +1,35 @@
 using System.IO;
 using System.Text;
-using System.Xml;
-using System.Xml.Linq;
-using System.Xml.Xsl;
 
 namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlToStringExtensions
     {
-        static readonly XslCompiledTransform toHtmlSyntax = MakeXhtmlToHtml();
-
-        static XslCompiledTransform MakeXhtmlToHtml()
+        public static string SerializeToString(this HtmlFragment rootElem)
         {
-            var transform = new XslCompiledTransform(false);
-            var simpleTransform = @"<?xml version='1.0' encoding='UTF-8'?>
-<xsl:stylesheet version='1.0' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
-  <xsl:output method='html' omit-xml-declaration='yes' indent='no'/>
-  <xsl:template match='/html'>
-    <xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
-    <xsl:copy-of select='.'/>
-  </xsl:template>
-</xsl:stylesheet>";
-            using (var stringReader = new StringReader(simpleTransform))
-            using (var xmlReader = XmlReader.Create(stringReader))
-                transform.Load(xmlReader);
-            return transform;
+            var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
+            fastStringBuilder.AppendText("<!DOCTYPE html>");
+            rootElem.AppendToBuilder(ref fastStringBuilder);
+            return fastStringBuilder.Value;
         }
 
         public static void SaveHtmlFragmentToStream(HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
         {
-            var xhtmlDoc = (XElement)rootElem.ToXDocumentFragment();
-            var outputSettings = CreateXmlWriterSettings(contentEncoding);
-            using (var xmlWriter = XmlWriter.Create(outputStream, outputSettings))
-                toHtmlSyntax.Transform(xhtmlDoc.CreateReader(), null, xmlWriter);
-        }
-
-        static XmlWriterSettings CreateXmlWriterSettings(Encoding contentEncoding)
-        {
-            var outputSettings = toHtmlSyntax.OutputSettings.Clone();
-            outputSettings.CheckCharacters = false;
-            outputSettings.NewLineChars = "\n";
-            outputSettings.Encoding = contentEncoding;
-            return outputSettings;
-        }
-
-        public static string SerializeToString2(this HtmlFragment rootElem)
-        {
-            var xhtmlDoc = (XElement)rootElem.ToXDocumentFragment();
-            var outputSettings = CreateXmlWriterSettings(Encoding.UTF8);
-            using (var stringWriter = new StringWriter()) {
-                using (var xmlWriter = XmlWriter.Create(stringWriter, outputSettings))
-                    toHtmlSyntax.Transform(xhtmlDoc.CreateReader(), null, xmlWriter);
-                return stringWriter.ToString().Replace(@"<META http-equiv=""Content-Type"" content=""text/html; charset=utf-16"">","");
-            }
-        }
-
-        public static string SerializeToString(this HtmlFragment rootElem)
-        {
-            var fastStringBuilder = FastShortStringBuilder.Create();
+            var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
             rootElem.AppendToBuilder(ref fastStringBuilder);
-            return fastStringBuilder.Value;
+            const int charsPerBuffer = 2048;
+            var maxBufferSize = contentEncoding.GetMaxByteCount(charsPerBuffer);
+            var byteBuffer = PooledExponentialBufferAllocator<byte>.GetByLength((uint)maxBufferSize);
+
+            var charCount = fastStringBuilder.CurrentLength;
+            var charsWritten = 0;
+            while (charsWritten < charCount) {
+                var bytesToWrite = contentEncoding.GetBytes(fastStringBuilder.CurrentCharacterBuffer, charsWritten, charsPerBuffer, byteBuffer, 0);
+                outputStream.Write(byteBuffer, 0, bytesToWrite);
+                charsWritten += charsPerBuffer;
+            }
+            PooledExponentialBufferAllocator<byte>.ReturnToPool(byteBuffer);
         }
     }
 }
