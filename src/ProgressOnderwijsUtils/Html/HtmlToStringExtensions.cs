@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Text;
 
@@ -25,8 +26,9 @@ namespace ProgressOnderwijsUtils.Html
             var charCount = fastStringBuilder.CurrentLength;
             var charsWritten = 0;
             while (charsWritten < charCount) {
-                var bytesToWrite = contentEncoding.GetBytes(fastStringBuilder.CurrentCharacterBuffer, charsWritten, charsPerBuffer, byteBuffer, 0);
-                outputStream.Write(byteBuffer, 0, bytesToWrite);
+                var charsToConvert = Math.Min(charCount - charsWritten, charsPerBuffer);
+                var bytesWritten = contentEncoding.GetBytes(fastStringBuilder.CurrentCharacterBuffer, charsWritten, charsToConvert, byteBuffer, 0);
+                outputStream.Write(byteBuffer, 0, bytesWritten);
                 charsWritten += charsPerBuffer;
             }
             PooledExponentialBufferAllocator<byte>.ReturnToPool(byteBuffer);
