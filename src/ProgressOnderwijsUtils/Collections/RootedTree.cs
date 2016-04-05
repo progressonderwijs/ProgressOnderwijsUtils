@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Collections
     {
         public static RootedTree<T> RootTree(Tree<T> rootNode) => new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode)));
         public IEnumerable<RootedTree<T>> PathSelfToRoot() => PathSegments.NonEmpySuffixes.Select(path => new RootedTree<T>(path));
-        public int Depth => PathSelfToRoot().Count() -1;
+        public int Depth => PathSelfToRoot().Count() - 1;
         public int IndexInParent() => PathSegments.Head.Index;
         public Tree<T> UnrootedSubTree() => PathSegments.Head.ThisSubTree;
 
