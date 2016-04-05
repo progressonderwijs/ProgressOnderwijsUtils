@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtils.Html
             return outputSettings;
         }
 
-        public static string SerializeToString(this HtmlFragment rootElem)
+        public static string SerializeToString2(this HtmlFragment rootElem)
         {
             var xhtmlDoc = (XElement)rootElem.ToXDocumentFragment();
             var outputSettings = CreateXmlWriterSettings(Encoding.UTF8);
@@ -53,6 +53,14 @@ namespace ProgressOnderwijsUtils.Html
                     toHtmlSyntax.Transform(xhtmlDoc.CreateReader(), null, xmlWriter);
                 return stringWriter.ToString().Replace(@"<META http-equiv=""Content-Type"" content=""text/html; charset=utf-16"">","");
             }
+        }
+
+        public static string SerializeToString(this HtmlFragment rootElem)
+        {
+            var fastStringBuilder = FastShortStringBuilder.Create();
+            fastStringBuilder.AppendText("<!DOCTYPE html>");
+            rootElem.AppendToBuilder(ref fastStringBuilder);
+            return fastStringBuilder.Value;
         }
     }
 }

@@ -124,6 +124,140 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         public HtmlFragment ToFragment() => this;
+
+        internal void AppendToBuilder(ref FastShortStringBuilder stringBuilder)
+        {
+            if (tagNameOrTextContent == null) {
+                Debug.Assert(IsCollectionOfFragments);
+                AppendChildrenToBuilder(ref stringBuilder);
+            } else if (attributesWhenTag == null) {
+                Debug.Assert(IsTextContent);
+                AppendEscapedText(ref stringBuilder);
+            } else {
+                Debug.Assert(IsHtmlElement);
+                stringBuilder.AppendText("<");
+                stringBuilder.AppendText(tagNameOrTextContent);
+                for (int attrIndex = 0; attrIndex < attributesWhenTag.Length; attrIndex++) {
+                    stringBuilder.AppendText(" ");
+                    stringBuilder.AppendText(attributesWhenTag[attrIndex].Name);
+                    if (attributesWhenTag[attrIndex].Value != "") {
+                        stringBuilder.AppendText("=\"");
+                        AppendEscapedAttributeValue(ref stringBuilder, attributesWhenTag[attrIndex].Value);
+                        stringBuilder.AppendText("\"");
+                    }
+                }
+                stringBuilder.AppendText(">");
+
+                if (tagNameOrTextContent != "area"
+                    && tagNameOrTextContent != "base"
+                    && tagNameOrTextContent != "br"
+                    && tagNameOrTextContent != "col"
+                    && tagNameOrTextContent != "embed"
+                    && tagNameOrTextContent != "hr"
+                    && tagNameOrTextContent != "img"
+                    && tagNameOrTextContent != "input"
+                    && tagNameOrTextContent != "keygen"
+                    && tagNameOrTextContent != "link"
+                    && tagNameOrTextContent != "menuitem"
+                    && tagNameOrTextContent != "meta"
+                    && tagNameOrTextContent != "param"
+                    && tagNameOrTextContent != "source"
+                    && tagNameOrTextContent != "track"
+                    && tagNameOrTextContent != "wbr") {
+                    if (tagNameOrTextContent == "script" || tagNameOrTextContent == "style") {
+                        AppendChildrenAsRawText(ref stringBuilder);
+                    } else {
+                        AppendChildrenToBuilder(ref stringBuilder);
+                    }
+                    stringBuilder.AppendText("</");
+                    stringBuilder.AppendText(tagNameOrTextContent);
+                    stringBuilder.AppendText(">");
+                } else {
+                    Debug.Assert(childNodes == null || childNodes.Length == 0);
+                }
+            }
+        }
+
+        void AppendChildrenAsRawText(ref FastShortStringBuilder stringBuilder)
+        {
+            if (childNodes != null) {
+                foreach (var childNode in childNodes) {
+                    childNode.AppendAsRawTextToBuilder(ref stringBuilder);
+                }
+            }
+        }
+
+        void AppendAsRawTextToBuilder(ref FastShortStringBuilder stringBuilder)
+        {
+            if (tagNameOrTextContent == null) {
+                Debug.Assert(IsCollectionOfFragments);
+                AppendChildrenAsRawText(ref stringBuilder);
+            } else if (attributesWhenTag == null) {
+                Debug.Assert(IsTextContent);
+                stringBuilder.AppendText(tagNameOrTextContent);
+            } else {
+                Debug.Assert(IsHtmlElement);
+                throw new InvalidOperationException("script and style tags cannot contain child elements");
+            }
+        }
+
+        void AppendEscapedText(ref FastShortStringBuilder stringBuilder)
+        {
+            int uptoIndex = 0;
+            for (int textIndex = 0; textIndex < tagNameOrTextContent.Length; textIndex++) {
+                var c = tagNameOrTextContent[textIndex];
+                if (c <= '>') {
+                    //https://html.spec.whatwg.org/#elements-2:normal-elements-4
+                    //normal text must not contain < or & unescaped
+                    if (c == '<') {
+                        stringBuilder.AppendText(tagNameOrTextContent, uptoIndex, textIndex - uptoIndex);
+                        stringBuilder.AppendText("&lt;");
+                        uptoIndex = textIndex + 1;
+                    } else if (c == '&') {
+                        stringBuilder.AppendText(tagNameOrTextContent, uptoIndex, textIndex - uptoIndex);
+                        stringBuilder.AppendText("&amp;");
+                        uptoIndex = textIndex + 1;
+                    } else if (c == '>') {
+                        //not strictly necessary
+                        stringBuilder.AppendText(tagNameOrTextContent, uptoIndex, textIndex - uptoIndex);
+                        stringBuilder.AppendText("&gt;");
+                        uptoIndex = textIndex + 1;
+                    }
+                }
+            }
+            stringBuilder.AppendText(tagNameOrTextContent, uptoIndex, tagNameOrTextContent.Length - uptoIndex);
+        }
+
+        static void AppendEscapedAttributeValue(ref FastShortStringBuilder stringBuilder, string attrValue)
+        {
+            int uptoIndex = 0;
+            for (int textIndex = 0; textIndex < attrValue.Length; textIndex++) {
+                var c = attrValue[textIndex];
+                if (c <= '&') {
+                    //https://html.spec.whatwg.org/#attributes-2
+                    //quoted attribute values must not contain " or & unescaped
+                    if (c == '&') {
+                        stringBuilder.AppendText(attrValue, uptoIndex, textIndex - uptoIndex);
+                        stringBuilder.AppendText("&amp;");
+                        uptoIndex = textIndex + 1;
+                    } else if (c == '"') {
+                        stringBuilder.AppendText(attrValue, uptoIndex, textIndex - uptoIndex);
+                        stringBuilder.AppendText("&quot;");
+                        uptoIndex = textIndex + 1;
+                    } 
+                }
+            }
+            stringBuilder.AppendText(attrValue, uptoIndex, attrValue.Length - uptoIndex);
+        }
+
+        void AppendChildrenToBuilder(ref FastShortStringBuilder stringBuilder)
+        {
+            if (childNodes != null) {
+                for (int i = 0; i < childNodes.Length; i++) {
+                    childNodes[i].AppendToBuilder(ref stringBuilder);
+                }
+            }
+        }
     }
 
     public struct HtmlElement : IFluentHtmlTagExpression<HtmlElement>
