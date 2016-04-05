@@ -28,6 +28,51 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public void DocWithEmptyClass()
+        {
+            Approvals.Verify(
+                _html.Content(
+                    _head.Content(
+                        _title.Content("Hello world!")
+                        ),
+                    _body._class(null).Content(
+                        _p.Content("Hello world!")
+                        )
+                    ).ToFragment().SerializeToString()
+                );
+        }
+
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public void DocWithOneClass()
+        {
+            Approvals.Verify(
+                _html.Content(
+                    _head.Content(
+                        _title.Content("Hello world!")
+                        ),
+                    _body._class("aClass").Content(
+                        _p.Content("Hello world!")
+                        )
+                    ).ToFragment().SerializeToString()
+                );
+        }
+
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        public void DocWithTwoClasses()
+        {
+            Approvals.Verify(
+                _html.Content(
+                    _head.Content(
+                        _title.Content("Hello world!")
+                        ),
+                    _body._class("aClass")._class("bClass").Content(
+                        _p.Content("Hello world!")
+                        )
+                    ).ToFragment().SerializeToString()
+                );
+        }
+
+        [Test, MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOddChars()
         {
             Approvals.Verify(
@@ -89,6 +134,7 @@ namespace ProgressOnderwijsUtilsTests
                     ).ToFragment().SerializeToString()
                 );
         }
+
         [Test, MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithTrulyRawText()
         {

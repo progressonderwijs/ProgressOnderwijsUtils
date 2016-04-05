@@ -137,15 +137,8 @@ namespace ProgressOnderwijsUtils.Html
                 Debug.Assert(IsHtmlElement);
                 stringBuilder.AppendText("<");
                 stringBuilder.AppendText(tagNameOrTextContent);
-                for (int attrIndex = 0; attrIndex < attributesWhenTag.Length; attrIndex++) {
-                    stringBuilder.AppendText(" ");
-                    stringBuilder.AppendText(attributesWhenTag[attrIndex].Name);
-                    if (attributesWhenTag[attrIndex].Value != "") {
-                        stringBuilder.AppendText("=\"");
-                        AppendEscapedAttributeValue(ref stringBuilder, attributesWhenTag[attrIndex].Value);
-                        stringBuilder.AppendText("\"");
-                    }
-                }
+                AppendAttributes(ref stringBuilder);
+
                 stringBuilder.AppendText(">");
 
                 if (tagNameOrTextContent != "area"
@@ -175,6 +168,32 @@ namespace ProgressOnderwijsUtils.Html
                 } else {
                     Debug.Assert(childNodes == null || childNodes.Length == 0);
                 }
+            }
+        }
+
+        void AppendAttributes(ref FastShortStringBuilder stringBuilder)
+        {
+            var className = default(string);
+            foreach (var htmlAttribute in attributesWhenTag) {
+                if (htmlAttribute.Name == "class") {
+                    className = className == null ? htmlAttribute.Value : className + " " + htmlAttribute.Value;
+                } else {
+                    AppendAttribute(ref stringBuilder, htmlAttribute);
+                }
+            }
+            if (className != null) {
+                AppendAttribute(ref stringBuilder, new HtmlAttribute("class", className));
+            }
+        }
+
+        static void AppendAttribute(ref FastShortStringBuilder stringBuilder, HtmlAttribute htmlAttribute)
+        {
+            stringBuilder.AppendText(" ");
+            stringBuilder.AppendText(htmlAttribute.Name);
+            if (htmlAttribute.Value != "") {
+                stringBuilder.AppendText("=\"");
+                AppendEscapedAttributeValue(ref stringBuilder, htmlAttribute.Value);
+                stringBuilder.AppendText("\"");
             }
         }
 
@@ -244,7 +263,7 @@ namespace ProgressOnderwijsUtils.Html
                         stringBuilder.AppendText(attrValue, uptoIndex, textIndex - uptoIndex);
                         stringBuilder.AppendText("&quot;");
                         uptoIndex = textIndex + 1;
-                    } 
+                    }
                 }
             }
             stringBuilder.AppendText(attrValue, uptoIndex, attrValue.Length - uptoIndex);
