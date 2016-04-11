@@ -78,28 +78,28 @@ namespace ProgressOnderwijsUtilsTests
         public void BulkCopyChecksNames()
         {
             CreateTempTable();
-            Assert.Throws<InvalidOperationException>(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
+            Assert.Catch(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
         }
 
         [Test]
         public void BulkCopyChecksTypes()
         {
             CreateTempTable();
-            Assert.Throws<InvalidOperationException>(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
+            Assert.Catch(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
         }
 
         [Test]
         public void BulkCopyChecksTypes2()
         {
             CreateTempTable();
-            Assert.Throws<InvalidOperationException>(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
+            Assert.Catch(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
         }
 
         [Test]
         public void BulkCopyVerifiesExistanceOfDestinationColumns()
         {
             CreateTempTable();
-            Assert.Throws<InvalidOperationException>(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
+            Assert.Catch(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
         }
 
         [Test]
