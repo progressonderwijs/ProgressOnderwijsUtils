@@ -98,7 +98,7 @@ namespace ProgressOnderwijsUtilsTests
                     FormNaam = "def",
                     Ontvanger = "qwerty",
                     Organisatie = RootOrganisatie.RUG,
-                    Student = 2,
+                    Student = (Id.Student)2,
                     StudielinkberichtId = 3,
                     StudielinkNummer = (ExternalId.StudielinkNummer)4,
                     Tekst = "asdfg",
