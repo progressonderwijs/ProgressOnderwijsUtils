@@ -122,8 +122,30 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
+        public string TextContent()
+        {
+            var fastStringBuilder = FastShortStringBuilder.Create();
+            AppendTextContent(ref fastStringBuilder);
+            return fastStringBuilder.Value;
+        }
+
+        void AppendTextContent(ref FastShortStringBuilder fastStringBuilder)
+        {
+            if (tagNameOrTextContent != null && attributesWhenTag == null) {
+                Debug.Assert(IsTextContent);
+                fastStringBuilder.AppendText(tagNameOrTextContent);
+            } else {
+                Debug.Assert(IsHtmlElement || IsCollectionOfFragments);
+                if (childNodes != null) {
+                    foreach (var child in childNodes) {
+                        child.AppendTextContent(ref fastStringBuilder);
+                    }
+                }
+            }
+        }
+
         [Pure]
-        public HtmlFragment ToFragment() => this;
+        HtmlFragment IConvertibleToFragment.ToFragment() => this;
 
         internal void AppendToBuilder(ref FastShortStringBuilder stringBuilder)
         {
