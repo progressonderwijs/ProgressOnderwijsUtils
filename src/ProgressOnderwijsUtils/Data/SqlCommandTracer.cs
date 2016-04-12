@@ -65,33 +65,31 @@ namespace ProgressOnderwijsUtils
         }
 
         static string CommandParamString(SqlCommand sqlCommand)
+            => sqlCommand.Parameters.Cast<SqlParameter>().Select(DeclareParameter).JoinStrings();
+
+        static string DeclareParameter(SqlParameter par)
         {
-            return
-                sqlCommand.Parameters.Cast<SqlParameter>()
-                    .Select(
-                        par =>
-                            "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par) + DeclareTail(par)
-                                + ";\n")
-                    .JoinStrings();
+            var declareVariable = "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par);
+            if (par.SqlDbType != SqlDbType.Structured) {
+                return declareVariable
+                    + " = " + InsecureSqlDebugString(par.Value, true) + ";\n";
+            } else {
+                return declareVariable
+                    + "/*" + ObjectToCode.GetCSharpFriendlyTypeName(par.Value.GetType()) + "*/;\n"
+                    + "insert into " + par.ParameterName + " values "
+                    + ValuesClauseForTableValuedParameter((par.Value as IOptionalObjectListForDebugging)?.ContentsForDebuggingOrNull());
+            }
         }
 
-        static string DeclareTail(SqlParameter par)
+        static string ValuesClauseForTableValuedParameter(IReadOnlyList<object> tableValue)
         {
-            if (par.SqlDbType != SqlDbType.Structured) {
-                return " = " + InsecureSqlDebugString(par.Value, true);
-            } else {
-                var tableValuesDeclarationStart = "/*" + ObjectToCode.GetCSharpFriendlyTypeName(par.Value.GetType()) + "*/;\n" + "insert into " + par.ParameterName + " values ";
-                var tableValue = (par.Value as IOptionalObjectListForDebugging)?.ContentsForDebuggingOrNull();
-                if (tableValue == null) {
-                    return tableValuesDeclarationStart + "(/* UNKNOWN? */)";
-                } else {
-                    const int maxValuesToInsert = 20;
-                    return tableValuesDeclarationStart
-                        + tableValue.Take(maxValuesToInsert).Select(v => $"({InsecureSqlDebugString(v, false)})").JoinStrings(", ")
-                        + (tableValue.Count <= maxValuesToInsert ? "" : "\n    /* ... and more; " + tableValue.Count + " total */")
-                        ;
-                }
+            if (tableValue == null) {
+                return "(/* UNKNOWN? */);\n";
             }
+            const int maxValuesToInsert = 20;
+            var valuesString = tableValue.Take(maxValuesToInsert).Select(v => $"({InsecureSqlDebugString(v, false)})").JoinStrings(", ");
+            var valueCountCommentIfNecessary = (tableValue.Count <= maxValuesToInsert ? "" : "\n    /* ... and more; " + tableValue.Count + " total */") + ";\n";
+            return valuesString + valueCountCommentIfNecessary;
         }
 
         static string SqlParamTypeString(SqlParameter par)
