@@ -4,6 +4,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
@@ -29,7 +31,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
         /// </summary>
-        public static void WriteMetaObjectsToServer<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject
+        public static async Task WriteMetaObjectsToServerAsync<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, CancellationToken cancellationToken) where T : IMetaObject
         {
             if (metaObjects == null) {
                 throw new ArgumentNullException(nameof(metaObjects));
@@ -49,13 +51,18 @@ namespace ProgressOnderwijsUtils
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
 
                 try {
-                    bulkCopy.WriteToServer(objectReader);
+                    await bulkCopy.WriteToServerAsync(objectReader, cancellationToken);
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
                     var metaPropName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
                     throw new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
                 }
             }
+        }
+
+        public static void WriteMetaObjectsToServer<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject
+        {
+            bulkCopy.WriteMetaObjectsToServerAsync(metaObjects, sqlconn, tableName, CancellationToken.None).Wait();
         }
 
         static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
