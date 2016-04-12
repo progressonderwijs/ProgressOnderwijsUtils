@@ -109,12 +109,13 @@ namespace ProgressOnderwijsUtils
     namespace Internal
     {
         //public needed for auto-mapping
-        public struct TableValuedParameterWrapper<T> : IMetaObject
+        public struct TableValuedParameterWrapper<T> : IMetaObject, IOptionalObjectProjectionForDebugging
         {
             [Key]
             public T QueryTableValue { get; set; }
 
             public override string ToString() => QueryTableValue == null ? "NULL" : QueryTableValue.ToString();
+            public object ProjectionForDebuggingOrNull() => QueryTableValue;
         }
 
         public static class TableValuedParameterWrapperHelper

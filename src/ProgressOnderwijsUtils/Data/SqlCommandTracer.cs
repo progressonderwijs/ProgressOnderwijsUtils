@@ -70,14 +70,36 @@ namespace ProgressOnderwijsUtils
                 sqlCommand.Parameters.Cast<SqlParameter>()
                     .Select(
                         par =>
-                            "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par) + ";\nSET " + par.ParameterName + " = " + InsecureSqlDebugString(par.Value)
+                            "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par) + DeclareTail(par)
                                 + ";\n")
                     .JoinStrings();
         }
 
-        static string SqlParamTypeString(SqlParameter par) => par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
+        static string DeclareTail(SqlParameter par)
+        {
+            if (par.SqlDbType != SqlDbType.Structured) {
+                return " = " + InsecureSqlDebugString(par.Value, true);
+            } else {
+                var tableValuesDeclarationStart = "/*" + ObjectToCode.GetCSharpFriendlyTypeName(par.Value.GetType()) + "*/;\n" + "insert into " + par.ParameterName + " values ";
+                var tableValue = (par.Value as IOptionalObjectListForDebugging)?.ContentsForDebuggingOrNull();
+                if (tableValue == null) {
+                    return tableValuesDeclarationStart + "(/* UNKNOWN? */)";
+                } else {
+                    const int maxValuesToInsert = 20;
+                    return tableValuesDeclarationStart
+                        + tableValue.Take(maxValuesToInsert).Select(v => $"({InsecureSqlDebugString(v, false)})").JoinStrings(", ")
+                        + (tableValue.Count <= maxValuesToInsert ? "" : "\n    /* ... and more; " + tableValue.Count + " total */")
+                        ;
+                }
+            }
+        }
 
-        public static string InsecureSqlDebugString(object p)
+        static string SqlParamTypeString(SqlParameter par)
+            => par.SqlDbType == SqlDbType.Structured
+                ? par.TypeName
+                : par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
+
+        public static string InsecureSqlDebugString(object p, bool includeEnumType)
         {
             if (p is DBNull || p == null) {
                 return "NULL";
@@ -92,14 +114,14 @@ namespace ProgressOnderwijsUtils
             } else if (p is bool) {
                 return (bool)p ? "1" : "0";
             } else if (p is Enum) {
-                return ((IConvertible)p).ToInt64(null).ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(p) + "*/";
+                return ((IConvertible)p).ToInt64(null).ToStringInvariant() + (includeEnumType ? "/*" + ObjectToCode.PlainObjectToCode(p) + "*/" : "");
             } else if (p is IFormattable) {
                 return ((IFormattable)p).ToString(null, CultureInfo.InvariantCulture);
             } else {
                 try {
                     return "{!" + p + "!}";
                 } catch (Exception e) {
-                    return $"[[Exception in {nameof(SqlCommandTracer)}.{nameof(InsecureSqlDebugString)}: {e.Message }]]";
+                    return $"[[Exception in {nameof(SqlCommandTracer)}.{nameof(InsecureSqlDebugString)}: {e.Message}]]";
                 }
             }
         }

@@ -7,15 +7,28 @@ using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
-    public sealed class MetaObjectDataReader<T> : DbDataReaderBase
+    public interface IOptionalObjectListForDebugging
+    {
+        IReadOnlyList<object> ContentsForDebuggingOrNull();
+    }
+
+    public interface IOptionalObjectProjectionForDebugging
+    {
+        object ProjectionForDebuggingOrNull();
+    }
+
+
+    public sealed class MetaObjectDataReader<T> : DbDataReaderBase, IOptionalObjectListForDebugging
         where T : IMetaObject
     {
         readonly IEnumerator<T> metaObjects;
+        readonly IReadOnlyList<T> objectsOrNull_ForDebugging;
         T current;
 
         public MetaObjectDataReader(IEnumerable<T> objects)
         {
             metaObjects = objects.GetEnumerator();
+            objectsOrNull_ForDebugging = objects as IReadOnlyList<T>;
         }
 
         public override void Close()
@@ -144,5 +157,7 @@ namespace ProgressOnderwijsUtils
             });
             return dt;
         }
+
+        IReadOnlyList<object> IOptionalObjectListForDebugging.ContentsForDebuggingOrNull() => objectsOrNull_ForDebugging?.SelectIndexable(o=>(o as IOptionalObjectProjectionForDebugging)?.ProjectionForDebuggingOrNull() ?? o );
     }
 }
