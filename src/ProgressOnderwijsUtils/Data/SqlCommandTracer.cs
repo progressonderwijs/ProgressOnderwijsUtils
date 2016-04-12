@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils
                 ? par.TypeName
                 : par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
-        public static string InsecureSqlDebugString(object p, bool includeEnumType)
+        public static string InsecureSqlDebugString(object p, bool includeReadableEnumValue)
         {
             if (p is DBNull || p == null) {
                 return "NULL";
@@ -112,7 +112,7 @@ namespace ProgressOnderwijsUtils
             } else if (p is bool) {
                 return (bool)p ? "1" : "0";
             } else if (p is Enum) {
-                return ((IConvertible)p).ToInt64(null).ToStringInvariant() + (includeEnumType ? "/*" + ObjectToCode.PlainObjectToCode(p) + "*/" : "");
+                return ((IConvertible)p).ToInt64(null).ToStringInvariant() + (includeReadableEnumValue ? "/*" + ObjectToCode.PlainObjectToCode(p) + "*/" : "");
             } else if (p is IFormattable) {
                 return ((IFormattable)p).ToString(null, CultureInfo.InvariantCulture);
             } else {
