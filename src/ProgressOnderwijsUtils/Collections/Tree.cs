@@ -99,7 +99,7 @@ namespace ProgressOnderwijsUtils.Collections
         public Tree(T value, Tree<T>[] children)
         {
             nodeValue = value;
-            kidArray = children ?? ArrayExtensions.Empty<Tree<T>>();
+            kidArray = children ?? Array.Empty<Tree<T>>();
         }
 
         public static readonly Comparer DefaultComparer = new Comparer(EqualityComparer<T>.Default);

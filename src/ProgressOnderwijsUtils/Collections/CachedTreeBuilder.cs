@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtils.Collections
                     }
                     nodeBuilderThatWantsKids.tempKids = tempKidBuilders.ToArray();
                 } else
-                    nodeBuilderThatWantsKids.tempKids = ArrayExtensions.Empty<TreeNodeBuilder>();
+                    nodeBuilderThatWantsKids.tempKids = Array.Empty<TreeNodeBuilder>();
             }
 
             while (needsGenerateOutput.Count > 0) {

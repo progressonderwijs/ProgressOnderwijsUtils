@@ -19,21 +19,13 @@ namespace ProgressOnderwijsUtils
             return array != null && index < array.Length && index >= 0 ? array[index] : defaultValue;
         }
 
-        static class Helper<T>
-        {
-            public static readonly T[] EmptyArray = new T[0];
-        }
-
-        [Pure]
-        public static T[] Empty<T>() => Helper<T>.EmptyArray;
-
         /// <summary>
         /// Return an empty array if it's null
         /// </summary>
         [Pure]
         public static T[] EmptyIfNull<T>(this T[] array)
         {
-            return array ?? Helper<T>.EmptyArray;
+            return array ?? Array.Empty<T>();
         }
 
         /// <summary>

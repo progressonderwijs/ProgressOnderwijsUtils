@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtils
 
         class NullTracer : ISqlCommandTracer
         {
-            public IEnumerable<Tuple<string, TimeSpan>> AllCommands => ArrayExtensions.Empty<Tuple<string, TimeSpan>>();
+            public IEnumerable<Tuple<string, TimeSpan>> AllCommands => Array.Empty<Tuple<string, TimeSpan>>();
             public TimeSpan TotalDuration => TimeSpan.Zero;
             public int CommandCount => 0;
             public TimeSpan SlowestCommandDuration => TimeSpan.Zero;
