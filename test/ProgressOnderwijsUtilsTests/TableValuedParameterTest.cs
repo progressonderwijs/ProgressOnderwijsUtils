@@ -13,6 +13,7 @@ using Progress.Business.DomainUnits;
 using Progress.Business.GenericEdit;
 using Progress.Business.Test;
 using Progress.Business.Text;
+using Progress.Test.Ids;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Internal;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -41,7 +42,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void ParameterizedSqlCanIncludeEnumTvps()
         {
-            var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => (Id.Student)i)} x");
+            var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => i.ToStudentId())} x");
             var sum = (int)q.ReadScalar<Id.Student>(conn);
             Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
         }
