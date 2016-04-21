@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using ExpressionToCodeLib;
 using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
@@ -21,6 +22,11 @@ namespace ProgressOnderwijsUtils
         /// <param name="separator">separator string</param>
         /// <returns>a string</returns>
         public static string JoinStrings(this IEnumerable<string> strings, string separator) => string.Join(separator, strings);
+
+        public static string JoinStringsLimitLength(this IReadOnlyCollection<string> strings, string separator, int maxCount)
+        {
+            return string.Join(separator, strings.Take(maxCount)) + (strings.Count > maxCount ? separator + "..." : "");
+        }
     }
 
     public sealed class EnumerableOfStringExtensionTest
@@ -73,6 +79,18 @@ namespace ProgressOnderwijsUtils
         public void testJoinShortStrings()
         {
             Assert.That(() => new[] { "", "0", "1", "2" }.JoinStrings(","), Is.EqualTo(",0,1,2"));
+        }
+
+        [Test]
+        public void JoinStringsLimitLength_works_like_normal_join_when_count_is_smaller_than_or_equal_to_max_count()
+        {
+            PAssert.That(() => new[] { "1", "2" }.JoinStringsLimitLength(" ", 2) == "1 2");
+        }
+
+        [Test]
+        public void JoinStringsLimitLength_limits_length_when_count_is_greater_than_max_count()
+        {
+            PAssert.That(() => new[] { "1", "2", "3" }.JoinStringsLimitLength(" ", 2) == "1 2 ...");
         }
     }
 }
