@@ -38,44 +38,32 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         static class FieldHelperClass<T>
         {
-            public static readonly Func<object, T> Extractor;
+            public static readonly Func<object, T> Extractor = GetExtractor(typeof(T));
 
-            static FieldHelperClass()
+            static Func<object, T> GetExtractor(Type type)
             {
-                var type = typeof(T);
-                if (type.IsValueType) {
-                    var nullableBase = type.IfNullableGetNonNullableType();
-                    if (nullableBase == null) {
-                        Extractor = ExtractValueField;
-                    } else if (!nullableBase.IsValueType) {
-                        Extractor = ExtractClassOrNullableField;
-                    } else {
-                        Extractor = (Func<object, T>)Delegate.CreateDelegate(
-                            typeof(Func<object, T>),
-                            typeof(DBNullRemover).GetMethod("ExtractNullableStruct", BindingFlags.Static | BindingFlags.NonPublic).MakeGenericMethod(nullableBase));
-                    }
-                } else {
-                    Extractor = ExtractClassOrNullableField;
+                if (!type.IsValueType) {
+                    return obj => obj == DBNull.Value ? default(T) : (T)obj;
                 }
+                var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
+                if (nonnullableUnderlyingType == null) {
+                    return obj => (T)obj;
+                }
+
+                return (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
             }
-
-            static T ExtractClassOrNullableField(object obj) => obj == DBNull.Value ? default(T) : (T)obj;
-            static T ExtractValueField(object obj) => (T)obj;
         }
 
-        // ReSharper disable UnusedMember.Local
-        static TStruct? ExtractNullableStruct<TStruct>(object obj) where TStruct : struct
-            // ReSharper restore UnusedMember.Local
-        {
-            return obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj;
-        }
+        static readonly MethodInfo extractNullableValueTypeMethod = typeof(DBNullRemover).GetMethod(nameof(ExtractNullableValueType), BindingFlags.Static | BindingFlags.NonPublic);
+
+        static TStruct? ExtractNullableValueType<TStruct>(object obj)
+            where TStruct : struct
+            => obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj;
 
         static readonly MethodInfo genericCastMethod = ((Func<object, int>)Cast<int>).Method.GetGenericMethodDefinition();
 
         [Pure]
         public static object DynamicCast(object val, Type type)
-        {
-            return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });
-        }
+            => genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });
     }
 }
