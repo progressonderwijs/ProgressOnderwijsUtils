@@ -477,13 +477,20 @@ namespace ProgressOnderwijsUtils
                     ParameterExpression readerParamExpr,
                     ParameterExpression lastColumnReadParameter)
                 {
+                    var isMetaPropertyIndexAlreadyUsed = new bool[metadata.Count];
                     var cols = orderingP.Cols;
                     for (int i = 0; i < cols.Length; i++) {
                         var colName = cols[i];
-                        IReadonlyMetaProperty<T> member = metadata.GetByNameOrNull(colName);
-                        if (member == null) {
+                        var metaPropertyIndexOrNull = metadata.IndexByName.GetOrDefaultR(colName, default(int?));
+                        if (metaPropertyIndexOrNull == null) {
                             throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
                         }
+                        var metaPropertyIndex = metaPropertyIndexOrNull.Value;
+                        if (isMetaPropertyIndexAlreadyUsed[metaPropertyIndex]) {
+                            throw new InvalidOperationException("IDataReader has two identically named columns " + colName + "!");
+                        }
+                        isMetaPropertyIndexAlreadyUsed[metaPropertyIndex] = true;
+                        var member = metadata[metaPropertyIndex];
                         yield return Expression.Bind(
                             member.PropertyInfo,
                             Expression.Block(
