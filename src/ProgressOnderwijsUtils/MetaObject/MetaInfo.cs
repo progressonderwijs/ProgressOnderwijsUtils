@@ -66,12 +66,6 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
-        public IReadonlyMetaProperty<T> GetByNameOrNull(string colName)
-        {
-            int index;
-            return indexByName.TryGetValue(colName, out index) ? MetaProperties[index] : null;
-        }
-
         public IEnumerator<IMetaProperty<T>> GetEnumerator()
         {
             foreach (var mp in MetaProperties) {

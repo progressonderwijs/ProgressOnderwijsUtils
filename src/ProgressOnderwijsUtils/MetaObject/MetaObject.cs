@@ -18,14 +18,9 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) => GetCache(metaobj.GetType());
 
-        public static MetaInfo<T> GetMetaInfo<T>(this T metaobj) where T : IMetaObject => MetaInfo<T>.Instance;
-
-        //public static object DynamicGet(this IMetaObject metaobj, string propertyName) => GetCache(metaobj.GetType()).DynGet(metaobj, propertyName);
+        // ReSharper disable once UnusedParameter.Global
         [Pure]
-        public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject
-        {
-            return MetaInfo<T>.Instance;
-        }
+        public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject => MetaInfo<T>.Instance;
 
         [Pure]
         [CodeThatsOnlyUsedForTests]
