@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -74,33 +75,52 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void LotsOfCallsPreventHandlerFromFiring()
         {
-            var task = new TaskCompletionSource<TimeSpan>();
+            const int durationThatEventsAreFired = 400;
+            const int debounceDurationThreshhold = 35;
+            const int numberOfEventFiringThreads = 10;
+            const int earliestExpectedDebouncedEventDelay = durationThatEventsAreFired + debounceDurationThreshhold;
+            const int gracePeriod = debounceDurationThreshhold * 5;
+            const int durationToWaitForDebouncedHandlerToFire = durationThatEventsAreFired + gracePeriod;
+
+            var debouncedHandlerCompletion = new TaskCompletionSource<TimeSpan>();
+            var debouncedHandlerTask = debouncedHandlerCompletion.Task;
             var sw = Stopwatch.StartNew();
-            var handler = HandlerUtils.Debounce(
-                TimeSpan.FromMilliseconds(35),
-                () =>
-                    task.SetResult(sw.Elapsed));
+            var handler = HandlerUtils.Debounce(TimeSpan.FromMilliseconds(debounceDurationThreshhold), () => debouncedHandlerCompletion.SetResult(sw.Elapsed));
 
-            var ignore = Enumerable.Range(0, 5).Select(
-                n =>
-                    Task.Run(
-                        async () => {
-                            var elapsed = Stopwatch.StartNew();
-                            var r = new Random(n);
-                            while (elapsed.Elapsed < TimeSpan.FromMilliseconds(400)) {
-                                handler();
-                                await Task.Delay(r.Next(35));
-                            }
-                        })).ToArray();
+            var eventFiringTasks = Enumerable.Range(0, numberOfEventFiringThreads)
+                .Select(threadId =>
+                    Task.Run(async () => {
+                        var actualTimes = new List<DateTime>(3 * durationThatEventsAreFired / debounceDurationThreshhold);
+                        var elapsed = Stopwatch.StartNew();
+                        var r = new Random(threadId);
+                        while (elapsed.Elapsed < TimeSpan.FromMilliseconds(durationThatEventsAreFired)) {
+                            var nextDelay = Task.Delay(r.Next(debounceDurationThreshhold));
+                            handler();
+                            actualTimes.Add(DateTime.UtcNow);
+                            await nextDelay;
+                        }
+                        return actualTimes.ToArray();
+                    })
+                )
+                .ToArray();
 
-            Task.Delay(400).ContinueWith(_ => handler());
+            Task.Delay(durationThatEventsAreFired).ContinueWith(_ => handler());
 
-            if (!task.Task.Wait(600)) {
-                Assert.Fail("debounced handler failed to run even 100 ms after the last");
+            if (!debouncedHandlerTask.Wait(durationToWaitForDebouncedHandlerToFire)) {
+                Assert.Fail($"debounced handler failed to run even {gracePeriod}ms after the last event fired");
             }
 
-            var elapsedMS = task.Task.Result.TotalMilliseconds;
-            PAssert.That(() => elapsedMS >= 434 && elapsedMS < 600);
+            var eventFiringTimes = eventFiringTasks.SelectMany(t => t.Result).OrderBy(t => t).ToArray();
+            var eventFiringTimeDeltas = eventFiringTimes.Skip(1).Zip(eventFiringTimes, (later, earlier) => later - earlier);
+
+            var actualDebouncedEventDelay = debouncedHandlerTask.Result.TotalMilliseconds;
+            var worstEventFiringDelta = eventFiringTimeDeltas.Max().TotalMilliseconds;
+
+            if (worstEventFiringDelta >= debounceDurationThreshhold && actualDebouncedEventDelay < earliestExpectedDebouncedEventDelay) {
+                Assert.Inconclusive("The timespan between two event firings was greater than the debounce threshhold - this run is invalid.");
+            }
+
+            PAssert.That(() => actualDebouncedEventDelay >= earliestExpectedDebouncedEventDelay, $"worstEventFiringDelta: {worstEventFiringDelta}");
         }
     }
 }
