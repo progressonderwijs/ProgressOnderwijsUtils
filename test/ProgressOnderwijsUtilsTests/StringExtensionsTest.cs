@@ -42,6 +42,18 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => "'S-GRAVENHAGE".ToCamelCase() == "'s-Gravenhage");
         }
 
+        [Test]
+        public void ToCamelCase_Hoodletters_met_lees_tekens_worden_ook_meegenomen()
+        {
+            PAssert.That(() => "ÖSTERREICH".ToCamelCase() == "Österreich");
+        }
+
+        [Test]
+        public void ToCamelCase_Combi_van_meerdere_omzettingen()
+        {
+            PAssert.That(() => "'S-ÖSTERREICH".ToCamelCase() == "'s-Österreich");
+        }
+
         [TestCase("é", "e"), TestCase("Ü", "U"), TestCase("ß", "ß")]
         public void WithoutDiakriet(string from, string to)
         {
