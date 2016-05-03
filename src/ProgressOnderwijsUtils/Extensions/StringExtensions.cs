@@ -76,7 +76,7 @@ namespace ProgressOnderwijsUtils
             // (patroon A t/m Z gevolgd door 1 of meer wordcharacters, A t/m Z blijft staan, rest lowercase)
             var upc1 = Regex.Replace(
                 s,
-                @"[A-Z]\w+",
+                @"[A-ZÄÖÜ]\w+",
                 match => {
                     var v = match.ToString();
                     return char.ToUpper(v[0]) + v.Substring(1).ToLower();
@@ -85,7 +85,7 @@ namespace ProgressOnderwijsUtils
             // ... maar letters voorafgegaan door ' ('s, 't etc.) naar lowercase
             return Regex.Replace(
                 upc1,
-                @"['][A-Z]",
+                @"['][A-ZÄÖÜ]",
                 match => match.ToString().ToLower());
         }
     }
