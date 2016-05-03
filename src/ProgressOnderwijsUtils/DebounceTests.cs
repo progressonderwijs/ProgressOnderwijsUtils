@@ -75,8 +75,8 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void LotsOfCallsPreventHandlerFromFiring()
         {
-            const int durationThatEventsAreFired = 400;
-            const int debounceDurationThreshhold = 35;
+            const int durationThatEventsAreFired = 300;
+            const int debounceDurationThreshhold = 50;
             const int numberOfEventFiringThreads = 10;
             const int earliestExpectedDebouncedEventDelay = durationThatEventsAreFired + debounceDurationThreshhold;
             const int gracePeriod = debounceDurationThreshhold * 5;
