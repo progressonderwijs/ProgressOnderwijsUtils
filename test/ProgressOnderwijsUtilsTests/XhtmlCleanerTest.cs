@@ -32,15 +32,17 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         const string sample2 =
-            @"<p><script>lalala<b>innerlala</b></script>test this! <!--lalala<p>--> <div class=""lalala"" style=""lalala"">hmm</div> <unknown>include this though</unknown></p>";
+            @"<p><script>lalala<b>innerlala</b></script>test this! <!--lalala<p>--> <div class=""yadayada"" style=""lalala"">hmm</div> <unknown>include this though</unknown></p>";
 
         [Test]
         public void CleanerWorks()
         {
             var tidiedSample = XhtmlCleaner.SanitizeHtmlString(sample2);
             PAssert.That(() => !tidiedSample.Contains("lalala") && !tidiedSample.Contains("script") && !tidiedSample.Contains("innerlala"));
-            PAssert.That(() => !tidiedSample.Contains("class") && !tidiedSample.Contains("style") && !tidiedSample.Contains("unknown"));
-            PAssert.That(() => tidiedSample.Contains("include this") && tidiedSample.Contains("test this") && tidiedSample.Contains("<div>") && tidiedSample.StartsWith("<p>"));
+            PAssert.That(() => !tidiedSample.Contains("style") && !tidiedSample.Contains("unknown"));
+            PAssert.That(() => tidiedSample.Contains("include this") && tidiedSample.Contains("test this") && 
+                               tidiedSample.Contains("</div>") && tidiedSample.StartsWith("<p>") && 
+                               tidiedSample.Contains("yadayada"));
         }
 
         const string sample3 = @"<p>&nbsp;whee</p>";
