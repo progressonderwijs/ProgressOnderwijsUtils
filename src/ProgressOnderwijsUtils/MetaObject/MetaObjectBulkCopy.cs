@@ -85,9 +85,10 @@ namespace ProgressOnderwijsUtils
                 "table " + tableName,
                 FieldMappingMode.IgnoreExtraDestinationFields);
 
-            FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, bulkCopy);
+            foreach (var mapEntry in mapping) {
+                bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
+            }
             return mapping;
         }
-
     }
 }
