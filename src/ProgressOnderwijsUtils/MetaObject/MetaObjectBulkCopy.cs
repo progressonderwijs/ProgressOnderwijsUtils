@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
 
                 try {
-                    await bulkCopy.WriteToServerAsync(objectReader, cancellationToken);
+                    await bulkCopy.WriteToServerAsync(objectReader, cancellationToken).ConfigureAwait(false);
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
                     var metaPropName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
