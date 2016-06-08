@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
 
                 try {
-                    await bulkCopy.WriteToServerAsync(objectReader, cancellationToken);
+                    await bulkCopy.WriteToServerAsync(objectReader, cancellationToken).ConfigureAwait(false);
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
                     var metaPropName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
@@ -85,9 +85,10 @@ namespace ProgressOnderwijsUtils
                 "table " + tableName,
                 FieldMappingMode.IgnoreExtraDestinationFields);
 
-            FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, bulkCopy);
+            foreach (var mapEntry in mapping) {
+                bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
+            }
             return mapping;
         }
-
     }
 }
