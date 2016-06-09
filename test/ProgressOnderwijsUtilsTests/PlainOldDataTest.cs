@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtilsTests
                     Ontvanger = "qwerty",
                     Organisatie = RootOrganisatie.RUG,
                     Student = (Id.Student)2,
-                    StudielinkberichtId = 3,
+                    StudielinkBerichtId = 3,
                     StudielinkNummer = (ExternalId.StudielinkNummer)4,
                     Zender = "zxcvb",
                 };
