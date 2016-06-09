@@ -78,7 +78,6 @@ namespace ProgressOnderwijsUtilsTests
                 Student = (Id.Student)2,
                 StudielinkberichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
-                Tekst = "asdfg",
                 Zender = "zxcvb",
             }.FinishBuilding();
             var b = new SLBerichtSamenvatting.Value {
@@ -89,7 +88,6 @@ namespace ProgressOnderwijsUtilsTests
                 Student = (Id.Student)2,
                 StudielinkberichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
-                Tekst = "asdfg",
                 Zender = "zxcvb",
             }.FinishBuilding();
             var c =
@@ -101,7 +99,6 @@ namespace ProgressOnderwijsUtilsTests
                     Student = (Id.Student)2,
                     StudielinkberichtId = 3,
                     StudielinkNummer = (ExternalId.StudielinkNummer)4,
-                    Tekst = "asdfg",
                     Zender = "zxcvb",
                 };
             ComparePod(a, b);
