@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static XElement SerializeToXElement(object o)
+        public static XDocument SerializeToXDocument(object o)
         {
             var doc = new XDocument();
             using (var xw = doc.CreateWriter()) {
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
                     ).SerializeToInst(xw, o);
             }
 
-            return doc.Root;
+            return doc;
         }
     }
 
