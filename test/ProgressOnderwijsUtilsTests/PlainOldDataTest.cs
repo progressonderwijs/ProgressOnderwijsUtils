@@ -72,31 +72,28 @@ namespace ProgressOnderwijsUtilsTests
         {
             var a = new SLBerichtSamenvatting.Value {
                 BerichtType = BerichtType.vchmsg06onderhoudennaw,
-                Ontvanger = "qwerty",
+                IsUitgaandBericht = true,
                 Organisatie = RootOrganisatie.RUG,
                 Student = (Id.Student)2,
                 StudielinkBerichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
-                Zender = "zxcvb",
             }.FinishBuilding();
             var b = new SLBerichtSamenvatting.Value {
                 BerichtType = BerichtType.vchmsg06onderhoudennaw,
-                Ontvanger = "qwerty",
+                IsUitgaandBericht = true,
                 Organisatie = RootOrganisatie.RUG,
                 Student = (Id.Student)2,
                 StudielinkBerichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
-                Zender = "zxcvb",
             }.FinishBuilding();
             var c =
                 new {
                     BerichtType = BerichtType.vchmsg06onderhoudennaw,
-                    Ontvanger = "qwerty",
                     Organisatie = RootOrganisatie.RUG,
                     Student = (Id.Student)2,
                     StudielinkBerichtId = 3,
                     StudielinkNummer = (ExternalId.StudielinkNummer)4,
-                    Zender = "zxcvb",
+                    IsUitgaandBericht = true,
                 };
             ComparePod(a, b);
             ComparePod(a, c);
