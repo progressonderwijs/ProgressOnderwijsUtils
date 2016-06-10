@@ -71,33 +71,33 @@ namespace ProgressOnderwijsUtilsTests
         public void SLBerichtSamenvattingTest()
         {
             var a = new SLBerichtSamenvatting.Value {
-                Berichttype = "abc",
+                BerichtType = BerichtType.vchmsg06onderhoudennaw,
                 FormNaam = "def",
                 Ontvanger = "qwerty",
                 Organisatie = RootOrganisatie.RUG,
                 Student = (Id.Student)2,
-                StudielinkberichtId = 3,
+                StudielinkBerichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
                 Zender = "zxcvb",
             }.FinishBuilding();
             var b = new SLBerichtSamenvatting.Value {
-                Berichttype = "abc",
+                BerichtType = BerichtType.vchmsg06onderhoudennaw,
                 FormNaam = "def",
                 Ontvanger = "qwerty",
                 Organisatie = RootOrganisatie.RUG,
                 Student = (Id.Student)2,
-                StudielinkberichtId = 3,
+                StudielinkBerichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
                 Zender = "zxcvb",
             }.FinishBuilding();
             var c =
                 new {
-                    Berichttype = "abc",
+                    BerichtType = BerichtType.vchmsg06onderhoudennaw,
                     FormNaam = "def",
                     Ontvanger = "qwerty",
                     Organisatie = RootOrganisatie.RUG,
                     Student = (Id.Student)2,
-                    StudielinkberichtId = 3,
+                    StudielinkBerichtId = 3,
                     StudielinkNummer = (ExternalId.StudielinkNummer)4,
                     Zender = "zxcvb",
                 };
