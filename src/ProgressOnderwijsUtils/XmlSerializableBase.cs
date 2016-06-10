@@ -9,10 +9,8 @@ namespace ProgressOnderwijsUtils
 {
     public static class XmlSerializerHelper
     {
-        public static T Deserialize<T>(string xml)
-        {
-            return XmlSerializerHelper<T>.Deserialize(xml);
-        }
+        public static T Deserialize<T>(string xml) => XmlSerializerHelper<T>.Deserialize(xml);
+        public static T Deserialize<T>(XDocument xml) => XmlSerializerHelper<T>.Deserialize(xml);
 
         public static string SerializeToString(object o)
         {
@@ -30,7 +28,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static XElement SerializeToXElement(object o)
+        public static XDocument SerializeToXDocument(object o)
         {
             var doc = new XDocument();
             using (var xw = doc.CreateWriter()) {
@@ -43,7 +41,7 @@ namespace ProgressOnderwijsUtils
                     ).SerializeToInst(xw, o);
             }
 
-            return doc.Root;
+            return doc;
         }
     }
 
