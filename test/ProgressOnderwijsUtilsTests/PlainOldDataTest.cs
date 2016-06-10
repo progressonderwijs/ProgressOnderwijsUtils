@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtilsTests
         public void SLBerichtSamenvattingTest()
         {
             var a = new SLBerichtSamenvatting.Value {
-                Berichttype = "abc",
+                BerichtType = BerichtType.vchmsg06onderhoudennaw,
                 FormNaam = "def",
                 Ontvanger = "qwerty",
                 Organisatie = RootOrganisatie.RUG,
@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtilsTests
                 Zender = "zxcvb",
             }.FinishBuilding();
             var b = new SLBerichtSamenvatting.Value {
-                Berichttype = "abc",
+                BerichtType = BerichtType.vchmsg06onderhoudennaw,
                 FormNaam = "def",
                 Ontvanger = "qwerty",
                 Organisatie = RootOrganisatie.RUG,
@@ -92,7 +92,7 @@ namespace ProgressOnderwijsUtilsTests
             }.FinishBuilding();
             var c =
                 new {
-                    Berichttype = "abc",
+                    BerichtType = BerichtType.vchmsg06onderhoudennaw,
                     FormNaam = "def",
                     Ontvanger = "qwerty",
                     Organisatie = RootOrganisatie.RUG,
