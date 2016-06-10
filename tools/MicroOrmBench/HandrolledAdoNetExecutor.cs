@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Data.SqlTypes;
+using System.Runtime.CompilerServices;
 using ProgressOnderwijsUtils;
 
 namespace MicroOrmBench
@@ -70,6 +72,60 @@ namespace MicroOrmBench
                 }
             }
         }
+
+        static int ExecuteQuery2(SqlCommandCreationContext ctx, int rows)
+        {
+            using (var cmd = new SqlCommand()) {
+                cmd.CommandText = ExampleObject.RawQueryString;
+                cmd.Connection = ctx.Connection;
+                var argP = new SqlParameter {
+                    SqlDbType = SqlDbType.Int,
+                    ParameterName = "@Arg",
+                    IsNullable = true,
+                    Value = DBNull.Value,
+                };
+                var numP = new SqlParameter {
+                    SqlDbType = SqlDbType.Int,
+                    ParameterName = "@Num2",
+                    IsNullable = false,
+                    Value = new SqlInt32(2),
+                };
+                var heheP = new SqlParameter {
+                    SqlDbType = SqlDbType.NVarChar,
+                    ParameterName = "@hehe",
+                    IsNullable = false,
+                    Value = "hehe",
+                };
+                var topP = new SqlParameter {
+                    SqlDbType = SqlDbType.Int,
+                    ParameterName = "@Top",
+                    IsNullable = false,
+                    Value = new SqlInt32(rows),
+                };
+                cmd.Parameters.Add(topP);
+                cmd.Parameters.Add(numP);
+                cmd.Parameters.Add(heheP);
+                cmd.Parameters.Add(argP);
+                using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
+                    var list = new List<ExampleObject>();
+                    while (reader.Read()) {
+                        list.Add(new ExampleObject {
+                            A = reader.GetSqlInt32(0).ToNullableInt(),
+                            B = reader.GetInt32(1),
+                            C = reader.GetString(2),
+                            D = reader.GetDateTime(3),
+                            E = reader.GetInt32(4),
+                            Arg = reader.GetSqlInt32(5).ToNullableInt(),
+                        });
+                    }
+                    return list.Count;
+                }
+            }
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static int? ToNullableInt(this SqlInt32 num) => num.IsNull ? default(int?) : num.Value;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static string ToNullableString(this SqlString str) => str.IsNull ? default(string) : str.Value;
 
         public static void RunWideQuery(Benchmarker benchmarker)
         {

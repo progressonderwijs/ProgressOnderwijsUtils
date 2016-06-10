@@ -4,7 +4,7 @@
     {
         public static void Main()
         {
-            var benchmarker = new Benchmarker {IterationsPerTry = 1000, Tries = 50};
+            var benchmarker = new Benchmarker {IterationsPerTry = 2000, Tries = 100};
             benchmarker.ReportInitialDistribution();
             RunCurrentBenchmarks(new Benchmarker {IterationsPerTry = 8, Tries = 2, Output = _ => { }}); //warm-up
             RunCurrentBenchmarks(benchmarker);
