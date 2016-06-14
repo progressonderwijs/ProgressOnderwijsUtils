@@ -36,9 +36,12 @@ namespace ProgressOnderwijsUtils
             lock (sync) {
                 if (writer == null) {
                     try {
-                        writer = new StreamWriter($@"C:\\temp\\MetaObjectProposals_{DateTime.Now.ToString("yyyy-MM-dd_HHmm_ss")}.txt") {
-                            AutoFlush = true
-                        }.Write;
+                        if (Process.GetCurrentProcess().ProcessName.StartsWith("LINQPad.")) {
+                            writer = Console.Out.Write;
+                        } else
+                            writer = new StreamWriter($@"C:\\temp\\MetaObjectProposals_{DateTime.Now.ToString("yyyy-MM-dd_HHmm_ss")}.txt") {
+                                AutoFlush = true
+                            }.Write;
                     } catch {
                         writer = s => { };
                     }
