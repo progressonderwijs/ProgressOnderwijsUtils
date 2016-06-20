@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Xml.Linq;
 
 namespace ProgressOnderwijsUtils
@@ -24,7 +20,6 @@ namespace ProgressOnderwijsUtils
             foreach (var unusedNamespaceDeclaration in unusedRootNamespaceDeclarations)
                 unusedNamespaceDeclaration.Remove();
 
-            //*
             if (usedNamespaces.Contains(XNamespace.Get("http://www.w3.org/2001/XMLSchema"))) {
                 foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration && attr.Value == "http://www.w3.org/2001/XMLSchema"))
                     attr.Remove();
