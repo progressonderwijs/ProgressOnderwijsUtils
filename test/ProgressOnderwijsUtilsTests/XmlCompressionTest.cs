@@ -1,9 +1,13 @@
 ﻿using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Xml.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
+using Progress.Business.Inschrijvingen.Studielink;
+using Progress.Business.Schemas;
 using Progress.Business.Test;
+using Progress.Test.Studielink;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -46,7 +50,6 @@ namespace ProgressOnderwijsUtilsTests
             var output = doc.ToString(SaveOptions.DisableFormatting);
             PAssert.That(() => output == "<test xmlns=\"bla\" />");
         }
-
 
         [Test]
         public void DocumentWithChildNamespaceIsUnchanged()
@@ -107,7 +110,7 @@ namespace ProgressOnderwijsUtilsTests
         public void SaveToUtf8IsUtf8()
         {
             var doc = XDocument.Parse("<test>Ƒоо</test>");
-            var bytes =  XmlCompression.SaveToUtf8(doc);
+            var bytes = XmlCompression.SaveToUtf8(doc);
             var str = UTF8.GetString(bytes);
 
             PAssert.That(() => str == "<test>Ƒоо</test>");
@@ -124,7 +127,6 @@ namespace ProgressOnderwijsUtilsTests
 
             PAssert.That(() => str == "<test>Ƒоо</test>");
         }
-
 
         [Test]
         public void SaveToUtf8ExcludesXmlDeclaration()
@@ -158,5 +160,74 @@ namespace ProgressOnderwijsUtilsTests
       </here></elements></nested></test>");
         }
 
+        [Test]
+        public void SaveUsingDeflateWithDictionaryWithoutDictionaryRoundTrips()
+        {
+            var docString = "<test><this><document xmlns=\"bla\">Ƒоо</document></this></test>";
+            AssertCompressionCompressesAndRoundTrips(docString, null);
+        }
+
+        [Test]
+        public void CompressionRoundTripsInComplexExampleWithoutDictionary()
+        {
+            var xmlString = new ServiceTestBerichten().Bericht(BerichtType.vchmsg03inschrijving);
+            var minifiedVchMsg03 = XDocument.Parse(xmlString).ToString(SaveOptions.DisableFormatting);
+            AssertCompressionCompressesAndRoundTrips(minifiedVchMsg03, null);
+        }
+
+        static void AssertCompressionCompressesAndRoundTrips(string docString, byte[] dictionary)
+        {
+            var doc = XDocument.Parse(docString);
+            var compressedBytes = XmlCompression.SaveUsingDeflateWithDictionary(doc, dictionary);
+            PAssert.That(() => compressedBytes.Length < UTF8.GetByteCount(docString));
+            var decompressedDoc = XmlCompression.LoadFromDeflateWithDictionary(compressedBytes, dictionary);
+            PAssert.That(() => !ReferenceEquals(doc, decompressedDoc), "Using the same reference would be cheating!");
+            PAssert.That(() => XNode.DeepEquals(doc, decompressedDoc));
+            PAssert.That(() => decompressedDoc.ToString(SaveOptions.DisableFormatting) == docString);
+        }
+
+        [Test]
+        public void SaveUsingDeflateWithDictionaryRoundTrips()
+        {
+            var dictionary = UTF8.GetBytes("documentesthis");
+            var docString = "<test><this><document xmlns=\"bla\">Ƒоо</document></this></test>";
+            AssertCompressionCompressesAndRoundTrips(docString, dictionary);
+        }
+
+        [Test]
+        public void CompressionRoundTripsInComplexExample()
+        {
+            var xmlString = new ServiceTestBerichten().Bericht(BerichtType.vchmsg03inschrijving);
+
+            var minifiedVchMsg03 = XDocument.Parse(xmlString).ToString(SaveOptions.DisableFormatting);
+            var dictionary = UTF8.GetBytes("<typename><tysource sourcetype=\"imsdefault\" /><tyvalue>" + BerichtType.vchmsg03inschrijving + $" xmlns=\"{SchemaSet.KVA5_NS.NamespaceName}\"");
+            AssertCompressionCompressesAndRoundTrips(minifiedVchMsg03, dictionary);
+        }
+
+        [Test]
+        public void SaveUsingDeflateWithDictionaryIsSmaller()
+        {
+            var dictionary = UTF8.GetBytes("documentesthis");
+            var docString = "<test><this><document xmlns=\"bla\">Ƒоо</document></this></test>";
+            var doc = XDocument.Parse(docString);
+            var uncompressedBytes = UTF8.GetBytes(docString).Length;
+            var withoutDictionary = XmlCompression.SaveUsingDeflateWithDictionary(doc, null).Length;
+            var withDictionary = XmlCompression.SaveUsingDeflateWithDictionary(doc, dictionary).Length;
+            PAssert.That(() => withDictionary < withoutDictionary && withoutDictionary < uncompressedBytes);
+        }
+
+        [Test]
+        public void SaveUsingDeflateWithDictionaryIsSmallerInRealExample()
+        {
+            var xmlStringWithFormatting = new ServiceTestBerichten().Bericht(BerichtType.vchmsg03inschrijving);
+            var docString = XDocument.Parse(xmlStringWithFormatting).ToString(SaveOptions.DisableFormatting);
+
+            var dictionary = UTF8.GetBytes("<typename><tysource sourcetype=\"imsdefault\" /><tyvalue>" + BerichtType.vchmsg03inschrijving + $" xmlns=\"{SchemaSet.KVA5_NS.NamespaceName}\"");
+            var doc = XDocument.Parse(docString);
+            var uncompressedBytes = UTF8.GetBytes(docString).Length;
+            var withoutDictionary = XmlCompression.SaveUsingDeflateWithDictionary(doc, null).Length;
+            var withDictionary = XmlCompression.SaveUsingDeflateWithDictionary(doc, dictionary).Length;
+            PAssert.That(() => withDictionary < withoutDictionary && withoutDictionary < uncompressedBytes);
+        }
     }
 }

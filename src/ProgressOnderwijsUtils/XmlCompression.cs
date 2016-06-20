@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using ZlibWithDictionary;
 
 namespace ProgressOnderwijsUtils
 {
@@ -52,6 +53,35 @@ namespace ProgressOnderwijsUtils
                 doc.Save(xw);
 
             return Encoding.UTF8.GetBytes(sb.ToString());
+        }
+
+        /// <summary>
+        /// Saves the xml document.  The document is minified (redundant namespaces and indenting omitted), serialized to utf8, and then zlib compressed with an (optional) dictionary.
+        /// You must provide this identical dictionary to be able to decompress the document.
+        /// </summary>
+        /// <param name="doc">The document to compress.</param>
+        /// <param name="dictionary">
+        /// The dictionary to use during compression.  
+        /// A good dictionary shared as many substrings that are as long as possible with the input data (e.g. document with the same schema).
+        /// A null dictionary is permitted, which means "compress without dictionary".
+        /// </param>
+        /// <returns>The deflate-compressed document.</returns>
+        public static byte[] SaveUsingDeflateWithDictionary(XDocument doc, byte[] dictionary)
+        {
+            CleanupNamespaces(doc);
+            var uncompressedBytes = SaveToUtf8(doc);
+            var compressedBytes = DeflateCompression.ZlibCompressWithDictionary(uncompressedBytes, dictionary, Ionic.Zlib.CompressionLevel.BestCompression);
+            return compressedBytes;
+        }
+
+        /// <summary>
+        /// Loads an XDocument that was saved with 'SaveUsingDeflateWithDictionary'.  You must provide the same dictionary used during compression. 
+        /// </summary>
+        public static XDocument LoadFromDeflateWithDictionary(byte[] compressedBytes, byte[] dictionary)
+        {
+            var bytes = DeflateCompression.ZlibDecompressWithDictionary(compressedBytes, dictionary);
+            var xmlString = Encoding.UTF8.GetString(bytes);
+            return XDocument.Parse(xmlString);
         }
     }
 }
