@@ -1,4 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using System.IO;
+using System.Text;
+using System.Xml.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Business.Test;
@@ -90,5 +92,71 @@ namespace ProgressOnderwijsUtilsTests
             var output = doc.ToString(SaveOptions.DisableFormatting);
             PAssert.That(() => output == "<test xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><this xsi:nil=\"true\" /></test>");
         }
+
+        static readonly Encoding UTF8 = Encoding.UTF8;
+
+        [Test]
+        public void SaveToUtf8ContainsNoByteOrderMark()
+        {
+            var doc = XDocument.Parse("<test>Ƒоо</test>");
+            var bytes = XmlCompression.SaveToUtf8(doc);
+            PAssert.That(() => bytes[0] == (byte)'<');
+        }
+
+        [Test]
+        public void SaveToUtf8IsUtf8()
+        {
+            var doc = XDocument.Parse("<test>Ƒоо</test>");
+            var bytes =  XmlCompression.SaveToUtf8(doc);
+            var str = UTF8.GetString(bytes);
+
+            PAssert.That(() => str == "<test>Ƒоо</test>");
+        }
+
+        [Test]
+        public void SaveToUtf8CanRoundTrip()
+        {
+            var doc = XDocument.Parse("<test>Ƒоо</test>");
+            var bytes = XmlCompression.SaveToUtf8(doc);
+            var reloaded = XDocument.Load(new MemoryStream(bytes));
+
+            var str = reloaded.ToString();
+
+            PAssert.That(() => str == "<test>Ƒоо</test>");
+        }
+
+
+        [Test]
+        public void SaveToUtf8ExcludesXmlDeclaration()
+        {
+            var doc = XDocument.Parse("<?xml version=\"1.0\" encoding=\"utf16\"?><test>Ƒоо</test>");
+
+            var bytes = XmlCompression.SaveToUtf8(doc);
+            var str = UTF8.GetString(bytes);
+
+            PAssert.That(() => str == "<test>Ƒоо</test>");
+        }
+
+        [Test]
+        public void SaveToUtf8ExcludesIndentation()
+        {
+            var doc = XDocument.Parse(@"<test>
+  <nested>
+    <elements>
+      <here>
+        Ƒоо
+      </here>
+    </elements>
+  </nested>
+</test>");
+
+            var bytes = XmlCompression.SaveToUtf8(doc);
+            var str = UTF8.GetString(bytes);
+
+            PAssert.That(() => str == @"<test><nested><elements><here>
+        Ƒоо
+      </here></elements></nested></test>");
+        }
+
     }
 }

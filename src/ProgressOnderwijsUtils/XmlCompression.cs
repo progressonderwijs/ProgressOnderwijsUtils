@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace ProgressOnderwijsUtils
@@ -34,5 +37,21 @@ namespace ProgressOnderwijsUtils
 
         static readonly XNamespace xsdNamespace = XNamespace.Get("http://www.w3.org/2001/XMLSchema");
         static readonly XNamespace xsiNamespace = XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance");
+
+        static readonly XmlWriterSettings xmlWriterSettings = new XmlWriterSettings {
+            Encoding = Encoding.UTF8,
+            Indent = false,
+            NamespaceHandling = NamespaceHandling.OmitDuplicates,
+            OmitXmlDeclaration = true,
+        };
+
+        public static byte[] SaveToUtf8(XDocument doc)
+        {
+            var sb = new StringBuilder();
+            using (var xw = XmlWriter.Create(sb, xmlWriterSettings))
+                doc.Save(xw);
+
+            return Encoding.UTF8.GetBytes(sb.ToString());
+        }
     }
 }
