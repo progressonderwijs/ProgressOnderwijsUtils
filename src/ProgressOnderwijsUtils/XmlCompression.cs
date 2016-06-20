@@ -20,16 +20,19 @@ namespace ProgressOnderwijsUtils
             foreach (var unusedNamespaceDeclaration in unusedRootNamespaceDeclarations)
                 unusedNamespaceDeclaration.Remove();
 
-            if (usedNamespaces.Contains(XNamespace.Get("http://www.w3.org/2001/XMLSchema"))) {
-                foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration && attr.Value == "http://www.w3.org/2001/XMLSchema"))
+            if (usedNamespaces.Contains(xsdNamespace)) {
+                foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration && attr.Value == xsdNamespace.NamespaceName))
                     attr.Remove();
-                doc.Root.SetAttributeValue(XNamespace.Xmlns + "xsd", "http://www.w3.org/2001/XMLSchema");
+                doc.Root.SetAttributeValue(XNamespace.Xmlns + "xsd", xsdNamespace.NamespaceName);
             }
-            if (usedNamespaces.Contains(XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance"))) {
-                foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration && attr.Value == "http://www.w3.org/2001/XMLSchema-instance"))
+            if (usedNamespaces.Contains(xsiNamespace)) {
+                foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration && attr.Value == xsiNamespace.NamespaceName))
                     attr.Remove();
-                doc.Root.SetAttributeValue(XNamespace.Xmlns + "xsi", "http://www.w3.org/2001/XMLSchema-instance");
+                doc.Root.SetAttributeValue(XNamespace.Xmlns + "xsi", xsiNamespace.NamespaceName);
             }
         }
+
+        static readonly XNamespace xsdNamespace = XNamespace.Get("http://www.w3.org/2001/XMLSchema");
+        static readonly XNamespace xsiNamespace = XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance");
     }
 }
