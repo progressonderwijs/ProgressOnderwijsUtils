@@ -37,6 +37,16 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
+        public void XmlDeclarationHasNoImpact()
+        {
+            var doc = XDocument.Parse("<?xml version=\"1.0\"?><test xmlns='bla'/>");
+            XmlCompression.CleanupNamespaces(doc);
+            var output = doc.ToString(SaveOptions.DisableFormatting);
+            PAssert.That(() => output == "<test xmlns=\"bla\" />");
+        }
+
+
+        [Test]
         public void DocumentWithChildNamespaceIsUnchanged()
         {
             var doc = XDocument.Parse("<test xmlns='bla'><hmm:this xmlns:hmm='foo'/></test>");
