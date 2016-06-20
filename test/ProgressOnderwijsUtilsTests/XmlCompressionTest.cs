@@ -101,7 +101,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void SaveToUtf8ContainsNoByteOrderMark()
         {
-            var doc = XDocument.Parse("<test>Ƒоо</test>");
+            var doc = XDocument.Parse("<test>Ƒϕϕ</test>");
             var bytes = XmlCompression.SaveToUtf8(doc);
             PAssert.That(() => bytes[0] == (byte)'<');
         }
@@ -109,34 +109,34 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void SaveToUtf8IsUtf8()
         {
-            var doc = XDocument.Parse("<test>Ƒоо</test>");
+            var doc = XDocument.Parse("<test>Ƒϕϕ</test>");
             var bytes = XmlCompression.SaveToUtf8(doc);
             var str = UTF8.GetString(bytes);
 
-            PAssert.That(() => str == "<test>Ƒоо</test>");
+            PAssert.That(() => str == "<test>Ƒϕϕ</test>");
         }
 
         [Test]
         public void SaveToUtf8CanRoundTrip()
         {
-            var doc = XDocument.Parse("<test>Ƒоо</test>");
+            var doc = XDocument.Parse("<test>Ƒϕϕ</test>");
             var bytes = XmlCompression.SaveToUtf8(doc);
             var reloaded = XDocument.Load(new MemoryStream(bytes));
 
             var str = reloaded.ToString();
 
-            PAssert.That(() => str == "<test>Ƒоо</test>");
+            PAssert.That(() => str == "<test>Ƒϕϕ</test>");
         }
 
         [Test]
         public void SaveToUtf8ExcludesXmlDeclaration()
         {
-            var doc = XDocument.Parse("<?xml version=\"1.0\" encoding=\"utf16\"?><test>Ƒоо</test>");
+            var doc = XDocument.Parse("<?xml version=\"1.0\" encoding=\"utf16\"?><test>Ƒϕϕ</test>");
 
             var bytes = XmlCompression.SaveToUtf8(doc);
             var str = UTF8.GetString(bytes);
 
-            PAssert.That(() => str == "<test>Ƒоо</test>");
+            PAssert.That(() => str == "<test>Ƒϕϕ</test>");
         }
 
         [Test]
@@ -146,7 +146,7 @@ namespace ProgressOnderwijsUtilsTests
   <nested>
     <elements>
       <here>
-        Ƒоо
+        Ƒϕϕ
       </here>
     </elements>
   </nested>
@@ -156,10 +156,9 @@ namespace ProgressOnderwijsUtilsTests
             var str = UTF8.GetString(bytes);
 
             PAssert.That(() => str == @"<test><nested><elements><here>
-        Ƒоо
+        Ƒϕϕ
       </here></elements></nested></test>");
         }
-
         [Test]
         public void SaveUsingDeflateWithDictionaryWithoutDictionaryRoundTrips()
         {
