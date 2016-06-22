@@ -71,35 +71,29 @@ namespace ProgressOnderwijsUtilsTests
         public void SLBerichtSamenvattingTest()
         {
             var a = new SLBerichtSamenvatting.Value {
-                Berichttype = "abc",
-                FormNaam = "def",
-                Ontvanger = "qwerty",
+                BerichtType = BerichtType.vchmsg06onderhoudennaw,
+                IsUitgaandBericht = true,
                 Organisatie = RootOrganisatie.RUG,
                 Student = (Id.Student)2,
-                StudielinkberichtId = 3,
+                StudielinkBerichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
-                Zender = "zxcvb",
             }.FinishBuilding();
             var b = new SLBerichtSamenvatting.Value {
-                Berichttype = "abc",
-                FormNaam = "def",
-                Ontvanger = "qwerty",
+                BerichtType = BerichtType.vchmsg06onderhoudennaw,
+                IsUitgaandBericht = true,
                 Organisatie = RootOrganisatie.RUG,
                 Student = (Id.Student)2,
-                StudielinkberichtId = 3,
+                StudielinkBerichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
-                Zender = "zxcvb",
             }.FinishBuilding();
             var c =
                 new {
-                    Berichttype = "abc",
-                    FormNaam = "def",
-                    Ontvanger = "qwerty",
+                    BerichtType = BerichtType.vchmsg06onderhoudennaw,
                     Organisatie = RootOrganisatie.RUG,
                     Student = (Id.Student)2,
-                    StudielinkberichtId = 3,
+                    StudielinkBerichtId = 3,
                     StudielinkNummer = (ExternalId.StudielinkNummer)4,
-                    Zender = "zxcvb",
+                    IsUitgaandBericht = true,
                 };
             ComparePod(a, b);
             ComparePod(a, c);
