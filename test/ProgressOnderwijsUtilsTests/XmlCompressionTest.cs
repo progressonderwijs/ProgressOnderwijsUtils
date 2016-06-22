@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtilsTests
         public void SaveToUtf8ContainsNoByteOrderMark()
         {
             var doc = XDocument.Parse("<test>Ƒϕϕ</test>");
-            var bytes = XmlCompression.SaveToUtf8(doc);
+            var bytes = XmlCompression.ToUtf8(doc);
             PAssert.That(() => bytes[0] == (byte)'<');
         }
 
@@ -110,7 +110,7 @@ namespace ProgressOnderwijsUtilsTests
         public void SaveToUtf8IsUtf8()
         {
             var doc = XDocument.Parse("<test>Ƒϕϕ</test>");
-            var bytes = XmlCompression.SaveToUtf8(doc);
+            var bytes = XmlCompression.ToUtf8(doc);
             var str = UTF8.GetString(bytes);
 
             PAssert.That(() => str == "<test>Ƒϕϕ</test>");
@@ -120,8 +120,8 @@ namespace ProgressOnderwijsUtilsTests
         public void SaveToUtf8CanRoundTrip()
         {
             var doc = XDocument.Parse("<test>Ƒϕϕ</test>");
-            var bytes = XmlCompression.SaveToUtf8(doc);
-            var reloaded = XDocument.Load(new MemoryStream(bytes));
+            var bytes = XmlCompression.ToUtf8(doc);
+            var reloaded = XmlCompression.FromUtf8(bytes);
 
             var str = reloaded.ToString();
 
@@ -133,7 +133,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var doc = XDocument.Parse("<?xml version=\"1.0\" encoding=\"utf16\"?><test>Ƒϕϕ</test>");
 
-            var bytes = XmlCompression.SaveToUtf8(doc);
+            var bytes = XmlCompression.ToUtf8(doc);
             var str = UTF8.GetString(bytes);
 
             PAssert.That(() => str == "<test>Ƒϕϕ</test>");
@@ -152,13 +152,14 @@ namespace ProgressOnderwijsUtilsTests
   </nested>
 </test>");
 
-            var bytes = XmlCompression.SaveToUtf8(doc);
+            var bytes = XmlCompression.ToUtf8(doc);
             var str = UTF8.GetString(bytes);
 
             PAssert.That(() => str == @"<test><nested><elements><here>
         Ƒϕϕ
       </here></elements></nested></test>");
         }
+
         [Test]
         public void SaveUsingDeflateWithDictionaryWithoutDictionaryRoundTrips()
         {
@@ -177,9 +178,9 @@ namespace ProgressOnderwijsUtilsTests
         static void AssertCompressionCompressesAndRoundTrips(string docString, byte[] dictionary)
         {
             var doc = XDocument.Parse(docString);
-            var compressedBytes = XmlCompression.SaveUsingDeflateWithDictionary(doc, dictionary);
+            var compressedBytes = XmlCompression.ToCompressedUtf8(doc, dictionary);
             PAssert.That(() => compressedBytes.Length < UTF8.GetByteCount(docString));
-            var decompressedDoc = XmlCompression.LoadFromDeflateWithDictionary(compressedBytes, dictionary);
+            var decompressedDoc = XmlCompression.FromCompressedUtf8(compressedBytes, dictionary);
             PAssert.That(() => !ReferenceEquals(doc, decompressedDoc), "Using the same reference would be cheating!");
             PAssert.That(() => XNode.DeepEquals(doc, decompressedDoc));
             PAssert.That(() => decompressedDoc.ToString(SaveOptions.DisableFormatting) == docString);
@@ -210,8 +211,8 @@ namespace ProgressOnderwijsUtilsTests
             var docString = "<test><this><document xmlns=\"bla\">Ƒоо</document></this></test>";
             var doc = XDocument.Parse(docString);
             var uncompressedBytes = UTF8.GetBytes(docString).Length;
-            var withoutDictionary = XmlCompression.SaveUsingDeflateWithDictionary(doc, null).Length;
-            var withDictionary = XmlCompression.SaveUsingDeflateWithDictionary(doc, dictionary).Length;
+            var withoutDictionary = XmlCompression.ToCompressedUtf8(doc, null).Length;
+            var withDictionary = XmlCompression.ToCompressedUtf8(doc, dictionary).Length;
             PAssert.That(() => withDictionary < withoutDictionary && withoutDictionary < uncompressedBytes);
         }
 
@@ -224,8 +225,8 @@ namespace ProgressOnderwijsUtilsTests
             var dictionary = UTF8.GetBytes("<typename><tysource sourcetype=\"imsdefault\" /><tyvalue>" + BerichtType.vchmsg03inschrijving + $" xmlns=\"{SchemaSet.KVA5_NS.NamespaceName}\"");
             var doc = XDocument.Parse(docString);
             var uncompressedBytes = UTF8.GetBytes(docString).Length;
-            var withoutDictionary = XmlCompression.SaveUsingDeflateWithDictionary(doc, null).Length;
-            var withDictionary = XmlCompression.SaveUsingDeflateWithDictionary(doc, dictionary).Length;
+            var withoutDictionary = XmlCompression.ToCompressedUtf8(doc, null).Length;
+            var withDictionary = XmlCompression.ToCompressedUtf8(doc, dictionary).Length;
             PAssert.That(() => withDictionary < withoutDictionary && withoutDictionary < uncompressedBytes);
         }
     }

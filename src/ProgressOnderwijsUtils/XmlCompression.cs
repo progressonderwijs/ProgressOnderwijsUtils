@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
             OmitXmlDeclaration = true,
         };
 
-        public static byte[] SaveToUtf8(XDocument doc)
+        public static byte[] ToUtf8(XDocument doc)
         {
             var sb = new StringBuilder();
             using (var xw = XmlWriter.Create(sb, xmlWriterSettings))
@@ -54,6 +54,9 @@ namespace ProgressOnderwijsUtils
 
             return Encoding.UTF8.GetBytes(sb.ToString());
         }
+
+        public static XDocument FromUtf8(byte[] utf8EncodedXml)
+            => XDocument.Parse(Encoding.UTF8.GetString(utf8EncodedXml));
 
         /// <summary>
         /// Saves the xml document.  The document is minified (redundant namespaces and indenting omitted), serialized to utf8, and then zlib compressed with an (optional) dictionary.
@@ -66,10 +69,10 @@ namespace ProgressOnderwijsUtils
         /// A null dictionary is permitted, which means "compress without dictionary".
         /// </param>
         /// <returns>The deflate-compressed document.</returns>
-        public static byte[] SaveUsingDeflateWithDictionary(XDocument doc, byte[] dictionary)
+        public static byte[] ToCompressedUtf8(XDocument doc, byte[] dictionary)
         {
             CleanupNamespaces(doc);
-            var uncompressedBytes = SaveToUtf8(doc);
+            var uncompressedBytes = ToUtf8(doc);
             var compressedBytes = DeflateCompression.ZlibCompressWithDictionary(uncompressedBytes, dictionary, Ionic.Zlib.CompressionLevel.BestCompression);
             return compressedBytes;
         }
@@ -77,7 +80,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Loads an XDocument that was saved with 'SaveUsingDeflateWithDictionary'.  You must provide the same dictionary used during compression. 
         /// </summary>
-        public static XDocument LoadFromDeflateWithDictionary(byte[] compressedBytes, byte[] dictionary)
+        public static XDocument FromCompressedUtf8(byte[] compressedBytes, byte[] dictionary)
         {
             var bytes = DeflateCompression.ZlibDecompressWithDictionary(compressedBytes, dictionary);
             var xmlString = Encoding.UTF8.GetString(bytes);
