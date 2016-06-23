@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System;
+using System.Data.SqlClient;
 
 namespace ProgressOnderwijsUtils
 {
@@ -67,6 +68,13 @@ namespace ProgressOnderwijsUtils
             }
 
             return srcFieldsByName.Values.Select(srcCol => new FieldMapping(srcCol.Def, srcCol.Index, dstFieldsByName[srcCol.Def.Name].Index)).ToArray();
+        }
+
+        public static void ApplyFieldMappingsToBulkCopy(FieldMapping[] mapping, SqlBulkCopy bulkCopy)
+        {
+            foreach (var mapEntry in mapping) {
+                bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
+            }
         }
     }
 }

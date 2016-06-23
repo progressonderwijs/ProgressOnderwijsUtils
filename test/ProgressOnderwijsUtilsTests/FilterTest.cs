@@ -412,7 +412,7 @@ namespace ProgressOnderwijsUtilsTests
         };
 
         static readonly IFilterFactory<BlaFilterObject> helper = null;
-        Func<int, Func<int, bool>> getStaticGroupContainmentVerifier;
+        Func<Id.StatischeGroep, Func<int, bool>> getStaticGroupContainmentVerifier;
         IEnumerable<BlaFilterObject> run(FilterBase filter) => data.Where(filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier));
 
         [SetUp]
