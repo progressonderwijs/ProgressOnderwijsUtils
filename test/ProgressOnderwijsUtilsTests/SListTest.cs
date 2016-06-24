@@ -83,6 +83,7 @@ namespace ProgressOnderwijsUtilsTests
 
             PAssert.That(() => list.Tail.Tail.Tail.IsEmpty);
             PAssert.That(() => list.Tail.Prepend(1) == list);
+            // ReSharper disable once UnusedVariable
             Assert.Throws<NullReferenceException>(() => { var x = list.Tail.Tail.Tail.Tail; });
         }
 
@@ -94,6 +95,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => list.Head == 1);
             PAssert.That(() => list.Tail.Head == 2);
             PAssert.That(() => list.Tail.Tail.Head == 3);
+            // ReSharper disable once UnusedVariable
             Assert.Throws<NullReferenceException>(() => { var x = list.Tail.Tail.Tail.Head; });
         }
 
@@ -101,7 +103,7 @@ namespace ProgressOnderwijsUtilsTests
         public void HashReasonableness()
         {
             var list = SList.Create(Enumerable.Range(0, 100).Select(i => i * 14678355468 ^ i));
-            List<int> hashcodes = new List<int>();
+            var hashcodes = new List<int>();
             for (var suffix = list; !suffix.IsEmpty; suffix = suffix.Tail) {
                 hashcodes.Add(suffix.GetHashCode());
             }
