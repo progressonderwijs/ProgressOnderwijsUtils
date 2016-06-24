@@ -31,7 +31,8 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void SameContentsNull()
         {
-            Assert.Catch<ArgumentNullException>(() => { var ignore = sut.SameContents(null); });
+            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            Assert.Catch<ArgumentNullException>(() => { sut.SameContents(null); });
         }
 
         [Test]
@@ -50,9 +51,9 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void SameContentsFilled()
         {
-            using (FileStream fs1 = sut.OpenWrite())
+            using (var fs1 = sut.OpenWrite())
                 fs1.WriteByte(0);
-            using (FileStream fs2 = other.OpenWrite())
+            using (var fs2 = other.OpenWrite())
                 fs2.WriteByte(0);
             Assert.That(sut.SameContents(other));
         }
@@ -60,11 +61,11 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void DifferentLength()
         {
-            using (FileStream fs1 = sut.OpenWrite()) {
+            using (var fs1 = sut.OpenWrite()) {
                 fs1.WriteByte(0);
                 fs1.WriteByte(0);
             }
-            using (FileStream fs2 = other.OpenWrite())
+            using (var fs2 = other.OpenWrite())
                 fs2.WriteByte(0);
             PAssert.That(() => !sut.SameContents(other));
         }
@@ -79,9 +80,9 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void DifferentContents()
         {
-            using (FileStream fs1 = sut.OpenWrite())
+            using (var fs1 = sut.OpenWrite())
                 fs1.WriteByte(0);
-            using (FileStream fs2 = other.OpenWrite())
+            using (var fs2 = other.OpenWrite())
                 fs2.WriteByte(1);
             Assert.That(!sut.SameContents(other));
         }
