@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using NUnit.Framework;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
@@ -59,6 +60,7 @@ namespace ProgressOnderwijsUtilsTests
         class Recursive
         {
             public int V = 3;
+            [UsedImplicitly]//equality via deep-equals
             public Recursive Next;
         }
 #pragma warning restore 649
@@ -77,25 +79,25 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void RecursiveTypes()
         {
-            Recursive a = new Recursive { V = 3 };
+            var a = new Recursive { V = 3 };
             a.Next = a;
             PAssert.That(() => DeepEquals.AreEqual(a, a));
 
-            Recursive b = new Recursive { V = 3, Next = a };
+            var b = new Recursive { V = 3, Next = a };
             PAssert.That(() => DeepEquals.AreEqual(a, b));
 
-            Recursive a1 = new Recursive { V = 4 };
-            Recursive b1 = new Recursive { V = 5, Next = a1 };
+            var a1 = new Recursive { V = 4 };
+            var b1 = new Recursive { V = 5, Next = a1 };
             a1.Next = b1;
             PAssert.That(() => !DeepEquals.AreEqual(a1, b1));
 
-            Recursive a2 = new Recursive { V = 4 };
-            Recursive b2 = new Recursive { V = 5, Next = a2 };
+            var a2 = new Recursive { V = 4 };
+            var b2 = new Recursive { V = 5, Next = a2 };
             a2.Next = b2;
             PAssert.That(() => DeepEquals.AreEqual(a1, a2));
 
-            Recursive a3 = new Recursive { V = 6 };
-            Recursive b3 = new Recursive { V = 6, Next = a3 };
+            var a3 = new Recursive { V = 6 };
+            var b3 = new Recursive { V = 6, Next = a3 };
             a3.Next = b3;
             PAssert.That(() => DeepEquals.AreEqual(a3, b3));
         }

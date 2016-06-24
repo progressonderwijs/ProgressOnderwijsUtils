@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Linq.Expressions;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
+    [UsedImplicitly(ImplicitUseTargetFlags.Members)]// to test valuebase.ToString
     public sealed class ExampleValue : ValueBase<ExampleValue>
     {
         public int MyInt;
@@ -21,16 +22,6 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void ToString_IsCompilableWherePossible()
         {
-            Expression<Func<ExampleValue>> mkExample = () =>
-                new ExampleValue {
-                    NullableField = null,
-                    AnEnum = ConsoleKey.BrowserBack,
-                    MyString = "Hello World!",
-                    Nested = new ExampleValue { AnEnum = ConsoleKey.BrowserRefresh },
-                    SomeValueType = default(DateTime),
-                    MyInt = 42,
-                };
-
             PAssert.That(
                 () =>
                     new ExampleValue {
