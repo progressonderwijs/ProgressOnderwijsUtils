@@ -6,10 +6,24 @@ using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
+    /// <summary>
+    /// Represents a half-open integer range from Begin (inclusive) to End (exclusive).  E.g. [3, 8) means 3,4,5,6,7
+    /// </summary>
     public struct IntegerRange : IEquatable<IntegerRange>
     {
-        public readonly int Begin, End;
+        /// <summary>
+        /// The (inclusive) beginning of the range of integers.
+        /// </summary>
+        public readonly int Begin;
 
+        /// <summary>
+        /// The (exclusive) beginning of the range of integers.
+        /// </summary>
+        public readonly int End;
+
+        /// <summary>
+        /// Constructs a half-open integer range from begin (inclusive) to end (exclusive).  E.g. [3, 8) means 3,4,5,6,7
+        /// </summary>
         public IntegerRange(int begin, int end)
         {
             Begin = begin;
