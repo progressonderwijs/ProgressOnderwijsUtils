@@ -57,7 +57,8 @@ namespace ProgressOnderwijsUtilsTests
         public void IsImmutable()
         {
             foreach (var col in colSort.Columns) {
-                var ignore = colSort.ToggleSortDirection(col.ColumnName); //doesn't do anything!
+                // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+                colSort.ToggleSortDirection(col.ColumnName); //we're testing if this really is pure.
             }
 
             PAssert.That(() => colSort.Columns.SequenceEqual(new[] { ziggyA, abcA, acolD }));
