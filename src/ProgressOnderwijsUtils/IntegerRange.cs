@@ -33,12 +33,12 @@ namespace ProgressOnderwijsUtils
         public IEnumerable<IntegerRange> Subdivide(int batchCount)
         {
             var doneUpto = Begin;
-            var batchIndex = 0;
-            var rangeSize = End - Begin;
+            var batchIndex = 0L;
+            var rangeSize = (long)End - Begin;
 
             while (batchIndex < batchCount) {
                 batchIndex++;
-                int nextSplit = Begin + (int)(rangeSize * (long)batchIndex / batchCount);
+                int nextSplit = Begin + (int)(rangeSize * batchIndex / batchCount);
                 yield return new IntegerRange(doneUpto, nextSplit);
                 doneUpto = nextSplit;
             }
@@ -92,6 +92,18 @@ namespace ProgressOnderwijsUtils
                     new IntegerRange(2, 5),
                     new IntegerRange(5, 7),
                     new IntegerRange(7, 10),
+                }));
+        }
+
+        [Test]
+        public void SubdividingAvoidsIntegerOverflow()
+        {
+            PAssert.That(() => new IntegerRange(int.MinValue, int.MaxValue).Subdivide(4).SequenceEqual(
+                new[] {
+                    new IntegerRange(int.MinValue, -(1 << 30) - 1),
+                    new IntegerRange(-(1 << 30) - 1, -1),
+                    new IntegerRange(-1, (1 << 30) - 1),
+                    new IntegerRange((1 << 30) - 1, int.MaxValue),
                 }));
         }
     }
