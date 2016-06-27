@@ -62,7 +62,8 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override int GetHashCode() => EqualityKeyCommandFactory.EqualityKey(impl).GetHashCode();
 
-        public override string ToString() => DebugText();
+        //ToString is constructed to be invalid sql, so that accidental string-concat doesn't result in something that looks reasonable to execute.
+        public override string ToString() => "*/Pseudo-sql (with parameter values inlined!):/*\r\n" + DebugText();
         public string DebugText() => DebugCommandFactory.DebugTextFor(impl);
 
         public string CommandText()
