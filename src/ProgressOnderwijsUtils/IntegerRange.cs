@@ -33,11 +33,9 @@ namespace ProgressOnderwijsUtils
         public IEnumerable<IntegerRange> Subdivide(int batchCount)
         {
             var doneUpto = Begin;
-            var batchIndex = 0L;
             var rangeSize = (long)End - Begin;
 
-            while (batchIndex < batchCount) {
-                batchIndex++;
+            for(var batchIndex = 1L; batchIndex <= batchCount; batchIndex++) {
                 int nextSplit = Begin + (int)(rangeSize * batchIndex / batchCount);
                 yield return new IntegerRange(doneUpto, nextSplit);
                 doneUpto = nextSplit;
