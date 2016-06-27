@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
             var rangeSize = (long)End - Begin;
 
             for(var batchIndex = 1L; batchIndex <= batchCount; batchIndex++) {
-                int nextSplit = Begin + (int)(rangeSize * batchIndex / batchCount);
+                var nextSplit = Begin + (int)(rangeSize * batchIndex / batchCount);
                 yield return new IntegerRange(doneUpto, nextSplit);
                 doneUpto = nextSplit;
             }
