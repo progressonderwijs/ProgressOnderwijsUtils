@@ -36,6 +36,13 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        public static void RemoveComments(XDocument doc)
+        {
+            foreach (var comment in doc.DescendantNodes().OfType<XComment>().ToArray()) {
+                comment.Remove();
+            }
+        }
+
         static readonly XNamespace xsdNamespace = XNamespace.Get("http://www.w3.org/2001/XMLSchema");
         static readonly XNamespace xsiNamespace = XNamespace.Get("http://www.w3.org/2001/XMLSchema-instance");
 
@@ -72,6 +79,7 @@ namespace ProgressOnderwijsUtils
         public static byte[] ToCompressedUtf8(XDocument doc, byte[] dictionary)
         {
             CleanupNamespaces(doc);
+            RemoveComments(doc);
             var uncompressedBytes = ToUtf8(doc);
             var compressedBytes = DeflateCompression.ZlibCompressWithDictionary(uncompressedBytes, dictionary, Ionic.Zlib.CompressionLevel.BestCompression);
             return compressedBytes;
