@@ -192,7 +192,7 @@ namespace ProgressOnderwijsUtilsTests
                 from flag2 in EnumHelpers.GetValues<FlagsEnumForTesting>()
                 select flag1 | flag2).Distinct();
 
-            foreach (var taal in Translator.AccountLanguages) {
+            foreach (var taal in Translator.AllLanguages) {
                 foreach (var combo in values) {
                     var str = EnumHelpers.GetLabel(combo).Translate(taal).Text;
                     PAssert.That(() => EnumHelpers.TryParseLabel<FlagsEnumForTesting>(str, taal).SequenceEqual(new[] { combo }));
