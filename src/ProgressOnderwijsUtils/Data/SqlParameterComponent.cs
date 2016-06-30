@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Internal;
@@ -11,13 +12,34 @@ namespace ProgressOnderwijsUtils
 {
     static class SqlParameterComponent
     {
+        static readonly ConcurrentDictionary<Type, Dictionary<long, string>> enumStringRepresentations = new ConcurrentDictionary<Type, Dictionary<long, string>>();
+
+        static readonly Func<Type, Dictionary<long, string>> enumStringRepresentationValueFactory =
+            type => Enum.GetValues(type).Cast<Enum>().ToDictionary(
+                v => ((IConvertible)v).ToInt64(null),
+                v => ((IConvertible)v).ToInt64(null).ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(v) + "*/"
+                );
+
+        static string GetEnumStringRepresentationOrNull(Enum val)
+            => val == null
+                ? null
+                : enumStringRepresentations.GetOrAdd(
+                    val.GetType(),
+                    enumStringRepresentationValueFactory
+                    ).GetOrDefault(((IConvertible)val).ToInt64(null));
+
         public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object o)
             where TCommandFactory : struct, ICommandFactory
         {
             if (o is IEnumerable && !(o is string) && !(o is byte[])) {
                 ToTableValuedParameterFromPlainValues((IEnumerable)o).AppendTo(ref factory);
             } else {
-                QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
+                var enumRepresentation = GetEnumStringRepresentationOrNull(o as Enum);
+                if (enumRepresentation != null) {
+                    factory.AppendSql(enumRepresentation, 0, enumRepresentation.Length);
+                } else {
+                    QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
+                }
             }
         }
 
@@ -35,9 +57,9 @@ namespace ProgressOnderwijsUtils
             return factory.CreateFromPlainValues(set);
         }
 
-        public static ISqlComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection) 
+        public static ISqlComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection)
             where TOut : IMetaObject, new()
-            => new QueryTableValuedParameterComponent<TIn,TOut>(tableTypeName, set, projection);
+            => new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
 
         static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
 
