@@ -225,10 +225,20 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static int? StringToNullableInt(string input)
+        public static int? TryParseInt32(this string input)
         {
             int output;
             if (int.TryParse(input, out output)) {
+                return output;
+            } else {
+                return null;
+            }
+        }
+
+        public static long? TryParseInt64(this string input)
+        {
+            long output;
+            if (long.TryParse(input, out output)) {
                 return output;
             } else {
                 return null;
