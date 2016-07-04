@@ -145,7 +145,7 @@ namespace ProgressOnderwijsUtilsTests
                     if (taal == Taal.EN && (value == EnumForTesting.ValueA || value == EnumForTesting.AValue)) {
                         PAssert.That(() => Converteer.TryParse(Converteer.ToString(value, taal), typeof(EnumForTesting), taal).State == Converteer.ParseState.Malformed);
                     } else {
-                        PAssert.That(() => value.Equals(Converteer.Parse(Converteer.ToString(value, taal), typeof(EnumForTesting), taal)));
+                        PAssert.That(() => value.Equals(Converteer.Parse<EnumForTesting>(Converteer.ToString(value, taal), taal)));
                     }
                 }
             }
