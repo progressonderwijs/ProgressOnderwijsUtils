@@ -141,7 +141,7 @@ namespace ProgressOnderwijsUtilsTests
         public void BasicConverteerTests()
         {
             foreach (var value in EnumHelpers.GetValues<EnumForTesting>()) {
-                foreach (var taal in EnumHelpers.GetValues<Taal>().Except(new[] { Taal.None })) {
+                foreach (var taal in Translator.AllLanguages) {
                     if (taal == Taal.EN && (value == EnumForTesting.ValueA || value == EnumForTesting.AValue)) {
                         PAssert.That(() => Converteer.TryParse(Converteer.ToString(value, taal), typeof(EnumForTesting), taal).State == Converteer.ParseState.Malformed);
                     } else {
@@ -174,7 +174,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test, Continuous]
         public void EnumRoundTrips()
         {
-            foreach (var taal in EnumHelpers.GetValues<Taal>().Except(new[] { Taal.None })) {
+            foreach (var taal in Translator.AllLanguages) {
                 foreach (var val in EnumHelpers.GetValues<EnumForTesting>()) {
                     if (taal != Taal.EN || val != EnumForTesting.AValue && val != EnumForTesting.ValueA) {
                         var str = EnumHelpers.GetLabel(val).Translate(taal).Text;
@@ -192,7 +192,7 @@ namespace ProgressOnderwijsUtilsTests
                 from flag2 in EnumHelpers.GetValues<FlagsEnumForTesting>()
                 select flag1 | flag2).Distinct();
 
-            foreach (var taal in EnumHelpers.GetValues<Taal>().Except(new[] { Taal.None })) {
+            foreach (var taal in Translator.AllLanguages) {
                 foreach (var combo in values) {
                     var str = EnumHelpers.GetLabel(combo).Translate(taal).Text;
                     PAssert.That(() => EnumHelpers.TryParseLabel<FlagsEnumForTesting>(str, taal).SequenceEqual(new[] { combo }));

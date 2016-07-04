@@ -75,7 +75,6 @@ namespace ProgressOnderwijsUtilsTests
                 IsUitgaandBericht = true,
                 Organisatie = RootOrganisatie.RUG,
                 Student = (Id.Student)2,
-                StudielinkBerichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
             }.FinishBuilding();
             var b = new SLBerichtSamenvatting.Value {
@@ -83,7 +82,6 @@ namespace ProgressOnderwijsUtilsTests
                 IsUitgaandBericht = true,
                 Organisatie = RootOrganisatie.RUG,
                 Student = (Id.Student)2,
-                StudielinkBerichtId = 3,
                 StudielinkNummer = (ExternalId.StudielinkNummer)4,
             }.FinishBuilding();
             var c =
@@ -91,7 +89,6 @@ namespace ProgressOnderwijsUtilsTests
                     BerichtType = BerichtType.vchmsg06onderhoudennaw,
                     Organisatie = RootOrganisatie.RUG,
                     Student = (Id.Student)2,
-                    StudielinkBerichtId = 3,
                     StudielinkNummer = (ExternalId.StudielinkNummer)4,
                     IsUitgaandBericht = true,
                 };
