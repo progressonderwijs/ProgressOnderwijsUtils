@@ -143,7 +143,7 @@ namespace ProgressOnderwijsUtilsTests
             foreach (var value in EnumHelpers.GetValues<EnumForTesting>()) {
                 foreach (var taal in Translator.AllLanguages) {
                     if (taal == Taal.EN && (value == EnumForTesting.ValueA || value == EnumForTesting.AValue)) {
-                        PAssert.That(() => Converteer.TryParse(Converteer.ToString(value, taal), typeof(EnumForTesting), taal).State == Converteer.ParseState.Malformed);
+                        PAssert.That(() => Converteer.TryParse<EnumForTesting>(Converteer.ToString(value, taal), taal).State == Converteer.ParseState.Malformed);
                     } else {
                         PAssert.That(() => value.Equals(Converteer.Parse<EnumForTesting>(Converteer.ToString(value, taal), taal)));
                     }
@@ -154,9 +154,9 @@ namespace ProgressOnderwijsUtilsTests
         [Test, Continuous]
         public void NullableConverteerTests()
         {
-            PAssert.That(() => Converteer.TryParse("waarde a", typeof(EnumForTesting?), Taal.NL).Equals(Converteer.ParseResult.Ok(EnumForTesting.AValue)));
-            PAssert.That(() => Converteer.TryParse("XML value", typeof(EnumForTesting?), Taal.EN).Equals(Converteer.ParseResult.Ok(EnumForTesting.XmlValue)));
-            PAssert.That(() => Converteer.TryParse("XmlValue", typeof(EnumForTesting), Taal.EN).State == Converteer.ParseState.Malformed);
+            PAssert.That(() => Converteer.TryParse<EnumForTesting?>("waarde a", Taal.NL).Equals(Converteer.ParseResult.Ok(EnumForTesting.AValue)));
+            PAssert.That(() => Converteer.TryParse<EnumForTesting?>("XML value", Taal.EN).Equals(Converteer.ParseResult.Ok(EnumForTesting.XmlValue)));
+            PAssert.That(() => Converteer.TryParse<EnumForTesting>("XmlValue", Taal.EN).State == Converteer.ParseState.Malformed);
         }
 
         [Test, Continuous]
