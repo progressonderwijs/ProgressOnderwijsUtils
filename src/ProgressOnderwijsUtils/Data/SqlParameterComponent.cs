@@ -12,13 +12,28 @@ namespace ProgressOnderwijsUtils
 {
     static class SqlParameterComponent
     {
+        static readonly Dictionary<long, string> empty = new Dictionary<long, string>();
         static readonly ConcurrentDictionary<Type, Dictionary<long, string>> enumStringRepresentations = new ConcurrentDictionary<Type, Dictionary<long, string>>();
 
         static readonly Func<Type, Dictionary<long, string>> enumStringRepresentationValueFactory =
-            type => Enum.GetValues(type).Cast<Enum>().ToDictionary(
-                v => ((IConvertible)v).ToInt64(null),
-                v => ((IConvertible)v).ToInt64(null).ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(v) + "*/"
-                );
+            type => {
+                var enumAttributes = type.GetCustomAttributes(true);
+                foreach (var customAttribute in enumAttributes) {
+                    if (customAttribute is IEnumShouldBeParameterizedInSqlAttribute) {
+                        return empty;
+                    }
+                }
+                var enumValues = Enum.GetValues(type);
+                if (enumValues.Length == 0) {
+                    return empty;
+                }
+                var literalSqlByEnumValue = new Dictionary<long, string>();
+                foreach (Enum v in enumValues) {
+                    var valueAsLong = ((IConvertible)v).ToInt64(null);
+                    literalSqlByEnumValue.Add(valueAsLong, valueAsLong.ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(v) + "*/");
+                }
+                return literalSqlByEnumValue;
+            };
 
         static string GetEnumStringRepresentationOrNull(Enum val)
             => val == null
