@@ -66,6 +66,7 @@ namespace ProgressOnderwijsUtils
         public override string ToString() => "*/Pseudo-sql (with parameter values inlined!):/*\r\n" + DebugText();
         public string DebugText() => DebugCommandFactory.DebugTextFor(impl);
 
+        [Pure]
         public string CommandText()
         {
             var factory = CommandFactory.Create();
