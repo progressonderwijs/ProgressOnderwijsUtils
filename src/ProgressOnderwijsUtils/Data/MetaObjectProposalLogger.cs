@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils
             if (wasAdded) {
                 Log("=======================\r\n" + commandText + "\r\n\r\n" + metaObjectClass + "\r\n\r\n");
             }
-            tracer.FinishDisposableTimer(() => "METAOBJECT proposed for next query:\n" + metaObjectClass, TimeSpan.Zero);
+            tracer?.FinishDisposableTimer(() => "METAOBJECT proposed for next query:\n" + metaObjectClass, TimeSpan.Zero);
         }
 
         static void Log(string text)
