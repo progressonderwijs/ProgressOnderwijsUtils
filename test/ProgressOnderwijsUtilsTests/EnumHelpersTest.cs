@@ -210,7 +210,7 @@ namespace ProgressOnderwijsUtilsTests
         public void GetAttrsFrom()
         {
             Assert.That(
-                EnumHelpers.GetAttrs<BronHoCodeAttribute>.From<VerblijfsvergunningType>(attr => attr.Code == "3").Single(),
+                EnumHelpers.From<VerblijfsvergunningType, BronHoCodeAttribute>(attr => attr.Code == "3").Single(),
                 Is.EqualTo(VerblijfsvergunningType.AsielBepaaldeTijd));
         }
     }
