@@ -203,14 +203,14 @@ namespace ProgressOnderwijsUtilsTests
         [Test, Continuous]
         public void GetAttrsOn()
         {
-            Assert.That(EnumHelpers.GetAttrs<BronHoCodeAttribute>.On(VerblijfsvergunningType.AsielBepaaldeTijd).Single().Code, Is.EqualTo("3"));
+            Assert.That(EnumHelpers.MetaDataForValue(VerblijfsvergunningType.AsielBepaaldeTijd).Attributes<BronHoCodeAttribute>().Single().Code, Is.EqualTo("3"));
         }
 
         [Test, Continuous]
         public void GetAttrsFrom()
         {
             Assert.That(
-                EnumHelpers.GetAttrs<BronHoCodeAttribute>.From<VerblijfsvergunningType>(attr => attr.Code == "3").Single(),
+                EnumTypeMetaData<VerblijfsvergunningType>.Instance.GetValuesByAttribute<BronHoCodeAttribute>(attr => attr.Code == "3").Single(),
                 Is.EqualTo(VerblijfsvergunningType.AsielBepaaldeTijd));
         }
     }
