@@ -9,6 +9,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class MetaObjectProposalLogger
     {
+        public static bool LogProposals = true;
         static readonly ConcurrentDictionary<string, string> metaObjectProposals = new ConcurrentDictionary<string, string>();
         static readonly object sync = new object();
         static Action<string> writer;
@@ -16,6 +17,8 @@ namespace ProgressOnderwijsUtils
         [Conditional("DEBUG")]
         public static void LogMetaObjectProposal(SqlCommand command, DataTable dt, ISqlCommandTracer tracer)
         {
+            if (!LogProposals)
+                return;
             var commandText = SqlCommandTracer.DebugFriendlyCommandText(command, SqlCommandTracerOptions.ExcludeArgumentValuesFromLog);
             bool wasAdded = false;
 
