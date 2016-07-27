@@ -198,7 +198,6 @@ namespace ProgressOnderwijsUtils
 
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
-
         const int AsciiUpperToLowerDiff = 'a' - 'A';
 
         static ulong CaseInsensitiveHash(string s)
@@ -434,17 +433,7 @@ namespace ProgressOnderwijsUtils
                 public static TRowReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
                     // ReSharper restore UnusedParameter.Local
                 {
-                    if (reader.FieldCount > ColHashPrimes.Length
-                        || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
-                        throw new InvalidOperationException(
-                            "Cannot unpack DbDataReader into type " + FriendlyName + "; column count = " + reader.FieldCount + "; property count = " + ColHashPrimes.Length
-                                + "\n" +
-                                "datareader: " + Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).JoinStrings(", ") + "\n" +
-                                FriendlyName + ": " + metadata.Where(mp => mp.CanWrite).Select(mp => mp.Name).JoinStrings(", "));
-                    }
-                    if (ColHashPrimes.Length == 0) {
-                        throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
-                    }
+                    AssertColumnsCanBeMappedToObject(reader, fieldMappingMode);
                     var ordering = new ColumnOrdering(reader);
 
                     var cachedRowReaderWithCols = LoadRows.GetOrAdd(ordering, Delegate_ConstructTRowReaderWithCols);
@@ -455,11 +444,32 @@ namespace ProgressOnderwijsUtils
                     return cachedRowReaderWithCols.RowReader;
                 }
 
+                static void AssertColumnsCanBeMappedToObject(TReader reader, FieldMappingMode fieldMappingMode)
+                {
+                    if (reader.FieldCount > ColHashPrimes.Length
+                        || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
+                        var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
+                        var publicWritableProperties = metadata.Where(mp => mp.CanWrite).Select(mp => mp.Name).ToArray();
+                        var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
+                        var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
+                        throw new InvalidOperationException(
+                            $"Cannot unpack DbDataReader ({reader.FieldCount} columns) into type {FriendlyName} ({ColHashPrimes.Length} properties with public setters)\n" +
+                                $"Query columns without corresponding property: {columnsThatCannotBeMapped.JoinStrings(", ")}\n" +
+                                $".net properties without corresponding query column: {propertiesWithoutColumns.JoinStrings(", ")}\n" +
+                                $"All columns: {columnNames.Select(n => "\n\t- " + n).JoinStrings()}\n" +
+                                $"{FriendlyName} properties: {publicWritableProperties.Select(n => "\n\t- " + n).JoinStrings()}\n");
+                    }
+                    if (ColHashPrimes.Length == 0) {
+                        throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
+                    }
+                }
+
                 /// <summary>
                 /// Methodgroup-to-delegate conversion shows up on the profiles as COMDelegate::DelegateConstruct as around 4% of query exection.
                 /// See also: http://blogs.msmvps.com/jonskeet/2011/08/22/optimization-and-generics-part-2-lambda-expressions-and-reference-types/
                 /// </summary>
                 static readonly Func<ColumnOrdering, TRowReaderWithCols<T>> Delegate_ConstructTRowReaderWithCols = ConstructTRowReaderWithCols;
+
                 static TRowReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
                 {
                     return new TRowReaderWithCols<T> {
@@ -507,7 +517,7 @@ namespace ProgressOnderwijsUtils
             {
                 // ReSharper disable UnusedMember.Local
                 public static T[] VerifyShapeAndLoadRows(SqlDataReader reader)
-                // ReSharper restore UnusedMember.Local
+                    // ReSharper restore UnusedMember.Local
                 {
                     DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.VerifyDataReaderShape(reader);
                     var lastColumnRead = 0;
