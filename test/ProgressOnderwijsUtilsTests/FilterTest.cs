@@ -33,6 +33,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.NotEqual, 3).ToParameterizedSql() == SQL($"test != {3}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, Taal.NL).ToParameterizedSql() == SQL($"test = {Taal.NL}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Contains, "world").ToParameterizedSql() == SQL($"test like {"%world%"}"));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.DoesNotContain, "world").ToParameterizedSql() == SQL($"test not like {"%world%"}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.StartsWith, "world").ToParameterizedSql() == SQL($"test like {"world%"}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.EndsWith, "world").ToParameterizedSql() == SQL($"test like {"%world"}"));
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.IsNull, null).ToParameterizedSql() == SQL($"test is null"));
@@ -309,6 +310,7 @@ namespace ProgressOnderwijsUtilsTests
                 Filter.CreateCriterium("test", BooleanComparer.GreaterThan, 3),
                 Filter.CreateCriterium("test", BooleanComparer.NotEqual, 3),
                 Filter.CreateCriterium("test", BooleanComparer.Contains, "world"),
+                Filter.CreateCriterium("test", BooleanComparer.DoesNotContain, "world"),
                 Filter.CreateCriterium("test", BooleanComparer.StartsWith, "world"),
                 Filter.CreateCriterium("test", BooleanComparer.EndsWith, "world"),
                 Filter.CreateCriterium("test", BooleanComparer.IsNull, null),
