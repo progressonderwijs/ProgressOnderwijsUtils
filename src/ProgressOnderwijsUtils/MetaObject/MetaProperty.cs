@@ -86,7 +86,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-s            public override string ToString() => typeof(TOwner).ToCSharpFriendlyTypeName() + "." + Name;
+            public override string ToString() => typeof(TOwner).ToCSharpFriendlyTypeName() + "." + Name;
 
             static Setter<TOwner> MkSetter(MethodInfo setterMethod, Type propertyType)
             {
