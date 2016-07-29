@@ -38,40 +38,6 @@ namespace ProgressOnderwijsUtils
                 command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
         }
 
-        /// <summary>
-        /// Leest DataTable op basis van het huidige commando met de huidige parameters
-        /// </summary>
-        /// <param name="sql">De uit-te-voeren query</param>
-        /// <param name="conn">De database om tegen te query-en</param>
-        /// <param name="missingSchemaAction"></param>
-        public static DataTable ReadDataTable(this ParameterizedSql sql, SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
-        {
-            return ExecuteQuery(
-                sql,
-                conn,
-                () => "ReadDataTable failed",
-                command => {
-                    using (var adapter = new SqlDataAdapter(command)) {
-                        adapter.MissingSchemaAction = missingSchemaAction;
-                        var dt = new DataTable();
-                        adapter.Fill(dt);
-
-                        MetaObjectProposalLogger.LogMetaObjectProposal(command, dt, conn.Tracer);
-                        return dt;
-                    }
-                });
-        }
-
-        /// <summary>
-        /// Leest DataTable op basis van het huidige commando met de huidige parameters; neemt ook schema informatie in de DataTable op.
-        /// </summary>
-        /// <param name="sql">De uit-te-voeren query</param>
-        /// <param name="conn">De database om tegen te query-en</param>
-        public static DataTable ReadDataTableWithSqlMetadata(ParameterizedSql sql, SqlCommandCreationContext conn)
-        {
-            return sql.ReadDataTable(conn, MissingSchemaAction.AddWithKey);
-        }
-
         public static int ExecuteNonQuery(this ParameterizedSql sql, SqlCommandCreationContext commandCreationContext)
         {
             return ExecuteQuery(
