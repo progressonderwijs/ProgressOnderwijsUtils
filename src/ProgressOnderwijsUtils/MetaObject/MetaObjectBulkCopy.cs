@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
                     await bulkCopy.WriteToServerAsync(objectReader, cancellationToken).ConfigureAwait(false);
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
-                    var metaPropName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
+                    var metaPropName = ObjectToCode.ToCSharpFriendlyTypeName(typeof(T)) + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
                     throw new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
                 }
             }
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils
             var clrColumns = ColumnDefinition.GetFromReader(objectReader);
             var mapping = FieldMapping.VerifyAndCreate(
                 clrColumns,
-                ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)),
+                ObjectToCode.ToCSharpFriendlyTypeName(typeof(T)),
                 dataColumns,
                 "table " + tableName,
                 FieldMappingMode.IgnoreExtraDestinationFields);

@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
             return ExecuteQuery(
                 sql,
                 commandCreationContext,
-                () => "ReadScalar<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
+                () => "ReadScalar<" + ObjectToCode.ToCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
                 command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
         }
 
@@ -96,7 +96,7 @@ namespace ProgressOnderwijsUtils
             return ExecuteQuery(
                 q,
                 qCommandCreationContext,
-                () => "ReadMetaObjects<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
+                () => "ReadMetaObjects<" + ObjectToCode.ToCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
                 cmd => ReadMetaObjectsUnpacker<T>(cmd)
                 );
         }
@@ -111,14 +111,14 @@ namespace ProgressOnderwijsUtils
                     return unpacker(reader, out lastColumnRead);
                 } catch (Exception ex) when (!reader.IsClosed) {
                     var mps = MetaObject.GetMetaProperties<T>();
-                    var metaObjectTypeName = ObjectToCode.GetCSharpFriendlyTypeName(typeof(T));
+                    var metaObjectTypeName = ObjectToCode.ToCSharpFriendlyTypeName(typeof(T));
 
                     var sqlColName = reader.GetName(lastColumnRead);
                     var mp = mps.GetByName(sqlColName);
 
                     var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
-                    var expectedCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(reader.GetFieldType(lastColumnRead));
-                    var actualCsTypeName = ObjectToCode.GetCSharpFriendlyTypeName(mp.DataType);
+                    var expectedCsTypeName = ObjectToCode.ToCSharpFriendlyTypeName(reader.GetFieldType(lastColumnRead));
+                    var actualCsTypeName = ObjectToCode.ToCSharpFriendlyTypeName(mp.DataType);
 
                     throw new InvalidOperationException(
                         "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name
@@ -141,7 +141,7 @@ namespace ProgressOnderwijsUtils
             return ExecuteQuery(
                 q,
                 qCommandCreationContext,
-                () => "ReadPlain<" + ObjectToCode.GetCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
+                () => "ReadPlain<" + ObjectToCode.ToCSharpFriendlyTypeName(typeof(T)) + ">() failed.",
                 ReadPlainUnpacker<T>);
         }
 
@@ -397,7 +397,7 @@ namespace ProgressOnderwijsUtils
 
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>> LoadRows;
                 static Type type => typeof(T);
-                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
+                static string FriendlyName => ObjectToCode.ToCSharpFriendlyTypeName(type);
                 static readonly uint[] ColHashPrimes;
                 static readonly MetaInfo<T> metadata = MetaInfo<T>.Instance;
                 static readonly bool hasUnsupportedColumns;
@@ -526,7 +526,7 @@ namespace ProgressOnderwijsUtils
 
                 public static readonly TRowReader<T> LoadRows;
                 static Type type => typeof(T);
-                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
+                static string FriendlyName => ObjectToCode.ToCSharpFriendlyTypeName(type);
                 static readonly ConstructorInfo constructor;
                 static ParameterInfo[] ConstructorParameters => constructor.GetParameters();
 
@@ -560,7 +560,7 @@ namespace ProgressOnderwijsUtils
                             FriendlyName + " : ILoadFromDbByConstructor's constructor must have only simple types: cannot support "
                                 + retval.GetParameters()
                                     .Where(pi => !SupportsType(pi.ParameterType))
-                                    .Select(pi => ObjectToCode.GetCSharpFriendlyTypeName(pi.ParameterType) + " " + pi.Name)
+                                    .Select(pi => ObjectToCode.ToCSharpFriendlyTypeName(pi.ParameterType) + " " + pi.Name)
                                     .JoinStrings(", "));
                     }
                     return retval;
@@ -581,16 +581,16 @@ namespace ProgressOnderwijsUtils
                         throw new InvalidOperationException(
                             "Cannot unpack DbDataReader:\n"
                                 + Enumerable.Range(0, reader.FieldCount)
-                                    .Select(i => reader.GetName(i) + " : " + ObjectToCode.GetCSharpFriendlyTypeName(reader.GetFieldType(i)))
+                                    .Select(i => reader.GetName(i) + " : " + ObjectToCode.ToCSharpFriendlyTypeName(reader.GetFieldType(i)))
                                     .JoinStrings(", ") + "\n\t into type " + FriendlyName + ":\n"
-                                + ConstructorParameters.Select(ci => ci.Name + " : " + ObjectToCode.GetCSharpFriendlyTypeName(ci.ParameterType)).JoinStrings(", "));
+                                + ConstructorParameters.Select(ci => ci.Name + " : " + ObjectToCode.ToCSharpFriendlyTypeName(ci.ParameterType)).JoinStrings(", "));
                     }
                 }
             }
 
             public static class PlainImpl<T>
             {
-                static string FriendlyName => ObjectToCode.GetCSharpFriendlyTypeName(type);
+                static string FriendlyName => ObjectToCode.ToCSharpFriendlyTypeName(type);
                 public static readonly TRowReader<T> LoadRows;
                 static Type type => typeof(T);
 
@@ -605,7 +605,7 @@ namespace ProgressOnderwijsUtils
                     if (!SupportsType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
-                                + getterMethodsByType.Keys.Select(ObjectToCode.GetCSharpFriendlyTypeName).JoinStrings(", ") + ")!");
+                                + getterMethodsByType.Keys.Select(ObjectToCode.ToCSharpFriendlyTypeName).JoinStrings(", ") + ")!");
                     }
                 }
 
@@ -620,7 +620,7 @@ namespace ProgressOnderwijsUtils
                         throw new InvalidOperationException(
                             "Cannot unpack DbDataReader into type " + FriendlyName + ":\n"
                                 + Enumerable.Range(0, reader.FieldCount)
-                                    .Select(i => reader.GetName(i) + " : " + ObjectToCode.GetCSharpFriendlyTypeName(reader.GetFieldType(i)))
+                                    .Select(i => reader.GetName(i) + " : " + ObjectToCode.ToCSharpFriendlyTypeName(reader.GetFieldType(i)))
                                     .JoinStrings(", "));
                     }
                 }

@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static string FriendlyName(this Type type) => ObjectToCode.GetCSharpFriendlyTypeName(type);
+        public static string FriendlyName(this Type type) => ObjectToCode.ToCSharpFriendlyTypeName(type);
 
         [Pure]
         [CodeThatsOnlyUsedForTests]
