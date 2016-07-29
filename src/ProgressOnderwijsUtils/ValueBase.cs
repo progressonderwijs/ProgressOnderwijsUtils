@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
                     throw new InvalidOperationException("Value Classes must be sealed.");
                 }
             } catch (Exception e) {
-                throw new Exception("Failed to create ValueBase for " + ObjectToCode.ToCSharpFriendlyTypeName(typeof(T)), e);
+                throw new Exception("Failed to create ValueBase for " + typeof(T).ToCSharpFriendlyTypeName(), e);
             }
         }
 

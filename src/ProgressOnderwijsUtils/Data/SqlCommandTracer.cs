@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils
                     + " = " + InsecureSqlDebugString(par.Value, true) + ";\n";
             } else {
                 return declareVariable
-                    + "/*" + ObjectToCode.ToCSharpFriendlyTypeName(par.Value.GetType()) + "*/;\n"
+                    + "/*" + par.Value.GetType().ToCSharpFriendlyTypeName() + "*/;\n"
                     + "insert into " + par.ParameterName + " values "
                     + ValuesClauseForTableValuedParameter((par.Value as IOptionalObjectListForDebugging)?.ContentsForDebuggingOrNull());
             }

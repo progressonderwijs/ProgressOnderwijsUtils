@@ -65,7 +65,7 @@ namespace ProgressOnderwijsUtils
         {
             var getter = columnInfos[ordinal].TypedNonNullableGetter as Func<T, TColumn>;
             if (getter == null) {
-                throw new InvalidOperationException($"Tried to access field {columnInfos[ordinal].Name} of type {ObjectToCode.ToCSharpFriendlyTypeName(columnInfos[ordinal].ColumnType)} as type {ObjectToCode.ToCSharpFriendlyTypeName(typeof(TColumn))}.");
+                throw new InvalidOperationException($"Tried to access field {columnInfos[ordinal].Name} of type {columnInfos[ordinal].ColumnType.ToCSharpFriendlyTypeName()} as type {typeof(TColumn).ToCSharpFriendlyTypeName()}.");
             }
             return getter(current);
         }

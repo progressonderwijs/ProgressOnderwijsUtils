@@ -15,17 +15,17 @@ namespace ProgressOnderwijsUtils
     {
         public static string GetColumnProperty(ColumnDefinition col)
         {
-            return "public " + ObjectToCode.ToCSharpFriendlyTypeName(col.DataType) + " " + StringUtils.Capitalize(col.Name) + " { get; set; }\n";
+            return "public " + col.DataType.ToCSharpFriendlyTypeName() + " " + StringUtils.Capitalize(col.Name) + " { get; set; }\n";
         }
 
         public static string GetColumnField(ColumnDefinition col)
         {
-            return "public readonly " + ObjectToCode.ToCSharpFriendlyTypeName(col.DataType) + " " + StringUtils.Capitalize(col.Name) + ";\n";
+            return "public readonly " + col.DataType.ToCSharpFriendlyTypeName() + " " + StringUtils.Capitalize(col.Name) + ";\n";
         }
 
         public static string GetColumnParameter(ColumnDefinition col)
         {
-            return ObjectToCode.ToCSharpFriendlyTypeName(col.DataType) + " " + StringUtils.Uncapitalize(col.Name);
+            return col.DataType.ToCSharpFriendlyTypeName() + " " + StringUtils.Uncapitalize(col.Name);
         }
 
         static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);

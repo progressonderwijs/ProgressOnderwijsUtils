@@ -38,6 +38,6 @@ namespace ProgressOnderwijsUtils
             Name = name;
         }
 
-        public override string ToString() => ObjectToCode.ToCSharpFriendlyTypeName(DataType) + " " + Name;
+        public override string ToString() => DataType.ToCSharpFriendlyTypeName() + " " + Name;
     }
 }
