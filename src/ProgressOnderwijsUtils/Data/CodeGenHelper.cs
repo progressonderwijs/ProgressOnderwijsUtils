@@ -19,16 +19,6 @@ namespace ProgressOnderwijsUtils
             return "public " + friendlyTypeName(col) + " " + StringUtils.Capitalize(col.Name) + " { get; set; }\n";
         }
 
-        public static string GetColumnField(ColumnDefinition col)
-        {
-            return "public readonly " + col.DataType.ToCSharpFriendlyTypeName() + " " + StringUtils.Capitalize(col.Name) + ";\n";
-        }
-
-        public static string GetColumnParameter(ColumnDefinition col)
-        {
-            return col.DataType.ToCSharpFriendlyTypeName() + " " + StringUtils.Uncapitalize(col.Name);
-        }
-
         static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
         public static string Indent(string str, int indentCount = 1) => newLine.Replace(str, new string(' ', indentCount * 4));
 
