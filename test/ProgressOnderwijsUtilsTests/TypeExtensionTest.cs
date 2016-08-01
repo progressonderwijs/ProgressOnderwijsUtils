@@ -6,10 +6,12 @@ using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Business;
 using Progress.Business.DomainUnits;
+using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
+    [Continuous]
     public sealed class TypeExtensionTest
     {
         [Test]
@@ -34,6 +36,7 @@ namespace ProgressOnderwijsUtilsTests
 
         class SampleX<A> : Sample<A> { }
 
+
         [Test]
         public void TestBases()
         {
@@ -47,6 +50,23 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => typeof(DocumentType).BaseTypes().SequenceEqual(new[] { typeof(Enum), typeof(ValueType), typeof(object) }));
             PAssert.That(() => typeof(SelectItem<int?>).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
             PAssert.That(() => typeof(SampleX<string>).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object) }));
+        }
+
+        enum SampleEnum { }
+        class SampleClass { }
+        struct SampleStruct { }
+
+        [Test]
+        public void TestIsNullableValueType()
+        {
+            PAssert.That(() => typeof(int?).IsNullableValueType());
+            PAssert.That(() => !typeof(int).IsNullableValueType());
+            PAssert.That(() => typeof(SampleEnum?).IsNullableValueType());
+            PAssert.That(() => !typeof(SampleEnum).IsNullableValueType());
+            PAssert.That(() => !typeof(string).IsNullableValueType());
+            PAssert.That(() => !typeof(SampleClass).IsNullableValueType());
+            PAssert.That(() => !typeof(SampleStruct).IsNullableValueType());
+            PAssert.That(() => typeof(SampleStruct?).IsNullableValueType());
         }
 
         [Test]

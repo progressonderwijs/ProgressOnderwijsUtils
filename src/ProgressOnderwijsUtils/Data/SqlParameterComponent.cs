@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils
                 tableValuedParameterFactoryCache.TryAdd(enumerableType, factory);
             }
             if (factory == null) {
-                throw new ArgumentException("Cannot interpret " + ObjectToCode.GetCSharpFriendlyTypeName(enumerableType) + " as a table valued parameter", nameof(set));
+                throw new ArgumentException("Cannot interpret " + enumerableType.ToCSharpFriendlyTypeName() + " as a table valued parameter", nameof(set));
             }
             return factory.CreateFromPlainValues(set);
         }
