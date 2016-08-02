@@ -4,9 +4,9 @@ using NUnit.Framework;
 
 namespace ProgressOnderwijsUtils
 {
-    static class BenchTimer
+    public static class BenchTimer
     {
-        public static TimeSpan MinimumTime(Action a, int numRuns = 5)
+        public static TimeSpan BestTime(Action a, int numRuns)
         {
             if (numRuns < 1) {
                 throw new ArgumentException("Need to test for at least 1 run", nameof(numRuns));
@@ -21,6 +21,13 @@ namespace ProgressOnderwijsUtils
             }
             return bestTime;
         }
+
+        public static TimeSpan Time(Action a)
+        {
+            var timer = Stopwatch.StartNew();
+            a();
+            return timer.Elapsed;
+        }
     }
 
     public class BenchmarkTimerTests
@@ -28,7 +35,7 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void ArgVerify()
         {
-            Assert.Throws<ArgumentException>(() => BenchTimer.MinimumTime(() => { }, 0));
+            Assert.Throws<ArgumentException>(() => BenchTimer.BestTime(() => { }, 0));
         }
     }
 }

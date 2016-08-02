@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils
         public void FastJoin()
         {
             var ints = Enumerable.Range(0, 20000).Select(i => i.ToStringInvariant()).ToArray();
-            var time = BenchTimer.MinimumTime(() => ints.JoinStrings());
+            var time = BenchTimer.BestTime(() => ints.JoinStrings(), 5);
             Assert.That(time.TotalMilliseconds, Is.LessThan(5.0));
         }
 
