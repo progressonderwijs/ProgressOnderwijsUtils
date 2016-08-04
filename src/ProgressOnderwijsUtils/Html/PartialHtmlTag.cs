@@ -313,7 +313,7 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         public HtmlElement Content(params HtmlFragment[] content)
-            => new HtmlElement(TagName, Attributes, HtmlTagHelpers.AppendArrays(ChildNodes, content));
+            => new HtmlElement(TagName, Attributes, ArrayExtensions.AppendArrays(ChildNodes, content));
 
         public HtmlElement(string tagName, [NotNull] HtmlAttribute[] attributes, HtmlFragment[] childNodes)
         {
@@ -367,19 +367,6 @@ namespace ProgressOnderwijsUtils.Html
             where T : IConvertibleToFragment
             => HtmlFragment.Fragment(htmlEls.Select(el => el.ToFragment()).ToArray());
 
-        internal static T[] AppendArrays<T>(T[] beginning, T[] end)
-        {
-            if (beginning == null) {
-                return end;
-            } else if (end == null) {
-                return beginning;
-            }
-            var newChildNodes = new T[beginning.Length + end.Length];
-            Array.Copy(beginning, 0, newChildNodes, 0, beginning.Length);
-            Array.Copy(end, 0, newChildNodes, beginning.Length, end.Length);
-            return newChildNodes;
-        }
-
         public static HtmlFragment JoinHtml<T>(this IEnumerable<T> htmlEls, HtmlFragment joiner)
             where T : IConvertibleToFragment
         {
@@ -431,7 +418,7 @@ namespace ProgressOnderwijsUtils.Html
             => attrValue == null ? this : new HtmlTag<TName>((Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue), childNodes);
 
         [Pure]
-        public HtmlTag<TName> Content(params HtmlFragment[] content) => new HtmlTag<TName>(Attributes, HtmlTagHelpers.AppendArrays(childNodes, content));
+        public HtmlTag<TName> Content(params HtmlFragment[] content) => new HtmlTag<TName>(Attributes, ArrayExtensions.AppendArrays(childNodes, content));
 
         public static implicit operator HtmlFragment(HtmlTag<TName> tag) => HtmlFragment.HtmlElement(default(TName).TagName, tag.Attributes, tag.childNodes);
         public HtmlFragment ToFragment() => this;

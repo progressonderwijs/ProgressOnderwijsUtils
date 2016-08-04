@@ -48,5 +48,18 @@ namespace ProgressOnderwijsUtils
                 output[i] = mappingFunction(array[i]);
             return output;
         }
+
+        public static T[] AppendArrays<T>(this T[] beginning, T[] end)
+        {
+            if (beginning == null) {
+                return end;
+            } else if (end == null) {
+                return beginning;
+            }
+            var newChildNodes = new T[beginning.Length + end.Length];
+            Array.Copy(beginning, 0, newChildNodes, 0, beginning.Length);
+            Array.Copy(end, 0, newChildNodes, beginning.Length, end.Length);
+            return newChildNodes;
+        }
     }
 }
