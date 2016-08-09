@@ -166,6 +166,10 @@ namespace ProgressOnderwijsUtils
         }
     }
 
+    public struct EmptyDictionary {
+
+    }
+
     public sealed class DictionaryExtensionsTests
     {
         [Test]
