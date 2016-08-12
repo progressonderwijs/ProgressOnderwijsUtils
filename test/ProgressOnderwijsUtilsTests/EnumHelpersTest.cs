@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtilsTests
     {
         public enum EnumForTesting
         {
-            [MpLabel("Waarde A", "Value A")]
+            [MpLabel("Waarde A")]
             AValue = 1,
 
             [MpTooltip("B", "B")]
@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.AValue).Translate(Taal.DU).Text == "~Waarde A");
             PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.XmlValue).Translate(Taal.DU).ExtraText == "");
             PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.AValue).Translate(Taal.NL).Text == "Waarde A");
-            PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.AValue).Translate(Taal.EN).Text == "Value A");
+            PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.AValue).Translate(Taal.EN).Text == "~Waarde A");
             PAssert.That(() => EnumHelpers.GetLabel((EnumForTesting)(-1)).Translate(Taal.NL).Text == "-1");
             //Assert.Throws<ArgumentOutOfRangeException>(() => EnumHelpers.GetLabel((EnumForTesting)(-1)));
         }
@@ -107,34 +107,23 @@ namespace ProgressOnderwijsUtilsTests
         [Test, Continuous]
         public void TryParseLabelUntyped()
         {
-            PAssert.That(() => EnumHelpers.TryParseLabel(typeof(EnumForTesting), "Waarde A", Taal.NL).SequenceEqual(new Enum[] { EnumForTesting.AValue }));
-            PAssert.That(() => EnumHelpers.TryParseLabel(typeof(EnumForTesting), "Waarde A", Taal.EN).SequenceEqual(new Enum[] { }));
-            PAssert.That(() => EnumHelpers.TryParseLabel(typeof(EnumForTesting), "AValue", Taal.DU).SequenceEqual(new Enum[] { }));
+            PAssert.That(() => EnumHelpers.ParseLabelOrNull(typeof(EnumForTesting), "Waarde A", Taal.NL).Equals(EnumForTesting.AValue));
+            PAssert.That(() => EnumHelpers.ParseLabelOrNull(typeof(EnumForTesting), "Waarde A", Taal.EN) == null);
+            PAssert.That(() => EnumHelpers.ParseLabelOrNull(typeof(EnumForTesting), "AValue", Taal.DU) == null);
             PAssert.That(
-                () => EnumHelpers.TryParseLabel(typeof(EnumForTesting), "Value A", Taal.EN).SequenceEqual(new Enum[] { EnumForTesting.AValue, EnumForTesting.ValueA, }));
-        }
-
-        [Test, Continuous]
-        public void TryParseLabelTyped()
-        {
-            PAssert.That(() => EnumHelpers.TryParseLabel<EnumForTesting>("Waarde A", Taal.NL).SequenceEqual(new[] { EnumForTesting.AValue }));
-            PAssert.That(() => !EnumHelpers.TryParseLabel<EnumForTesting>("Waarde A", Taal.EN).Any());
-            PAssert.That(() => !EnumHelpers.TryParseLabel<EnumForTesting>("AValue", Taal.DU).Any());
-            PAssert.That(() => EnumHelpers.TryParseLabel<EnumForTesting>("Value A", Taal.EN).SequenceEqual(new[] { EnumForTesting.AValue, EnumForTesting.ValueA, }));
-            PAssert.That(() => EnumHelpers.TryParseLabel<EnumForTesting>("Xml Value", Taal.EN).SequenceEqual(new[] { EnumForTesting.XmlValue }));
-            PAssert.That(() => EnumHelpers.TryParseLabel<EnumForTesting>("xml value", Taal.EN).SequenceEqual(new[] { EnumForTesting.XmlValue }));
+                () => EnumHelpers.ParseLabelOrNull(typeof(EnumForTesting), "Value A", Taal.EN).Equals(EnumForTesting.ValueA));
         }
 
         [Test, Continuous]
         public void TryParseLabelForFlagsEnumReturnsCorrectValues()
         {
-            PAssert.That(() => EnumHelpers.TryParseLabel<FlagsEnumForTesting>("Waarde A, B value", Taal.NL).SequenceEqual(new[] { FlagsEnumForTesting.AValue | FlagsEnumForTesting.BValue }));
+            PAssert.That(() => EnumHelpers.ParseLabelOrNull<FlagsEnumForTesting>("Waarde A, B value", Taal.NL) == (FlagsEnumForTesting.AValue | FlagsEnumForTesting.BValue));
         }
 
         [Test, Continuous]
         public void TryParseLabelForFlagsEnumReturnsNothingForIncorrectInput()
         {
-            PAssert.That(() => EnumHelpers.TryParseLabel<FlagsEnumForTesting>("Waarde A, XYZ", Taal.NL).None());
+            PAssert.That(() => EnumHelpers.ParseLabelOrNull<FlagsEnumForTesting>("Waarde A, XYZ", Taal.NL) == null);
         }
 
         [Test, Continuous]
@@ -142,11 +131,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             foreach (var value in EnumHelpers.GetValues<EnumForTesting>()) {
                 foreach (var taal in Translator.AllLanguages) {
-                    if (taal == Taal.EN && (value == EnumForTesting.ValueA || value == EnumForTesting.AValue)) {
-                        PAssert.That(() => Converteer.TryParse<EnumForTesting>(Converteer.ToString(value, taal), taal).State == Converteer.ParseState.Malformed);
-                    } else {
-                        PAssert.That(() => value.Equals(Converteer.Parse<EnumForTesting>(Converteer.ToString(value, taal), taal)));
-                    }
+                    PAssert.That(() => value.Equals(Converteer.Parse<EnumForTesting>(Converteer.ToString(value, taal), taal)));
                 }
             }
         }
@@ -178,7 +163,7 @@ namespace ProgressOnderwijsUtilsTests
                 foreach (var val in EnumHelpers.GetValues<EnumForTesting>()) {
                     if (taal != Taal.EN || val != EnumForTesting.AValue && val != EnumForTesting.ValueA) {
                         var str = EnumHelpers.GetLabel(val).Translate(taal).Text;
-                        PAssert.That(() => EnumHelpers.TryParseLabel<EnumForTesting>(str, taal).SequenceEqual(new[] { val }));
+                        PAssert.That(() => EnumHelpers.ParseLabelOrNull<EnumForTesting>(str, taal) == val);
                     }
                 }
             }
@@ -195,7 +180,7 @@ namespace ProgressOnderwijsUtilsTests
             foreach (var taal in Translator.AllLanguages) {
                 foreach (var combo in values) {
                     var str = EnumHelpers.GetLabel(combo).Translate(taal).Text;
-                    PAssert.That(() => EnumHelpers.TryParseLabel<FlagsEnumForTesting>(str, taal).SequenceEqual(new[] { combo }));
+                    PAssert.That(() => EnumHelpers.ParseLabelOrNull<FlagsEnumForTesting>(str, taal) == combo);
                 }
             }
         }
