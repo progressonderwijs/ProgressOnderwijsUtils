@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.IO.Compression;
-using System.Text;
+﻿using System.Text;
 using System.Xml.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
