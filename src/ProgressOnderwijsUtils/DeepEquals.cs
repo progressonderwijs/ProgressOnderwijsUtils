@@ -65,7 +65,7 @@ namespace ProgressOnderwijsUtils
 
             public static bool operator ==(ReferencePair a, ReferencePair b)
             {
-                return ReferenceEquals(a, b) || !object.ReferenceEquals(a, null) && a.Equals(b);
+                return ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b);
             }
 
             public static bool operator !=(ReferencePair a, ReferencePair b)
