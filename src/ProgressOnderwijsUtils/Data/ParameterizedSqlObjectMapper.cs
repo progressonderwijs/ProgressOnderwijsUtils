@@ -115,7 +115,7 @@ namespace ProgressOnderwijsUtils
         {
             using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
-                var lastColumnRead = 0;
+                int lastColumnRead;
                 return DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.LoadRows(reader, out lastColumnRead);
             }
         }
@@ -486,7 +486,7 @@ namespace ProgressOnderwijsUtils
                     // ReSharper restore UnusedMember.Local
                 {
                     DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.VerifyDataReaderShape(reader);
-                    var lastColumnRead = 0;
+                    int lastColumnRead;
                     return DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.LoadRows(reader, out lastColumnRead);
                 }
 

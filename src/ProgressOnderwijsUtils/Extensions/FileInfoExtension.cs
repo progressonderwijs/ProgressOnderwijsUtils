@@ -28,7 +28,6 @@ namespace ProgressOnderwijsUtils
 
             bool result = true;
             if (one.FullName == other.FullName) {
-                result = true;
             } else if (one.Length != other.Length) {
                 result = false;
             } else {
