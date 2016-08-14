@@ -118,9 +118,6 @@ namespace ProgressOnderwijsUtils
         public static string Capitalize(string name) => name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
 
         [Pure]
-        public static string Uncapitalize(string name) => name.Substring(0, 1).ToLowerInvariant() + name.Substring(1);
-
-        [Pure]
         public static int LevenshteinDistance(string s, string t, int? substitutionCost = null)
         {
             //modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
