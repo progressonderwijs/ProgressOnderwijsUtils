@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
             return val.ToString(format, CultureInfo.InvariantCulture);
         }
 
-        [Pure, UsefulToKeep("Library function, other overloads used")]
+        [Pure]
         public static string ToStringInvariant<T>(this T? val)
             where T : struct, IConvertible
         {
