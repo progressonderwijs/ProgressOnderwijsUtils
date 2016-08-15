@@ -31,6 +31,13 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
+        [Test]
+        public void LimitIsIgnoredIfNull() {
+            var limitedVer = XhtmlCleaner.TidyHtmlStringAndLimitLength(sample, null);
+
+            PAssert.That(() => limitedVer == sample);
+        }
+
         const string sample2 =
             @"<p><script>lalala<b>innerlala</b></script>test this! <!--lalala<p>--> <div class=""lalala"" style=""lalala"">hmm</div> <unknown>include this though</unknown></p>";
 
