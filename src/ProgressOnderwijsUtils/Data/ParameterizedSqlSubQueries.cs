@@ -19,7 +19,6 @@ namespace ProgressOnderwijsUtils
             IEnumerable<ParameterizedSql> projectedColumns,
             ParameterizedSql filterClause,
             OrderByColumns sortOrder,
-            int skipNrows,
             int takeNrows)
         {
             projectedColumns = projectedColumns ?? AllColumns;
@@ -30,24 +29,8 @@ namespace ProgressOnderwijsUtils
             }
 
             var takeRowsParam = ParameterizedSql.Param((long)takeNrows);
-            var skipNrowsParam = ParameterizedSql.Param((long)skipNrows);
 
-            var sortorder = sortOrder;
-            var orderClause = sortorder == OrderByColumns.Empty ? SQL($"order by (select 1)") : CreateFromSortOrder(sortorder);
-            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
-
-            var topNSubQuery = SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam + SQL($"+") + skipNrowsParam);
-            return SQL($@"
-select top ({takeRowsParam}) {projectedColumnsClause}
-from (select _row=row_number() over ({orderClause}),
-      _g2.*
-from (
-
-{topNSubQuery}
-
-) as _g2) t
-where _row > {skipNrowsParam}
-order by _row");
+            return SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, takeRowsParam);
         }
 
         [Pure]
