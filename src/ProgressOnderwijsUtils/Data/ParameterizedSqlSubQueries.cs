@@ -21,12 +21,6 @@ namespace ProgressOnderwijsUtils
             OrderByColumns sortOrder,
             int takeNrows)
         {
-            projectedColumns = projectedColumns ?? AllColumns;
-            if (!projectedColumns.Any()) {
-                throw new InvalidOperationException(
-                    "Cannot create subquery without any projected columns: at least one column must be projected (are your columns all virtual?)\nQuery:\n"
-                        + subQuery.DebugText());
-            }
 
             var takeRowsParam = ParameterizedSql.Param((long)takeNrows);
 
