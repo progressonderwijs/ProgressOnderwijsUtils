@@ -21,10 +21,7 @@ namespace ProgressOnderwijsUtils
             OrderByColumns sortOrder,
             int takeNrows)
         {
-
-            var takeRowsParam = ParameterizedSql.Param((long)takeNrows);
-
-            return SubQueryHelper(subQuery, filterClause, sortOrder, takeRowsParam);
+            return SubQueryHelper(subQuery, filterClause, sortOrder, ParameterizedSql.Param((long)takeNrows));
         }
 
         [Pure]
