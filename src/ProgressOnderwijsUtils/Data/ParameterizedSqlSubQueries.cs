@@ -10,12 +10,13 @@ namespace ProgressOnderwijsUtils
     public static class ParameterizedSqlSubQueries
     {
         [Pure]
-        public static ParameterizedSql CreateSubQuery(ParameterizedSql subQuery, ParameterizedSql filterClause, OrderByColumns sortOrder)
+        public static ParameterizedSql CreateSubQuery(ParameterizedSql subQuery, IEnumerable<ParameterizedSql> projectedColumns, ParameterizedSql filterClause, OrderByColumns sortOrder)
             => SubQueryHelper(subQuery, filterClause, sortOrder, null);
 
         [Pure]
         public static ParameterizedSql CreatePagedSubQuery(
             ParameterizedSql subQuery,
+            IEnumerable<ParameterizedSql> projectedColumns,
             ParameterizedSql filterClause,
             OrderByColumns sortOrder,
             int takeNrows)
