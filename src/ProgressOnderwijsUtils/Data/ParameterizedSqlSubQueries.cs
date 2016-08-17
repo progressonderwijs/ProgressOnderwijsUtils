@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils
             var topClause = topRowsOrNull != null ? SQL($"top ({topRowsOrNull}) ") : ParameterizedSql.Empty;
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
             return
-                SQL($"select {topClause} {projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
+                SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateFromSortOrder(sortOrder);
         }
 
