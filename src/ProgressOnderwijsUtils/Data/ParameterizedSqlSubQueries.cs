@@ -10,8 +10,8 @@ namespace ProgressOnderwijsUtils
     public static class ParameterizedSqlSubQueries
     {
         [Pure]
-        public static ParameterizedSql CreateSubQuery(ParameterizedSql subQuery, ParameterizedSql filterClause, OrderByColumns sortOrder)
-            => SubQueryHelper(subQuery, filterClause, sortOrder, null);
+        public static ParameterizedSql CreateSubQuery(ParameterizedSql subQuery, IEnumerable<ParameterizedSql> projectedColumns, ParameterizedSql filterClause, OrderByColumns sortOrder)
+            => SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, null);
 
         [Pure]
         public static ParameterizedSql CreatePagedSubQuery(
@@ -20,19 +20,21 @@ namespace ProgressOnderwijsUtils
             OrderByColumns sortOrder,
             int takeNrows)
         {
-            return SubQueryHelper(subQuery, filterClause, sortOrder, ParameterizedSql.Param((long)takeNrows));
+            return SubQueryHelper(subQuery, AllColumns, filterClause, sortOrder, ParameterizedSql.Param((long)takeNrows));
         }
 
         [Pure]
         static ParameterizedSql SubQueryHelper(
             ParameterizedSql subquery,
+            IEnumerable<ParameterizedSql> projectedColumns,
             ParameterizedSql filterClause,
             OrderByColumns sortOrder,
             ParameterizedSql? topRowsOrNull)
         {
+            projectedColumns = projectedColumns ?? AllColumns;
             var topClause = topRowsOrNull != null ? SQL($"top ({topRowsOrNull}) ") : ParameterizedSql.Empty;
             return
-                SQL($"select {topClause} * from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
+                SQL($"select {topClause} {projectedColumns} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateFromSortOrder(sortOrder);
         }
 
