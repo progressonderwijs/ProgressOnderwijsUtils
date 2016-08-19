@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtilsTests
                     _body.Content(
                         _p.Content("Hello world!")
                         )
-                    ).ToFragment().SerializeToString()
+                    ).AsFragment().SerializeToString()
                 );
         }
 
@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtilsTests
                     _body._class(null).Content(
                         _p.Content("Hello world!")
                         )
-                    ).ToFragment().SerializeToString()
+                    ).AsFragment().SerializeToString()
                 );
         }
 
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtilsTests
                     _body._class("aClass").Content(
                         _p.Content("Hello world!")
                         )
-                    ).ToFragment().SerializeToString()
+                    ).AsFragment().SerializeToString()
                 );
         }
 
@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtilsTests
                     _body._class("aClass")._class("bClass").Content(
                         _p.Content("Hello world!")
                         )
-                    ).ToFragment().SerializeToString()
+                    ).AsFragment().SerializeToString()
                 );
         }
 
@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtilsTests
                     _body.Content(
                         _p.Content("Hello world: a < b & \"b\" > 'c'; ")
                         )
-                    ).ToFragment().SerializeToString()
+                    ).AsFragment().SerializeToString()
                 );
         }
 
@@ -98,7 +98,7 @@ namespace ProgressOnderwijsUtilsTests
                     _body.Content(
                         _p._title("Hello world: a < b & \"b\" > 'c'; ").Content("no content")
                         )
-                    ).ToFragment().SerializeToString()
+                    ).AsFragment().SerializeToString()
                 );
         }
 
@@ -116,7 +116,7 @@ namespace ProgressOnderwijsUtilsTests
                     _body.Content(
                         _area, _br, _col, _embed, _hr, _img, _input, _keygen, _menuitem, _param, _source, _track, _wbr
                         )
-                    ).ToFragment().SerializeToString()
+                    ).AsFragment().SerializeToString()
                 );
         }
 
@@ -131,7 +131,7 @@ namespace ProgressOnderwijsUtilsTests
                     _body.Content(
                         _textarea.Content("Hello world: a < b & \"b\" > 'c'; ")
                         )
-                    ).ToFragment().SerializeToString()
+                    ).AsFragment().SerializeToString()
                 );
         }
 
@@ -147,7 +147,7 @@ namespace ProgressOnderwijsUtilsTests
                     _body.Content(
                         _p.Content("Hello world!")
                         )
-                    ).ToFragment().SerializeToString()
+                    ).AsFragment().SerializeToString()
                 );
         }
     }

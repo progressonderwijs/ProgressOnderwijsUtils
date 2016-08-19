@@ -101,7 +101,7 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static HtmlFragment Fragment<T>(IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
-            => Fragment(htmlEls.Select(el => el.ToFragment()).ToArray());
+            => Fragment(htmlEls.Select(el => el.AsFragment()).ToArray());
 
         public static HtmlFragment Empty => default(HtmlFragment);
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
@@ -145,7 +145,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        HtmlFragment IConvertibleToFragment.ToFragment() => this;
+        HtmlFragment IConvertibleToFragment.AsFragment() => this;
 
         internal void AppendToBuilder(ref FastShortStringBuilder stringBuilder)
         {
@@ -323,7 +323,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public HtmlFragment ToFragment() => this;
+        public HtmlFragment AsFragment() => this;
     }
 
     public interface IFluentHtmlTagExpression<out TExpression> : IConvertibleToFragment
@@ -352,7 +352,7 @@ namespace ProgressOnderwijsUtils.Html
         public static TExpression Contents<TExpression, TContent>(this TExpression htmlTagExpr, IEnumerable<TContent> items)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression>
             where TContent : IConvertibleToFragment
-            => htmlTagExpr.Content(items.Select(el => el.ToFragment()).ToArray());
+            => htmlTagExpr.Content(items.Select(el => el.AsFragment()).ToArray());
 
         [Pure]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute attribute)
@@ -365,7 +365,7 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
-            => HtmlFragment.Fragment(htmlEls.Select(el => el.ToFragment()).ToArray());
+            => HtmlFragment.Fragment(htmlEls.Select(el => el.AsFragment()).ToArray());
 
         public static HtmlFragment JoinHtml<T>(this IEnumerable<T> htmlEls, HtmlFragment joiner)
             where T : IConvertibleToFragment
@@ -373,7 +373,7 @@ namespace ProgressOnderwijsUtils.Html
             if (joiner.IsEmpty) {
                 var retval = new List<HtmlFragment>();
                 foreach (var item in htmlEls) {
-                    retval.Add(item.ToFragment());
+                    retval.Add(item.AsFragment());
                 }
                 return HtmlFragment.Fragment(retval.ToArray());
             }
@@ -381,13 +381,13 @@ namespace ProgressOnderwijsUtils.Html
                 if (!enumerator.MoveNext()) {
                     return HtmlFragment.Empty;
                 }
-                var firstNode = enumerator.Current.ToFragment();
+                var firstNode = enumerator.Current.AsFragment();
 
                 var retval = new List<HtmlFragment> { firstNode };
 
                 while (enumerator.MoveNext()) {
                     retval.Add(joiner);
-                    retval.Add(enumerator.Current.ToFragment());
+                    retval.Add(enumerator.Current.AsFragment());
                 }
                 return HtmlFragment.Fragment(retval.ToArray());
             }
@@ -397,7 +397,7 @@ namespace ProgressOnderwijsUtils.Html
     public interface IConvertibleToFragment
     {
         [Pure]
-        HtmlFragment ToFragment();
+        HtmlFragment AsFragment();
     }
 
     public struct HtmlTag<TName>
@@ -421,6 +421,6 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlTag<TName> Content(params HtmlFragment[] content) => new HtmlTag<TName>(Attributes, ArrayExtensions.AppendArrays(childNodes, content));
 
         public static implicit operator HtmlFragment(HtmlTag<TName> tag) => HtmlFragment.HtmlElement(default(TName).TagName, tag.Attributes, tag.childNodes);
-        public HtmlFragment ToFragment() => this;
+        public HtmlFragment AsFragment() => this;
     }
 }
