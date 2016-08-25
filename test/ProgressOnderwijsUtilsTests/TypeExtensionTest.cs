@@ -32,9 +32,9 @@ namespace ProgressOnderwijsUtilsTests
 
         class SampleBase : ArrayList { }
 
-        class Sample<TA> : SampleBase { }
+        class Sample<T> : SampleBase { }
 
-        class SampleX<TA> : Sample<TA> { }
+        class SampleX<T> : Sample<T> { }
 
 
         [Test]
