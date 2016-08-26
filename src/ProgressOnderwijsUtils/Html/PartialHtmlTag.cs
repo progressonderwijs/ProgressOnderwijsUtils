@@ -144,6 +144,8 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
+        public override string ToString() => "HtmlFragment: " + this.SerializeToString();
+
         [Pure]
         HtmlFragment IConvertibleToFragment.AsFragment() => this;
 
