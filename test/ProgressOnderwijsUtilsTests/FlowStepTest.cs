@@ -11,13 +11,13 @@ namespace ProgressOnderwijsUtilsTests
     public sealed class FlowStepTest
     {
         [Test, Continuous]
-        public void String_representation_corresponds_to_integer_representation()
+        public void Do_not_change_flowstep_too_much()
         {
-            var flowStepsWhoseStringIsNotTheInteger = EnumHelpers
+            // dit veranderen is vervelend voor instellingen, ze moeten dan (onterechte) koppelingen aan excel repareren ed
+            var flowSteps = EnumHelpers
                 .GetValues<FlowStep>()
-                .Where(flowStep => Converteer.ToString(flowStep, Taal.NL) != Converteer.ToString((int)flowStep, Taal.NL));
-            PAssert.That(() => flowStepsWhoseStringIsNotTheInteger.None());
-            // Instellingen hechten hier waarde aan, zie bv https://uocg.fogbugz.com/f/cases/15882
+                .Select(flowStep => Converteer.ToString(flowStep, Taal.NL));
+            PAssert.That(() => flowSteps.SequenceEqual(new[] { "Gedeeltelijk", "Afgewezen", "Open", "OK" }));
         }
     }
 }
