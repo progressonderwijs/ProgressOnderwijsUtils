@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils
         /// Like Enumerable.Select, but faster due to specialization for arrays.
         /// </summary>
         [Pure]
-        public static TR[] ArraySelect<T,TR>(this T[] array, Func<T, TR> mappingFunction)
+        public static TR[] ArraySelect<T, TR>(this T[] array, Func<T, TR> mappingFunction)
         {
             var output = new TR[array.Length];
             for (int i = 0; i < array.Length; ++i)

@@ -18,7 +18,6 @@ namespace ProgressOnderwijsUtilsTests
     {
         public int Field;
         public string Property { get; set; }
-
         internal string IgnoredProperty { get; set; }
 
         [Hide]

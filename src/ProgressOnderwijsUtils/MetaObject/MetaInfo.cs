@@ -7,9 +7,7 @@ using System.Linq.Expressions;
 namespace ProgressOnderwijsUtils
 {
     public interface IMetaPropCache<out T> : IReadOnlyList<T>
-        where T : IMetaProperty
-    {
-    }
+        where T : IMetaProperty { }
 
     public sealed class MetaInfo<T> : IMetaPropCache<IMetaProperty<T>>
         where T : IMetaObject

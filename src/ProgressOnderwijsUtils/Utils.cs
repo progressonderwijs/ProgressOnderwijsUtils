@@ -395,16 +395,14 @@ namespace ProgressOnderwijsUtils
                     var tmp = x;
                     x = x / 10;
                     str[idx++] = (char)('0' + (tmp - x * 10));
-                }
-                while (idx < precision);
+                } while (idx < precision);
                 str[idx++] = fI.PercentDecimalSeparator[0];
             }
             do {
                 var tmp = x;
                 x = x / 10;
                 str[idx++] = (char)('0' + (tmp - x * 10));
-            }
-            while (x != 0);
+            } while (x != 0);
             if (isNeg) {
                 str[idx++] = fI.NegativeSign[0];
             }
@@ -436,6 +434,7 @@ namespace ProgressOnderwijsUtils
             var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));
             return Math.Ceiling(input * multiplier) / multiplier;
         }
+
         /// <summary>
         /// returns 0 if input is zero; otherwise returns the only int for which the postcondition holds
         /// Postcondition: (1ul &lt;&lt; result) &lt;= x &lt; (1ul &lt;&lt; result+1)
@@ -443,11 +442,26 @@ namespace ProgressOnderwijsUtils
         public static int LogBase2RoundedDown(uint x)
         {
             int res = 0;
-            if (x >= 1 << 16) { res += 16; x = x >> 16; }
-            if (x >= 1 << 8) { res += 8; x = x >> 8; }
-            if (x >= 1 << 4) { res += 4; x = x >> 4; }
-            if (x >= 1 << 2) { res += 2; x = x >> 2; }
-            if (x >= 1 << 1) { res += 1; x = x >> 1; }
+            if (x >= 1 << 16) {
+                res += 16;
+                x = x >> 16;
+            }
+            if (x >= 1 << 8) {
+                res += 8;
+                x = x >> 8;
+            }
+            if (x >= 1 << 4) {
+                res += 4;
+                x = x >> 4;
+            }
+            if (x >= 1 << 2) {
+                res += 2;
+                x = x >> 2;
+            }
+            if (x >= 1 << 1) {
+                res += 1;
+                x = x >> 1;
+            }
             return res;
         }
 

@@ -36,7 +36,6 @@ namespace ProgressOnderwijsUtilsTests
 
         class SampleX<T> : Sample<T> { }
 
-
         [Test]
         public void TestBases()
         {
@@ -52,8 +51,11 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => typeof(SampleX<string>).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object) }));
         }
 
-        enum SampleEnum { }
+        enum SampleEnum
+        { }
+
         class SampleClass { }
+
         struct SampleStruct { }
 
         [Test]

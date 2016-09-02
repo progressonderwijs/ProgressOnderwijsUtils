@@ -42,8 +42,7 @@ namespace ProgressOnderwijsUtils
 
         public override bool HasRows
         {
-            get
-            {
+            get {
                 if (!hasRows) {
                     afterFirstRowPeek = true;
                     hasRows = ReadImpl();

@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [UsedImplicitly(ImplicitUseTargetFlags.Members)]// to test valuebase.ToString
+    [UsedImplicitly(ImplicitUseTargetFlags.Members)] // to test valuebase.ToString
     public sealed class ExampleValue : ValueBase<ExampleValue>
     {
         public int MyInt;

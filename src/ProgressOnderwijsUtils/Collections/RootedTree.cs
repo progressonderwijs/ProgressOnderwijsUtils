@@ -14,8 +14,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         public IReadOnlyList<RootedTree<T>> Children
         {
-            get
-            {
+            get {
                 var treePathSegments = PathSegments;
                 return UnrootedSubTree().Children.SelectIndexable((kid, i) => new RootedTree<T>(treePathSegments.Prepend(new TreePathSegment(i, kid))));
             }

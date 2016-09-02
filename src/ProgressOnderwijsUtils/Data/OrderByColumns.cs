@@ -24,8 +24,7 @@ namespace ProgressOnderwijsUtils
         [System.Diagnostics.Contracts.Pure]
         public IEnumerable<ColumnSort> Columns
         {
-            get
-            {
+            get {
                 if (sortColumns != null) {
                     foreach (var sc in sortColumns) {
                         yield return sc;

@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtilsTests
     {
         struct TestType
         {
-            [UsedImplicitly]//for equality
+            [UsedImplicitly] //for equality
             int value;
 
             public TestType(int value)

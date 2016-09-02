@@ -16,8 +16,7 @@ namespace ProgressOnderwijsUtils.WebSupport
 
         public string StringData
         {
-            get
-            {
+            get {
                 using (var gzipStream = new GZipStream(new MemoryStream(GzippedUtf8String), CompressionMode.Decompress, false))
                     return Encoding.UTF8.GetString(ReadFully(gzipStream));
             }

@@ -32,7 +32,8 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        public void LimitIsIgnoredIfNull() {
+        public void LimitIsIgnoredIfNull()
+        {
             var limitedVer = XhtmlCleaner.TidyHtmlStringAndLimitLength(sample, null);
 
             PAssert.That(() => limitedVer == sample);
@@ -47,8 +48,8 @@ namespace ProgressOnderwijsUtilsTests
             var tidiedSample = XhtmlCleaner.SanitizeHtmlString(sample2);
             PAssert.That(() => !tidiedSample.Contains("lalala") && !tidiedSample.Contains("script") && !tidiedSample.Contains("innerlala"));
             PAssert.That(() => !tidiedSample.Contains("class") && !tidiedSample.Contains("style") && !tidiedSample.Contains("unknown"));
-            PAssert.That(() => tidiedSample.Contains("include this") && tidiedSample.Contains("test this") && 
-                               tidiedSample.Contains("<div>") && tidiedSample.StartsWith("<p>"));
+            PAssert.That(() => tidiedSample.Contains("include this") && tidiedSample.Contains("test this") &&
+                tidiedSample.Contains("<div>") && tidiedSample.StartsWith("<p>"));
         }
 
         const string sample3 = @"<p>&nbsp;whee</p>";

@@ -45,6 +45,7 @@ namespace ProgressOnderwijsUtilsTests
             }
             throw new Exception("The released array was not reused even after 10000 attempts!");
         }
+
         [Test]
         public void ANonReleasedArrayIsNotReused()
         {

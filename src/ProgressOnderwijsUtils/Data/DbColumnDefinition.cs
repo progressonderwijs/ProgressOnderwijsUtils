@@ -17,10 +17,10 @@ namespace ProgressOnderwijsUtils
         public Type DataType { get; }
         public string Name { get; }
 
-        public static ColumnDefinition Create(DataColumn col) 
+        public static ColumnDefinition Create(DataColumn col)
             => new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName);
 
-        public static ColumnDefinition[] GetFromReader(IDataRecord reader) 
+        public static ColumnDefinition[] GetFromReader(IDataRecord reader)
             => Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
 
         public static ColumnDefinition[] GetFromTable(SqlConnection sqlconn, string tableName)

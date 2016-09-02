@@ -58,7 +58,9 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void NeedsRealDir()
         {
-            Assert.Throws<ArgumentException>(() => { using (new TempTextFileTest(new FileInfo(@"A:\b\c\d\e"))) { } });
+            Assert.Throws<ArgumentException>(() => {
+                using (new TempTextFileTest(new FileInfo(@"A:\b\c\d\e"))) { }
+            });
         }
 
         [Test]
