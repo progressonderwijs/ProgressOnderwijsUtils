@@ -83,8 +83,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         public IEnumerable<SList<T>> NonEmpySuffixes
         {
-            get
-            {
+            get {
                 for (var current = this; !current.IsEmpty; current = current.Tail) {
                     yield return current;
                 }

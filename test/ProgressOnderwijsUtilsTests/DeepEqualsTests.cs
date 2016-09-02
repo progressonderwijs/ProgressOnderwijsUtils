@@ -60,12 +60,12 @@ namespace ProgressOnderwijsUtilsTests
         class Recursive
         {
             public int V = 3;
-            [UsedImplicitly]//equality via deep-equals
+
+            [UsedImplicitly] //equality via deep-equals
             public Recursive Next;
         }
 #pragma warning restore 649
 #pragma warning restore 414
-
         [Test]
         public void SimpleTypes()
         {

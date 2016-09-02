@@ -88,6 +88,5 @@ namespace ProgressOnderwijsUtils
             FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, bulkCopy);
             return mapping;
         }
-
     }
 }

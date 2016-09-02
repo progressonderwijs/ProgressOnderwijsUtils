@@ -17,7 +17,6 @@ namespace ProgressOnderwijsUtils
         object ProjectionForDebuggingOrNull();
     }
 
-
     public sealed class MetaObjectDataReader<T> : DbDataReaderBase, IOptionalObjectListForDebugging
         where T : IMetaObject
     {
@@ -158,6 +157,6 @@ namespace ProgressOnderwijsUtils
             return dt;
         }
 
-        IReadOnlyList<object> IOptionalObjectListForDebugging.ContentsForDebuggingOrNull() => objectsOrNull_ForDebugging?.SelectIndexable(o=>(o as IOptionalObjectProjectionForDebugging)?.ProjectionForDebuggingOrNull() ?? o );
+        IReadOnlyList<object> IOptionalObjectListForDebugging.ContentsForDebuggingOrNull() => objectsOrNull_ForDebugging?.SelectIndexable(o => (o as IOptionalObjectProjectionForDebugging)?.ProjectionForDebuggingOrNull() ?? o);
     }
 }

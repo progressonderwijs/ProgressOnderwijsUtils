@@ -6,7 +6,8 @@ namespace ProgressOnderwijsUtils
     {
         public object EquatableValue { get; private set; }
 
-        public void ToSqlParameter(ref SqlParamArgs paramArgs) {
+        public void ToSqlParameter(ref SqlParamArgs paramArgs)
+        {
             paramArgs.Value = EquatableValue == CurrentTimeToken.Instance ? DateTime.Now : EquatableValue;
         }
 

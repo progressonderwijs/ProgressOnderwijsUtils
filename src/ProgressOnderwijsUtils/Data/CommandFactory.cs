@@ -153,7 +153,6 @@ namespace ProgressOnderwijsUtils
         int queryLen;
         public static FastShortStringBuilder Create() => new FastShortStringBuilder { charBuffer = PooledExponentialBufferAllocator<char>.GetByLength(4096) };
         public static FastShortStringBuilder Create(uint length) => new FastShortStringBuilder { charBuffer = PooledExponentialBufferAllocator<char>.GetByLength(length) };
-
         public void AppendText(string text) => AppendText(text, 0, text.Length);
 
         public void AppendText(string text, int startIndex, int length)

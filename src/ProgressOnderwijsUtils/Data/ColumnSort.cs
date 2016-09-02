@@ -100,7 +100,7 @@ namespace ProgressOnderwijsUtils
         {
             var col = new ColumnSort("ziggy", SortDirection.Asc);
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-            col.WithReverseDirection().WithDifferentName("test");//to test whether it's really pure.
+            col.WithReverseDirection().WithDifferentName("test"); //to test whether it's really pure.
             Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc), col);
         }
 

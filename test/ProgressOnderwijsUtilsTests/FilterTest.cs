@@ -22,7 +22,6 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void BasicChecks()
         {
-            
 #pragma warning disable 1720
             PAssert.That(() => default(FilterBase).ToParameterizedSql(featureToggles_WTF) == SQL($"1=1")); //shouldn't throw and should be equal
 #pragma warning restore 1720

@@ -27,8 +27,7 @@ namespace ProgressOnderwijsUtils
             }
 
             bool result = true;
-            if (one.FullName == other.FullName) {
-            } else if (one.Length != other.Length) {
+            if (one.FullName == other.FullName) { } else if (one.Length != other.Length) {
                 result = false;
             } else {
                 using (FileStream fs1 = one.OpenRead())

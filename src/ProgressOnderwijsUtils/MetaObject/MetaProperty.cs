@@ -36,7 +36,6 @@ namespace ProgressOnderwijsUtils
         public sealed class Impl<TOwner> : IMetaProperty<TOwner>
         {
             public bool IsKey { get; }
-
             public string Name { get; }
             public IReadOnlyList<object> CustomAttributes { get; }
             public int Index { get; }
@@ -52,8 +51,7 @@ namespace ProgressOnderwijsUtils
 
             public Func<object, object> UntypedGetter
             {
-                get
-                {
+                get {
                     if (untypedGetter == null) {
                         var localGetter = Getter;
                         untypedGetter = localGetter == null ? default(Func<object, object>) : o => localGetter((TOwner)o);
@@ -62,7 +60,8 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            public object UnsafeSetPropertyAndReturnObject(object o, object newValue) {
+            public object UnsafeSetPropertyAndReturnObject(object o, object newValue)
+            {
                 var typedObj = (TOwner)o;
                 Setter(ref typedObj, newValue);
                 return typedObj;

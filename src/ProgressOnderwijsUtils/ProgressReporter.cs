@@ -29,7 +29,6 @@ namespace ProgressOnderwijsUtils
         readonly long ReportEveryFractionOfTotal;
         readonly Action<ProgressReport> report;
         readonly long reportEveryTicks;
-
         int stepsDone;
         long nextReportDueAt;
 
@@ -40,7 +39,7 @@ namespace ProgressOnderwijsUtils
             ReportEveryFractionOfTotal = reportEveryFractionOfTotal ?? 20; //default 1/20 i.e. every five percent
             start = DateTime.Now;
             sw = Stopwatch.StartNew();
-            nextReportDueAt = reportEveryTicks =  (reportEveryTimeSpan?? TimeSpan.FromMinutes(1.0)).Ticks;
+            nextReportDueAt = reportEveryTicks = (reportEveryTimeSpan ?? TimeSpan.FromMinutes(1.0)).Ticks;
         }
 
         public ProgressReporter(int TotalSteps, string reportNameForConsole, int? reportEveryFractionOfTotal = null, TimeSpan? reportEveryTimeSpan = null)
