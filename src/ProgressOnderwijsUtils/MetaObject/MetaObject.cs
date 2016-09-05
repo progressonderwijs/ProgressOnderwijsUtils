@@ -7,6 +7,7 @@ using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
@@ -142,7 +143,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql SqlColumnName(this IMetaProperty mp)
         {
-            return SafeSql.SQL($@"[{ParameterizedSql.CreateDynamic(mp.Name)}]");
+            return SQL($@"[{ParameterizedSql.CreateDynamic(mp.Name)}]");
         }
     }
 }
