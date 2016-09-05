@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
     {
         static readonly RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider(); //threadsafe
 
-        public static byte[] GetBytes(int numBytes)
+        static byte[] GetBytes(int numBytes)
         {
             var bytes = new byte[numBytes];
             rng.GetBytes(bytes);
