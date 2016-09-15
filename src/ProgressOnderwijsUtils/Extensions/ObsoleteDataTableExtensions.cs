@@ -4,6 +4,10 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+#pragma warning disable 618
+using static ProgressOnderwijsUtils.ObsoleteDataTableExtensions;
+
+#pragma warning restore 618
 
 namespace ProgressOnderwijsUtils
 {
@@ -11,7 +15,7 @@ namespace ProgressOnderwijsUtils
     /// Extensions for System.Data.DataTable.
     /// </summary>
     [Obsolete("This code is very slow and subtly buggy if a row value's ToString isn't identity preserving")]
-    public static class DataTableExtensions
+    public static class ObsoleteDataTableExtensions
     {
         sealed class Key : IEquatable<Key>
         {
@@ -50,7 +54,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The primary key of the tabel is set to this then unique key.</param>
         /// <param name="comparator">Optional delegate to choose the records to keep.</param>
         /// <param name="primary">Optional flag denoting whether to set the primary key to the key specified or not.</param>
-        public static void DeleteDuplicates(this DataTable table, DataColumn[] key, Func<DataRow, DataRow, DataRow> comparator = null, bool primary = true)
+        public static void DeleteDuplicates(DataTable table, DataColumn[] key, Func<DataRow, DataRow, DataRow> comparator = null, bool primary = true)
         {
             var duplicates =
                 from row in table.Rows.Cast<DataRow>()
@@ -139,7 +143,7 @@ namespace ProgressOnderwijsUtils
         public void MakeUnique(int count, int[][] rows)
         {
             SetUpRows(rows, sut);
-            sut.DeleteDuplicates(new[] { col1, col2 });
+            DeleteDuplicates(sut, new[] { col1, col2 });
             Assert.That(sut.Rows.Count, Is.EqualTo(count));
         }
 
@@ -147,7 +151,7 @@ namespace ProgressOnderwijsUtils
         public void MakeUniqueCompareOne()
         {
             SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } }, sut);
-            sut.DeleteDuplicates(new[] { col1 }, (one, other) => one);
+            DeleteDuplicates(sut, new[] { col1 }, (one, other) => one);
             Assert.That(sut.Rows[0][1], Is.EqualTo(1));
         }
 
@@ -155,7 +159,7 @@ namespace ProgressOnderwijsUtils
         public void MakeUniqueCompareOther()
         {
             SetUpRows(new[] { new[] { 1, 1 }, new[] { 1, 2 } }, sut);
-            sut.DeleteDuplicates(new[] { col1 }, (one, other) => other);
+            DeleteDuplicates(sut, new[] { col1 }, (one, other) => other);
             Assert.That(sut.Rows[0][1], Is.EqualTo(2));
         }
     }
