@@ -107,21 +107,6 @@ namespace ProgressOnderwijsUtils.Html
         public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
 
-        [Pure]
-        public object ToXDocumentFragment()
-        {
-            if (tagNameOrTextContent == null) {
-                Debug.Assert(IsCollectionOfFragments);
-                return childNodes?.ArraySelect(node => node.ToXDocumentFragment());
-            } else if (attributesWhenTag == null) {
-                Debug.Assert(IsTextContent);
-                return new XText(tagNameOrTextContent);
-            } else {
-                Debug.Assert(IsHtmlElement);
-                return new XElement(tagNameOrTextContent, attributesWhenTag.ToXAttributes(), childNodes?.ArraySelect(childNode => childNode.ToXDocumentFragment()));
-            }
-        }
-
         public string TextContent()
         {
             var fastStringBuilder = FastShortStringBuilder.Create();
