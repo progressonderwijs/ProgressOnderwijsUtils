@@ -65,5 +65,17 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static object DynamicCast(object val, Type type)
             => genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });
+
+        [Pure]
+        public static bool EqualsConvertingIntToEnum(object val1, object val2)
+        {
+            if (val1 is Enum && val2 != null && !(val2 is Enum)) {
+                return Equals(val1, Enum.ToObject(val1.GetType(), val2));
+            }
+            if (val1 != null && !(val1 is Enum) && val2 is Enum) {
+                return Equals(Enum.ToObject(val2.GetType(), val1), val2);
+            }
+            return Equals(val1, val2);
+        }
     }
 }
