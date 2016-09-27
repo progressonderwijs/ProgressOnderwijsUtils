@@ -636,6 +636,36 @@ namespace ProgressOnderwijsUtilsTests
             var f = Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
             f(blaFilterObject);
         }
+
+        [Test]
+        public void HasFlagHelper_null_null_returns_false()
+        {
+            PAssert.That(() => !CriteriumFilter.HasFlagHelper(null, null));
+        }
+
+        [Test]
+        public void HasFlagHelper_null_0_returns_false()
+        {
+            PAssert.That(() => !CriteriumFilter.HasFlagHelper(null, 0));
+        }
+
+        [Test]
+        public void HasFlagHelper_0_null_returns_false()
+        {
+            PAssert.That(() => !CriteriumFilter.HasFlagHelper(0, null));
+        }
+
+        [Test]
+        public void HasFlagHelper_0_1_returns_false()
+        {
+            PAssert.That(() => !CriteriumFilter.HasFlagHelper(0, 1));
+        }
+
+        [Test]
+        public void HasFlagHelper_1_0_returns_true()
+        {
+            PAssert.That(() => CriteriumFilter.HasFlagHelper(1, 0));
+        }
     }
 
     public sealed class BlaFilterObject : ValueBase<BlaFilterObject>, IMetaObject
