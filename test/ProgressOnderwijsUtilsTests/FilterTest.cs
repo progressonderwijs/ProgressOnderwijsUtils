@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Business;
@@ -600,6 +601,40 @@ namespace ProgressOnderwijsUtilsTests
 
             var filter2 = new FilterFactory<BlaFilterObject>.FilterCreator<int?>(o => o.IntNullable).Equal(3);
             PAssert.That(() => filter2.ToParameterizedSql(featureToggles_WTF) == SQL($"IntNullable = {3}"));
+        }
+
+        static readonly BlaFilterObject blaFilterObject = new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Xyz, null);
+
+        [Test]
+        public void ToMetaObjectFilterExpr_doesnt_crash_when_has_flag_operand_is_Int32_0()
+        {
+            var filter = Filter.CreateCriterium(nameof(BlaFilterObject.IntNonNullable), BooleanComparer.HasFlag, 1);
+            var f = Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
+            f(blaFilterObject);
+        }
+
+        [Test]
+        public void ToMetaObjectFilterExpr_doesnt_crash_when_has_flag_operand_is_nullable_Int32_null()
+        {
+            var filter = Filter.CreateCriterium(nameof(BlaFilterObject.IntNullable), BooleanComparer.HasFlag, 1);
+            var f = Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
+            f(blaFilterObject);
+        }
+
+        [Test]
+        public void ToMetaObjectFilterExpr_doesnt_crash_when_has_flag_operand_is_enum_0()
+        {
+            var filter = Filter.CreateCriterium(nameof(BlaFilterObject.EnumVal), BooleanComparer.HasFlag, BlaFilterEnumTest.Abc);
+            var f = Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
+            f(blaFilterObject);
+        }
+
+        [Test]
+        public void ToMetaObjectFilterExpr_doesnt_crash_when_has_flag_operand_is_nullable_enum_null()
+        {
+            var filter = Filter.CreateCriterium(nameof(BlaFilterObject.EnumNullable), BooleanComparer.HasFlag, BlaFilterEnumTest.Abc);
+            var f = Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
+            f(blaFilterObject);
         }
     }
 
