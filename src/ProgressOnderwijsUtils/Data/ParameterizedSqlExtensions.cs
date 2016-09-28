@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void EmptyConcatenateFails()
         {
-            Assert.Catch<Exception>(() => new ParameterizedSql[] { }.ConcatenateSql(SQL($"bla")));
+            Assert.Catch(() => new ParameterizedSql[] { }.ConcatenateSql(SQL($"bla")));
         }
 
         [Test]
