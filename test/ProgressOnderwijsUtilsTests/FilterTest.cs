@@ -605,36 +605,38 @@ namespace ProgressOnderwijsUtilsTests
 
         static readonly BlaFilterObject blaFilterObject = new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Xyz, null);
 
-        [Test]
-        public void ToMetaObjectFilterExpr_doesnt_crash_when_has_flag_operand_is_Int32_0()
+        static Func<BlaFilterObject, bool> CompileHasFlagFilterForMetaObject(string kolomNaam, object waarde)
         {
-            var filter = Filter.CreateCriterium(nameof(BlaFilterObject.IntNonNullable), BooleanComparer.HasFlag, 1);
-            var f = Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
-            f(blaFilterObject);
+            var filter = Filter.CreateCriterium(kolomNaam, BooleanComparer.HasFlag, waarde);
+            return Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
         }
 
         [Test]
-        public void ToMetaObjectFilterExpr_doesnt_crash_when_has_flag_operand_is_nullable_Int32_null()
+        public void Compiled_meta_object_filter_doesnt_crash_when_has_flag_operand_is_Int32_0()
         {
-            var filter = Filter.CreateCriterium(nameof(BlaFilterObject.IntNullable), BooleanComparer.HasFlag, 1);
-            var f = Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
-            f(blaFilterObject);
+            var filter = CompileHasFlagFilterForMetaObject(nameof(BlaFilterObject.IntNonNullable), 1);
+            PAssert.That(() => !filter(blaFilterObject));
         }
 
         [Test]
-        public void ToMetaObjectFilterExpr_doesnt_crash_when_has_flag_operand_is_enum_0()
+        public void Compiled_meta_object_filter_doesnt_crash_when_has_flag_operand_is_nullable_Int32_null()
         {
-            var filter = Filter.CreateCriterium(nameof(BlaFilterObject.EnumVal), BooleanComparer.HasFlag, BlaFilterEnumTest.Abc);
-            var f = Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
-            f(blaFilterObject);
+            var filter = CompileHasFlagFilterForMetaObject(nameof(BlaFilterObject.IntNullable), 1);
+            PAssert.That(() => !filter(blaFilterObject));
         }
 
         [Test]
-        public void ToMetaObjectFilterExpr_doesnt_crash_when_has_flag_operand_is_nullable_enum_null()
+        public void Compiled_meta_object_filter_doesnt_crash_when_has_flag_operand_is_enum_0()
         {
-            var filter = Filter.CreateCriterium(nameof(BlaFilterObject.EnumNullable), BooleanComparer.HasFlag, BlaFilterEnumTest.Abc);
-            var f = Filter.ToMetaObjectFilterExpr<BlaFilterObject>(filter, y => x => false).Compile();
-            f(blaFilterObject);
+            var filter = CompileHasFlagFilterForMetaObject(nameof(BlaFilterObject.EnumVal), BlaFilterEnumTest.Abc);
+            PAssert.That(() => !filter(blaFilterObject));
+        }
+
+        [Test]
+        public void Compiled_meta_object_filter_crash_when_has_flag_operand_is_nullable_enum_null()
+        {
+            var filter = CompileHasFlagFilterForMetaObject(nameof(BlaFilterObject.EnumNullable), BlaFilterEnumTest.Abc);
+            PAssert.That(() => !filter(blaFilterObject));
         }
 
         [Test]
