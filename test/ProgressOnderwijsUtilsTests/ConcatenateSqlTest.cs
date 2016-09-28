@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    //[Continuous]
     public sealed class ConcatenateSqlTest
     {
         [Test]
