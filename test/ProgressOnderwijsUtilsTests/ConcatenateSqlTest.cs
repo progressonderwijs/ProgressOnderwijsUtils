@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    //[Continuous]
+    [Continuous]
     public sealed class ConcatenateSqlTest
     {
         [Test]
@@ -24,12 +24,12 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void ConcatenateIsFastEnoughForLargeSequences()
         {
-            var someSqls = Enumerable.Range(0, 20000).Select(i => ParameterizedSql.CreateDynamic(i.ToStringInvariant())).ToArray();
+            var someSqls = Enumerable.Range(0, 10000).Select(i => ParameterizedSql.CreateDynamic(i.ToStringInvariant())).ToArray();
             var time = BenchTimer.BestTime(() => {
                 // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
                 someSqls.ConcatenateSql().CommandText();
             }, 5);
-            //At 1ns per op (equiv to approx 4 clock cycles), a quadratic implementation would use some multiple of 400 ms.  Even with an extremely low 
+            //At 1ns per op (equiv to approx 4 clock cycles), a quadratic implementation would use some multiple of 100 ms.  Even with an extremely low 
             //scaling factor, if it's faster than 5ms, it's almost certainly better than quadratic, and in any case fast enough.
             PAssert.That(() => time.TotalMilliseconds < 5.0);
         }
