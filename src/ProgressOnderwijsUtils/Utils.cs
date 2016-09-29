@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {

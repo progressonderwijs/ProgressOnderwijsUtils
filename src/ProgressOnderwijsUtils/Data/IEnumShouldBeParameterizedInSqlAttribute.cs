@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProgressOnderwijsUtils
+﻿namespace ProgressOnderwijsUtils
 {
     /// <summary>
     /// If an enum is annotated with an attribute [MyCustomAttr("example")], 
