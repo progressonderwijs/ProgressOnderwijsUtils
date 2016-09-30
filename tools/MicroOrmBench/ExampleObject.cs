@@ -14,22 +14,22 @@ namespace MicroOrmBench
         public int E { get; set; }
 
         static readonly FormattableString formattableQueryString = $@"
-	        select top ({0}) 
-		        a=a.x+{2}
-		        , b=b.x
-		        , c=c.x+{"hehe"}
-		        , d=d.x
-		        , e=e.x
-		        , Arg = {default(int?)}
-	        from       (select x=0 union all select 1 union all select null) a
-	        cross join (select x=0 union all select 1 union all select 2) b
-	        cross join (select x=N'abracadabra fee fi fo fum' union all select N'abcdef' union all select N'quick brown fox') c
-	        cross join (select x=getdate() union all select getdate() union all select getdate()) d
-	        cross join (select x=0 union all select 1 union all select 2) e
-	        cross join (select x=0 union all select 1 union all select 2 union all select 3) f
-	        cross join (select x=0 union all select 1 union all select 2 union all select 3) g
-	        cross join (select x=0 union all select 1 union all select 2 union all select 3) h
-	        cross join (select x=0 union all select 1 union all select 2 union all select 3) i
+            select top ({0}) 
+                a=a.x+{2}
+                , b=b.x
+                , c=c.x+{"hehe"}
+                , d=d.x
+                , e=e.x
+                , Arg = {default(int?)}
+            from       (select x=0 union all select 1 union all select null) a
+            cross join (select x=0 union all select 1 union all select 2) b
+            cross join (select x=N'abracadabra fee fi fo fum' union all select N'abcdef' union all select N'quick brown fox') c
+            cross join (select x=getdate() union all select getdate() union all select getdate()) d
+            cross join (select x=0 union all select 1 union all select 2) e
+            cross join (select x=0 union all select 1 union all select 2 union all select 3) f
+            cross join (select x=0 union all select 1 union all select 2 union all select 3) g
+            cross join (select x=0 union all select 1 union all select 2 union all select 3) h
+            cross join (select x=0 union all select 1 union all select 2 union all select 3) i
         ";
         static readonly string formatString = formattableQueryString.Format;
         public static readonly string RawQueryString = string.Format(formatString, "@Top", "@Num2", "@Hehe", "@Arg");
