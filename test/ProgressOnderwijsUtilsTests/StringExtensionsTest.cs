@@ -54,7 +54,9 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => "'S-ÖSTERREICH".ToCamelCase() == "'s-Österreich");
         }
 
-        [TestCase("é", "e"), TestCase("Ü", "U"), TestCase("ß", "ß")]
+        [TestCase("é", "e")]
+        [TestCase("Ü", "U")]
+        [TestCase("ß", "ß")]
         public void WithoutDiakriet(string from, string to)
         {
             Assert.That(StringUtils.VerwijderDiakrieten(@from), Is.EqualTo(to));
@@ -70,32 +72,65 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(StringUtils.VervangRingelS("", false), Is.EqualTo(""));
         }
 
-        [Test, TestCase("", ""), TestCase("test", "test"), TestCase(" test ", "test"), TestCase("\ttest\t", "test"),
-         TestCase("\ntest\n", "test"), TestCase(" \t\ntest\n\t ", "test"), TestCase("een test", "een test"), TestCase("een  test", "een test"),
-         TestCase("een\ttest", "een test"), TestCase("een\t\ttest", "een test"), TestCase("een\ntest", "een test"), TestCase("een\n\ntest", "een test")]
+        [Test]
+        [TestCase("", "")]
+        [TestCase("test", "test")]
+        [TestCase(" test ", "test")]
+        [TestCase("\ttest\t", "test")]
+        [TestCase("\ntest\n", "test")]
+        [TestCase(" \t\ntest\n\t ", "test")]
+        [TestCase("een test", "een test")]
+        [TestCase("een  test", "een test")]
+        [TestCase("een\ttest", "een test")]
+        [TestCase("een\t\ttest", "een test")]
+        [TestCase("een\ntest", "een test")]
+        [TestCase("een\n\ntest", "een test")]
         public void NormalizeWhitespace(string str, string expected)
         {
             Assert.That(str.NormalizeWhitespace(), Is.EqualTo(expected));
         }
 
-        [Test, TestCase("", ""), TestCase("test", "test"), TestCase(" test ", " test "), TestCase("\ttest\t", " test "),
-         TestCase("\ntest\n", " test "), TestCase(" \t\ntest\n\t ", " test "), TestCase("een test", "een test"), TestCase("een  test", "een test"),
-         TestCase("een\ttest", "een test"), TestCase("een\t\ttest", "een test"), TestCase("een\ntest", "een test"), TestCase("een\n\ntest", "een test")]
+        [Test]
+        [TestCase("", "")]
+        [TestCase("test", "test")]
+        [TestCase(" test ", " test ")]
+        [TestCase("\ttest\t", " test ")]
+        [TestCase("\ntest\n", " test ")]
+        [TestCase(" \t\ntest\n\t ", " test ")]
+        [TestCase("een test", "een test")]
+        [TestCase("een  test", "een test")]
+        [TestCase("een\ttest", "een test")]
+        [TestCase("een\t\ttest", "een test")]
+        [TestCase("een\ntest", "een test")]
+        [TestCase("een\n\ntest", "een test")]
         public void CollapseWhitespace(string str, string expected)
         {
             Assert.That(str.CollapseWhitespace(), Is.EqualTo(expected));
         }
 
-        [Test, TestCase("", "", ExpectedResult = 0), TestCase("test", "tset", ExpectedResult = 2), TestCase(" test ", "\ttest\t", ExpectedResult = 2),
-         TestCase("Ziggy Stardust", "ziggy stradust", ExpectedResult = 4), TestCase("a", "b", ExpectedResult = 1), TestCase("a", "", ExpectedResult = 1), TestCase("aba", "aa", ExpectedResult = 1),
-         TestCase("simple", "Simpler", ExpectedResult = 2), TestCase("hmmm", "yummy", ExpectedResult = 3), TestCase("World-wide", "wordy", ExpectedResult = 7)]
+        [Test]
+        [TestCase("", "", ExpectedResult = 0)]
+        [TestCase("test", "tset", ExpectedResult = 2)]
+        [TestCase(" test ", "\ttest\t", ExpectedResult = 2)]
+        [TestCase("Ziggy Stardust", "ziggy stradust", ExpectedResult = 4)]
+        [TestCase("a", "b", ExpectedResult = 1)]
+        [TestCase("a", "", ExpectedResult = 1)]
+        [TestCase("aba", "aa", ExpectedResult = 1)]
+        [TestCase("simple", "Simpler", ExpectedResult = 2)]
+        [TestCase("hmmm", "yummy", ExpectedResult = 3)]
+        [TestCase("World-wide", "wordy", ExpectedResult = 7)]
         //"W"=>"w",drop "l", replace "-wide"
         public int TestLevenshtein(string str1, string str2) => StringUtils.LevenshteinDistance(str1, str2);
 
-        [Test, TestCase("joepje jofel", ExpectedResult = "Joepje Jofel"), TestCase("carolien Kaasteen", ExpectedResult = "Carolien Kaasteen"),
-         TestCase("maarten middelmaat--meloen", ExpectedResult = "Maarten Middelmaat-Meloen"), TestCase("carolien    Kaasteen", ExpectedResult = "Carolien Kaasteen"),
-         TestCase("'s-gravenhage", ExpectedResult = "'s-Gravenhage"), TestCase("'s gravenhage", ExpectedResult = "'s Gravenhage"), TestCase("'sgravenhage", ExpectedResult = "'s Gravenhage"),
-         TestCase("sieb op de kast", ExpectedResult = "Sieb op de Kast")]
+        [Test]
+        [TestCase("joepje jofel", ExpectedResult = "Joepje Jofel")]
+        [TestCase("carolien Kaasteen", ExpectedResult = "Carolien Kaasteen")]
+        [TestCase("maarten middelmaat--meloen", ExpectedResult = "Maarten Middelmaat-Meloen")]
+        [TestCase("carolien    Kaasteen", ExpectedResult = "Carolien Kaasteen")]
+        [TestCase("'s-gravenhage", ExpectedResult = "'s-Gravenhage")]
+        [TestCase("'s gravenhage", ExpectedResult = "'s Gravenhage")]
+        [TestCase("'sgravenhage", ExpectedResult = "'s Gravenhage")]
+        [TestCase("sieb op de kast", ExpectedResult = "Sieb op de Kast")]
         public string testNaam2Upper(string inp) => StringUtils.Name2UpperCasedName(inp);
 
         [Test]
@@ -105,8 +140,14 @@ namespace ProgressOnderwijsUtilsTests
                 Is.EqualTo("Miep Boezeroen-Jansen van der Sloot op 't Gootje v.d. Geest de la Terrine du Soupe au Beurre à Demi v/d Zo-Is-Het-Wel-Genoeg Ja"));
         }
 
-        [TestCase("Tests", ExpectedResult = "Test"), TestCase("Testen", ExpectedResult = "Test"), TestCase("Taal", ExpectedResult = "Taal"), TestCase("Talen", ExpectedResult = "Taal"),
-         TestCase("Cases", ExpectedResult = "Case"), TestCase("Fouten", ExpectedResult = "Fout"), TestCase("Sappen", ExpectedResult = "Sap"), TestCase("Apen", ExpectedResult = "Aap")]
+        [TestCase("Tests", ExpectedResult = "Test")]
+        [TestCase("Testen", ExpectedResult = "Test")]
+        [TestCase("Taal", ExpectedResult = "Taal")]
+        [TestCase("Talen", ExpectedResult = "Taal")]
+        [TestCase("Cases", ExpectedResult = "Case")]
+        [TestCase("Fouten", ExpectedResult = "Fout")]
+        [TestCase("Sappen", ExpectedResult = "Sap")]
+        [TestCase("Apen", ExpectedResult = "Aap")]
         public string testDepluralize(string inp) => StringUtils.Depluralize(inp);
 
         [Test]
@@ -154,7 +195,7 @@ namespace ProgressOnderwijsUtilsTests
                 { "_Multi _Space", " multi space", " multi space" },
                 { "trailing Space\t", "trailing space ", "trailing space " },
             };
-            for (int row = 0; row < translations.GetLength(0); row++) {
+            for (var row = 0; row < translations.GetLength(0); row++) {
                 var initial = translations[row, 0];
                 var ideal = translations[row, 1];
                 var idealCap = translations[row, 2];
@@ -163,8 +204,12 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [TestCase(null, "[]"), TestCase(new string[0], "[]"), TestCase(new[] { "single" }, "[single]"), TestCase(new[] { "first", "second" }, "[first, second]"),
-         TestCase(new object[] { 1, "2", null, 3 }, "[1, 2, , 3]"), Test]
+        [TestCase(null, "[]")]
+        [TestCase(new string[0], "[]")]
+        [TestCase(new[] { "single" }, "[single]")]
+        [TestCase(new[] { "first", "second" }, "[first, second]")]
+        [TestCase(new object[] { 1, "2", null, 3 }, "[1, 2, , 3]")]
+        [Test]
         public void ToFlatDebugString(IEnumerable<object> sut, string expected)
         {
             Assert.That(StringUtils.ToFlatDebugString(sut), Is.EqualTo(expected));

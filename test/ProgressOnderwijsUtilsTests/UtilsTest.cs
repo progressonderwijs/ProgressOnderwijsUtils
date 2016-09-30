@@ -26,8 +26,8 @@ namespace ProgressOnderwijsUtilsTests
 
             foreach (var i in samplePoints) {
                 var j = i + 1;
-                string a = Utils.ToSortableShortString(i);
-                string b = Utils.ToSortableShortString(j);
+                var a = Utils.ToSortableShortString(i);
+                var b = Utils.ToSortableShortString(j);
                 if (cmp.Compare(a, b) >= 0) {
                     throw new Exception("numbers " + i + " and " + j + " produce out-of-order strings: " + a + " and " + b);
                 }
@@ -86,27 +86,30 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test, Continuous]
+        [Test]
+        [Continuous]
         public void SwapValue()
         {
-            int one = 1;
-            int other = 2;
+            var one = 1;
+            var other = 2;
             Utils.Swap(ref one, ref other);
             Assert.That(one, Is.EqualTo(2));
             Assert.That(other, Is.EqualTo(1));
         }
 
-        [Test, Continuous]
+        [Test]
+        [Continuous]
         public void SwapReference()
         {
-            string one = "1";
-            string other = "2";
+            var one = "1";
+            var other = "2";
             Utils.Swap(ref one, ref other);
             Assert.That(one, Is.EqualTo("2"));
             Assert.That(other, Is.EqualTo("1"));
         }
 
-        [Test, Continuous]
+        [Test]
+        [Continuous]
         public void NUnitSession()
         {
             Assert.That(Utils.IsInUnitTest());
@@ -124,13 +127,16 @@ namespace ProgressOnderwijsUtilsTests
             yield return new TestCaseData(new DateTime(2000, 12, 1), new DateTime(2001, 1, 1)).Returns(1);
         }
 
-        [Test, TestCaseSource(nameof(MaandSpan)), Continuous]
+        [Test]
+        [TestCaseSource(nameof(MaandSpan))]
+        [Continuous]
         public int MaandSpanTest(DateTime d1, DateTime d2)
         {
             return Utils.MaandSpan(d1, d2);
         }
 
-        [Test, Continuous]
+        [Test]
+        [Continuous]
         public void IsDbConnFailureTest()
         {
             PAssert.That(() => !Utils.IsDbConnectionFailure(new Exception()));
@@ -147,7 +153,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !Utils.IsDbConnectionFailure(null));
         }
 
-        [Test, Continuous]
+        [Test]
+        [Continuous]
         public void DateMaxTest()
         {
             DateTime? d1 = null;
@@ -183,25 +190,26 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
         }
 
-        [Test,
-         TestCase(DocumentLanguage.Dutch, Taal.NL, ExpectedResult = true),
-         TestCase(DocumentLanguage.Dutch, Taal.EN, ExpectedResult = false),
-         TestCase(DocumentLanguage.Dutch, Taal.DU, ExpectedResult = false),
-         TestCase(DocumentLanguage.English, Taal.NL, ExpectedResult = false),
-         TestCase(DocumentLanguage.English, Taal.EN, ExpectedResult = true),
-         TestCase(DocumentLanguage.English, Taal.DU, ExpectedResult = false),
-         TestCase(DocumentLanguage.German, Taal.NL, ExpectedResult = false),
-         TestCase(DocumentLanguage.German, Taal.EN, ExpectedResult = false),
-         TestCase(DocumentLanguage.German, Taal.DU, ExpectedResult = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, ExpectedResult = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, ExpectedResult = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, ExpectedResult = false),
-         TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, ExpectedResult = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, ExpectedResult = true),
-         TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, ExpectedResult = true),
-         TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, ExpectedResult = true),
-         TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, ExpectedResult = true),
-         TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, ExpectedResult = false), Continuous]
+        [Test]
+        [TestCase(DocumentLanguage.Dutch, Taal.NL, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.Dutch, Taal.EN, ExpectedResult = false)]
+        [TestCase(DocumentLanguage.Dutch, Taal.DU, ExpectedResult = false)]
+        [TestCase(DocumentLanguage.English, Taal.NL, ExpectedResult = false)]
+        [TestCase(DocumentLanguage.English, Taal.EN, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.English, Taal.DU, ExpectedResult = false)]
+        [TestCase(DocumentLanguage.German, Taal.NL, ExpectedResult = false)]
+        [TestCase(DocumentLanguage.German, Taal.EN, ExpectedResult = false)]
+        [TestCase(DocumentLanguage.German, Taal.DU, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, ExpectedResult = false)]
+        [TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, ExpectedResult = true)]
+        [TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, ExpectedResult = false)]
+        [Continuous]
         public bool GenerateForLanguage(DocumentLanguage doc, Taal language)
         {
             return doc.GenerateForLanguage(language);
@@ -217,7 +225,8 @@ namespace ProgressOnderwijsUtilsTests
             yield return new TestCaseData(1000001.129m, 2, 1000001.13m);
         }
 
-        [Test, TestCaseSource(nameof(RoundUpData))]
+        [Test]
+        [TestCaseSource(nameof(RoundUpData))]
         public void RoundUp(decimal waarde, int posities, decimal resultaat)
         {
             Assert.That(Utils.RoundUp(waarde, posities), Is.EqualTo(resultaat));
