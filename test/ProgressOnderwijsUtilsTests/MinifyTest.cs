@@ -27,7 +27,7 @@ var is = {
     ns:      navigator.appName == 'Netscape',
     ua:      navigator.userAgent.toLowerCase(),
     version: parseFloat(navigator.appVersion.substr(21)) ||
-             parseFloat(navigator.appVersion),
+        parseFloat(navigator.appVersion),
     win:     navigator.platform == 'Win32'
 }
 is.mac = is.ua.indexOf('mac') >= 0;
