@@ -141,21 +141,21 @@ namespace ProgressOnderwijsUtilsTests
         public void SaveToUtf8ExcludesIndentation()
         {
             var doc = XDocument.Parse(@"<test>
-  <nested>
-    <elements>
-      <here>
-        Ƒϕϕ
-      </here>
-    </elements>
-  </nested>
+    <nested>
+        <elements>
+            <here>
+                Ƒϕϕ
+            </here>
+        </elements>
+    </nested>
 </test>");
 
             var bytes = XmlCompression.ToUtf8(doc);
             var str = UTF8.GetString(bytes);
 
             PAssert.That(() => str == @"<test><nested><elements><here>
-        Ƒϕϕ
-      </here></elements></nested></test>");
+                Ƒϕϕ
+            </here></elements></nested></test>");
         }
 
         [Test]
