@@ -31,13 +31,18 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(md, Is.Not.Null);
         }
 
-        [TestCase(ServiceProvider.P3W, PnetOmgeving.Productie), TestCase(ServiceProvider.P3W, PnetOmgeving.Test),
-         TestCase(ServiceProvider.PNet, PnetOmgeving.Productie), TestCase(ServiceProvider.PNet, PnetOmgeving.Test),
-         TestCase(ServiceProvider.PNet, PnetOmgeving.Acceptatie),
-         TestCase(ServiceProvider.PNet, PnetOmgeving.Ontwikkel),
-         TestCase(ServiceProvider.Student, PnetOmgeving.Productie), TestCase(ServiceProvider.Student, PnetOmgeving.Test),
-         TestCase(ServiceProvider.Student, PnetOmgeving.Ontwikkel), TestCase(ServiceProvider.StudentOAuth, PnetOmgeving.Productie),
-         TestCase(ServiceProvider.StudentOAuth, PnetOmgeving.Test), TestCase(ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
+        [TestCase(ServiceProvider.P3W, PnetOmgeving.Productie)]
+        [TestCase(ServiceProvider.P3W, PnetOmgeving.Test)]
+        [TestCase(ServiceProvider.PNet, PnetOmgeving.Productie)]
+        [TestCase(ServiceProvider.PNet, PnetOmgeving.Test)]
+        [TestCase(ServiceProvider.PNet, PnetOmgeving.Acceptatie)]
+        [TestCase(ServiceProvider.PNet, PnetOmgeving.Ontwikkel)]
+        [TestCase(ServiceProvider.Student, PnetOmgeving.Productie)]
+        [TestCase(ServiceProvider.Student, PnetOmgeving.Test)]
+        [TestCase(ServiceProvider.Student, PnetOmgeving.Ontwikkel)]
+        [TestCase(ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
+        [TestCase(ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
+        [TestCase(ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
         public void GetServiceProvider(ServiceProvider sp, PnetOmgeving db)
         {
             var sut = MetaDataFactory.GetServiceProvider(sp, db);
@@ -49,7 +54,8 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(sut.certificate.HasPrivateKey);
         }
 
-        [TestCase(IdentityProvider.Conext), TestCase(IdentityProvider.ConextWayf)]
+        [TestCase(IdentityProvider.Conext)]
+        [TestCase(IdentityProvider.ConextWayf)]
         public void GetIdentityProvider(IdentityProvider idp)
         {
             var sut = MetaDataFactory.GetIdentityProvider(idp);
@@ -61,32 +67,38 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(!sut.certificate.HasPrivateKey);
         }
 
-        [TestCase(IdentityProvider.ConextWayf, null, null), TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test), TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Test), TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Acceptatie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Ontwikkel),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Ontwikkel),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.ConextWayf, null, null)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Acceptatie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
         public void GetEntities(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
         {
             var sut = MetaDataFactory.GetEntities(idp, sp, db);
             Assert.That(sut, Is.Not.Null);
         }
 
-        [TestCase(IdentityProvider.ConextWayf, null, null), TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test), TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Test), TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Acceptatie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Ontwikkel),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Ontwikkel),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.ConextWayf, null, null)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Acceptatie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
         public void GetMetaData(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
         {
             var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
@@ -96,32 +108,38 @@ namespace ProgressOnderwijsUtilsTests
 
     public sealed class Saml20MetaDataTest
     {
-        [TestCase(IdentityProvider.ConextWayf, null, null), TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test), TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Test), TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Acceptatie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Ontwikkel),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Ontwikkel),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.ConextWayf, null, null)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Acceptatie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
         public void GetEntities(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
         {
             var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
             Assert.That(sut.GetEntities(), Is.EquivalentTo(MetaDataFactory.GetEntities(idp, sp, db).Values.Distinct()));
         }
 
-        [TestCase(IdentityProvider.ConextWayf, null, null), TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test), TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Test), TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Acceptatie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Ontwikkel),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test),
-         TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Ontwikkel),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test),
-         TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.ConextWayf, null, null)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Acceptatie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Ontwikkel)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Ontwikkel)]
         public void SingleSignOnService(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
         {
             var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
