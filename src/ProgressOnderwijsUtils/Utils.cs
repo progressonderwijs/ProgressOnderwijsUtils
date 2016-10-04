@@ -476,15 +476,12 @@ namespace ProgressOnderwijsUtils
 
         public static bool IsEmailAdresGeldig(string emailAdres)
         {
-            try
-            {
+            try {
                 // ReSharper disable ObjectCreationAsStatement
                 new MailAddress(emailAdres);
                 // ReSharper restore ObjectCreationAsStatement
                 return true;
-            }
-            catch
-            {
+            } catch {
                 return false;
             }
         }
