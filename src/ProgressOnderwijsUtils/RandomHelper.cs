@@ -1,13 +1,28 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
-    public abstract class RandomHelper
+    public sealed class RandomHelper
     {
-        protected abstract byte[] GetBytes(int numBytes);
+        public static readonly RandomHelper Secure = new RandomHelper(new RNGCryptoServiceProvider().GetBytes);
+        public static RandomHelper Insecure(int seed) => new RandomHelper(new Random(seed).NextBytes);
+        readonly Action<byte[]> fillWithRandomBytes;
+
+        RandomHelper(Action<byte[]> fillWithRandomBytes)
+        {
+            this.fillWithRandomBytes = fillWithRandomBytes;
+        }
+
+        byte[] GetBytes(int numBytes)
+        {
+            var bytes = new byte[numBytes];
+            fillWithRandomBytes(bytes);
+            return bytes;
+        }
 
         [UsefulToKeep("library method")]
         public byte GetByte() => GetBytes(1)[0];
