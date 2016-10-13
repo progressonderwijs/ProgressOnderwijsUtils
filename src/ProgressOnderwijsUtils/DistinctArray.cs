@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
-    public sealed class DistinctArray<T> : IEnumerable<T>
+    public struct DistinctArray<T> : IReadOnlyList<T>
     {
         readonly T[] items;
 
@@ -13,9 +13,9 @@ namespace ProgressOnderwijsUtils
             this.items = items.Distinct().ToArray();
         }
 
-        public int Length => items.Length;
+        public int Count => items.Length;
         public T this[int index] => items[index];
-        public IEnumerator<T> GetEnumerator() => items.Cast<T>().GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)items).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var sut = new DistinctArray<int>(new [] { 1, 1, 2});
 
-            PAssert.That(() => sut.Length == 2);
+            PAssert.That(() => sut.Count == 2);
             PAssert.That(() => sut.SetEqual(new[] { 1, 2 }));
         }
 
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var sut = new[] { 1, 1, 2 }.ToDistinctArray();
 
-            PAssert.That(() => sut.Length == 2);
+            PAssert.That(() => sut.Count == 2);
             PAssert.That(() => sut.SetEqual(new[] { 1, 2 }));
         }
 
