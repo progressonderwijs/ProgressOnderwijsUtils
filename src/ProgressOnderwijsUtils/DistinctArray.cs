@@ -9,9 +9,7 @@ namespace ProgressOnderwijsUtils
         readonly T[] items;
 
         public DistinctArray(IEnumerable<T> items)
-        {
-            this.items = items.Distinct().ToArray();
-        }
+            : this(items, EqualityComparer<T>.Default) { }
 
         public DistinctArray(IEnumerable<T> items, IEqualityComparer<T> comparer)
         {
