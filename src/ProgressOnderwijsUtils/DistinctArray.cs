@@ -13,9 +13,14 @@ namespace ProgressOnderwijsUtils
             this.items = items.Distinct().ToArray();
         }
 
+        public DistinctArray(IEnumerable<T> items, IEqualityComparer<T> comparer)
+        {
+            this.items = items.Distinct(comparer).ToArray();
+        }
+
         public int Count => items.Length;
         public T this[int index] => items[index];
-        public IEnumerator<T> GetEnumerator() => ((IEnumerable<T>)items).GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => ((IEnumerable<T>)items).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
     }
 }

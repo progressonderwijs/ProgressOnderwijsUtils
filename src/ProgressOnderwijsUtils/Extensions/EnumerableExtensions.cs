@@ -218,5 +218,8 @@ namespace ProgressOnderwijsUtils
 
         public static DistinctArray<T> ToDistinctArray<T>(this IEnumerable<T> items)
             => new DistinctArray<T>(items);
+
+        public static DistinctArray<T> ToDistinctArray<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer)
+            => new DistinctArray<T>(items, comparer);
     }
 }
