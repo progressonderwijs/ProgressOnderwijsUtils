@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
 
         public int Count => items.Length;
         public T this[int index] => items[index];
-        IEnumerator<T> IEnumerable<T>.GetEnumerator() => ((IEnumerable<T>)items).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => items.GetEnumerator();
+        IEnumerator<T> IEnumerable<T>.GetEnumerator() => ((IEnumerable<T>)items).GetEnumerator();
     }
 }
