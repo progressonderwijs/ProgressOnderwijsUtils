@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
 
         public static DistinctArray<T> FromDistinct(IEnumerable<T> items, IEqualityComparer<T> comparer)
         {
-            if (items.Distinct(comparer).Count() != items.Count()) {
+            if (items.ContainsDuplicates(comparer)) {
                 throw new ArgumentException("items are not distinct");
             }
 
