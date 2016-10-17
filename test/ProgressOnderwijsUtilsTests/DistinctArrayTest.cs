@@ -39,13 +39,13 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void Creating_DistinctArray_from_not_distinct_gives_error()
         {
-            Assert.Catch<ArgumentException>(() => new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct());
+            Assert.Catch<Exception>(() => new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct());
         }
 
         [Test]
         public void Creating_DistinctArray_from_not_distinct_with_custom_comparer_gives_error()
         {
-            Assert.Catch<ArgumentException>(() => new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode())));
+            Assert.Catch<Exception>(() => new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode())));
         }
 
         [Test]
