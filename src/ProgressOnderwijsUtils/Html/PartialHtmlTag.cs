@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
@@ -34,22 +33,6 @@ namespace ProgressOnderwijsUtils.Html
             Array.Resize(ref attributes, attributes.Length + 1);
             attributes[attributes.Length - 1] = new HtmlAttribute { Name = attrName, Value = attrValue };
             return attributes;
-        }
-
-        [Pure]
-        public static IEnumerable<XAttribute> ToXAttributes(this HtmlAttribute[] htmlAttributes)
-        {
-            string className = null;
-            foreach (var htmlAttr in htmlAttributes) {
-                if (htmlAttr.Name == "class") {
-                    className = className == null ? htmlAttr.Value : className + " " + htmlAttr.Value;
-                } else {
-                    yield return new XAttribute(htmlAttr.Name, htmlAttr.Value);
-                }
-            }
-            if (className != null) {
-                yield return new XAttribute("class", className);
-            }
         }
     }
 
