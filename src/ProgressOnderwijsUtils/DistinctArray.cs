@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,6 +7,9 @@ namespace ProgressOnderwijsUtils
 {
     public struct DistinctArray<T> : IReadOnlyList<T>
     {
+        public static DistinctArray<T> Empty
+            => new DistinctArray<T>(Array.Empty<T>());
+
         readonly T[] items;
 
         public DistinctArray(IEnumerable<T> items)
