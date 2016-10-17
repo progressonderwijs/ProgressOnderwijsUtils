@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
@@ -7,6 +8,14 @@ namespace ProgressOnderwijsUtilsTests
 {
     public sealed class DistinctArrayTest
     {
+        [Test]
+        public void Initialize_with_empty_array_gives_count_0()
+        {
+            var sut = new DistinctArray<int>(Array.Empty<int>());
+
+            PAssert.That(() => sut.Count == 0);
+        }
+
         [Test]
         public void Created_DistinctArray_is_distinct()
         {
