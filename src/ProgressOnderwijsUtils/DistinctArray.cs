@@ -5,6 +5,12 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
+    public static class DistinctArray
+    {
+        public static DistinctArray<T> FromDistinct<T>(IEnumerable<T> items)
+            => DistinctArray<T>.FromDistinct(items);
+    }
+
     [Serializable]
     public struct DistinctArray<T> : IReadOnlyList<T>
     {
