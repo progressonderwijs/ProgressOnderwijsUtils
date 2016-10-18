@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
+    [Serializable]
     public struct DistinctArray<T> : IReadOnlyList<T>
     {
         public static DistinctArray<T> Empty
