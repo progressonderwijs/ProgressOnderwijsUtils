@@ -413,13 +413,13 @@ namespace ProgressOnderwijsUtilsTests
         };
 
         static readonly IFilterFactory<BlaFilterObject> helper = null;
-        Func<Id.StatischeGroep, Func<int, bool>> getStaticGroupContainmentVerifier;
-        IEnumerable<BlaFilterObject> run(FilterBase filter) => data.Where(filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier));
+        Func<Id.StudentenGroep, Func<int, bool>> getStudentenGroupContainmentVerifier;
+        IEnumerable<BlaFilterObject> run(FilterBase filter) => data.Where(filter.ToMetaObjectFilter<BlaFilterObject>(getStudentenGroupContainmentVerifier));
 
         [SetUp]
         public void initGroupLookup()
         {
-            getStaticGroupContainmentVerifier = InfoStaticGroup.CachedGroupMembershipVerifier(conn);
+            getStudentenGroupContainmentVerifier = InfoStudentenGroep.CachedGroupMembershipVerifier(conn);
         }
 
         [Test]
@@ -526,7 +526,7 @@ namespace ProgressOnderwijsUtilsTests
         public void MetaObject_EnumGreaterThanComparison()
         {
             var filter = new FilterFactory<BlaFilterObject>().FilterOn(o => o.EnumVal).GreaterThan(BlaFilterEnumTest.Abc);
-            var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
+            var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStudentenGroupContainmentVerifier);
             PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
         }
 
@@ -534,7 +534,7 @@ namespace ProgressOnderwijsUtilsTests
         public void MetaObject_NullableEnumGreaterThanComparison()
         {
             var filter = new FilterFactory<BlaFilterObject>().FilterOn(o => o.EnumNullable).GreaterThan(BlaFilterEnumTest.Abc);
-            var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
+            var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStudentenGroupContainmentVerifier);
             PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, BlaFilterEnumTest.Test)));
             PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
         }
@@ -543,7 +543,7 @@ namespace ProgressOnderwijsUtilsTests
         public void MetaObject_EnumGreaterThanNullableKolom()
         {
             var filter = Filter.CreateCriterium("EnumVal", BooleanComparer.GreaterThan, new ColumnReference("EnumNullable"));
-            var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
+            var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStudentenGroupContainmentVerifier);
             PAssert.That(() => func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Abc, BlaFilterEnumTest.Xyz)));
             PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
         }
@@ -552,7 +552,7 @@ namespace ProgressOnderwijsUtilsTests
         public void MetaObject_NullableEnumGreaterThanNonNullableKolom()
         {
             var filter = Filter.CreateCriterium("EnumNullable", BooleanComparer.GreaterThan, new ColumnReference("EnumVal"));
-            var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStaticGroupContainmentVerifier);
+            var func = filter.ToMetaObjectFilter<BlaFilterObject>(getStudentenGroupContainmentVerifier);
             PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, BlaFilterEnumTest.Abc)));
             PAssert.That(() => !func(new BlaFilterObject(null, 0, null, BlaFilterEnumTest.Test, null)));
         }
