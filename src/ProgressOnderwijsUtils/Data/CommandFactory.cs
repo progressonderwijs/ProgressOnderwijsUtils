@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -219,16 +220,22 @@ namespace ProgressOnderwijsUtils
             impl?.AppendTo(ref factory);
             var key = new ParameterizedSqlEquatableKey {
                 SqlTextKey = factory.debugText.Value,
-                Params = new ComparableArray<object>(factory.paramValues.ToArray()),
+                Params = factory.paramValues.ToArray(),
             };
             factory.debugText.ReturnToPool();
             return key;
         }
     }
 
-    sealed class ParameterizedSqlEquatableKey : ValueBase<ParameterizedSqlEquatableKey>
+    struct ParameterizedSqlEquatableKey : IEquatable<ParameterizedSqlEquatableKey>
     {
         public string SqlTextKey { get; set; }
-        public ComparableArray<object> Params { get; set; }
+        public object[] Params { get; set; }
+        public bool Equals(ParameterizedSqlEquatableKey other) 
+            => SqlTextKey == other.SqlTextKey && StructuralComparisons.StructuralEqualityComparer.Equals(Params, other.Params);
+
+        public override bool Equals(object obj) => obj is ParameterizedSqlEquatableKey && Equals((ParameterizedSqlEquatableKey)obj);
+        public override int GetHashCode() => (SqlTextKey?.GetHashCode() ?? 0) + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params);
+
     }
 }
