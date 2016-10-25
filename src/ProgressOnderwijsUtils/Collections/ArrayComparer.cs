@@ -4,10 +4,8 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    [CodeThatsOnlyUsedForTests]
     public class ArrayComparer<T> : IEqualityComparer<T[]>
     {
-        [CodeThatsOnlyUsedForTests]
         public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
 
         readonly IEqualityComparer<T> underlying;
@@ -52,19 +50,5 @@ namespace ProgressOnderwijsUtils.Collections
             }
             return (int)((buffer >> 32) ^ buffer);
         }
-    }
-
-    public struct ComparableArray<T> : IEquatable<ComparableArray<T>>
-    {
-        readonly T[] array;
-
-        public ComparableArray(T[] array)
-        {
-            this.array = array;
-        }
-
-        public bool Equals(ComparableArray<T> other) => ArrayComparer<T>.Default.Equals(array, other.array);
-        public override int GetHashCode() => ArrayComparer<T>.Default.GetHashCode(array);
-        public override bool Equals(object obj) => obj is ComparableArray<T> && Equals((ComparableArray<T>)obj);
     }
 }
