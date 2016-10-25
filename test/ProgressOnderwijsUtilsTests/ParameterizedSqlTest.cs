@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Progress.Business.DomainUnits;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -16,8 +17,8 @@ namespace ProgressOnderwijsUtilsTests
         public void IdenticalInterpolatedSqlWithoutParamsAreEquals()
         {
             ParameterizedSql
-                a1 = SafeSql.SQL($"a"),
-                a2 = SafeSql.SQL($"a");
+                a1 = SQL($"a"),
+                a2 = SQL($"a");
 
             PAssert.That(() => a1 == a2);
             PAssert.That(() => !(a1 != a2));
@@ -29,8 +30,8 @@ namespace ProgressOnderwijsUtilsTests
         public void NonIdenticalInterpolatedSqlWithoutParamsAreNotEquals()
         {
             ParameterizedSql
-                a = SafeSql.SQL($"a"),
-                b = SafeSql.SQL($"b");
+                a = SQL($"a"),
+                b = SQL($"b");
 
             PAssert.That(() => !(a == b));
             PAssert.That(() => a != b);
@@ -68,12 +69,12 @@ namespace ProgressOnderwijsUtilsTests
         public void EqualsIgnoresComponentBoundaries()
         {
             ParameterizedSql
-                a = SafeSql.SQL($"a"),
-                b = SafeSql.SQL($"b"),
-                c = SafeSql.SQL($"c"),
-                ab = SafeSql.SQL($"a b"),
-                bc = SafeSql.SQL($"b c"),
-                abc = SafeSql.SQL($"a b c");
+                a = SQL($"a"),
+                b = SQL($"b"),
+                c = SQL($"c"),
+                ab = SQL($"a b"),
+                bc = SQL($"b c"),
+                abc = SQL($"a b c");
 
             PAssert.That(() => a + b == ab);
             PAssert.That(() => a + bc == ab + c);
@@ -85,9 +86,9 @@ namespace ProgressOnderwijsUtilsTests
         public void EqualsRecurses()
         {
             ParameterizedSql
-                a = SafeSql.SQL($"a"),
-                b = SafeSql.SQL($"b"),
-                c = SafeSql.SQL($"c");
+                a = SQL($"a"),
+                b = SQL($"b"),
+                c = SQL($"c");
 
             // ReSharper disable ArrangeRedundantParentheses
             PAssert.That(() => (a + (a + c)) + b == (a + a) + (c + b));
@@ -106,7 +107,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void PrependingEmptyHasNoEffect()
         {
-            PAssert.That(() => ParameterizedSql.Empty + SafeSql.SQL($"abc") == SafeSql.SQL($"abc"));
+            PAssert.That(() => ParameterizedSql.Empty + SQL($"abc") == SQL($"abc"));
         }
 
         [Test]
@@ -116,8 +117,8 @@ namespace ProgressOnderwijsUtilsTests
             //all behave as expected.
             var qEmpty0 = default(ParameterizedSql);
             var qEmpty1 = ParameterizedSql.Empty;
-            var qEmpty2 = SafeSql.SQL($"");
-            var qEmpty3 = SafeSql.SQL($"");
+            var qEmpty2 = SQL($"");
+            var qEmpty3 = SQL($"");
 
             //we don't want to depend on string reference equality, but as it turns out all empty strings are always reference equals:
             PAssert.That(() => ReferenceEquals(42.ToStringInvariant().Substring(42.ToStringInvariant().Length), ""));
@@ -130,16 +131,16 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => qEmpty1.GetHashCode() == qEmpty2.GetHashCode());
             PAssert.That(() => qEmpty3.GetHashCode() == qEmpty2.GetHashCode());
 
-            PAssert.That(() => SafeSql.SQL($"abc") + qEmpty2 == SafeSql.SQL($"abc"));
-            PAssert.That(() => SafeSql.SQL($"abc") + qEmpty3 == SafeSql.SQL($"abc"));
-            PAssert.That(() => (SafeSql.SQL($"abc") + qEmpty2).GetHashCode() == SafeSql.SQL($"abc").GetHashCode());
-            PAssert.That(() => (SafeSql.SQL($"abc") + qEmpty3).GetHashCode() == SafeSql.SQL($"abc").GetHashCode());
+            PAssert.That(() => SQL($"abc") + qEmpty2 == SQL($"abc"));
+            PAssert.That(() => SQL($"abc") + qEmpty3 == SQL($"abc"));
+            PAssert.That(() => (SQL($"abc") + qEmpty2).GetHashCode() == SQL($"abc").GetHashCode());
+            PAssert.That(() => (SQL($"abc") + qEmpty3).GetHashCode() == SQL($"abc").GetHashCode());
         }
 
         [Test]
         public void DealsWithApparentlyNestedParameterPlaceholders()
         {
-            var badQuery = SafeSql.SQL($@"A{{x{1}}}Z");
+            var badQuery = SQL($@"A{{x{1}}}Z");
             Assert.Catch(() => badQuery.DebugText());
             using (var conn = new SqlConnection())
                 Assert.Catch(() => badQuery.CreateSqlCommand(conn));
@@ -148,7 +149,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void SupportsNestedParameterizedSql()
         {
-            var result = SafeSql.SQL($@"A{0}{SafeSql.SQL($@"[{1}{0}]")}Z");
+            var result = SQL($@"A{0}{SQL($@"[{1}{0}]")}Z");
 
             var cmd = result.CreateSqlCommand(new SqlCommandCreationContext(null, 0, null));
 
@@ -160,20 +161,20 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void ParameterizedSqlToStringIsClearForEnumParams()
         {
-            PAssert.That(() => SafeSql.SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\r\nselect 42, 2/*DayOfWeek.Tuesday*/");
+            PAssert.That(() => SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\r\nselect 42, 2/*DayOfWeek.Tuesday*/");
         }
 
         [Test]
         public void ParameterizedSqlUsesLiteralsForValidEnumConstants()
         {
-            PAssert.That(() => SafeSql.SQL($"select {(DayOfWeek)42}, {DayOfWeek.Tuesday}").CommandText() == "select @par0, 2/*DayOfWeek.Tuesday*/");
+            PAssert.That(() => SQL($"select {(DayOfWeek)42}, {DayOfWeek.Tuesday}").CommandText() == "select @par0, 2/*DayOfWeek.Tuesday*/");
         }
 
         [Test]
         public void ParameterizedSqlDoesNotUseLiteralsEnumsMarked_IEnumShouldBeParameterizedInSqlAttribute()
         {
-            PAssert.That(() => SafeSql.SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
-            PAssert.That(() => SafeSql.SQL($"select {Id.Organisatie.Dummy_ICT_en_Media}").CommandText() == "select @par0");
+            PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
+            PAssert.That(() => SQL($"select {Id.Organisatie.Dummy_ICT_en_Media}").CommandText() == "select @par0");
         }
 
         [TestNotLiteral]
