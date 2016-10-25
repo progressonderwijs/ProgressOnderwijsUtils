@@ -83,6 +83,64 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
+        public void EqualsChecksSimpleParameterValues()
+        {
+            ParameterizedSql
+                intPar = SQL($"a param: {1}"),
+                intPar2 = SQL($"a param: {1}"),
+                enumIntPar = SQL($"a param: {(DayOfWeek)1}"),
+                enumIntPar2 = SQL($"a param: {(DayOfWeek)1}"),
+                longPar = SQL($"a param: {1L}"),
+                stringPar = SQL($"a param: {"1"}"),
+                stringPar2 = SQL($"a param: {"1"}"),
+                noPar = SQL($"a param: 1")
+                ;
+
+            PAssert.That(() => intPar == intPar2);
+            PAssert.That(() => enumIntPar == enumIntPar2);
+            PAssert.That(() => stringPar == stringPar2);
+
+            PAssert.That(() => intPar != enumIntPar);
+            PAssert.That(() => intPar != longPar);
+            PAssert.That(() => intPar != stringPar);
+            PAssert.That(() => enumIntPar != longPar);
+            PAssert.That(() => enumIntPar != stringPar);
+            PAssert.That(() => longPar != stringPar);
+
+            PAssert.That(() => intPar.GetHashCode() == intPar2.GetHashCode());
+            PAssert.That(() => enumIntPar.GetHashCode() == enumIntPar2.GetHashCode());
+            PAssert.That(() => stringPar.GetHashCode() == stringPar2.GetHashCode());
+            PAssert.That(() => intPar.GetHashCode() != stringPar.GetHashCode());
+
+            PAssert.That(() => intPar != noPar);
+            PAssert.That(() => enumIntPar != noPar);
+            PAssert.That(() => longPar != noPar);
+            PAssert.That(() => stringPar != noPar);
+
+            PAssert.That(() => new[] { intPar, intPar2, enumIntPar, enumIntPar2, longPar, stringPar, stringPar2, noPar }.Distinct().Count() == 5);
+        }
+
+        [Test]
+        public void EqualsChecksTableValuedParametersInDepth()
+        {
+            ParameterizedSql
+                withPar_1_2 = SQL($"a param: {new[] { 1, 2 }}"),
+                withPar_1_2b = SQL($"a param: {new[] { 1, 2 }}"),
+                withPar_2_1 = SQL($"a param: {new[] { 2, 1 }}"),
+                withParEnum_1_2 = SQL($"a param: {new[] { (DayOfWeek)1, (DayOfWeek)2 }}"),
+                withParString_1_2 = SQL($"a param: {new[] { "1", "2" }}"),
+                withParString_1_2b = SQL($"a param: {new[] { "1", "2" }}")
+                ;
+
+            PAssert.That(() => withPar_1_2 == withPar_1_2b);
+            PAssert.That(() => withParString_1_2 == withParString_1_2b);
+
+            PAssert.That(() => withPar_1_2 != withPar_2_1);
+            PAssert.That(() => withPar_2_1 != withParString_1_2);
+            PAssert.That(() => withPar_1_2 != withParEnum_1_2);
+        }
+
+        [Test]
         public void EqualsRecurses()
         {
             ParameterizedSql
