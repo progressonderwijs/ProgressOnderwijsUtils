@@ -319,6 +319,7 @@ namespace ProgressOnderwijsUtils
         /// ToSortableShortString(a) kleiner dan ToShortableShortString(b)
         /// 
         /// Deze eigenschap geldt wanneer je m verifieert in C#, JS, SQL (, etc?)
+        /// (want er worden alleen letters in 1 case en cijfers gebruikt)
         /// </summary>
         public static string ToSortableShortString(long value)
         {
