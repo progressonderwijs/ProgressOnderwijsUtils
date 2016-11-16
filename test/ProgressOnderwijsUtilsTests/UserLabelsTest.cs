@@ -60,7 +60,7 @@ namespace ProgressOnderwijsUtilsTests
         public void Members_UserLabels_always_have_at_most_one_bit_set()
         {
             var membersWithMoreThanOneBitSet = EnumHelpers.GetValues<UserLabels>()
-                .Where(ul => ((int)ul & (int)ul - 1) == 0)
+                .Where(ul => ((int)ul & (int)ul - 1) != 0)
                 .ToArray();
 
             PAssert.That(() => membersWithMoreThanOneBitSet.None());
