@@ -57,6 +57,13 @@ namespace ProgressOnderwijsUtilsTests
 
         [Test]
         [Continuous]
+        public void AreUserLabelsAssignedToSomeVolgOnderwijs_does_not_crash()
+        {
+            UserLabelsHelper.AreUserLabelsAssignedToSomeVolgOnderwijs(conn, RootOrganisatie.Dummy, UserLabels.None);
+        }
+
+        [Test]
+        [Continuous]
         public void Members_UserLabels_always_have_at_most_one_bit_set()
         {
             var membersWithMoreThanOneBitSet = EnumHelpers.GetValues<UserLabels>()
@@ -79,6 +86,29 @@ namespace ProgressOnderwijsUtilsTests
                 ").ReadPlain<string>(conn);
 
             PAssert.That(() => nonExistent.None());
+        }
+
+        static UserLabels AllUserLabels(BusinessConnection conn, RootOrganisatie rootOrganisatieId, string tableName)
+            => UserLabelDefinition.AllForTable(conn, rootOrganisatieId, tableName).Aggregate(UserLabels.None, (current, next) => current | next.UserLabel);
+
+        [Test]
+        [DataControle]
+        public void No_VolgOnderwijs_have_undefined_labels()
+        {
+            var volgOnderwijsWithUndefinedLabels = EnumHelpers
+                .GetValues<RootOrganisatie>()
+                .SelectMany(rootOrganisatie => SQL($@"
+                        select
+                            vo.OnderwijsId
+                        from VolgOnderwijs vo
+                        where 1=1
+                            and vo.Organisatie in (select obc.Child from OrganisatieBoomCache obc where obc.Parent = {rootOrganisatie})
+                            and vo.UserLabels & {~AllUserLabels(conn, rootOrganisatie, "VolgOnderwijs")} <> 0
+                    ").ReadPlain<Id.VolgOnderwijs>(conn)
+                )
+                .ToArray();
+
+            PAssert.That(() => volgOnderwijsWithUndefinedLabels.None());
         }
     }
 }
