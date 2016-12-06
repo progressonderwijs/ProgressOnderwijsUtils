@@ -665,6 +665,15 @@ namespace ProgressOnderwijsUtilsTests
         {
             PAssert.That(() => CriteriumFilter.HasFlagHelper(1, 0));
         }
+
+        [Test]
+        public void Parsing_serialized_filter_keeps_dates_unchanged()
+        {
+            var date = new DateTime(2015, 8, 26);
+            var filterText = Filter.CreateCriterium("abc", BooleanComparer.Equal, date).SerializeToString();
+            var value = (DateTime)((CriteriumFilter)Filter.TryParseSerializedFilter(filterText)).Waarde;
+            PAssert.That(() => value == date);
+        }
     }
 
     public sealed class BlaFilterObject : ValueBase<BlaFilterObject>, IMetaObject
