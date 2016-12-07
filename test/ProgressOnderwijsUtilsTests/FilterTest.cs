@@ -674,6 +674,22 @@ namespace ProgressOnderwijsUtilsTests
             var value = (DateTime)((CriteriumFilter)Filter.TryParseSerializedFilter(filterText)).Waarde;
             PAssert.That(() => value == date);
         }
+
+        [Test]
+        public void Parsing_serialized_filter_retains_enum_typing()
+        {
+            var filterText = Filter.CreateCriterium("dayOfWeek", BooleanComparer.Equal, DayOfWeek.Thursday).SerializeToString();
+            var value = ((CriteriumFilter)Filter.TryParseSerializedFilter(filterText)).Waarde;
+            PAssert.That(() => value.GetType() == typeof(DayOfWeek));
+        }
+
+        [Test]
+        public void Parsing_serialized_filter_retains_enum_typing_of_arrays()
+        {
+            var filterText = Filter.CreateCriterium("dayOfWeek", BooleanComparer.In, new[] { DayOfWeek.Thursday }).SerializeToString();
+            var value = ((CriteriumFilter)Filter.TryParseSerializedFilter(filterText)).Waarde;
+            PAssert.That(() => value.GetType() == typeof(DayOfWeek[]));
+        }
     }
 
     public sealed class BlaFilterObject : ValueBase<BlaFilterObject>, IMetaObject
