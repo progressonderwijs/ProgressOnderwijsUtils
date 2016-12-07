@@ -76,6 +76,16 @@ namespace ProgressOnderwijsUtils
             return commandText;
         }
 
+        [Pure]
+        public object[] ParameterValuesForDebugging()
+        {
+            var factory = CommandFactory.Create();
+            impl?.AppendTo(ref factory);
+            var parameterValues = factory.ParameterValuesForDebugging();
+            factory.ReturnToPool();
+            return parameterValues;
+        }
+
         public static ParameterizedSql Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]

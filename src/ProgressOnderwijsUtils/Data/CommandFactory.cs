@@ -143,6 +143,11 @@ namespace ProgressOnderwijsUtils
         }
 
         public void AppendSql(string sql, int startIndex, int length) => queryText.AppendText(sql, startIndex, length);
+
+        public object[] ParameterValuesForDebugging()
+        {
+            return paramObjs.Take(paramCount).Select(p => p.Value).ToArray();
+        }
     }
 
     /// <summary>
