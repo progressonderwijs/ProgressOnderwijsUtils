@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils.WebSupport;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public class CompressedUtf8StringTest
     {
         [Test]

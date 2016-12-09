@@ -6,7 +6,7 @@ using Progress.Business.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public sealed class FilterLanguage
     {
         [Test]

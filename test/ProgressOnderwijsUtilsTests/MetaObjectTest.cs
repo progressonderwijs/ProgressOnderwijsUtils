@@ -59,7 +59,7 @@ namespace ProgressOnderwijsUtilsTests
         public string StringProperty { get; set; }
     }
 
-    [Continuous]
+    [PullRequestTest]
     public sealed class MetaObjectTest
     {
         [Test]

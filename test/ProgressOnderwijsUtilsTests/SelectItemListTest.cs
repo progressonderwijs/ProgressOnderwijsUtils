@@ -6,7 +6,7 @@ using Progress.Business.Text;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public sealed class SelectItemListTest : TestsWithBusinessConnection
     {
         [Test]

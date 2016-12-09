@@ -10,7 +10,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     class XmlCompressionTest
     {
         [Test]

@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtilsTests
         public static double Distance(this Color a, Color b) => (Math.Abs(a.G - b.G) * 0.5 + Math.Abs(a.R - b.R) * 0.35 + Math.Abs(a.B - b.B) * 0.15) / 255.0;
     }
 
-    [Continuous]
+    [PullRequestTest]
     public class ImageToolsTests
     {
         [Test]

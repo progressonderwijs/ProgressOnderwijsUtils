@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtilsTests
 
     public class OrderByTopologyTest
     {
-        [Test, Continuous]
+        [Test, PullRequestTest]
         public void NodesWithoutDependenciesAreNotSorted()
         {
             var example = new[] { "a", "b", "d", "c" };

@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public class NonceStoreTest
     {
         static IEnumerable<TestCaseData> NonceStoreItemEqualityData()

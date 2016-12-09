@@ -8,7 +8,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public class EnumerableExtensionsTests
     {
 #pragma warning disable 1720

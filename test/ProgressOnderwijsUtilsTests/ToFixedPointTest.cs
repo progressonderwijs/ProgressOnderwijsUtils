@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test, Continuous]
+        [Test, PullRequestTest]
         public void FixedPointOmitsMinusForZero()
         {
             PAssert.That(() => Utils.ToFixedPointString(-0.1, INV, 0) == "0");
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Utils.ToFixedPointString(-double.Epsilon, INV, 2) == "0.00");
         }
 
-        [Test, Continuous]
+        [Test, PullRequestTest]
         public void WorksOnNonFiniteNumbers()
         {
             PAssert.That(() => Utils.ToFixedPointString(double.NaN, NL, 0) == double.NaN.ToString("f0", NL));
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Utils.ToFixedPointString(double.NegativeInfinity, BE, 2) == double.NegativeInfinity.ToString("f0", BE));
         }
 
-        [Test, Continuous]
+        [Test, PullRequestTest]
         public void WorksOnCornerCases()
         {
             ulong edgeCase = ulong.MaxValue - 1024;

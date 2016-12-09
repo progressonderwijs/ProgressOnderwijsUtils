@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtilsTests
     public sealed class UserLabelsTest : TestsWithBusinessConnection
     {
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void UserLabelDefinitionBusinessEdit_sets_an_available_user_label()
         {
             var session = WebSession.CreateTestSession(conn, RootOrganisatie.Dummy);
@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void Creating_too_many_user_label_definitions_gives_an_error()
         {
             var session = WebSession.CreateTestSession(conn, RootOrganisatie.Dummy);
@@ -49,21 +49,21 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void GetVolgOnderwijsUserLabels_does_not_crash()
         {
             UserLabelsHelper.GetVolgOnderwijsUserLabels(conn, default(Id.VolgOnderwijs));
         }
 
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void AreUserLabelsAssignedToSomeVolgOnderwijs_does_not_crash()
         {
             UserLabelsHelper.AreUserLabelsAssignedToSomeVolgOnderwijs(conn, RootOrganisatie.Dummy, UserLabels.None);
         }
 
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void Members_UserLabels_always_have_at_most_one_bit_set()
         {
             var membersWithMoreThanOneBitSet = EnumHelpers.GetValues<UserLabels>()
