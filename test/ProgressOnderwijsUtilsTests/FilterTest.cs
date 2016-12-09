@@ -215,7 +215,7 @@ namespace ProgressOnderwijsUtilsTests
         public void BasicSerializationWorks()
         {
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).SerializeToString() == @"test[<]i3*");
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).Equals(Filter.TryParseSerializedFilter(@"test[<]i3*")));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, 3).Equals(Filter.TryParseSerializedFilter(@"test[<]i3*", col => typeof(int))));
 
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, new ColumnReference("blablabla")).SerializeToString() == @"test[<]cblablabla*");
             PAssert.That(
@@ -227,16 +227,16 @@ namespace ProgressOnderwijsUtilsTests
 
             PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.LessThan, CurrentTimeToken.Instance).SerializeToString() == @"test[<]n*");
 
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<]i3* ") == null); //extra space!
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"test<]i3*") == null); //missing [
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<i3*") == null); //missing ]
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<<]i3*") == null); //invalid op
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"&test[<]i3*") == null); //unterminated &
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"|test[<]i3*") == null); //unterminated |
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"&test[<]i3*,") == null); //unterminated &
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"|test[<]i3*,") == null); //unterminated |
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"&test[<]i3*;") != null); //terminated &
-            PAssert.That(() => Filter.TryParseSerializedFilter(@"|test[<]i3*;") != null); //terminated |
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<]i3* ", col => typeof(int)) == null); //extra space!
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"test<]i3*", col => typeof(int)) == null); //missing [
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<i3*", col => typeof(int)) == null); //missing ]
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"test[<<]i3*", col => typeof(int)) == null); //invalid op
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"&test[<]i3*", col => typeof(int)) == null); //unterminated &
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"|test[<]i3*", col => typeof(int)) == null); //unterminated |
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"&test[<]i3*,", col => typeof(int)) == null); //unterminated &
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"|test[<]i3*,", col => typeof(int)) == null); //unterminated |
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"&test[<]i3*;", col => typeof(int)) != null); //terminated &
+            PAssert.That(() => Filter.TryParseSerializedFilter(@"|test[<]i3*;", col => typeof(int)) != null); //terminated |
         }
 
         [Test]
@@ -263,8 +263,8 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void BooleansDeserializeOk()
         {
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, true).Equals(Filter.TryParseSerializedFilter("test[=]bTrue*")));
-            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, false).Equals(Filter.TryParseSerializedFilter("test[=]bFalse*")));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, true).Equals(Filter.TryParseSerializedFilter("test[=]bTrue*", col => typeof(bool))));
+            PAssert.That(() => Filter.CreateCriterium("test", BooleanComparer.Equal, false).Equals(Filter.TryParseSerializedFilter("test[=]bFalse*", col => typeof(bool))));
         }
 
         enum TestEnum
@@ -294,7 +294,7 @@ namespace ProgressOnderwijsUtilsTests
                 Filter.CreateCriterium("test", BooleanComparer.In, new[] { ";#", "*", "**#*" }),
             };
             foreach (var filter in filters) {
-                PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString())));
+                PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString(), col => typeof(string))));
             }
         }
 
@@ -332,9 +332,12 @@ namespace ProgressOnderwijsUtilsTests
             };
 
             foreach (var filter in filters) {
-                PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString())));
+                PAssert.That(() => filter.Equals(Filter.TryParseSerializedFilter(filter.SerializeToString(), col => GetTypeOrNull(((CriteriumFilter)filter).Waarde))));
             }
         }
+
+        static Type GetTypeOrNull(object val)
+            => val?.GetType();
 
         [Test]
         public void ComplexFilterSerialization1()
@@ -351,15 +354,15 @@ namespace ProgressOnderwijsUtilsTests
                         )
                     );
             PAssert.That(() => someFilter is CombinedFilter && ((CombinedFilter)someFilter).FilterLijst.OfType<CombinedFilter>().Any());
-            PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString())));
+            PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString(), col => typeof(int))));
         }
 
         [Test]
         public void EmptyArraySerializationPreservesType()
         {
             var someFilter = Filter.CreateCriterium("test", BooleanComparer.In, new decimal[] { });
-            PAssert.That(() => ((CriteriumFilter)Filter.TryParseSerializedFilter(someFilter.SerializeToString())).Waarde.GetType() == typeof(decimal[]));
-            PAssert.That(() => ((CriteriumFilter)Filter.TryParseSerializedFilter(someFilter.SerializeToString())).Waarde.GetType() != typeof(double[]));
+            PAssert.That(() => ((CriteriumFilter)Filter.TryParseSerializedFilter(someFilter.SerializeToString(), col => typeof(decimal))).Waarde.GetType() == typeof(decimal[]));
+            PAssert.That(() => ((CriteriumFilter)Filter.TryParseSerializedFilter(someFilter.SerializeToString(), col => typeof(decimal))).Waarde.GetType() != typeof(double[]));
         }
 
         [Test]
@@ -377,7 +380,7 @@ namespace ProgressOnderwijsUtilsTests
                     Filter.CreateCriterium("testB", BooleanComparer.LessThanOrEqual, 37)
                     );
             PAssert.That(() => someFilter is CombinedFilter && ((CombinedFilter)someFilter).FilterLijst.OfType<CombinedFilter>().Any());
-            PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString())));
+            PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString(), col => typeof(int))));
         }
 
         [Test]
@@ -395,7 +398,7 @@ namespace ProgressOnderwijsUtilsTests
                     Filter.CreateCriterium("testB", BooleanComparer.LessThanOrEqual, 37)
                     );
             PAssert.That(() => someFilter is CombinedFilter && ((CombinedFilter)someFilter).FilterLijst.OfType<CombinedFilter>().Any());
-            PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString())));
+            PAssert.That(() => someFilter.Equals(Filter.TryParseSerializedFilter(someFilter.SerializeToString(), col => typeof(int))));
         }
 
         static readonly BlaFilterObject[] data = new[] {
@@ -442,7 +445,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => run(filter100).Count() == 2);
             PAssert.That(() => run(filterNull).Count() == 8);
             PAssert.That(() => run(filter3).Count() == 1);
-            PAssert.That(() => run(Filter.TryParseSerializedFilter(filter100.SerializeToString())).Count() == 2);
+            PAssert.That(() => run(Filter.TryParseSerializedFilter(filter100.SerializeToString(), col => typeof(string))).Count() == 2);
         }
 
         [Test]
@@ -456,7 +459,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => run(filter100).Count() == 9);
             PAssert.That(() => run(filterNull).Count() == 3);
             PAssert.That(() => run(filter3).Count() == 10);
-            PAssert.That(() => run(Filter.TryParseSerializedFilter(filter100.SerializeToString())).Count() == 9);
+            PAssert.That(() => run(Filter.TryParseSerializedFilter(filter100.SerializeToString(), col => typeof(string))).Count() == 9);
         }
 
         [Test]
@@ -466,7 +469,7 @@ namespace ProgressOnderwijsUtilsTests
             var filterNotIn = Filter.CreateCriterium("StringVal", BooleanComparer.NotIn, new[] { "1", "3" }); //TODO:verify SQL results too; in particular with DBNULL
             PAssert.That(() => run(filterIn).Count() == 2);
             PAssert.That(() => run(filterNotIn).Count() == 10);
-            PAssert.That(() => run(Filter.TryParseSerializedFilter(filterNotIn.SerializeToString())).Count() == 10);
+            PAssert.That(() => run(Filter.TryParseSerializedFilter(filterNotIn.SerializeToString(), col => typeof(string))).Count() == 10);
         }
 
         [Test]
@@ -671,7 +674,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var date = new DateTime(2015, 8, 26);
             var filterText = Filter.CreateCriterium("abc", BooleanComparer.Equal, date).SerializeToString();
-            var value = (DateTime)((CriteriumFilter)Filter.TryParseSerializedFilter(filterText)).Waarde;
+            var value = (DateTime)((CriteriumFilter)Filter.TryParseSerializedFilter(filterText, col => typeof(DateTime))).Waarde;
             PAssert.That(() => value == date);
         }
 
@@ -679,7 +682,7 @@ namespace ProgressOnderwijsUtilsTests
         public void Parsing_serialized_filter_retains_enum_typing()
         {
             var filterText = Filter.CreateCriterium("dayOfWeek", BooleanComparer.Equal, DayOfWeek.Thursday).SerializeToString();
-            var value = ((CriteriumFilter)Filter.TryParseSerializedFilter(filterText)).Waarde;
+            var value = ((CriteriumFilter)Filter.TryParseSerializedFilter(filterText, col => typeof(DayOfWeek))).Waarde;
             PAssert.That(() => value.GetType() == typeof(DayOfWeek));
         }
 
@@ -687,7 +690,7 @@ namespace ProgressOnderwijsUtilsTests
         public void Parsing_serialized_filter_retains_enum_typing_of_arrays()
         {
             var filterText = Filter.CreateCriterium("dayOfWeek", BooleanComparer.In, new[] { DayOfWeek.Thursday }).SerializeToString();
-            var value = ((CriteriumFilter)Filter.TryParseSerializedFilter(filterText)).Waarde;
+            var value = ((CriteriumFilter)Filter.TryParseSerializedFilter(filterText, col => typeof(DayOfWeek))).Waarde;
             PAssert.That(() => value.GetType() == typeof(DayOfWeek[]));
         }
     }
