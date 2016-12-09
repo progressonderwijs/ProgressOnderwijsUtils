@@ -12,8 +12,8 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void InStruct()
         {
-            PAssert.That(() => PnetOmgeving.Ontwikkel.In(PnetOmgeving.Productie, PnetOmgeving.Ontwikkel));
-            PAssert.That(() => !PnetOmgeving.Ontwikkel.In(PnetOmgeving.Productie, PnetOmgeving.Test));
+            PAssert.That(() => PnetOmgeving.ForContinuousTestingOnMaster.In(PnetOmgeving.Productie, PnetOmgeving.ForContinuousTestingOnMaster));
+            PAssert.That(() => !PnetOmgeving.ForContinuousTestingOnMaster.In(PnetOmgeving.Productie, PnetOmgeving.Test));
             PAssert.That(() => !default(PnetOmgeving?).In(PnetOmgeving.Productie, PnetOmgeving.Test));
             PAssert.That(() => default(PnetOmgeving?).In(PnetOmgeving.Productie, PnetOmgeving.Test, null));
 
