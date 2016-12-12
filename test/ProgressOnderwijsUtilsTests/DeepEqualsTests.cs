@@ -9,7 +9,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public class DeepEqualsTest
     {
         [Test]

@@ -8,7 +8,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public sealed class MetaObjectBulkCopyTest : TestSuiteBase
     {
         static readonly BlaOk[] SampleObjects = new[] {

@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public class ArrayExtensionsTest
     {
         [Test]

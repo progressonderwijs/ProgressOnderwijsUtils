@@ -5,7 +5,7 @@ using Progress.Business.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public class FileDataTest
     {
         [Test]

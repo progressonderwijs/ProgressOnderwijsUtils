@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public sealed class DistinctArrayTest
     {
         [Test]

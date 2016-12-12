@@ -19,7 +19,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public class TableValuedParameterTest : TestsWithBusinessConnection
     {
         [Test]

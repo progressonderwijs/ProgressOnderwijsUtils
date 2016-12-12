@@ -11,7 +11,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public sealed class TypeExtensionTest
     {
         [Test]

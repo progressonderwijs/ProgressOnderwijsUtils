@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public sealed class XhtmlCleanerTest
     {
         const string sample =

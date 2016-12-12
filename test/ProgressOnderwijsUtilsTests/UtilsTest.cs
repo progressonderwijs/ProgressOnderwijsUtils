@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void SwapValue()
         {
             var one = 1;
@@ -98,7 +98,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void SwapReference()
         {
             var one = "1";
@@ -109,7 +109,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void NUnitSession()
         {
             Assert.That(Utils.IsInUnitTest());
@@ -129,14 +129,14 @@ namespace ProgressOnderwijsUtilsTests
 
         [Test]
         [TestCaseSource(nameof(MaandSpan))]
-        [Continuous]
+        [PullRequestTest]
         public int MaandSpanTest(DateTime d1, DateTime d2)
         {
             return Utils.MaandSpan(d1, d2);
         }
 
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void IsDbConnFailureTest()
         {
             PAssert.That(() => !Utils.IsDbConnectionFailure(new Exception()));
@@ -154,7 +154,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [Continuous]
+        [PullRequestTest]
         public void DateMaxTest()
         {
             DateTime? d1 = null;
@@ -209,7 +209,7 @@ namespace ProgressOnderwijsUtilsTests
         [TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, ExpectedResult = true)]
         [TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, ExpectedResult = true)]
         [TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, ExpectedResult = false)]
-        [Continuous]
+        [PullRequestTest]
         public bool GenerateForLanguage(DocumentLanguage doc, Taal language)
         {
             return doc.GenerateForLanguage(language);

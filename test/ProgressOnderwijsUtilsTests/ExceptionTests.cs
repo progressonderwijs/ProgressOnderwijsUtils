@@ -8,7 +8,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public sealed class ExceptionTests
     {
         [Test]

@@ -7,7 +7,7 @@ using Progress.Business.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public class SchemaSetTest
     {
         static readonly XElement VALID = new XElement(

@@ -9,7 +9,7 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [Continuous]
+    [PullRequestTest]
     public sealed class SListTest
     {
         [Test]
