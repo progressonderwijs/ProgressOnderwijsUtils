@@ -678,20 +678,117 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => value == date);
         }
 
+        static object ExtractSerializedValue(FilterBase criteriumFilter, Func<string, Type> colTypeLookup)
+            => ((CriteriumFilter)Filter.TryParseSerializedFilter(criteriumFilter.SerializeToString(), colTypeLookup)).Waarde;
+
         [Test]
-        public void Parsing_serialized_filter_retains_enum_typing()
+        public void Serializing_filter_with_enum_column_retains_enum_typing()
         {
-            var filterText = Filter.CreateCriterium("dayOfWeek", BooleanComparer.Equal, DayOfWeek.Thursday).SerializeToString();
-            var value = ((CriteriumFilter)Filter.TryParseSerializedFilter(filterText, col => typeof(DayOfWeek))).Waarde;
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.Equal, DayOfWeek.Thursday),
+                col => typeof(DayOfWeek)
+                );
             PAssert.That(() => value.GetType() == typeof(DayOfWeek));
         }
 
         [Test]
-        public void Parsing_serialized_filter_retains_enum_typing_of_arrays()
+        public void Serializing_filter_with_enum_column_retains_enum_typing_of_arrays()
         {
-            var filterText = Filter.CreateCriterium("dayOfWeek", BooleanComparer.In, new[] { DayOfWeek.Thursday }).SerializeToString();
-            var value = ((CriteriumFilter)Filter.TryParseSerializedFilter(filterText, col => typeof(DayOfWeek))).Waarde;
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.In, new[] { DayOfWeek.Thursday }),
+                col => typeof(DayOfWeek)
+                );
             PAssert.That(() => value.GetType() == typeof(DayOfWeek[]));
+        }
+
+        [Test]
+        public void Serializing_filter_with_nullable_enum_column_retains_enum_typing()
+        {
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.Equal, DayOfWeek.Thursday),
+                col => typeof(DayOfWeek?)
+                );
+            PAssert.That(() => value.GetType() == typeof(DayOfWeek));
+        }
+
+        [Test]
+        public void Serializing_filter_with_nullable_enum_column_retains_enum_typing_of_arrays()
+        {
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.In, new[] { DayOfWeek.Thursday }),
+                col => typeof(DayOfWeek?)
+                );
+            PAssert.That(() => value.GetType() == typeof(DayOfWeek[]));
+        }
+
+        [Test]
+        public void Deserializing_filter_with_enum_column_retains_string_typing()
+        {
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.Equal, "hello"),
+                col => typeof(DayOfWeek)
+                );
+            PAssert.That(() => value is string);
+        }
+
+        [Test]
+        public void Deserializing_filter_with_enum_column_retains_string_typing_of_arrays()
+        {
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.In, new[] { "hello" }),
+                col => typeof(DayOfWeek)
+                );
+            PAssert.That(() => value.GetType() == typeof(string[]));
+        }
+
+        [Test]
+        public void Deserializing_filter_with_enum_column_converts_values_of_underlying_type_to_enums()
+        {
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.Equal, 0),
+                col => typeof(DayOfWeek)
+                );
+            PAssert.That(() => value.GetType() == typeof(DayOfWeek));
+        }
+
+        [Test]
+        public void Deserializing_filter_with_enum_column_converts_arrays_of_underlying_type_to_enum_arrays()
+        {
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.In, new[] { 0 }),
+                col => typeof(DayOfWeek)
+                );
+            PAssert.That(() => value.GetType() == typeof(DayOfWeek[]));
+        }
+
+        [Test]
+        public void Deserializing_filter_with_enum_column_doesnt_convert_incompatible_values()
+        {
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.Equal, (long)0),
+                col => typeof(DayOfWeek)
+                );
+            PAssert.That(() => value is long);
+        }
+
+        [Test]
+        public void Deserializing_filter_with_enum_column_doesnt_convert_arrays_with_incompatible_values()
+        {
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.In, new[] { (long)0 }),
+                col => typeof(DayOfWeek)
+                );
+            PAssert.That(() => value.GetType() == typeof(long[]));
+        }
+
+        [Test]
+        public void Deserializing_filter_with_missing_column_retains_serialized_type()
+        {
+            var value = ExtractSerializedValue(
+                Filter.CreateCriterium("dayOfWeek", BooleanComparer.Equal, 0),
+                col => null
+                );
+            PAssert.That(() => value is int);
         }
     }
 
