@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils
         {
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);
             command.Connection = conn.Connection;
-            command.CommandTimeout = conn.CommandTimeoutInS; //60 by default
+            command.CommandTimeout = conn.CommandTimeoutInS;
             command.CommandText = queryText.Value;
             var cmdParams = command.Parameters;
             for (int i = 0; i < paramCount; i++) {
