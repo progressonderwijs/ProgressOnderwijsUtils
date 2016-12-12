@@ -790,6 +790,15 @@ namespace ProgressOnderwijsUtilsTests
                 );
             PAssert.That(() => value is int);
         }
+
+        [Test]
+        public void Filters_with_enum_array_values_arent_cleared_when_column_type_matches()
+        {
+            var filter = Filter.CreateCriterium("dayOfWeek", BooleanComparer.In, new[] { DayOfWeek.Thursday })
+                .ClearFilterWhenItContainsInvalidColumns(col => typeof(DayOfWeek));
+
+            PAssert.That(() => filter != null);
+        }
     }
 
     public sealed class BlaFilterObject : ValueBase<BlaFilterObject>, IMetaObject
