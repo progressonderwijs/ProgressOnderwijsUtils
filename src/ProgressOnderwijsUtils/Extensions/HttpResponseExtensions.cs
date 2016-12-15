@@ -8,5 +8,10 @@ namespace ProgressOnderwijsUtils
         {
             response.AddHeader("Content-Disposition", $"attachment;filename=\"{fileName}\";");
         }
+
+        public static void AddContentDispositionHeader(this HttpResponseBase response, string fileName)
+        {
+            response.AddHeader("Content-Disposition", $"attachment;filename=\"{fileName}\";");
+        }
     }
 }
