@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         static UserLabels AllUserLabels(BusinessConnection conn, RootOrganisatie rootOrganisatieId, string tableName)
-            => UserLabelDefinition.AllForTable(conn, rootOrganisatieId, tableName).Aggregate(UserLabels.None, (current, next) => current | next.UserLabel);
+            => UserLabelDefinition.GetDefinitionsByRootOrgByTable(conn, rootOrganisatieId, tableName).Aggregate(UserLabels.None, (current, next) => current | next.UserLabel);
 
         [Test]
         [DataControle]
