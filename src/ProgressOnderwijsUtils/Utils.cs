@@ -60,8 +60,8 @@ namespace ProgressOnderwijsUtils
         {
             const double relativeEpsilon = 1.0 / (1ul << 32);
 
-            double delta = Math.Abs(x - y);
-            double magnitude = Math.Abs(x) + Math.Abs(y);
+            var delta = Math.Abs(x - y);
+            var magnitude = Math.Abs(x) + Math.Abs(y);
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             return x == y || delta / magnitude < relativeEpsilon;
         }
@@ -73,8 +73,8 @@ namespace ProgressOnderwijsUtils
 
         public static bool ElfProef(int getal)
         {
-            int res = 0;
-            for (int i = 1; getal != 0; getal /= 10, ++i) {
+            var res = 0;
+            for (var i = 1; getal != 0; getal /= 10, ++i) {
                 res += i * (getal % 10);
             }
             return res != 0 && res % 11 == 0;
@@ -100,7 +100,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static void Swap<T>(ref T one, ref T other)
         {
-            T tmp = one;
+            var tmp = one;
             one = other;
             other = tmp;
         }
@@ -109,7 +109,7 @@ namespace ProgressOnderwijsUtils
         {
             const int retryMAX = 5;
 
-            int attempt = 0;
+            var attempt = 0;
             while (true) {
                 try {
                     return func();
@@ -231,7 +231,7 @@ namespace ProgressOnderwijsUtils
         // ReSharper restore UnusedMember.Global
         public static string GetSqlExceptionDetailsString(Exception exception)
         {
-            SqlException sql = exception as SqlException ?? exception.InnerException as SqlException;
+            var sql = exception as SqlException ?? exception.InnerException as SqlException;
             return sql == null ? null : $"[code='{sql.ErrorCode:x}'; number='{sql.Number}'; state='{sql.State}']";
         }
 
@@ -303,8 +303,8 @@ namespace ProgressOnderwijsUtils
         {
             if (incompleteDate != null) {
                 var incompleteDateFragments = incompleteDate.Split('-');
-                string month = incompleteDateFragments[1] == "00" ? "1" : incompleteDateFragments[1];
-                string date = incompleteDateFragments[2] == "00" ? "1" : incompleteDateFragments[2];
+                var month = incompleteDateFragments[1] == "00" ? "1" : incompleteDateFragments[1];
+                var date = incompleteDateFragments[2] == "00" ? "1" : incompleteDateFragments[2];
                 return DateTime.Parse(incompleteDateFragments[0] + "/" + month + "/" + date);
             } else {
                 return null;
@@ -341,11 +341,11 @@ namespace ProgressOnderwijsUtils
         static void SssHelper(StringBuilder target, long value, int index)
         {
             if (value != 0) {
-                int digit = (int)(value % 36);
+                var digit = (int)(value % 36);
                 SssHelper(target, value / 36, index + 1);
                 target.Append(MapToBase36Char(digit));
             } else {
-                int encodedLength = index + 13; //-6..6 for int32; but for 64-bit -13..13 so to futureproof this offset by 13
+                var encodedLength = index + 13; //-6..6 for int32; but for 64-bit -13..13 so to futureproof this offset by 13
                 target.Append(MapToBase36Char(encodedLength));
             }
         }
@@ -353,11 +353,11 @@ namespace ProgressOnderwijsUtils
         static void SssNegHelper(StringBuilder target, long value, int index)
         {
             if (value != 0) {
-                int digit = (int)(value % 36); //in range -35..0!!
+                var digit = (int)(value % 36); //in range -35..0!!
                 SssNegHelper(target, value / 36, index + 1);
                 target.Append(MapToBase36Char(35 + digit));
             } else {
-                int encodedLength = 13 - index; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
+                var encodedLength = 13 - index; //-6..6; but for 64-bit -13..13 so to futureproof this offset by 13
                 target.Append(MapToBase36Char(encodedLength));
             }
         }
@@ -376,14 +376,14 @@ namespace ProgressOnderwijsUtils
             //TODO:add tests
             var fI = culture.NumberFormat;
             var str = new char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
-            int idx = 0;
-            bool isNeg = number < 0;
+            var idx = 0;
+            var isNeg = number < 0;
             if (isNeg) {
                 number = -number;
             }
 
             ulong mult = 1;
-            for (int i = 0; i < precision; i++) {
+            for (var i = 0; i < precision; i++) {
                 mult *= 10;
             }
             var rounded = number * mult + 0.5;
@@ -451,7 +451,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static int LogBase2RoundedDown(uint x)
         {
-            int res = 0;
+            var res = 0;
             if (x >= 1 << 16) {
                 res += 16;
                 x = x >> 16;

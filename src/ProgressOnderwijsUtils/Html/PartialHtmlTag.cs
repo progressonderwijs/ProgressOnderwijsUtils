@@ -219,8 +219,8 @@ namespace ProgressOnderwijsUtils.Html
 
         void AppendEscapedText(ref FastShortStringBuilder stringBuilder)
         {
-            int uptoIndex = 0;
-            for (int textIndex = 0; textIndex < tagNameOrTextContent.Length; textIndex++) {
+            var uptoIndex = 0;
+            for (var textIndex = 0; textIndex < tagNameOrTextContent.Length; textIndex++) {
                 var c = tagNameOrTextContent[textIndex];
                 if (c <= '>') {
                     //https://html.spec.whatwg.org/#elements-2:normal-elements-4
@@ -246,8 +246,8 @@ namespace ProgressOnderwijsUtils.Html
 
         static void AppendEscapedAttributeValue(ref FastShortStringBuilder stringBuilder, string attrValue)
         {
-            int uptoIndex = 0;
-            for (int textIndex = 0; textIndex < attrValue.Length; textIndex++) {
+            var uptoIndex = 0;
+            for (var textIndex = 0; textIndex < attrValue.Length; textIndex++) {
                 var c = attrValue[textIndex];
                 if (c <= '&') {
                     //https://html.spec.whatwg.org/#attributes-2
@@ -269,7 +269,7 @@ namespace ProgressOnderwijsUtils.Html
         void AppendChildrenToBuilder(ref FastShortStringBuilder stringBuilder)
         {
             if (childNodes != null) {
-                for (int i = 0; i < childNodes.Length; i++) {
+                for (var i = 0; i < childNodes.Length; i++) {
                     childNodes[i].AppendToBuilder(ref stringBuilder);
                 }
             }

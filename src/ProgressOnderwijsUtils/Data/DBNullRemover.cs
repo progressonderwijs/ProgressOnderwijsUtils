@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
             try {
                 return FieldHelperClass<T>.Extractor(fromdatabase);
             } catch (Exception e) {
-                string valStr =
+                var valStr =
                     fromdatabase == null
                         ? "<null>"
                         : fromdatabase == DBNull.Value

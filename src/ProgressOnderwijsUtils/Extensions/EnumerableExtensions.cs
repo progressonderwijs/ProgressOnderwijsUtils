@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
             if (matcher == null) {
                 throw new ArgumentNullException(nameof(matcher));
             }
-            int retval = 0;
+            var retval = 0;
             foreach (var item in list) {
                 if (matcher(item)) {
                     return retval;
@@ -191,7 +191,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         static string ToCsvValue<T>(this T item, string delimiter, bool useQuotesForStrings)
         {
-            string csvValueWithoutQuotes = item?.ToString() ?? "";
+            var csvValueWithoutQuotes = item?.ToString() ?? "";
 
             if (csvValueWithoutQuotes.Contains(delimiter) && !useQuotesForStrings) {
                 new ArgumentException("item contains illegal characters, use useQuotesForStrings=true").ThrowPreconditionViolation();

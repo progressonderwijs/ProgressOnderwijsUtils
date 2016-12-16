@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
         {
             var result = new Dictionary<string, string>();
             if (reader.HasAttributes) {
-                bool next = reader.MoveToFirstAttribute();
+                var next = reader.MoveToFirstAttribute();
                 while (next) {
                     result[reader.Name.ToLower()] = reader.Value;
                     next = reader.MoveToNextAttribute();

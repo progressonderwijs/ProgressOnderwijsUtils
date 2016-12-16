@@ -42,14 +42,14 @@ namespace ProgressOnderwijsUtils.Radius
         //Utility function to make working with RNGCryptoServiceProvider easier
         public static byte[] NextBytes(this RNGCryptoServiceProvider secureRandom, int byteCount)
         {
-            byte[] data = new byte[byteCount];
+            var data = new byte[byteCount];
             secureRandom.GetBytes(data);
             return data;
         }
 
         public static byte NextByte(this RNGCryptoServiceProvider secureRandom)
         {
-            byte[] data = new byte[1];
+            var data = new byte[1];
             secureRandom.GetBytes(data);
             return data[0];
         }
@@ -65,9 +65,9 @@ namespace ProgressOnderwijsUtils.Radius
             var secureRandom = new RNGCryptoServiceProvider();
 
             byte requestIdentifier = secureRandom.NextByte();
-            byte[] requestAuthenticator = secureRandom.NextBytes(16);
+            var requestAuthenticator = secureRandom.NextBytes(16);
 
-            List<RadiusAttribute> radiusAttributes = new List<RadiusAttribute>(extraAttributes);
+            var radiusAttributes = new List<RadiusAttribute>(extraAttributes);
             radiusAttributes.Add(new RadiusAttribute(RadiusAttributeType.UserName, username));
             radiusAttributes.Add(new RadiusAttribute(RadiusAttributeType.UserPassword, HashPapPassword(password, sharedSecret, requestAuthenticator)));
             if (radiusAttributes.Count != radiusAttributes.Select(attr => attr.AttributeType).Distinct().Count()) {
@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils.Radius
                 foreach (var serializedAttribute in radiusAttributes.Select(attr => attr.Paket)) {
                     requestStream.Write(serializedAttribute, 0, serializedAttribute.Length);
                 }
-                byte[] request = requestStream.ToArray();
+                var request = requestStream.ToArray();
                 if (request.Length > short.MaxValue) { //perhaps actually ushort.Length is permitted, but we're taking no risks
                     throw new Exception("nRadius request too large");
                 }
@@ -105,15 +105,15 @@ namespace ProgressOnderwijsUtils.Radius
 
         static byte[] AuthNetworkHelper(string serverHostname, byte[] request)
         {
-            using (UdpClient udpClient = new UdpClient()) {
+            using (var udpClient = new UdpClient()) {
                 udpClient.Client.SendTimeout = udpTimeoutMs;
                 udpClient.Client.ReceiveTimeout = udpTimeoutMs;
                 udpClient.Ttl = UDP_TTL;
-                IPEndPoint RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
+                var RemoteIpEndPoint = new IPEndPoint(IPAddress.Any, 0);
 
                 udpClient.Connect(serverHostname, pRadiusPort);
                 udpClient.Send(request, request.Length);
-                byte[] response = udpClient.Receive(ref RemoteIpEndPoint); //TODO: parallelization issue!!!
+                var response = udpClient.Receive(ref RemoteIpEndPoint); //TODO: parallelization issue!!!
 
                 udpClient.Close(); //probably redundant; docs (as usual) just don't say.
                 return response;
@@ -136,14 +136,14 @@ namespace ProgressOnderwijsUtils.Radius
 
             // Checking the length field of the paket. This value must be equal to the byteArray length
             // "receivedBytes.Length"
-            int responseLen = ((int)response[2] << 8) + (int)response[3];
+            var responseLen = ((int)response[2] << 8) + (int)response[3];
             if (responseLen != response.Length) {
                 return RadiusAuthResults.ServiceErrorPacketMalformed; //error
             }
 
-            byte[] receivedMd5 = response.Skip(4).Take(16).ToArray();
+            var receivedMd5 = response.Skip(4).Take(16).ToArray();
 
-            byte[] verificationStream =
+            var verificationStream =
                 response.Take(4) //Code+ID+Length
                     .Concat(requestAuthenticator) //request authenticator
                     .Concat(response.Skip(20)) //attributes
@@ -178,16 +178,16 @@ namespace ProgressOnderwijsUtils.Radius
                 //then, for the next 16-bytes, a new pad is generated, and so on.
 
                 // Initially pad is MD5(sharedSecret + requestAuthenticator)
-                byte[] pMD5Sum = md5.ComputeHash(sharedSecret.Concat(requestAuthenticator).ToArray());
+                var pMD5Sum = md5.ComputeHash(sharedSecret.Concat(requestAuthenticator).ToArray());
 
                 // how many rounds are needed == number of 16-byte "chunks" in password (rounded up)
-                int nHashRounds = (password.Length + 15) / 16;
-                byte[] Result = new byte[nHashRounds * 16];
+                var nHashRounds = (password.Length + 15) / 16;
+                var Result = new byte[nHashRounds * 16];
 
-                for (int j = 0; j < nHashRounds; j++) {
-                    for (int i = 0; i < 16; i++) {
-                        int pos = j * 16 + i;
-                        byte pp = pos < password.Length ? (byte)password[pos] : (byte)0;
+                for (var j = 0; j < nHashRounds; j++) {
+                    for (var i = 0; i < 16; i++) {
+                        var pos = j * 16 + i;
+                        var pp = pos < password.Length ? (byte)password[pos] : (byte)0;
                         Result[pos] = (byte)(pMD5Sum[i] ^ pp);
                     }
 

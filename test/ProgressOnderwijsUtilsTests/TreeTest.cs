@@ -252,7 +252,7 @@ namespace ProgressOnderwijsUtilsTests
             var input = Tree.BuildRecursively(0u, i => i < 100000 ? new[] { i + 1 } : new uint[0]);
             var output = Tree.BuildRecursively(0L, i => i < 100000 ? new[] { i + 1 } : new long[0]);
             var mappedInput = input.Select(i => (long)i);
-            bool areEqual = mappedInput.Equals(output);
+            var areEqual = mappedInput.Equals(output);
             Assert.That(areEqual, "Deep trees should be selectable and comparable too");
             Assert.That(input.Height(), Is.EqualTo(100001));
         }

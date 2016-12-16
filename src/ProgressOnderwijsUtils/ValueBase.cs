@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils
 
         static Func<T, string> byPublicMembers()
         {
-            Type type = typeof(T);
+            var type = typeof(T);
             var refEqMethod = ((Func<object, object, bool>)ReferenceEquals).Method;
             var toStringMethod = typeof(ToStringByMembers<T>).GetMethod("ToString", BindingFlags.Static | BindingFlags.NonPublic);
             var concatMethod = ((Func<string, string, string>)string.Concat).Method;

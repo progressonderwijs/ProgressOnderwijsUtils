@@ -19,8 +19,8 @@ namespace ProgressOnderwijsUtilsTests
         {
             var tidiedSample = XhtmlCleaner.SanitizeHtmlString(sample);
             Assert.That(StringUtils.LevenshteinDistanceScaled(sample, tidiedSample), Is.LessThan(0.05));
-            int lastLength = tidiedSample.Length;
-            for (int i = tidiedSample.Length + 10; i >= 0; i--) {
+            var lastLength = tidiedSample.Length;
+            for (var i = tidiedSample.Length + 10; i >= 0; i--) {
                 var limitedVer = XhtmlCleaner.TidyHtmlStringAndLimitLength(sample, i);
                 Assert.That(limitedVer.Length, Is.LessThanOrEqualTo(i));
                 if (limitedVer.Length < i) { // if more than "needed" trimmed then:

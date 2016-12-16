@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var array600 = PooledExponentialBufferAllocator<int>.GetByLength(600);
             PooledExponentialBufferAllocator<int>.ReturnToPool(array600);
-            for (int i = 0; i < 10000; i++) {
+            for (var i = 0; i < 10000; i++) {
                 var secondArray = PooledExponentialBufferAllocator<int>.GetByLength(600);
                 if (secondArray == array600) {
                     return;
@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtilsTests
         public void ANonReleasedArrayIsNotReused()
         {
             var array6 = PooledExponentialBufferAllocator<int>.GetByLength(6);
-            for (int i = 0; i < 10000; i++) {
+            for (var i = 0; i < 10000; i++) {
                 var secondArray = PooledExponentialBufferAllocator<int>.GetByLength(6);
                 if (secondArray == array6) {
                     throw new Exception("The non-released array was reused!");

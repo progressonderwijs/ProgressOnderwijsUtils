@@ -12,8 +12,8 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentException("Need to test for at least 1 run", nameof(numRuns));
             }
             var bestTime = TimeSpan.MaxValue;
-            Stopwatch timer = new Stopwatch();
-            for (int i = 0; i < numRuns; i++) {
+            var timer = new Stopwatch();
+            for (var i = 0; i < numRuns; i++) {
                 timer.Restart();
                 a();
                 timer.Stop();

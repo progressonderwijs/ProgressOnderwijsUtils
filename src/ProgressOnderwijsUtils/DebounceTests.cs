@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
         [Test]
         public void DebounceCallsHandlersWithMutualExclusion()
         {
-            int inCriticalSection = 0;
+            var inCriticalSection = 0;
             var counts = new BlockingCollection<int>();
             var handler = HandlerUtils.Debounce(
                 TimeSpan.FromMilliseconds(35),
@@ -57,8 +57,8 @@ namespace ProgressOnderwijsUtils
                     Thread.Sleep(100);
                     Interlocked.Decrement(ref inCriticalSection);
                 });
-            for (int n = 0; n < 5; n++) {
-                int runs = counts.Count;
+            for (var n = 0; n < 5; n++) {
+                var runs = counts.Count;
                 handler();
                 handler();
 

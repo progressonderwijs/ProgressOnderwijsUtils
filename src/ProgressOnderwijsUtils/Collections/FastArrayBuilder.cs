@@ -41,10 +41,10 @@ namespace ProgressOnderwijsUtils.Collections
                 Array.Resize(ref retval, idx);
                 return retval;
             } else {
-                int sumlength = (1 << (sI + InitSize2Pow - 1)) + idx - 1;
+                var sumlength = (1 << (sI + InitSize2Pow - 1)) + idx - 1;
                 var retval = new T[sumlength];
-                int j = 0;
-                for (int sJ = 0; sJ < sI; sJ++) {
+                var j = 0;
+                for (var sJ = 0; sJ < sI; sJ++) {
                     var subarr = segments[sJ];
                     subarr.CopyTo(retval, j);
                     j += subarr.Length;

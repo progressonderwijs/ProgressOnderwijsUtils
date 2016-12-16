@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
             using (var md5computer = MD5.Create()) {
                 var md5 = md5computer.ComputeHash(data);
                 var sb = new StringBuilder();
-                for (int i = 0; i < md5.Length; i++) {
+                for (var i = 0; i < md5.Length; i++) {
                     sb.Append(md5[i].ToString("x2"));
                 }
                 return sb.ToString();

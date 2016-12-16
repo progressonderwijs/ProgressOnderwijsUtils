@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
 
             var srcFieldsByName = mkFieldDict(srcFields);
             var dstFieldsByName = mkFieldDict(dstFields);
-            bool colCountMismatch = srcFieldsByName.Count > dstFieldsByName.Count
+            var colCountMismatch = srcFieldsByName.Count > dstFieldsByName.Count
                 || mode == FieldMappingMode.RequireExactColumnMatches && srcFieldsByName.Count < dstFieldsByName.Count;
 
             if (colCountMismatch || srcFieldsByName.Any(
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils
                 var nameMatchedCols = srcFieldsByName.Keys.Where(dstFieldsByName.ContainsKey);
                 var typeMismatchCols = nameMatchedCols.Where(name => srcFieldsByName[name].UnderlyingType != dstFieldsByName[name].UnderlyingType);
 
-                string typeMismatchMessage = !typeMismatchCols.Any()
+                var typeMismatchMessage = !typeMismatchCols.Any()
                     ? ""
                     : "\n\nType mismatches (src <> dst):\n"
                         + typeMismatchCols.Select(

@@ -51,11 +51,11 @@ namespace ProgressOnderwijsUtils
         public uint GetUInt32(uint excludedBound)
         {
             // Proved in: http://www.google.com/url?q=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F11758809%2Fwhat-is-the-optimal-algorithm-for-generating-an-unbiased-random-integer-within-a&sa=D&sntz=1&usg=AFQjCNEtQkf0HYEkTn6Npvmyu2TDKPQCxA
-            uint modErr = (uint.MaxValue % excludedBound + 1) % excludedBound;
-            uint safeIncBound = uint.MaxValue - modErr;
+            var modErr = (uint.MaxValue % excludedBound + 1) % excludedBound;
+            var safeIncBound = uint.MaxValue - modErr;
 
             while (true) {
-                uint val = GetUInt32();
+                var val = GetUInt32();
                 if (val <= safeIncBound) {
                     return val % excludedBound;
                 }
@@ -65,11 +65,11 @@ namespace ProgressOnderwijsUtils
         [CLSCompliant(false), UsefulToKeep("library method")]
         public ulong GetUInt64(ulong bound)
         {
-            ulong modErr = (ulong.MaxValue % bound + 1) % bound;
-            ulong safeIncBound = ulong.MaxValue - modErr;
+            var modErr = (ulong.MaxValue % bound + 1) % bound;
+            var safeIncBound = ulong.MaxValue - modErr;
 
             while (true) {
-                ulong val = GetUInt64();
+                var val = GetUInt64();
                 if (val <= safeIncBound) {
                     return val % bound;
                 }
@@ -84,8 +84,8 @@ namespace ProgressOnderwijsUtils
         public string GetString(int length, char min, char max)
         {
             var letters = (uint)max - min + 1;
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < length; i++) {
+            var sb = new StringBuilder();
+            for (var i = 0; i < length; i++) {
                 sb.Append((char)(GetUInt32(letters) + min));
             }
             return sb.ToString();

@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
             Bitmap bitmap = null;
             try {
                 bitmap = new Bitmap(newWidth, newHeight);
-                using (Graphics g = Graphics.FromImage(bitmap)) {
+                using (var g = Graphics.FromImage(bitmap)) {
                     setHQ(g);
                     g.DrawImage(oldImage, new Rectangle(0, 0, newWidth, newHeight));
                 }
@@ -58,10 +58,10 @@ namespace ProgressOnderwijsUtils
         /// <returns>A new Bitmap (don't forget to Dispose it!)</returns>
         public static Bitmap DownscaleAndClip(Image oldImage, int newWidth, int newHeight)
         {
-            int oldWidth = oldImage.Width;
-            int oldHeight = oldImage.Height;
+            var oldWidth = oldImage.Width;
+            var oldHeight = oldImage.Height;
             Bitmap bitmap = null;
-            Rectangle clipRectangle = ClipRectangle(oldWidth, oldHeight, newWidth, newHeight);
+            var clipRectangle = ClipRectangle(oldWidth, oldHeight, newWidth, newHeight);
             if (clipRectangle.Width * clipRectangle.Height < newWidth * newHeight) {
                 newWidth = clipRectangle.Width;
                 newHeight = clipRectangle.Height;
@@ -69,7 +69,7 @@ namespace ProgressOnderwijsUtils
 
             try {
                 bitmap = new Bitmap(newWidth, newHeight);
-                using (Graphics g = Graphics.FromImage(bitmap)) {
+                using (var g = Graphics.FromImage(bitmap)) {
                     setHQ(g);
                     g.DrawImage(
                         oldImage,
@@ -100,15 +100,15 @@ namespace ProgressOnderwijsUtils
         /// <returns>The bytes of the resulting JPEG, or NULL if the original is corrupt or too large.</returns>
         public static byte[] Downscale_Clip_ConvertToJpeg(byte[] origImageData, int targetWidth, int targetHeight)
         {
-            using (Image uploadedImage = ToImage(origImageData)) {
-                int oldHeight = uploadedImage.Height;
-                int oldWidth = uploadedImage.Width;
+            using (var uploadedImage = ToImage(origImageData)) {
+                var oldHeight = uploadedImage.Height;
+                var oldWidth = uploadedImage.Width;
 
                 if (oldHeight > MAX_IMAGE_DIMENSION || oldWidth > MAX_IMAGE_DIMENSION || oldHeight < 1 || oldWidth < 1) {
                     return null;
                 }
-                using (Bitmap thumbnail = DownscaleAndClip(uploadedImage, targetWidth, targetHeight))
-                using (MemoryStream ms = new MemoryStream()) {
+                using (var thumbnail = DownscaleAndClip(uploadedImage, targetWidth, targetHeight))
+                using (var ms = new MemoryStream()) {
                     SaveImageAsJpeg(thumbnail, ms); //always resave as a security precaution.
                     return ms.ToArray();
                 }
@@ -131,19 +131,19 @@ namespace ProgressOnderwijsUtils
         public static Rectangle ClipRectangle(int oldWidth, int oldHeight, int aspectWidth, int aspectHeight)
         {
             //is the input image too wide or too tall?
-            bool tooWide = oldWidth * aspectHeight > aspectWidth * oldHeight;
+            var tooWide = oldWidth * aspectHeight > aspectWidth * oldHeight;
 
-            int clipWidth = tooWide ? (oldHeight * aspectWidth + aspectHeight / 2) / aspectHeight : oldWidth;
-            int clipHeight = tooWide ? oldHeight : (oldWidth * aspectHeight + aspectWidth / 2) / aspectWidth;
-            int clipX = (oldWidth - clipWidth) / 2;
-            int clipY = (oldHeight - clipHeight) / 2;
+            var clipWidth = tooWide ? (oldHeight * aspectWidth + aspectHeight / 2) / aspectHeight : oldWidth;
+            var clipHeight = tooWide ? oldHeight : (oldWidth * aspectHeight + aspectWidth / 2) / aspectWidth;
+            var clipX = (oldWidth - clipWidth) / 2;
+            var clipY = (oldHeight - clipHeight) / 2;
             return new Rectangle(clipX, clipY, clipWidth, clipHeight);
         }
 
         public static void SaveImageAsJpeg(Image image, Stream outputStream, int? quality = null)
         {
-            ImageCodecInfo jpgInfo = ImageCodecInfo.GetImageEncoders().First(codecInfo => codecInfo.MimeType == "image/jpeg");
-            using (EncoderParameters encParams = new EncoderParameters(1)) {
+            var jpgInfo = ImageCodecInfo.GetImageEncoders().First(codecInfo => codecInfo.MimeType == "image/jpeg");
+            using (var encParams = new EncoderParameters(1)) {
                 encParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)(quality ?? 90)); //quality should be in the range [0..100]
                 image.Save(outputStream, jpgInfo, encParams);
             }
@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
 
         public static void SaveResizedImage(byte[] pasfoto, int targetWidth, int targetHeight, Stream outputStream)
         {
-            using (Image fromDatabase = ToImage(pasfoto)) {
+            using (var fromDatabase = ToImage(pasfoto)) {
                 if (fromDatabase.Height == targetHeight) {
                     outputStream.Write(pasfoto, 0, pasfoto.Length);
                 } else {

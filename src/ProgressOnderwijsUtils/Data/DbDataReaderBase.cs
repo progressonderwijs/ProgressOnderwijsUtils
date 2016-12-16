@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
             var str = GetString(ordinal);
             length = Math.Min(length, str.Length);
             if (buffer != null && buffer.Length >= bufferOffset + length) {
-                for (int i = (int)dataOffset; i < length; i++) {
+                for (var i = (int)dataOffset; i < length; i++) {
                     buffer[bufferOffset + i] = str[i];
                 }
                 return Math.Max(0, length - dataOffset);
@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils
                 afterFirstRowPeek = false;
                 return hasRows;
             } else {
-                bool nextRow = ReadImpl();
+                var nextRow = ReadImpl();
                 if (nextRow) {
                     hasRows = true;
                 }
@@ -99,7 +99,7 @@ namespace ProgressOnderwijsUtils
         public override int GetValues(object[] values)
         {
             var fieldsTodo = Math.Min(values.Length, FieldCount);
-            for (int i = 0; i < fieldsTodo; i++) {
+            for (var i = 0; i < fieldsTodo; i++) {
                 values[i] = GetValue(i);
             }
             return fieldsTodo;

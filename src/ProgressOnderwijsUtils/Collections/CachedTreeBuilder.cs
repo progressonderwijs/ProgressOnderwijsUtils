@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils.Collections
                     return;
                 }
                 var finishedKidsNodes = new Tree<T>[tempKids.Length];
-                for (int i = 0; i < finishedKidsNodes.Length; i++) {
+                for (var i = 0; i < finishedKidsNodes.Length; i++) {
                     finishedKidsNodes[i] = tempKids[i].finishedNode;
                     if (finishedKidsNodes[i] == null) {
                         throw new InvalidOperationException("Internal error detected!");

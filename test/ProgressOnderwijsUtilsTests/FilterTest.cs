@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtilsTests
             var filter = Filter.CreateCriterium("test", BooleanComparer.Equal, CurrentTimeToken.Instance);
             var q = filter.ToParameterizedSql();
             var time = DateTime.Now;
-            bool matcheSomeOldTime = Enumerable.Range(0, 20000).Select(offset => SQL($"test = {time.AddTicks(-offset)}")).Any(qIdeal => q == qIdeal);
+            var matcheSomeOldTime = Enumerable.Range(0, 20000).Select(offset => SQL($"test = {time.AddTicks(-offset)}")).Any(qIdeal => q == qIdeal);
             Assert.True(matcheSomeOldTime, "Kon geen tijd dichtbij DateTime.Now vinden die de CurrentTimeToken matched!");
         }
 

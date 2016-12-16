@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
         public OrderByColumns(IEnumerable<ColumnSort> order)
         {
             var columns = new ColumnSort[4];
-            int idx = 0;
+            var idx = 0;
             var ordinalIgnoreCase = StringComparer.OrdinalIgnoreCase;
             foreach (var columnSort in order) {
                 if (!HasDuplicateIn(columnSort, columns, idx, ordinalIgnoreCase)) {
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public ColumnSort? GetSortColumn(string column)
         {
-            foreach (ColumnSort sc in DirectAcessColumns) {
+            foreach (var sc in DirectAcessColumns) {
                 if (streq(sc.ColumnName, column)) {
                     return sc;
                 }
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils
         [CodeThatsOnlyUsedForTests]
         public int? GetColumnSortRank(string col)
         {
-            int index = DirectAcessColumns.IndexOf(sc => sc.ColumnName.Equals(col, StringComparison.OrdinalIgnoreCase));
+            var index = DirectAcessColumns.IndexOf(sc => sc.ColumnName.Equals(col, StringComparison.OrdinalIgnoreCase));
             return index == -1 ? default(int?) : index + 1;
         }
 
@@ -163,8 +163,8 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         static bool HasDuplicateIn(ColumnSort columnSort, ColumnSort[] existing, int existingCount, StringComparer comparer)
         {
-            bool dup = false;
-            for (int j = 0; j < existingCount; j++) {
+            var dup = false;
+            for (var j = 0; j < existingCount; j++) {
                 if (comparer.Equals(existing[j].ColumnName, columnSort.ColumnName)) {
                     dup = true;
                     break;

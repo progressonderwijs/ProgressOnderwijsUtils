@@ -121,25 +121,25 @@ namespace ProgressOnderwijsUtils
         public static int LevenshteinDistance(string s, string t, int? substitutionCost = null)
         {
             //modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
-            int subsCost = substitutionCost ?? 1;
-            int n = s.Length; //length of s
-            int m = t.Length; //length of t
-            int[,] d = new int[n + 1, m + 1]; // matrix
+            var subsCost = substitutionCost ?? 1;
+            var n = s.Length; //length of s
+            var m = t.Length; //length of t
+            var d = new int[n + 1, m + 1]; // matrix
             if (n == 0) {
                 return m;
             }
             if (m == 0) {
                 return n;
             }
-            for (int i = 0; i <= n; i++) {
+            for (var i = 0; i <= n; i++) {
                 d[i, 0] = i;
             }
-            for (int j = 0; j <= m; j++) {
+            for (var j = 0; j <= m; j++) {
                 d[0, j] = j;
             }
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < m; j++) {
-                    int cost = t[j] == s[i] ? 0 : subsCost; // cost
+            for (var i = 0; i < n; i++) {
+                for (var j = 0; j < m; j++) {
+                    var cost = t[j] == s[i] ? 0 : subsCost; // cost
                     d[i + 1, j + 1] = Math.Min(Math.Min(d[i, j + 1] + 1, d[i + 1, j] + 1), d[i, j] + cost);
                 }
             }
@@ -192,7 +192,7 @@ namespace ProgressOnderwijsUtils
                                         | vd | v.d. | v\/d
                                         | au | aux | a | à | à la | a la 
                                         | \- |\s|\s+|\-+";
-            string[] newstr = Regex.Split(inp, Regex.Replace(expression, @"\s+", " "));
+            var newstr = Regex.Split(inp, Regex.Replace(expression, @"\s+", " "));
             return newstr.Aggregate(
                 inp,
                 (current, t) =>

@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils.Collections
             if (x.Length != y.Length) {
                 return false;
             }
-            for (int i = 0; i < x.Length; i++) {
+            for (var i = 0; i < x.Length; i++) {
                 if (!underlying.Equals(x[i], y[i])) {
                     return false;
                 }

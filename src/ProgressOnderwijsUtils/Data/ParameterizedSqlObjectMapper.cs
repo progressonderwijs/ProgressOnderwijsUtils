@@ -187,7 +187,7 @@ namespace ProgressOnderwijsUtils
             if (a.Length != b.Length) {
                 return false;
             }
-            for (int i = 0; i < a.Length; i++) {
+            for (var i = 0; i < a.Length; i++) {
                 int aChar = a[i];
                 int bChar = b[i];
                 if (aChar != bChar) {
@@ -253,8 +253,8 @@ namespace ProgressOnderwijsUtils
 
             public static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, Type type)
             {
-                bool canBeNull = type.CanBeNull();
-                Type underlyingType = type.GetNonNullableUnderlyingType();
+                var canBeNull = type.CanBeNull();
+                var underlyingType = type.GetNonNullableUnderlyingType();
                 var iConstant = Expression.Constant(i);
                 var callExpr = underlyingType == typeof(byte[])
                     ? Expression.Call(getterMethodsByType[underlyingType], readerParamExpr, iConstant)
@@ -336,7 +336,7 @@ namespace ProgressOnderwijsUtils
                         var primeArr = ColHashPrimes;
                         Cols = PooledSmallBufferAllocator<string>.GetByLength(reader.FieldCount);
                         cachedHash = 0;
-                        for (int i = 0; i < Cols.Length; i++) {
+                        for (var i = 0; i < Cols.Length; i++) {
                             var name = reader.GetName(i);
                             Cols[i] = name;
                             cachedHash += (ulong)primeArr[i] * CaseInsensitiveHash(name);
@@ -349,7 +349,7 @@ namespace ProgressOnderwijsUtils
                         if (cachedHash != other.cachedHash || Cols.Length != oCols.Length) {
                             return false;
                         }
-                        for (int i = 0; i < Cols.Length; i++) {
+                        for (var i = 0; i < Cols.Length; i++) {
                             if (!CaseInsensitiveEquality(Cols[i], oCols[i])) {
                                 return false;
                             }
@@ -370,7 +370,7 @@ namespace ProgressOnderwijsUtils
 
                 static ByMetaObjectImpl()
                 {
-                    int writablePropCount = 0;
+                    var writablePropCount = 0;
                     foreach (var mp in metadata) { //perf:no LINQ
                         if (mp.CanWrite && SupportsType(mp.DataType)) {
                             writablePropCount++;
@@ -380,7 +380,7 @@ namespace ProgressOnderwijsUtils
                     ColHashPrimes = new uint[writablePropCount];
 
                     using (var pGen = Utils.Primes().GetEnumerator()) {
-                        for (int i = 0; i < ColHashPrimes.Length && pGen.MoveNext(); i++) {
+                        for (var i = 0; i < ColHashPrimes.Length && pGen.MoveNext(); i++) {
                             ColHashPrimes[i] = (uint)pGen.Current;
                         }
                     }
@@ -455,7 +455,7 @@ namespace ProgressOnderwijsUtils
                 {
                     var isMetaPropertyIndexAlreadyUsed = new bool[metadata.Count];
                     var cols = orderingP.Cols;
-                    for (int i = 0; i < cols.Length; i++) {
+                    for (var i = 0; i < cols.Length; i++) {
                         var colName = cols[i];
                         var metaPropertyIndexOrNull = metadata.IndexByName.GetOrDefaultR(colName, default(int?));
                         if (metaPropertyIndexOrNull == null) {
@@ -599,7 +599,7 @@ namespace ProgressOnderwijsUtils
         [UsedImplicitly]
         public static byte[] GetBytes(this IDataRecord row, int colIndex)
         {
-            long byteCount = row.GetBytes(colIndex, 0L, null, 0, 0);
+            var byteCount = row.GetBytes(colIndex, 0L, null, 0, 0);
             if (byteCount > int.MaxValue) {
                 throw new NotSupportedException("Array too large!");
             }
@@ -614,7 +614,7 @@ namespace ProgressOnderwijsUtils
         [UsedImplicitly]
         public static char[] GetChars(this IDataRecord row, int colIndex)
         {
-            long charCount = row.GetChars(colIndex, 0L, null, 0, 0);
+            var charCount = row.GetChars(colIndex, 0L, null, 0, 0);
             if (charCount > int.MaxValue) {
                 throw new NotSupportedException("Array too large!");
             }

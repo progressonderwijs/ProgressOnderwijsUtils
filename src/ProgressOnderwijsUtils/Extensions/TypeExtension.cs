@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtils
         {
             var typename = type.FullName;
             // ReSharper disable PossibleNullReferenceException
-            int backtickIdx = typename.IndexOf('`');
+            var backtickIdx = typename.IndexOf('`');
             // ReSharper restore PossibleNullReferenceException
             return backtickIdx == -1 ? typename : typename.Substring(0, backtickIdx);
         }

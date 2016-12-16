@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils
 
         static IMetaProperty<T>[] GetMetaPropertiesImpl()
         {
-            int index = 0;
+            var index = 0;
             var propertyInfos = typeof(T).GetProperties();
             var metaProperties = new IMetaProperty<T>[propertyInfos.Length];
             foreach (var propertyInfo in propertyInfos) {

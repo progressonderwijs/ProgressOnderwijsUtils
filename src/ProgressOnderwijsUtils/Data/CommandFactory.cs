@@ -78,7 +78,7 @@ namespace ProgressOnderwijsUtils
             command.CommandTimeout = conn.CommandTimeoutInS;
             command.CommandText = queryText.Value;
             var cmdParams = command.Parameters;
-            for (int i = 0; i < paramCount; i++) {
+            for (var i = 0; i < paramCount; i++) {
                 if (paramObjs[i].TypeName != null) {
                     cmdParams[i].SqlDbType = SqlDbType.Structured;
                     cmdParams[i].TypeName = paramObjs[i].TypeName;

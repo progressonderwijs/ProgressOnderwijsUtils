@@ -236,10 +236,10 @@ namespace ProgressOnderwijsUtils
         static ParamRefSubString ParamRefNextMatch(string query, int pos, int length)
         {
             while (pos < length) {
-                char c = query[pos];
+                var c = query[pos];
                 if (c == '{') {
                     var startPos = pos;
-                    int num = 0;
+                    var num = 0;
                     for (pos++; pos < length; pos++) {
                         c = query[pos];
                         if (c >= '0' && c <= '9') {

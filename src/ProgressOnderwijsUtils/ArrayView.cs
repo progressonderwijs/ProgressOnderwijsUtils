@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils
 
         public IEnumerator<TOut> GetEnumerator()
         {
-            int i = 0;
+            var i = 0;
             foreach (var item in source) {
                 yield return map(item, i++);
             }

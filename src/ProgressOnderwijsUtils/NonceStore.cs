@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils
         public override int GetHashCode()
         {
             unchecked {
-                int result = Timestamp.GetHashCode();
+                var result = Timestamp.GetHashCode();
                 result = (result * 397) ^ Context.GetHashCode();
                 result = (result * 397) ^ Nonce.GetHashCode();
                 return result;
@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtils
         public bool IsNotKnown(NonceStoreItem item)
         {
             lock (monitor) {
-                bool result = items.Add(item);
+                var result = items.Add(item);
                 if (result) { // to avoid as much busy looping during an attack as possible
                     CleanUp();
                 }
@@ -114,8 +114,8 @@ namespace ProgressOnderwijsUtils
         {
             if (++counter == cleanup) {
                 counter = 0;
-                DateTime now = DateTime.UtcNow;
-                foreach (NonceStoreItem expired in items.Where(item => now - item.Timestamp > window).ToArray()) {
+                var now = DateTime.UtcNow;
+                foreach (var expired in items.Where(item => now - item.Timestamp > window).ToArray()) {
                     items.Remove(expired);
                 }
             }

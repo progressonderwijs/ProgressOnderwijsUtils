@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test, PullRequestTest]
         public void WorksOnCornerCases()
         {
-            ulong edgeCase = ulong.MaxValue - 1024;
+            var edgeCase = ulong.MaxValue - 1024;
 
             Func<double, double, bool> approxEqual = (a, b) => Math.Abs(a - b) / (Math.Abs(a) + Math.Abs(b)) < 1e-14;
 

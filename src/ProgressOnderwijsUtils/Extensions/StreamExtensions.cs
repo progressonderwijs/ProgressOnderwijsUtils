@@ -14,9 +14,9 @@ namespace ProgressOnderwijsUtils
         public static byte[] ReadUntil(this Stream stream, int numberOfBytesToRead)
         {
             var result = new byte[numberOfBytesToRead];
-            int offset = 0;
+            var offset = 0;
             while (offset < result.Length) {
-                int n = stream.Read(result, offset, result.Length - offset);
+                var n = stream.Read(result, offset, result.Length - offset);
                 if (n == 0) {
                     throw new EndOfStreamException();
                 }

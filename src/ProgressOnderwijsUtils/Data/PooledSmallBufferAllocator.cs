@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         static ConcurrentQueue<T[]>[] InitBags()
         {
             var allBags = new ConcurrentQueue<T[]>[IndexCount];
-            for (int i = 0; i < IndexCount; i++) {
+            for (var i = 0; i < IndexCount; i++) {
                 allBags[i] = new ConcurrentQueue<T[]>();
             }
             return allBags;

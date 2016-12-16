@@ -26,12 +26,12 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentNullException(nameof(other));
             }
 
-            bool result = true;
+            var result = true;
             if (one.FullName == other.FullName) { } else if (one.Length != other.Length) {
                 result = false;
             } else {
-                using (FileStream fs1 = one.OpenRead())
-                using (FileStream fs2 = other.OpenRead()) {
+                using (var fs1 = one.OpenRead())
+                using (var fs2 = other.OpenRead()) {
                     while (result && (fs1.Position < fs1.Length)) {
                         result = fs1.ReadByte() == fs2.ReadByte();
                     }

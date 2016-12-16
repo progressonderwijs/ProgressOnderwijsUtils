@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         static ConcurrentQueue<SqlCommand>[] InitBags()
         {
             var allBags = new ConcurrentQueue<SqlCommand>[IndexCount];
-            for (int i = 0; i < IndexCount; i++) {
+            for (var i = 0; i < IndexCount; i++) {
                 allBags[i] = new ConcurrentQueue<SqlCommand>();
             }
             return allBags;
@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils
             }
             var cmd = new SqlCommand();
             var parameters = new SqlParameter[length];
-            for (int i = 0; i < length; i++) {
+            for (var i = 0; i < length; i++) {
                 parameters[i] = new SqlParameter { ParameterName = CommandFactory.IndexToParameterName(i) };
             }
             cmd.Parameters.AddRange(parameters);
@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
                 return;
             }
             var bag = bagsByIndex[parameterCount];
-            for (int i = 0; i < parameterCount; i++) {
+            for (var i = 0; i < parameterCount; i++) {
                 parameters[i].Value = null;
                 parameters[i].TypeName = null;
             }

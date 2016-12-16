@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var array6 = PooledSmallBufferAllocator<object>.GetByLength(6);
             PooledSmallBufferAllocator<object>.ReturnToPool(array6);
-            for (int i = 0; i < 10000; i++) {
+            for (var i = 0; i < 10000; i++) {
                 var secondArray = PooledSmallBufferAllocator<object>.GetByLength(6);
                 if (secondArray == array6) {
                     return;
@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtilsTests
         public void ANonReleasedArrayIsNotReused()
         {
             var array6 = PooledSmallBufferAllocator<object>.GetByLength(6);
-            for (int i = 0; i < 10000; i++) {
+            for (var i = 0; i < 10000; i++) {
                 var secondArray = PooledSmallBufferAllocator<object>.GetByLength(6);
                 if (secondArray == array6) {
                     throw new Exception("The non-released array was reused!");

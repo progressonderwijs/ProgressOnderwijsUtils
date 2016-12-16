@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils.Collections
             while (reconstruct.Count > 0) {
                 var next = reconstruct.Pop();
                 var mappedChildren = new Tree<TR>[next.Children.Count];
-                for (int i = 0; i < mappedChildren.Length; i++) {
+                for (var i = 0; i < mappedChildren.Length; i++) {
                     mappedChildren[i] = output.Pop();
                 }
                 output.Push(Node(mapper(next.NodeValue), mappedChildren));
@@ -127,7 +127,7 @@ namespace ProgressOnderwijsUtils.Collections
                 while (todo.Count > 0) {
                     var pair = todo.Pop();
                     if (ShallowEquals(pair)) {
-                        for (int i = 0; i < pair.A.Children.Count; i++) {
+                        for (var i = 0; i < pair.A.Children.Count; i++) {
                             todo.Push(new NodePair { A = pair.A.Children[i], B = pair.B.Children[i] });
                         }
                     } else {
@@ -193,7 +193,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public int Height()
         {
-            int height = 1;
+            var height = 1;
             var nextSet = Children.ToArray();
             while (nextSet.Length > 0) {
                 height++;

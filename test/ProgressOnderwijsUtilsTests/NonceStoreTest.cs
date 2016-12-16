@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test, TestCaseSource(nameof(NonceStoreItemEqualityData))]
         public bool NonceStoreItemEquality(NonceStoreItem lhs, NonceStoreItem rhs)
         {
-            bool result = !(lhs != rhs);
+            var result = !(lhs != rhs);
             if (lhs != null && rhs != null) {
                 Assert.That(lhs.GetHashCode() == rhs.GetHashCode(), Is.EqualTo(result));
             }
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void Generate()
         {
-            NonceStore sut = new NonceStore();
+            var sut = new NonceStore();
             Assert.That(sut.Generate(), Is.Not.EqualTo(sut.Generate()));
         }
 
@@ -53,9 +53,9 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void IsNotKnown([Values(false, true)] bool utc)
         {
-            DateTime now = utc ? DateTime.UtcNow : DateTime.Now;
+            var now = utc ? DateTime.UtcNow : DateTime.Now;
 
-            NonceStore sut = new NonceStore();
+            var sut = new NonceStore();
             Assert.That(sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n1")));
             Assert.That(sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n2")));
             Assert.That(sut.IsOriginal(new NonceStoreItem("c2", now.AddSeconds(1), "n1")));
@@ -69,8 +69,8 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void Cleanup()
         {
-            DateTime now = DateTime.UtcNow;
-            NonceStore sut = new NonceStore(new TimeSpan(0, 0, 1), 1);
+            var now = DateTime.UtcNow;
+            var sut = new NonceStore(new TimeSpan(0, 0, 1), 1);
             Assert.That(sut.IsOriginal(new NonceStoreItem("c", now, "n")));
             Thread.Sleep(1000);
             Assert.That(!sut.IsOriginal(new NonceStoreItem("c", now, "n")));
