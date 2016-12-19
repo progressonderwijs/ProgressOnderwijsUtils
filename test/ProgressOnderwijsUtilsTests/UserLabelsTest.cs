@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtilsTests
         public void UserLabelDefinitionBusinessEdit_sets_an_available_user_label()
         {
             var session = WebSession.CreateTestSession(conn, RootOrganisatie.Dummy);
-            var be = CreateUserLabelDefinitionForNonExistentTable(conn, session, "tmwj");
+            var be = CreateUserLabelDefinitionForNonExistentTable(conn, session, "TMWJ");
             PAssert.That(() => be.Field<UserLabels?>(be.fUserLabel) != null);
         }
 
@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtilsTests
             var randomHelper = RandomHelper.Insecure(576490211);
 
             for (var i = 0; i < UserLabelsHelper.MaxLabelCount; i++) {
-                CreateUserLabelDefinitionForNonExistentTable(conn, session, randomHelper.GetStringOfLatinLower(4));
+                CreateUserLabelDefinitionForNonExistentTable(conn, session, randomHelper.GetStringOfLatinUpperOrLower(4).ToUpper());
             }
 
             var ex = Assert.Catch<GenericEditException>(() => CreateUserLabelDefinitionForNonExistentTable(conn, session, randomHelper.GetStringOfLatinLower(4)));
