@@ -24,6 +24,35 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
+        public static ParameterizedSql CreateSelectedSubQuery(
+            ParameterizedSql subQuery,
+            IReadOnlyCollection<ParameterizedSql> projectedColumns,
+            ParameterizedSql filterClause,
+            ParameterizedSql keyTable,
+            IEnumerable<ParameterizedSql> keyColumns)
+        {
+            var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
+            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
+            var joinClause = keyColumns
+                .Select(col => SQL($"k.{col} = _g2.{col}"))
+                .Aggregate((a, b) => SQL($"{a} and {b}"));
+
+            return SQL($@"
+                select
+                    {selectedProjectedColumnsClause}
+                from (
+                    select 
+                        {projectedColumnsClause}
+                    from (
+                        {subQuery}
+                    ) as _g1
+                    where {filterClause}
+                ) as _g2
+                join {keyTable} k on {joinClause}
+            ");
+        }
+
+        [Pure]
         static ParameterizedSql SubQueryHelper(
             ParameterizedSql subquery,
             IEnumerable<ParameterizedSql> projectedColumns,
