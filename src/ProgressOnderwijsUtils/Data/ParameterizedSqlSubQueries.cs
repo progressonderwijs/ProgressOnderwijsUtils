@@ -24,12 +24,39 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static ParameterizedSql CreateSelectedSubQuery(
+        public static ParameterizedSql CreateSelectedBySingularKeySubQuery(
             ParameterizedSql subQuery,
             IReadOnlyCollection<ParameterizedSql> projectedColumns,
             ParameterizedSql filterClause,
-            ParameterizedSql keyTable,
-            IEnumerable<ParameterizedSql> keyColumns)
+            ParameterizedSql keyColumn,
+            ParameterizedSql selection)
+        {
+            var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
+            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
+
+            return SQL($@"
+                /* multi-selection for current filters */
+                select
+                    {selectedProjectedColumnsClause}
+                from (
+                    select 
+                        {projectedColumnsClause}
+                    from (
+                        {subQuery}
+                    ) as _g1
+                    where {filterClause}
+                ) as _g2
+                where _g2.{keyColumn} in {selection}
+            ");
+        }
+
+        [Pure]
+        public static ParameterizedSql CreateSelectedByPluralKeySubQuery(
+            ParameterizedSql subQuery,
+            IReadOnlyCollection<ParameterizedSql> projectedColumns,
+            ParameterizedSql filterClause,
+            IEnumerable<ParameterizedSql> keyColumns,
+            ParameterizedSql selection)
         {
             var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
@@ -49,7 +76,7 @@ namespace ProgressOnderwijsUtils
                     ) as _g1
                     where {filterClause}
                 ) as _g2
-                join {keyTable} k on {joinClause}
+                join {selection} k on {joinClause}
             ");
         }
 
