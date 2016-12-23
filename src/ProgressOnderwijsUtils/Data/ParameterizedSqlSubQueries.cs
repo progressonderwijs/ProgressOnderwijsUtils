@@ -38,6 +38,7 @@ namespace ProgressOnderwijsUtils
                 .Aggregate((a, b) => SQL($"{a} and {b}"));
 
             return SQL($@"
+                /* multi-selection for current filters */
                 select
                     {selectedProjectedColumnsClause}
                 from (
