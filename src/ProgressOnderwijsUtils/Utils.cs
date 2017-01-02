@@ -105,43 +105,6 @@ namespace ProgressOnderwijsUtils
             other = tmp;
         }
 
-        public static T Retry<T>(Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
-        {
-            const int retryMAX = 5;
-
-            var attempt = 0;
-            while (true) {
-                try {
-                    return func();
-                } catch (Exception e) {
-                    if (attempt++ >= retryMAX || !shouldRetryOnThisFailure(e)) {
-                        throw;
-                    }
-                }
-            }
-        }
-
-        public static void Retry(CancellationToken cancel, Action action, Func<Exception, bool> shouldRetryOnThisFailure)
-        {
-            Retry(
-                () => {
-                    cancel.ThrowIfCancellationRequested();
-                    action();
-                    return default(object);
-                },
-                e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested);
-        }
-
-        public static T Retry<T>(CancellationToken cancel, Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
-        {
-            return Retry(
-                () => {
-                    cancel.ThrowIfCancellationRequested();
-                    return func();
-                },
-                e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested);
-        }
-
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
         {
             return TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
