@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void CanResolveOntwikkelServiceDir()
         {
-            PAssert.That(() => DatabaseVersionAuto.DatabaseVersionFromPath(new DirectoryInfo(@"\\service1\Service\Ontwikkel-taken")) == PnetOmgeving.Ontwikkel);
+            PAssert.That(() => DatabaseVersionAuto.DatabaseVersionFromPath(new DirectoryInfo(@"\\service1\Service\Ontwikkel-taken")) == PnetOmgeving.TestingContinuously);
         }
 
         [Test]
@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void CanResolveNightlyServiceDir()
         {
-            PAssert.That(() => DatabaseVersionAuto.DatabaseVersionFromPath(new DirectoryInfo(@"\\service1\Service\Nightly-taken")) == PnetOmgeving.Ontwikkel);
+            PAssert.That(() => DatabaseVersionAuto.DatabaseVersionFromPath(new DirectoryInfo(@"\\service1\Service\Nightly-taken")) == PnetOmgeving.TestingContinuously);
         }
 
         [Test]
