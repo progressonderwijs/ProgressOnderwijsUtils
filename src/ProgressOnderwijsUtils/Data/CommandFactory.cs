@@ -231,11 +231,11 @@ namespace ProgressOnderwijsUtils
     {
         public string SqlTextKey { get; set; }
         public object[] Params { get; set; }
-        public bool Equals(ParameterizedSqlEquatableKey other) 
+
+        public bool Equals(ParameterizedSqlEquatableKey other)
             => SqlTextKey == other.SqlTextKey && StructuralComparisons.StructuralEqualityComparer.Equals(Params, other.Params);
 
         public override bool Equals(object obj) => obj is ParameterizedSqlEquatableKey && Equals((ParameterizedSqlEquatableKey)obj);
         public override int GetHashCode() => (SqlTextKey?.GetHashCode() ?? 0) + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params);
-
     }
 }

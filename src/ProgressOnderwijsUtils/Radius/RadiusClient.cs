@@ -1,7 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtils.Radius
             byte requestCode = 1; //means "Access-Request"
             var secureRandom = new RNGCryptoServiceProvider();
 
-            byte requestIdentifier = secureRandom.NextByte();
+            var requestIdentifier = secureRandom.NextByte();
             var requestAuthenticator = secureRandom.NextBytes(16);
 
             var radiusAttributes = new List<RadiusAttribute>(extraAttributes);
@@ -150,11 +150,10 @@ namespace ProgressOnderwijsUtils.Radius
                     .Concat(sharedSecret)
                     .ToArray();
 
-            using (var md5 = new MD5CryptoServiceProvider()) {
+            using (var md5 = new MD5CryptoServiceProvider())
                 if (!md5.ComputeHash(verificationStream).SequenceEqual(receivedMd5)) {
                     return RadiusAuthResults.ServiceErrorBadResponseAuthenticator;
                 }
-            }
 
             //ok, we've checked that the packet is basically OK and has a valid response authenticator...
 

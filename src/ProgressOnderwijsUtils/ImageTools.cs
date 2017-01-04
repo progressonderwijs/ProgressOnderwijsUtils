@@ -151,14 +151,13 @@ namespace ProgressOnderwijsUtils
 
         public static void SaveResizedImage(byte[] pasfoto, int targetWidth, int targetHeight, Stream outputStream)
         {
-            using (var fromDatabase = ToImage(pasfoto)) {
+            using (var fromDatabase = ToImage(pasfoto))
                 if (fromDatabase.Height == targetHeight) {
                     outputStream.Write(pasfoto, 0, pasfoto.Length);
                 } else {
                     using (Image smallImage = Resize(fromDatabase, targetWidth, targetHeight))
                         SaveImageAsJpeg(smallImage, outputStream);
                 }
-            }
         }
     }
 }

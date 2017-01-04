@@ -1,6 +1,6 @@
 ﻿using System;
-using JetBrains.Annotations;
 using System.Globalization;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -41,7 +41,8 @@ namespace ProgressOnderwijsUtils
             return val == null ? null : val.Value.ToString(CultureInfo.InvariantCulture);
         }
 
-        [Pure, UsefulToKeep("Library function, other overloads used")]
+        [Pure]
+        [UsefulToKeep("Library function, other overloads used")]
         public static string ToStringInvariantOrNull<T>(this T? val, string format)
             where T : struct, IFormattable
         {

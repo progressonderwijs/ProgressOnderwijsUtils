@@ -41,7 +41,8 @@ namespace ProgressOnderwijsUtilsTests
             BCValue = 6,
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void ListsValuesInOrder()
         {
             PAssert.That(
@@ -50,13 +51,15 @@ namespace ProgressOnderwijsUtilsTests
                         EnumHelpers.GetValues<EnumForTesting>()));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void NonEnumsThrow()
         {
             Assert.Throws<ArgumentException>(() => EnumHelpers.TryParse<int>("123"));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TryParsePlain()
         {
             PAssert.That(() => EnumHelpers.TryParse<EnumForTesting>("XmlValue") == EnumForTesting.XmlValue);
@@ -69,7 +72,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => EnumHelpers.TryParse<EnumForTesting>("avalue") == EnumForTesting.AValue);
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void GetLabel()
         {
             PAssert.That(() => EnumHelpers.GetLabel(EnumForTesting.XmlValue).Translate(Taal.DU).Text == "Xml value");
@@ -87,23 +91,27 @@ namespace ProgressOnderwijsUtilsTests
 
         enum UntranslatedTestEnum
         {
-            [MpLabelUntranslated("Label"), MpTooltipUntranslated("Tooltip")]
+            [MpLabelUntranslated("Label")]
+            [MpTooltipUntranslated("Tooltip")]
             Member
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void GetLabelWorksWithUntranslatedLabel()
         {
             PAssert.That(() => EnumHelpers.GetLabel(UntranslatedTestEnum.Member).Translate(Taal.EN).Text == "Label");
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void GetLabelWorksWithUntranslatedTooltip()
         {
             PAssert.That(() => EnumHelpers.GetLabel(UntranslatedTestEnum.Member).Translate(Taal.EN).TooltipText == "Tooltip");
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TryParseLabelUntyped()
         {
             PAssert.That(() => EnumHelpers.ParseLabelOrNull(typeof(EnumForTesting), "Waarde A", Taal.NL).Equals(EnumForTesting.AValue));
@@ -113,19 +121,22 @@ namespace ProgressOnderwijsUtilsTests
                 () => EnumHelpers.ParseLabelOrNull(typeof(EnumForTesting), "Value A", Taal.EN).Equals(EnumForTesting.ValueA));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TryParseLabelForFlagsEnumReturnsCorrectValues()
         {
             PAssert.That(() => EnumHelpers.ParseLabelOrNull<FlagsEnumForTesting>("Waarde A, B value", Taal.NL) == (FlagsEnumForTesting.AValue | FlagsEnumForTesting.BValue));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TryParseLabelForFlagsEnumReturnsNothingForIncorrectInput()
         {
             PAssert.That(() => EnumHelpers.ParseLabelOrNull<FlagsEnumForTesting>("Waarde A, XYZ", Taal.NL) == null);
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void BasicConverteerTests()
         {
             foreach (var value in EnumHelpers.GetValues<EnumForTesting>()) {
@@ -135,7 +146,8 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void NullableConverteerTests()
         {
             PAssert.That(() => Converteer.TryParse<EnumForTesting?>("waarde a", Taal.NL).Equals(Converteer.ParseResult.Ok(EnumForTesting.AValue)));
@@ -143,7 +155,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Converteer.TryParse<EnumForTesting>("XmlValue", Taal.EN).State == Converteer.ParseState.Malformed);
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void FlagsEnumGetLabel()
         {
             PAssert.That(() => EnumHelpers.GetLabel(FlagsEnumForTesting.BValue).Translate(Taal.NL).TooltipText == "B");
@@ -155,7 +168,8 @@ namespace ProgressOnderwijsUtilsTests
                     EnumHelpers.GetLabel(FlagsEnumForTesting.AValue | FlagsEnumForTesting.BValue | FlagsEnumForTesting.ValueC).Translate(Taal.NL).Text == "Waarde A, BC value");
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void EnumRoundTrips()
         {
             foreach (var taal in Translator.AllLanguages) {
@@ -168,7 +182,8 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void FlagsEnumRoundTrips()
         {
             var values = (
@@ -184,13 +199,15 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void GetAttrsOn()
         {
             Assert.That(EnumHelpers.MetaDataForValue(VerblijfsvergunningType.AsielBepaaldeTijd).Attributes<BronHoCodeAttribute>().Single().Code, Is.EqualTo("3"));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void GetAttrsFrom()
         {
             Assert.That(

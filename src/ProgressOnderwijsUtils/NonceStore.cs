@@ -36,8 +36,8 @@ namespace ProgressOnderwijsUtils
         {
             unchecked {
                 var result = Timestamp.GetHashCode();
-                result = (result * 397) ^ Context.GetHashCode();
-                result = (result * 397) ^ Nonce.GetHashCode();
+                result = result * 397 ^ Context.GetHashCode();
+                result = result * 397 ^ Nonce.GetHashCode();
                 return result;
             }
         }

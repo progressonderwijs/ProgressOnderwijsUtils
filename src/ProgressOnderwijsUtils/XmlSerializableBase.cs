@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         public static string SerializeToString(object o)
         {
             using (var writer = new StringWriter()) {
-                using (var xw = XmlWriter.Create(writer)) {
+                using (var xw = XmlWriter.Create(writer))
                     ((IXmlSerializeHelper)
                         typeof(XmlSerializerHelper<>)
                             .MakeGenericType(o.GetType())
@@ -23,7 +23,6 @@ namespace ProgressOnderwijsUtils
                             .Single()
                             .Invoke(null)
                         ).SerializeToInst(xw, o);
-                }
                 return writer.ToString();
             }
         }
@@ -31,7 +30,7 @@ namespace ProgressOnderwijsUtils
         public static XDocument SerializeToXDocument(object o)
         {
             var doc = new XDocument();
-            using (var xw = doc.CreateWriter()) {
+            using (var xw = doc.CreateWriter())
                 ((IXmlSerializeHelper)
                     typeof(XmlSerializerHelper<>)
                         .MakeGenericType(o.GetType())
@@ -39,7 +38,6 @@ namespace ProgressOnderwijsUtils
                         .Single()
                         .Invoke(null)
                     ).SerializeToInst(xw, o);
-            }
 
             return doc;
         }

@@ -6,7 +6,6 @@ namespace ProgressOnderwijsUtils.Collections
     public class ArrayComparer<T> : IEqualityComparer<T[]>
     {
         public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
-
         readonly IEqualityComparer<T> underlying;
         static readonly ulong start = (ulong)typeof(T).MetadataToken + ((ulong)typeof(T).Module.MetadataToken << 32);
 
@@ -47,7 +46,7 @@ namespace ProgressOnderwijsUtils.Collections
             } else {
                 buffer = ~start;
             }
-            return (int)((buffer >> 32) ^ buffer);
+            return (int)(buffer >> 32 ^ buffer);
         }
     }
 }

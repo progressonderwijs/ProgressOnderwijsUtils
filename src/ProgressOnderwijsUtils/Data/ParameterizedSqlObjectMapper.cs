@@ -20,13 +20,12 @@ namespace ProgressOnderwijsUtils
     {
         public static T ExecuteQuery<T>(ParameterizedSql sql, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, Func<SqlCommand, T> action)
         {
-            using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
+            using (var cmd = sql.CreateSqlCommand(commandCreationContext))
                 try {
                     return action(cmd.Command);
                 } catch (Exception e) {
                     throw new ParameterizedSqlExecutionException(exceptionMessage() + "\n\nQUERY:\n\n" + SqlCommandTracer.DebugFriendlyCommandText(cmd.Command, SqlCommandTracerOptions.IncludeArgumentValuesInLog), e);
                 }
-            }
         }
 
         public static T ReadScalar<T>(this ParameterizedSql sql, SqlCommandCreationContext commandCreationContext)
@@ -148,7 +147,7 @@ namespace ProgressOnderwijsUtils
         static Dictionary<MethodInfo, MethodInfo> MakeMap(params InterfaceMapping[] mappings)
         {
             return mappings.SelectMany(
-                map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
+                map => map.InterfaceMethods.Zip<MethodInfo, MethodInfo, Tuple<MethodInfo, MethodInfo>>(map.TargetMethods, Tuple.Create))
                 .ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
         }
 
@@ -227,7 +226,7 @@ namespace ProgressOnderwijsUtils
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 return getterMethodsByType.ContainsKey(underlyingType) ||
-                    (isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset)));
+                    isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset));
             }
 
             static MethodInfo GetterForType(Type underlyingType)
@@ -379,11 +378,10 @@ namespace ProgressOnderwijsUtils
 
                     ColHashPrimes = new uint[writablePropCount];
 
-                    using (var pGen = Utils.Primes().GetEnumerator()) {
+                    using (var pGen = Utils.Primes().GetEnumerator())
                         for (var i = 0; i < ColHashPrimes.Length && pGen.MoveNext(); i++) {
                             ColHashPrimes[i] = (uint)pGen.Current;
                         }
-                    }
                     hasUnsupportedColumns = false;
                     foreach (var mp in metadata) { //perf:no LINQ
                         if (mp.CanWrite && !SupportsType(mp.DataType)) {

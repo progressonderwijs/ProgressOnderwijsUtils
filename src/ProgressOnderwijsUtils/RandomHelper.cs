@@ -35,19 +35,22 @@ namespace ProgressOnderwijsUtils
         [UsefulToKeep("library method")]
         public long GetInt64() => BitConverter.ToInt64(GetBytes(sizeof(long)), 0);
 
-        [CLSCompliant(false), UsefulToKeep("library method")]
+        [CLSCompliant(false)]
+        [UsefulToKeep("library method")]
         public uint GetUInt32()
         {
             return BitConverter.ToUInt32(GetBytes(sizeof(uint)), 0);
         }
 
-        [CLSCompliant(false), UsefulToKeep("library method")]
+        [CLSCompliant(false)]
+        [UsefulToKeep("library method")]
         public ulong GetUInt64()
         {
             return BitConverter.ToUInt64(GetBytes(sizeof(ulong)), 0);
         }
 
-        [CLSCompliant(false), UsefulToKeep("library method")]
+        [CLSCompliant(false)]
+        [UsefulToKeep("library method")]
         public uint GetUInt32(uint excludedBound)
         {
             // Proved in: http://www.google.com/url?q=http%3A%2F%2Fstackoverflow.com%2Fquestions%2F11758809%2Fwhat-is-the-optimal-algorithm-for-generating-an-unbiased-random-integer-within-a&sa=D&sntz=1&usg=AFQjCNEtQkf0HYEkTn6Npvmyu2TDKPQCxA
@@ -62,7 +65,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [CLSCompliant(false), UsefulToKeep("library method")]
+        [CLSCompliant(false)]
+        [UsefulToKeep("library method")]
         public ulong GetUInt64(ulong bound)
         {
             var modErr = (ulong.MaxValue % bound + 1) % bound;

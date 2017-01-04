@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
@@ -108,7 +108,8 @@ namespace ProgressOnderwijsUtils.Collections
             return new SList<T>(head, self);
         }
 
-        [Pure, UsefulToKeep("library method")]
+        [Pure]
+        [UsefulToKeep("library method")]
         public static SList<T> Prepend<T>(this SList<T> self, SList<T> heads)
         {
             var retval = self;
@@ -154,7 +155,8 @@ namespace ProgressOnderwijsUtils.Collections
             return retval;
         }
 
-        [Pure, UsefulToKeep("library method")]
+        [Pure]
+        [UsefulToKeep("library method")]
         public static SList<T> WhereReverse<T>(this SList<T> self, Func<T, bool> filter)
         {
             var retval = default(SList<T>);

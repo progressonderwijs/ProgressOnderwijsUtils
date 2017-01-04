@@ -22,7 +22,8 @@ namespace ProgressOnderwijsUtilsTests
             yield return new TestCaseData(new NonceStoreItem("1", null, "n"), new NonceStoreItem("c", null, "n")).Returns(false);
         }
 
-        [Test, TestCaseSource(nameof(NonceStoreItemEqualityData))]
+        [Test]
+        [TestCaseSource(nameof(NonceStoreItemEqualityData))]
         public bool NonceStoreItemEquality(NonceStoreItem lhs, NonceStoreItem rhs)
         {
             var result = !(lhs != rhs);

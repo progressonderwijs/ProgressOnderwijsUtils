@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using System.Linq;
+using JetBrains.Annotations;
 using MoreLinq;
 
 namespace ProgressOnderwijsUtils

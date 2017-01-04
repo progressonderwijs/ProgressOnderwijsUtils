@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void Created_DistinctArray_is_distinct()
         {
-            var sut = new[] { 1, 1, 2}.ToDistinctArray();
+            var sut = new[] { 1, 1, 2 }.ToDistinctArray();
 
             PAssert.That(() => sut.Count == 2);
             PAssert.That(() => sut.SetEqual(new[] { 1, 2 }));

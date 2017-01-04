@@ -1,7 +1,7 @@
-﻿using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
+﻿using System.Linq;
 using System;
+using System.Data;
+using System.Data.SqlClient;
 using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils

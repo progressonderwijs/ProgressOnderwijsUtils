@@ -9,7 +9,7 @@
                 var val = obj[i];
                 res += val == null ? i : (ulong)val.GetHashCode() * (1 + 2 * i);
             }
-            return (int)(uint)(res ^ (res >> 32));
+            return (int)(uint)(res ^ res >> 32);
         }
     }
 }
