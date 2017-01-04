@@ -74,7 +74,7 @@ namespace ProgressOnderwijsUtilsTests
         [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
-        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.TestingMasterContinuously)]
+        [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.TestingContinuously)]
         public void GetEntities(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
         {
             var sut = MetaDataFactory.GetEntities(idp, sp, db);
