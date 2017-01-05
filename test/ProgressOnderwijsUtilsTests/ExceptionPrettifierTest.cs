@@ -42,7 +42,9 @@ namespace ProgressOnderwijsUtilsTests
     {
         static string RemoveLineNumbers(string text) => Regex.Replace(text, @":line \d+", ":line ??");
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining), PullRequestTest]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        [PullRequestTest]
         public void TrivialStackTraceWorks()
         {
             try {
@@ -52,7 +54,9 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining), PullRequestTest]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        [PullRequestTest]
         public void ExplicitInterfaceImplementationInNestedClass()
         {
             try {

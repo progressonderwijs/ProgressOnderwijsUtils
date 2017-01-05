@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Collections
                     segments = new T[31 - InitSize2Pow][];
                 }
                 segments[sI++] = current;
-                current = new T[(current.Length << 1) & ~current.Length];
+                current = new T[current.Length << 1 & ~current.Length];
                 current[0] = item;
                 idx = 1;
             }
@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtils.Collections
                 Array.Resize(ref retval, idx);
                 return retval;
             } else {
-                var sumlength = (1 << (sI + InitSize2Pow - 1)) + idx - 1;
+                var sumlength = (1 << sI + InitSize2Pow - 1) + idx - 1;
                 var retval = new T[sumlength];
                 var j = 0;
                 for (var sJ = 0; sJ < sI; sJ++) {

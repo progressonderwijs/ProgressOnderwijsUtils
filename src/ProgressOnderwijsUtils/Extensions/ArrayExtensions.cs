@@ -35,8 +35,9 @@ namespace ProgressOnderwijsUtils
         public static TR[] ArraySelect<T, TR>(this T[] array, Func<T, TR> mappingFunction)
         {
             var output = new TR[array.Length];
-            for (var i = 0; i < array.Length; ++i)
+            for (var i = 0; i < array.Length; ++i) {
                 output[i] = mappingFunction(array[i]);
+            }
             return output;
         }
 
@@ -44,8 +45,9 @@ namespace ProgressOnderwijsUtils
         public static TR[] ArraySelect<T, TR>(this IReadOnlyList<T> array, Func<T, TR> mappingFunction)
         {
             var output = new TR[array.Count];
-            for (var i = 0; i < output.Length; ++i)
+            for (var i = 0; i < output.Length; ++i) {
                 output[i] = mappingFunction(array[i]);
+            }
             return output;
         }
 

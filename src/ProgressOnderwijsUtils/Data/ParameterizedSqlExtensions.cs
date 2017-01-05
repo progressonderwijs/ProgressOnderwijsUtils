@@ -19,7 +19,8 @@ namespace ProgressOnderwijsUtils
             return condition ? source.Append(extra) : source;
         }
 
-        [Pure, UsefulToKeep("Library function, other overloads used")]
+        [Pure]
+        [UsefulToKeep("Library function, other overloads used")]
         public static ParameterizedSql AppendIf(this ParameterizedSql source, bool condition, Func<ParameterizedSql> extra)
         {
             return condition ? source.Append(extra()) : source;

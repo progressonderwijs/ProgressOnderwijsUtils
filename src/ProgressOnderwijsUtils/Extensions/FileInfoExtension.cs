@@ -31,11 +31,10 @@ namespace ProgressOnderwijsUtils
                 result = false;
             } else {
                 using (var fs1 = one.OpenRead())
-                using (var fs2 = other.OpenRead()) {
-                    while (result && (fs1.Position < fs1.Length)) {
+                using (var fs2 = other.OpenRead())
+                    while (result && fs1.Position < fs1.Length) {
                         result = fs1.ReadByte() == fs2.ReadByte();
                     }
-                }
             }
 
             return result;

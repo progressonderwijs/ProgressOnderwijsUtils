@@ -10,7 +10,8 @@ namespace ProgressOnderwijsUtilsTests
 {
     public sealed class FlowStepTest
     {
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void Do_not_change_flowstep_too_much()
         {
             // dit veranderen is vervelend voor instellingen, ze moeten dan (onterechte) koppelingen aan excel repareren ed

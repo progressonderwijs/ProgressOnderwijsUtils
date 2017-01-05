@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var q = SQL($@"select sum(x.querytablevalue) from ") + ParameterizedSql.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
             var sum = q.ReadScalar<int>(conn);
-            Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
+            PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
         [Test]
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
             var sum = q.ReadScalar<int>(conn);
-            Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
+            PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
         [Test]
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => i.ToStudentId())} x");
             var sum = (int)q.ReadScalar<Id.Student>(conn);
-            Assert.That(sum, Is.EqualTo((100 * 100 + 100) / 2));
+            PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var q = SQL($@"select count(x.querytablevalue) from {EnumHelpers.GetValues<DayOfWeek>()} x");
             var dayCount = q.ReadScalar<int>(conn);
-            Assert.That(dayCount, Is.EqualTo(7));
+            PAssert.That(() => dayCount == 7);
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo" }} x");
             var dayCount = q.ReadScalar<int>(conn);
-            Assert.That(dayCount, Is.EqualTo(2));
+            PAssert.That(() => dayCount == 2);
         }
 
         [Test]

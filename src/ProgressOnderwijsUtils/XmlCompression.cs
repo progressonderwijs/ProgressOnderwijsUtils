@@ -20,17 +20,20 @@ namespace ProgressOnderwijsUtils
                 .Where(attr => attr.IsNamespaceDeclaration && !usedNamespaces.Contains(attr.Value))
                 .ToArray();
 
-            foreach (var unusedNamespaceDeclaration in unusedRootNamespaceDeclarations)
+            foreach (var unusedNamespaceDeclaration in unusedRootNamespaceDeclarations) {
                 unusedNamespaceDeclaration.Remove();
+            }
 
             if (usedNamespaces.Contains(xsdNamespace)) {
-                foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration && attr.Value == xsdNamespace.NamespaceName))
+                foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration && attr.Value == xsdNamespace.NamespaceName)) {
                     attr.Remove();
+                }
                 doc.Root.SetAttributeValue(XNamespace.Xmlns + "xsd", xsdNamespace.NamespaceName);
             }
             if (usedNamespaces.Contains(xsiNamespace)) {
-                foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration && attr.Value == xsiNamespace.NamespaceName))
+                foreach (var attr in doc.Root.Attributes().Where(attr => attr.IsNamespaceDeclaration && attr.Value == xsiNamespace.NamespaceName)) {
                     attr.Remove();
+                }
                 doc.Root.SetAttributeValue(XNamespace.Xmlns + "xsi", xsiNamespace.NamespaceName);
             }
         }

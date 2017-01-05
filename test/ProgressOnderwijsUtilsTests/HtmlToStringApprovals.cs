@@ -9,7 +9,8 @@ namespace ProgressOnderwijsUtilsTests
 
     public class HtmlToStringApprovals
     {
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void BasicDocWorks()
         {
             Approvals.Verify(
@@ -24,7 +25,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithEmptyClass()
         {
             Approvals.Verify(
@@ -39,7 +41,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOneClass()
         {
             Approvals.Verify(
@@ -54,7 +57,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithTwoClasses()
         {
             Approvals.Verify(
@@ -69,7 +73,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOddChars()
         {
             Approvals.Verify(
@@ -84,7 +89,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOddCharsInAttribute()
         {
             Approvals.Verify(
@@ -99,7 +105,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithSelfClosingTags()
         {
             Approvals.Verify(
@@ -117,7 +124,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithEscapableRawText()
         {
             Approvals.Verify(
@@ -132,7 +140,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, MethodImpl(MethodImplOptions.NoInlining)]
+        [Test]
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithTrulyRawText()
         {
             Approvals.Verify(

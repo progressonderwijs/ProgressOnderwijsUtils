@@ -47,15 +47,17 @@ namespace ProgressOnderwijsUtils.Collections
                     var tempKidBuilders = new List<TreeNodeBuilder>();
                     foreach (var kid in kids) {
                         var builderForKid = new TreeNodeBuilder { value = kid, };
-                        if (needsGenerateOutput.Count >= 100 * 1000 * 1000)
+                        if (needsGenerateOutput.Count >= 100 * 1000 * 1000) {
                             throw new InvalidOperationException("Tree too large (possibly a cycle?)");
+                        }
                         needsGenerateOutput.Push(builderForKid);
                         needsKids.Push(builderForKid);
                         tempKidBuilders.Add(builderForKid);
                     }
                     nodeBuilderThatWantsKids.tempKids = tempKidBuilders.ToArray();
-                } else
+                } else {
                     nodeBuilderThatWantsKids.tempKids = Array.Empty<TreeNodeBuilder>();
+                }
             }
 
             while (needsGenerateOutput.Count > 0) {

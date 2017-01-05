@@ -6,11 +6,11 @@ using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Mail;
 using System.Text;
 using System.Threading;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using System.Net.Mail;
 
 namespace ProgressOnderwijsUtils
 {
@@ -103,43 +103,6 @@ namespace ProgressOnderwijsUtils
             var tmp = one;
             one = other;
             other = tmp;
-        }
-
-        public static T Retry<T>(Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
-        {
-            const int retryMAX = 5;
-
-            var attempt = 0;
-            while (true) {
-                try {
-                    return func();
-                } catch (Exception e) {
-                    if (attempt++ >= retryMAX || !shouldRetryOnThisFailure(e)) {
-                        throw;
-                    }
-                }
-            }
-        }
-
-        public static void Retry(CancellationToken cancel, Action action, Func<Exception, bool> shouldRetryOnThisFailure)
-        {
-            Retry(
-                () => {
-                    cancel.ThrowIfCancellationRequested();
-                    action();
-                    return default(object);
-                },
-                e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested);
-        }
-
-        public static T Retry<T>(CancellationToken cancel, Func<T> func, Func<Exception, bool> shouldRetryOnThisFailure)
-        {
-            return Retry(
-                () => {
-                    cancel.ThrowIfCancellationRequested();
-                    return func();
-                },
-                e => shouldRetryOnThisFailure(e) && !cancel.IsCancellationRequested);
         }
 
         public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
@@ -504,10 +467,12 @@ namespace ProgressOnderwijsUtils
         {
             for (uint i = 1; i < uint.MaxValue; i++) {
                 var res = Utils.LogBase2RoundedDown(i);
-                if (!(i < 1ul << res + 1))
+                if (!(i < 1ul << res + 1)) {
                     throw new Exception($"i < (1ul << res + 1) FAILED for i:{i}; res: {res}");
-                if (!(1ul << res <= i))
+                }
+                if (!(1ul << res <= i)) {
                     throw new Exception($"(1ul << res) <= i FAILED for i:{i}; res: {res}");
+                }
             }
             PAssert.That(() => Utils.LogBase2RoundedDown(0) == 0);
             PAssert.That(() => Utils.LogBase2RoundedDown(uint.MaxValue) == 31);
@@ -518,10 +483,12 @@ namespace ProgressOnderwijsUtils
         {
             for (uint i = 2; i < uint.MaxValue; i++) {
                 var res = Utils.LogBase2RoundedUp(i);
-                if (!(i <= 1ul << res))
+                if (!(i <= 1ul << res)) {
                     throw new Exception($"i <= (1ul << res) FAILED for i:{i}; res: {res}");
-                if (!(1ul << res - 1 < i))
+                }
+                if (!(1ul << res - 1 < i)) {
                     throw new Exception($"(1ul << res - 1) < i FAILED for i:{i}; res: {res}");
+                }
             }
             PAssert.That(() => Utils.LogBase2RoundedUp(0) == 0);
             PAssert.That(() => Utils.LogBase2RoundedUp(1) == 0);

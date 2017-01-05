@@ -11,7 +11,8 @@ namespace ProgressOnderwijsUtilsTests
 {
     public sealed class TreeTest
     {
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TreeStoresInfo()
         {
             var tree = Tree.Node("abc", Tree.Node("def"), Tree.Node("xyz"));
@@ -22,7 +23,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => tree.Children[1].NodeValue == "xyz");
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TreeWithManyLeaves()
         {
             var tree = Tree.Node(100, Tree.Node(1), Tree.Node(2), Tree.Node(3), Tree.Node(4));
@@ -30,7 +32,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => tree.Children.Select((kid, index) => kid.NodeValue == index + 1).All(b => b));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void SaneDefaultComparer()
         {
             var leaf2 = Tree.Node(2);
@@ -49,7 +52,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !Equals(tree2, leaf2));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void CustomizableComparerWorks()
         {
             var tree1 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
@@ -65,7 +69,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !Tree.EqualityComparer(StringComparer.OrdinalIgnoreCase).Equals(tree1, tree4));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void SaneDefaultHashCodes()
         {
             var leaf2 = Tree.Node(2);
@@ -84,7 +89,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => equalityComparer.GetHashCode(tree1) != equalityComparer.GetHashCode(null));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void CustomizableGetHashCodeWorks()
         {
             var comparer = Tree.EqualityComparer(StringComparer.OrdinalIgnoreCase);
@@ -102,7 +108,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => comparer.GetHashCode(tree1) != comparer.GetHashCode(tree4));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void PreorderTraversalNormalCase()
         {
             var e = Tree.Node("e");
@@ -119,7 +126,8 @@ namespace ProgressOnderwijsUtilsTests
                         .SequenceEqual(new[] { "a", "ba", "ca", "dca", "ea" }));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void BuildWorks()
         {
             var dict = new Dictionary<string, IReadOnlyList<string>> {
@@ -155,7 +163,8 @@ namespace ProgressOnderwijsUtilsTests
             Assert.Throws<InvalidOperationException>(() => ignore = Tree.BuildRecursively(0, i => new[] { (i + 1) % 10, (i + 2) % 13 }));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TreeSelectSingleNode()
         {
             AssertTreeSelectMapsInputAsExpected(
@@ -164,7 +173,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TreeSelectOneChild()
         {
             AssertTreeSelectMapsInputAsExpected(
@@ -173,7 +183,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TreeSelectTwoChildren()
         {
             AssertTreeSelectMapsInputAsExpected(
@@ -182,7 +193,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TreeSelectTwoChildrenWithChild()
         {
             AssertTreeSelectMapsInputAsExpected(
@@ -191,7 +203,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void ComplexTreeSelectTwoChildrenWithChild()
         {
             AssertTreeSelectMapsInputAsExpected(
@@ -230,7 +243,8 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void TreeSelectVisitsInReversePreorderTraversal()
         {
             //Tree.Select calls the mapping function for each tree node, but that might have side effects.
@@ -246,7 +260,8 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => nodeValuesInPreorder.SequenceEqual(Enumerable.Range(1, 8).Reverse()));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void CanWorkWithDeepTreesWithoutStackoverflow()
         {
             var input = Tree.BuildRecursively(0u, i => i < 100000 ? new[] { i + 1 } : new uint[0]);
@@ -257,19 +272,22 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(input.Height(), Is.EqualTo(100001));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void SingleNodeHasHeight1()
         {
             PAssert.That(() => Tree.Node(0).Height() == 1);
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void RightLeaningTreeComputesHeight4()
         {
             PAssert.That(() => Tree.Node(1u, Tree.Node(6u), Tree.Node(2u, Tree.Node(4u), Tree.Node(7u)), Tree.Node(3u, Tree.Node(5u, Tree.Node(8u)))).Height() == 4);
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void MessyTreeComputesHeight4()
         {
             PAssert.That(() => Tree.Node(1u, Tree.Node(6u), Tree.Node(3u, Tree.Node(5u, Tree.Node(8u))), Tree.Node(2u, Tree.Node(4u), Tree.Node(7u))).Height() == 4);
@@ -281,7 +299,8 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(output, Is.EqualTo(expected));
         }
 
-        [Test, PullRequestTest]
+        [Test]
+        [PullRequestTest]
         public void BuildRecursivelyDoesntDetectCycleWhenDifferentParentsHaveIdenticalLeafChildren()
         {
             var tree = Tree.Node(

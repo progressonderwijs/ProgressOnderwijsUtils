@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentNullException(nameof(rawSqlString));
             }
             if (rawSqlString == "") {
-                return ParameterizedSql.Empty;
+                return Empty;
             }
             return new StringSqlFragment(rawSqlString).BuildableToQuery();
         }
