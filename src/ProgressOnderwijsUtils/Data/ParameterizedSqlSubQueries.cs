@@ -26,11 +26,12 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql CreateSelectedBySingularKeySubQuery(
             ParameterizedSql subQuery,
-            IReadOnlyCollection<ParameterizedSql> projectedColumns,
             ParameterizedSql filterClause,
+            OrderByColumns sortOrder,
             ParameterizedSql keyColumn,
             ParameterizedSql selection)
         {
+            var projectedColumns = AllColumns;
             var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
 
@@ -47,17 +48,19 @@ namespace ProgressOnderwijsUtils
                     where {filterClause}
                 ) as _g2
                 where _g2.{keyColumn} in {selection}
+                {CreateFromSortOrder(sortOrder)}
             ");
         }
 
         [Pure]
         public static ParameterizedSql CreateSelectedByPluralKeySubQuery(
             ParameterizedSql subQuery,
-            IReadOnlyCollection<ParameterizedSql> projectedColumns,
             ParameterizedSql filterClause,
+            OrderByColumns sortOrder,
             IEnumerable<ParameterizedSql> keyColumns,
             ParameterizedSql selection)
         {
+            var projectedColumns = AllColumns;
             var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
             var joinClause = keyColumns
@@ -77,6 +80,7 @@ namespace ProgressOnderwijsUtils
                     where {filterClause}
                 ) as _g2
                 join {selection} k on {joinClause}
+                {CreateFromSortOrder(sortOrder)}
             ");
         }
 
