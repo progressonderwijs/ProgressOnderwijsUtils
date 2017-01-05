@@ -31,25 +31,8 @@ namespace ProgressOnderwijsUtils
             ParameterizedSql keyColumn,
             ParameterizedSql selection)
         {
-            var projectedColumns = AllColumns;
-            var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
-            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
-
-            return SQL($@"
-                /* multi-selection for current filters */
-                select
-                    {selectedProjectedColumnsClause}
-                from (
-                    select 
-                        {projectedColumnsClause}
-                    from (
-                        {subQuery}
-                    ) as _g1
-                    where {filterClause}
-                ) as _g2
-                where _g2.{keyColumn} in {selection}
-                {CreateFromSortOrder(sortOrder)}
-            ");
+            var joinClause = SQL($"k.querytablevalue = _g2.{keyColumn}");
+            return CreateSelectedSubQuery(subQuery, filterClause, sortOrder, joinClause, selection);
         }
 
         [Pure]
@@ -60,12 +43,23 @@ namespace ProgressOnderwijsUtils
             IEnumerable<ParameterizedSql> keyColumns,
             ParameterizedSql selection)
         {
-            var projectedColumns = AllColumns;
-            var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
-            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
             var joinClause = keyColumns
                 .Select(col => SQL($"k.{col} = _g2.{col}"))
                 .Aggregate((a, b) => SQL($"{a} and {b}"));
+            return CreateSelectedSubQuery(subQuery, filterClause, sortOrder, joinClause, selection);
+        }
+
+        [Pure]
+        static ParameterizedSql CreateSelectedSubQuery(
+            ParameterizedSql subQuery,
+            ParameterizedSql filterClause,
+            OrderByColumns sortOrder,
+            ParameterizedSql selectionClause,
+            ParameterizedSql selection)
+        {
+            var projectedColumns = AllColumns;
+            var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
+            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
 
             return SQL($@"
                 /* multi-selection for current filters */
@@ -79,7 +73,7 @@ namespace ProgressOnderwijsUtils
                     ) as _g1
                     where {filterClause}
                 ) as _g2
-                join {selection} k on {joinClause}
+                join {selection} k on {selectionClause}
                 {CreateFromSortOrder(sortOrder)}
             ");
         }
