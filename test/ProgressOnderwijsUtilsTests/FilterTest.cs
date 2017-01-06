@@ -15,7 +15,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 namespace ProgressOnderwijsUtilsTests
 {
     [PullRequestTest]
-    public sealed class FilterTest : TestSuiteBase
+    public sealed class FilterTest : TestsWithBusinessConnection
     {
         [Test]
         public void BasicChecks()

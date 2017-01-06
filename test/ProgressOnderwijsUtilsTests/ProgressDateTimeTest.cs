@@ -4,7 +4,7 @@ using Progress.Business.Test;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    public sealed class ProgressDateTimeTest : TestSuiteBase
+    public sealed class ProgressDateTimeTest : TestsWithBusinessConnection
     {
         [Test]
         public void DateShiftWithDays([Values(-100, -12, 0, 17, 537)] int daysToAdd)

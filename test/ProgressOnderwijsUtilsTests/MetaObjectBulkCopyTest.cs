@@ -9,7 +9,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 namespace ProgressOnderwijsUtilsTests
 {
     [PullRequestTest]
-    public sealed class MetaObjectBulkCopyTest : TestSuiteBase
+    public sealed class MetaObjectBulkCopyTest : TestsWithBusinessConnection
     {
         static readonly BlaOk[] SampleObjects = new[] {
             new BlaOk { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },
