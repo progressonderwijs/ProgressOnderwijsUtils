@@ -8,7 +8,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 namespace ProgressOnderwijsUtilsTests
 {
     [PullRequestTest]
-    public sealed class DatabaseSanityTest : TestSuiteBase
+    public sealed class DatabaseSanityTest : TestsWithBusinessConnection
     {
         [Test]
         public void OntbrekendeForeignKeyIndexes()
