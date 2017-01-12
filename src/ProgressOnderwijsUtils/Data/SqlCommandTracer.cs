@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
         IncludeArgumentValuesInLog
     }
 
-    public static class CommandTracer
+    public static class SqlCommandTracer
     {
         public static ISqlCommandTracer CreateAlwaysOnTracer(CommandTracerOptions includeSensitiveInfo)
             => new SqlCommandTracerImpl(includeSensitiveInfo);
@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return "{!" + p + "!}";
                 } catch (Exception e) {
-                    return $"[[Exception in {nameof(CommandTracer)}.{nameof(InsecureSqlDebugString)}: {e.Message}]]";
+                    return $"[[Exception in {nameof(SqlCommandTracer)}.{nameof(InsecureSqlDebugString)}: {e.Message}]]";
                 }
             }
         }
