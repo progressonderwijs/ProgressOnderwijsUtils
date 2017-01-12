@@ -234,6 +234,14 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
         }
 
+
+        [Test]
+        public void ParameterizedSqlSupportsNullParameters()
+        {
+            //TODO: do we want to make these literal?
+            PAssert.That(() => SQL($"select {null}").CommandText() == "select @par0");
+        }
+
         [Test]
         public void ParameterizedSqlDoesNotUseLiteralsEnumsMarked_IEnumShouldBeParameterizedInSqlAttribute()
         {
