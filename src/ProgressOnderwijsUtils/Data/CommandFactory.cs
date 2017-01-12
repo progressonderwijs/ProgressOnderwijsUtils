@@ -183,7 +183,7 @@ namespace ProgressOnderwijsUtils
     struct DebugCommandFactory : ICommandFactory
     {
         FastShortStringBuilder debugText;
-        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => SqlCommandTracer.InsecureSqlDebugString(o.EquatableValue, true);
+        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => CommandTracer.InsecureSqlDebugString(o.EquatableValue, true);
         public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
         public static string DebugTextFor(ISqlComponent impl)
