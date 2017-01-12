@@ -229,6 +229,12 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
+        public void ParameterizedSqlUsesLiteralsForBooleanConstants()
+        {
+            PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
+        }
+
+        [Test]
         public void ParameterizedSqlDoesNotUseLiteralsEnumsMarked_IEnumShouldBeParameterizedInSqlAttribute()
         {
             PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
