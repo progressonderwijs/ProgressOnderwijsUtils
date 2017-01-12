@@ -10,7 +10,7 @@ using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils
 {
-    public interface ICommandTracer
+    public interface ISqlCommandTracer
     {
         IEnumerable<Tuple<string, TimeSpan>> AllCommands { get; }
         TimeSpan TotalDuration { get; }
@@ -31,15 +31,15 @@ namespace ProgressOnderwijsUtils
 
     public static class CommandTracer
     {
-        public static ICommandTracer CreateAlwaysOnTracer(CommandTracerOptions includeSensitiveInfo)
-            => new CommandTracerImpl(includeSensitiveInfo);
+        public static ISqlCommandTracer CreateAlwaysOnTracer(CommandTracerOptions includeSensitiveInfo)
+            => new SqlCommandTracerImpl(includeSensitiveInfo);
 
-        public static ICommandTracer CreateAlwaysOffTracer() => NoopTracer.Instance;
+        public static ISqlCommandTracer CreateAlwaysOffTracer() => NoopTracer.Instance;
 
-        public static ICommandTracer CreateTogglableTracer(CommandTracerOptions includeSensitiveInfo)
+        public static ISqlCommandTracer CreateTogglableTracer(CommandTracerOptions includeSensitiveInfo)
             => new ResettableCommandTracer(() => CreateAlwaysOnTracer(includeSensitiveInfo));
 
-        sealed class NoopTracer : ICommandTracer
+        sealed class NoopTracer : ISqlCommandTracer
         {
             public static readonly NoopTracer Instance = new NoopTracer();
             public IEnumerable<Tuple<string, TimeSpan>> AllCommands => Array.Empty<Tuple<string, TimeSpan>>();
@@ -127,14 +127,14 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        sealed class CommandTracerImpl : ICommandTracer
+        sealed class SqlCommandTracerImpl : ISqlCommandTracer
         {
             public int CommandCount => commandCount;
             int commandCount;
             int commandsCompleted;
             readonly CommandTracerOptions IncludeSensitiveInfo;
 
-            public CommandTracerImpl(CommandTracerOptions inlcudeSensiveInfo)
+            public SqlCommandTracerImpl(CommandTracerOptions inlcudeSensiveInfo)
             {
                 IncludeSensitiveInfo = inlcudeSensiveInfo;
             }
@@ -184,11 +184,11 @@ namespace ProgressOnderwijsUtils
 
             sealed class SqlCommandTimer : IDisposable
             {
-                readonly CommandTracerImpl tracer;
+                readonly SqlCommandTracerImpl tracer;
                 readonly Func<string> lazySqlCommandText;
                 readonly Stopwatch commandStopwatch;
 
-                internal SqlCommandTimer(CommandTracerImpl tracer, Func<string> lazySqlCommandText)
+                internal SqlCommandTimer(SqlCommandTracerImpl tracer, Func<string> lazySqlCommandText)
                 {
                     this.tracer = tracer;
                     this.lazySqlCommandText = lazySqlCommandText;
@@ -205,29 +205,29 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public sealed class ResettableCommandTracer : ICommandTracer
+        public sealed class ResettableCommandTracer : ISqlCommandTracer
         {
-            ICommandTracer commandTracer;
-            readonly Func<ICommandTracer> tracerFactory;
+            ISqlCommandTracer sqlCommandTracer;
+            readonly Func<ISqlCommandTracer> tracerFactory;
 
-            public ResettableCommandTracer(Func<ICommandTracer> tracerFactory)
+            public ResettableCommandTracer(Func<ISqlCommandTracer> tracerFactory)
             {
                 this.tracerFactory = tracerFactory;
                 StopTracing();
             }
 
-            public IEnumerable<Tuple<string, TimeSpan>> AllCommands => commandTracer.AllCommands;
-            public TimeSpan TotalDuration => commandTracer.TotalDuration;
-            public int CommandCount => commandTracer.CommandCount;
-            public TimeSpan SlowestCommandDuration => commandTracer.SlowestCommandDuration;
+            public IEnumerable<Tuple<string, TimeSpan>> AllCommands => sqlCommandTracer.AllCommands;
+            public TimeSpan TotalDuration => sqlCommandTracer.TotalDuration;
+            public int CommandCount => sqlCommandTracer.CommandCount;
+            public TimeSpan SlowestCommandDuration => sqlCommandTracer.SlowestCommandDuration;
 
             public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)
-                => commandTracer.FinishDisposableTimer(commandText, duration);
+                => sqlCommandTracer.FinishDisposableTimer(commandText, duration);
 
-            public IDisposable StartCommandTimer(string commandText) => commandTracer.StartCommandTimer(commandText);
-            public IDisposable StartCommandTimer(SqlCommand sqlCommand) => commandTracer.StartCommandTimer(sqlCommand);
-            public void StartTracing() => commandTracer = tracerFactory();
-            public void StopTracing() => commandTracer = CreateAlwaysOffTracer();
+            public IDisposable StartCommandTimer(string commandText) => sqlCommandTracer.StartCommandTimer(commandText);
+            public IDisposable StartCommandTimer(SqlCommand sqlCommand) => sqlCommandTracer.StartCommandTimer(sqlCommand);
+            public void StartTracing() => sqlCommandTracer = tracerFactory();
+            public void StopTracing() => sqlCommandTracer = CreateAlwaysOffTracer();
         }
     }
 }
