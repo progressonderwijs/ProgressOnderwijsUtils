@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
         void StopTracing();
     }
 
-    public enum CommandTracerOptions
+    public enum SqlCommandTracerOptions
     {
         ExcludeArgumentValuesFromLog,
         IncludeArgumentValuesInLog
@@ -31,12 +31,12 @@ namespace ProgressOnderwijsUtils
 
     public static class SqlCommandTracer
     {
-        public static ISqlCommandTracer CreateAlwaysOnTracer(CommandTracerOptions includeSensitiveInfo)
+        public static ISqlCommandTracer CreateAlwaysOnTracer(SqlCommandTracerOptions includeSensitiveInfo)
             => new SqlCommandTracerImpl(includeSensitiveInfo);
 
         public static ISqlCommandTracer CreateAlwaysOffTracer() => NoopTracer.Instance;
 
-        public static ISqlCommandTracer CreateTogglableTracer(CommandTracerOptions includeSensitiveInfo)
+        public static ISqlCommandTracer CreateTogglableTracer(SqlCommandTracerOptions includeSensitiveInfo)
             => new ResettableCommandTracer(() => CreateAlwaysOnTracer(includeSensitiveInfo));
 
         sealed class NoopTracer : ISqlCommandTracer
@@ -53,14 +53,12 @@ namespace ProgressOnderwijsUtils
             public void StopTracing() { }
         }
 
-        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, CommandTracerOptions includeSensitiveInfo)
-        {
-            return CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
-        }
+        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo) 
+            => CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
 
-        static string CommandParamStringOrEmpty(SqlCommand sqlCommand, CommandTracerOptions includeSensitiveInfo)
+        static string CommandParamStringOrEmpty(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo)
         {
-            if (includeSensitiveInfo == CommandTracerOptions.IncludeArgumentValuesInLog) {
+            if (includeSensitiveInfo == SqlCommandTracerOptions.IncludeArgumentValuesInLog) {
                 return CommandParamString(sqlCommand);
             } else {
                 return "";
@@ -132,9 +130,9 @@ namespace ProgressOnderwijsUtils
             public int CommandCount => commandCount;
             int commandCount;
             int commandsCompleted;
-            readonly CommandTracerOptions IncludeSensitiveInfo;
+            readonly SqlCommandTracerOptions IncludeSensitiveInfo;
 
-            public SqlCommandTracerImpl(CommandTracerOptions inlcudeSensiveInfo)
+            public SqlCommandTracerImpl(SqlCommandTracerOptions inlcudeSensiveInfo)
             {
                 IncludeSensitiveInfo = inlcudeSensiveInfo;
             }
