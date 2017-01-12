@@ -37,10 +37,12 @@ namespace ProgressOnderwijsUtils
         static string GetEnumStringRepresentationOrNull(Enum val)
             => val == null
                 ? null
-                : enumStringRepresentations.GetOrAdd(
-                    val.GetType(),
-                    enumStringRepresentationValueFactory
-                    ).GetOrDefault(((IConvertible)val).ToInt64(null));
+                : enumStringRepresentations
+                    .GetOrAdd(val.GetType(), enumStringRepresentationValueFactory)
+                    .GetOrDefault(((IConvertible)val).ToInt64(null));
+
+        static string GetBooleanStringRepresentationOrNull(bool? val)
+            => val == null ? null : val.Value ? "cast(1 as bit)" : "cast(0 as bit)";
 
         public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object o)
             where TCommandFactory : struct, ICommandFactory
@@ -48,9 +50,12 @@ namespace ProgressOnderwijsUtils
             if (o is IEnumerable && !(o is string) && !(o is byte[])) {
                 ToTableValuedParameterFromPlainValues((IEnumerable)o).AppendTo(ref factory);
             } else {
-                var enumRepresentation = GetEnumStringRepresentationOrNull(o as Enum);
-                if (enumRepresentation != null) {
-                    factory.AppendSql(enumRepresentation, 0, enumRepresentation.Length);
+                var literalSqlRepresentation =
+                    GetBooleanStringRepresentationOrNull(o as bool?)
+                        ?? GetEnumStringRepresentationOrNull(o as Enum);
+
+                if (literalSqlRepresentation != null) {
+                    factory.AppendSql(literalSqlRepresentation, 0, literalSqlRepresentation.Length);
                 } else {
                     QueryScalarParameterComponent.AppendScalarParameter(ref factory, o);
                 }
