@@ -30,9 +30,10 @@ namespace ProgressOnderwijsUtils
     public static class SqlCommandTracer
     {
         public static ISqlCommandTracer CreateTracer(SqlCommandTracerOptions includeSensitiveInfo)
-        {
-            return new SqlCommandTracerImpl(includeSensitiveInfo);
-        }
+            => new SqlCommandTracerImpl(includeSensitiveInfo);
+
+        public static ISqlCommandTracer CreateTogglableTracer(SqlCommandTracerOptions includeSensitiveInfo, NestableToggle toggle) 
+            => new PausableCommandTracer(new SqlCommandTracerImpl(includeSensitiveInfo), toggle);
 
         public static ISqlCommandTracer CreateNullTracer()
         {
