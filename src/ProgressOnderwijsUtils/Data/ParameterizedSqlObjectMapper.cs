@@ -18,6 +18,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class ParameterizedSqlObjectMapper
     {
+        [MustUseReturnValue]
         public static T ExecuteQuery<T>(ParameterizedSql sql, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, Func<SqlCommand, T> action)
         {
             using (var cmd = sql.CreateSqlCommand(commandCreationContext))
@@ -28,6 +29,7 @@ namespace ProgressOnderwijsUtils
                 }
         }
 
+        [MustUseReturnValue]
         public static T ReadScalar<T>(this ParameterizedSql sql, SqlCommandCreationContext commandCreationContext)
         {
             return ExecuteQuery(
@@ -56,6 +58,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The database connection</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
+        [MustUseReturnValue]
+        [NotNull]
         public static T[] ReadMetaObjects<T>(this ParameterizedSql q, SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
         {
             return ExecuteQuery(
@@ -66,6 +70,8 @@ namespace ProgressOnderwijsUtils
                 );
         }
 
+        [MustUseReturnValue]
+        [NotNull]
         public static T[] ReadMetaObjectsUnpacker<T>(SqlCommand cmd, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
             where T : IMetaObject, new()
         {
@@ -101,6 +107,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The command creation context</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
+        [MustUseReturnValue]
+        [NotNull]
         public static T[] ReadPlain<T>(this ParameterizedSql q, SqlCommandCreationContext qCommandCreationContext)
         {
             return ExecuteQuery(
@@ -110,6 +118,8 @@ namespace ProgressOnderwijsUtils
                 ReadPlainUnpacker<T>);
         }
 
+        [MustUseReturnValue]
+        [NotNull]
         public static T[] ReadPlainUnpacker<T>(SqlCommand cmd)
         {
             using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
@@ -147,7 +157,7 @@ namespace ProgressOnderwijsUtils
         static Dictionary<MethodInfo, MethodInfo> MakeMap(params InterfaceMapping[] mappings)
         {
             return mappings.SelectMany(
-                map => map.InterfaceMethods.Zip<MethodInfo, MethodInfo, Tuple<MethodInfo, MethodInfo>>(map.TargetMethods, Tuple.Create))
+                map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
                 .ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
         }
 
