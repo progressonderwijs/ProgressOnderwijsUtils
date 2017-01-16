@@ -19,6 +19,8 @@ namespace ProgressOnderwijsUtils
         void FinishDisposableTimer(Func<string> commandText, TimeSpan duration);
         IDisposable StartCommandTimer(string commandText);
         IDisposable StartCommandTimer(SqlCommand sqlCommand);
+        void StartTracing();
+        void StopTracing();
     }
 
     public enum SqlCommandTracerOptions
@@ -29,18 +31,17 @@ namespace ProgressOnderwijsUtils
 
     public static class SqlCommandTracer
     {
-        public static ISqlCommandTracer CreateTracer(SqlCommandTracerOptions includeSensitiveInfo)
-        {
-            return new SqlCommandTracerImpl(includeSensitiveInfo);
-        }
+        public static ISqlCommandTracer CreateAlwaysOnTracer(SqlCommandTracerOptions includeSensitiveInfo)
+            => new SqlCommandTracerImpl(includeSensitiveInfo);
 
-        public static ISqlCommandTracer CreateNullTracer()
-        {
-            return new NullTracer();
-        }
+        public static ISqlCommandTracer CreateAlwaysOffTracer() => NoopTracer.Instance;
 
-        class NullTracer : ISqlCommandTracer
+        public static ISqlCommandTracer CreateTogglableTracer(SqlCommandTracerOptions includeSensitiveInfo)
+            => new ResettableCommandTracer(() => CreateAlwaysOnTracer(includeSensitiveInfo));
+
+        sealed class NoopTracer : ISqlCommandTracer
         {
+            public static readonly NoopTracer Instance = new NoopTracer();
             public IEnumerable<Tuple<string, TimeSpan>> AllCommands => Array.Empty<Tuple<string, TimeSpan>>();
             public TimeSpan TotalDuration => TimeSpan.Zero;
             public int CommandCount => 0;
@@ -48,12 +49,12 @@ namespace ProgressOnderwijsUtils
             public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration) { }
             public IDisposable StartCommandTimer(string commandText) => null;
             public IDisposable StartCommandTimer(SqlCommand sqlCommand) => null;
+            public void StartTracing() { }
+            public void StopTracing() { }
         }
 
-        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo)
-        {
-            return CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
-        }
+        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo) 
+            => CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
 
         static string CommandParamStringOrEmpty(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo)
         {
@@ -176,6 +177,9 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
+            public void StartTracing() { }
+            public void StopTracing() { }
+
             sealed class SqlCommandTimer : IDisposable
             {
                 readonly SqlCommandTracerImpl tracer;
@@ -197,6 +201,31 @@ namespace ProgressOnderwijsUtils
                     tracer.FinishDisposableTimer(lazySqlCommandText, commandStopwatch.Elapsed);
                 }
             }
+        }
+
+        public sealed class ResettableCommandTracer : ISqlCommandTracer
+        {
+            ISqlCommandTracer sqlCommandTracer;
+            readonly Func<ISqlCommandTracer> tracerFactory;
+
+            public ResettableCommandTracer(Func<ISqlCommandTracer> tracerFactory)
+            {
+                this.tracerFactory = tracerFactory;
+                StopTracing();
+            }
+
+            public IEnumerable<Tuple<string, TimeSpan>> AllCommands => sqlCommandTracer.AllCommands;
+            public TimeSpan TotalDuration => sqlCommandTracer.TotalDuration;
+            public int CommandCount => sqlCommandTracer.CommandCount;
+            public TimeSpan SlowestCommandDuration => sqlCommandTracer.SlowestCommandDuration;
+
+            public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)
+                => sqlCommandTracer.FinishDisposableTimer(commandText, duration);
+
+            public IDisposable StartCommandTimer(string commandText) => sqlCommandTracer.StartCommandTimer(commandText);
+            public IDisposable StartCommandTimer(SqlCommand sqlCommand) => sqlCommandTracer.StartCommandTimer(sqlCommand);
+            public void StartTracing() => sqlCommandTracer = tracerFactory();
+            public void StopTracing() => sqlCommandTracer = CreateAlwaysOffTracer();
         }
     }
 }
