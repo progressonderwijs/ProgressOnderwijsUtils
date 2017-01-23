@@ -57,23 +57,14 @@ namespace ProgressOnderwijsUtils
             ParameterizedSql selectionClause,
             ParameterizedSql selection)
         {
-            var projectedColumns = AllColumns;
-            var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
-            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
-
             return SQL($@"
                 /* multi-selection for current filters */
-                select
-                    {selectedProjectedColumnsClause}
+                select _g2.*
                 from (
-                    select 
-                        {projectedColumnsClause}
-                    from (
-                        {subQuery}
-                    ) as _g1
-                    where {filterClause}
-                ) as _g2
-                join {selection} k on {selectionClause}
+                    {subQuery}
+                ) as _g2 
+                where {filterClause}
+                and exists(select 0 from {selection} k where {selectionClause})
                 {CreateFromSortOrder(sortOrder)}
             ");
         }
