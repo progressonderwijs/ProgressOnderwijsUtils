@@ -24,18 +24,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static ParameterizedSql CreateSelectedBySingularKeySubQuery(
-            ParameterizedSql subQuery,
-            ParameterizedSql filterClause,
-            OrderByColumns sortOrder,
-            ParameterizedSql keyColumn,
-            ParameterizedSql selection)
-        {
-            var joinClause = SQL($"k.querytablevalue = _g2.{keyColumn}");
-            return CreateSelectedSubQuery(subQuery, filterClause, sortOrder, joinClause, selection);
-        }
-
-        [Pure]
         public static ParameterizedSql CreateSelectedByPluralKeySubQuery(
             ParameterizedSql subQuery,
             ParameterizedSql filterClause,
@@ -43,20 +31,9 @@ namespace ProgressOnderwijsUtils
             IEnumerable<ParameterizedSql> keyColumns,
             ParameterizedSql selection)
         {
-            var joinClause = keyColumns
+            var selectionWhereExpression = keyColumns
                 .Select(col => SQL($"k.{col} = _g2.{col}"))
                 .Aggregate((a, b) => SQL($"{a} and {b}"));
-            return CreateSelectedSubQuery(subQuery, filterClause, sortOrder, joinClause, selection);
-        }
-
-        [Pure]
-        static ParameterizedSql CreateSelectedSubQuery(
-            ParameterizedSql subQuery,
-            ParameterizedSql filterClause,
-            OrderByColumns sortOrder,
-            ParameterizedSql selectionClause,
-            ParameterizedSql selection)
-        {
             return SQL($@"
                 /* multi-selection for current filters */
                 select _g2.*
@@ -64,7 +41,7 @@ namespace ProgressOnderwijsUtils
                     {subQuery}
                 ) as _g2 
                 where {filterClause}
-                and exists(select 0 from {selection} k where {selectionClause})
+                and exists(select 0 from {selection} k where {selectionWhereExpression})
                 {CreateFromSortOrder(sortOrder)}
             ");
         }
