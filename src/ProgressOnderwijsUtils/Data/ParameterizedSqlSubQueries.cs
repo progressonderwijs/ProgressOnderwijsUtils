@@ -31,38 +31,30 @@ namespace ProgressOnderwijsUtils
             ParameterizedSql keyColumn,
             ParameterizedSql selection)
         {
-            var joinClause = SQL($"k.querytablevalue = _g2.{keyColumn}");
-            return CreateSelectedSubQuery(subQuery, filterClause, sortOrder, joinClause, selection);
-        }
+            // Onderstaande query zou ook met een join op de selectie als TVP uitgedrukt kunnen worden zodat we dezelfde query als voor de plural key kunnen gebruiken.
+            // Maar in de praktijk blijkt dat qua performance vies tegen te vallen:
+            //
+            // Aanmeldingen | page  | all
+            // ==============================
+            // where clause | 0,03s | 3,1s
+            // join clause  | 2,8s  | 3,2s
+            //
+            // BRON-HO      | page  | all
+            // ==============================
+            // where clause | 0,02s | Timeout
+            // join clause  | 3,5s  | Timeout
+            //
+            // Vorderingen  | page  | all
+            // ==============================
+            // where clause | 0,01s | Timeout
+            // join clause  | 0,01s | Timeout
 
-        [Pure]
-        public static ParameterizedSql CreateSelectedByPluralKeySubQuery(
-            ParameterizedSql subQuery,
-            ParameterizedSql filterClause,
-            OrderByColumns sortOrder,
-            IEnumerable<ParameterizedSql> keyColumns,
-            ParameterizedSql selection)
-        {
-            var joinClause = keyColumns
-                .Select(col => SQL($"k.{col} = _g2.{col}"))
-                .Aggregate((a, b) => SQL($"{a} and {b}"));
-            return CreateSelectedSubQuery(subQuery, filterClause, sortOrder, joinClause, selection);
-        }
-
-        [Pure]
-        static ParameterizedSql CreateSelectedSubQuery(
-            ParameterizedSql subQuery,
-            ParameterizedSql filterClause,
-            OrderByColumns sortOrder,
-            ParameterizedSql selectionClause,
-            ParameterizedSql selection)
-        {
             var projectedColumns = AllColumns;
             var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
 
             return SQL($@"
-                /* multi-selection for current filters */
+                /* multi-selection (singular key) for current filters */
                 select
                     {selectedProjectedColumnsClause}
                 from (
@@ -73,7 +65,39 @@ namespace ProgressOnderwijsUtils
                     ) as _g1
                     where {filterClause}
                 ) as _g2
-                join {selection} k on {selectionClause}
+                where _g2.{keyColumn} in {selection}
+                {CreateFromSortOrder(sortOrder)}
+            ");
+        }
+
+        [Pure]
+        public static ParameterizedSql CreateSelectedByPluralKeySubQuery(
+            ParameterizedSql subQuery,
+            ParameterizedSql filterClause,
+            OrderByColumns sortOrder,
+            IEnumerable<ParameterizedSql> keyColumns,
+            ParameterizedSql selection)
+        {
+            var projectedColumns = AllColumns;
+            var selectedProjectedColumnsClause = CreateProjectedColumnsClause(projectedColumns.Select(col => SQL($"_g2.{col}")));
+            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
+            var joinClause = keyColumns
+                .Select(col => SQL($"k.{col} = _g2.{col}"))
+                .Aggregate((a, b) => SQL($"{a} and {b}"));
+
+            return SQL($@"
+                /* multi-selection (plural key) for current filters */
+                select
+                    {selectedProjectedColumnsClause}
+                from (
+                    select 
+                        {projectedColumnsClause}
+                    from (
+                        {subQuery}
+                    ) as _g1
+                    where {filterClause}
+                ) as _g2
+                join {selection} k on {joinClause}
                 {CreateFromSortOrder(sortOrder)}
             ");
         }
