@@ -10,12 +10,10 @@ namespace ProgressOnderwijsUtilsTests
 {
     public static class ConextTestHelpers
     {
-        public static Saml20MetaData Saml20MetaData(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
+        public static Saml20MetaData Saml20MetaData(IdentityProvider idp, ServiceProvider sp, PnetOmgeving db)
         {
             var server = MetaDataFactory.GetIdentityProvider(idp);
-            var client = sp.HasValue && db.HasValue
-                ? MetaDataFactory.GetServiceProvider(sp.Value, db.Value)
-                : default(ServiceProviderConfig?);
+            var client = MetaDataFactory.GetServiceProvider(sp, db);
 
             var sut = MetaDataFactory.GetMetaData(server, client);
             return sut;
@@ -51,10 +49,10 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(sut.certificate.HasPrivateKey);
         }
 
-        [TestCase(IdentityProvider.Conext)]
-        [TestCase(IdentityProvider.ConextWayf)]
-        public void GetIdentityProvider(IdentityProvider idp)
+        [Test]
+        public void GetIdentityProvider()
         {
+            var idp = IdentityProvider.Conext;
             var sut = MetaDataFactory.GetIdentityProvider(idp);
             Assert.That(sut, Is.Not.Null);
             Assert.That(sut.idp, Is.EqualTo(idp));
@@ -64,7 +62,6 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(!sut.certificate.HasPrivateKey);
         }
 
-        [TestCase(IdentityProvider.ConextWayf, null, null)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie)]
@@ -75,13 +72,12 @@ namespace ProgressOnderwijsUtilsTests
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.TestingContinuously)]
-        public void GetEntities(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
+        public void GetEntities(IdentityProvider idp, ServiceProvider sp, PnetOmgeving db)
         {
             var sut = MetaDataFactory.GetEntities(idp, sp, db);
             Assert.That(sut, Is.Not.Null);
         }
 
-        [TestCase(IdentityProvider.ConextWayf, null, null)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie)]
@@ -91,7 +87,7 @@ namespace ProgressOnderwijsUtilsTests
         [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
-        public void GetMetaData(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
+        public void GetMetaData(IdentityProvider idp, ServiceProvider sp, PnetOmgeving db)
         {
             var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
             Assert.That(sut, Is.Not.Null);
@@ -100,7 +96,6 @@ namespace ProgressOnderwijsUtilsTests
 
     public sealed class Saml20MetaDataTest
     {
-        [TestCase(IdentityProvider.ConextWayf, null, null)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie)]
@@ -110,13 +105,12 @@ namespace ProgressOnderwijsUtilsTests
         [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
-        public void GetEntities(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
+        public void GetEntities(IdentityProvider idp, ServiceProvider sp, PnetOmgeving db)
         {
             var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
             Assert.That(sut.GetEntities(), Is.EquivalentTo(MetaDataFactory.GetEntities(idp, sp, db).Values.Distinct()));
         }
 
-        [TestCase(IdentityProvider.ConextWayf, null, null)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Productie)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.P3W, PnetOmgeving.Test)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.PNet, PnetOmgeving.Productie)]
@@ -126,7 +120,7 @@ namespace ProgressOnderwijsUtilsTests
         [TestCase(IdentityProvider.Conext, ServiceProvider.Student, PnetOmgeving.Test)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Productie)]
         [TestCase(IdentityProvider.Conext, ServiceProvider.StudentOAuth, PnetOmgeving.Test)]
-        public void SingleSignOnService(IdentityProvider idp, ServiceProvider? sp, PnetOmgeving? db)
+        public void SingleSignOnService(IdentityProvider idp, ServiceProvider sp, PnetOmgeving db)
         {
             var sut = ConextTestHelpers.Saml20MetaData(idp, sp, db);
             foreach (var entity in MetaDataFactory.GetEntities(idp, sp, db).Values.Distinct()) {
