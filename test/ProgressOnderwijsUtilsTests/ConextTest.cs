@@ -44,7 +44,6 @@ namespace ProgressOnderwijsUtilsTests
             Assert.That(sut, Is.Not.Null);
             Assert.That(sut.sp, Is.EqualTo(sp));
             Assert.That(sut.entity, Is.Not.Null);
-            Assert.That(sut.index, Is.EqualTo(0));
             Assert.That(sut.certificate, Is.Not.Null);
             Assert.That(sut.certificate.HasPrivateKey);
         }
