@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtilsTests
             var server = MetaDataFactory.GetIdentityProvider(idp);
             var client = MetaDataFactory.GetServiceProvider(sp, db);
 
-            var sut = MetaDataFactory.GetMetaData(server, client);
+            var sut = SsoProcessor.GetMetaData(server, client);
             return sut;
         }
     }
