@@ -24,29 +24,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static ParameterizedSql CreateSelectedByPluralKeySubQuery(
-            ParameterizedSql subQuery,
-            ParameterizedSql filterClause,
-            OrderByColumns sortOrder,
-            IEnumerable<ParameterizedSql> keyColumns,
-            ParameterizedSql selection)
-        {
-            var selectionWhereExpression = keyColumns
-                .Select(col => SQL($"k.{col} = _g2.{col}"))
-                .Aggregate((a, b) => SQL($"{a} and {b}"));
-            return SQL($@"
-                /* multi-selection for current filters */
-                select _g2.*
-                from (
-                    {subQuery}
-                ) as _g2 
-                where {filterClause}
-                and exists(select 0 from {selection} k where {selectionWhereExpression})
-                {CreateFromSortOrder(sortOrder)}
-            ");
-        }
-
-        [Pure]
         static ParameterizedSql SubQueryHelper(
             ParameterizedSql subquery,
             IEnumerable<ParameterizedSql> projectedColumns,
@@ -59,7 +36,7 @@ namespace ProgressOnderwijsUtils
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
             return
                 SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
-                    + CreateFromSortOrder(sortOrder);
+                    + CreateOrderByClause(sortOrder);
         }
 
         //TODO: dit aanzetten voor datasource tests
@@ -78,7 +55,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        static ParameterizedSql CreateFromSortOrder(OrderByColumns sortOrder)
+        public static ParameterizedSql CreateOrderByClause(OrderByColumns sortOrder)
         {
             return !sortOrder.Columns.Any()
                 ? ParameterizedSql.Empty
