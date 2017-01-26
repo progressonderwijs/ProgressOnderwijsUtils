@@ -1,6 +1,6 @@
 using System.Security.Cryptography.X509Certificates;
 
-namespace Progress.Business.SingleSignOn
+namespace ProgressOnderwijsUtils.SingleSignOn
 {
     public struct IdentityProviderConfig
     {

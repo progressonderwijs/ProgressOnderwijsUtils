@@ -1,7 +1,6 @@
 using System;
-using ProgressOnderwijsUtils;
 
-namespace Progress.Business.Tools
+namespace ProgressOnderwijsUtils.SingleSignOn
 {
     [Serializable]
     public struct SurffSsoAttributes

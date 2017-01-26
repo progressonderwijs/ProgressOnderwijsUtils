@@ -13,11 +13,10 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using log4net;
-using Progress.Business.Tools;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Log4Net;
 
-namespace Progress.Business.SingleSignOn
+namespace ProgressOnderwijsUtils.SingleSignOn
 {
     public static class SsoProcessor
     {

@@ -3,7 +3,7 @@ using System.Linq;
 using System.Xml.Linq;
 using ProgressOnderwijsUtils;
 
-namespace Progress.Business.SingleSignOn
+namespace ProgressOnderwijsUtils.SingleSignOn
 {
     public class Saml20MetaData
     {

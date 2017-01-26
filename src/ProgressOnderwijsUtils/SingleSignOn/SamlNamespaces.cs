@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace Progress.Business.SingleSignOn
+namespace ProgressOnderwijsUtils.SingleSignOn
 {
     public static class SamlNamespaces
     {
