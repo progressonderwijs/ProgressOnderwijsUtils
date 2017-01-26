@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtilsTests
             var server = MetaDataFactory.GetIdentityProvider(idp);
             var client = MetaDataFactory.GetServiceProvider(sp, db);
 
-            var sut = MetaDataFactory.GetMetaData(server, client);
+            var sut = SsoProcessor.GetMetaData(server, client);
             return sut;
         }
     }
@@ -42,9 +42,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             var sut = MetaDataFactory.GetServiceProvider(sp, db);
             Assert.That(sut, Is.Not.Null);
-            Assert.That(sut.sp, Is.EqualTo(sp));
             Assert.That(sut.entity, Is.Not.Null);
-            Assert.That(sut.index, Is.EqualTo(0));
             Assert.That(sut.certificate, Is.Not.Null);
             Assert.That(sut.certificate.HasPrivateKey);
         }
@@ -55,7 +53,6 @@ namespace ProgressOnderwijsUtilsTests
             var idp = IdentityProvider.Conext;
             var sut = MetaDataFactory.GetIdentityProvider(idp);
             Assert.That(sut, Is.Not.Null);
-            Assert.That(sut.idp, Is.EqualTo(idp));
             Assert.That(sut.metadata, Is.Not.Null);
             Assert.That(sut.identity, Is.Not.Null);
             Assert.That(sut.certificate, Is.Not.Null);
