@@ -2,14 +2,13 @@
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
-using Progress.Business.Schemas;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils.SingleSignOn;
 
 namespace ProgressOnderwijsUtilsTests
 {
     [PullRequestTest]
-    public class SchemaSetTest
+    public class SsoProcessorValidationTest
     {
         static readonly XElement VALID = new XElement(
             SamlNamespaces.SAMLP_NS + "AuthnRequest",
@@ -115,15 +114,15 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void ValidateXDocument()
         {
-            Assert.That(() => new XDocument(VALID).Validate(null), Throws.Nothing);
-            Assert.That(() => new XDocument(INVALID).Validate(null), Throws.InstanceOf<XmlSchemaValidationException>());
+            Assert.That(() => SsoProcessor.Validate(VALID), Throws.Nothing);
+            Assert.That(() => SsoProcessor.Validate(INVALID), Throws.InstanceOf<XmlSchemaValidationException>());
         }
 
         [Test]
         public void ValidateNested()
         {
-            Assert.That(() => XDocument.Parse(VALID_NESTED).Validate(null), Throws.Nothing);
-            Assert.That(() => XDocument.Parse(INVALID_NESTED).Validate(null), Throws.InstanceOf<XmlSchemaValidationException>());
+            Assert.That(() => SsoProcessor.Validate(XElement.Parse(VALID_NESTED)), Throws.Nothing);
+            Assert.That(() => SsoProcessor.Validate(XElement.Parse(INVALID_NESTED)), Throws.InstanceOf<XmlSchemaValidationException>());
         }
     }
 }

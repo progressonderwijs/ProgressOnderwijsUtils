@@ -219,7 +219,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
             var schemaResources = new SingleSignOnSchemaResources();
             foreach (var resName in schemaResources.GetResourceNames()) {
-                if (resName.EndsWith(".xsd")) {
+                if (resName.EndsWith(".xsd") || resName.EndsWith(".xsd.intellisensehack")) {
                     using (var stream = schemaResources.GetResource(resName))
                     using (var reader = XmlReader.Create(stream, settings))
                         schemaSet.Add(XmlSchema.Read(reader, null));
@@ -229,7 +229,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
         static void Validate(XElement assertion, X509Certificate2 cer)
         {
-            new XDocument(assertion).Validate(schemaSet, null, false);
+            Validate(assertion);
 
             var doc = new XmlDocument {
                 PreserveWhitespace = true,
@@ -243,6 +243,11 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             if (!dsig.CheckSignature(cer, true)) {
                 throw new CryptographicException("metadata not signed");
             }
+        }
+
+        public static void Validate(XElement assertion)
+        {
+            new XDocument(assertion).Validate(schemaSet, null, false);
         }
     }
 }
