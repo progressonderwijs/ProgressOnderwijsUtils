@@ -75,10 +75,10 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return ReceiveSamlResponse(samlResponse);
         }
 
-        public static SurffSsoAttributes? Process(XElement response, X509Certificate2 certificate)
+        public static SsoAttributes? Process(XElement response, X509Certificate2 certificate)
         {
             var assertion = GetAssertion(response, certificate);
-            return assertion == null ? default(SurffSsoAttributes?) : GetAttributes(assertion, certificate);
+            return assertion == null ? default(SsoAttributes?) : GetAttributes(assertion, certificate);
         }
 
         public static XElement GetAssertion(XElement response, X509Certificate2 certificate)
@@ -95,12 +95,12 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return null;
         }
 
-        public static SurffSsoAttributes GetAttributes(XElement assertion, X509Certificate2 certificate)
+        public static SsoAttributes GetAttributes(XElement assertion, X509Certificate2 certificate)
         {
             LOG.Debug(() => $"GetAttributes(assertion='{assertion}')");
 
             Validate(assertion, certificate);
-            return new SurffSsoAttributes {
+            return new SsoAttributes {
                 uid = GetAttribute(assertion, UID),
                 domain = GetAttribute(assertion, DOMAIN),
                 email = GetAttributes(assertion, MAIL),

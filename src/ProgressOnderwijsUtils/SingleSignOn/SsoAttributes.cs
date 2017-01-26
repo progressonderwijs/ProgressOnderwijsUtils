@@ -3,7 +3,7 @@ using System;
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
     [Serializable]
-    public struct SurffSsoAttributes
+    public struct SsoAttributes
     {
         public string uid;
         public string domain;
