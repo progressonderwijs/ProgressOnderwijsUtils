@@ -14,8 +14,7 @@ namespace ProgressOnderwijsUtils
         {
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns ?? AllColumns);
             return
-                SQL($"select {projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
-                    + CreateOrderByClause(sortOrder);
+                SQL($"select {projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n{CreateOrderByClause(sortOrder)}");
         }
 
         [Pure]
@@ -26,8 +25,7 @@ namespace ProgressOnderwijsUtils
             int takeNrows)
         {
             return
-                SQL($"select top ({(long)takeNrows}) * from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
-                    + CreateOrderByClause(sortOrder);
+                SQL($"select top ({(long)takeNrows}) * from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n{CreateOrderByClause(sortOrder)}");
         }
 
         //TODO: dit aanzetten voor datasource tests
