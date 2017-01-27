@@ -17,17 +17,6 @@ namespace ProgressOnderwijsUtils
                 SQL($"select {projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n{CreateOrderByClause(sortOrder)}");
         }
 
-        [Pure]
-        public static ParameterizedSql CreatePagedSubQuery(
-            ParameterizedSql subQuery,
-            ParameterizedSql filterClause,
-            OrderByColumns sortOrder,
-            int takeNrows)
-        {
-            return
-                SQL($"select top ({(long)takeNrows}) * from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n{CreateOrderByClause(sortOrder)}");
-        }
-
         //TODO: dit aanzetten voor datasource tests
         // ReSharper disable once UnusedMember.Global
         public static void AssertNoVariableColumns(ParameterizedSql parameterizedSql)
