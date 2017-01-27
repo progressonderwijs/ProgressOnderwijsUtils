@@ -3,14 +3,12 @@ using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.DomainUnits;
-using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public sealed class ParameterizedSqlTest
     {
         [Test]
@@ -246,7 +244,6 @@ namespace ProgressOnderwijsUtilsTests
         public void ParameterizedSqlDoesNotUseLiteralsEnumsMarked_IEnumShouldBeParameterizedInSqlAttribute()
         {
             PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
-            PAssert.That(() => SQL($"select {Id.Organisatie.Dummy_ICT_en_Media}").CommandText() == "select @par0");
         }
 
         [TestNotLiteral]

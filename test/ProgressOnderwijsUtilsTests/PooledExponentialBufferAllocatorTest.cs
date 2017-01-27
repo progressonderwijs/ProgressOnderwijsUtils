@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     class PooledExponentialBufferAllocatorTest
     {
         [Test]

@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public class ReferenceEqualityComparerTest
     {
         struct TestType

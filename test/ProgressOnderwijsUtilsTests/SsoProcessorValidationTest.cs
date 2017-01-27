@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils.SingleSignOn;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public class SsoProcessorValidationTest
     {
         static readonly XElement VALID = new XElement(

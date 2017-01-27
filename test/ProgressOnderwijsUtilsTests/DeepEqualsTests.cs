@@ -4,12 +4,11 @@ using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using NUnit.Framework;
-using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public class DeepEqualsTest
     {
         [Test]

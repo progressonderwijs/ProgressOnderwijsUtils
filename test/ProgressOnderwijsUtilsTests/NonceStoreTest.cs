@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Threading;
 using NUnit.Framework;
-using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public class NonceStoreTest
     {
         static IEnumerable<TestCaseData> NonceStoreItemEqualityData()

@@ -4,14 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business;
-using Progress.Business.DomainUnits;
-using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public sealed class TypeExtensionTest
     {
         [Test]
@@ -21,11 +18,11 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => typeof(string).CanBeNull());
             PAssert.That(() => typeof(TypeExtensionTest).CanBeNull());
             PAssert.That(() => typeof(IEnumerable<int>).CanBeNull());
-            PAssert.That(() => typeof(ServerLocationAuto).CanBeNull());
+            PAssert.That(() => typeof(TypeExtension).CanBeNull());
             PAssert.That(() => !typeof(int).CanBeNull());
 
-            PAssert.That(() => !typeof(DocumentType).CanBeNull());
-            PAssert.That(() => !typeof(SelectItem<int?>).CanBeNull());
+            PAssert.That(() => !typeof(DayOfWeek).CanBeNull());
+            PAssert.That(() => !typeof(KeyValuePair<int?,string>).CanBeNull());
 
             PAssert.That(() => typeof(Enum).CanBeNull()); //WTF???? maar goed, dit is dan ook wel een heel gek type.
         }
@@ -44,10 +41,10 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => typeof(TypeExtensionTest).BaseTypes().SequenceEqual(new[] { typeof(object) }));
             PAssert.That(() => typeof(IEnumerable<int>).BaseTypes().SequenceEqual(new Type[] { }));
             PAssert.That(() => typeof(int).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-            PAssert.That(() => typeof(ServerLocationAuto).BaseTypes().SequenceEqual(new[] { typeof(object) }));
+            PAssert.That(() => typeof(TypeExtension).BaseTypes().SequenceEqual(new[] { typeof(object) }));
             PAssert.That(() => typeof(Enum).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
-            PAssert.That(() => typeof(DocumentType).BaseTypes().SequenceEqual(new[] { typeof(Enum), typeof(ValueType), typeof(object) }));
-            PAssert.That(() => typeof(SelectItem<int?>).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
+            PAssert.That(() => typeof(DayOfWeek).BaseTypes().SequenceEqual(new[] { typeof(Enum), typeof(ValueType), typeof(object) }));
+            PAssert.That(() => typeof(KeyValuePair<int?, string>).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
             PAssert.That(() => typeof(SampleX<string>).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object) }));
         }
 

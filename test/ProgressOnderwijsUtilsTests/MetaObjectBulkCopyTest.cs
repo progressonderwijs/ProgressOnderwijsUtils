@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿#if false
+using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
 using Progress.Business;
@@ -8,7 +9,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public sealed class MetaObjectBulkCopyTest : TestsWithBusinessConnection
     {
         static readonly BlaOk[] SampleObjects = new[] {
@@ -127,3 +128,4 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 }
+#endif

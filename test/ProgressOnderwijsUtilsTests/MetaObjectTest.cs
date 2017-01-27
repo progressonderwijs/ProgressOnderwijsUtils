@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if false
+using System;
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
@@ -59,7 +60,7 @@ namespace ProgressOnderwijsUtilsTests
         public string StringProperty { get; set; }
     }
 
-    [PullRequestTest]
+    
     public sealed class MetaObjectTest
     {
         [Test]
@@ -199,3 +200,4 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 }
+#endif

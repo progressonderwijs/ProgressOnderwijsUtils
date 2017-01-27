@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
+    using static System.Data.DataRowExtensions;
     /// <summary>
     /// Extensions for DataRow
     /// </summary>

@@ -5,9 +5,6 @@ using System.Linq;
 using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
-using Progress.Business.Documenten;
-using Progress.Business.Test;
-using Progress.Business.Text;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -87,7 +84,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [PullRequestTest]
+        
         public void SwapValue()
         {
             var one = 1;
@@ -98,7 +95,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [PullRequestTest]
+        
         public void SwapReference()
         {
             var one = "1";
@@ -109,7 +106,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [PullRequestTest]
+        
         public void NUnitSession()
         {
             Assert.That(Utils.IsInUnitTest());
@@ -129,14 +126,14 @@ namespace ProgressOnderwijsUtilsTests
 
         [Test]
         [TestCaseSource(nameof(MaandSpan))]
-        [PullRequestTest]
+        
         public int MaandSpanTest(DateTime d1, DateTime d2)
         {
             return Utils.MaandSpan(d1, d2);
         }
 
         [Test]
-        [PullRequestTest]
+        
         public void IsDbConnFailureTest()
         {
             PAssert.That(() => !Utils.IsDbConnectionFailure(new Exception()));
@@ -154,7 +151,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Test]
-        [PullRequestTest]
+        
         public void DateMaxTest()
         {
             DateTime? d1 = null;
@@ -188,31 +185,6 @@ namespace ProgressOnderwijsUtilsTests
             d1 = DateTime.Today;
             d2 = DateTime.Today.AddDays(1);
             Assert.That(Utils.DateMax(d1, d2), Is.EqualTo(d2));
-        }
-
-        [Test]
-        [TestCase(DocumentLanguage.Dutch, Taal.NL, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.Dutch, Taal.EN, ExpectedResult = false)]
-        [TestCase(DocumentLanguage.Dutch, Taal.DU, ExpectedResult = false)]
-        [TestCase(DocumentLanguage.English, Taal.NL, ExpectedResult = false)]
-        [TestCase(DocumentLanguage.English, Taal.EN, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.English, Taal.DU, ExpectedResult = false)]
-        [TestCase(DocumentLanguage.German, Taal.NL, ExpectedResult = false)]
-        [TestCase(DocumentLanguage.German, Taal.EN, ExpectedResult = false)]
-        [TestCase(DocumentLanguage.German, Taal.DU, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.NL, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.EN, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.StudentPreferenceNlEn, Taal.DU, ExpectedResult = false)]
-        [TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.NL, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.EN, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.StudentPreferenceNlEnDu, Taal.DU, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.NL, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.EN, ExpectedResult = true)]
-        [TestCase(DocumentLanguage.CoursePreferenceNlEn, Taal.DU, ExpectedResult = false)]
-        [PullRequestTest]
-        public bool GenerateForLanguage(DocumentLanguage doc, Taal language)
-        {
-            return doc.GenerateForLanguage(language);
         }
 
         public static IEnumerable<TestCaseData> RoundUpData()

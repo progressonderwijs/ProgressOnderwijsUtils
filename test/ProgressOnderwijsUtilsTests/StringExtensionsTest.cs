@@ -9,7 +9,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public class StringExtensionsTest
     {
         [Test]

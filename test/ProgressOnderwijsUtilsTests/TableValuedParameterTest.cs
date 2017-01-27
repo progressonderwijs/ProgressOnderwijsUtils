@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if false
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -19,7 +20,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public class TableValuedParameterTest : TestsWithBusinessConnection
     {
         [Test]
@@ -200,3 +201,4 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 }
+#endif

@@ -5,7 +5,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    [PullRequestTest]
+    
     public class SimplerHashTest
     {
         [Test]

@@ -1,21 +1,20 @@
-﻿using ExpressionToCodeLib;
+﻿using System;
+using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.Data;
-using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtilsTests
+namespace ProgressOnderwijsUtilsFridays
 {
-    [PullRequestTest]
-    public class GenericExtensionsTest
+    
+    public class GenericExtensionsFriday
     {
         [Test]
         public void InStruct()
         {
-            PAssert.That(() => PnetOmgeving.TestingContinuously.In(PnetOmgeving.Productie, PnetOmgeving.TestingContinuously));
-            PAssert.That(() => !PnetOmgeving.TestingContinuously.In(PnetOmgeving.Productie, PnetOmgeving.Test));
-            PAssert.That(() => !default(PnetOmgeving?).In(PnetOmgeving.Productie, PnetOmgeving.Test));
-            PAssert.That(() => default(PnetOmgeving?).In(PnetOmgeving.Productie, PnetOmgeving.Test, null));
+            PAssert.That(() => DayOfWeek.Monday.In(DayOfWeek.Tuesday, DayOfWeek.Monday));
+            PAssert.That(() => !DayOfWeek.Monday.In(DayOfWeek.Tuesday, DayOfWeek.Friday));
+            PAssert.That(() => !default(DayOfWeek?).In(DayOfWeek.Tuesday, DayOfWeek.Friday));
+            PAssert.That(() => default(DayOfWeek?).In(DayOfWeek.Tuesday, DayOfWeek.Friday, null));
 
             PAssert.That(() => 3.In(1, 2, 3));
             PAssert.That(() => !3.In(1, 2, 4, 8));

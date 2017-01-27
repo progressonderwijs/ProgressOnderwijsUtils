@@ -2,7 +2,6 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -23,7 +22,7 @@ namespace ProgressOnderwijsUtilsTests
     public class OrderByTopologyTest
     {
         [Test]
-        [PullRequestTest]
+        
         public void NodesWithoutDependenciesAreNotSorted()
         {
             var example = new[] { "a", "b", "d", "c" };
