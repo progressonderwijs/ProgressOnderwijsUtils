@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
         {
             var projectedColumnsClause = CreateProjectedColumnsClause(AllColumns);
             return
-                SQL($"select {SQL($"top ({(ParameterizedSql?)ParameterizedSql.Param((long)takeNrows)}) ")}{projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
+                SQL($"select top ({(ParameterizedSql?)ParameterizedSql.Param((long)takeNrows)}) {projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateOrderByClause(sortOrder);
         }
 
