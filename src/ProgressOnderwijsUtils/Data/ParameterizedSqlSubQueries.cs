@@ -11,7 +11,15 @@ namespace ProgressOnderwijsUtils
     {
         [Pure]
         public static ParameterizedSql CreateSubQuery(ParameterizedSql subQuery, IEnumerable<ParameterizedSql> projectedColumns, ParameterizedSql filterClause, OrderByColumns sortOrder)
-            => SubQueryHelper(subQuery, projectedColumns, filterClause, sortOrder, null);
+        {
+            IEnumerable<ParameterizedSql> projectedColumns1 = projectedColumns;
+            projectedColumns1 = projectedColumns1 ?? AllColumns;
+            var topClause = (ParameterizedSql?)null != null ? SQL($"top ({(ParameterizedSql?)null}) ") : ParameterizedSql.Empty;
+            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns1);
+            return
+                SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
+                    + CreateOrderByClause(sortOrder);
+        }
 
         [Pure]
         public static ParameterizedSql CreatePagedSubQuery(
@@ -20,22 +28,13 @@ namespace ProgressOnderwijsUtils
             OrderByColumns sortOrder,
             int takeNrows)
         {
-            return SubQueryHelper(subQuery, AllColumns, filterClause, sortOrder, ParameterizedSql.Param((long)takeNrows));
-        }
-
-        [Pure]
-        static ParameterizedSql SubQueryHelper(
-            ParameterizedSql subquery,
-            IEnumerable<ParameterizedSql> projectedColumns,
-            ParameterizedSql filterClause,
-            OrderByColumns sortOrder,
-            ParameterizedSql? topRowsOrNull)
-        {
+            IEnumerable<ParameterizedSql> projectedColumns = AllColumns;
+            ParameterizedSql? topRowsOrNull = ParameterizedSql.Param((long)takeNrows);
             projectedColumns = projectedColumns ?? AllColumns;
             var topClause = topRowsOrNull != null ? SQL($"top ({topRowsOrNull}) ") : ParameterizedSql.Empty;
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
             return
-                SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subquery}\r\n) as _g1 where {filterClause}\r\n")
+                SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateOrderByClause(sortOrder);
         }
 
