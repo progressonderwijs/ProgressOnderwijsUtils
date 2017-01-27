@@ -2,18 +2,18 @@
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
-using Progress.Business.Schemas;
 using Progress.Business.Test;
+using ProgressOnderwijsUtils.SingleSignOn;
 
 namespace ProgressOnderwijsUtilsTests
 {
     [PullRequestTest]
-    public class SchemaSetTest
+    public class SsoProcessorValidationTest
     {
         static readonly XElement VALID = new XElement(
-            SchemaSet.SAMLP_NS + "AuthnRequest",
-            new XAttribute(XNamespace.Xmlns + "saml", SchemaSet.SAML_NS.NamespaceName),
-            new XAttribute(XNamespace.Xmlns + "sampl", SchemaSet.SAMLP_NS.NamespaceName),
+            SamlNamespaces.SAMLP_NS + "AuthnRequest",
+            new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
+            new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
             new XAttribute("ID", "_" + Guid.NewGuid()),
             new XAttribute("Version", "2.0"),
             new XAttribute("IssueInstant", DateTime.UtcNow),
@@ -21,13 +21,13 @@ namespace ProgressOnderwijsUtilsTests
             new XAttribute("ForceAuthn", "false"),
             new XAttribute("IsPassive", "false"),
             new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
-            new XElement(SchemaSet.SAML_NS + "Issuer", "Iemand")
+            new XElement(SamlNamespaces.SAML_NS + "Issuer", "Iemand")
             );
 
         static readonly XElement INVALID = new XElement(
-            SchemaSet.SAMLP_NS + "AuthnRequest",
-            new XAttribute(XNamespace.Xmlns + "saml", SchemaSet.SAML_NS.NamespaceName),
-            new XAttribute(XNamespace.Xmlns + "sampl", SchemaSet.SAMLP_NS.NamespaceName),
+            SamlNamespaces.SAMLP_NS + "AuthnRequest",
+            new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
+            new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
             new XAttribute("ID", "_" + Guid.NewGuid()),
             new XAttribute("Version", "2.0"),
             new XAttribute("IssueInstant", DateTime.UtcNow),
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
             new XAttribute("ForceAuthn", "false"),
             new XAttribute("IsPassive", "false"),
             new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
-            new XElement(SchemaSet.SAML_NS + "Issuers", "Iemand")
+            new XElement(SamlNamespaces.SAML_NS + "Issuers", "Iemand")
             );
 
         const string VALID_NESTED = @"
@@ -114,15 +114,15 @@ namespace ProgressOnderwijsUtilsTests
         [Test]
         public void ValidateXDocument()
         {
-            Assert.That(() => new XDocument(VALID).Validate(null), Throws.Nothing);
-            Assert.That(() => new XDocument(INVALID).Validate(null), Throws.InstanceOf<XmlSchemaValidationException>());
+            Assert.That(() => SsoProcessor.Validate(VALID), Throws.Nothing);
+            Assert.That(() => SsoProcessor.Validate(INVALID), Throws.InstanceOf<XmlSchemaValidationException>());
         }
 
         [Test]
         public void ValidateNested()
         {
-            Assert.That(() => XDocument.Parse(VALID_NESTED).Validate(null), Throws.Nothing);
-            Assert.That(() => XDocument.Parse(INVALID_NESTED).Validate(null), Throws.InstanceOf<XmlSchemaValidationException>());
+            Assert.That(() => SsoProcessor.Validate(XElement.Parse(VALID_NESTED)), Throws.Nothing);
+            Assert.That(() => SsoProcessor.Validate(XElement.Parse(INVALID_NESTED)), Throws.InstanceOf<XmlSchemaValidationException>());
         }
     }
 }
