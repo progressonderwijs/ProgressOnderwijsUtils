@@ -35,7 +35,5 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql CreateProjectedColumnsClause(IEnumerable<ParameterizedSql> projectedColumns)
             => projectedColumns.Aggregate((a, b) => SQL($"{a}\n, {b}"));
-
-        public static readonly ParameterizedSql[] AllColumns = { SQL($"*") };
     }
 }
