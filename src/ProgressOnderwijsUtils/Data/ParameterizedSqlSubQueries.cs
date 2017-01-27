@@ -12,10 +12,8 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql CreateSubQuery(ParameterizedSql subQuery, IEnumerable<ParameterizedSql> projectedColumns, ParameterizedSql filterClause, OrderByColumns sortOrder)
         {
-            IEnumerable<ParameterizedSql> projectedColumns1 = projectedColumns;
-            projectedColumns1 = projectedColumns1 ?? AllColumns;
             var topClause = (ParameterizedSql?)null != null ? SQL($"top ({(ParameterizedSql?)null}) ") : ParameterizedSql.Empty;
-            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns1);
+            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns ?? AllColumns);
             return
                 SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateOrderByClause(sortOrder);
@@ -28,11 +26,9 @@ namespace ProgressOnderwijsUtils
             OrderByColumns sortOrder,
             int takeNrows)
         {
-            IEnumerable<ParameterizedSql> projectedColumns = AllColumns;
             ParameterizedSql? topRowsOrNull = ParameterizedSql.Param((long)takeNrows);
-            projectedColumns = projectedColumns ?? AllColumns;
             var topClause = topRowsOrNull != null ? SQL($"top ({topRowsOrNull}) ") : ParameterizedSql.Empty;
-            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns);
+            var projectedColumnsClause = CreateProjectedColumnsClause(AllColumns);
             return
                 SQL($"select {topClause}{projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateOrderByClause(sortOrder);
