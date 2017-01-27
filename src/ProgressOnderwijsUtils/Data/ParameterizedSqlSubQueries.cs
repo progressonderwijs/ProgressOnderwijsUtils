@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
         {
             var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns ?? AllColumns);
             return
-                SQL($"select {ParameterizedSql.Empty}{projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
+                SQL($"select {projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateOrderByClause(sortOrder);
         }
 
