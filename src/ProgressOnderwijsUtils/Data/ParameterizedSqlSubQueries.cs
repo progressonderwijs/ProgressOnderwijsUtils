@@ -31,9 +31,5 @@ namespace ProgressOnderwijsUtils
                 ? ParameterizedSql.Empty
                 : ParameterizedSql.CreateDynamic("order by " + sortOrder.Columns.Select(sc => sc.SqlSortString()).JoinStrings(", "));
         }
-
-        [Pure]
-        public static ParameterizedSql CreateProjectedColumnsClause(IEnumerable<ParameterizedSql> projectedColumns)
-            => projectedColumns.Aggregate((a, b) => SQL($"{a}\n, {b}"));
     }
 }
