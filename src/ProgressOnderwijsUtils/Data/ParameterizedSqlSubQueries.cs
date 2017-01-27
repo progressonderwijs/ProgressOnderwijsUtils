@@ -25,9 +25,8 @@ namespace ProgressOnderwijsUtils
             OrderByColumns sortOrder,
             int takeNrows)
         {
-            var projectedColumnsClause = CreateProjectedColumnsClause(AllColumns);
             return
-                SQL($"select top ({(long)takeNrows}) {projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
+                SQL($"select top ({(long)takeNrows}) * from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n")
                     + CreateOrderByClause(sortOrder);
         }
 
