@@ -9,14 +9,6 @@ namespace ProgressOnderwijsUtils
 {
     public static class ParameterizedSqlSubQueries
     {
-        [Pure]
-        public static ParameterizedSql CreateSubQuery(ParameterizedSql subQuery, IEnumerable<ParameterizedSql> projectedColumns, ParameterizedSql filterClause, OrderByColumns sortOrder)
-        {
-            var projectedColumnsClause = CreateProjectedColumnsClause(projectedColumns ?? AllColumns);
-            return
-                SQL($"select {projectedColumnsClause} from (\r\n{subQuery}\r\n) as _g1 where {filterClause}\r\n{CreateOrderByClause(sortOrder)}");
-        }
-
         //TODO: dit aanzetten voor datasource tests
         // ReSharper disable once UnusedMember.Global
         public static void AssertNoVariableColumns(ParameterizedSql parameterizedSql)
@@ -41,9 +33,9 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        static ParameterizedSql CreateProjectedColumnsClause(IEnumerable<ParameterizedSql> projectedColumns)
+        public static ParameterizedSql CreateProjectedColumnsClause(IEnumerable<ParameterizedSql> projectedColumns)
             => projectedColumns.Aggregate((a, b) => SQL($"{a}\n, {b}"));
 
-        static readonly ParameterizedSql[] AllColumns = { SQL($"*") };
+        public static readonly ParameterizedSql[] AllColumns = { SQL($"*") };
     }
 }
