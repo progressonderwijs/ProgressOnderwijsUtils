@@ -2,7 +2,7 @@
   <PropertyGroup Label="Configuration">
     <AssemblyName>ProgressOnderwijsUtils</AssemblyName>
     <RootNamespace>ProgressOnderwijsUtils</RootNamespace>
-    <Version>0.0.3-beta</Version>
+    <Version>0.0.4-beta</Version>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -20,6 +20,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <OutputType>library</OutputType>
+    <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="10.2.1" />
