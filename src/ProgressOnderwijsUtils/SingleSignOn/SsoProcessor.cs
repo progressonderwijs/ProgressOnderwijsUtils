@@ -8,12 +8,10 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
 using System.Text;
-using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using log4net;
-using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Log4Net;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
@@ -59,14 +57,15 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
         static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
-        public static void Request(HttpResponse response, string relayState, IdentityProviderConfig server, ServiceProviderConfig client, string entityName)
+        public static string GetRedirectUrl(string relayState, IdentityProviderConfig server, ServiceProviderConfig client, string entityName)
         {
             var md = GetMetaData(server, client);
             var request = new AuthnRequest {
                 Destination = md.SingleSignOnService(entityName),
                 Issuer = client.entity,
             };
-            SendSamlRequest(response, request, relayState, client.certificate);
+            var qs = CreateQueryString(request, relayState, client.certificate);
+            return CreateUrl(request, qs);
         }
 
         public static XElement Response(string samlResponse)
@@ -106,13 +105,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 email = GetAttributes(assertion, MAIL),
                 roles = GetAttributes(assertion, ROLE),
             };
-        }
-
-        static void SendSamlRequest(HttpResponse response, AuthnRequest req, string relayState, X509Certificate2 cer)
-        {
-            var qs = CreateQueryString(req, relayState, cer);
-            var url = CreateUrl(req, qs);
-            response.Redirect(url);
         }
 
         static XElement ReceiveSamlResponse(string SamlResponse)
