@@ -2,7 +2,6 @@
 using System.Xml.Linq;
 using System.Xml.Schema;
 using NUnit.Framework;
-using Progress.Business.Test;
 using ProgressOnderwijsUtils.SingleSignOn;
 
 namespace ProgressOnderwijsUtilsTests

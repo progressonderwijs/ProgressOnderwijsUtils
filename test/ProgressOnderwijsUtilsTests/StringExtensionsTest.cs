@@ -4,7 +4,6 @@ using System.Globalization;
 using System.Threading;
 using ExpressionToCodeLib;
 using NUnit.Framework;
-using Progress.Business.Test;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
