@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
     <AssemblyName>ProgressOnderwijsUtils</AssemblyName>
     <RootNamespace>ProgressOnderwijsUtils</RootNamespace>
@@ -22,10 +22,6 @@
     <OutputType>library</OutputType>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="**\*.cs" />
-    <EmbeddedResource Include="**\*.resx" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="10.2.1" />
     <PackageReference Include="DotNetZip" version="1.10.1" />
     <PackageReference Include="EcmaScript.Net" version="1.0.1.0" />
@@ -40,7 +36,6 @@
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework)=='netstandard1.5' ">
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="1.1.0" />
-    <PackageReference Include="NETStandard.Library" Version="1.6" />
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
     <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
