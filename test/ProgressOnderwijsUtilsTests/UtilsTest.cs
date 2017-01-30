@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core;
 using System.Linq;
 using ExpressionToCodeLib;
 using MoreLinq;
 using NUnit.Framework;
 using ProgressOnderwijsUtils;
+using System.Data;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -137,15 +137,15 @@ namespace ProgressOnderwijsUtilsTests
         public void IsDbConnFailureTest()
         {
             PAssert.That(() => !Utils.IsDbConnectionFailure(new Exception()));
-            PAssert.That(() => !Utils.IsDbConnectionFailure(new EntityException()));
+            PAssert.That(() => !Utils.IsDbConnectionFailure(new DataException()));
             PAssert.That(() => !Utils.IsDbConnectionFailure(new ParameterizedSqlExecutionException()));
-            PAssert.That(() => Utils.IsDbConnectionFailure(new ParameterizedSqlExecutionException("bla", new EntityException("The underlying provider failed on Open."))));
+            PAssert.That(() => Utils.IsDbConnectionFailure(new ParameterizedSqlExecutionException("bla", new DataException("The underlying provider failed on Open."))));
             PAssert.That(
                 () =>
                     Utils.IsDbConnectionFailure(
                         new AggregateException(
-                            new ParameterizedSqlExecutionException("bla", new EntityException("The underlying provider failed on Open.")),
-                            new EntityException("The underlying provider failed on Open."))));
+                            new ParameterizedSqlExecutionException("bla", new DataException("The underlying provider failed on Open.")),
+                            new DataException("The underlying provider failed on Open."))));
             PAssert.That(() => !Utils.IsDbConnectionFailure(new AggregateException()));
             PAssert.That(() => !Utils.IsDbConnectionFailure(null));
         }

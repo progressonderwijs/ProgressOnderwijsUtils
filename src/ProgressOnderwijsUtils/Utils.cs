@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity.Core;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
@@ -145,7 +144,7 @@ namespace ProgressOnderwijsUtils
                     e.Message.StartsWith("Timeout expired.");
             } else if (e is DBConcurrencyException) {
                 return e.Message.StartsWith("Concurrency violation:");
-            } else if (e is EntityException) {
+            } else if (e is DataException) {
                 return e.Message == "The underlying provider failed on Open.";
             } else if (e is AggregateException) {
                 return ((AggregateException)e).Flatten().InnerExceptions.DefaultIfEmpty().All(IsDbConnectionFailure);
