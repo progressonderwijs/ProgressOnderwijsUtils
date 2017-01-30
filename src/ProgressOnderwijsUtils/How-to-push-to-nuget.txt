@@ -1,4 +1,5 @@
 ﻿ - Update the version number in the project file
+ - open this directory (e.g from package manager console: cd src/ProgressOnderwijsUtils)
  - Run: dotnet pack -c release --include-symbols --include-source
  - Run: dotnet nuget push .\bin\release\ProgressOnderwijsUtils.<VERSIONNUMBER>.nupkg
 
