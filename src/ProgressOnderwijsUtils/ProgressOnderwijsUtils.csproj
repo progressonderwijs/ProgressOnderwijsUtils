@@ -23,6 +23,10 @@
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="SingleSignOn\*.xsd" />
+    <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="10.2.1" />
     <PackageReference Include="EcmaScript.Net" version="1.0.1.0" />
     <PackageReference Include="ExpressionToCodeLib" version="2.0.0-beta2" />
