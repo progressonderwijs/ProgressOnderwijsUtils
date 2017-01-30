@@ -1,0 +1,5 @@
+﻿ - Update the version number in the project file
+ - Run: dotnet pack -c release --include-symbols --include-source
+ - Run: dotnet nuget push .\bin\release\ProgressOnderwijsUtils.<VERSIONNUMBER>.nupkg
+
+ Nuget will complain if anything is wrong.  In particular: you may need to set the api-key, and you cannot overwrite existing versions.
