@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtils
         int counter;
         int nonce;
         readonly object monitor = new object();
-        readonly ISet<NonceStoreItem> items;
+        readonly HashSet<NonceStoreItem> items;
 
         public NonceStore(TimeSpan? window = null, int cleanup = 100)
         {
@@ -87,12 +87,7 @@ namespace ProgressOnderwijsUtils
         public string Generate()
         {
             lock (monitor) {
-                try {
-                    return (++nonce).ToStringInvariant();
-                } catch (OverflowException) {
-                    nonce = 0;
-                    return Generate();
-                }
+                return (++nonce).ToStringInvariant();
             }
         }
 
@@ -115,9 +110,7 @@ namespace ProgressOnderwijsUtils
             if (++counter == cleanup) {
                 counter = 0;
                 var now = DateTime.UtcNow;
-                foreach (var expired in items.Where(item => now - item.Timestamp > window).ToArray()) {
-                    items.Remove(expired);
-                }
+                items.RemoveWhere(item => now - item.Timestamp > window);
             }
         }
     }
