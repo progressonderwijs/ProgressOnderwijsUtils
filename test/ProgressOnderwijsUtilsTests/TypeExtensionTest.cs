@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public sealed class TypeExtensionTest
     {
-        [Test]
+        [Fact]
         public void TestNullability()
         {
             PAssert.That(() => typeof(int?).CanBeNull());
@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtilsTests
 
         class SampleX<T> : Sample<T> { }
 
-        [Test]
+        [Fact]
         public void TestBases()
         {
             PAssert.That(() => typeof(int?).BaseTypes().SequenceEqual(new[] { typeof(ValueType), typeof(object) }));
@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtilsTests
 
         struct SampleStruct { }
 
-        [Test]
+        [Fact]
         public void TestIsNullableValueType()
         {
             PAssert.That(() => typeof(int?).IsNullableValueType());
@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => typeof(SampleStruct?).IsNullableValueType());
         }
 
-        [Test]
+        [Fact]
         public void TestNullableGetter()
         {
             PAssert.That(() => typeof(int?).IfNullableGetNonNullableType() == typeof(int));
@@ -76,7 +76,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => typeof(string).IfNullableGetNonNullableType() == null);
         }
 
-        [Test]
+        [Fact]
         public void TestNonGenericName()
         {
             PAssert.That(() => typeof(int?).GetNonGenericName() == "System.Nullable");

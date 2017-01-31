@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -8,19 +9,19 @@ namespace ProgressOnderwijsUtilsTests
     
     public sealed class ConcatenateSqlTest
     {
-        [Test]
+        [Fact]
         public void ConcatenateWithEmptySeparatorIsStillSpaced()
         {
             PAssert.That(() => new[] { SafeSql.SQL($"een"), SafeSql.SQL($"twee"), SafeSql.SQL($"drie") }.ConcatenateSql() == SafeSql.SQL($"een twee drie"));
         }
 
-        [Test]
+        [Fact]
         public void EmptyConcatenateFails()
         {
-            Assert.Catch(() => new ParameterizedSql[] { }.ConcatenateSql(SafeSql.SQL($"bla")));
+            Assert.ThrowsAny<Exception>(() => new ParameterizedSql[] { }.ConcatenateSql(SafeSql.SQL($"bla")));
         }
 
-        [Test]
+        [Fact]
         public void ConcatenateIsFastEnoughForLargeSequences()
         {
             var someSqls = Enumerable.Range(0, 10000).Select(i => ParameterizedSql.CreateDynamic(i.ToStringInvariant())).ToArray();
@@ -33,7 +34,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => time.TotalMilliseconds < 5.0);
         }
 
-        [Test]
+        [Fact]
         public void ConcatenateWithSeparatorUsesSeparatorSpaced()
         {
             PAssert.That(() => new[] { SafeSql.SQL($"een"), SafeSql.SQL($"twee"), SafeSql.SQL($"drie") }.ConcatenateSql(SafeSql.SQL($"!")) == SafeSql.SQL($"een ! twee ! drie"));

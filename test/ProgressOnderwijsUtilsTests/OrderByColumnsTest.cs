@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using ExpressionToCodeLib;
 using MoreLinq;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -19,21 +19,21 @@ namespace ProgressOnderwijsUtilsTests
         static readonly ColumnSort[] someOrder = new[] { ziggyA, abcA, acolD };
         static readonly OrderByColumns colSort = new OrderByColumns(someOrder);
 
-        [Test]
+        [Fact]
         public void BasicOrderingOk()
         {
             //check that order works as exepcted:
             PAssert.That(() => colSort.Columns.SequenceEqual(someOrder));
         }
 
-        [Test]
+        [Fact]
         public void SortRankOk()
         {
             PAssert.That(() => colSort.GetColumnSortRank("monster") == null);
             PAssert.That(() => colSort.GetColumnSortRank("abc") == 2); //"rank" is 1-based
         }
 
-        [Test]
+        [Fact]
         public void SortDirectionOk()
         {
             PAssert.That(() => colSort.GetColumnSortDirection("abc") == SortDirection.Asc);
@@ -41,19 +41,19 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => colSort.GetColumnSortDirection("monster") == null);
         }
 
-        [Test]
+        [Fact]
         public void ColumnCountOk()
         {
             PAssert.That(() => colSort.ColumnCount == 3);
         }
 
-        [Test]
+        [Fact]
         public void ToStringOk()
         {
             PAssert.That(() => colSort.ToString() == "{[ziggy Asc], [abc Asc], [acol Desc]}");
         }
 
-        [Test]
+        [Fact]
         public void IsImmutable()
         {
             foreach (var col in colSort.Columns) {
@@ -65,7 +65,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Equals(colSort, new OrderByColumns(new[] { ziggyA, abcA, acolD })));
         }
 
-        [Test]
+        [Fact]
         public void EqualsFailsOk()
         {
             //check that equality can fail too...
@@ -73,14 +73,14 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !Equals(colSort, new OrderByColumns(new[] { ziggyA, monsterA, acolD })));
         }
 
-        [Test]
+        [Fact]
         public void DefaultIsEmpty()
         {
             //check that default order is the empty order:
             PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default(OrderByColumns));
         }
 
-        [Test]
+        [Fact]
         public void ToggleOk()
         {
             //verify that toggling adds if not present:
@@ -89,14 +89,14 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => colSort.ToggleSortDirection("acol").Columns.SequenceEqual(new[] { acolA, ziggyA, abcA, }));
         }
 
-        [Test]
+        [Fact]
         public void DuplicatesIgnored()
         {
             //verify that duplicate columns are ignored:
             PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD, ziggyD, }) == colSort);
         }
 
-        [Test]
+        [Fact]
         public void DoubleToggleNoOp()
         {
             //verify that toggling all columns twice in reverse order is a no-op:
@@ -107,7 +107,7 @@ namespace ProgressOnderwijsUtilsTests
                         == colSort);
         }
 
-        [Test]
+        [Fact]
         public void OperatorsOk()
         {
             PAssert.That(() => colSort != new OrderByColumns(new[] { ziggyA, abcA, acolA }));
@@ -118,7 +118,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !(colSort != new OrderByColumns(new[] { ziggyA, abcA, acolD })));
         }
 
-        [Test]
+        [Fact]
         public void ThenByOk()
         {
             //check ThenBy for new column
@@ -129,28 +129,28 @@ namespace ProgressOnderwijsUtilsTests
             //check ThenBy for null
         }
 
-        [Test]
+        [Fact]
         public void ThenByColumnsOk()
         {
             PAssert.That(
                 () => new OrderByColumns(new[] { ziggyD, abcD }).ThenSortBy(colSort.FirstSortBy(monsterA)) == new OrderByColumns(new[] { ziggyD, abcD, monsterA, acolD }));
         }
 
-        [Test]
+        [Fact]
         public void FirstByOk()
         {
             //check firstby with toggle
             PAssert.That(() => colSort.ToggleSortDirection("ziggy") == colSort.FirstSortBy(ziggyD));
         }
 
-        [Test]
+        [Fact]
         public void ComplexFromScratch()
         {
             //check complex construction from scratch
             PAssert.That(() => colSort == default(OrderByColumns).ToggleSortDirection("acol").FirstSortBy(abcA).ToggleSortDirection("ziggy").ToggleSortDirection("ziggy"));
         }
 
-        [Test]
+        [Fact]
         public void GetHashcodeOk()
         {
             PAssert.That(() => colSort.GetHashCode() != new OrderByColumns(new[] { ziggyA, abcA, acolA }).GetHashCode());
@@ -161,7 +161,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => new OrderByColumns(new ColumnSort[] { }).GetHashCode() == default(OrderByColumns).GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void AssumeThenByOk()
         {
             PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD }).AssumeThenBy(OrderByColumns.Empty) == new OrderByColumns(new[] { ziggyA, abcA, acolD }));

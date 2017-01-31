@@ -1,67 +1,69 @@
 ﻿using System;
 using System.IO;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    public sealed class FileInfoExtensionTest
+    public sealed class FileInfoExtensionTest : IDisposable
     {
         FileInfo sut;
         FileInfo other;
 
-        [SetUp]
-        public void SetUp()
+        public FileInfoExtensionTest()
         {
             sut = new FileInfo(Path.GetTempFileName());
             other = new FileInfo(Path.GetTempFileName());
         }
 
-        [TearDown]
-        public void TearDown()
+        public void Dispose()
         {
-            try {
+            try
+            {
                 sut.Delete();
-            } finally {
+            }
+            finally
+            {
                 other.Delete();
             }
         }
 
-        [Test]
+        [Fact]
         public void SameContentsNull()
         {
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-            Assert.Catch<ArgumentNullException>(() => { sut.SameContents(null); });
+            Assert.ThrowsAny<ArgumentNullException>(() => { sut.SameContents(null); });
         }
 
-        [Test]
+        [Fact]
         public void SameContentsSame()
         {
-            Assert.That(sut.SameContents(sut));
-            Assert.That(sut.SameContents(new FileInfo(sut.FullName)));
+            PAssert.That(() => sut.SameContents(sut));
+            PAssert.That(() => sut.SameContents(new FileInfo(sut.FullName)));
         }
 
-        [Test]
+        [Fact]
         public void SameContentsEmpty()
         {
-            Assert.That(sut.SameContents(other));
+            PAssert.That(() => sut.SameContents(other));
         }
 
-        [Test]
+        [Fact]
         public void SameContentsFilled()
         {
             using (var fs1 = sut.OpenWrite())
                 fs1.WriteByte(0);
             using (var fs2 = other.OpenWrite())
                 fs2.WriteByte(0);
-            Assert.That(sut.SameContents(other));
+            PAssert.That(() => sut.SameContents(other));
         }
 
-        [Test]
+        [Fact]
         public void DifferentLength()
         {
-            using (var fs1 = sut.OpenWrite()) {
+            using (var fs1 = sut.OpenWrite())
+            {
                 fs1.WriteByte(0);
                 fs1.WriteByte(0);
             }
@@ -70,21 +72,21 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !sut.SameContents(other));
         }
 
-        [Test]
+        [Fact]
         public void ReadToEnd()
         {
             File.WriteAllText(sut.FullName, @"Hello World!");
             PAssert.That(() => sut.ReadToEnd() == @"Hello World!");
         }
 
-        [Test]
+        [Fact]
         public void DifferentContents()
         {
             using (var fs1 = sut.OpenWrite())
                 fs1.WriteByte(0);
             using (var fs2 = other.OpenWrite())
                 fs2.WriteByte(1);
-            Assert.That(!sut.SameContents(other));
+            PAssert.That(() => !sut.SameContents(other));
         }
     }
 }

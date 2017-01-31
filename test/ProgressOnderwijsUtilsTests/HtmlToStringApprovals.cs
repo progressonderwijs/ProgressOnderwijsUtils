@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using ApprovalTests;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils.Html;
 
 namespace ProgressOnderwijsUtilsTests
@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtilsTests
 
     public class HtmlToStringApprovals
     {
-        [Test]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void BasicDocWorks()
         {
@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithEmptyClass()
         {
@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOneClass()
         {
@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithTwoClasses()
         {
@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOddChars()
         {
@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOddCharsInAttribute()
         {
@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithSelfClosingTags()
         {
@@ -124,7 +124,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithEscapableRawText()
         {
@@ -140,7 +140,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test]
+        [Fact]
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithTrulyRawText()
         {

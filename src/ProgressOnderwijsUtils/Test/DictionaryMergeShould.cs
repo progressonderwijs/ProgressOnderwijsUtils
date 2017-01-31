@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils.Test
 {
     public class DictionaryMergeShould
     {
-        [Test]
+        [Fact]
         public void ReturnTheSameDictionaryWhenMergingWithEmpty()
         {
             var original = new Dictionary<int, string>() {
@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils.Test
             PAssert.That(() => original.Merge(empty).SequenceEqual(original));
         }
 
-        [Test]
+        [Fact]
         public void ReturnsContentOfBothDictionaries()
         {
             var first = new Dictionary<int, string>() {
@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils.Test
             PAssert.That(() => first.Merge(second).SequenceEqual(combined));
         }
 
-        [Test]
+        [Fact]
         public void ReturnsValueOfLastDictionaryWhenBothDictionariesContainSameKey()
         {
             var first = new Dictionary<int, string>() {
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils.Test
             PAssert.That(() => first.Merge(second).SequenceEqual(combined));
         }
 
-        [Test]
+        [Fact]
         public void ReturnsTheResultOfMultipleMergedArrays()
         {
             var first = new Dictionary<int, string>() {

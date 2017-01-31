@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using Progress.Business;
 using Progress.Business.Test;
 using Progress.Test.CodeStyle;
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public sealed class MetaObjectTest
     {
-        [Test]
+        [Fact]
         public void MetaObjectsAreAbstractOrNotInherited()
         {
             var metaObjectTypes =
@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        [Test]
+        [Fact]
         public void ReturnsSameMetaProperties()
         {
             var mps = MetaObject.GetMetaProperties<SimpleObject>();
@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => mps.SequenceEqual(mpsAlt));
         }
 
-        [Test]
+        [Fact]
         public void EnumeratesAsExpected()
         {
             var mps = MetaObject.GetMetaProperties<SimpleObject>();
@@ -107,7 +107,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => names.SequenceEqual(expected));
         }
 
-        [Test]
+        [Fact]
         public void IsReadable()
         {
             var readable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp => mp.CanRead);
@@ -115,7 +115,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => readable.Select(mp => mp.Name).SequenceEqual(expected));
         }
 
-        [Test]
+        [Fact]
         public void IsWritable()
         {
             var writable = MetaObject.GetMetaProperties<SimpleObject>().Where(mp => mp.CanWrite);
@@ -123,7 +123,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => writable.Select(mp => mp.Name).SequenceEqual(expected));
         }
 
-        [Test]
+        [Fact]
         public void CanSetAndGet()
         {
             var o = new SimpleObject { Property = "foo", LabelledProperty = "bar" };
@@ -137,14 +137,14 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => o.Equals(new SimpleObject { Property = "aha", LabelledProperty = "really" }));
         }
 
-        [Test]
+        [Fact]
         public void CanGetByExpression()
         {
             var mp = MetaObject.GetByExpression((SimpleObject o) => o.Property);
             PAssert.That(() => mp.Name == "Property" && mp.DataType == typeof(string));
         }
 
-        [Test]
+        [Fact]
         public void ReadonlyWorks()
         {
             var readonlyPropertyMp = MetaObject.GetByExpression((SimpleObject o) => o.ReadonlyProperty);
@@ -155,7 +155,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !propertyMp.ExtraMetaData().IsReadonly && propertyMp.CanWrite);
         }
 
-        [Test]
+        [Fact]
         public void CanReadWrite_ValueTypedProperty_On_ValueTypeObject()
         {
             var obj = new SetterTestStruct();
@@ -166,7 +166,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => (int)prop.Getter(obj) == 42);
         }
 
-        [Test]
+        [Fact]
         public void CanReadWrite_ReferenceTypedProperty_On_ValueTypeObject()
         {
             var obj = new SetterTestStruct();
@@ -177,7 +177,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => (string)prop.Getter(obj) == "42");
         }
 
-        [Test]
+        [Fact]
         public void CanReadWrite_ValueTypedProperty_On_ReferenceTypeObject()
         {
             var obj = new SetterTestClass();
@@ -188,7 +188,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => (int)prop.Getter(obj) == 42);
         }
 
-        [Test]
+        [Fact]
         public void CanReadWrite_ReferenceTypedProperty_On_ReferenceTypeObject()
         {
             var obj = new SetterTestClass();

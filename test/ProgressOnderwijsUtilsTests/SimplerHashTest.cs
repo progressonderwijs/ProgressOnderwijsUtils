@@ -1,5 +1,5 @@
 ﻿using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public class SimplerHashTest
     {
-        [Test]
+        [Fact]
         public void BasicChecks()
         {
             const string strA = @" ASDF#VA#Q$T*B#$%(DFB	<script>";

@@ -4,7 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using Progress.Business.Test;
 using Progress.Test.Resources;
 using ProgressOnderwijsUtils;
@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public class ImageToolsTests
     {
-        [Test]
+        [Fact]
         public void CanResaveImage()
         {
             var resImage = TestResources.rainbow;
@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test]
+        [Fact]
         public void CanResizeImage()
         {
             var resImage = TestResources.rainbow;
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test]
+        [Fact]
         public void CannotResizeToZero()
         {
             var resImage = TestResources.rainbow;
@@ -78,7 +78,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !badPixels.Any());
         }
 
-        [Test]
+        [Fact]
         public void CanDownscaleImage()
         {
             var resImage = TestResources.rainbow;

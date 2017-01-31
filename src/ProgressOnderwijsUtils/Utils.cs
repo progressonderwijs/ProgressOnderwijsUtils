@@ -9,7 +9,7 @@ using System.Net.Mail;
 using System.Text;
 using System.Threading;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
@@ -195,54 +195,6 @@ namespace ProgressOnderwijsUtils
         {
             var sql = exception as SqlException ?? exception.InnerException as SqlException;
             return sql == null ? null : $"[code='{sql.ErrorCode:x}'; number='{sql.Number}'; state='{sql.State}']";
-        }
-
-        /// <summary>
-        /// Executes a test body, marking a test as inconclusive rather than failed when a timeout occurs.
-        /// </summary>
-        [CodeThatsOnlyUsedForTests]
-        public static void IgnoreTimeouts(Action test)
-        {
-            //Ideally, we'd retry the test, however, since lots of test are in a complex inheritance chain
-            //we can't really seperate the test body from the side-effects in the setup/teardown.
-            //In particuarly, a retry wouldn't run in its own environment.
-
-            try {
-                test();
-            } catch (Exception e) {
-                if (IsTimeoutException(e)) {
-                    Assert.Inconclusive("TIMEOUT DETECTED\n\n" + e);
-                } else if (e is AggregateException) {
-                    // re-order de inner-exceptions zodat we tenminste de eerste non-timeout exceptie te zien krijgen
-                    var ae = (AggregateException)e;
-                    throw new AggregateException(ae.InnerExceptions.OrderBy(IsTimeoutException));
-                } else {
-                    throw;
-                }
-            }
-        }
-
-        static bool IsTimeoutException(Exception e)
-        {
-            var aggregateException = e as AggregateException;
-            if (aggregateException != null) {
-                return aggregateException.InnerExceptions.All(IsTimeoutException);
-            }
-
-            for (var current = e; current != null; current = current.InnerException) {
-                var sqlE = current as SqlException;
-                if (sqlE != null && sqlE.Number == -2) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public static bool IsInUnitTest()
-        {
-            return RegisterTestingProgressTools.IsInUnitTest;
-            //string procname = Process.GetCurrentProcess().ProcessName;
-            //return procname.StartsWith("nunit") || procname.StartsWith("pnunit"); //also supports nunit-agent, nunit-console, nunit-x86, etc.
         }
 
         // vergelijk datums zonder milliseconden.
@@ -461,7 +413,7 @@ namespace ProgressOnderwijsUtils
 
     public class LogBase2Test
     {
-        [Test]
+        [Fact]
         public void LogBase2RoundedDown_exhaustive_test()
         {
             for (uint i = 1; i < uint.MaxValue; i++) {
@@ -477,7 +429,7 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => Utils.LogBase2RoundedDown(uint.MaxValue) == 31);
         }
 
-        [Test]
+        [Fact]
         public void LogBase2RoundedUp_exhaustive_test()
         {
             for (uint i = 2; i < uint.MaxValue; i++) {

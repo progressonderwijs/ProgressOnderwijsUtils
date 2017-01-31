@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtilsTests
         static readonly CultureInfo NL = CultureInfo.GetCultureInfo("nl");
         static readonly CultureInfo BE = CultureInfo.GetCultureInfo("nl-BE"); //in belgie is "NaN" "NaN (geen getal)" dus das een mooie corner case
 
-        [Test]
+        [Fact]
         public void ToFixedPointWorksLikeFormatter()
         {
             foreach (var culture in new[] { NL, INV }) {
@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtilsTests
             }
         }
 
-        [Test]
+        [Fact]
         
         public void FixedPointOmitsMinusForZero()
         {
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Utils.ToFixedPointString(-double.Epsilon, INV, 2) == "0.00");
         }
 
-        [Test]
+        [Fact]
         
         public void WorksOnNonFiniteNumbers()
         {
@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Utils.ToFixedPointString(double.NegativeInfinity, BE, 2) == double.NegativeInfinity.ToString("f0", BE));
         }
 
-        [Test]
+        [Fact]
         
         public void WorksOnCornerCases()
         {

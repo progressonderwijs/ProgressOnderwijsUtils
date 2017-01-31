@@ -1,16 +1,15 @@
 ﻿using System;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
     public sealed class TestSqlParameterComponent
     {
-        [Test]
+        [Fact]
         public void ValidatesArgumentsOK()
         {
             Assert.Throws<ArgumentNullException>(() => ParameterizedSql.CreateDynamic(null));
-            Assert.DoesNotThrow(() => ParameterizedSql.CreateDynamic("bla"));
 
             PAssert.That(() => ParameterizedSql.CreateDynamic("bla" + 0).GetHashCode() == ParameterizedSql.CreateDynamic("bla0").GetHashCode());
             PAssert.That(() => ParameterizedSql.CreateDynamic("bla" + 0).GetHashCode() != ParameterizedSql.CreateDynamic("bla").GetHashCode());

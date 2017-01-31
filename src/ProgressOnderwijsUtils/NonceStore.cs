@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils
         readonly object monitor = new object();
         readonly HashSet<NonceStoreItem> items;
 
-        public NonceStore(TimeSpan? window = null, int cleanup = 100)
+        public NonceStore(TimeSpan? window, int cleanup)
         {
             if (cleanup <= 0) {
                 throw new ArgumentException();
@@ -82,6 +82,10 @@ namespace ProgressOnderwijsUtils
             nonce = 0;
             monitor = new object();
             items = new HashSet<NonceStoreItem>();
+        }
+
+        public NonceStore() : this(null, 100)
+        {
         }
 
         public string Generate()

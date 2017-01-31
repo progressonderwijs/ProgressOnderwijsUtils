@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public sealed class DistinctArrayTest
     {
-        [Test]
+        [Fact]
         public void Initialize_with_empty_array_gives_count_0()
         {
             var sut = DistinctArray<int>.Empty;
@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => sut.Count == 0);
         }
 
-        [Test]
+        [Fact]
         public void Created_DistinctArray_from_distinct_is_same()
         {
             var distinct = new[] { 1, 2 };
@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => sut.SetEqual(distinct));
         }
 
-        [Test]
+        [Fact]
         public void Created_DistinctArray_from_distinct_with_custom_comparer_is_same()
         {
             var distinct = new[] { 1, 2 };
@@ -35,23 +35,23 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => sut.SetEqual(distinct));
         }
 
-        [Test]
+        [Fact]
         public void Creating_DistinctArray_from_not_distinct_gives_error()
         {
-            Assert.Catch<ArgumentException>(() => {
+            Assert.ThrowsAny<ArgumentException>(() => {
                 var ignore = new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct();
             });
         }
 
-        [Test]
+        [Fact]
         public void Creating_DistinctArray_from_not_distinct_with_custom_comparer_gives_error()
         {
-            Assert.Catch<ArgumentException>(() => {
+            Assert.ThrowsAny<ArgumentException>(() => {
                 var ignore = new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
             });
         }
 
-        [Test]
+        [Fact]
         public void Created_DistinctArray_is_distinct()
         {
             var sut = new[] { 1, 1, 2 }.ToDistinctArray();
@@ -60,7 +60,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => sut.SetEqual(new[] { 1, 2 }));
         }
 
-        [Test]
+        [Fact]
         public void Created_DistinctArray_with_custom_comparer_is_distinct()
         {
             var sut = new[] { 1, 1, 2 }.ToDistinctArray(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
@@ -69,7 +69,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => sut.SetEqual(new[] { 1, 2 }));
         }
 
-        [Test]
+        [Fact]
         public void Indexing_all_items_gives_equals_set()
         {
             var sut = new[] { 1, 1, 2 }.ToDistinctArray();

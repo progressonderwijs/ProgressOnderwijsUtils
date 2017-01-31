@@ -1,80 +1,87 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using NUnit.Framework;
+using ExpressionToCodeLib;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    
     public class NonceStoreTest
     {
-        static IEnumerable<TestCaseData> NonceStoreItemEqualityData()
+        public static object[][] NonceStoreItemEqualityData()
         {
-            yield return new TestCaseData(null, null).Returns(true);
-            yield return new TestCaseData(null, new NonceStoreItem("c", null, "n")).Returns(false);
-            yield return new TestCaseData(new NonceStoreItem("c", null, "n"), null).Returns(false);
-            yield return new TestCaseData(new NonceStoreItem("c", null, "n"), new NonceStoreItem("c", null, "n")).Returns(true);
-            yield return new TestCaseData(new NonceStoreItem("c", null, "n"), new NonceStoreItem("c", null, "0")).Returns(false);
-            yield return new TestCaseData(new NonceStoreItem("c", null, "n"), new NonceStoreItem("1", null, "n")).Returns(false);
-            yield return new TestCaseData(new NonceStoreItem("c", null, "0"), new NonceStoreItem("c", null, "n")).Returns(false);
-            yield return new TestCaseData(new NonceStoreItem("1", null, "n"), new NonceStoreItem("c", null, "n")).Returns(false);
+            return new[]
+            {
+                new object[] {null, null, true}
+                , new object[] {null, new NonceStoreItem("c", null, "n"), false}
+                , new object[] {new NonceStoreItem("c", null, "n"), null, false}
+                , new object[] {new NonceStoreItem("c", null, "n"), new NonceStoreItem("c", null, "n"), true}
+                , new object[] {new NonceStoreItem("c", null, "n"), new NonceStoreItem("c", null, "0"), false}
+                , new object[] {new NonceStoreItem("c", null, "n"), new NonceStoreItem("1", null, "n"), false}
+                , new object[] {new NonceStoreItem("c", null, "0"), new NonceStoreItem("c", null, "n"), false}
+                , new object[] {new NonceStoreItem("1", null, "n"), new NonceStoreItem("c", null, "n"), false}
+            };
         }
 
-        [Test]
-        [TestCaseSource(nameof(NonceStoreItemEqualityData))]
-        public bool NonceStoreItemEquality(NonceStoreItem lhs, NonceStoreItem rhs)
+        [Theory]
+        [MemberData(nameof(NonceStoreItemEqualityData))]
+        public void NonceStoreItemEquality(NonceStoreItem lhs, NonceStoreItem rhs, bool expectEqual)
         {
             var result = !(lhs != rhs);
-            if (lhs != null && rhs != null) {
-                Assert.That(lhs.GetHashCode() == rhs.GetHashCode(), Is.EqualTo(result));
+            if (lhs != null && rhs != null)
+            {
+                PAssert.That(() => lhs.GetHashCode() == rhs.GetHashCode() == expectEqual);
             }
-            return result;
+            PAssert.That(() => result == expectEqual);
         }
 
-        [Test]
+        [Fact]
         public void Generate()
         {
             var sut = new NonceStore();
-            Assert.That(sut.Generate(), Is.Not.EqualTo(sut.Generate()));
+            var firstNonce = sut.Generate();
+            var secondNonce = sut.Generate();
+            PAssert.That(() => firstNonce != secondNonce);
         }
 
-        [Test] // we cannot use TestCaseSource as it will be executed upon loading, and these tests much later!
+        [Fact] // we cannot use TestCaseSource as it will be executed upon loading, and these tests much later!
         public void IsInWindow()
         {
-            Assert.That(new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.Now, "n")));
-            Assert.That(new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.UtcNow, "n")));
-            Assert.That(!new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.Now.AddHours(-1), "n")));
-            Assert.That(!new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.UtcNow.AddHours(-1), "n")));
-            Assert.That(!new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.Now.AddHours(1), "n")));
-            Assert.That(!new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.UtcNow.AddHours(1), "n")));
+            PAssert.That(() => new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.Now, "n")));
+            PAssert.That(() => new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.UtcNow, "n")));
+            PAssert.That(() => !new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.Now.AddHours(-1), "n")));
+            PAssert.That(() => !new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.UtcNow.AddHours(-1), "n")));
+            PAssert.That(() => !new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.Now.AddHours(1), "n")));
+            PAssert.That(() => !new NonceStore().IsOriginal(new NonceStoreItem("c", DateTime.UtcNow.AddHours(1), "n")));
         }
 
-        [Test]
-        public void IsNotKnown([Values(false, true)] bool utc)
+        [Fact]
+        public void IsNotKnown()
         {
-            var now = utc ? DateTime.UtcNow : DateTime.Now;
-
-            var sut = new NonceStore();
-            Assert.That(sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n1")));
-            Assert.That(sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n2")));
-            Assert.That(sut.IsOriginal(new NonceStoreItem("c2", now.AddSeconds(1), "n1")));
-            Assert.That(sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(2), "n1")));
-            Assert.That(!sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n1")));
-            Assert.That(!sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n2")));
-            Assert.That(!sut.IsOriginal(new NonceStoreItem("c2", now.AddSeconds(1), "n1")));
-            Assert.That(!sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(2), "n1")));
+            foreach (var now in new[] {DateTime.UtcNow, DateTime.Now})
+            {
+                var sut = new NonceStore();
+                PAssert.That(() => sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n1")));
+                PAssert.That(() => sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n2")));
+                PAssert.That(() => sut.IsOriginal(new NonceStoreItem("c2", now.AddSeconds(1), "n1")));
+                PAssert.That(() => sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(2), "n1")));
+                PAssert.That(() => !sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n1")));
+                PAssert.That(() => !sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(1), "n2")));
+                PAssert.That(() => !sut.IsOriginal(new NonceStoreItem("c2", now.AddSeconds(1), "n1")));
+                PAssert.That(() => !sut.IsOriginal(new NonceStoreItem("c1", now.AddSeconds(2), "n1")));
+            }
         }
 
-        [Test]
+        [Fact]
         public void Cleanup()
         {
             var now = DateTime.UtcNow;
-            var sut = new NonceStore(new TimeSpan(0, 0, 1), 1);
-            Assert.That(sut.IsOriginal(new NonceStoreItem("c", now, "n")));
-            Thread.Sleep(1000);
-            Assert.That(!sut.IsOriginal(new NonceStoreItem("c", now, "n")));
-            Assert.That(sut.IsOriginal(new NonceStoreItem("c", DateTime.UtcNow, "n")));
+            var sut = new NonceStore(TimeSpan.FromSeconds(0.5), 1);
+            PAssert.That(() => sut.IsOriginal(new NonceStoreItem("c", now, "n")));
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+            PAssert.That(() => !sut.IsOriginal(new NonceStoreItem("c", now, "n")));
+            PAssert.That(() => sut.IsOriginal(new NonceStoreItem("c", DateTime.UtcNow, "n")));
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿#if false
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using Progress.Business;
 using Progress.Business.Test;
 using ProgressOnderwijsUtils;
@@ -74,42 +74,42 @@ namespace ProgressOnderwijsUtilsTests
             SQL($@"create table #MyTable (id int not null primary key, bla nvarchar(max) null, bla2 nvarchar(max) not null)").ExecuteNonQuery(conn);
         }
 
-        [Test]
+        [Fact]
         public void BulkCopyChecksNames()
         {
             CreateTempTable();
-            Assert.Catch(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
+            Assert.ThrowsAny(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
         }
 
-        [Test]
+        [Fact]
         public void BulkCopyChecksTypes()
         {
             CreateTempTable();
-            Assert.Catch(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
+            Assert.ThrowsAny(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
         }
 
-        [Test]
+        [Fact]
         public void BulkCopyChecksTypes2()
         {
             CreateTempTable();
-            Assert.Catch(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
+            Assert.ThrowsAny(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
         }
 
-        [Test]
+        [Fact]
         public void BulkCopyVerifiesExistanceOfDestinationColumns()
         {
             CreateTempTable();
-            Assert.Catch(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
+            Assert.ThrowsAny(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable"));
         }
 
-        [Test]
+        [Fact]
         public void BulkCopyAllowsExtraDestinationColumns()
         {
             CreateTempTable();
             new BlaWithMissingClrFields[0].BulkCopyToSqlServer(conn.SqlConnection, "#MyTable");
         }
 
-        [Test]
+        [Fact]
         public void BulkCopyAllowsExactMatch()
         {
             CreateTempTable();
@@ -118,7 +118,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
         }
 
-        [Test]
+        [Fact]
         public void BulkCopySupportsColumnReordering()
         {
             CreateTempTable();

@@ -6,13 +6,21 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace ProgressOnderwijsUtils
 {
     public class DebounceTests
     {
-        [Test]
+        readonly ITestOutputHelper output;
+
+        public DebounceTests(ITestOutputHelper output)
+        {
+            this.output = output;
+        }
+
+        [Fact]
         public void DebounceEventuallyCalls()
         {
             var taskCS = new TaskCompletionSource<int>();
@@ -23,12 +31,12 @@ namespace ProgressOnderwijsUtils
                     taskCS.SetResult(0));
 
             handler();
-            Assert.AreNotEqual(TaskStatus.RanToCompletion, task.Status);
+            Assert.NotEqual(TaskStatus.RanToCompletion, task.Status);
             task.Wait(1000);
-            Assert.AreEqual(TaskStatus.RanToCompletion, task.Status);
+            Assert.Equal(TaskStatus.RanToCompletion, task.Status);
         }
 
-        [Test]
+        [Fact]
         public void DebounceCallsAfterTheRightAmountOfTime()
         {
             var task = new TaskCompletionSource<int>();
@@ -44,7 +52,7 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => elapsedMS >= 34 && elapsedMS < 100);
         }
 
-        [Test]
+        [Fact]
         public void DebounceCallsHandlersWithMutualExclusion()
         {
             var inCriticalSection = 0;
@@ -72,7 +80,7 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => counts.Count == 5);
         }
 
-        [Test]
+        [Fact]
         public void LotsOfCallsPreventHandlerFromFiring()
         {
             const int durationThatEventsAreFired = 300;
@@ -107,7 +115,7 @@ namespace ProgressOnderwijsUtils
             Task.Delay(durationThatEventsAreFired).ContinueWith(_ => handler());
 
             if (!debouncedHandlerTask.Wait(durationToWaitForDebouncedHandlerToFire)) {
-                Assert.Fail($"debounced handler failed to run even {gracePeriod}ms after the last event fired");
+                throw new Exception($"debounced handler failed to run even {gracePeriod}ms after the last event fired");
             }
 
             var eventFiringTimes = eventFiringTasks.SelectMany(t => t.Result).OrderBy(t => t).ToArray();
@@ -117,7 +125,8 @@ namespace ProgressOnderwijsUtils
             var worstEventFiringDelta = eventFiringTimeDeltas.Max().TotalMilliseconds;
 
             if (worstEventFiringDelta >= debounceDurationThreshhold && actualDebouncedEventDelay < earliestExpectedDebouncedEventDelay) {
-                Assert.Inconclusive("The timespan between two event firings was greater than the debounce threshhold - this run is invalid.");
+                output.WriteLine("The timespan between two event firings was greater than the debounce threshhold - this run is inconclusive.");
+                return;
             }
 
             PAssert.That(() => actualDebouncedEventDelay >= earliestExpectedDebouncedEventDelay, $"worstEventFiringDelta: {worstEventFiringDelta}");

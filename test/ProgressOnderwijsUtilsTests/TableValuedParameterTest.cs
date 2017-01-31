@@ -7,7 +7,7 @@ using System.Net.Mime;
 using System.Security.Cryptography;
 using System.Text;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using Progress.Business;
 using Progress.Business.Data;
 using Progress.Business.DomainUnits;
@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public class TableValuedParameterTest : TestsWithBusinessConnection
     {
-        [Test]
+        [Fact]
         public void DatabaseCanProcessTableValuedParameters()
         {
             var q = SQL($@"select sum(x.querytablevalue) from ") + ParameterizedSql.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlCanIncludeTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlCanIncludeEnumTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => i.ToStudentId())} x");
@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlTvpsCanCountDaysOfWeek()
         {
             var q = SQL($@"select count(x.querytablevalue) from {EnumHelpers.GetValues<DayOfWeek>()} x");
@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => dayCount == 7);
         }
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlTvpsCanCountStrings()
         {
             var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo" }} x");
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => dayCount == 2);
         }
 
-        [Test]
+        [Fact]
         public void MetaObjectReadersCanIncludeNull()
         {
             var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
@@ -78,7 +78,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => stringsWithNull.SetEqual(output));
         }
 
-        [Test]
+        [Fact]
         public void Binary_columns_can_be_used_in_tvps()
         {
             var filedata = new FileData("testje.txt", Encoding.ASCII.GetBytes("Iets om te kunnen testen die nog niet bestaat"), MediaTypeNames.Text.Plain);
@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtilsTests
 
         static readonly byte[] testData = Enumerable.Range(0, 100).Select(i => (byte)i).ToArray();
 
-        [Test]
+        [Fact]
         public void Test_DbDataReaderBase_GetBytes_works_the_same_as_in_SqlDataReader()
         {
             var testen = new[] { new TestDataMetaObject { Data = testData } };
@@ -113,7 +113,7 @@ namespace ProgressOnderwijsUtilsTests
             Assert_DataReader_GetBytes_works(reader);
         }
 
-        [Test]
+        [Fact]
         public void Test_SqlDataReader_GetBytes_for_its_spec()
         {
             SQL($@"
@@ -172,28 +172,28 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !reader.Read());
         }
 
-        [Test]
+        [Fact]
         public void WrapSupportsEnumerableOfInt()
         {
             var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7));
             PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7)));
         }
 
-        [Test]
+        [Fact]
         public void WrapSupportsEnumerableOfString()
         {
             var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).Select(n => n.ToString()));
             PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7).Select(n => n.ToString())));
         }
 
-        [Test]
+        [Fact]
         public void WrapSupportsReadonlyListOfInt()
         {
             var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToList());
             PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7)));
         }
 
-        [Test]
+        [Fact]
         public void WrapSupportsArrayOfInt()
         {
             var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToArray());

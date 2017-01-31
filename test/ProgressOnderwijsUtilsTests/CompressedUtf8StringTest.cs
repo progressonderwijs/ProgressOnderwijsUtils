@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.WebSupport;
 
@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public class CompressedUtf8StringTest
     {
-        [Test]
+        [Fact]
         public void IsReversible()
         {
             var sampledata = typeof(CompressedUtf8StringTest).Assembly.GetTypes().Select(t => t.FullName).JoinStrings("\n");

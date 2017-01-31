@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
@@ -21,9 +21,11 @@ namespace ProgressOnderwijsUtils
         /// <param name="strings">string sequence</param>
         /// <param name="separator">separator string</param>
         /// <returns>a string</returns>
-        public static string JoinStrings(this IEnumerable<string> strings, string separator) => string.Join(separator, strings);
+        public static string JoinStrings(this IEnumerable<string> strings, string separator)
+            => string.Join(separator, strings);
 
-        public static string JoinStringsLimitLength(this IReadOnlyCollection<string> strings, string separator, int maxCount)
+        public static string JoinStringsLimitLength(this IReadOnlyCollection<string> strings, string separator,
+            int maxCount)
         {
             return string.Join(separator, strings.Take(maxCount)) + (strings.Count > maxCount ? separator + "..." : "");
         }
@@ -31,66 +33,66 @@ namespace ProgressOnderwijsUtils
 
     public sealed class EnumerableOfStringExtensionTest
     {
-        [Test]
+        [Fact]
         public void testJoin()
         {
-            Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings(), Is.EqualTo("eentweedrie"));
+            PAssert.That(() => new[] {"een", "twee", "drie"}.JoinStrings() == "eentweedrie");
         }
 
-        [Test]
+        [Fact]
         public void EmptyJoin()
         {
-            Assert.That(() => new string[] { }.JoinStrings(), Is.EqualTo(string.Empty));
+            PAssert.That(() => new string[] {}.JoinStrings() == "");
         }
 
-        [Test]
+        [Fact]
         public void EmptyJoinStrings()
         {
-            Assert.That(() => new string[] { }.JoinStrings("!"), Is.EqualTo(string.Empty));
+            PAssert.That(() => new string[] {}.JoinStrings("!") == "");
         }
 
-        [Test]
+        [Fact]
         public void FastJoin()
         {
             var ints = Enumerable.Range(0, 20000).Select(i => i.ToStringInvariant()).ToArray();
             var time = BenchTimer.BestTime(() => ints.JoinStrings(), 5);
-            Assert.That(time.TotalMilliseconds, Is.LessThan(5.0));
+            PAssert.That(() => time.TotalMilliseconds < 5.0);
         }
 
-        [Test]
+        [Fact]
         public void testJoinStrings()
         {
-            Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings("!"), Is.EqualTo("een!twee!drie"));
+            PAssert.That(() => new[] {"een", "twee", "drie"}.JoinStrings("!") == "een!twee!drie");
         }
 
-        [Test]
+        [Fact]
         public void testBiggerJoinStrings()
         {
-            Assert.That(() => new[] { "een", "twee", "drie" }.JoinStrings("123"), Is.EqualTo("een123twee123drie"));
+            PAssert.That(() => new[] {"een", "twee", "drie"}.JoinStrings("123") == "een123twee123drie");
         }
 
-        [Test]
+        [Fact]
         public void testEmptyJoinStrings()
         {
-            Assert.That(() => new string[] { }.JoinStrings("!"), Is.EqualTo(""));
+            PAssert.That(() => new string[] {}.JoinStrings("!") == "");
         }
 
-        [Test]
+        [Fact]
         public void testJoinShortStrings()
         {
-            Assert.That(() => new[] { "", "0", "1", "2" }.JoinStrings(","), Is.EqualTo(",0,1,2"));
+            PAssert.That(() => new[] {"", "0", "1", "2"}.JoinStrings(",") == ",0,1,2");
         }
 
-        [Test]
+        [Fact]
         public void JoinStringsLimitLength_works_like_normal_join_when_count_is_smaller_than_or_equal_to_max_count()
         {
-            PAssert.That(() => new[] { "1", "2" }.JoinStringsLimitLength(" ", 2) == "1 2");
+            PAssert.That(() => new[] {"1", "2"}.JoinStringsLimitLength(" ", 2) == "1 2");
         }
 
-        [Test]
+        [Fact]
         public void JoinStringsLimitLength_limits_length_when_count_is_greater_than_max_count()
         {
-            PAssert.That(() => new[] { "1", "2", "3" }.JoinStringsLimitLength(" ", 2) == "1 2 ...");
+            PAssert.That(() => new[] {"1", "2", "3"}.JoinStringsLimitLength(" ", 2) == "1 2 ...");
         }
     }
 }

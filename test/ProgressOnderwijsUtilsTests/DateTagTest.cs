@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
     public sealed class DateTagTest
     {
-        [Test]
+        [Fact]
         public void NoCollisionsSoon()
         {
             var start = DateTime.Now; //slightly evil in unit test;

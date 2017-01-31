@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using MoreLinq;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
@@ -34,13 +35,15 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The key whose value to get.</param>
         /// <param name="defaultValue">The default value of the key.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-        public static TValue GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key, TValue defaultValue)
+        public static TValue GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key,
+            TValue defaultValue)
         {
             TValue result;
             return dict.TryGetValue(key, out result) ? result : defaultValue;
         }
 
-        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue defaultValue)
+        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key,
+            TValue defaultValue)
         {
             TValue result;
             return dict.TryGetValue(key, out result) ? result : defaultValue;
@@ -69,7 +72,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The key whose value to get.</param>
         /// <param name="defaultValue">The default value of the key.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-        public static TValue? GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key, TValue? defaultValue)
+        public static TValue? GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key,
+            TValue? defaultValue)
             where TValue : struct
         {
             TValue result;
@@ -84,7 +88,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="defaultValue">The default value of the key.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
         [UsefulToKeep("library method; interface is used, since method above is used")]
-        public static TValue? GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue? defaultValue)
+        public static TValue? GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key,
+            TValue? defaultValue)
             where TValue : struct
         {
             TValue result;
@@ -98,7 +103,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The key whose value to get.</param>
         /// <param name="defaultFactory">The factory method to call to create a default value if not found.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-        public static TValue GetOrLazyDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> defaultFactory)
+        public static TValue GetOrLazyDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key,
+            Func<TValue> defaultFactory)
         {
             TValue result;
             return dict.TryGetValue(key, out result) ? result : defaultFactory();
@@ -113,7 +119,8 @@ namespace ProgressOnderwijsUtils
         /// <returns>The value corresponding to the key in the dictionary (which may have just been added).</returns>
         public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value)
         {
-            if (!dict.ContainsKey(key)) {
+            if (!dict.ContainsKey(key))
+            {
                 dict.Add(key, value);
             }
             return dict[key];
@@ -126,10 +133,12 @@ namespace ProgressOnderwijsUtils
         /// <param name="key">The key whose value to get.</param>
         /// <param name="factory">The factory to create the value if the key does not yet exists.</param>
         /// <returns>The value corresponding to the key in the dictionary (which may have just been added).</returns>
-        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TKey, TValue> factory)
+        public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key,
+            Func<TKey, TValue> factory)
         {
             TValue val;
-            if (dict.TryGetValue(key, out val)) {
+            if (dict.TryGetValue(key, out val))
+            {
                 return val;
             }
             val = factory(key);
@@ -147,9 +156,11 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="old">This dictionary</param>
         /// <param name="others">The dictionary which should be merged into this array</param>
-        public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old, params Dictionary<TKey, TValue>[] others)
+        public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old,
+            params Dictionary<TKey, TValue>[] others)
         {
-            if (old == null) {
+            if (old == null)
+            {
                 throw new ArgumentNullException(nameof(old));
             }
 
@@ -168,22 +179,22 @@ namespace ProgressOnderwijsUtils
 
     public sealed class DictionaryExtensionsTests
     {
-        [Test]
+        [Fact]
         public void GetDefault()
         {
-            var sut = new Dictionary<int, int> { { 0, 0 } };
-            Assert.That(sut.GetOrDefault(0, 1), Is.EqualTo(0));
-            Assert.That(sut.GetOrDefault(1, 2), Is.EqualTo(2));
-            Assert.That(!sut.ContainsKey(1));
+            var sut = new Dictionary<int, int> {{0, 0}};
+            PAssert.That(() => sut.GetOrDefault(0, 1) == 0);
+            PAssert.That(() => sut.GetOrDefault(1, 2) == 2);
+            PAssert.That(() => !sut.ContainsKey(1));
         }
 
-        [Test]
+        [Fact]
         public void SetDefault()
         {
-            IDictionary<int, int> sut = new Dictionary<int, int> { { 0, 0 } };
-            Assert.That(sut.GetOrAdd(0, 1), Is.EqualTo(0));
-            Assert.That(sut.GetOrAdd(1, 2), Is.EqualTo(2));
-            Assert.That(sut.ContainsKey(1));
+            IDictionary<int, int> sut = new Dictionary<int, int> {{0, 0}};
+            PAssert.That(() => sut.GetOrAdd(0, 1) == 0);
+            PAssert.That(() => sut.GetOrAdd(1, 2) == 2);
+            PAssert.That(() => sut.ContainsKey(1));
         }
     }
 }

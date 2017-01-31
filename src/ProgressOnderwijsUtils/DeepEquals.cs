@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
@@ -133,7 +133,7 @@ namespace ProgressOnderwijsUtils
 
     public class DeepEqualsTest
     {
-        [Test]
+        [Fact]
         public void RefPair()
         {
             object a = new object(), b = new object(), c = "3", d = 3.ToStringInvariant();
@@ -152,7 +152,7 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => !refpair(a, b).Equals(refpair(null, b)));
         }
 
-        [Test]
+        [Fact]
         public void AnonTypes()
         {
             PAssert.That(() => DeepEquals.AreEqual(new { XYZ = "123", BC = 3m }, new { XYZ = 123m.ToString(CultureInfo.InvariantCulture), BC = 3m }));
@@ -183,7 +183,7 @@ namespace ProgressOnderwijsUtils
             public Recursive Next;
         }
 
-        [Test]
+        [Fact]
         public void SimpleTypes()
         {
             PAssert.That(() => DeepEquals.AreEqual(new XT { XYZ = "123", BC = 3m }, new XT { XYZ = 123m.ToString(CultureInfo.InvariantCulture), BC = 3m }));
@@ -193,7 +193,7 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => !DeepEquals.AreEqual(new XT { XYZ = "123", BC = 3m }, null));
         }
 
-        [Test]
+        [Fact]
         public void RecursiveTypes()
         {
             var a = new Recursive { V = 3 };
@@ -219,7 +219,7 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => DeepEquals.AreEqual(a3, b3));
         }
 
-        [Test]
+        [Fact]
         public void Sequences()
         {
             var q1 =
@@ -243,7 +243,7 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => !DeepEquals.AreEqual(q1.Reverse(), q3)); //order matters;
         }
 
-        [Test]
+        [Fact]
         public void Dictionaries()
         {
             var q1 =

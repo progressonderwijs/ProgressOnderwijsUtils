@@ -1,7 +1,7 @@
 ﻿using System;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtilsTests
 
     class ValueBaseTest
     {
-        [Test]
+        [Fact]
         public void ToString_IsCompilableWherePossible()
         {
             PAssert.That(

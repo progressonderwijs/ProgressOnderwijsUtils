@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -9,14 +9,14 @@ namespace ProgressOnderwijsUtilsTests
     
     class PooledExponentialBufferAllocatorTest
     {
-        [Test]
+        [Fact]
         public void AllocatesArray()
         {
             var array = PooledExponentialBufferAllocator<int>.GetByLength(3);
             PAssert.That(() => array.SequenceEqual(Enumerable.Repeat(default(int), 4)));
         }
 
-        [Test]
+        [Fact]
         public void TwoAllocationsWithDifferentLengthsWork()
         {
             var array3 = PooledExponentialBufferAllocator<int>.GetByLength(3);
@@ -24,14 +24,14 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => array3.Length == 4 && array4.Length == 256);
         }
 
-        [Test]
+        [Fact]
         public void AllocatingThenReleasingAnArrayDoesNotCrash()
         {
             var array5 = PooledExponentialBufferAllocator<int>.GetByLength(5);
             PooledExponentialBufferAllocator<int>.ReturnToPool(array5);
         }
 
-        [Test]
+        [Fact]
         public void AReleasedArrayIsEventuallyReused()
         {
             var array600 = PooledExponentialBufferAllocator<int>.GetByLength(600);
@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtilsTests
             throw new Exception("The released array was not reused even after 10000 attempts!");
         }
 
-        [Test]
+        [Fact]
         public void ANonReleasedArrayIsNotReused()
         {
             var array6 = PooledExponentialBufferAllocator<int>.GetByLength(6);

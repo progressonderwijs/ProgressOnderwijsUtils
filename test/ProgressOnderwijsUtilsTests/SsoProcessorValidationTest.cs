@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Xml.Linq;
 using System.Xml.Schema;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils.SingleSignOn;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    
     public class SsoProcessorValidationTest
     {
         static readonly XElement VALID = new XElement(
@@ -21,7 +20,7 @@ namespace ProgressOnderwijsUtilsTests
             new XAttribute("IsPassive", "false"),
             new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
             new XElement(SamlNamespaces.SAML_NS + "Issuer", "Iemand")
-            );
+        );
 
         static readonly XElement INVALID = new XElement(
             SamlNamespaces.SAMLP_NS + "AuthnRequest",
@@ -35,7 +34,7 @@ namespace ProgressOnderwijsUtilsTests
             new XAttribute("IsPassive", "false"),
             new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
             new XElement(SamlNamespaces.SAML_NS + "Issuers", "Iemand")
-            );
+        );
 
         const string VALID_NESTED = @"
 <EntitiesDescriptor xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"" Name=""http://www.uocgmarket.nl"" ID=""_12bae828-bc3d-4cd7-a935-2b640b9fb927"" validUntil=""2012-12-14T19:35:13.665039Z"" xmlns=""urn:oasis:names:tc:SAML:2.0:metadata"">
@@ -110,18 +109,18 @@ namespace ProgressOnderwijsUtilsTests
 </EntitiesDescriptor>
 ";
 
-        [Test]
+        [Fact]
         public void ValidateXDocument()
         {
-            Assert.That(() => SsoProcessor.Validate(VALID), Throws.Nothing);
-            Assert.That(() => SsoProcessor.Validate(INVALID), Throws.InstanceOf<XmlSchemaValidationException>());
+            SsoProcessor.Validate(VALID); //assert does not throw
+            Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.Validate(INVALID));
         }
 
-        [Test]
+        [Fact]
         public void ValidateNested()
         {
-            Assert.That(() => SsoProcessor.Validate(XElement.Parse(VALID_NESTED)), Throws.Nothing);
-            Assert.That(() => SsoProcessor.Validate(XElement.Parse(INVALID_NESTED)), Throws.InstanceOf<XmlSchemaValidationException>());
+            SsoProcessor.Validate(XElement.Parse(VALID_NESTED)); //assert does not throw
+            Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.Validate(XElement.Parse(INVALID_NESTED)));
         }
     }
 }

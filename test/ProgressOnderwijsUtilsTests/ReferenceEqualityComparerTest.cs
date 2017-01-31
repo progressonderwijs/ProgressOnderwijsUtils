@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    
     public class ReferenceEqualityComparerTest
     {
         struct TestType
@@ -22,20 +21,20 @@ namespace ProgressOnderwijsUtilsTests
         static readonly TestType t1 = new TestType(1);
         static readonly TestType t2 = new TestType(1);
 
-        [Test]
+        [Fact]
         public void TestValue()
         {
             var sut = new HashSet<TestType>();
-            Assert.That(sut.Add(t1));
-            Assert.That(!sut.Add(t2));
+            Assert.True(sut.Add(t1));
+            Assert.True(!sut.Add(t2));
         }
 
-        [Test]
+        [Fact]
         public void TestReference()
         {
             var sut = new HashSet<TestType>(new ReferenceEqualityComparer<TestType>());
-            Assert.That(sut.Add(t1));
-            Assert.That(sut.Add(t2));
+            Assert.True(sut.Add(t1));
+            Assert.True(sut.Add(t2));
         }
     }
 }

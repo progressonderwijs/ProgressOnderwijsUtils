@@ -1,5 +1,5 @@
 ﻿using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public class LineScannerTest
     {
-        [Test]
+        [Fact]
         public void ReadAndPushbackTest()
         {
             var ls = new LineScanner("Hello\r\nWorld!\n");

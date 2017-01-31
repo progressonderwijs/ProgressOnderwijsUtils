@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
 using MoreLinq;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
     sealed class RndTest
     {
-        [Test]
+        [Fact]
         public void CheckRandomBasic()
         {
             var numTo37 = new HashSet<uint>(Enumerable.Range(0, 37).Select(i => (uint)i));
@@ -20,21 +20,21 @@ namespace ProgressOnderwijsUtils
             PAssert.That(() => numTo37.SetEquals(MoreEnumerable.GenerateByIndex(i => RandomHelper.Secure.GetUInt32(37)).Take(10000))); //kans op fout ~= 37 * (1-1/37)^10000  < 10^-117
         }
 
-        [Test]
+        [Fact]
         public void CheckString()
         {
             for (var i = 0; i < 50; i++) {
-                var len = (int)RandomHelper.Secure.GetUInt32(300);
+                var len = (int) RandomHelper.Secure.GetUInt32(300);
                 var str = RandomHelper.Secure.GetStringOfLatinLower(len);
                 var StR = RandomHelper.Secure.GetStringOfLatinUpperOrLower(len);
-                Assert.That(str.Length == len);
-                Assert.That(StR.Length == len);
+                PAssert.That(() => str.Length == len);
+                PAssert.That(() => StR.Length == len);
                 PAssert.That(() => !str.AsEnumerable().Any(c => c < 'a' || c > 'z'));
                 PAssert.That(() => !StR.AsEnumerable().Any(c => (c < 'a' || c > 'z') && (c < 'A' || c > 'Z')));
             }
         }
 
-        [Test]
+        [Fact]
         public void CheckUriPrintable()
         {
             for (var i = 0; i < 50; i++) {
@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [Test]
+        [Fact]
         public void CheckStrings()
         {
             PAssert.That(() => Regex.IsMatch(RandomHelper.Secure.GetStringOfNumbers(10), "[0-9]{10}"));

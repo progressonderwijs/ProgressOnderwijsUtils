@@ -2,7 +2,7 @@
 using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public sealed class ParameterizedSqlTest
     {
-        [Test]
+        [Fact]
         public void IdenticalInterpolatedSqlWithoutParamsAreEquals()
         {
             ParameterizedSql
@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Equals(a1, a2));
         }
 
-        [Test]
+        [Fact]
         public void NonIdenticalInterpolatedSqlWithoutParamsAreNotEquals()
         {
             ParameterizedSql
@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !Equals(a, b));
         }
 
-        [Test]
+        [Fact]
         public void IdenticalDynamicSqlAreEquals()
         {
             ParameterizedSql
@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Equals(a1, a2));
         }
 
-        [Test]
+        [Fact]
         public void NonIdenticalDynamicSqlAreNotEquals()
         {
             ParameterizedSql
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !Equals(a, b));
         }
 
-        [Test]
+        [Fact]
         public void EqualsIgnoresComponentBoundaries()
         {
             ParameterizedSql
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => a + b + c == abc);
         }
 
-        [Test]
+        [Fact]
         public void EqualsChecksSimpleParameterValues()
         {
             ParameterizedSql
@@ -118,7 +118,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => new[] { intPar, intPar2, enumIntPar, enumIntPar2, longPar, stringPar, stringPar2, noPar }.Distinct().Count() == 5);
         }
 
-        [Test]
+        [Fact]
         public void EqualsChecksTableValuedParametersInDepth()
         {
             ParameterizedSql
@@ -138,7 +138,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => withPar_1_2 != withParEnum_1_2);
         }
 
-        [Test]
+        [Fact]
         public void EqualsRecurses()
         {
             ParameterizedSql
@@ -152,7 +152,7 @@ namespace ProgressOnderwijsUtilsTests
             // ReSharper restore ArrangeRedundantParentheses
         }
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlValidation()
         {
             // ReSharper disable once NotAccessedVariable
@@ -160,13 +160,13 @@ namespace ProgressOnderwijsUtilsTests
             Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.CreateDynamic(null));
         }
 
-        [Test]
+        [Fact]
         public void PrependingEmptyHasNoEffect()
         {
             PAssert.That(() => ParameterizedSql.Empty + SQL($"abc") == SQL($"abc"));
         }
 
-        [Test]
+        [Fact]
         public void EmptyParameterizedSql()
         {
             //we want to check that various subtly different ways of making empty ParameterizedSqls
@@ -193,16 +193,16 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => (SQL($"abc") + qEmpty3).GetHashCode() == SQL($"abc").GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void DealsWithApparentlyNestedParameterPlaceholders()
         {
             var badQuery = SQL($@"A{{x{1}}}Z");
-            Assert.Catch(() => badQuery.DebugText());
+            Assert.ThrowsAny<Exception>(() => badQuery.DebugText());
             using (var conn = new SqlConnection())
-                Assert.Catch(() => badQuery.CreateSqlCommand(conn));
+                Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn));
         }
 
-        [Test]
+        [Fact]
         public void SupportsNestedParameterizedSql()
         {
             var result = SQL($@"A{0}{SQL($@"[{1}{0}]")}Z");
@@ -210,37 +210,37 @@ namespace ProgressOnderwijsUtilsTests
             var cmd = result.CreateSqlCommand(new SqlCommandCreationContext(null, 0, null));
 
             var commandText = @"A@par0[@par1@par0]Z";
-            Assert.That(cmd.Command.CommandText, Is.EqualTo(commandText));
+            PAssert.That(() => cmd.Command.CommandText == commandText);
             PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.Value).SequenceEqual(new object[] { 0, 1 }));
         }
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlToStringIsClearForEnumParams()
         {
             PAssert.That(() => SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\r\nselect 42, 2/*DayOfWeek.Tuesday*/");
         }
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlUsesLiteralsForValidEnumConstants()
         {
             PAssert.That(() => SQL($"select {(DayOfWeek)42}, {DayOfWeek.Tuesday}").CommandText() == "select @par0, 2/*DayOfWeek.Tuesday*/");
         }
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlUsesLiteralsForBooleanConstants()
         {
             PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
         }
 
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlSupportsNullParameters()
         {
             //TODO: do we want to make these literal?
             PAssert.That(() => SQL($"select {null}").CommandText() == "select @par0");
         }
 
-        [Test]
+        [Fact]
         public void ParameterizedSqlDoesNotUseLiteralsEnumsMarked_IEnumShouldBeParameterizedInSqlAttribute()
         {
             PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");

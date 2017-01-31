@@ -1,6 +1,6 @@
 ﻿using System;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public class HashCodeTest
     {
-        [Test]
+        [Fact]
         public void IsConsistent()
         {
             PAssert.That(() => HashCodeHelper.ComputeHash("test", 3, null, DateTime.MinValue) != HashCodeHelper.ComputeHash("test", 3, null, DateTime.MinValue, null));

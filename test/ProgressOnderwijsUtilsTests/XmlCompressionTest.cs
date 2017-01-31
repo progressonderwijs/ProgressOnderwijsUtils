@@ -1,14 +1,14 @@
 ﻿using System.Text;
 using System.Xml.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
     class XmlCompressionTest
     {
-        [Test]
+        [Fact]
         public void TrivialDocIsNotChanged()
         {
             var doc = XDocument.Parse("<test/>");
@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => output == "<test />");
         }
 
-        [Test]
+        [Fact]
         public void DocumentWithUnusedRootNamespaceHasNamespaceRemoved()
         {
             var doc = XDocument.Parse("<test xmlns:bla='bla'/>");
@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => output == "<test />");
         }
 
-        [Test]
+        [Fact]
         public void DocumentWithDefaultNsIsUnchanged()
         {
             var doc = XDocument.Parse("<test xmlns='bla'/>");
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => output == "<test xmlns=\"bla\" />");
         }
 
-        [Test]
+        [Fact]
         public void XmlDeclarationHasNoImpact()
         {
             var doc = XDocument.Parse("<?xml version=\"1.0\"?><test xmlns='bla'/>");
@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => output == "<test xmlns=\"bla\" />");
         }
 
-        [Test]
+        [Fact]
         public void DocumentWithChildNamespaceIsUnchanged()
         {
             var doc = XDocument.Parse("<test xmlns='bla'><hmm:this xmlns:hmm='foo'/></test>");
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => output == "<test xmlns=\"bla\"><hmm:this xmlns:hmm=\"foo\" /></test>");
         }
 
-        [Test]
+        [Fact]
         public void DocumentWithNamespaceUsedInDescendantIsUnchanged()
         {
             var doc = XDocument.Parse("<test xmlns:hmm='bla'><hmm:this /></test>");
@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => output == "<test xmlns:hmm=\"bla\"><hmm:this /></test>");
         }
 
-        [Test]
+        [Fact]
         public void DocumentWithNamespaceUsedInDescendantAttributeIsUnchanged()
         {
             var doc = XDocument.Parse("<test xmlns:hmm='bla'><this><that hmm:id='' /></this></test>");
@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => output == "<test xmlns:hmm=\"bla\"><this><that hmm:id=\"\" /></this></test>");
         }
 
-        [Test]
+        [Fact]
         public void UnusualAliasesAreNormalized()
         {
             var doc = XDocument.Parse("<test xmlns:notxsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:notxsi=\"http://www.w3.org/2001/XMLSchema-instance\"><this notxsd:foo='' notxsi:nil='true' /></test>");
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => output == "<test xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><this xsd:foo=\"\" xsi:nil=\"true\" /></test>");
         }
 
-        [Test]
+        [Fact]
         public void UnusedAreRemoved()
         {
             var doc = XDocument.Parse("<test xmlns:notxsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:notxsi=\"http://www.w3.org/2001/XMLSchema-instance\"><this notxsi:nil='true' /></test>");
@@ -91,7 +91,7 @@ namespace ProgressOnderwijsUtilsTests
 
         static readonly Encoding UTF8 = Encoding.UTF8;
 
-        [Test]
+        [Fact]
         public void SaveToUtf8ContainsNoByteOrderMark()
         {
             var doc = XDocument.Parse("<test>Ƒϕϕ</test>");
@@ -99,7 +99,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => bytes[0] == (byte)'<');
         }
 
-        [Test]
+        [Fact]
         public void SaveToUtf8IsUtf8()
         {
             var doc = XDocument.Parse("<test>Ƒϕϕ</test>");
@@ -109,7 +109,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => str == "<test>Ƒϕϕ</test>");
         }
 
-        [Test]
+        [Fact]
         public void SaveToUtf8CanRoundTrip()
         {
             var doc = XDocument.Parse("<test>Ƒϕϕ</test>");
@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => str == "<test>Ƒϕϕ</test>");
         }
 
-        [Test]
+        [Fact]
         public void SaveToUtf8ExcludesXmlDeclaration()
         {
             var doc = XDocument.Parse("<?xml version=\"1.0\" encoding=\"utf16\"?><test>Ƒϕϕ</test>");
@@ -132,7 +132,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => str == "<test>Ƒϕϕ</test>");
         }
 
-        [Test]
+        [Fact]
         public void SaveToUtf8ExcludesIndentation()
         {
             var doc = XDocument.Parse(@"<test>
@@ -153,7 +153,7 @@ namespace ProgressOnderwijsUtilsTests
             </here></elements></nested></test>");
         }
 
-        [Test]
+        [Fact]
         public void SaveUsingDeflateWithDictionaryWithoutDictionaryRoundTrips()
         {
             var docString = "<test><this><document xmlns=\"bla\">Ƒоо</document></this></test>";
@@ -171,7 +171,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => decompressedDoc.ToString(SaveOptions.DisableFormatting) == docString);
         }
 
-        [Test]
+        [Fact]
         public void SaveUsingDeflateWithDictionaryRoundTrips()
         {
             var dictionary = UTF8.GetBytes("documentesthis");
@@ -179,7 +179,7 @@ namespace ProgressOnderwijsUtilsTests
             AssertCompressionCompressesAndRoundTrips(docString, dictionary);
         }
 
-        [Test]
+        [Fact]
         public void SaveUsingDeflateWithDictionaryIsSmaller()
         {
             var dictionary = UTF8.GetBytes("documentesthis");

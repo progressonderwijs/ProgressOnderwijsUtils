@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using NUnit.Framework;
+using Xunit;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
@@ -32,7 +33,7 @@ namespace ProgressOnderwijsUtils
 
     public class BenchmarkTimerTests
     {
-        [Test]
+        [Fact]
         public void ArgVerify()
         {
             Assert.Throws<ArgumentException>(() => BenchTimer.BestTime(() => { }, 0));

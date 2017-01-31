@@ -1,6 +1,6 @@
 ﻿using System;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsFridays
@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtilsFridays
     
     public class GenericExtensionsFriday
     {
-        [Test]
+        [Fact]
         public void InStruct()
         {
             PAssert.That(() => DayOfWeek.Monday.In(DayOfWeek.Tuesday, DayOfWeek.Monday));

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtilsTests
 
     public class OrderByTopologyTest
     {
-        [Test]
+        [Fact]
         
         public void NodesWithoutDependenciesAreNotSorted()
         {
@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => example.OrderByTopology(s => new string[0]).SequenceEqual(example));
         }
 
-        [Test]
+        [Fact]
         public void SimpleDependencyComesFirst()
         {
             var nodes = new[] {
@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => nodes.OrderByTopology(node => node.Children(lookup)).Select(s => s.Name).SequenceEqual(new[] { "c", "b", "a" }));
         }
 
-        [Test]
+        [Fact]
         public void DoesNotDetectCircularDependencies()
         {
             var nodes = new[] {
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => nodes.OrderByTopology(node => node.Children(lookup)).Select(s => s.Name).SequenceEqual(new[] { "c", "b", "a" }));
         }
 
-        [Test]
+        [Fact]
         public void SupportsMulitpleDependancies()
         {
             var nodes = new[] {

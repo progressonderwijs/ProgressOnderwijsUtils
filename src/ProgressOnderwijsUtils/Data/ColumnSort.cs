@@ -1,7 +1,7 @@
 ﻿using System;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
@@ -60,63 +60,63 @@ namespace ProgressOnderwijsUtils
 
     public class SortColumnTest
     {
-        [Test]
+        [Fact]
         public void CheckEquals()
         {
-            Assert.AreNotEqual(new ColumnSort("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc));
-            Assert.AreEqual(new ColumnSort("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
-            Assert.AreEqual(new ColumnSort("test", SortDirection.Asc), new ColumnSort("Test", SortDirection.Asc));
+            Assert.NotEqual(new ColumnSort("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc));
+            Assert.Equal(new ColumnSort("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
+            Assert.Equal(new ColumnSort("test", SortDirection.Asc), new ColumnSort("Test", SortDirection.Asc));
 
-            Assert.AreNotSame(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
-            Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
+            Assert.NotSame(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
+            Assert.Equal(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
 
-            Assert.AreNotEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc));
-            Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection());
+            Assert.NotEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc));
+            Assert.Equal(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection());
 
-            Assert.AreNotEqual(new ColumnSort("abc", SortDirection.Asc), null);
+            Assert.NotEqual((object)new ColumnSort("abc", SortDirection.Asc), null);
 
-            Assert.AreNotEqual(null, new ColumnSort("abc", SortDirection.Asc));
+            Assert.NotEqual(null, (object)new ColumnSort("abc", SortDirection.Asc));
         }
 
-        [Test]
+        [Fact]
         public void OperatorsOk()
         {
-            Assert.That(new ColumnSort("test", SortDirection.Asc) == new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
+            PAssert.That(()=>new ColumnSort("test", SortDirection.Asc) == new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
             PAssert.That(() => !(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test")));
 
-            Assert.That(new ColumnSort("test", SortDirection.Asc) == new ColumnSort("Test", SortDirection.Asc));
+            PAssert.That(() => new ColumnSort("test", SortDirection.Asc) == new ColumnSort("Test", SortDirection.Asc));
             PAssert.That(() => !(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("Test", SortDirection.Asc)));
         }
 
-        [Test]
+        [Fact]
         public void CheckSqlSortString()
         {
-            Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc).SqlSortString(), "ziggy Asc");
-            Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test").SqlSortString(), "test Asc");
+            Assert.Equal(new ColumnSort("ziggy", SortDirection.Asc).SqlSortString(), "ziggy Asc");
+            Assert.Equal(new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test").SqlSortString(), "test Asc");
         }
 
-        [Test]
+        [Fact]
         public void CheckImmutable()
         {
             var col = new ColumnSort("ziggy", SortDirection.Asc);
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
             col.WithReverseDirection().WithDifferentName("test"); //to test whether it's really pure.
-            Assert.AreEqual(new ColumnSort("ziggy", SortDirection.Asc), col);
+            Assert.Equal(new ColumnSort("ziggy", SortDirection.Asc), col);
         }
 
-        [Test]
+        [Fact]
         public void CheckHashcode()
         {
             //hashcodes *may* collide, just these happen not to (and a collision is quite unlikely)
 
-            Assert.AreNotEqual(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("ziggy", SortDirection.Asc).GetHashCode());
-            Assert.AreEqual(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test").GetHashCode());
-            Assert.AreEqual(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("Test", SortDirection.Asc).GetHashCode());
+            Assert.NotEqual(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("ziggy", SortDirection.Asc).GetHashCode());
+            Assert.Equal(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test").GetHashCode());
+            Assert.Equal(new ColumnSort("test", SortDirection.Asc).GetHashCode(), new ColumnSort("Test", SortDirection.Asc).GetHashCode());
 
-            Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Asc).GetHashCode());
+            Assert.Equal(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Asc).GetHashCode());
 
-            Assert.AreNotEqual(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Desc).GetHashCode());
-            Assert.AreEqual(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection().GetHashCode());
+            Assert.NotEqual(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Desc).GetHashCode());
+            Assert.Equal(new ColumnSort("abc", SortDirection.Asc).GetHashCode(), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection().GetHashCode());
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
 
     public class IntegerRangeTests
     {
-        [Test]
+        [Fact]
         public void SubdividingIntoEvenlyDivisibleChunks()
         {
             PAssert.That(() => new IntegerRange(0, 10).Subdivide(2).First().Equals(new IntegerRange(0, 5)));
@@ -69,7 +69,7 @@ namespace ProgressOnderwijsUtils
                 }));
         }
 
-        [Test]
+        [Fact]
         public void SubdividingAcrossZeroWorks()
         {
             PAssert.That(() => new IntegerRange(-3, 7).Subdivide(2).First().Equals(new IntegerRange(-3, 2)));
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils
                 }));
         }
 
-        [Test]
+        [Fact]
         public void SubdividingIrregularAlternatesBlockSizes()
         {
             PAssert.That(() => new IntegerRange(0, 10).Subdivide(4).SequenceEqual(
@@ -92,7 +92,7 @@ namespace ProgressOnderwijsUtils
                 }));
         }
 
-        [Test]
+        [Fact]
         public void SubdividingAvoidsIntegerOverflow()
         {
             PAssert.That(() => new IntegerRange(int.MinValue, int.MaxValue).Subdivide(4).SequenceEqual(

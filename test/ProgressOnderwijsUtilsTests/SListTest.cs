@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtilsTests
@@ -11,35 +11,35 @@ namespace ProgressOnderwijsUtilsTests
     
     public sealed class SListTest
     {
-        [Test]
+        [Fact]
         public void CanContainValues()
         {
             var list = SList.Create(new[] { 1, 3, 4, 1 });
             PAssert.That(() => list.SequenceEqual(new[] { 1, 3, 4, 1 }));
         }
 
-        [Test]
+        [Fact]
         public void EmptyIsEmpty()
         {
             var list = SList.Create(new int[] { });
             PAssert.That(() => list.IsEmpty);
         }
 
-        [Test]
+        [Fact]
         public void EmptyIsEmpty2()
         {
             var list = SList<int>.Empty;
             PAssert.That(() => list.IsEmpty);
         }
 
-        [Test]
+        [Fact]
         public void PrependTest()
         {
             var list = SList<int>.Empty.Prepend(3).Prepend(4);
             PAssert.That(() => list.SequenceEqual(new[] { 4, 3 }));
         }
 
-        [Test]
+        [Fact]
         public void EqualsTest()
         {
             var a = SList.Create(new[] { 1, 2, 3 });
@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => !a.Equals(SList<int>.Empty));
         }
 
-        [Test]
+        [Fact]
         public void ReverseTest()
         {
             var a = SList.Create(new[] { 1, 2, 3 });
@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => a == b);
         }
 
-        [Test]
+        [Fact]
         public void EnumeratorTest()
         {
             var b = SList<int>.Empty.Prepend(1).Prepend(2).Prepend(3).Reverse();
@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => StructuralComparisons.StructuralEqualityComparer.Equals(b.ToArray(), new[] { 1, 2, 3 }));
         }
 
-        [Test]
+        [Fact]
         public void TailTest()
         {
             var list = SList.Create(new[] { 1, 2, 3 });
@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtilsTests
             });
         }
 
-        [Test]
+        [Fact]
         public void HeadTest()
         {
             var list = SList.Create(new[] { 1, 2, 3 });
@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtilsTests
             });
         }
 
-        [Test]
+        [Fact]
         public void HashReasonableness()
         {
             var list = SList.Create(Enumerable.Range(0, 100).Select(i => i * 14678355468 ^ i));
@@ -114,13 +114,13 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => hashcodes.Count == hashcodes.Distinct().Count());
         }
 
-        [Test]
+        [Fact]
         public void HashDiffersPerType()
         {
             PAssert.That(() => SList<int>.Empty.GetHashCode() != SList<double>.Empty.GetHashCode());
         }
 
-        [Test]
+        [Fact]
         public void HashConsistentWithEquals()
         {
             var lists = new[] {

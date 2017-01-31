@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils
 
     public class StreamExtensionsTestClass
     {
-        [Test]
+        [Fact]
         public void ChecksEOF()
         {
             using (var stream = new MemoryStream(Enumerable.Range(0, 256).Select(i => (byte)i).ToArray())) {

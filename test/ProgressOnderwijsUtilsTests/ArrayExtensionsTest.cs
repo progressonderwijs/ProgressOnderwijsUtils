@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -8,13 +8,13 @@ namespace ProgressOnderwijsUtilsTests
     
     public class ArrayExtensionsTest
     {
-        [Test]
+        [Fact]
         public void AppendingNullToNullReturnsNull()
         {
             PAssert.That(() => default(int[]).AppendArrays(default(int[])) == null);
         }
 
-        [Test]
+        [Fact]
         public void AppendingSomethingToNullOrViceVersaReturnsSomething()
         {
             var arr = new[] { "foo", "baar" };
@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => arr.AppendArrays(default(string[])) == arr);
         }
 
-        [Test]
+        [Fact]
         public void AppendingingArraysIsEquivalentToConcat()
         {
             var arrA = new[] { "paper", "scissors", "stone" };
@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => arrB.AppendArrays(arrA).SequenceEqual(new[] { "lizard", "spock", "paper", "scissors", "stone" }));
         }
 
-        [Test]
+        [Fact]
         public void AppendingingEmptyWorks()
         {
             var arr = new[] { "foo", "baar" };
