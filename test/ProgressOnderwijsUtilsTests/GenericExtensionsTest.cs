@@ -1,9 +1,9 @@
 ﻿using System;
 using ExpressionToCodeLib;
-using Xunit;
 using ProgressOnderwijsUtils;
+using Xunit;
 
-namespace ProgressOnderwijsUtilsFridays
+namespace ProgressOnderwijsUtilsTests
 {
     
     public class GenericExtensionsFriday

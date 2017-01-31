@@ -1,7 +1,8 @@
 ﻿using System.Threading.Tasks;
+using ProgressOnderwijsUtils;
 using Xunit;
 
-namespace ProgressOnderwijsUtils.Test
+namespace ProgressOnderwijsUtilsTests
 {
     public class Net45Works
     {

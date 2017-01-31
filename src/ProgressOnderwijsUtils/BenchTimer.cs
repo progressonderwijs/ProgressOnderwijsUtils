@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using Xunit;
-using Xunit;
 
 namespace ProgressOnderwijsUtils
 {
@@ -28,15 +26,6 @@ namespace ProgressOnderwijsUtils
             var timer = Stopwatch.StartNew();
             a();
             return timer.Elapsed;
-        }
-    }
-
-    public class BenchmarkTimerTests
-    {
-        [Fact]
-        public void ArgVerify()
-        {
-            Assert.Throws<ArgumentException>(() => BenchTimer.BestTime(() => { }, 0));
         }
     }
 }
