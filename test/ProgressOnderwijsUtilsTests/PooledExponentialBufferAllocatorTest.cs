@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils;
 namespace ProgressOnderwijsUtilsTests
 {
     
-    class PooledExponentialBufferAllocatorTest
+    public class PooledExponentialBufferAllocatorTest
     {
         [Fact]
         public void AllocatesArray()

@@ -179,7 +179,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Fact]
-        public void RoundUp(decimal waarde, int posities, decimal resultaat)
+        public void RoundUp()
         {
             PAssert.That(() => Utils.RoundUp(1.12m, 2) == 1.12m);
             PAssert.That(() => Utils.RoundUp(1.0m, 2) == 1.0m);

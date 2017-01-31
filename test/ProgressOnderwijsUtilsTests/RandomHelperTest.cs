@@ -9,7 +9,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    sealed class RandomHelperTest
+    public sealed class RandomHelperTest
     {
         [Fact]
         public void CheckRandomBasic()

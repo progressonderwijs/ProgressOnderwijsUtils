@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Theory]
-        public void WithoutDiakriet(string from, string to)
+        public void WithoutDiakriet()
         {
             PAssert.That(() => StringUtils.VerwijderDiakrieten("é") == "e");
             PAssert.That(() => StringUtils.VerwijderDiakrieten("Ü") == "U");
@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Fact]
-        public void NormalizeWhitespace(string str, string expected)
+        public void NormalizeWhitespace()
         {
             PAssert.That(() => "".NormalizeWhitespace() == "");
             PAssert.That(() => "test".NormalizeWhitespace() == "test");

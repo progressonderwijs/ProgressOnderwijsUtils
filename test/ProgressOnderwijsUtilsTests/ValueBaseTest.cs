@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtilsTests
         public ConsoleKey? AnEnum;
     }
 
-    class ValueBaseTest
+    public class ValueBaseTest
     {
         [Fact]
         public void ToString_IsCompilableWherePossible()

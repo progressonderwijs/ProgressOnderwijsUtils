@@ -7,7 +7,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    class SetEqualsTest
+    public class SetEqualsTest
     {
         [Fact]
         public void SetEqualWorksOnEmpty()
