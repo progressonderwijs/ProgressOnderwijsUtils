@@ -218,7 +218,7 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Fact]
-        public void ToFlatDebugString(IEnumerable<object> sut, string expected)
+        public void ToFlatDebugString()
         {
             PAssert.That(() => StringUtils.ToFlatDebugString((int[]) null) == "[]");
             PAssert.That(() => StringUtils.ToFlatDebugString(new string[0]) == "[]");

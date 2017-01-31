@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    class XmlCompressionTest
+    public class XmlCompressionTest
     {
         [Fact]
         public void TrivialDocIsNotChanged()
