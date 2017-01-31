@@ -1,3 +1,0 @@
-﻿This is an exception
-   at Progress.Test.Tools.ExampleTestClass.CausesError() in test\Tools\ExceptionPrettifierTest.cs:line ??
-   at Progress.Test.Tools.ExceptionPrettifierTest.TrivialStackTraceWorks() in test\Tools\ExceptionPrettifierTest.cs:line ??
