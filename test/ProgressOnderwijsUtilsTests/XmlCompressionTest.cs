@@ -6,7 +6,6 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    
     class XmlCompressionTest
     {
         [Test]
