@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => "'S-ÖSTERREICH".ToCamelCase() == "'s-Österreich");
         }
 
-        [Theory]
+        [Fact]
         public void WithoutDiakriet()
         {
             PAssert.That(() => StringUtils.VerwijderDiakrieten("é") == "e");
