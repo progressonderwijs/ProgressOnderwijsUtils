@@ -87,12 +87,7 @@ namespace ProgressOnderwijsUtils
         public string Generate()
         {
             lock (monitor) {
-                try {
-                    return (++nonce).ToStringInvariant();
-                } catch (OverflowException) {
-                    nonce = 0;
-                    return Generate();
-                }
+                return (++nonce).ToStringInvariant();
             }
         }
 
