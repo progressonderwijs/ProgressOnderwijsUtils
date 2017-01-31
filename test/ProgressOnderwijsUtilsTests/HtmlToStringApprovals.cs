@@ -1,5 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using ApprovalTests;
+using ApprovalTests.Reporters;
 using Xunit;
 using ProgressOnderwijsUtils.Html;
 
@@ -10,10 +11,9 @@ namespace ProgressOnderwijsUtilsTests
     public class HtmlToStringApprovals
     {
         [Fact]
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public void BasicDocWorks()
         {
-            Approvals.Verify(
+            ApprovalTest.Verify(
                 _html.Content(
                     _head.Content(
                         _title.Content("Hello world!")
@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtilsTests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithEmptyClass()
         {
-            Approvals.Verify(
+            ApprovalTest.Verify(
                 _html.Content(
                     _head.Content(
                         _title.Content("Hello world!")
@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtilsTests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOneClass()
         {
-            Approvals.Verify(
+            ApprovalTest.Verify(
                 _html.Content(
                     _head.Content(
                         _title.Content("Hello world!")
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtilsTests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithTwoClasses()
         {
-            Approvals.Verify(
+            ApprovalTest.Verify(
                 _html.Content(
                     _head.Content(
                         _title.Content("Hello world!")
@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtilsTests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOddChars()
         {
-            Approvals.Verify(
+            ApprovalTest.Verify(
                 _html.Content(
                     _head.Content(
                         _title.Content("Hello world!")
@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtilsTests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithOddCharsInAttribute()
         {
-            Approvals.Verify(
+            ApprovalTest.Verify(
                 _html.Content(
                     _head.Content(
                         _title.Content("Hello world!")
@@ -109,7 +109,7 @@ namespace ProgressOnderwijsUtilsTests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithSelfClosingTags()
         {
-            Approvals.Verify(
+            ApprovalTest.Verify(
                 _html.Content(
                     _head.Content(
                         _title.Content("Hello world!"),
@@ -128,7 +128,7 @@ namespace ProgressOnderwijsUtilsTests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithEscapableRawText()
         {
-            Approvals.Verify(
+            ApprovalTest.Verify(
                 _html.Content(
                     _head.Content(
                         _title.Content("Hello world: a < b & \"b\" > 'c'; ")
@@ -144,7 +144,7 @@ namespace ProgressOnderwijsUtilsTests
         [MethodImpl(MethodImplOptions.NoInlining)]
         public void DocWithTrulyRawText()
         {
-            Approvals.Verify(
+            ApprovalTest.Verify(
                 _html.Content(
                     _head.Content(
                         _script._type("mytype").Content("Hello world: a < b & \"b\" > 'c'; </style> "),
