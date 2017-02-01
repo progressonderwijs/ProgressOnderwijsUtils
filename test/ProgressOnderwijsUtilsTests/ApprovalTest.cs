@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Runtime.CompilerServices;
-using ApprovalTests;
 using ApprovalTests.Approvers;
 using ApprovalTests.Core;
 using ApprovalTests.Reporters;
@@ -23,7 +22,6 @@ namespace ProgressOnderwijsUtilsTests
             var filedir = Path.GetDirectoryName(filepath);
             var namer = new SaneNamer {Name = filename + "." + membername, SourcePath = filedir};
             var reporter = new DiffReporter();
-            Approvals.Verify(writer, namer, reporter);
             Approver.Verify(new FileApprover(writer, namer, true), reporter);
         }
     }
