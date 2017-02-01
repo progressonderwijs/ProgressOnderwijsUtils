@@ -1,120 +1,84 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Collections.Concurrent;
+
 
 namespace ProgressOnderwijsUtils
 {
-    public sealed class NonceStoreItem : IEquatable<NonceStoreItem>
+    public struct TimestampedNonce : IEquatable<TimestampedNonce>
     {
-        public NonceStoreItem(string context, DateTime? timestamp, string nonce)
+        public TimestampedNonce(DateTime timestamp, long nonceValue)
         {
-            if (string.IsNullOrWhiteSpace(context)) {
-                throw new ArgumentException("context is required");
-            }
-            if (string.IsNullOrWhiteSpace(nonce)) {
-                throw new ArgumentException("nonce is required");
-            }
-
-            Context = context;
-            Timestamp = (timestamp ?? new DateTime(1, 1, 1, 0, 0, 0, DateTimeKind.Utc)).ToUniversalTime();
-            Nonce = nonce;
+            Timestamp = timestamp.ToUniversalTime();
+            Nonce = nonceValue;
         }
 
-        public string Context { get; }
         public DateTime Timestamp { get; }
-        public string Nonce { get; }
-
-        public bool Equals(NonceStoreItem other)
-        {
-            return !ReferenceEquals(other, null) &&
-                other.Timestamp.Equals(Timestamp) && Equals(other.Context, Context) && Equals(other.Nonce, Nonce);
-        }
-
-        public override bool Equals(object obj) => Equals(obj as NonceStoreItem);
-
-        public override int GetHashCode()
-        {
-            unchecked {
-                var result = Timestamp.GetHashCode();
-                result = result * 397 ^ Context.GetHashCode();
-                result = result * 397 ^ Nonce.GetHashCode();
-                return result;
-            }
-        }
-
-        public static bool operator ==(NonceStoreItem left, NonceStoreItem right)
-        {
-            return Equals(left, right);
-        }
-
-        public static bool operator !=(NonceStoreItem left, NonceStoreItem right)
-        {
-            return !(left == right);
-        }
+        public long Nonce { get; }
+        public bool Equals(TimestampedNonce other) => other.Timestamp == Timestamp && other.Nonce == Nonce;
+        public override bool Equals(object obj) => (obj as TimestampedNonce?)?.Equals(this) ?? false;
+        public override int GetHashCode() => Timestamp.GetHashCode() * 397 ^ Nonce.GetHashCode();
     }
 
-    public interface INonceStore
+    public class NonceStore
     {
-        string Generate();
-        bool IsOriginal(NonceStoreItem item);
-        bool IsInWindow(NonceStoreItem item);
-        bool IsNotKnown(NonceStoreItem item);
-    }
+        readonly TimeSpan window = TimeSpan.FromMinutes(10);
+        long nextNonce;
+        readonly ConcurrentDictionary<TimestampedNonce, byte> seenNonces;
+        readonly object cleanupSync = new object();
+        readonly Queue<TimestampedNonce> noncesInCleanupOrder;
 
-    public class NonceStore : INonceStore
-    {
-        readonly TimeSpan window;
-        readonly int cleanup;
-        int counter;
-        int nonce;
-        readonly object monitor = new object();
-        readonly HashSet<NonceStoreItem> items;
+        //seenNonces is the primary store.
+        //whenever a nonce is added, it *eventually* is also added to noncesInCleanupOrder
 
-        public NonceStore(TimeSpan? window, int cleanup)
+        public NonceStore()
         {
-            if (cleanup <= 0) {
-                throw new ArgumentException();
+            noncesInCleanupOrder = new Queue<TimestampedNonce>();
+            nextNonce = 0;
+            seenNonces = new ConcurrentDictionary<TimestampedNonce, byte>();
+        }
+
+
+        public long Generate() => Interlocked.Increment(ref nextNonce);
+
+        public bool IsFreshAndPreviouslyUnusedNonce(TimestampedNonce item, DateTime utcNow) => IsFresh(item, utcNow) && PreviouslyUnused(item, utcNow);
+        bool IsFresh(TimestampedNonce item, DateTime utcNow) => (utcNow - item.Timestamp).Duration() <= window;
+
+        bool PreviouslyUnused(TimestampedNonce freshItem, DateTime utcNow)
+        {
+            var wasAdded = seenNonces.TryAdd(freshItem, 0);
+            if (wasAdded)
+            {
+                RegisterFutureCleanupThenCleanup(freshItem, utcNow);
             }
-
-            this.window = window ?? new TimeSpan(0, 10, 0);
-            this.cleanup = cleanup;
-            counter = 0;
-            nonce = 0;
-            monitor = new object();
-            items = new HashSet<NonceStoreItem>();
+            return wasAdded;
         }
 
-        public NonceStore() : this(null, 100)
+        void RegisterFutureCleanupThenCleanup(TimestampedNonce newNonce, DateTime utcNow)
         {
-        }
-
-        public string Generate()
-        {
-            lock (monitor) {
-                return (++nonce).ToStringInvariant();
-            }
-        }
-
-        public bool IsOriginal(NonceStoreItem item) => IsInWindow(item) && IsNotKnown(item);
-        public bool IsInWindow(NonceStoreItem item) => (DateTime.UtcNow - item.Timestamp).Duration() <= window;
-
-        public bool IsNotKnown(NonceStoreItem item)
-        {
-            lock (monitor) {
-                var result = items.Add(item);
-                if (result) { // to avoid as much busy looping during an attack as possible
-                    CleanUp();
+            lock (cleanupSync)
+            {
+                noncesInCleanupOrder.Enqueue(newNonce);
+                while (true)
+                {
+                    if (noncesInCleanupOrder.Count == 0)
+                    {
+                        //clearly no need for further cleanup
+                        return;
+                    }
+                    var nextNonceToCleanup = noncesInCleanupOrder.Peek();
+                    if (IsFresh(nextNonceToCleanup, utcNow))
+                    {
+                        //head of the queue is fresh: assume most others are fresh too.
+                        return;
+                    }
+                    //stale nonce found!
+                    noncesInCleanupOrder.Dequeue();
+                    byte ignore;
+                    seenNonces.TryRemove(nextNonceToCleanup, out ignore);
                 }
-                return result;
-            }
-        }
-
-        void CleanUp()
-        {
-            if (++counter == cleanup) {
-                counter = 0;
-                var now = DateTime.UtcNow;
-                items.RemoveWhere(item => now - item.Timestamp > window);
             }
         }
     }
