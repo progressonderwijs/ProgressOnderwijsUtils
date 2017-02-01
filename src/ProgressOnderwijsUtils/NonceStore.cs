@@ -43,20 +43,20 @@ namespace ProgressOnderwijsUtils
 
         public long Generate() => Interlocked.Increment(ref nextNonce);
 
-        public bool IsFreshAndPreviouslyUnusedNonce(TimestampedNonce item) => IsFresh(item) && PreviouslyUnused(item);
-        bool IsFresh(TimestampedNonce item) => (DateTime.UtcNow - item.Timestamp).Duration() <= window;
+        public bool IsFreshAndPreviouslyUnusedNonce(TimestampedNonce item, DateTime utcNow) => IsFresh(item, utcNow) && PreviouslyUnused(item, utcNow);
+        bool IsFresh(TimestampedNonce item, DateTime utcNow) => (utcNow - item.Timestamp).Duration() <= window;
 
-        bool PreviouslyUnused(TimestampedNonce freshItem)
+        bool PreviouslyUnused(TimestampedNonce freshItem, DateTime utcNow)
         {
             var wasAdded = seenNonces.TryAdd(freshItem, 0);
             if (wasAdded)
             {
-                RegisterFutureCleanupThenCleanup(freshItem);
+                RegisterFutureCleanupThenCleanup(freshItem, utcNow);
             }
             return wasAdded;
         }
 
-        void RegisterFutureCleanupThenCleanup(TimestampedNonce newNonce)
+        void RegisterFutureCleanupThenCleanup(TimestampedNonce newNonce, DateTime utcNow)
         {
             lock (cleanupSync)
             {
@@ -69,7 +69,7 @@ namespace ProgressOnderwijsUtils
                         return;
                     }
                     var nextNonceToCleanup = noncesInCleanupOrder.Peek();
-                    if (IsFresh(nextNonceToCleanup))
+                    if (IsFresh(nextNonceToCleanup, utcNow))
                     {
                         //head of the queue is fresh: assume most others are fresh too.
                         return;

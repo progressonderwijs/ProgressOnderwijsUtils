@@ -45,28 +45,32 @@ namespace ProgressOnderwijsUtilsTests
         [Fact] // we cannot use TestCaseSource as it will be executed upon loading, and these tests much later!
         public void IsInWindow()
         {
-            PAssert.That(() => new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(DateTime.Now, 37L)));
-            PAssert.That(() => new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(DateTime.UtcNow, 37L)));
-            PAssert.That(() => !new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(DateTime.Now.AddHours(-1), 37L)));
-            PAssert.That(() => !new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(DateTime.UtcNow.AddHours(-1), 37L)));
-            PAssert.That(() => !new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(DateTime.Now.AddHours(1), 37L)));
-            PAssert.That(() => !new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(DateTime.UtcNow.AddHours(1), 37L)));
+            var utcNow = DateTime.UtcNow;
+            var localNow = DateTime.Now;
+            PAssert.That(() => new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(localNow, 37L), utcNow));
+            PAssert.That(() => new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(utcNow, 37L), utcNow));
+            PAssert.That(() => !new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(localNow.AddHours(-1), 37L), utcNow));
+            PAssert.That(() => !new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(utcNow.AddHours(-1), 37L), utcNow));
+            PAssert.That(() => !new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(localNow.AddHours(1), 37L), utcNow));
+            PAssert.That(() => !new NonceStore().IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(utcNow.AddHours(1), 37L), utcNow));
         }
 
         [Fact]
         public void IsNotKnown()
         {
-            foreach (var now in new[] {DateTime.UtcNow, DateTime.Now})
+            var utcNow = DateTime.UtcNow;
+            var localNow = DateTime.Now;
+            foreach (var now in new[] {utcNow, localNow})
             {
                 var sut = new NonceStore();
-                PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), 13L)));
-                PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), -1L)));
-                PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), 13L)));
-                PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(2), 13L)));
-                PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), 13L)));
-                PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), -1L)));
-                PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), 13L)));
-                PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(2), 13L)));
+                PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), 13L), utcNow));
+                PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), -1L), utcNow));
+                PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), 13L), utcNow));
+                PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(2), 13L), utcNow));
+                PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), 13L), utcNow));
+                PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), -1L), utcNow));
+                PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(1), 13L), utcNow));
+                PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddSeconds(2), 13L), utcNow));
             }
         }
 
@@ -74,11 +78,16 @@ namespace ProgressOnderwijsUtilsTests
         public void Cleanup()
         {
             var now = DateTime.UtcNow;
-            var sut = new NonceStore(TimeSpan.FromSeconds(0.5), 1);
-            PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now, 37L)));
-            Thread.Sleep(TimeSpan.FromSeconds(1));
-            PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now, 37L)));
-            PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(DateTime.UtcNow, 37L)));
+            var sut = new NonceStore();
+            var timestampedNonce = new TimestampedNonce(now, 37L);
+            PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(timestampedNonce, now));
+            PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(timestampedNonce, now));
+            //timetravel 20 minutes into the future...
+            PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(timestampedNonce, now.AddMinutes(20)));
+            //EVIL effectively time-travel to the past here...
+            PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(timestampedNonce, now));
+
+            //so if the system clock is reset, some nonces may be usable again - that's OK.
         }
     }
 }
