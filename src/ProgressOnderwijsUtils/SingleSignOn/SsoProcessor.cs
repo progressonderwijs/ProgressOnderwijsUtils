@@ -232,7 +232,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
             var dsig = new SignedXml(doc);
             dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
-            if (!dsig.CheckSignature(cer, true)) {
+            if (!dsig.CheckSignature(cer.PublicKey.Key)) {
                 throw new CryptographicException("metadata not signed");
             }
         }
