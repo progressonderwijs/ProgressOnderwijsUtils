@@ -1,6 +1,7 @@
 ﻿ - Update the version number in the project file
  - open this directory (e.g from package manager console: cd src/ProgressOnderwijsUtils)
  - Run: dotnet pack -c release --include-symbols --include-source
+ - Check whether the DLL and NuGet version match **
  - Run: dotnet nuget push .\bin\release\ProgressOnderwijsUtils.<VERSIONNUMBER>.nupkg
 
  Nuget will complain if anything is wrong.  In particular: you may need to set the api-key, and you cannot overwrite existing versions.
@@ -8,3 +9,6 @@
 The API key can be found in Deplyment.kdbx > Overig > MSDN > View Entry > Advanced > NuGet API Key.
 To set it, run:
 nuget set-api-key xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+
+** To prevent confusion. This can go wrong because changing the version number does not trigger a rebuild or something.
