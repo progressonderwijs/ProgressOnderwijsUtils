@@ -57,11 +57,10 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
         static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
-        public static string GetRedirectUrl(string relayState, IdentityProviderConfig server, ServiceProviderConfig client, string entityName)
+        public static string GetRedirectUrl(string relayState, ServiceProviderConfig client, string singleSignOnServiceUrl)
         {
-            var md = GetMetaData(server, client);
             var request = new AuthnRequest {
-                Destination = md.SingleSignOnService(entityName),
+                Destination = singleSignOnServiceUrl,
                 Issuer = client.entity,
             };
             var qs = CreateQueryString(request, relayState, client.certificate);
