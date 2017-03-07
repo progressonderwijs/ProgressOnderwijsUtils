@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
@@ -186,12 +187,16 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 select attribute.Value).ToArray();
         }
 
-        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
-            => ValidatedSaml20MetaData(idp, ConextMetaDataXml(idp, sp));
+        static readonly ConcurrentDictionary<string, Lazy<Saml20MetaData>> samlMetaDataCache = new ConcurrentDictionary<string, Lazy<Saml20MetaData>>();
 
-        static XElement ConextMetaDataXml(IdentityProviderConfig idp, ServiceProviderConfig sp)
+        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
         {
             var uri = idp.identity + "?sp-entity-id=" + Uri.EscapeDataString(sp.entity);
+            return samlMetaDataCache.GetOrAdd(uri, new Lazy<Saml20MetaData>(() => ValidatedSaml20MetaData(idp, ConextMetaDataXml(uri)))).Value;
+        }
+
+        static XElement ConextMetaDataXml(string uri)
+        {
             var request = (HttpWebRequest)WebRequest.Create(uri);
             using (var response = (HttpWebResponse)request.GetResponse())
             using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
