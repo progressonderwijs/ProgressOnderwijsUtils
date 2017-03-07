@@ -116,6 +116,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 domain = GetAttribute(assertion, DOMAIN),
                 email = GetAttributes(assertion, MAIL),
                 roles = GetAttributes(assertion, ROLE),
+                SessionIndex = (string)assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement").Attribute("SessionIndex"),
+                AuthnInstant = (DateTime)assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement").Attribute("AuthnInstant"),
             };
         }
 
