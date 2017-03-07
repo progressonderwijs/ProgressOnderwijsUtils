@@ -20,6 +20,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
     {
         struct AuthnRequest
         {
+            public string ID { get; set; }
             public string Destination { get; set; }
             public string Issuer { private get; set; }
 
@@ -39,7 +40,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                     SamlNamespaces.SAMLP_NS + "AuthnRequest",
                     new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
                     new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
-                    new XAttribute("ID", "_" + Guid.NewGuid()),
+                    new XAttribute("ID", ID),
                     new XAttribute("Version", "2.0"),
                     new XAttribute("IssueInstant", DateTime.UtcNow),
                     new XAttribute("Destination", Destination),
@@ -62,8 +63,20 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             var request = new AuthnRequest {
                 Destination = singleSignOnServiceUrl,
                 Issuer = client.entity,
+                ID = "_" + Guid.NewGuid()
             };
             var qs = CreateQueryString(request, relayState, client.certificate);
+            return CreateUrl(request, qs);
+        }
+
+        public static string GetRedirectUrlWithID(string id, ServiceProviderConfig client, string singleSignOnServiceUrl)
+        {
+            var request = new AuthnRequest {
+                Destination = singleSignOnServiceUrl,
+                Issuer = client.entity,
+                ID = id
+            };
+            var qs = CreateQueryString(request, null, client.certificate);
             return CreateUrl(request, qs);
         }
 
