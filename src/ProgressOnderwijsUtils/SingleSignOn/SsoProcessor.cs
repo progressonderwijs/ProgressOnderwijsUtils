@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public static XElement Response(string samlResponse)
         {
             LOG.Debug(() => "Response");
-            return ReceiveSamlResponse(samlResponse);
+            return samlResponse != null ? XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(samlResponse)), LoadOptions.PreserveWhitespace).Root : null;
         }
 
         public static SsoAttributes? Process(XElement response, X509Certificate2 certificate)
@@ -117,16 +117,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 email = GetAttributes(assertion, MAIL),
                 roles = GetAttributes(assertion, ROLE),
             };
-        }
-
-        static XElement ReceiveSamlResponse(string SamlResponse)
-        {
-            var response = SamlResponse;
-            if (response != null) {
-                var result = XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(response)), LoadOptions.PreserveWhitespace);
-                return result.Root;
-            }
-            return null;
         }
 
         static string CreateUrl(AuthnRequest req, NameValueCollection qs)
