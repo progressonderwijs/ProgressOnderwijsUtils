@@ -343,6 +343,10 @@ namespace ProgressOnderwijsUtils.Html
             where T : IConvertibleToFragment
             => HtmlFragment.Fragment(htmlEls.Select(el => el.AsFragment()).ToArray());
 
+        public static HtmlFragment EmptyIfNull<T>(this T? htmlFragmentOrNull)
+            where T : struct, IConvertibleToFragment
+            => htmlFragmentOrNull?.AsFragment() ?? HtmlFragment.Empty;
+
         public static HtmlFragment JoinHtml<T>(this IEnumerable<T> htmlEls, HtmlFragment joiner)
             where T : IConvertibleToFragment
         {
