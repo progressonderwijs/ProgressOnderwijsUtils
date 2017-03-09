@@ -112,15 +112,15 @@ namespace ProgressOnderwijsUtilsTests
         [Fact]
         public void ValidateXDocument()
         {
-            SsoProcessor.Validate(VALID); //assert does not throw
-            Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.Validate(INVALID));
+            SsoProcessor.ValidateSchema(VALID); //assert does not throw
+            Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.ValidateSchema(INVALID));
         }
 
         [Fact]
         public void ValidateNested()
         {
-            SsoProcessor.Validate(XElement.Parse(VALID_NESTED)); //assert does not throw
-            Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.Validate(XElement.Parse(INVALID_NESTED)));
+            SsoProcessor.ValidateSchema(XElement.Parse(VALID_NESTED)); //assert does not throw
+            Assert.ThrowsAny<XmlSchemaValidationException>(() => SsoProcessor.ValidateSchema(XElement.Parse(INVALID_NESTED)));
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Specialized;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Cryptography.Xml;
@@ -189,18 +188,21 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
             => ValidatedSaml20MetaData(idp, ConextMetaDataXml(idp, sp));
 
-        static XElement ConextMetaDataXml(IdentityProviderConfig idp, ServiceProviderConfig sp)
+        static XmlDocument ConextMetaDataXml(IdentityProviderConfig idp, ServiceProviderConfig sp)
         {
-            var uri = idp.identity + "?sp-entity-id=" + Uri.EscapeDataString(sp.entity);
-            var request = (HttpWebRequest)WebRequest.Create(uri);
-            using (var response = (HttpWebResponse)request.GetResponse())
-            using (var reader = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                return XElement.Load(reader, LoadOptions.PreserveWhitespace);
+            var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
+            var document = new XmlDocument {
+                PreserveWhitespace = true,
+            };
+            document.Load(uri);
+            return document;
         }
 
-        static Saml20MetaData ValidatedSaml20MetaData(IdentityProviderConfig idp, XElement xml)
+        static Saml20MetaData ValidatedSaml20MetaData(IdentityProviderConfig idp, XmlDocument document)
         {
-            Validate(xml, idp.certificate);
+            ValidateSignature(document, idp.certificate);
+            var xml = XElement.Parse(document.OuterXml, LoadOptions.PreserveWhitespace);
+            ValidateSchema(xml);
             return new Saml20MetaData(xml);
         }
 
@@ -225,23 +227,27 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
         static void Validate(XElement assertion, X509Certificate2 cer)
         {
-            Validate(assertion);
+            ValidateSchema(assertion);
 
             var doc = new XmlDocument {
                 PreserveWhitespace = true,
             };
-
             using (var reader = assertion.CreateReader())
                 doc.Load(reader);
 
-            var dsig = new SignedXml(doc);
-            dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
+            ValidateSignature(doc, cer);
+        }
+
+        static void ValidateSignature(XmlDocument document, X509Certificate2 cer)
+        {
+            var dsig = new SignedXml(document);
+            dsig.LoadXml(document.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
             if (!dsig.CheckSignature(cer.PublicKey.Key)) {
                 throw new CryptographicException("metadata not signed");
             }
         }
 
-        public static void Validate(XElement assertion)
+        public static void ValidateSchema(XElement assertion)
         {
             new XDocument(assertion).Validate(schemaSet, null, false);
         }
