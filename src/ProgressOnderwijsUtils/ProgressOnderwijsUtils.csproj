@@ -27,10 +27,10 @@
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="10.3.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
     <PackageReference Include="EcmaScript.Net" version="1.0.1.0" />
     <PackageReference Include="ExpressionToCodeLib" version="2.0.0-beta2" />
-    <PackageReference Include="log4net" version="2.0.7" />
+    <PackageReference Include="log4net" version="2.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="1.1.1" />
     <PackageReference Include="morelinq" version="2.2.0" />
     <PackageReference Include="ValueUtils" version="1.3.0.0" />

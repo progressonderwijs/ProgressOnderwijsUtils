@@ -11,7 +11,7 @@
     <PackageReference Include="ApprovalTests" Version="3.0.13" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="10.3.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
   </ItemGroup>
   <ItemGroup Condition="$(TargetFramework)=='netcoreapp1.1' ">
     <PackageReference Include="Microsoft.DotNet.InternalAbstractions" Version="1.0.500-preview2-1-003177" />
