@@ -11,6 +11,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using log4net;
+using Microsoft.AspNetCore.WebUtilities;
 using ProgressOnderwijsUtils.Log4Net;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
@@ -39,7 +40,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                     SamlNamespaces.SAMLP_NS + "AuthnRequest",
                     new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
                     new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
-                    new XAttribute("ID", ID),
+                    new XAttribute("ID", "_" + WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(ID))),
                     new XAttribute("Version", "2.0"),
                     new XAttribute("IssueInstant", DateTime.UtcNow),
                     new XAttribute("Destination", Destination),
@@ -115,9 +116,19 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 domain = GetAttribute(assertion, DOMAIN),
                 email = GetAttributes(assertion, MAIL),
                 roles = GetAttributes(assertion, ROLE),
-                SessionIndex = (string)assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement").Attribute("SessionIndex"),
+                InResponseTo = GetInResponseTo(assertion),
                 AuthnInstant = (DateTime)assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement").Attribute("AuthnInstant"),
             };
+        }
+
+        static string GetInResponseTo(XElement assertion)
+        {
+            var rawInResponseTo = (string)assertion
+                .Element(SamlNamespaces.SAML_NS + "Subject")
+                .Element(SamlNamespaces.SAML_NS + "SubjectConfirmation")
+                .Element(SamlNamespaces.SAML_NS + "SubjectConfirmationData")
+                .Attribute("InResponseTo");
+            return Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(rawInResponseTo.Substring(1)));
         }
 
         static string CreateUrl(AuthnRequest req, NameValueCollection qs)
