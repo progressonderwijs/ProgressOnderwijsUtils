@@ -11,7 +11,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using log4net;
-using Microsoft.AspNetCore.WebUtilities;
 using ProgressOnderwijsUtils.Log4Net;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
@@ -40,7 +39,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                     SamlNamespaces.SAMLP_NS + "AuthnRequest",
                     new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
                     new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
-                    new XAttribute("ID", "_" + WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(ID))),
+                    new XAttribute("ID", XmlConvert.EncodeLocalName(ID)),
                     new XAttribute("Version", "2.0"),
                     new XAttribute("IssueInstant", DateTime.UtcNow),
                     new XAttribute("Destination", Destination),
@@ -128,7 +127,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 .Element(SamlNamespaces.SAML_NS + "SubjectConfirmation")
                 .Element(SamlNamespaces.SAML_NS + "SubjectConfirmationData")
                 .Attribute("InResponseTo");
-            return Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(rawInResponseTo.Substring(1)));
+            return XmlConvert.DecodeName(rawInResponseTo);
         }
 
         static string CreateUrl(AuthnRequest req, NameValueCollection qs)
