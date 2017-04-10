@@ -216,12 +216,12 @@ namespace ProgressOnderwijsUtils
         static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
         {
-            public delegate T[] TRowReader<T>(TReader reader, out int lastColumnRead);
+            public delegate T[] TRowArrayReader<out T>(TReader reader, out int lastColumnRead);
 
-            struct TRowReaderWithCols<T>
+            struct TRowArrayReaderWithCols<T>
             {
                 public string[] Cols;
-                public TRowReader<T> RowReader;
+                public TRowArrayReader<T> RowArrayReader;
             }
 
             static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(
@@ -281,7 +281,7 @@ namespace ProgressOnderwijsUtils
                 return colValueExpr;
             }
 
-            static TRowReader<T> CreateLoadRowsMethod<T>(Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
+            static TRowArrayReader<T> CreateLoadRowsMethod<T>(Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
             {
                 //read this method bottom-to-top, because expression trees need to be constructed inside-out.
                 var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
@@ -308,12 +308,12 @@ namespace ProgressOnderwijsUtils
                 var returnEmptyArrayOrRunRestOfCode = Expression.Condition(callReader_Read, createArrayGivenReaderAtValidFirstRow, callEmptyArrayMethod);
                 var loadRowsMethodBody = Expression.Block(typeof(T[]), new[] { rowVar, arrayBuilderVar, }, returnEmptyArrayOrRunRestOfCode);
                 var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
-                var loadRowsLambda = Expression.Lambda<TRowReader<T>>(loadRowsMethodBody, "LoadRows", loadRowsParamExprs);
+                var loadRowsLambda = Expression.Lambda<TRowArrayReader<T>>(loadRowsMethodBody, "LoadRows", loadRowsParamExprs);
 
                 return ConvertLambdaExpressionIntoDelegate(loadRowsLambda);
             }
 
-            static TRowReader<T> ConvertLambdaExpressionIntoDelegate<T>(Expression<TRowReader<T>> loadRowsLambda)
+            static TRowArrayReader<T> ConvertLambdaExpressionIntoDelegate<T>(Expression<TRowArrayReader<T>> loadRowsLambda)
             {
                 try {
                     if (!typeof(T).IsPublic) {
@@ -326,7 +326,7 @@ namespace ProgressOnderwijsUtils
                     loadRowsLambda.CompileToMethod(methodBuilder); //generates faster code
                     var newType = typeBuilder.CreateType();
 
-                    return (TRowReader<T>)Delegate.CreateDelegate(typeof(TRowReader<T>), newType.GetMethod("LoadRows"));
+                    return (TRowArrayReader<T>)Delegate.CreateDelegate(typeof(TRowArrayReader<T>), newType.GetMethod("LoadRows"));
                 } catch (Exception e) {
                     throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
                 }
@@ -370,7 +370,7 @@ namespace ProgressOnderwijsUtils
                     public override bool Equals(object obj) => obj is ColumnOrdering && Equals((ColumnOrdering)obj);
                 }
 
-                static readonly ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>> LoadRows;
+                static readonly ConcurrentDictionary<ColumnOrdering, TRowArrayReaderWithCols<T>> LoadRows;
                 static Type type => typeof(T);
                 static string FriendlyName => type.ToCSharpFriendlyTypeName();
                 static readonly uint[] ColHashPrimes;
@@ -400,11 +400,11 @@ namespace ProgressOnderwijsUtils
                         }
                     }
 
-                    LoadRows = new ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>>();
+                    LoadRows = new ConcurrentDictionary<ColumnOrdering, TRowArrayReaderWithCols<T>>();
                 }
 
                 // ReSharper disable UnusedParameter.Local
-                public static TRowReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
+                public static TRowArrayReader<T> GetDataReaderUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
                     // ReSharper restore UnusedParameter.Local
                 {
                     AssertColumnsCanBeMappedToObject(reader, fieldMappingMode);
@@ -415,7 +415,7 @@ namespace ProgressOnderwijsUtils
                         //our ordering isn't in the cache, so it's string array can be returned to the pool
                         PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
                     }
-                    return cachedRowReaderWithCols.RowReader;
+                    return cachedRowReaderWithCols.RowArrayReader;
                 }
 
                 static void AssertColumnsCanBeMappedToObject(TReader reader, FieldMappingMode fieldMappingMode)
@@ -442,13 +442,13 @@ namespace ProgressOnderwijsUtils
                 /// Methodgroup-to-delegate conversion shows up on the profiles as COMDelegate::DelegateConstruct as around 4% of query exection.
                 /// See also: http://blogs.msmvps.com/jonskeet/2011/08/22/optimization-and-generics-part-2-lambda-expressions-and-reference-types/
                 /// </summary>
-                static readonly Func<ColumnOrdering, TRowReaderWithCols<T>> Delegate_ConstructTRowReaderWithCols = ConstructTRowReaderWithCols;
+                static readonly Func<ColumnOrdering, TRowArrayReaderWithCols<T>> Delegate_ConstructTRowReaderWithCols = ConstructTRowReaderWithCols;
 
-                static TRowReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
+                static TRowArrayReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
                 {
-                    return new TRowReaderWithCols<T> {
+                    return new TRowArrayReaderWithCols<T> {
                         Cols = ordering.Cols,
-                        RowReader = CreateLoadRowsMethod<T>(
+                        RowArrayReader = CreateLoadRowsMethod<T>(
                             (readerParamExpr, lastColumnReadParameter) =>
                                 Expression.MemberInit(
                                     Expression.New(type),
@@ -498,7 +498,7 @@ namespace ProgressOnderwijsUtils
                     return DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.LoadRows(reader, out lastColumnRead);
                 }
 
-                public static readonly TRowReader<T> LoadRows;
+                public static readonly TRowArrayReader<T> LoadRows;
                 static Type type => typeof(T);
                 static string FriendlyName => type.ToCSharpFriendlyTypeName();
                 static readonly ConstructorInfo constructor;
@@ -565,7 +565,7 @@ namespace ProgressOnderwijsUtils
             public static class PlainImpl<T>
             {
                 static string FriendlyName => type.ToCSharpFriendlyTypeName();
-                public static readonly TRowReader<T> LoadRows;
+                public static readonly TRowArrayReader<T> LoadRows;
                 static Type type => typeof(T);
 
                 static PlainImpl()
