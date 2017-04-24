@@ -1,8 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
-using ApprovalTests;
-using ApprovalTests.Reporters;
-using Xunit;
 using ProgressOnderwijsUtils.Html;
+using Xunit;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -118,7 +116,9 @@ namespace ProgressOnderwijsUtilsTests
                         _base._href("nowhere")
                         ),
                     _body.Content(
-                        _area, _br, _col, _embed, _hr, _img, _input, _keygen, _menuitem, _param, _source, _track, _wbr
+                        new HtmlFragment[] {
+                            _area, _br, _col, _embed, _hr, _img, _input, _param, _source, _track, _wbr
+                        }.JoinHtml("\r\n")
                         )
                     ).AsFragment().SerializeToString()
                 );

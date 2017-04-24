@@ -1,1 +1,11 @@
-﻿<!DOCTYPE html><html><head><title>Hello world!</title><meta hidden="hmm"><link rel="bla"><base href="nowhere"></head><body><area><br><col><embed><hr><img><input><keygen><menuitem><param><source><track><wbr></body></html>
+﻿<!DOCTYPE html><html><head><title>Hello world!</title><meta hidden="hmm"><link rel="bla"><base href="nowhere"></head><body><area>
+<br>
+<col>
+<embed>
+<hr>
+<img>
+<input>
+<param>
+<source>
+<track>
+<wbr></body></html>

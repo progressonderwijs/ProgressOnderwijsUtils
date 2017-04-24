@@ -37,7 +37,13 @@ using (var client = new HttpClient(new WebRequestHandler {
     var tableOfElements = 
         MoreEnumerable.Generate(elementsSectionHeader, el => el.NextElementSibling)
             .First(el => "table".Equals(el.TagName, StringComparison.OrdinalIgnoreCase));
-    
+    var attributesSectionHeader =
+        document.QuerySelectorAll("h3")
+            .Single(el => el.TextContent == "Attributes");
+    var tableOfAttributes =
+        MoreEnumerable.Generate(attributesSectionHeader, el => el.NextElementSibling)
+            .First(el => "table".Equals(el.TagName, StringComparison.OrdinalIgnoreCase));
+
     var columns = tableOfElements.QuerySelectorAll("thead tr th").Select(el=>el.TextContent.Trim()).ToArray();
     
     var elementNameColumnIndex = Array.IndexOf(columns, "Element");
@@ -50,10 +56,12 @@ using (var client = new HttpClient(new WebRequestHandler {
     PAssert.That(()=>0 <= elementNameColumnIndex && elementNameColumnIndex < attributesColumnIndex);
 
     var globalAttributes =
-        document.QuerySelector("#global-attributes ~ ul")
-            .QuerySelectorAll("li")
-            .Select(li => li.TextContent.Trim())
-            .ToArray();
+        tableOfAttributes.QuerySelectorAll("tbody tr")
+            .Where(tr=>tr.QuerySelector("td").TextContent.Trim() == "HTML elements")
+            .Select(tr=>tr.QuerySelector("th").TextContent.Trim())
+            .Distinct()
+            .ToArray()
+            .Dump();
 
     string toClassName(string s) => s.Replace('-', '_');
     string[] splitList(string list) => list.Split(';').Select(s=>s.Trim().TrimEnd('*')).Where(s=>s!="").ToArray();
@@ -89,6 +97,7 @@ using (var client = new HttpClient(new WebRequestHandler {
             {
                 elementName = elGroup.Key,
                 csName = toClassName(elGroup.Key),
+                csUpperName = toClassName(elGroup.Key).ToUpper(CultureInfo.InvariantCulture),
                 elementMetaData =
                 new XElement("summary",
                     elGroup.SelectMany(el =>
@@ -105,15 +114,6 @@ using (var client = new HttpClient(new WebRequestHandler {
                 children = elGroup.SelectMany(el => el.children).Distinct().ToArray(),
             }
         ).ToArray();
-
-
-
-
-
-
-
-
-
 
 
     var globalAttributeExtensionMethods = globalAttributes
@@ -149,13 +149,13 @@ using (var client = new HttpClient(new WebRequestHandler {
     }}
 ";
 
-    var elTagNameClasses = elements
+    var elHtmlTagClasses = elements
         .Select(el => $@"
-        public struct {el.csName.ToUpper(CultureInfo.InvariantCulture)} : IHtmlTag{
+        public struct {el.csUpperName} : {(
+            el.children.Length == 0 ? "IHtmlTag" : "IHtmlTagAllowingContent"
+            )}{
             string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
-            }{(
-            el.children.Length==0? "":", IHtmlTagAllowingContent"
-            )} {{ 
+            } {{ 
             public string TagName => ""{el.elementName}"";
             string IHtmlTag.TagStart => ""<{el.elementName}"";
             string IHtmlTag.EndTag => ""{(
@@ -164,13 +164,15 @@ using (var client = new HttpClient(new WebRequestHandler {
             HtmlAttribute[] IHtmlTag.Attributes {{ get; set; }}{(
             el.children.Length==0? "" : @"
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }"
-			)}
+            )}
+            public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
         }}"
 );
 
     var tagNamesClass = $@"
-    public static class TagNames
-    {{{string.Join("",elTagNameClasses)}
+    public static class HtmlTagKinds
+    {{{string.Join("",elHtmlTagClasses)}
     }}
 ";
 
@@ -178,7 +180,7 @@ using (var client = new HttpClient(new WebRequestHandler {
         .Select(el => $@"
 
 {Regex.Replace(el.elementMetaData.ToString(SaveOptions.None),@"^|(?<=\n)","        ///")}
-        public static readonly TagNames.{el.csName.ToUpper(CultureInfo.InvariantCulture)} _{el.csName} = new TagNames.{el.csName.ToUpper(CultureInfo.InvariantCulture)}();"
+        public static readonly HtmlTagKinds.{el.csName.ToUpper(CultureInfo.InvariantCulture)} _{el.csName} = new HtmlTagKinds.{el.csName.ToUpper(CultureInfo.InvariantCulture)}();"
 );
     var tagsClass = $@"
     public static class Tags
@@ -187,9 +189,9 @@ using (var client = new HttpClient(new WebRequestHandler {
 
     $@"namespace ProgressOnderwijsUtils.Html
 {{
-	using AttributeNameInterfaces;
-	{(tagNamesClass + tagsClass+ attrNamesClass + attrExtensionMethodsClass)}
-}}
+    using AttributeNameInterfaces;
+	{(tagNamesClass + tagsClass+ attrNamesClass + attrExtensionMethodsClass)
+}}}
 ".Dump();
 //    globalAttributes.Dump();
 //    elements.Where(el => el.attributes.Any()).Dump();
