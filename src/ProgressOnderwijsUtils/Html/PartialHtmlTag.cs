@@ -17,11 +17,6 @@ namespace ProgressOnderwijsUtils.Html
         }
     }
 
-    public interface IHtmlTagName
-    {
-        string TagName { get; }
-    }
-
     static class HtmlAttributeHelpers
     {
         public static readonly HtmlAttribute[] EmptyAttributes = new HtmlAttribute[0];
@@ -38,45 +33,37 @@ namespace ProgressOnderwijsUtils.Html
 
     public struct HtmlFragment : IConvertibleToFragment
     {
-        readonly string tagNameOrTextContent; //iff text or element node
-        readonly HtmlAttribute[] attributesWhenTag; // iff elementnode
-        readonly HtmlFragment[] childNodes; //only if element node or collection; null means "empty".
-
-        //This is a union type of...
-        // - A text content node:
-        //      (without embeddedContent, WITH tagNameOrTextContent, without attributesWhenTag, without childNodes)
-        public bool IsTextContent => tagNameOrTextContent != null && attributesWhenTag == null && childNodes == null;
+        object Content; //null, string, HtmlFragment[] or IHtmlTag
+        public bool IsTextContent => Content is string;
         // - A single element node    
         //      (without embeddedContent, WITH tagNameOrTextContent, WITH attributesWhenTag, ? childNodes)
-        public bool IsHtmlElement => attributesWhenTag != null && tagNameOrTextContent != null;
+        public bool IsHtmlElement => Content is IHtmlTag;
         // - A collection of fragments
         //      (without embeddedContent, without tagNameOrTextContent, without attributesWhenTag, ? childNodes)
-        public bool IsCollectionOfFragments => tagNameOrTextContent == null && attributesWhenTag == null;
-        public bool IsEmpty => IsCollectionOfFragments && childNodes == null;
+        public bool IsCollectionOfFragments => Content is IHtmlTag || IsEmpty;
+        public bool IsEmpty => Content == null;
 
         /// <summary>
         /// Only elements and fragments can have children; always empty for text nodes
         /// </summary>
-        public IReadOnlyList<HtmlFragment> Children => childNodes ?? Array.Empty<HtmlFragment>();
+        public IReadOnlyList<HtmlFragment> Children => Content as HtmlFragment[] ?? (Content as IHtmlTagAllowingContent).Contents ?? Array.Empty<HtmlFragment>();
 
-        HtmlFragment(string tagNameOrTextContent, HtmlAttribute[] attributesWhenTag, HtmlFragment[] childNodes)
+        HtmlFragment(object content)
         {
-            this.tagNameOrTextContent = tagNameOrTextContent;
-            this.attributesWhenTag = attributesWhenTag;
-            this.childNodes = childNodes;
+            Content = content;
             Debug.Assert((IsTextContent ? 1 : 0) + (IsHtmlElement ? 1 : 0) + (IsCollectionOfFragments ? 1 : 0) == 1);
         }
 
         [Pure]
-        public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent, null, null);
+        public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent);
 
         [Pure]
         public static HtmlFragment HtmlElement(HtmlElement element)
-            => new HtmlFragment(element.TagName, element.Attributes ?? HtmlAttributeHelpers.EmptyAttributes, element.ChildNodes);
+            => new HtmlFragment(element);
 
         [Pure]
         public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
-            => new HtmlFragment(tagName, attributes ?? HtmlAttributeHelpers.EmptyAttributes, childNodes);
+            => new HtmlFragment(new HtmlElement(tagName, attributes ?? HtmlAttributeHelpers.EmptyAttributes, childNodes));
 
         [Pure]
         public static HtmlFragment Fragment(params HtmlFragment[] htmlEls)
@@ -84,7 +71,7 @@ namespace ProgressOnderwijsUtils.Html
                 ? Empty
                 : htmlEls.Length == 1
                     ? htmlEls[0]
-                    : new HtmlFragment(null, null, htmlEls);
+                    : new HtmlFragment(htmlEls);
 
         [Pure]
         public static HtmlFragment Fragment<T>(IEnumerable<T> htmlEls)
@@ -104,15 +91,12 @@ namespace ProgressOnderwijsUtils.Html
 
         void AppendTextContent(ref FastShortStringBuilder fastStringBuilder)
         {
-            if (tagNameOrTextContent != null && attributesWhenTag == null) {
-                Debug.Assert(IsTextContent);
-                fastStringBuilder.AppendText(tagNameOrTextContent);
+            if (Content is string str) {
+                fastStringBuilder.AppendText(str);
             } else {
                 Debug.Assert(IsHtmlElement || IsCollectionOfFragments);
-                if (childNodes != null) {
-                    foreach (var child in childNodes) {
-                        child.AppendTextContent(ref fastStringBuilder);
-                    }
+                foreach (var child in Children) {
+                    child.AppendTextContent(ref fastStringBuilder);
                 }
             }
         }
@@ -124,9 +108,9 @@ namespace ProgressOnderwijsUtils.Html
 
         internal void AppendToBuilder(ref FastShortStringBuilder stringBuilder)
         {
-            if (tagNameOrTextContent == null) {
+            if (Content is HtmlFragment[] fragments) {
                 Debug.Assert(IsCollectionOfFragments);
-                AppendChildrenToBuilder(ref stringBuilder);
+                AppendChildrenToBuilder(ref stringBuilder, fragments);
             } else if (attributesWhenTag == null) {
                 Debug.Assert(IsTextContent);
                 AppendEscapedText(ref stringBuilder);
@@ -266,7 +250,7 @@ namespace ProgressOnderwijsUtils.Html
             stringBuilder.AppendText(attrValue, uptoIndex, attrValue.Length - uptoIndex);
         }
 
-        void AppendChildrenToBuilder(ref FastShortStringBuilder stringBuilder)
+        void AppendChildrenToBuilder(ref FastShortStringBuilder stringBuilder, HtmlFragment[] fragments)
         {
             if (childNodes != null) {
                 for (var i = 0; i < childNodes.Length; i++) {
@@ -276,29 +260,23 @@ namespace ProgressOnderwijsUtils.Html
         }
     }
 
-    public struct HtmlElement : IFluentHtmlTagExpression<HtmlElement>
+    public struct HtmlElement : IHtmlTag, IHtmlTagAllowingContent
     {
-        public readonly string TagName;
-        public readonly HtmlAttribute[] Attributes;
-        public readonly HtmlFragment[] ChildNodes;
-
-        [Pure]
-        public HtmlElement Attribute(string attrName, string attrValue)
-            => attrValue == null ? this : new HtmlElement(TagName, (Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue), ChildNodes);
-
-        [Pure]
-        public HtmlElement Content(params HtmlFragment[] content)
-            => new HtmlElement(TagName, Attributes, ArrayExtensions.AppendArrays(ChildNodes, content));
-
         public HtmlElement(string tagName, [NotNull] HtmlAttribute[] attributes, HtmlFragment[] childNodes)
         {
             TagName = tagName;
             Attributes = attributes;
-            ChildNodes = childNodes;
+            Contents = childNodes;
         }
 
         [Pure]
         public HtmlFragment AsFragment() => this;
+
+        public string TagName { get; }
+        string IHtmlTag.TagStart => "<" + TagName;
+        string IHtmlTag.EndTag => "</" + TagName + ">";
+        public HtmlAttribute[] Attributes { get; set; }
+        public HtmlFragment[] Contents { get; set; }
     }
 
     public interface IFluentHtmlTagExpression<out TExpression> : IConvertibleToFragment
@@ -337,6 +315,17 @@ namespace ProgressOnderwijsUtils.Html
         [UsefulToKeep("library method")]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute? attributeOrNull)
             where TExpression : struct, IFluentHtmlTagExpression<TExpression> => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
+
+        public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, string attrName, string attrValue)
+            where THtmlTag : struct, IHtmlTag
+        {
+            if (attrValue == null) {
+                return htmlTagExpr;
+            } else {
+                htmlTagExpr.Attributes = (htmlTagExpr.Attributes ?? HtmlAttributeHelpers.EmptyAttributes).appendAttr(attrName, attrValue);
+                return htmlTagExpr;
+            }
+        }
 
         [Pure]
         public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)
@@ -402,5 +391,18 @@ namespace ProgressOnderwijsUtils.Html
 
         public static implicit operator HtmlFragment(HtmlTag<TName> tag) => HtmlFragment.HtmlElement(default(TName).TagName, tag.Attributes, tag.childNodes);
         public HtmlFragment AsFragment() => this;
+    }
+
+    public interface IHtmlTag
+    {
+        string TagName { get; }
+        string TagStart { get; }
+        string EndTag { get; }
+        HtmlAttribute[] Attributes { get; set; }
+    }
+
+    public interface IHtmlTagAllowingContent
+    {
+        HtmlFragment[] Contents { get; set; }
     }
 }
