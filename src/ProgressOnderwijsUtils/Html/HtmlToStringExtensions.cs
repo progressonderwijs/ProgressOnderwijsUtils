@@ -113,7 +113,6 @@ namespace ProgressOnderwijsUtils.Html
                     AppendAsRawTextToBuilder(ref stringBuilder, childNode);
                 }
             } else if (fragment.Content is string contentString) {
-                Debug.Assert(fragment.IsTextContent);
                 stringBuilder.AppendText(contentString);
             } else if (fragment.Content is IHtmlTag) {
                 throw new InvalidOperationException("script and style tags cannot contain child elements");

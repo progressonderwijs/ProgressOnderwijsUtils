@@ -24,18 +24,13 @@ namespace ProgressOnderwijsUtils.Html
         /// </summary>
         public IReadOnlyList<HtmlFragment> Children => Content as HtmlFragment[] ?? (Content as IHtmlTagAllowingContent).Contents ?? Array.Empty<HtmlFragment>();
 
-        HtmlFragment(object content)
-        {
-            Content = content;
-            Debug.Assert((IsTextContent ? 1 : 0) + (IsHtmlElement ? 1 : 0) + (IsCollectionOfFragments ? 1 : 0) == 1);
-        }
+        HtmlFragment(object content) => Content = content;
 
         [Pure]
         public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent);
 
         [Pure]
-        public static HtmlFragment HtmlElement(IHtmlTag element)
-            => new HtmlFragment(element);
+        public static HtmlFragment HtmlElement(IHtmlTag element) => new HtmlFragment(element);
 
         [Pure]
         public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
