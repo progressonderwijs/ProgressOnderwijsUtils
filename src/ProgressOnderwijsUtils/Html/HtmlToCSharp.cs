@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using ExpressionToCodeLib;
 
 namespace ProgressOnderwijsUtils.Html
@@ -15,56 +14,24 @@ namespace ProgressOnderwijsUtils.Html
             return builder.Value;
         }
 
-        class TagDescription
-        {
-            public string FieldName;
-            public IReadOnlyDictionary<string, string> AttributeMethodsByName;
-
-            public static readonly IReadOnlyDictionary<string, TagDescription> ByTagName =
-                typeof(Tags).GetTypeInfo()
-                    .GetFields(BindingFlags.Static | BindingFlags.Public)
-                    .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlTag)field.GetValue(null) })
-                    .ToDictionary(
-                        field => field.FieldValue.TagName,
-                        field => new TagDescription {
-                            FieldName = field.FieldName,
-                            AttributeMethodsByName = AttributeLookup(field.FieldType, field.FieldValue)
-                        },
-                        StringComparer.OrdinalIgnoreCase
-                    );
-
-            static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlTag emptyValue)
-            {
-                return typeof(AttributeConstructionMethods)
-                    .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                    .Where(mi => mi.GetGenericArguments().Single().GetGenericParameterConstraints().All(constraint => constraint.IsAssignableFrom(tagType)))
-                    .ToDictionary(
-                        method => ((IHtmlTag)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })).Attributes.Last().Name,
-                        method => method.Name,
-                        StringComparer.OrdinalIgnoreCase);
-            }
-
-            public static readonly IReadOnlyDictionary<string, string> DefaultAttributes = AttributeLookup(typeof(HtmlElement), new HtmlElement("unknown", null, null));
-        }
-
         static void AppendCSharpTo(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment, int indent)
         {
             if (fragment.Content is string stringContent) {
                 stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(stringContent));
             } else if (fragment.Content is IHtmlTag htmlTag) {
-                bool wereAttributesRendered;
-                if (TagDescription.ByTagName.TryGetValue(htmlTag.TagName, out var description)) {
+                var description = TagDescription.LookupTag(htmlTag.TagName);
+                if (description.FieldName != null) {
                     stringBuilder.AppendText(description.FieldName);
-                    wereAttributesRendered = AppendAttributesAsCSharp(ref stringBuilder, htmlTag.Attributes, description.AttributeMethodsByName, indent);
                 } else {
                     stringBuilder.AppendText("new HtmlElement(");
                     stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(htmlTag.TagName));
                     stringBuilder.AppendText(")");
-                    wereAttributesRendered = AppendAttributesAsCSharp(ref stringBuilder, htmlTag.Attributes, TagDescription.DefaultAttributes, indent);
                 }
+                var wereAttributesRendered = AppendAttributesAsCSharp(ref stringBuilder, htmlTag.Attributes, description.AttributeMethodsByName, indent);
                 if (htmlTag is IHtmlTagAllowingContent withContent && (withContent.Contents?.Length ?? 0) > 0) {
                     var subIndent = wereAttributesRendered ? indent + 8 : indent + 4;
                     if (wereAttributesRendered) {
+                        AppendNewline(ref stringBuilder);
                         AppendIndent(ref stringBuilder, indent + 4);
                     }
                     stringBuilder.AppendText(".Content(");
@@ -113,6 +80,7 @@ namespace ProgressOnderwijsUtils.Html
                     continue;
                 }
                 if (hasRenderedAttribute) {
+                    AppendNewline(ref stringBuilder);
                     AppendIndent(ref stringBuilder, indent + 4);
                 }
                 hasRenderedAttribute = true;
@@ -127,7 +95,6 @@ namespace ProgressOnderwijsUtils.Html
                 }
                 stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(attr.Value));
                 stringBuilder.AppendText(")");
-                AppendNewline(ref stringBuilder);
             }
             return hasRenderedAttribute;
         }
