@@ -60,8 +60,7 @@ using (var client = new HttpClient(new WebRequestHandler {
             .Where(tr=>tr.QuerySelector("td").TextContent.Trim() == "HTML elements")
             .Select(tr=>tr.QuerySelector("th").TextContent.Trim())
             .Distinct()
-            .ToArray()
-            .Dump();
+            .ToArray();
 
     string toClassName(string s) => s.Replace('-', '_');
     string[] splitList(string list) => list.Split(';').Select(s=>s.Trim().TrimEnd('*')).Where(s=>s!="").ToArray();
