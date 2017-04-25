@@ -1,0 +1,14 @@
+﻿_html.Content(
+    _head.Content(
+        _title.Content(
+            "Hello world!"
+        )
+    ),
+    _body._class("aClass")
+        ._class("bClass")
+        .Content(
+            _p.Content(
+                "Hello world!"
+            )
+    )
+)

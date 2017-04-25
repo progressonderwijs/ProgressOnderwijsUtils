@@ -1,21 +1,9 @@
 <Query Kind="Statements">
-  <Reference Relative="..\Build\bin\ExpressionToCodeLib.dll">C:\vcs\progress\Build\bin\ExpressionToCodeLib.dll</Reference>
-  <Reference Relative="..\Build\bin\Newtonsoft.Json.dll">C:\vcs\progress\Build\bin\Newtonsoft.Json.dll</Reference>
-  <Reference Relative="..\Build\bin\nunit.framework.dll">C:\vcs\progress\Build\bin\nunit.framework.dll</Reference>
-  <Reference Relative="..\Build\bin\Packager.exe">C:\vcs\progress\Build\bin\Packager.exe</Reference>
-  <Reference Relative="..\Build\bin\Progress.Business.dll">C:\vcs\progress\Build\bin\Progress.Business.dll</Reference>
-  <Reference Relative="..\Build\bin\Progress.Business.Test.dll">C:\vcs\progress\Build\bin\Progress.Business.Test.dll</Reference>
-  <Reference Relative="..\Build\bin\Progress.Gadgets.dll">C:\vcs\progress\Build\bin\Progress.Gadgets.dll</Reference>
-  <Reference Relative="..\Build\bin\Progress.Taken.exe">C:\vcs\progress\Build\bin\Progress.Taken.exe</Reference>
-  <Reference Relative="..\Build\bin\Progress.Templates.dll">C:\vcs\progress\Build\bin\Progress.Templates.dll</Reference>
-  <Reference Relative="..\Build\bin\Progress.Test.dll">C:\vcs\progress\Build\bin\Progress.Test.dll</Reference>
-  <Reference Relative="..\Build\bin\Progress.Tools.dll">C:\vcs\progress\Build\bin\Progress.Tools.dll</Reference>
-  <Reference Relative="..\Build\bin\Progress.WebApp.dll">C:\vcs\progress\Build\bin\Progress.WebApp.dll</Reference>
-  <Reference Relative="..\Build\bin\Progress.WebFramework.dll">C:\vcs\progress\Build\bin\Progress.WebFramework.dll</Reference>
   <Reference>&lt;RuntimeDirectory&gt;\System.Net.Http.dll</Reference>
   <Reference>&lt;RuntimeDirectory&gt;\System.Net.Http.WebRequest.dll</Reference>
   <NuGetReference>AngleSharp</NuGetReference>
-  <NuGetReference Prerelease="true">morelinq</NuGetReference>
+  <NuGetReference Prerelease="true">ExpressionToCodeLib</NuGetReference>
+  <NuGetReference>morelinq</NuGetReference>
   <Namespace>AngleSharp</Namespace>
   <Namespace>AngleSharp.Attributes</Namespace>
   <Namespace>AngleSharp.Css</Namespace>
@@ -27,21 +15,6 @@
   <Namespace>AngleSharp.Parser.Html</Namespace>
   <Namespace>ExpressionToCodeLib</Namespace>
   <Namespace>MoreLinq</Namespace>
-  <Namespace>Newtonsoft.Json</Namespace>
-  <Namespace>NUnit.Framework</Namespace>
-  <Namespace>Progress.Business</Namespace>
-  <Namespace>Progress.Business.AppVersion</Namespace>
-  <Namespace>Progress.Business.Data</Namespace>
-  <Namespace>Progress.Business.DomainUnits</Namespace>
-  <Namespace>Progress.Business.Test</Namespace>
-  <Namespace>Progress.Packager</Namespace>
-  <Namespace>Progress.Test.CodeStyle</Namespace>
-  <Namespace>Progress.Test.GenericTests</Namespace>
-  <Namespace>Progress.Tools</Namespace>
-  <Namespace>Progress.WebApp</Namespace>
-  <Namespace>Progress.WebApp.Base</Namespace>
-  <Namespace>Progress.WebFramework</Namespace>
-  <Namespace>static Progress.Tools.SafeSql</Namespace>
   <Namespace>System.Collections.Concurrent</Namespace>
   <Namespace>System.Globalization</Namespace>
   <Namespace>System.Linq</Namespace>
@@ -54,145 +27,171 @@
 var specUri = new Uri("https://html.spec.whatwg.org/");
 
 using (var client = new HttpClient(new WebRequestHandler {
-	CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.CacheIfAvailable),
+    CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.CacheIfAvailable),
 })) {
-	var content = await client.GetStringAsync(specUri);
-	var document = new HtmlParser().Parse(content);
-	var elementsSectionHeader = 
-		document.QuerySelectorAll("h3")
-			.Single(el => el.TextContent == "Elements");
-	var tableOfElements = 
-		MoreEnumerable.Generate(elementsSectionHeader, el => el.NextElementSibling)
-			.First(el => "table".Equals(el.TagName, StringComparison.OrdinalIgnoreCase));
-	
-	var columns = tableOfElements.QuerySelectorAll("thead tr th").Select(el=>el.TextContent.Trim()).ToArray();
-	
-	var elementNameColumnIndex = columns.IndexOf("Element");
-	var attributesColumnIndex = columns.IndexOf("Attributes");
-	var descriptionColumnIndex = columns.IndexOf("Description");
-	PAssert.That(()=>0 <= elementNameColumnIndex && elementNameColumnIndex < attributesColumnIndex);
+    var content = await client.GetStringAsync(specUri);
+    var document = new HtmlParser().Parse(content);
+    var elementsSectionHeader = 
+        document.QuerySelectorAll("h3")
+            .Single(el => el.TextContent == "Elements");
+    var tableOfElements = 
+        MoreEnumerable.Generate(elementsSectionHeader, el => el.NextElementSibling)
+            .First(el => "table".Equals(el.TagName, StringComparison.OrdinalIgnoreCase));
+    var attributesSectionHeader =
+        document.QuerySelectorAll("h3")
+            .Single(el => el.TextContent == "Attributes");
+    var tableOfAttributes =
+        MoreEnumerable.Generate(attributesSectionHeader, el => el.NextElementSibling)
+            .First(el => "table".Equals(el.TagName, StringComparison.OrdinalIgnoreCase));
 
-	var globalAttributes =
-		document.QuerySelector("#global-attributes ~ ul")
-			.QuerySelectorAll("li")
-			.Select(li => li.TextContent.Trim())
-			.ToArray();
+    var columns = tableOfElements.QuerySelectorAll("thead tr th").Select(el=>el.TextContent.Trim()).ToArray();
+    
+    var elementNameColumnIndex = Array.IndexOf(columns, "Element");
+    var attributesColumnIndex = Array.IndexOf(columns, "Attributes");
+    var descriptionColumnIndex = Array.IndexOf(columns, "Description");
+    var categoriesColumnIndex = Array.IndexOf(columns, "Categories");
+    var parentsColumnIndex = columns.TakeWhile(s => !s.StartsWith("Parents")).Count();
+    var childrenColumnIndex = Array.IndexOf(columns, "Children");
 
-	var toClassName = Utils.F((string s) => s.Replace('-', '_'));
+    PAssert.That(()=>0 <= elementNameColumnIndex && elementNameColumnIndex < attributesColumnIndex);
 
-	var elements = tableOfElements.QuerySelectorAll("tbody tr")
-		.SelectMany(tableRow =>
-		{
-			var tds = tableRow.QuerySelectorAll("th,td");
-			var elementNames = tds[elementNameColumnIndex].TextContent.Split(',').Select(n=>n.Trim());
-			var elementAnchor = tds[elementNameColumnIndex].QuerySelector("a")?.GetAttribute("href");
-			var description = tds[descriptionColumnIndex].TextContent;
-			var elementLink = new Uri(specUri, elementAnchor).ToString();
-			var attributes = tds[attributesColumnIndex].TextContent
-				.Split(';')
-				.Select(s => s.Trim())
-				.Where(s=>!string.IsNullOrEmpty(s) && s!="any*"&& s!="globals" && !s.Contains(" "))
-				.Select(s=>s.TrimEnd('*'))
-				.ToArray();
-			return elementNames.Select(elementName=> new {
-				elementName, 
-				elementLink,
-				description,
-				attributes 
-				}
-			);
+    var globalAttributes =
+        tableOfAttributes.QuerySelectorAll("tbody tr")
+            .Where(tr=>tr.QuerySelector("td").TextContent.Trim() == "HTML elements")
+            .Select(tr=>tr.QuerySelector("th").TextContent.Trim())
+            .Distinct()
+            .ToArray();
+
+    string toClassName(string s) => s.Replace('-', '_');
+    string[] splitList(string list) => list.Split(';').Select(s=>s.Trim().TrimEnd('*')).Where(s=>s!="").ToArray();
+
+    var elements = tableOfElements.QuerySelectorAll("tbody tr")
+        .SelectMany(tableRow =>
+        {
+            var tds = tableRow.QuerySelectorAll("th,td");
+            var elementNames = tds[elementNameColumnIndex].TextContent.Split(',').Select(n=>n.Trim());
+            var elementAnchor = tds[elementNameColumnIndex].QuerySelector("a")?.GetAttribute("href");
+            var description = tds[descriptionColumnIndex].TextContent;
+            var categories = splitList(tds[categoriesColumnIndex].TextContent);
+            var parents = splitList(tds[parentsColumnIndex].TextContent);
+            var children = splitList(tds[childrenColumnIndex].TextContent).Where(s=>s!="empty").ToArray();
+            var elementLink = new Uri(specUri, elementAnchor).ToString();
+            var attributes = splitList(tds[attributesColumnIndex].TextContent)
+                .Where(s=> s!="any" && s!= "globals" && !s.Contains(" ")).ToArray();
+            return elementNames.Select(elementName=> new {
+                elementName, 
+                elementLink,
+                description,
+                attributes,
+                categories,
+                parents,
+                children,
+                }
+            );
         })
-		.GroupBy(el => el.elementName)
-		.Select(elGroup =>
-			 new { 
-			 	elementName=elGroup.Key, 
-				csName= toClassName(elGroup.Key), 
-				elementMetaData=
-					new XElement("summary",
-					elGroup.SelectMany(el =>
-						new object[]{
-							el.description+". See: ",
-							new XElement("a", new XAttribute("href", el.elementLink), el.elementLink),
-							new XElement("br")
-						}
-					)
-					), 
-				attributes = elGroup.SelectMany(el=>el.attributes).Distinct()
-			}
-		).ToArray();
+        .Where(el=>!el.elementName.Contains(" "))
+        .GroupBy(el => el.elementName)
+        .Select(elGroup =>
+            new
+            {
+                elementName = elGroup.Key,
+                csName = toClassName(elGroup.Key),
+                csUpperName = toClassName(elGroup.Key).ToUpper(CultureInfo.InvariantCulture),
+                elementMetaData =
+                new XElement("summary",
+                    elGroup.SelectMany(el =>
+                        new object[]{
+                            el.description+". See: ",
+                            new XElement("a", new XAttribute("href", el.elementLink), el.elementLink),
+                            new XElement("br")
+                        }
+                    )
+                ),
+                attributes = elGroup.SelectMany(el => el.attributes).Distinct().ToArray(),
+                categories = elGroup.SelectMany(el => el.categories).Distinct().ToArray(),
+                parents = elGroup.SelectMany(el => el.parents).Distinct().ToArray(),
+                children = elGroup.SelectMany(el => el.children).Distinct().ToArray(),
+            }
+        ).ToArray();
 
 
-
-
-
-
-
-
-
-
-
-	var globalAttributeExtensionMethods = globalAttributes
-		.Select(attrName => $@"
-        public static TExpression _{toClassName(attrName)}<TExpression>(this TExpression htmlTagExpr, string attrValue)
-            where TExpression : struct, IFluentHtmlTagExpression<TExpression>
+    var globalAttributeExtensionMethods = globalAttributes
+        .Select(attrName => $@"
+        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+            where THtmlTag : struct, IHtmlTag
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
 
 
-	var specificAttributes = elements.SelectMany(el => el.attributes).Distinct();
-	
-	var elAttrInterfaces = specificAttributes
-		.Select(attrName => $@"
+    var specificAttributes = elements.SelectMany(el => el.attributes).Distinct();
+    
+    var elAttrInterfaces = specificAttributes
+        .Select(attrName => $@"
         public interface IHasAttr_{toClassName(attrName)} {{ }}"
 );
-	var elAttrExtensionMethods = specificAttributes
-		.Select(attrName => $@"
-        public static HtmlTag<TName> _{toClassName(attrName)}<TName>(this HtmlTag<TName> htmlTagExpr, string attrValue)
-            where TName : struct, IHasAttr_{toClassName(attrName)}, IHtmlTagName
+    var elAttrExtensionMethods = specificAttributes
+        .Select(attrName => $@"
+        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+            where THtmlTag : struct, IHasAttr_{toClassName(attrName)}, IHtmlTag
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
 
-	var attrNamesClass = $@"
-    using AttributeNameInterfaces;
+    var attrNamesClass = $@"
     namespace AttributeNameInterfaces
-    {{{elAttrInterfaces.JoinStrings()}
+    {{{string.Join("",elAttrInterfaces)}
     }}
 ";
 
-	var attrExtensionMethodsClass = $@"
+    var attrExtensionMethodsClass = $@"
     public static class AttributeConstructionMethods
-    {{{globalAttributeExtensionMethods.JoinStrings()}{elAttrExtensionMethods.JoinStrings()}
+    {{{string.Join("",globalAttributeExtensionMethods)}{string.Join("",elAttrExtensionMethods)}
     }}
 ";
 
-	var elTagNameClasses = elements
-		.Select(el => $@"
-        public struct {el.csName.ToUpper(CultureInfo.InvariantCulture)} : IHtmlTagName{
-	el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}").JoinStrings()
-			} {{ public string TagName => ""{el.elementName}""; }}"
+    var elHtmlTagClasses = elements
+        .Select(el => $@"
+        public struct {el.csUpperName} : {(
+            el.children.Length == 0 ? "IHtmlTag" : "IHtmlTagAllowingContent"
+            )}{
+            string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
+            } {{ 
+            public string TagName => ""{el.elementName}"";
+            string IHtmlTag.TagStart => ""<{el.elementName}"";
+            string IHtmlTag.EndTag => ""{(
+			el.children.Length == 0 ? "" : $"</{el.elementName}>"
+			)}"";
+            HtmlAttribute[] IHtmlTag.Attributes {{ get; set; }}{(
+            el.children.Length==0? "" : @"
+            HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }"
+            )}
+            public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
+        }}"
 );
 
-	var tagNamesClass = $@"
-    public static class TagNames
-    {{{elTagNameClasses.JoinStrings()}
+    var tagNamesClass = $@"
+    public static class HtmlTagKinds
+    {{{string.Join("",elHtmlTagClasses)}
     }}
 ";
 
-	var elFields = elements
-		.Select(el => $@"
+    var elFields = elements
+        .Select(el => $@"
 
 {Regex.Replace(el.elementMetaData.ToString(SaveOptions.None),@"^|(?<=\n)","        ///")}
-		public static readonly HtmlTag<TagNames.{el.csName.ToUpper(CultureInfo.InvariantCulture)}> _{el.csName} = new HtmlTag<TagNames.{el.csName.ToUpper(CultureInfo.InvariantCulture)}>();"
+        public static readonly HtmlTagKinds.{el.csName.ToUpper(CultureInfo.InvariantCulture)} _{el.csName} = new HtmlTagKinds.{el.csName.ToUpper(CultureInfo.InvariantCulture)}();"
 );
-	var tagsClass = $@"
-	public static class Tags
-    {{{elFields.JoinStrings()}
+    var tagsClass = $@"
+    public static class Tags
+    {{{string.Join("",elFields)}
     }}";
 
-	$@"namespace Progress.Tools.Html
-{{{(attrNamesClass + attrExtensionMethodsClass + tagNamesClass + tagsClass)}
-}}
+    $@"namespace ProgressOnderwijsUtils.Html
+{{
+    using AttributeNameInterfaces;
+	{(tagNamesClass + tagsClass+ attrNamesClass + attrExtensionMethodsClass)
+}}}
 ".Dump();
-//	globalAttributes.Dump();
-//	elements.Where(el => el.attributes.Any()).Dump();
+//    globalAttributes.Dump();
+//    elements.Where(el => el.attributes.Any()).Dump();
 }
