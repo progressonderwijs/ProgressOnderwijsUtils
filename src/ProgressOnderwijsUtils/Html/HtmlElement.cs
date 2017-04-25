@@ -7,8 +7,8 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
         {
             TagName = tagName;
-            Attributes = attributes;
-            Contents = childNodes;
+            Attributes = attributes == null || attributes.Length == 0 ? null : attributes;
+            Contents = childNodes == null || childNodes.Length == 0 ? null : childNodes;
         }
 
         public HtmlElement(string tagName)
@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils.Html
 
         public string TagName { get; }
         string IHtmlTag.TagStart => "<" + TagName;
-        string IHtmlTag.EndTag => "</" + TagName + ">";
+        string IHtmlTag.EndTag => Contents != null || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
         public HtmlAttribute[] Attributes { get; set; }
         public HtmlFragment[] Contents { get; set; }
     }
