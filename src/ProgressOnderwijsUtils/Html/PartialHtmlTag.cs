@@ -53,20 +53,20 @@ namespace ProgressOnderwijsUtils.Html
 
     public struct HtmlFragment : IConvertibleToFragment
     {
-        readonly object Content; //null, string, HtmlFragment[] or IHtmlTag
-        public bool IsTextContent => Content is string;
-        public bool IsHtmlElement => Content is IHtmlTag;
-        public bool IsCollectionOfFragments => Content is HtmlFragment[] || IsEmpty;
-        public bool IsEmpty => Content == null;
+        readonly object content; //null, string, HtmlFragment[] or IHtmlTag
+        public bool IsTextContent => content is string;
+        public bool IsHtmlElement => content is IHtmlTag;
+        public bool IsCollectionOfFragments => content is HtmlFragment[] || IsEmpty;
+        public bool IsEmpty => content == null;
 
         /// <summary>
         /// Only elements and fragments can have children; always empty for text nodes
         /// </summary>
-        public IReadOnlyList<HtmlFragment> Children => Content as HtmlFragment[] ?? (Content as IHtmlTagAllowingContent).Contents ?? Array.Empty<HtmlFragment>();
+        public IReadOnlyList<HtmlFragment> Children => content as HtmlFragment[] ?? (content as IHtmlTagAllowingContent).Contents ?? Array.Empty<HtmlFragment>();
 
         HtmlFragment(object content)
         {
-            Content = content;
+            this.content = content;
             Debug.Assert((IsTextContent ? 1 : 0) + (IsHtmlElement ? 1 : 0) + (IsCollectionOfFragments ? 1 : 0) == 1);
         }
 
@@ -107,7 +107,7 @@ namespace ProgressOnderwijsUtils.Html
 
         void AppendTextContent(ref FastShortStringBuilder fastStringBuilder)
         {
-            if (Content is string str) {
+            if (content is string str) {
                 fastStringBuilder.AppendText(str);
             } else {
                 Debug.Assert(IsHtmlElement || IsCollectionOfFragments);
@@ -124,13 +124,13 @@ namespace ProgressOnderwijsUtils.Html
 
         internal void AppendToBuilder(ref FastShortStringBuilder stringBuilder)
         {
-            if (Content is string stringContent) {
+            if (content is string stringContent) {
                 AppendEscapedText(ref stringBuilder, stringContent);
-            } else if (Content is HtmlFragment[] fragments) {
+            } else if (content is HtmlFragment[] fragments) {
                 for (var i = 0; i < fragments.Length; i++) {
                     fragments[i].AppendToBuilder(ref stringBuilder);
                 }
-            } else if (Content is IHtmlTag htmlTag) {
+            } else if (content is IHtmlTag htmlTag) {
                 stringBuilder.AppendText(htmlTag.TagStart);
                 if (htmlTag.Attributes != null) {
                     AppendAttributes(ref stringBuilder, htmlTag.Attributes);
@@ -141,7 +141,7 @@ namespace ProgressOnderwijsUtils.Html
                     AppendTagContentAndEnd(ref stringBuilder, htmlTagAllowingContent);
                 }
             } else {
-                Debug.Assert(Content == null);
+                Debug.Assert(content == null);
             }
         }
 
@@ -188,15 +188,15 @@ namespace ProgressOnderwijsUtils.Html
 
         void AppendAsRawTextToBuilder(ref FastShortStringBuilder stringBuilder)
         {
-            if (Content is HtmlFragment[] fragments) {
+            if (content is HtmlFragment[] fragments) {
                 Debug.Assert(IsCollectionOfFragments);
                 foreach (var childNode in fragments) {
                     childNode.AppendAsRawTextToBuilder(ref stringBuilder);
                 }
-            } else if (Content is string contentString) {
+            } else if (content is string contentString) {
                 Debug.Assert(IsTextContent);
                 stringBuilder.AppendText(contentString);
-            } else if (Content != null) {
+            } else if (content != null) {
                 Debug.Assert(IsHtmlElement);
                 throw new InvalidOperationException("script and style tags cannot contain child elements");
             }
