@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils.Html
             return fastStringBuilder.Value;
         }
 
-        public static void SaveHtmlFragmentToStream(HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
+        public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");

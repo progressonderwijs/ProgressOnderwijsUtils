@@ -2,21 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using ProgressOnderwijsUtils.Html;
-using Xunit;
 
 namespace ProgressOnderwijsUtilsTests
 {
     using static Tags;
 
-    public class Html5SpecTestCase
+    public static class WikiPageHtml5
     {
-        [Fact]
-        public void ApproveWikiHtml5Page()
-        {
-            ApprovalTest.Verify(MakeHtml().SerializeToString());
-        }
-
-        HtmlFragment MakeHtml()
+        public static HtmlFragment MakeHtml()
         {
             return 
                 _html._class("client-nojs")
