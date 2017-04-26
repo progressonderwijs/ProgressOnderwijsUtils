@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
@@ -25,6 +26,7 @@ namespace ProgressOnderwijsUtils.Html
             => htmlTagExpr.Content(contents.Select(el => el.AsFragment()).ToArray());
 
         [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TExpression Content<TExpression>(this TExpression htmlTagExpr, params HtmlFragment[] contents)
             where TExpression : struct, IHtmlTagAllowingContent
         {
@@ -33,32 +35,35 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static HtmlFragment AsFragment(this IHtmlTag tag) => HtmlFragment.HtmlElement(tag);
 
         [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute attribute)
             where TExpression : struct, IHtmlTag
-        {
-            if (attribute.Value == null) {
-                return htmlTagExpr;
-            } else {
-                var attributes = htmlTagExpr.Attributes ?? Array.Empty<HtmlAttribute>();
-                //performance assumption: the list of attributes is short.
-                Array.Resize(ref attributes, attributes.Length + 1);
-                attributes[attributes.Length - 1] = attribute;
-                htmlTagExpr.Attributes = attributes;
-                return htmlTagExpr;
-            }
-        }
+            => htmlTagExpr.Attribute(attribute.Name, attribute.Value);
 
         [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static TExpression Attribute<TExpression>(this TExpression htmlTagExpr, HtmlAttribute? attributeOrNull)
             where TExpression : struct, IHtmlTag
             => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
+        [Pure]
         public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, string attrName, string attrValue)
             where THtmlTag : struct, IHtmlTag
-            => htmlTagExpr.Attribute(new HtmlAttribute { Name = attrName, Value = attrValue });
+        {
+            if (attrValue == null)
+            {
+                return htmlTagExpr;
+            }
+            else
+            {
+                htmlTagExpr.Attributes = htmlTagExpr.Attributes.Add(attrName, attrValue);
+                return htmlTagExpr;
+            }
+        }
 
         [Pure]
         public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)

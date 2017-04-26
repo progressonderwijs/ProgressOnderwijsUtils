@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils.Html
                 AppendEscapedText(ref stringBuilder, stringContent);
             } else if (fragment.Content is IHtmlTag htmlTag) {
                 stringBuilder.AppendText(htmlTag.TagStart);
-                if (htmlTag.Attributes != null) {
+                if (htmlTag.Attributes.Count > 0) {
                     AppendAttributes(ref stringBuilder, htmlTag.Attributes);
                 }
                 stringBuilder.AppendText(">");
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils.Html
             stringBuilder.AppendText(htmlTagAllowingContent.EndTag);
         }
 
-        static void AppendAttributes(ref FastShortStringBuilder stringBuilder, HtmlAttribute[] attributes)
+        static void AppendAttributes(ref FastShortStringBuilder stringBuilder, HtmlAttributes attributes)
         {
             var className = default(string);
             foreach (var htmlAttribute in attributes) {

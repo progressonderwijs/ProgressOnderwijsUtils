@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils.Html
         string TagName { get; }
         string TagStart { get; }
         string EndTag { get; }
-        HtmlAttribute[] Attributes { get; set; }
+        HtmlAttributes Attributes { get; set; }
     }
 
     public interface IHtmlTagAllowingContent : IHtmlTag
