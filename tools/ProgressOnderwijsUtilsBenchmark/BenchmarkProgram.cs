@@ -1,32 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿//#define FOR_PROFILING
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
-using BenchmarkDotNet.Running;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
 using ProgressOnderwijsUtils.Html;
 using ProgressOnderwijsUtilsTests;
-using AngleSharp.Extensions;
 
 namespace ProgressOnderwijsUtilsBenchmark
 {
     public class BenchmarkProgram
     {
         static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
-        static readonly string htmlString = htmlFragment.SerializeToString();
-        static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
-        static readonly IHtmlDocument angleSharpDocument = new HtmlParser().Parse(htmlString);
-        static BenchmarkProgram()
-        {
-        }
+        static BenchmarkProgram() { }
 
         static void Main(string[] args)
         {
+#if FOR_PROFILING
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            for (var i = 0; i < 5000; i++) {
+                WikiPageHtml5.MakeHtml().SerializeToString();
+            }
+            System.Console.WriteLine(sw.Elapsed.TotalSeconds);
+#else
             BenchmarkRunner.Run<BenchmarkProgram>();
+#endif
         }
 
         [Benchmark]
@@ -47,6 +43,10 @@ namespace ProgressOnderwijsUtilsBenchmark
             htmlFragment.SerializeToString();
         }
 
+        /*
+        static readonly string htmlString = htmlFragment.SerializeToString();
+        static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
+        static readonly IHtmlDocument angleSharpDocument = new HtmlParser().Parse(htmlString);
 
         [Benchmark]
         public void SerializeLargeDocumentToCSharp()
@@ -87,5 +87,6 @@ namespace ProgressOnderwijsUtilsBenchmark
         {
             angleSharpDocument.DocumentElement.ToHtml();
         }
+        /**/
     }
 }
