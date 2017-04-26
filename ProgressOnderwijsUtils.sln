@@ -12,11 +12,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		Performance1.psess = Performance1.psess
 		Performance2.psess = Performance2.psess
+		Performance3.psess = Performance3.psess
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgressOnderwijsUtilsBenchmark", "tools\ProgressOnderwijsUtilsBenchmark\ProgressOnderwijsUtilsBenchmark.csproj", "{E7B8ECF6-16BD-4FFA-A390-E1C1B9906A56}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
