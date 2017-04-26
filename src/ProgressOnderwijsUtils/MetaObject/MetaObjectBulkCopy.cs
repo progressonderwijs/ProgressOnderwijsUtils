@@ -20,11 +20,11 @@ namespace ProgressOnderwijsUtils
         /// <param name="metaObjects">The list of entities to insert</param>
         /// <param name="sqlconn">The Sql connection to write to</param>
         /// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
-        public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject
+        public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlCommandCreationContext sqlconn, string tableName) where T : IMetaObject
         {
-            using (var bulkCopy = new SqlBulkCopy(sqlconn, SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction, null)) {
-                bulkCopy.BulkCopyTimeout = 3600;
-                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn, tableName);
+            using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction, null)) {
+                bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
+                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn.Connection, tableName);
             }
         }
 
