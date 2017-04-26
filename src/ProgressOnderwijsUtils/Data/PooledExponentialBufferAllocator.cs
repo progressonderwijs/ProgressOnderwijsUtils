@@ -4,7 +4,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class PooledExponentialBufferAllocator<T>
     {
-        static readonly int IndexCount = 15;
+        static readonly int IndexCount = 24;
         static readonly int MaxIndex = IndexCount - 1;
         static readonly int MaxArrayLength = 1 << MaxIndex;
         static readonly ConcurrentQueue<T[]>[] bagsByIndex = InitBags();
