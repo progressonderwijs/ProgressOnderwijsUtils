@@ -43,7 +43,10 @@ namespace ProgressOnderwijsUtils.Html
                     array[count].Value = val;
                     return new HtmlAttributes(array, count + 1);
                 } else {
-                    Array.Resize(ref array, count + (count >> 2) + 2);
+                    var oldArray = array;
+                    array = new HtmlAttribute[count + 4 + (count >> 2) & ~1 | 2];
+                    for (int i = 0; i < count; i++)
+                        array[i] = oldArray[i];
                 }
             } else {
                 array = new HtmlAttribute[2];
