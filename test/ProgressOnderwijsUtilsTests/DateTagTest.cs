@@ -15,8 +15,6 @@ namespace ProgressOnderwijsUtilsTests
             var seconds = (int)TimeSpan.FromDays(162).TotalSeconds;
             var dates = Enumerable.Range(0, seconds).Select(s => start + TimeSpan.FromSeconds(s));
             PAssert.That(() => dates.Count() > 10000000);
-            var dateGroupsWithCaseInsensitiveAgeTagCollisions = dates.GroupBy(DateTimeShortAgeTag.ToAgeTagCaseInsensitive).Where(g => g.Count() > 1);
-            PAssert.That(() => dateGroupsWithCaseInsensitiveAgeTagCollisions.None());
             var dateGroupsWithCollisions = dates.GroupBy(DateTimeShortAgeTag.ToAgeTag).Where(g => g.Count() > 1);
             PAssert.That(() => dateGroupsWithCollisions.None());
         }
