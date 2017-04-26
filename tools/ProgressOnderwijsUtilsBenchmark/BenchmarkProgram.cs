@@ -1,4 +1,5 @@
 ﻿//#define FOR_PROFILING
+
 using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
@@ -9,7 +10,6 @@ namespace ProgressOnderwijsUtilsBenchmark
 {
     public class BenchmarkProgram
     {
-        static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
         static BenchmarkProgram() { }
 
         static void Main(string[] args)
@@ -37,17 +37,17 @@ namespace ProgressOnderwijsUtilsBenchmark
             WikiPageHtml5.MakeHtml().SerializeToString();
         }
 
+        /*
+        static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
+        static readonly string htmlString = htmlFragment.SerializeToString();
+        static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
+        static readonly IHtmlDocument angleSharpDocument = new HtmlParser().Parse(htmlString);
+
         [Benchmark]
         public void SerializeLargeDocument()
         {
             htmlFragment.SerializeToString();
         }
-
-        /*
-        static readonly string htmlString = htmlFragment.SerializeToString();
-        static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
-        static readonly IHtmlDocument angleSharpDocument = new HtmlParser().Parse(htmlString);
-
         [Benchmark]
         public void SerializeLargeDocumentToCSharp()
         {

@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils.Html
             {
                 attributes = attrs.attributes;
                 count = attrs.count;
-                pos = 0;
+                pos = -1;
             }
 
             public HtmlAttribute Current => attributes[pos];
