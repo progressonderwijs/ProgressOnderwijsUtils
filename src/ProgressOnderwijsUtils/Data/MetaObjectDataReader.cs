@@ -87,7 +87,6 @@ namespace ProgressOnderwijsUtils
                 var propertyValue = mp.PropertyAccessExpression(metaObjectParameter);
                 Name = mp.Name;
                 ColumnType = propertyType.GetNonNullableUnderlyingType();
-                var propertyIsDefault = Expression.Equal(Expression.Default(propertyType), propertyValue);
                 var nonNullableGetterType = typeof(Func<,>).MakeGenericType(typeof(T), ColumnType);
                 var propertyConvertedToUnderlyingType = Expression.Convert(propertyValue, propertyType.GetUnderlyingType());
                 var propertyConvertedToColumnType = Expression.Convert(propertyValue, ColumnType);
@@ -97,6 +96,7 @@ namespace ProgressOnderwijsUtils
                     columnBoxedAsColumnType = Expression.Convert(propertyConvertedToUnderlyingType, typeof(object));
                     WhenNullable_IsColumnDBNull = null;
                 } else {
+                    var propertyIsDefault = Expression.Equal(Expression.Default(propertyType), propertyValue);
                     columnBoxedAsColumnType = Expression.Coalesce(propertyConvertedToUnderlyingType, Expression.Constant(DBNull.Value, typeof(object)));
                     WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(propertyIsDefault, metaObjectParameter).Compile();
                 }
