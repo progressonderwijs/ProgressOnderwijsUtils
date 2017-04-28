@@ -10,23 +10,23 @@ namespace ProgressOnderwijsUtilsTests
     public sealed class SqlErrorParserTest : TestsWithLocalConnection
     {
         [Fact]
-        public void Parse_returns_KeyConstraintViolation_when_single_column_unique_key_constraint_is_violated()
+        public void Parse_returns_KeyConstraintViolation_when_single_column_unique_key_constraint_is_violated_with_value_containing_parentheses()
         {
             SQL($@"
                     create table #T (
                         Id int identity primary key,
-                        C nchar(1) not null constraint uc_T_C unique
+                        C nchar(4) not null constraint uc_T_C unique
                     )
                 ").ExecuteNonQuery(conn);
-            SQL($"insert #T (C) values ('A')").ExecuteNonQuery(conn);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A')").ExecuteNonQuery(conn)).InnerException;
+            SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(conn);
+            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(conn)).InnerException;
 
             var violation = (KeyConstraintViolation)SqlErrorParser.Parse(exception.Errors[0]);
 
             PAssert.That(() => violation.ConstraintType == "UNIQUE KEY");
             PAssert.That(() => violation.ConstraintName == "uc_T_C");
             PAssert.That(() => violation.ObjectName == "dbo.#T");
-            PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A" }));
+            PAssert.That(() => violation.DuplicateKeyValue.SequenceEqual(new[] { "A(1)" }));
         }
 
         [Fact]

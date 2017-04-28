@@ -41,13 +41,13 @@ namespace ProgressOnderwijsUtils
 
         // message_id 2627
         static readonly Regex keyConstraintViolationRegex = new Regex(
-            "Violation of (?<ConstraintType>.*) constraint '(?<ConstraintName>[^']*)'\\. Cannot insert duplicate key in object '(?<ObjectName>[^']*)'\\. The duplicate key value is \\((?<DuplicateKeyValue>[^\\)]*)\\)\\.",
+            "Violation of (?<ConstraintType>.*) constraint '(?<ConstraintName>[^']*)'\\. Cannot insert duplicate key in object '(?<ObjectName>[^']*)'\\. The duplicate key value is \\((?<DuplicateKeyValue>.*)\\)\\.",
             RegexOptions.Compiled
             );
 
         // message_id 2601
         static readonly Regex duplicateKeyUniqueIndexRegex = new Regex(
-            "Cannot insert duplicate key row in object '(?<ObjectName>[^']*)' with unique index '(?<IndexName>[^']*)'\\. The duplicate key value is \\((?<DuplicateKeyValue>[^\\)]*)\\)\\.",
+            "Cannot insert duplicate key row in object '(?<ObjectName>[^']*)' with unique index '(?<IndexName>[^']*)'\\. The duplicate key value is \\((?<DuplicateKeyValue>.*)\\)\\.",
             RegexOptions.Compiled
             );
 
