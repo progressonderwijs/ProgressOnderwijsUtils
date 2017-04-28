@@ -36,7 +36,7 @@
   </PostinstrumentEvent>
   <Binaries>
     <ProjBinary>
-      <Path>tools\ProgressOnderwijsUtilsBenchmark\obj\Release\net46\ProgressOnderwijsUtilsBenchmark.exe</Path>
+      <Path>tools\MicroOrmBench\obj\Release\net46\MicroOrmBench.exe</Path>
       <ArgumentTimestamp>01/01/0001 00:00:00</ArgumentTimestamp>
       <Instrument>true</Instrument>
       <Sample>true</Sample>
@@ -48,8 +48,8 @@
       <LaunchProject>true</LaunchProject>
       <OverrideProjectSettings>false</OverrideProjectSettings>
       <LaunchMethod>Executable</LaunchMethod>
-      <ExecutablePath>tools\ProgressOnderwijsUtilsBenchmark\bin\Release\net46\ProgressOnderwijsUtilsBenchmark.exe</ExecutablePath>
-      <StartupDirectory>tools\ProgressOnderwijsUtilsBenchmark</StartupDirectory>
+      <ExecutablePath>tools\MicroOrmBench\bin\Release\net46\MicroOrmBench.exe</ExecutablePath>
+      <StartupDirectory>tools\MicroOrmBench</StartupDirectory>
       <Arguments>
       </Arguments>
       <NetAppHost>IIS</NetAppHost>
@@ -62,25 +62,28 @@
       <PostinstrumentEvent>
         <InstrEventExclude>false</InstrEventExclude>
       </PostinstrumentEvent>
-      <ProjRef>{E7B8ECF6-16BD-4FFA-A390-E1C1B9906A56}|tools\ProgressOnderwijsUtilsBenchmark\ProgressOnderwijsUtilsBenchmark.csproj</ProjRef>
-      <ProjPath>tools\ProgressOnderwijsUtilsBenchmark\ProgressOnderwijsUtilsBenchmark.csproj</ProjPath>
-      <ProjName>ProgressOnderwijsUtilsBenchmark</ProjName>
+      <ProjRef>{72D9CB53-24CC-48A5-867D-D24E355D64A0}|tools\MicroOrmBench\MicroOrmBench.csproj</ProjRef>
+      <ProjPath>tools\MicroOrmBench\MicroOrmBench.csproj</ProjPath>
+      <ProjName>MicroOrmBench</ProjName>
     </ProjBinary>
   </Binaries>
   <Reports>
     <Report>
-      <Path>ProgressOnderwijsUtilsBenchmark170426.vspx</Path>
+      <Path>MicroOrmBench170427.vspx</Path>
     </Report>
     <Report>
-      <Path>ProgressOnderwijsUtilsBenchmark170426(1).vspx</Path>
+      <Path>MicroOrmBench170427(1).vspx</Path>
     </Report>
     <Report>
-      <Path>ProgressOnderwijsUtilsBenchmark170426(2).vspx</Path>
+      <Path>MicroOrmBench170427(2).vspx</Path>
+    </Report>
+    <Report>
+      <Path>MicroOrmBench170427(3).vspx</Path>
     </Report>
   </Reports>
   <Launches>
     <ProjBinary>
-      <Path>:PB:{E7B8ECF6-16BD-4FFA-A390-E1C1B9906A56}|tools\ProgressOnderwijsUtilsBenchmark\ProgressOnderwijsUtilsBenchmark.csproj</Path>
+      <Path>:PB:{72D9CB53-24CC-48A5-867D-D24E355D64A0}|tools\MicroOrmBench\MicroOrmBench.csproj</Path>
     </ProjBinary>
   </Launches>
 </VSPerformanceSession>

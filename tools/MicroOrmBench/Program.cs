@@ -12,12 +12,12 @@
 
         static void RunCurrentBenchmarks(Benchmarker benchmarker)
         {
-            HandrolledAdoNetExecutor.RunQuery(benchmarker);
-            DapperExecutor.RunQuery(benchmarker);
+            //HandrolledAdoNetExecutor.RunQuery(benchmarker);
+            //DapperExecutor.RunQuery(benchmarker);
             ParameterizedSqlExecutor.RunQuery(benchmarker);
             //HandrolledAdoNetExecutor.RunWideQuery(benchmarker);
             //DapperExecutor.RunWideQuery(benchmarker);
-            //ParameterizedSqlExecutor.RunWideQuery(benchmarker);
+            ParameterizedSqlExecutor.RunWideQuery(benchmarker);
 
             //ParameterizedSqlExecutor.ConstructWithoutExecuting(benchmarker);
         }
