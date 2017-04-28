@@ -1,5 +1,4 @@
-﻿#if false
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
@@ -8,12 +7,6 @@ using System.Security.Cryptography;
 using System.Text;
 using ExpressionToCodeLib;
 using Xunit;
-using Progress.Business;
-using Progress.Business.Data;
-using Progress.Business.DomainUnits;
-using Progress.Business.GenericEdit;
-using Progress.Business.Test;
-using Progress.Business.Text;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Internal;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -21,8 +14,11 @@ using static ProgressOnderwijsUtils.SafeSql;
 namespace ProgressOnderwijsUtilsTests
 {
     
-    public class TableValuedParameterTest : TestsWithBusinessConnection
+    public class TableValuedParameterTest : TestsWithLocalConnection
     {
+        public enum SomeEnum
+        { }
+        
         [Fact]
         public void DatabaseCanProcessTableValuedParameters()
         {
@@ -42,17 +38,17 @@ namespace ProgressOnderwijsUtilsTests
         [Fact]
         public void ParameterizedSqlCanIncludeEnumTvps()
         {
-            var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => i.ToStudentId())} x");
-            var sum = (int)q.ReadScalar<Id.Student>(conn);
+            var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i =>(SomeEnum) i)} x");
+            var sum = (int)q.ReadScalar<SomeEnum>(conn);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
         [Fact]
         public void ParameterizedSqlTvpsCanCountDaysOfWeek()
         {
-            var q = SQL($@"select count(x.querytablevalue) from {EnumHelpers.GetValues<DayOfWeek>()} x");
+            var q = SQL($@"select count(x.querytablevalue) from {new[]{DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday }} x");
             var dayCount = q.ReadScalar<int>(conn);
-            PAssert.That(() => dayCount == 7);
+            PAssert.That(() => dayCount == 5);
         }
 
         [Fact]
@@ -71,7 +67,7 @@ namespace ProgressOnderwijsUtilsTests
 
             SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(conn);
             //manual bulk insert because our default TVP types explicitly forbid null
-            metaObjects.BulkCopyToSqlServer(conn.PNetCommandCreationContext.Connection, "#strings");
+            metaObjects.BulkCopyToSqlServer(conn.Connection, "#strings");
 
             var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(conn);
             SQL($@"drop table #strings").ExecuteNonQuery(conn);
@@ -81,21 +77,10 @@ namespace ProgressOnderwijsUtilsTests
         [Fact]
         public void Binary_columns_can_be_used_in_tvps()
         {
-            var filedata = new FileData("testje.txt", Encoding.ASCII.GetBytes("Iets om te kunnen testen die nog niet bestaat"), MediaTypeNames.Text.Plain);
-            var hashcode = new SHA256Managed().ComputeHash(filedata.Content);
-
             PAssert.That(() => SQL($@"
-                select fd.filedataid
-                from filedata fd
-                where fd.hashcode in {new[] { hashcode }}
-            ").ReadPlain<Id.FileData>(conn).None());
-
-            var id = FileDataStorage.SaveFileData(conn, filedata);
-            PAssert.That(() => SQL($@"
-                select fd.filedataid
-                from filedata fd
-                where fd.hashcode in {new[] { hashcode }}
-            ").ReadPlain<Id.FileData>(conn).Single() == id);
+                select sum(datalength(hashes.QueryTableValue))
+                from {new[] {Encoding.ASCII.GetBytes( "0123456789"), Encoding.ASCII.GetBytes("abcdef") }} hashes
+            ").ReadPlain<long>(conn).Single() == 16);
         }
 
         public sealed class TestDataMetaObject : IMetaObject
@@ -126,7 +111,7 @@ namespace ProgressOnderwijsUtilsTests
                 values ({testData});
             ").ExecuteNonQuery(conn);
 
-            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(conn.PNetCommandCreationContext))
+            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(conn))
             using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default))
                 Assert_DataReader_GetBytes_works(reader);
         }
@@ -201,4 +186,3 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 }
-#endif

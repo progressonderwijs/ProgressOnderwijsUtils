@@ -13,10 +13,11 @@ namespace ProgressOnderwijsUtilsTests
 
         public TestsWithLocalConnection()
         {
-            transaction = new CommittableTransaction();
+            transaction = new CommittableTransaction(new TransactionOptions { IsolationLevel = IsolationLevel.Serializable });
             conn = new SqlCommandCreationContext(new SqlConnection(@"Server = (localdb)\MSSQLLocalDB; Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer());
             try {
                 conn.Connection.Open();
+                ParameterizedSql.TableValuedTypeDefinitionScript.ExecuteNonQuery(conn);
                 conn.Connection.EnlistTransaction(transaction);
             } catch {
                 Dispose();
