@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Internal;
@@ -89,7 +90,7 @@ namespace ProgressOnderwijsUtils
                 return null;
             }
             var underlyingType = elementType.GetUnderlyingType();
-            var sqlTableTypeName = SqlTableTypeNameByDotnetType.GetOrDefault(underlyingType);
+            var sqlTableTypeName = CustomTableType.SqlTableTypeNameByDotnetType.GetOrDefault(underlyingType);
             if (sqlTableTypeName == null) {
                 return null;
             }
@@ -97,20 +98,42 @@ namespace ProgressOnderwijsUtils
             return (ITableValuedParameterFactory)Activator.CreateInstance(factoryType, sqlTableTypeName);
         }
 
-        static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = new Dictionary<Type, string> {
-            { typeof(int), "TVar_Int" },
-            { typeof(string), "TVar_NVarcharMax" },
-            { typeof(DateTime), "TVar_DateTime2" },
-            { typeof(TimeSpan), "TVar_Time" },
-            { typeof(decimal), "TVar_Decimal" },
-            { typeof(char), "TVar_NChar1" },
-            { typeof(bool), "TVar_Bit" },
-            { typeof(byte), "TVar_Tinyint" },
-            { typeof(short), "TVar_Smallint" },
-            { typeof(long), "TVar_Bigint" },
-            { typeof(double), "TVar_Float" },
-            { typeof(byte[]), "TVar_VarBinaryMax" },
-        };
+        internal struct CustomTableType
+        {
+            public readonly Type Type;
+            public readonly string SqlTypeName;
+            public readonly string TableDeclaration;
+
+            CustomTableType(Type type, string sqlTypeName, string tableDeclaration)
+            {
+                Type = type;
+                SqlTypeName = sqlTypeName;
+                TableDeclaration = tableDeclaration;
+            }
+
+            public static readonly CustomTableType[] All = new[] {
+                new CustomTableType(typeof(long), "TVar_Bigint", "querytablevalue bigint not null"),
+                new CustomTableType(typeof(bool), "TVar_Bit", "querytablevalue bit not null"),
+                new CustomTableType(typeof(DateTime), "TVar_DateTime2", "querytablevalue datetime2(7) not null"),
+                new CustomTableType(typeof(decimal), "TVar_Decimal", "querytablevalue decimal(18, 0) not null"),
+                new CustomTableType(typeof(double), "TVar_Float", "querytablevalue float not null"),
+                new CustomTableType(typeof(int), "TVar_Int", "querytablevalue int not null, primary key clustered (querytablevalue asc) with (ignore_dup_key = off)"),
+                new CustomTableType(typeof(char), "TVar_NChar1", "querytablevalue nchar(1) not null"),
+                new CustomTableType(typeof(string), "TVar_NVarcharMax", "querytablevalue nvarchar(max) not null"),
+                new CustomTableType(typeof(short), "TVar_Smallint", "querytablevalue smallint not null"),
+                new CustomTableType(typeof(TimeSpan), "TVar_Time", "querytablevalue time(7) not null"),
+                new CustomTableType(typeof(byte), "TVar_Tinyint", "querytablevalue tinyint not null"),
+                new CustomTableType(typeof(byte[]), "TVar_VarBinaryMax", "querytablevalue varbinary(max) not null"),
+            };
+
+            public static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = All.ToDictionary(o => o.Type, o => o.SqlTypeName);
+
+            public static ParameterizedSql DefinitionScript =>
+                ParameterizedSql.CreateDynamic(
+                    All.Select(o => $"if type_id('{o.SqlTypeName}') is not null drop type {o.SqlTypeName}\n"
+                        + $"create type {o.SqlTypeName} as table ({o.TableDeclaration})"
+                        ).JoinStrings("\n\n"));
+        }
 
         interface ITableValuedParameterFactory
         {

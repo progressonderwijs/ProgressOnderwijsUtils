@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
@@ -93,6 +94,9 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
             => SqlParameterComponent.ToTableValuedParameter(typeName, objects, o => (T[])o).BuildableToQuery();
+
+        public static IReadOnlyDictionary<Type, string> BuiltInTabledValueTypes => SqlParameterComponent.CustomTableType.SqlTableTypeNameByDotnetType;
+        public static ParameterizedSql TableValuedTypeDefinitionScript => SqlParameterComponent.CustomTableType.DefinitionScript;
     }
 
     interface ISqlComponent
