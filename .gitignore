@@ -3,3 +3,5 @@ bin/
 .vs
 *.user
 *.orig
+BenchmarkDotNet.Artifacts
+*.vspx

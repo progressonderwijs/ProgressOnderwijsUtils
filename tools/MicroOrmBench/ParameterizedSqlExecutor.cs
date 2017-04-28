@@ -8,7 +8,7 @@ namespace MicroOrmBench
     {
         public static void RunQuery(Benchmarker benchmarker)
         {
-            benchmarker.Bench("QueryBuilder",
+            benchmarker.BenchSqlServer("ParameterizedSql",
                 (ctx, rows) => ExampleObject.ParameterizedSqlForRows(rows)
                     .ReadMetaObjects<ExampleObject>(ctx)
                     .Length)
@@ -17,7 +17,7 @@ namespace MicroOrmBench
 
         public static void RunWideQuery(Benchmarker benchmarker)
         {
-            benchmarker.Bench("QueryBuilder (26-col)",
+            benchmarker.BenchSqlServer("ParameterizedSql (26-col)",
                 (ctx, rows) => WideExampleObject.ParameterizedSqlForRows(rows)
                     .ReadMetaObjects<WideExampleObject>(ctx)
                     .Length)
@@ -26,7 +26,7 @@ namespace MicroOrmBench
 
         public static void ConstructWithoutExecuting(Benchmarker benchmarker)
         {
-            benchmarker.Bench("QueryBuilder noexec",
+            benchmarker.BenchSqlServer("ParameterizedSql noexec",
                 (ctx, rows) =>
                 {
                     ExampleObject.ParameterizedSqlForRows(rows).CreateSqlCommand(ctx).Dispose();

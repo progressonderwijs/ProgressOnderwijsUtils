@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 
@@ -68,9 +67,9 @@ namespace ProgressOnderwijsUtils.Html
         static void AppendNewline(ref FastShortStringBuilder stringBuilder) => stringBuilder.AppendText("\n");
         static void AppendIndent(ref FastShortStringBuilder stringBuilder, int indent) => stringBuilder.AppendText(new string(' ', indent));
 
-        static bool AppendAttributesAsCSharp(ref FastShortStringBuilder stringBuilder, HtmlAttribute[] htmlAttributes, IReadOnlyDictionary<string, string> attributeMethodsByName, int indent)
+        static bool AppendAttributesAsCSharp(ref FastShortStringBuilder stringBuilder, HtmlAttributes htmlAttributes, IReadOnlyDictionary<string, string> attributeMethodsByName, int indent)
         {
-            if (htmlAttributes == null) {
+            if (htmlAttributes.Count == 0) {
                 return false;
             }
             var hasRenderedAttribute = false;

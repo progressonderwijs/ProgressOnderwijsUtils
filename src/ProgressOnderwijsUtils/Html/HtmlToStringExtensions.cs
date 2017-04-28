@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils.Html
             return fastStringBuilder.Value;
         }
 
-        public static void SaveHtmlFragmentToStream(HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
+        public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils.Html
                 AppendEscapedText(ref stringBuilder, stringContent);
             } else if (fragment.Content is IHtmlTag htmlTag) {
                 stringBuilder.AppendText(htmlTag.TagStart);
-                if (htmlTag.Attributes != null) {
+                if (htmlTag.Attributes.Count > 0) {
                     AppendAttributes(ref stringBuilder, htmlTag.Attributes);
                 }
                 stringBuilder.AppendText(">");
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils.Html
             stringBuilder.AppendText(htmlTagAllowingContent.EndTag);
         }
 
-        static void AppendAttributes(ref FastShortStringBuilder stringBuilder, HtmlAttribute[] attributes)
+        static void AppendAttributes(ref FastShortStringBuilder stringBuilder, HtmlAttributes attributes)
         {
             var className = default(string);
             foreach (var htmlAttribute in attributes) {
@@ -113,7 +113,6 @@ namespace ProgressOnderwijsUtils.Html
                     AppendAsRawTextToBuilder(ref stringBuilder, childNode);
                 }
             } else if (fragment.Content is string contentString) {
-                Debug.Assert(fragment.IsTextContent);
                 stringBuilder.AppendText(contentString);
             } else if (fragment.Content is IHtmlTag) {
                 throw new InvalidOperationException("script and style tags cannot contain child elements");

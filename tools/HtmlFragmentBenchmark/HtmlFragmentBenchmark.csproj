@@ -7,10 +7,12 @@
     <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="1.50.2" />
-	<PackageReference Include="IncrementalMeanVarianceAccumulator" Version="0.1.0" />
+    <PackageReference Include="AngleSharp" Version="0.9.9" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.5" />
     <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.105" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
+    <ProjectReference Include="..\..\test\ProgressOnderwijsUtilsTests\ProgressOnderwijsUtilsTests.csproj" />
   </ItemGroup>
 </Project>

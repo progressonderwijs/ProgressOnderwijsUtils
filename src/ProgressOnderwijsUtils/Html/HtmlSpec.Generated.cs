@@ -1,4 +1,5 @@
-﻿namespace ProgressOnderwijsUtils.Html
+﻿using System.Runtime.CompilerServices;
+namespace ProgressOnderwijsUtils.Html
 {
     using AttributeNameInterfaces;
 
@@ -9,7 +10,7 @@
             public string TagName => "a";
             string IHtmlTag.TagStart => "<a";
             string IHtmlTag.EndTag => "</a>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(A tag) => tag.AsFragment();
@@ -19,7 +20,7 @@
             public string TagName => "abbr";
             string IHtmlTag.TagStart => "<abbr";
             string IHtmlTag.EndTag => "</abbr>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(ABBR tag) => tag.AsFragment();
@@ -29,7 +30,7 @@
             public string TagName => "address";
             string IHtmlTag.TagStart => "<address";
             string IHtmlTag.EndTag => "</address>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(ADDRESS tag) => tag.AsFragment();
@@ -39,7 +40,7 @@
             public string TagName => "area";
             string IHtmlTag.TagStart => "<area";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(AREA tag) => tag.AsFragment();
         }
@@ -48,7 +49,7 @@
             public string TagName => "article";
             string IHtmlTag.TagStart => "<article";
             string IHtmlTag.EndTag => "</article>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(ARTICLE tag) => tag.AsFragment();
@@ -58,7 +59,7 @@
             public string TagName => "aside";
             string IHtmlTag.TagStart => "<aside";
             string IHtmlTag.EndTag => "</aside>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(ASIDE tag) => tag.AsFragment();
@@ -68,7 +69,7 @@
             public string TagName => "audio";
             string IHtmlTag.TagStart => "<audio";
             string IHtmlTag.EndTag => "</audio>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(AUDIO tag) => tag.AsFragment();
@@ -78,7 +79,7 @@
             public string TagName => "b";
             string IHtmlTag.TagStart => "<b";
             string IHtmlTag.EndTag => "</b>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(B tag) => tag.AsFragment();
@@ -88,7 +89,7 @@
             public string TagName => "base";
             string IHtmlTag.TagStart => "<base";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BASE tag) => tag.AsFragment();
         }
@@ -97,7 +98,7 @@
             public string TagName => "bdi";
             string IHtmlTag.TagStart => "<bdi";
             string IHtmlTag.EndTag => "</bdi>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BDI tag) => tag.AsFragment();
@@ -107,7 +108,7 @@
             public string TagName => "bdo";
             string IHtmlTag.TagStart => "<bdo";
             string IHtmlTag.EndTag => "</bdo>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BDO tag) => tag.AsFragment();
@@ -117,7 +118,7 @@
             public string TagName => "blockquote";
             string IHtmlTag.TagStart => "<blockquote";
             string IHtmlTag.EndTag => "</blockquote>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BLOCKQUOTE tag) => tag.AsFragment();
@@ -127,7 +128,7 @@
             public string TagName => "body";
             string IHtmlTag.TagStart => "<body";
             string IHtmlTag.EndTag => "</body>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BODY tag) => tag.AsFragment();
@@ -137,7 +138,7 @@
             public string TagName => "br";
             string IHtmlTag.TagStart => "<br";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BR tag) => tag.AsFragment();
         }
@@ -146,7 +147,7 @@
             public string TagName => "button";
             string IHtmlTag.TagStart => "<button";
             string IHtmlTag.EndTag => "</button>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BUTTON tag) => tag.AsFragment();
@@ -156,7 +157,7 @@
             public string TagName => "canvas";
             string IHtmlTag.TagStart => "<canvas";
             string IHtmlTag.EndTag => "</canvas>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(CANVAS tag) => tag.AsFragment();
@@ -166,7 +167,7 @@
             public string TagName => "caption";
             string IHtmlTag.TagStart => "<caption";
             string IHtmlTag.EndTag => "</caption>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(CAPTION tag) => tag.AsFragment();
@@ -176,7 +177,7 @@
             public string TagName => "cite";
             string IHtmlTag.TagStart => "<cite";
             string IHtmlTag.EndTag => "</cite>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(CITE tag) => tag.AsFragment();
@@ -186,7 +187,7 @@
             public string TagName => "code";
             string IHtmlTag.TagStart => "<code";
             string IHtmlTag.EndTag => "</code>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(CODE tag) => tag.AsFragment();
@@ -196,7 +197,7 @@
             public string TagName => "col";
             string IHtmlTag.TagStart => "<col";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(COL tag) => tag.AsFragment();
         }
@@ -205,7 +206,7 @@
             public string TagName => "colgroup";
             string IHtmlTag.TagStart => "<colgroup";
             string IHtmlTag.EndTag => "</colgroup>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(COLGROUP tag) => tag.AsFragment();
@@ -215,7 +216,7 @@
             public string TagName => "data";
             string IHtmlTag.TagStart => "<data";
             string IHtmlTag.EndTag => "</data>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DATA tag) => tag.AsFragment();
@@ -225,7 +226,7 @@
             public string TagName => "datalist";
             string IHtmlTag.TagStart => "<datalist";
             string IHtmlTag.EndTag => "</datalist>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DATALIST tag) => tag.AsFragment();
@@ -235,7 +236,7 @@
             public string TagName => "dd";
             string IHtmlTag.TagStart => "<dd";
             string IHtmlTag.EndTag => "</dd>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DD tag) => tag.AsFragment();
@@ -245,7 +246,7 @@
             public string TagName => "del";
             string IHtmlTag.TagStart => "<del";
             string IHtmlTag.EndTag => "</del>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DEL tag) => tag.AsFragment();
@@ -255,7 +256,7 @@
             public string TagName => "details";
             string IHtmlTag.TagStart => "<details";
             string IHtmlTag.EndTag => "</details>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DETAILS tag) => tag.AsFragment();
@@ -265,7 +266,7 @@
             public string TagName => "dfn";
             string IHtmlTag.TagStart => "<dfn";
             string IHtmlTag.EndTag => "</dfn>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DFN tag) => tag.AsFragment();
@@ -275,7 +276,7 @@
             public string TagName => "dialog";
             string IHtmlTag.TagStart => "<dialog";
             string IHtmlTag.EndTag => "</dialog>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DIALOG tag) => tag.AsFragment();
@@ -285,7 +286,7 @@
             public string TagName => "div";
             string IHtmlTag.TagStart => "<div";
             string IHtmlTag.EndTag => "</div>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DIV tag) => tag.AsFragment();
@@ -295,7 +296,7 @@
             public string TagName => "dl";
             string IHtmlTag.TagStart => "<dl";
             string IHtmlTag.EndTag => "</dl>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DL tag) => tag.AsFragment();
@@ -305,7 +306,7 @@
             public string TagName => "dt";
             string IHtmlTag.TagStart => "<dt";
             string IHtmlTag.EndTag => "</dt>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DT tag) => tag.AsFragment();
@@ -315,7 +316,7 @@
             public string TagName => "em";
             string IHtmlTag.TagStart => "<em";
             string IHtmlTag.EndTag => "</em>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(EM tag) => tag.AsFragment();
@@ -325,7 +326,7 @@
             public string TagName => "embed";
             string IHtmlTag.TagStart => "<embed";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(EMBED tag) => tag.AsFragment();
         }
@@ -334,7 +335,7 @@
             public string TagName => "fieldset";
             string IHtmlTag.TagStart => "<fieldset";
             string IHtmlTag.EndTag => "</fieldset>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FIELDSET tag) => tag.AsFragment();
@@ -344,7 +345,7 @@
             public string TagName => "figcaption";
             string IHtmlTag.TagStart => "<figcaption";
             string IHtmlTag.EndTag => "</figcaption>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FIGCAPTION tag) => tag.AsFragment();
@@ -354,7 +355,7 @@
             public string TagName => "figure";
             string IHtmlTag.TagStart => "<figure";
             string IHtmlTag.EndTag => "</figure>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FIGURE tag) => tag.AsFragment();
@@ -364,7 +365,7 @@
             public string TagName => "footer";
             string IHtmlTag.TagStart => "<footer";
             string IHtmlTag.EndTag => "</footer>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FOOTER tag) => tag.AsFragment();
@@ -374,7 +375,7 @@
             public string TagName => "form";
             string IHtmlTag.TagStart => "<form";
             string IHtmlTag.EndTag => "</form>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FORM tag) => tag.AsFragment();
@@ -384,7 +385,7 @@
             public string TagName => "h1";
             string IHtmlTag.TagStart => "<h1";
             string IHtmlTag.EndTag => "</h1>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H1 tag) => tag.AsFragment();
@@ -394,7 +395,7 @@
             public string TagName => "h2";
             string IHtmlTag.TagStart => "<h2";
             string IHtmlTag.EndTag => "</h2>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H2 tag) => tag.AsFragment();
@@ -404,7 +405,7 @@
             public string TagName => "h3";
             string IHtmlTag.TagStart => "<h3";
             string IHtmlTag.EndTag => "</h3>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H3 tag) => tag.AsFragment();
@@ -414,7 +415,7 @@
             public string TagName => "h4";
             string IHtmlTag.TagStart => "<h4";
             string IHtmlTag.EndTag => "</h4>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H4 tag) => tag.AsFragment();
@@ -424,7 +425,7 @@
             public string TagName => "h5";
             string IHtmlTag.TagStart => "<h5";
             string IHtmlTag.EndTag => "</h5>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H5 tag) => tag.AsFragment();
@@ -434,7 +435,7 @@
             public string TagName => "h6";
             string IHtmlTag.TagStart => "<h6";
             string IHtmlTag.EndTag => "</h6>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H6 tag) => tag.AsFragment();
@@ -444,7 +445,7 @@
             public string TagName => "head";
             string IHtmlTag.TagStart => "<head";
             string IHtmlTag.EndTag => "</head>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HEAD tag) => tag.AsFragment();
@@ -454,7 +455,7 @@
             public string TagName => "header";
             string IHtmlTag.TagStart => "<header";
             string IHtmlTag.EndTag => "</header>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HEADER tag) => tag.AsFragment();
@@ -464,7 +465,7 @@
             public string TagName => "hgroup";
             string IHtmlTag.TagStart => "<hgroup";
             string IHtmlTag.EndTag => "</hgroup>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HGROUP tag) => tag.AsFragment();
@@ -474,7 +475,7 @@
             public string TagName => "hr";
             string IHtmlTag.TagStart => "<hr";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HR tag) => tag.AsFragment();
         }
@@ -483,7 +484,7 @@
             public string TagName => "html";
             string IHtmlTag.TagStart => "<html";
             string IHtmlTag.EndTag => "</html>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HTML tag) => tag.AsFragment();
@@ -493,7 +494,7 @@
             public string TagName => "i";
             string IHtmlTag.TagStart => "<i";
             string IHtmlTag.EndTag => "</i>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(I tag) => tag.AsFragment();
@@ -503,7 +504,7 @@
             public string TagName => "iframe";
             string IHtmlTag.TagStart => "<iframe";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(IFRAME tag) => tag.AsFragment();
         }
@@ -512,7 +513,7 @@
             public string TagName => "img";
             string IHtmlTag.TagStart => "<img";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(IMG tag) => tag.AsFragment();
         }
@@ -521,7 +522,7 @@
             public string TagName => "input";
             string IHtmlTag.TagStart => "<input";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(INPUT tag) => tag.AsFragment();
         }
@@ -530,7 +531,7 @@
             public string TagName => "ins";
             string IHtmlTag.TagStart => "<ins";
             string IHtmlTag.EndTag => "</ins>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(INS tag) => tag.AsFragment();
@@ -540,7 +541,7 @@
             public string TagName => "kbd";
             string IHtmlTag.TagStart => "<kbd";
             string IHtmlTag.EndTag => "</kbd>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(KBD tag) => tag.AsFragment();
@@ -550,7 +551,7 @@
             public string TagName => "label";
             string IHtmlTag.TagStart => "<label";
             string IHtmlTag.EndTag => "</label>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(LABEL tag) => tag.AsFragment();
@@ -560,7 +561,7 @@
             public string TagName => "legend";
             string IHtmlTag.TagStart => "<legend";
             string IHtmlTag.EndTag => "</legend>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(LEGEND tag) => tag.AsFragment();
@@ -570,7 +571,7 @@
             public string TagName => "li";
             string IHtmlTag.TagStart => "<li";
             string IHtmlTag.EndTag => "</li>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(LI tag) => tag.AsFragment();
@@ -580,7 +581,7 @@
             public string TagName => "link";
             string IHtmlTag.TagStart => "<link";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(LINK tag) => tag.AsFragment();
         }
@@ -589,7 +590,7 @@
             public string TagName => "main";
             string IHtmlTag.TagStart => "<main";
             string IHtmlTag.EndTag => "</main>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(MAIN tag) => tag.AsFragment();
@@ -599,7 +600,7 @@
             public string TagName => "map";
             string IHtmlTag.TagStart => "<map";
             string IHtmlTag.EndTag => "</map>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(MAP tag) => tag.AsFragment();
@@ -609,7 +610,7 @@
             public string TagName => "mark";
             string IHtmlTag.TagStart => "<mark";
             string IHtmlTag.EndTag => "</mark>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(MARK tag) => tag.AsFragment();
@@ -619,7 +620,7 @@
             public string TagName => "menu";
             string IHtmlTag.TagStart => "<menu";
             string IHtmlTag.EndTag => "</menu>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(MENU tag) => tag.AsFragment();
@@ -629,7 +630,7 @@
             public string TagName => "menuitem";
             string IHtmlTag.TagStart => "<menuitem";
             string IHtmlTag.EndTag => "</menuitem>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(MENUITEM tag) => tag.AsFragment();
@@ -639,7 +640,7 @@
             public string TagName => "meta";
             string IHtmlTag.TagStart => "<meta";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(META tag) => tag.AsFragment();
         }
@@ -648,7 +649,7 @@
             public string TagName => "meter";
             string IHtmlTag.TagStart => "<meter";
             string IHtmlTag.EndTag => "</meter>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(METER tag) => tag.AsFragment();
@@ -658,7 +659,7 @@
             public string TagName => "nav";
             string IHtmlTag.TagStart => "<nav";
             string IHtmlTag.EndTag => "</nav>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(NAV tag) => tag.AsFragment();
@@ -668,7 +669,7 @@
             public string TagName => "noscript";
             string IHtmlTag.TagStart => "<noscript";
             string IHtmlTag.EndTag => "</noscript>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(NOSCRIPT tag) => tag.AsFragment();
@@ -678,7 +679,7 @@
             public string TagName => "object";
             string IHtmlTag.TagStart => "<object";
             string IHtmlTag.EndTag => "</object>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OBJECT tag) => tag.AsFragment();
@@ -688,7 +689,7 @@
             public string TagName => "ol";
             string IHtmlTag.TagStart => "<ol";
             string IHtmlTag.EndTag => "</ol>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OL tag) => tag.AsFragment();
@@ -698,7 +699,7 @@
             public string TagName => "optgroup";
             string IHtmlTag.TagStart => "<optgroup";
             string IHtmlTag.EndTag => "</optgroup>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OPTGROUP tag) => tag.AsFragment();
@@ -708,7 +709,7 @@
             public string TagName => "option";
             string IHtmlTag.TagStart => "<option";
             string IHtmlTag.EndTag => "</option>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OPTION tag) => tag.AsFragment();
@@ -718,7 +719,7 @@
             public string TagName => "output";
             string IHtmlTag.TagStart => "<output";
             string IHtmlTag.EndTag => "</output>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OUTPUT tag) => tag.AsFragment();
@@ -728,7 +729,7 @@
             public string TagName => "p";
             string IHtmlTag.TagStart => "<p";
             string IHtmlTag.EndTag => "</p>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(P tag) => tag.AsFragment();
@@ -738,7 +739,7 @@
             public string TagName => "param";
             string IHtmlTag.TagStart => "<param";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(PARAM tag) => tag.AsFragment();
         }
@@ -747,7 +748,7 @@
             public string TagName => "picture";
             string IHtmlTag.TagStart => "<picture";
             string IHtmlTag.EndTag => "</picture>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(PICTURE tag) => tag.AsFragment();
@@ -757,7 +758,7 @@
             public string TagName => "pre";
             string IHtmlTag.TagStart => "<pre";
             string IHtmlTag.EndTag => "</pre>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(PRE tag) => tag.AsFragment();
@@ -767,7 +768,7 @@
             public string TagName => "progress";
             string IHtmlTag.TagStart => "<progress";
             string IHtmlTag.EndTag => "</progress>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(PROGRESS tag) => tag.AsFragment();
@@ -777,7 +778,7 @@
             public string TagName => "q";
             string IHtmlTag.TagStart => "<q";
             string IHtmlTag.EndTag => "</q>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(Q tag) => tag.AsFragment();
@@ -787,7 +788,7 @@
             public string TagName => "rp";
             string IHtmlTag.TagStart => "<rp";
             string IHtmlTag.EndTag => "</rp>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(RP tag) => tag.AsFragment();
@@ -797,7 +798,7 @@
             public string TagName => "rt";
             string IHtmlTag.TagStart => "<rt";
             string IHtmlTag.EndTag => "</rt>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(RT tag) => tag.AsFragment();
@@ -807,7 +808,7 @@
             public string TagName => "ruby";
             string IHtmlTag.TagStart => "<ruby";
             string IHtmlTag.EndTag => "</ruby>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(RUBY tag) => tag.AsFragment();
@@ -817,7 +818,7 @@
             public string TagName => "s";
             string IHtmlTag.TagStart => "<s";
             string IHtmlTag.EndTag => "</s>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(S tag) => tag.AsFragment();
@@ -827,7 +828,7 @@
             public string TagName => "samp";
             string IHtmlTag.TagStart => "<samp";
             string IHtmlTag.EndTag => "</samp>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SAMP tag) => tag.AsFragment();
@@ -837,7 +838,7 @@
             public string TagName => "script";
             string IHtmlTag.TagStart => "<script";
             string IHtmlTag.EndTag => "</script>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SCRIPT tag) => tag.AsFragment();
@@ -847,7 +848,7 @@
             public string TagName => "section";
             string IHtmlTag.TagStart => "<section";
             string IHtmlTag.EndTag => "</section>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SECTION tag) => tag.AsFragment();
@@ -857,7 +858,7 @@
             public string TagName => "select";
             string IHtmlTag.TagStart => "<select";
             string IHtmlTag.EndTag => "</select>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SELECT tag) => tag.AsFragment();
@@ -867,7 +868,7 @@
             public string TagName => "slot";
             string IHtmlTag.TagStart => "<slot";
             string IHtmlTag.EndTag => "</slot>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SLOT tag) => tag.AsFragment();
@@ -877,7 +878,7 @@
             public string TagName => "small";
             string IHtmlTag.TagStart => "<small";
             string IHtmlTag.EndTag => "</small>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SMALL tag) => tag.AsFragment();
@@ -887,7 +888,7 @@
             public string TagName => "source";
             string IHtmlTag.TagStart => "<source";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SOURCE tag) => tag.AsFragment();
         }
@@ -896,7 +897,7 @@
             public string TagName => "span";
             string IHtmlTag.TagStart => "<span";
             string IHtmlTag.EndTag => "</span>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SPAN tag) => tag.AsFragment();
@@ -906,7 +907,7 @@
             public string TagName => "strong";
             string IHtmlTag.TagStart => "<strong";
             string IHtmlTag.EndTag => "</strong>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(STRONG tag) => tag.AsFragment();
@@ -916,7 +917,7 @@
             public string TagName => "style";
             string IHtmlTag.TagStart => "<style";
             string IHtmlTag.EndTag => "</style>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(STYLE tag) => tag.AsFragment();
@@ -926,7 +927,7 @@
             public string TagName => "sub";
             string IHtmlTag.TagStart => "<sub";
             string IHtmlTag.EndTag => "</sub>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SUB tag) => tag.AsFragment();
@@ -936,7 +937,7 @@
             public string TagName => "summary";
             string IHtmlTag.TagStart => "<summary";
             string IHtmlTag.EndTag => "</summary>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SUMMARY tag) => tag.AsFragment();
@@ -946,7 +947,7 @@
             public string TagName => "sup";
             string IHtmlTag.TagStart => "<sup";
             string IHtmlTag.EndTag => "</sup>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SUP tag) => tag.AsFragment();
@@ -956,7 +957,7 @@
             public string TagName => "table";
             string IHtmlTag.TagStart => "<table";
             string IHtmlTag.EndTag => "</table>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TABLE tag) => tag.AsFragment();
@@ -966,7 +967,7 @@
             public string TagName => "tbody";
             string IHtmlTag.TagStart => "<tbody";
             string IHtmlTag.EndTag => "</tbody>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TBODY tag) => tag.AsFragment();
@@ -976,7 +977,7 @@
             public string TagName => "td";
             string IHtmlTag.TagStart => "<td";
             string IHtmlTag.EndTag => "</td>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TD tag) => tag.AsFragment();
@@ -986,7 +987,7 @@
             public string TagName => "template";
             string IHtmlTag.TagStart => "<template";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TEMPLATE tag) => tag.AsFragment();
         }
@@ -995,7 +996,7 @@
             public string TagName => "textarea";
             string IHtmlTag.TagStart => "<textarea";
             string IHtmlTag.EndTag => "</textarea>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TEXTAREA tag) => tag.AsFragment();
@@ -1005,7 +1006,7 @@
             public string TagName => "tfoot";
             string IHtmlTag.TagStart => "<tfoot";
             string IHtmlTag.EndTag => "</tfoot>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TFOOT tag) => tag.AsFragment();
@@ -1015,7 +1016,7 @@
             public string TagName => "th";
             string IHtmlTag.TagStart => "<th";
             string IHtmlTag.EndTag => "</th>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TH tag) => tag.AsFragment();
@@ -1025,7 +1026,7 @@
             public string TagName => "thead";
             string IHtmlTag.TagStart => "<thead";
             string IHtmlTag.EndTag => "</thead>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(THEAD tag) => tag.AsFragment();
@@ -1035,7 +1036,7 @@
             public string TagName => "time";
             string IHtmlTag.TagStart => "<time";
             string IHtmlTag.EndTag => "</time>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TIME tag) => tag.AsFragment();
@@ -1045,7 +1046,7 @@
             public string TagName => "title";
             string IHtmlTag.TagStart => "<title";
             string IHtmlTag.EndTag => "</title>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TITLE tag) => tag.AsFragment();
@@ -1055,7 +1056,7 @@
             public string TagName => "tr";
             string IHtmlTag.TagStart => "<tr";
             string IHtmlTag.EndTag => "</tr>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TR tag) => tag.AsFragment();
@@ -1065,7 +1066,7 @@
             public string TagName => "track";
             string IHtmlTag.TagStart => "<track";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TRACK tag) => tag.AsFragment();
         }
@@ -1074,7 +1075,7 @@
             public string TagName => "u";
             string IHtmlTag.TagStart => "<u";
             string IHtmlTag.EndTag => "</u>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(U tag) => tag.AsFragment();
@@ -1084,7 +1085,7 @@
             public string TagName => "ul";
             string IHtmlTag.TagStart => "<ul";
             string IHtmlTag.EndTag => "</ul>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(UL tag) => tag.AsFragment();
@@ -1094,7 +1095,7 @@
             public string TagName => "var";
             string IHtmlTag.TagStart => "<var";
             string IHtmlTag.EndTag => "</var>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(VAR tag) => tag.AsFragment();
@@ -1104,7 +1105,7 @@
             public string TagName => "video";
             string IHtmlTag.TagStart => "<video";
             string IHtmlTag.EndTag => "</video>";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             HtmlFragment[] IHtmlTagAllowingContent.Contents { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(VIDEO tag) => tag.AsFragment();
@@ -1114,7 +1115,7 @@
             public string TagName => "wbr";
             string IHtmlTag.TagStart => "<wbr";
             string IHtmlTag.EndTag => "";
-            HtmlAttribute[] IHtmlTag.Attributes { get; set; }
+            HtmlAttributes IHtmlTag.Attributes { get; set; }
             public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(WBR tag) => tag.AsFragment();
         }
@@ -1595,7 +1596,6 @@
         public static THtmlTag _contextmenu<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHtmlTag
             => htmlTagExpr.Attribute("contextmenu", attrValue);
-
         public static THtmlTag _dir<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHtmlTag
             => htmlTagExpr.Attribute("dir", attrValue);
