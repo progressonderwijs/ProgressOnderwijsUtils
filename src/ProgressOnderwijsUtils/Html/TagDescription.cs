@@ -31,7 +31,13 @@ namespace ProgressOnderwijsUtils.Html
         {
             return typeof(AttributeConstructionMethods)
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
-                .Where(mi => mi.GetGenericArguments().Single().GetGenericParameterConstraints().All(constraint => constraint.IsAssignableFrom(tagType)))
+                .Where(mi => {
+                    var typeArgument = mi.GetGenericArguments().Single();
+                    return typeArgument.GetGenericParameterConstraints()
+                        .All(constraint =>
+                            constraint.IsAssignableFrom(tagType)
+                                || constraint == typeof(IHtmlTag<>).MakeGenericType(typeArgument) && typeof(IHtmlTag<>).MakeGenericType(tagType).IsAssignableFrom(tagType));
+                })
                 .ToDictionary(
                     method => ((IHtmlTag)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })).Attributes.Last().Name,
                     method => method.Name,
