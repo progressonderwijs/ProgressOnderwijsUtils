@@ -96,7 +96,7 @@ namespace ProgressOnderwijsUtils
             => SqlParameterComponent.ToTableValuedParameter(typeName, objects, o => (T[])o).BuildableToQuery();
 
         public static IReadOnlyDictionary<Type, string> BuiltInTabledValueTypes => SqlParameterComponent.CustomTableType.SqlTableTypeNameByDotnetType;
-        public static ParameterizedSql TableValuedTypeDefinitionScript => SqlParameterComponent.CustomTableType.DefinitionScript;
+        public static ParameterizedSql[] TableValuedTypeDefinitionScripts => SqlParameterComponent.CustomTableType.DefinitionScripts;
     }
 
     interface ISqlComponent

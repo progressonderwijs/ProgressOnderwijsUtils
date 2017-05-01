@@ -17,7 +17,8 @@ namespace ProgressOnderwijsUtilsTests
             conn = new SqlCommandCreationContext(new SqlConnection(@"Server = (localdb)\MSSQLLocalDB; Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer());
             try {
                 conn.Connection.Open();
-                ParameterizedSql.TableValuedTypeDefinitionScript.ExecuteNonQuery(conn);
+                foreach(var script in ParameterizedSql.TableValuedTypeDefinitionScripts)
+                    script.ExecuteNonQuery(conn);
                 conn.Connection.EnlistTransaction(transaction);
             } catch {
                 Dispose();
