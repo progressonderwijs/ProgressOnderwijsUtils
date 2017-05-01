@@ -5,3 +5,4 @@ bin/
 *.orig
 BenchmarkDotNet.Artifacts
 *.vspx
+*.received.txt
