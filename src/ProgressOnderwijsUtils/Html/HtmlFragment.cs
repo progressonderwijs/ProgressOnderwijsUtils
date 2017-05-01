@@ -31,10 +31,10 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment HtmlElement(IHtmlTag element) => new HtmlFragment(element);
 
         [Pure]
-        public static HtmlFragment HtmlElement(HtmlElement element) => new HtmlFragment(element.Canonicalize());
+        public static HtmlFragment HtmlElement(CustomHtmlElement element) => new HtmlFragment(element.Canonicalize());
 
         [Pure]
-        public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes) => HtmlElement(new HtmlElement(tagName, attributes, childNodes));
+        public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes) => HtmlElement(new CustomHtmlElement(tagName, attributes, childNodes));
 
         [Pure]
         public static HtmlFragment Fragment(params HtmlFragment[] htmlEls)
@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils.Html
 
         public override string ToString() => "HtmlFragment: " + this.SerializeToStringWithoutDoctype();
         public static HtmlFragment Empty => default(HtmlFragment);
-        public static implicit operator HtmlFragment(HtmlElement element) => HtmlElement(element);
+        public static implicit operator HtmlFragment(CustomHtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
 
         [Pure]

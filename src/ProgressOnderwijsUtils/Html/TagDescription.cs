@@ -58,6 +58,6 @@ namespace ProgressOnderwijsUtils.Html
                         AttributeMethodsByName = DefaultAttributes,
                     };
 
-        static readonly IReadOnlyDictionary<string, string> DefaultAttributes = AttributeLookup(typeof(HtmlElement), new HtmlElement("unknown", null, null));
+        static readonly IReadOnlyDictionary<string, string> DefaultAttributes = AttributeLookup(typeof(CustomHtmlElement), new CustomHtmlElement("unknown", null, null));
     }
 }
