@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Html;
 
 namespace ProgressOnderwijsUtils.Html
 {
@@ -33,8 +31,10 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment HtmlElement(IHtmlTag element) => new HtmlFragment(element);
 
         [Pure]
-        public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
-            => new HtmlFragment(new HtmlElement(tagName, attributes ?? Array.Empty<HtmlAttribute>(), childNodes));
+        public static HtmlFragment HtmlElement(HtmlElement element) => new HtmlFragment(element.Canonicalize());
+
+        [Pure]
+        public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes) => HtmlElement(new HtmlElement(tagName, attributes, childNodes));
 
         [Pure]
         public static HtmlFragment Fragment(params HtmlFragment[] htmlEls)

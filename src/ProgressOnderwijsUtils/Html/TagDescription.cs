@@ -10,6 +10,8 @@ namespace ProgressOnderwijsUtils.Html
         public string TagName { get; private set; }
         public bool IsSelfClosing { get; private set; }
         public string FieldName { get; private set; }
+        public bool IsPredefined => FieldName != null;
+        public IHtmlTag EmptyValue { get; private set; }
         public IReadOnlyDictionary<string, string> AttributeMethodsByName { get; private set; }
 
         static readonly IReadOnlyDictionary<string, TagDescription> ByTagName =
@@ -20,6 +22,7 @@ namespace ProgressOnderwijsUtils.Html
                     field => field.FieldValue.TagName,
                     field => new TagDescription {
                         TagName = field.FieldValue.TagName,
+                        EmptyValue = field.FieldValue,
                         FieldName = field.FieldName,
                         IsSelfClosing = !(field.FieldValue is IHtmlTagAllowingContent),
                         AttributeMethodsByName = AttributeLookup(field.FieldType, field.FieldValue)

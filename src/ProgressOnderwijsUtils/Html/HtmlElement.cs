@@ -5,9 +5,9 @@ namespace ProgressOnderwijsUtils.Html
     public struct HtmlElement : IHtmlTagAllowingContent<HtmlElement>
     {
         public HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
-            : this(tagName, 
-                  attributes == null || attributes.Length == 0 ? HtmlAttributes.Empty : HtmlAttributes.FromArray(attributes), 
-                  childNodes == null || childNodes.Length == 0 ? null : childNodes) { }
+            : this(tagName,
+                attributes == null || attributes.Length == 0 ? HtmlAttributes.Empty : HtmlAttributes.FromArray(attributes),
+                childNodes == null || childNodes.Length == 0 ? null : childNodes) { }
 
         internal HtmlElement(string tagName, HtmlAttributes attributes, HtmlFragment[] childNodes)
         {
@@ -23,16 +23,23 @@ namespace ProgressOnderwijsUtils.Html
             Contents = null;
         }
 
-
         public string TagName { get; }
         public HtmlAttributes Attributes { get; }
         public HtmlFragment[] Contents { get; }
 
-        [Pure] public HtmlFragment AsFragment() => this;
+        [Pure]
+        public HtmlFragment AsFragment() => this;
 
         string IHtmlTag.TagStart => "<" + TagName;
         string IHtmlTag.EndTag => Contents != null || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
 
+        public IHtmlTag Canonicalize()
+        {
+            var tagDescription = TagDescription.LookupTag(TagName);
+            return tagDescription.EmptyValue == null
+                ? this
+                : HtmlTagAlterations.ReplaceAttributesAndContents(tagDescription.EmptyValue, Attributes, Contents);
+        }
 
         IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
         HtmlElement IHtmlTag<HtmlElement>.WithAttributes(HtmlAttributes replacementAttributes) => new HtmlElement(TagName, replacementAttributes, Contents);
