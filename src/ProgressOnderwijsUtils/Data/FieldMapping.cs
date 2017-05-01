@@ -72,6 +72,7 @@ namespace ProgressOnderwijsUtils
 
         public static void ApplyFieldMappingsToBulkCopy(FieldMapping[] mapping, SqlBulkCopy bulkCopy)
         {
+            bulkCopy.ColumnMappings.Clear();
             foreach (var mapEntry in mapping) {
                 bulkCopy.ColumnMappings.Add(mapEntry.SrcIndex, mapEntry.DstIndex);
             }
