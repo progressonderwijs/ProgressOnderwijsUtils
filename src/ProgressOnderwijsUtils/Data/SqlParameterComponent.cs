@@ -66,8 +66,7 @@ namespace ProgressOnderwijsUtils
         public static ISqlComponent ToTableValuedParameterFromPlainValues(IEnumerable set)
         {
             var enumerableType = set.GetType();
-            ITableValuedParameterFactory factory;
-            if (!tableValuedParameterFactoryCache.TryGetValue(enumerableType, out factory)) {
+            if (!tableValuedParameterFactoryCache.TryGetValue(enumerableType, out ITableValuedParameterFactory factory)) {
                 factory = CreateTableValuedParameterFactory(enumerableType);
                 tableValuedParameterFactoryCache.TryAdd(enumerableType, factory);
             }
@@ -190,8 +189,7 @@ namespace ProgressOnderwijsUtils
             /// </summary>
             public static TableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>(IEnumerable<T> typedEnumerable)
             {
-                var typedArray = typedEnumerable as T[];
-                if (typedArray != null) {
+                if (typedEnumerable is T[] typedArray) {
                     var projectedArray = new TableValuedParameterWrapper<T>[typedArray.Length];
                     for (var i = 0; i < projectedArray.Length; i++) {
                         projectedArray[i].QueryTableValue = typedArray[i];
@@ -199,8 +197,7 @@ namespace ProgressOnderwijsUtils
                     return projectedArray;
                 }
 
-                var typedList = typedEnumerable as IReadOnlyList<T>;
-                if (typedList != null) {
+                if (typedEnumerable is IReadOnlyList<T> typedList) {
                     var projectedArray = new TableValuedParameterWrapper<T>[typedList.Count];
                     for (var i = 0; i < projectedArray.Length; i++) {
                         projectedArray[i].QueryTableValue = typedList[i];
