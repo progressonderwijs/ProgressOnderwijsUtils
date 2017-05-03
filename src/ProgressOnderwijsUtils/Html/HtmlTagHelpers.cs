@@ -80,5 +80,7 @@ namespace ProgressOnderwijsUtils.Html
                 return HtmlFragment.Fragment(retval.ToArray());
             }
         }
+
+        public static HtmlFragment[] Children(this IHtmlTag element) => (element as IHtmlTagAllowingContent)?.Contents ?? Array.Empty<HtmlFragment>();
     }
 }
