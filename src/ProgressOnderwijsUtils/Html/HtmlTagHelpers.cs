@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
-            => HtmlFragment.Fragment(htmlEls.Select(el => el.AsFragment()).ToArray());
+            => HtmlFragment.Fragment(htmlEls.Select(el => el.AsFragment()).Where(frag=>!frag.IsEmpty).ToArray());
 
         public static HtmlFragment EmptyIfNull<TContent>(this TContent? htmlFragmentOrNull)
             where TContent : struct, IConvertibleToFragment
