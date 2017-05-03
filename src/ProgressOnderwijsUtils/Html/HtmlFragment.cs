@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static HtmlFragment Fragment<T>(IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
-            => Fragment(htmlEls.Select(el => el.AsFragment()).ToArray());
+            => Fragment(htmlEls.Select(el => el.AsFragment()).Where(f => !f.IsEmpty).ToArray());
 
         public override string ToString() => "HtmlFragment: " + this.SerializeToStringWithoutDoctype();
         public static HtmlFragment Empty => default(HtmlFragment);
