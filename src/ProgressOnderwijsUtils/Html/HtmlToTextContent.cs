@@ -6,7 +6,7 @@ namespace ProgressOnderwijsUtils.Html
         {
             var fastStringBuilder = FastShortStringBuilder.Create();
             AppendTextContent(ref fastStringBuilder, fragment);
-            return fastStringBuilder.Value;
+            return fastStringBuilder.FinishBuilding();
         }
 
         static void AppendTextContent(ref FastShortStringBuilder fastStringBuilder, HtmlFragment fragment)

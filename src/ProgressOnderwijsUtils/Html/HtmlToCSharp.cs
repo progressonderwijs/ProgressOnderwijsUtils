@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Html
         {
             var builder = FastShortStringBuilder.Create();
             AppendCSharpTo(ref builder, fragment, 0);
-            return builder.Value;
+            return builder.FinishBuilding();
         }
 
         static void AppendCSharpTo(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment, int indent)

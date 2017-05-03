@@ -50,8 +50,7 @@ namespace ProgressOnderwijsUtils
 
         static Dictionary<object, string> GetLookup()
         {
-            Dictionary<object, string> lookup;
-            if (nameLookupBag.TryDequeue(out lookup)) {
+            if (nameLookupBag.TryDequeue(out Dictionary<object, string> lookup)) {
                 return lookup;
             }
             return new Dictionary<object, string>(8);
@@ -71,12 +70,12 @@ namespace ProgressOnderwijsUtils
                     lookup = GetLookup()
                 };
 
-        public ReusableCommand CreateCommand(SqlCommandCreationContext conn)
+        public ReusableCommand FinishBuilding(SqlCommandCreationContext conn)
         {
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);
             command.Connection = conn.Connection;
             command.CommandTimeout = conn.CommandTimeoutInS;
-            command.CommandText = queryText.Value;
+            command.CommandText = queryText.FinishBuilding();
             var cmdParams = command.Parameters;
             for (var i = 0; i < paramCount; i++) {
                 if (paramObjs[i].TypeName != null) {
@@ -88,25 +87,29 @@ namespace ProgressOnderwijsUtils
                 cmdParams[i].Value = paramObjs[i].Value;
                 cmdParams[i].IsNullable = paramObjs[i].Value == DBNull.Value;
             }
-            var timer = conn.Tracer?.StartCommandTimer(command);
 
+            FreeParamsAndLookup();
+
+            var timer = conn.Tracer?.StartCommandTimer(command);
             return new ReusableCommand { Command = command, QueryTimer = timer };
         }
 
-        public void ReturnToPool()
+        public string FinishBuilding_CommandTextOnly()
         {
-            queryText.ReturnToPool();
+            FreeParamsAndLookup();
+            return queryText.FinishBuilding();
+        }
 
+        void FreeParamsAndLookup()
+        {
             Array.Clear(paramObjs, 0, paramCount);
             PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
             paramObjs = null;
-
             lookup.Clear();
             nameLookupBag.Enqueue(lookup);
             lookup = null;
         }
 
-        public string CommandText => queryText.Value;
         const int ParameterNameCacheSize = 20;
 
         static readonly string[] CachedParameterNames =
@@ -117,8 +120,7 @@ namespace ProgressOnderwijsUtils
         public string RegisterParameterAndGetName<T>(T o)
             where T : IQueryParameter
         {
-            string paramName;
-            if (!lookup.TryGetValue(o.EquatableValue, out paramName)) {
+            if (!lookup.TryGetValue(o.EquatableValue, out var paramName)) {
                 var parameterIndex = lookup.Count;
                 paramName = parameterIndex < CachedParameterNames.Length
                     ? CachedParameterNames[parameterIndex]
@@ -169,14 +171,21 @@ namespace ProgressOnderwijsUtils
             queryLen += length;
         }
 
-        public string Value => new string(charBuffer, 0, queryLen);
         public int CurrentLength => queryLen;
         public char[] CurrentCharacterBuffer => charBuffer;
 
-        public void ReturnToPool()
+        public void DiscardBuilder()
         {
             PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);
             charBuffer = null;
+        }
+
+        public string FinishBuilding()
+        {
+            var str = new string(charBuffer, 0, queryLen);
+            PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);
+            charBuffer = null;
+            return str;
         }
     }
 
@@ -190,9 +199,7 @@ namespace ProgressOnderwijsUtils
         {
             var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create() };
             impl?.AppendTo(ref factory);
-            var text = factory.debugText.Value;
-            factory.debugText.ReturnToPool();
-            return text;
+            return factory.debugText.FinishBuilding();
         }
     }
 
@@ -219,10 +226,9 @@ namespace ProgressOnderwijsUtils
             };
             impl?.AppendTo(ref factory);
             var key = new ParameterizedSqlEquatableKey {
-                SqlTextKey = factory.debugText.Value,
+                SqlTextKey = factory.debugText.FinishBuilding(),
                 Params = factory.paramValues.ToArray(),
             };
-            factory.debugText.ReturnToPool();
             return key;
         }
     }

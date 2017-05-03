@@ -28,8 +28,7 @@ namespace ProgressOnderwijsUtils
             }
             var i = Utils.LogBase2RoundedUp(length);
             var bag = bagsByIndex[i];
-            T[] result;
-            if (bag.TryDequeue(out result)) {
+            if (bag.TryDequeue(out var result)) {
                 return result;
             }
             return new T[1 << i];

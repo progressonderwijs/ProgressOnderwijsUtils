@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils.Html
             var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
             AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
-            return fastStringBuilder.Value;
+            return fastStringBuilder.FinishBuilding();
         }
 
         public static string ToCSharp(this IConvertibleToFragment rootElem) => rootElem.AsFragment().ToCSharp();
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.Html
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
             AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
-            return fastStringBuilder.Value;
+            return fastStringBuilder.FinishBuilding();
         }
 
         public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)

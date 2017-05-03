@@ -23,9 +23,7 @@ namespace ProgressOnderwijsUtils
         {
             var factory = CommandFactory.Create();
             impl?.AppendTo(ref factory);
-            var command = factory.CreateCommand(conn);
-            factory.ReturnToPool();
-            return command;
+            return factory.FinishBuilding(conn);
         }
 
         public static readonly ParameterizedSql Empty = new ParameterizedSql(null);
@@ -72,9 +70,7 @@ namespace ProgressOnderwijsUtils
         {
             var factory = CommandFactory.Create();
             impl?.AppendTo(ref factory);
-            var commandText = factory.CommandText;
-            factory.ReturnToPool();
-            return commandText;
+            return factory.FinishBuilding_CommandTextOnly();
         }
 
         public static ParameterizedSql Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
