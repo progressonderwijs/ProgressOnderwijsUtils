@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>4.2.0</Version>
+    <Version>4.2.1</Version>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
