@@ -17,11 +17,6 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsCollectionOfFragments => Content is HtmlFragment[];
         public bool IsEmpty => Content == null;
 
-        /// <summary>
-        /// Only elements and fragments can have children; always empty for text nodes
-        /// </summary>
-        public IReadOnlyList<HtmlFragment> Children => Content as HtmlFragment[] ?? (Content as IHtmlTagAllowingContent).Contents ?? Array.Empty<HtmlFragment>();
-
         HtmlFragment(object content) => Content = content;
 
         [Pure]

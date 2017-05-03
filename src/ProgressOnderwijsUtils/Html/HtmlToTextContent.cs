@@ -13,8 +13,12 @@ namespace ProgressOnderwijsUtils.Html
         {
             if (fragment.Content is string str) {
                 fastStringBuilder.AppendText(str);
-            } else {
-                foreach (var child in fragment.Children) {
+            } else if (fragment.Content is HtmlFragment[] childFragments) {
+                foreach (var child in childFragments) {
+                    AppendTextContent(ref fastStringBuilder, child);
+                }
+            } else if (fragment.Content is IHtmlTagAllowingContent elemWithContent && elemWithContent.Contents != null) {
+                foreach (var child in elemWithContent.Contents) {
                     AppendTextContent(ref fastStringBuilder, child);
                 }
             }
