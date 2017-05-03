@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
@@ -82,5 +83,8 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public static HtmlFragment[] Children(this IHtmlTag element) => (element as IHtmlTagAllowingContent)?.Contents ?? Array.Empty<HtmlFragment>();
+
+        public static HtmlAttributes ToHtmlAttributes(this IEnumerable<HtmlAttribute> attributes)
+            => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
     }
 }
