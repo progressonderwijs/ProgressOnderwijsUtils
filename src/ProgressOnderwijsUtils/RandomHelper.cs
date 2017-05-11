@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
             this.fillWithRandomBytes = fillWithRandomBytes;
         }
 
-        byte[] GetBytes(int numBytes)
+        public byte[] GetBytes(int numBytes)
         {
             var bytes = new byte[numBytes];
             fillWithRandomBytes(bytes);
