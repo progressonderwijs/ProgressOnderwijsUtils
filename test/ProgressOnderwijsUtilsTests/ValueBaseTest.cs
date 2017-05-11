@@ -1,8 +1,7 @@
 ﻿using System;
-using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using Xunit;
 using ProgressOnderwijsUtils;
+using Xunit;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -20,19 +19,17 @@ namespace ProgressOnderwijsUtilsTests
     public class ValueBaseTest
     {
         [Fact]
-        public void ToString_IsCompilableWherePossible()
+        public void ToString_ReturnsCleanLookingOutput()
         {
-            PAssert.That(
-                () =>
-                    new ExampleValue {
-                        NullableField = null,
-                        AnEnum = ConsoleKey.BrowserBack,
-                        MyString = "Hello World!",
-                        Nested = new ExampleValue { AnEnum = ConsoleKey.BrowserRefresh },
-                        SomeValueType = default(DateTime),
-                        MyInt = 42,
-                    }.ToString()
-                        == @"new ExampleValue { MyInt = 42, Nested = new ExampleValue { MyInt = 0, Nested = null, NullableField = null, AnEnum = ConsoleKey.BrowserRefresh, MyString = null, SomeValueType = default(DateTime), }, NullableField = null, AnEnum = ConsoleKey.BrowserBack, MyString = ""Hello World!"", SomeValueType = default(DateTime), }");
+            ApprovalTest.Verify(
+                new ExampleValue {
+                    NullableField = null,
+                    AnEnum = ConsoleKey.BrowserBack,
+                    MyString = "Hello World!",
+                    Nested = new ExampleValue { AnEnum = ConsoleKey.BrowserRefresh },
+                    SomeValueType = default(DateTime),
+                    MyInt = 42,
+                }.ToString());
         }
     }
 }
