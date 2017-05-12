@@ -1,0 +1,15 @@
+﻿new ExampleValue {
+    MyInt = 42,
+    Nested = new ExampleValue {
+        MyInt = 0,
+        Nested = null,
+        NullableField = null,
+        AnEnum = ConsoleKey.BrowserRefresh,
+        MyString = null,
+        SomeValueType = default(DateTime),
+    },
+    NullableField = null,
+    AnEnum = ConsoleKey.BrowserBack,
+    MyString = "Hello World!",
+    SomeValueType = default(DateTime),
+}
