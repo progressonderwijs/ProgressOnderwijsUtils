@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -54,7 +55,20 @@ namespace ProgressOnderwijsUtils
                     await bulkCopy.WriteToServerAsync(objectReader, cancellationToken).ConfigureAwait(false);
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
-                    var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
+
+                    var fi = typeof(SqlBulkCopy).GetField("_sortedColumnMappings", BindingFlags.NonPublic | BindingFlags.Instance);
+                    var sortedColumns = fi.GetValue(bulkCopy);
+                    var items = (Object[])sortedColumns.GetType().GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(sortedColumns);
+
+                    FieldInfo itemdata = items[destinationColumnIndex].GetType().GetField("_metadata", BindingFlags.NonPublic | BindingFlags.Instance);
+                    var metadata = itemdata.GetValue(items[destinationColumnIndex]);
+
+                    var column = metadata.GetType().GetField("column", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
+                    var length = metadata.GetType().GetField("length", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
+                    throw new Exception($"Column: {column} contains data with a length greater than: {length}", ex);
+
+                    var sourceColumnName = mapping.Where(m => m.DstIndex == destinationColumnIndex).Select(m => m.SourceColumnDefinition.Name).FirstOrDefault();
+                    var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + (sourceColumnName ?? "??unknown??");
                     throw new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
                 }
             }
