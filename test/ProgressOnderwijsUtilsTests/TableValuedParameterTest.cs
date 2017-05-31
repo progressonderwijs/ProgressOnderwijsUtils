@@ -14,7 +14,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 namespace ProgressOnderwijsUtilsTests
 {
     
-    public class TableValuedParameterTest : TestsWithLocalConnection
+    public class TableValuedParameterTest : TransactedLocalConnection
     {
         public enum SomeEnum
         { }
@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtilsTests
         public void DatabaseCanProcessTableValuedParameters()
         {
             var q = SQL($@"select sum(x.querytablevalue) from ") + ParameterizedSql.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
-            var sum = q.ReadScalar<int>(conn);
+            var sum = q.ReadScalar<int>(Context);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtilsTests
         public void ParameterizedSqlCanIncludeTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
-            var sum = q.ReadScalar<int>(conn);
+            var sum = q.ReadScalar<int>(Context);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtilsTests
         public void ParameterizedSqlCanIncludeEnumTvps()
         {
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i =>(SomeEnum) i)} x");
-            var sum = (int)q.ReadScalar<SomeEnum>(conn);
+            var sum = (int)q.ReadScalar<SomeEnum>(Context);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
 
@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtilsTests
         public void ParameterizedSqlTvpsCanCountDaysOfWeek()
         {
             var q = SQL($@"select count(x.querytablevalue) from {new[]{DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday }} x");
-            var dayCount = q.ReadScalar<int>(conn);
+            var dayCount = q.ReadScalar<int>(Context);
             PAssert.That(() => dayCount == 5);
         }
 
@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtilsTests
         public void ParameterizedSqlTvpsCanCountStrings()
         {
             var q = SQL($@"select count(distinct x.querytablevalue) from {new[] { "foo", "bar", "foo" }} x");
-            var dayCount = q.ReadScalar<int>(conn);
+            var dayCount = q.ReadScalar<int>(Context);
             PAssert.That(() => dayCount == 2);
         }
 
@@ -65,12 +65,12 @@ namespace ProgressOnderwijsUtilsTests
             var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
             var metaObjects = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string> { QueryTableValue = s });
 
-            SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(conn);
+            SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(Context);
             //manual bulk insert because our default TVP types explicitly forbid null
-            metaObjects.BulkCopyToSqlServer(conn.Connection, "#strings");
+            metaObjects.BulkCopyToSqlServer(Context.Connection, "#strings");
 
-            var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(conn);
-            SQL($@"drop table #strings").ExecuteNonQuery(conn);
+            var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(Context);
+            SQL($@"drop table #strings").ExecuteNonQuery(Context);
             PAssert.That(() => stringsWithNull.SetEqual(output));
         }
 
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => SQL($@"
                 select sum(datalength(hashes.QueryTableValue))
                 from {new[] {Encoding.ASCII.GetBytes( "0123456789"), Encoding.ASCII.GetBytes("abcdef") }} hashes
-            ").ReadPlain<long>(conn).Single() == 16);
+            ").ReadPlain<long>(Context).Single() == 16);
         }
 
         public sealed class TestDataMetaObject : IMetaObject
@@ -109,9 +109,9 @@ namespace ProgressOnderwijsUtilsTests
 
                 insert into get_bytes_test
                 values ({testData});
-            ").ExecuteNonQuery(conn);
+            ").ExecuteNonQuery(Context);
 
-            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(conn))
+            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Context))
             using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default))
                 Assert_DataReader_GetBytes_works(reader);
         }

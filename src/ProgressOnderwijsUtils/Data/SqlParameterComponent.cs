@@ -127,11 +127,15 @@ namespace ProgressOnderwijsUtils
 
             public static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = All.ToDictionary(o => o.Type, o => o.SqlTypeName);
 
-            public static ParameterizedSql[] DefinitionScripts =>
-                new[] {
-                    ParameterizedSql.CreateDynamic(All.Select(o => $"if type_id('{o.SqlTypeName}') is not null drop type {o.SqlTypeName}\n").JoinStrings("\n\n")),
-                    ParameterizedSql.CreateDynamic(All.Select(o => $"create type {o.SqlTypeName} as table ({o.TableDeclaration})").JoinStrings("\n\n"))
-                };
+            public static ParameterizedSql DefinitionScripts =>
+                ParameterizedSql.CreateDynamic($@"
+                    set transaction isolation level serializable;
+                    begin tran
+                    {All.Select(o => $@"
+                        drop type if exists {o.SqlTypeName}
+                        create type {o.SqlTypeName} as table ({o.TableDeclaration})
+                    ").JoinStrings("\n")}
+                    commit");
         }
 
         interface ITableValuedParameterFactory
