@@ -25,7 +25,8 @@ namespace ProgressOnderwijsUtilsTests
         {
             PAssert.That(() => _div.Content("bla").AsFragment().IsHtmlElement);
             PAssert.That(() => !((HtmlFragment)"bla").IsHtmlElement);
-            PAssert.That(() => !new[] { HtmlFragment.Empty, _div }.WrapInHtmlFragment().IsHtmlElement);
+            PAssert.That(() => new[] { HtmlFragment.Empty, _div }.WrapInHtmlFragment().IsHtmlElement);
+            PAssert.That(() => !new[] { _div, _div }.WrapInHtmlFragment().IsHtmlElement);
         }
 
         [Fact]
