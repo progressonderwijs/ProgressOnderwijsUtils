@@ -124,23 +124,35 @@ namespace ProgressOnderwijsUtilsTests
         [Fact]
         public void IsDbConnFailureTest()
         {
-            PAssert.That(() => !Utils.IsDbConnectionFailure(new Exception()));
-            PAssert.That(() => !Utils.IsDbConnectionFailure(new DataException()));
-            PAssert.That(() => !Utils.IsDbConnectionFailure(new ParameterizedSqlExecutionException()));
+            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new Exception()));
+            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new DataException()));
+            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new ParameterizedSqlExecutionException()));
             PAssert.That(
                 () =>
-                    Utils.IsDbConnectionFailure(new ParameterizedSqlExecutionException("bla",
+                    Utils.IsRetriableConnectionFailure(new ParameterizedSqlExecutionException("bla",
                         new DataException("The underlying provider failed on Open."))));
             PAssert.That(
                 () =>
-                    Utils.IsDbConnectionFailure(
+                    Utils.IsRetriableConnectionFailure(
                         new AggregateException(
                             new ParameterizedSqlExecutionException("bla",
                                 new DataException("The underlying provider failed on Open.")),
                             new DataException("The underlying provider failed on Open."))));
-            PAssert.That(() => !Utils.IsDbConnectionFailure(new AggregateException()));
-            PAssert.That(() => !Utils.IsDbConnectionFailure(null));
+            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new AggregateException()));
+            PAssert.That(() => !Utils.IsRetriableConnectionFailure(null));
         }
+
+        [Fact]
+        public void TimeoutDetectionAbortsWithInconclusiveAfterTimeout()
+        {
+            using (var localdb = new TransactedLocalConnection()) {
+                var ex = Assert.ThrowsAny<Exception>(() => {
+                    SafeSql.SQL($"WAITFOR DELAY '00:00:02'").ExecuteNonQuery(localdb.Context.OverrideTimeout(1));
+                });
+                PAssert.That(() => Utils.IsRetriableConnectionFailure(ex));
+            }
+        }
+
 
         [Fact]
         public void DateMaxTest()
