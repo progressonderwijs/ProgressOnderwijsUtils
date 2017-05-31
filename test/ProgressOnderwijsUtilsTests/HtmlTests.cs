@@ -17,23 +17,23 @@ namespace ProgressOnderwijsUtilsTests
         public void EmptyMeansEmpty()
         {
             PAssert.That(() => HtmlFragment.Empty.IsEmpty);
-            PAssert.That(() => !_p.AsFragment().IsEmpty);
+            PAssert.That(() => _p.AsFragment().IsEmpty == false);
         }
 
         [Fact]
         public void IsHtmlElementLooksAtOutermostNode()
         {
             PAssert.That(() => _div.Content("bla").AsFragment().IsHtmlElement);
-            PAssert.That(() => !((HtmlFragment)"bla").IsHtmlElement);
+            PAssert.That(() => ((HtmlFragment)"bla").IsHtmlElement == false);
             PAssert.That(() => new[] { HtmlFragment.Empty, _div }.WrapInHtmlFragment().IsHtmlElement);
-            PAssert.That(() => !new[] { _div, _div }.WrapInHtmlFragment().IsHtmlElement);
+            PAssert.That(() => new[] { _div, _div }.WrapInHtmlFragment().IsHtmlElement == false);
         }
 
         [Fact]
         public void EmptyIfNull_ReturnsEmptyOnlyForNull()
         {
             PAssert.That(() => default(HtmlFragment?).EmptyIfNull().IsEmpty);
-            PAssert.That(() => !((HtmlFragment?)_div).EmptyIfNull().IsEmpty);
+            PAssert.That(() => ((HtmlFragment?)_div).EmptyIfNull().IsEmpty == false);
         }
     }
 }
