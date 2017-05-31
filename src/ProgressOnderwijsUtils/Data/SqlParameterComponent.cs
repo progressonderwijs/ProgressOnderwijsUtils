@@ -132,8 +132,8 @@ namespace ProgressOnderwijsUtils
                     set transaction isolation level serializable;
                     begin tran
                     {All.Select(o => $@"
-                        if type_id('{o.SqlTypeName}') is not null exec('drop type {o.SqlTypeName}')
-                        exec('create type {o.SqlTypeName} as table ({o.TableDeclaration})')
+                        drop type if exists {o.SqlTypeName}
+                        create type {o.SqlTypeName} as table ({o.TableDeclaration})
                     ").JoinStrings("\n")}
                     commit");
         }

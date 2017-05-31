@@ -32,14 +32,14 @@ namespace ProgressOnderwijsUtilsTests
         public void Calling_EnumerateMetaObjects_create_no_row_objects()
         {
             // ReSharper disable once UnusedVariable
-            var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Connection);
+            var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Context);
             Assert.Equal(0, ExampleRow.HackyHackyCounter);
         }
 
         [Fact]
         public void Enumerating_EnumerateMetaObjects_creates_one_row_object_per_row()
         {
-            var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Connection);
+            var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Context);
             var array = enumerable.ToArray();
             Assert.Equal(3, ExampleRow.HackyHackyCounter);
             Assert.Equal(3, array.Length);
@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtilsTests
         [Fact]
         public void Stopping_early_creates_fewer_objects()
         {
-            var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Connection);
+            var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Context);
             // ReSharper disable once UnusedVariable
             var value = enumerable.Skip(1).First();
             Assert.Equal(2, ExampleRow.HackyHackyCounter);
@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtilsTests
         [Fact]
         public void Sets_row_object_properties()
         {
-            var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Connection);
+            var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Context);
             var value = enumerable.Skip(1).First();
             Assert.Equal(new ExampleRow { Id = 37, Content = "hmm" }, value);
         }
