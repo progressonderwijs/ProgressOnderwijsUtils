@@ -132,22 +132,26 @@ namespace ProgressOnderwijsUtils
             return set;
         }
 
-        public static bool IsDbConnectionFailure(Exception e)
+        public static bool IsRetriableConnectionFailure(Exception e)
         {
             if (e == null) {
                 return false;
-            } else if (e is SqlException) {
-                return e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") ||
-                    e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.") ||
-                    e.Message.StartsWith("Timeout expired.");
+            } else if (e is SqlException sqlE) {
+                //sqlE.Number docs at https://msdn.microsoft.com/en-us/library/cc645611.aspx
+                //see also system error codes: https://msdn.microsoft.com/en-us/library/windows/desktop/ms681382
+                return sqlE.Number == -2 //timeout expired 
+                    || sqlE.Number == 53 //failed to establish connection
+                    || sqlE.Number == 1205 //deadlock victim
+                    || e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.")//number 121, but unclear if that's sufficient, so check string too.
+                    || e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.");//number 121, but unclear if that's sufficient, so check string too.
             } else if (e is DBConcurrencyException) {
                 return e.Message.StartsWith("Concurrency violation:");
             } else if (e is DataException) {
                 return e.Message == "The underlying provider failed on Open.";
             } else if (e is AggregateException) {
-                return ((AggregateException)e).Flatten().InnerExceptions.DefaultIfEmpty().All(IsDbConnectionFailure);
+                return ((AggregateException)e).Flatten().InnerExceptions.DefaultIfEmpty().All(IsRetriableConnectionFailure);
             } else {
-                return IsDbConnectionFailure(e.InnerException);
+                return IsRetriableConnectionFailure(e.InnerException);
             }
         }
 
