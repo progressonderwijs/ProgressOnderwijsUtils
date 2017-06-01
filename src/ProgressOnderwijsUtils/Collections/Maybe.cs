@@ -7,24 +7,14 @@ namespace ProgressOnderwijsUtils.Collections
     public class Maybe_Ok<TOk>
     {
         public readonly TOk Value;
-
-        public Maybe_Ok(TOk value)
-        {
-            Value = value;
-        }
-
+        public Maybe_Ok(TOk value) => Value = value;
         public Maybe<TOk, TError> AsMaybeWithoutError<TError>() => this;
     }
 
     public class Maybe_Error<TError>
     {
         public readonly TError Error;
-
-        public Maybe_Error(TError error)
-        {
-            Error = error;
-        }
-
+        public Maybe_Error(TError error) => Error = error;
         public Maybe<TOk, TError> AsMaybeWithoutValue<TOk>() => this;
     }
 
@@ -39,16 +29,8 @@ namespace ProgressOnderwijsUtils.Collections
     public struct Maybe<TOk, TError>
     {
         readonly object okOrError;
-
-        Maybe(Maybe_Error<TError> error)
-        {
-            okOrError = error;
-        }
-
-        Maybe(Maybe_Ok<TOk> ok)
-        {
-            okOrError = ok;
-        }
+        Maybe(Maybe_Error<TError> error) => okOrError = error;
+        Maybe(Maybe_Ok<TOk> ok) => okOrError = ok;
 
         /// <summary>
         /// Consider "WhenOk",  "WhenOkTry" and "ExtractToValue": those often result in clearer code.
@@ -127,7 +109,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<Unit, TError> ErrorWhenNotNull<TError>(TError val)
             where TError : class
-            => Maybe.Either(val == null, Unit.Value, val);
+            => Either(val == null, Unit.Value, val);
 
         /// <summary>
         /// Usage: Maybe.Try( () => Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
@@ -146,19 +128,16 @@ namespace ProgressOnderwijsUtils.Collections
         public MaybeTryBody(Action tryBody) => this.tryBody = tryBody;
 
         public Maybe<Unit, TError> Catch<TError>()
-            where TError : Exception {
-            try
-            {
+            where TError : Exception
+        {
+            try {
                 tryBody();
                 return Maybe.Ok();
-            }
-            catch (TError e)
-            {
+            } catch (TError e) {
                 return Maybe.Error(e);
             }
         }
     }
-
 
     public struct MaybeTryBody<TOk>
     {
@@ -168,12 +147,9 @@ namespace ProgressOnderwijsUtils.Collections
         public Maybe<TOk, TError> Catch<TError>()
             where TError : Exception
         {
-            try
-            {
+            try {
                 return Maybe.Ok(tryBody());
-            }
-            catch (TError e)
-            {
+            } catch (TError e) {
                 return Maybe.Error(e);
             }
         }
