@@ -9,7 +9,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
-    [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
+    [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Members)]
     public interface IMetaObject { }
 
     public static class MetaObject
