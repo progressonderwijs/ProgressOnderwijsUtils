@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils
 
         public static string GetPasswordString(int length)
         {
-            return System.Web.Security.Membership.GeneratePassword(length, 0);
+            return Secure.GetStringOfUriPrintableCharacters(length);
         }
     }
 }

@@ -9,16 +9,17 @@ namespace ProgressOnderwijsUtilsTests
     public class TransactedLocalConnection : IDisposable
     {
         public readonly SqlCommandCreationContext Context;
-        public readonly CommittableTransaction Transaction;
+        //public readonly CommittableTransaction Transaction;
 
         public TransactedLocalConnection()
         {
-            Transaction = new CommittableTransaction();
             Context = new SqlCommandCreationContext(new SqlConnection(@"Server = (localdb)\MSSQLLocalDB; Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer());
+            //Transaction = new CommittableTransaction();
             try {
                 Context.Connection.Open();
                 ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(Context);
-                Context.Connection.EnlistTransaction(Transaction);
+                //Context.Connection.EnlistTransaction(Transaction);
+                SafeSql.SQL($"begin tran").ExecuteNonQuery(Context.Connection);
             } catch {
                 Dispose();
                 throw;
@@ -27,7 +28,7 @@ namespace ProgressOnderwijsUtilsTests
 
         public void Dispose()
         {
-            Transaction.Dispose();
+            //Transaction.Dispose();
             Context.Dispose();
         }
     }

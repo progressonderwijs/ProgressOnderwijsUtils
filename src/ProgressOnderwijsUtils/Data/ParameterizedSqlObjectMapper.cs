@@ -227,7 +227,7 @@ namespace ProgressOnderwijsUtils
 
         static ParameterizedSqlObjectMapper()
         {
-            assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
+            assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
             moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
         }
 
@@ -395,9 +395,10 @@ namespace ProgressOnderwijsUtils
             static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>(Expression<TDelegate> loadRowsLambda)
             {
                 try {
-                    if (!typeof(T).IsPublic) {
+                    //if (!typeof(T).IsPublic) {
                         return loadRowsLambda.Compile(); //generates slower code but works on non-public types
-                    }
+                    //}
+                    /*
                     var typeBuilder = moduleBuilder.DefineType(
                         "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
                         TypeAttributes.Public);
@@ -406,6 +407,7 @@ namespace ProgressOnderwijsUtils
                     var newType = typeBuilder.CreateType();
 
                     return (TDelegate)(object)Delegate.CreateDelegate(typeof(TDelegate), newType.GetMethod("LoadRows"));
+                    */
                 } catch (Exception e) {
                     throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
                 }
