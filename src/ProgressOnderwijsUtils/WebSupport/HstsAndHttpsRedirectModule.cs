@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NET46
+using System;
 using System.Web;
 
 namespace ProgressOnderwijsUtils.WebSupport
@@ -30,3 +31,4 @@ namespace ProgressOnderwijsUtils.WebSupport
         public void Dispose() { }
     }
 }
+#endif
