@@ -1,4 +1,4 @@
-﻿/* TODO
+﻿#if NET46
 using System.Web;
 
 namespace ProgressOnderwijsUtils
@@ -16,4 +16,4 @@ namespace ProgressOnderwijsUtils
         }
     }
 }
-*/
+#endif

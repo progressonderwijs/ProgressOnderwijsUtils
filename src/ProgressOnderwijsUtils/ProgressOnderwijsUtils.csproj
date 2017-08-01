@@ -12,8 +12,11 @@
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
     <OutputType>library</OutputType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net46'">
+    <DefineConstants>NET46</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
@@ -21,14 +24,21 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.3.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.4.0-preview2-25405-01" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.0-preview2-25405-01" />
     <PackageReference Include="JetBrains.Annotations" Version="11.0.0" />
-    <PackageReference Include="EcmaScript.Net" version="1.0.1.0" />
     <PackageReference Include="ExpressionToCodeLib" version="2.4.0" />
     <PackageReference Include="log4net" version="2.0.8" />
     <PackageReference Include="morelinq" version="2.6.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
     <PackageReference Include="ZlibWithDictionary" version="2.1.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.0-preview2-25405-01" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.0-preview2-25405-01" />
+    <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+    <Reference Include="System.Security" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
   </ItemGroup>
 </Project>
