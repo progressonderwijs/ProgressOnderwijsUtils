@@ -1,6 +1,12 @@
+sudo: required
+services:
+  - docker
 language: csharp
 mono: none
 dotnet: 2.0.0-preview2-006497
-dist: trusty
+before_install:
+ - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux
 script:
  - dotnet test test/ProgressOnderwijsUtilsTests/ProgressOnderwijsUtilsTests.csproj
+env:
+ - CONNECTION_STRING="Data Source=localhost;User Id=sa;Password=yourStrong(!)Password"

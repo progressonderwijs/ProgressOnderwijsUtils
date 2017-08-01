@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtilsTests
 
         public TransactedLocalConnection()
         {
-            Context = new SqlCommandCreationContext(new SqlConnection(@"Server = (localdb)\MSSQLLocalDB; Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer());
+            Context = new SqlCommandCreationContext(new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? "Data Source=localhost;Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer());
             //Transaction = new CommittableTransaction();
             try {
                 Context.Connection.Open();
