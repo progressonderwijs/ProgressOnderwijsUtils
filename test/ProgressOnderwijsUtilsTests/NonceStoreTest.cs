@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(timestampedNonce, now), "initial");
             PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(timestampedNonce, now), "next");
             //timetravel 20 minutes into the future...
-            PAssert.That(() => !sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddMinutes(17), 37L), now.AddMinutes(20)), "future");
+            PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(new TimestampedNonce(now.AddMinutes(17), 37L), now.AddMinutes(20)), "future");
             //EVIL effectively time-travel to the past here...
             PAssert.That(() => sut.IsFreshAndPreviouslyUnusedNonce(timestampedNonce, now),"past");
 
