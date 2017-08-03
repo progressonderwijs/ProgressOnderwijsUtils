@@ -1,11 +1,7 @@
-﻿#if false
-using System;
+﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
-using Progress.Business;
-using Progress.Business.Test;
-using Progress.Test.CodeStyle;
 using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsTests
@@ -20,16 +16,9 @@ namespace ProgressOnderwijsUtilsTests
         public int Field;
         public string Property { get; set; }
         internal string IgnoredProperty { get; set; }
-
-        [Hide]
         public string HiddenProperty { get; set; }
-
-        [MpLabel("bla", "bla")]
         public string LabelledProperty { get; set; }
-
-        [MpReadonly]
         public string MpReadonlyProperty { get; set; }
-
         string PrivateProperty { get; }
 #pragma warning disable 169
         DateTime PrivateField;
@@ -60,27 +49,8 @@ namespace ProgressOnderwijsUtilsTests
         public string StringProperty { get; set; }
     }
 
-    
     public sealed class MetaObjectTest
     {
-        [Fact]
-        public void MetaObjectsAreAbstractOrNotInherited()
-        {
-            var metaObjectTypes =
-                from assembly in ProgressAssemblies.All
-                from type in assembly.GetTypes()
-                where typeof(IMetaObject).IsAssignableFrom(type)
-                select type;
-
-            var typesWithNonAbstractBaseMetaObjects =
-                metaObjectTypes.Where(type => !type.IsAbstract && type.BaseTypes().Any(baseT => !baseT.IsAbstract && typeof(IMetaObject).IsAssignableFrom(baseT)));
-
-            PAssert.That(
-                () => !typesWithNonAbstractBaseMetaObjects.Any(),
-                "MetaObject types must not be inherited (unless they're abstract).  Reason: metaproperties can be resolved using ANY of the concrete types of the metaobject, so that inheritance can cause subclass instances' properties to be omitted unpredictably."
-                );
-        }
-
         [Fact]
         public void ReturnsSameMetaProperties()
         {
@@ -145,17 +115,6 @@ namespace ProgressOnderwijsUtilsTests
         }
 
         [Fact]
-        public void ReadonlyWorks()
-        {
-            var readonlyPropertyMp = MetaObject.GetByExpression((SimpleObject o) => o.ReadonlyProperty);
-            PAssert.That(() => readonlyPropertyMp.ExtraMetaData().IsReadonly && !readonlyPropertyMp.CanWrite);
-            var mpReadonlyPropertyMp = MetaObject.GetByExpression((SimpleObject o) => o.MpReadonlyProperty);
-            PAssert.That(() => mpReadonlyPropertyMp.ExtraMetaData().IsReadonly && mpReadonlyPropertyMp.CanWrite);
-            var propertyMp = MetaObject.GetByExpression((SimpleObject o) => o.Property);
-            PAssert.That(() => !propertyMp.ExtraMetaData().IsReadonly && propertyMp.CanWrite);
-        }
-
-        [Fact]
         public void CanReadWrite_ValueTypedProperty_On_ValueTypeObject()
         {
             var obj = new SetterTestStruct();
@@ -200,4 +159,3 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 }
-#endif
