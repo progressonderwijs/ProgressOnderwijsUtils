@@ -35,5 +35,12 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => default(HtmlFragment?).EmptyIfNull().IsEmpty);
             PAssert.That(() => ((HtmlFragment?)_div).EmptyIfNull().IsEmpty == false);
         }
+
+        [Fact]
+        public void IFrameGetsClosingTag()
+        {
+            var html = _iframe.SerializeToStringWithoutDoctype();
+            PAssert.That(() => html == "<iframe></iframe>");
+        }
     }
 }
