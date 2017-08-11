@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
     [AttributeUsage(AttributeTargets.All)]
     [UsefulToKeep("library attribute")]
     [MeansImplicitUse]
-    public class UsedImplicitlyBySerialisationAttribute : System.Attribute {
+    public class UsedImplicitlyBySerializationAttribute : Attribute {
 
     }
 
