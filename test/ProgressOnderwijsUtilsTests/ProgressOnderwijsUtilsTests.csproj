@@ -16,7 +16,7 @@
     <PackageReference Include="ApprovalTests" Version="3.0.13" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
-    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="11.0.0" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
