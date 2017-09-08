@@ -176,7 +176,7 @@ namespace ProgressOnderwijsUtils
     namespace Internal
     {
         //public needed for auto-mapping
-        public struct TableValuedParameterWrapper<T> : IMetaObject, IOptionalObjectProjectionForDebugging
+        public struct TableValuedParameterWrapper<T> : IMetaObject, IOptionalObjectProjectionForDebugging, IPropertiesAreUsedImplicitly
         {
             [Key]
             public T QueryTableValue { get; set; }
