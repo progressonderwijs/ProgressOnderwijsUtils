@@ -19,42 +19,42 @@ namespace ProgressOnderwijsUtilsTests
             new BlaOk { Bla2 = "", Id = 3 },
         };
 
-        public sealed class BlaOk : ValueBase<BlaOk>, IMetaObject
+        public sealed class BlaOk : ValueBase<BlaOk>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Id { get; set; }
             public string Bla2 { get; set; }
             public string Bla { get; set; }
         }
 
-        public sealed class BlaOk2 : ValueBase<BlaOk2>, IMetaObject
+        public sealed class BlaOk2 : ValueBase<BlaOk2>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Id { get; set; }
             public string Bla { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IMetaObject
+        public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Idd { get; set; }
             public string Bla { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMistypedColumns : ValueBase<BlaWithMistypedColumns>, IMetaObject
+        public sealed class BlaWithMistypedColumns : ValueBase<BlaWithMistypedColumns>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Bla { get; set; }
             public int Id { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMistypedColumns2 : ValueBase<BlaWithMistypedColumns2>, IMetaObject
+        public sealed class BlaWithMistypedColumns2 : ValueBase<BlaWithMistypedColumns2>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Bla { get; set; }
             public string Id { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithExtraClrFields : ValueBase<BlaWithExtraClrFields>, IMetaObject
+        public sealed class BlaWithExtraClrFields : ValueBase<BlaWithExtraClrFields>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public string ExtraBla { get; set; }
             public string Id { get; set; }
@@ -62,12 +62,11 @@ namespace ProgressOnderwijsUtilsTests
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMissingClrFields : ValueBase<BlaWithMissingClrFields>, IMetaObject
+        public sealed class BlaWithMissingClrFields : ValueBase<BlaWithMissingClrFields>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Id { get; set; }
             public string Bla2 { get; set; }
         }
-
 
         public void CreateTempTable()
         {
