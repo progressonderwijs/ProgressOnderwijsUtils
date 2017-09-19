@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>7.0.0</Version>
+    <Version>7.0.1</Version>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -8,7 +8,7 @@
       Various utility methods+classes used by Progress Onderwijs.
     </Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Added interface IPropertiesAreUsedImplicitly</PackageReleaseNotes>
+    <PackageReleaseNotes>NuGet dependencies updated</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
@@ -32,7 +32,7 @@
 
     <PackageReference Include="JetBrains.Annotations" Version="11.0.0" />
     <PackageReference Include="EcmaScript.Net" version="1.0.1.0" />
-    <PackageReference Include="ExpressionToCodeLib" version="2.4.0" />
+    <PackageReference Include="ExpressionToCodeLib" version="2.4.1" />
     <PackageReference Include="log4net" version="2.0.8" />
     <PackageReference Include="morelinq" version="2.6.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
