@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using Xunit;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
+using Xunit;
 
 namespace ProgressOnderwijsUtilsTests
 {
     public interface ISimpleInterface
     {
+        [UsedImplicitly]
         string Property { get; set; }
     }
 
+    [UsedImplicitly(ImplicitUseTargetFlags.Members)]
     public sealed class SimpleObject : ValueBase<SimpleObject>, IMetaObject, ISimpleInterface
     {
+#pragma warning disable 169
+#pragma warning disable 649
         public int Field;
         public string Property { get; set; }
         internal string IgnoredProperty { get; set; }
@@ -20,21 +25,20 @@ namespace ProgressOnderwijsUtilsTests
         public string LabelledProperty { get; set; }
         public string MpReadonlyProperty { get; set; }
         string PrivateProperty { get; }
-#pragma warning disable 169
         DateTime PrivateField;
-#pragma warning restore 169
-#pragma warning disable 649
         public readonly double ReadonlyField;
-#pragma warning restore 649
         public double ReadonlyProperty => 0.0;
 
         public char WriteonlyProperty
         {
+            // ReSharper disable once ValueParameterNotUsed
             set { }
         }
 
-        public object PrivateSetter { get; }
+        public object PrivateSetter { get; private set; }
         public object PrivateGetter { set; private get; }
+#pragma warning restore 169
+#pragma warning restore 649
     }
 
     struct SetterTestStruct : IMetaObject
