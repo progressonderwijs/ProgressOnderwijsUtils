@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
         public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlCommandCreationContext sqlconn, string tableName) where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction, null)) {
+            using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
                 bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
                 bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn.Connection, tableName);
             }
