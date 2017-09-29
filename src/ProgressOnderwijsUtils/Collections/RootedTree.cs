@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System;
-using ProgressOnderwijsUtils;
+using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
@@ -24,6 +24,7 @@ namespace ProgressOnderwijsUtils.Collections
         public bool IsRoot => PathSegments.Tail.IsEmpty;
         public bool HasValue => !PathSegments.IsEmpty;
         public RootedTree<T> Parent => new RootedTree<T>(PathSegments.Tail);
+        public RootedTree<T> Root => PathSegments.Last().ThisSubTree.RootHere();
 
         public bool Equals(RootedTree<T> other)
         {
@@ -57,6 +58,29 @@ namespace ProgressOnderwijsUtils.Collections
                 Index = index;
                 ThisSubTree = node;
             }
+        }
+
+        [Pure]
+        public RootedTree<T> ReplaceSubTree(Tree<T> newSubTree)
+        {
+            if (IsRoot) {
+                return newSubTree.RootHere();
+            } else {
+                var parentSubTree = PathSegments.Tail.Head.ThisSubTree;
+                var myIndex = PathSegments.Head.Index;
+                var newSiblings = CopyArrayWithNewValueOnIndex(parentSubTree.Children, myIndex, newSubTree);
+                var newParentSubTree = Tree.Node(parentSubTree.NodeValue, newSiblings);
+                var newParent = Parent.ReplaceSubTree(newParentSubTree);
+                return new RootedTree<T>(newParent.PathSegments.Prepend(new TreePathSegment(myIndex, newSubTree)));
+            }
+        }
+
+        [Pure]
+        static Tree<T>[] CopyArrayWithNewValueOnIndex(IReadOnlyList<Tree<T>> oldArray, int index, Tree<T> newValue)
+        {
+            var copy = oldArray.ToArray();
+            copy[index] = newValue;
+            return copy;
         }
     }
 }
