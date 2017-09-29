@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils.Collections
             return !a.Equals(b);
         }
 
-        public IEnumerable<SList<T>> NonEmpySuffixes
+        public IEnumerable<SList<T>> NonEmptySuffixes
         {
             get {
                 for (var current = this; !current.IsEmpty; current = current.Tail) {

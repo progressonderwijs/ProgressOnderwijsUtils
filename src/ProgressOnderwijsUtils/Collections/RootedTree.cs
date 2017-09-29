@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils.Collections
     public struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>>
     {
         public static RootedTree<T> RootTree(Tree<T> rootNode) => new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode)));
-        public IEnumerable<RootedTree<T>> PathSelfToRoot() => PathSegments.NonEmpySuffixes.Select(path => new RootedTree<T>(path));
+        public IEnumerable<RootedTree<T>> PathSelfToRoot() => PathSegments.NonEmptySuffixes.Select(path => new RootedTree<T>(path));
         public int IndexInParent() => PathSegments.Head.Index;
         public Tree<T> UnrootedSubTree() => PathSegments.Head.ThisSubTree;
 
