@@ -1,5 +1,5 @@
 ﻿ - Update the version number in the project file
- - open this directory (e.g from package manager console: cd src/ProgressOnderwijsUtils)
+ - open the library directory (e.g from package manager console: cd src/ProgressOnderwijsUtils)
  - Run: 
         dotnet clean
         dotnet pack -c release --include-symbols --include-source

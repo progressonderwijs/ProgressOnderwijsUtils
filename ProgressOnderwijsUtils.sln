@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils", "src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj", "{6C13FAA1-9347-4256-BCFD-F111E6121480}"
 EndProject
@@ -10,18 +10,16 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAF8D43B-2F61-421B-BD61-43848D1192BE}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		How-to-push-to-nuget.txt = How-to-push-to-nuget.txt
 		Performance1.psess = Performance1.psess
 		Performance3.psess = Performance3.psess
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HtmlFragmentBenchmark", "tools\HtmlFragmentBenchmark\HtmlFragmentBenchmark.csproj", "{E7B8ECF6-16BD-4FFA-A390-E1C1B9906A56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtmlFragmentBenchmark", "tools\HtmlFragmentBenchmark\HtmlFragmentBenchmark.csproj", "{E7B8ECF6-16BD-4FFA-A390-E1C1B9906A56}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroOrmBench", "tools\MicroOrmBench\MicroOrmBench.csproj", "{72D9CB53-24CC-48A5-867D-D24E355D64A0}"
 EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -46,6 +44,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E1CE476-2F5C-4FCE-B590-175594609727}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true
