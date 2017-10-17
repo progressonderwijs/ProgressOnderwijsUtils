@@ -8,7 +8,7 @@
       Various utility methods+classes used by Progress Onderwijs.
     </Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Transactie uit de TableValuedTypeDefinitionScripts gehaald zodat deze kan worden aangeroepen in code met zijn eigen transactie.</PackageReleaseNotes>
+    <PackageReleaseNotes>Removed transaction from the TableValuedTypeDefinitionScripts so callers can define their own transaction.</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
