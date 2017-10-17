@@ -229,7 +229,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
     }
 
-    struct AuthnRequest
+    public struct AuthnRequest
     {
         public string ID { get; set; }
         public string Destination { get; set; }
