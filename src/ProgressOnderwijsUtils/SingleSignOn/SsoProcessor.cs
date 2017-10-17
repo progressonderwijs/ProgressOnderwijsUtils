@@ -143,6 +143,11 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         static XmlDocument ConextMetaDataXml(IdentityProviderConfig idp, ServiceProviderConfig sp)
         {
             var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
+            return DownloadMetaData(uri);
+        }
+
+        static XmlDocument DownloadMetaData(string uri)
+        {
             var document = new XmlDocument {
                 PreserveWhitespace = true,
             };
