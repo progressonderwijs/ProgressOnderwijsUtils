@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
         public static ISqlComponent ToTableValuedParameterFromPlainValues(IEnumerable set)
         {
             var enumerableType = set.GetType();
-            if (!tableValuedParameterFactoryCache.TryGetValue(enumerableType, out ITableValuedParameterFactory factory)) {
+            if (!tableValuedParameterFactoryCache.TryGetValue(enumerableType, out var factory)) {
                 factory = CreateTableValuedParameterFactory(enumerableType);
                 tableValuedParameterFactoryCache.TryAdd(enumerableType, factory);
             }
@@ -127,15 +127,14 @@ namespace ProgressOnderwijsUtils
 
             public static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = All.ToDictionary(o => o.Type, o => o.SqlTypeName);
 
-            public static ParameterizedSql DefinitionScripts =>
-                ParameterizedSql.CreateDynamic($@"
-                    set transaction isolation level serializable;
-                    begin tran
-                    {All.Select(o => $@"
-                        drop type if exists {o.SqlTypeName}
-                        create type {o.SqlTypeName} as table ({o.TableDeclaration})
-                    ").JoinStrings("\n")}
-                    commit");
+            public static ParameterizedSql DefinitionScripts
+                => All
+                    .Select(o => SafeSql.SQL($@"
+                        drop type if exists {ParameterizedSql.CreateDynamic(o.SqlTypeName)};
+                        create type {ParameterizedSql.CreateDynamic(o.SqlTypeName)}
+                        as table ({ParameterizedSql.CreateDynamic(o.TableDeclaration)});
+                    "))
+                    .ConcatenateSql();
         }
 
         interface ITableValuedParameterFactory

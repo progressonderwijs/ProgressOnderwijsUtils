@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Transactions;
 using ProgressOnderwijsUtils;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -17,7 +17,12 @@ namespace ProgressOnderwijsUtilsTests
             Context = new SqlCommandCreationContext(new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer());
             try {
                 Context.Connection.Open();
-                ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(Context);
+                SQL($@"
+                    set transaction isolation level serializable;
+                    begin tran
+                    {ParameterizedSql.TableValuedTypeDefinitionScripts}
+                    commit
+                ").ExecuteNonQuery(Context);
                 Context.Connection.EnlistTransaction(Transaction);
             } catch {
                 Dispose();
