@@ -33,12 +33,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return samlResponse != null ? XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(samlResponse)), LoadOptions.PreserveWhitespace).Root : null;
         }
 
-        public static SsoAttributes? Process(XElement response, X509Certificate2 certificate)
-        {
-            var assertion = GetAssertion(response, certificate);
-            return assertion == null ? default(SsoAttributes?) : GetAttributes(assertion, certificate);
-        }
-
         public static XElement GetAssertion(XElement response, X509Certificate2 certificate)
         {
             LOG.Debug(() => $"GetAssertion(response='{response}')");
