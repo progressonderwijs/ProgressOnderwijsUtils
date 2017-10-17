@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
     {
         public string ID { get; set; }
         public string Destination { get; set; }
-        public string Issuer { private get; set; }
+        public ServiceProviderConfig Issuer { private get; set; }
         public bool ForceAuthn { get; set; }
 
         public string Encode()
@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 new XAttribute("ForceAuthn", ForceAuthn),
                 new XAttribute("IsPassive", "false"),
                 new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
-                new XElement(SamlNamespaces.SAML_NS + "Issuer", Issuer)
+                new XElement(SamlNamespaces.SAML_NS + "Issuer", Issuer.entity)
                 );
         }
     }
