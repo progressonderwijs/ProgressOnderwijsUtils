@@ -138,9 +138,9 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
-            => ConextMetaDataXml(idp, sp);
+            => DownloadAndValidateMetaData(idp, sp);
 
-        static Saml20MetaData ConextMetaDataXml(IdentityProviderConfig idp, ServiceProviderConfig sp)
+        static Saml20MetaData DownloadAndValidateMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
         {
             var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
             return ValidatedSaml20MetaData(idp, DownloadMetaData(uri));
