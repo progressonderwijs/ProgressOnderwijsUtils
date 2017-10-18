@@ -7,6 +7,7 @@ using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.Internal;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils
 {
@@ -128,13 +129,18 @@ namespace ProgressOnderwijsUtils
             public static readonly Dictionary<Type, string> SqlTableTypeNameByDotnetType = All.ToDictionary(o => o.Type, o => o.SqlTypeName);
 
             public static ParameterizedSql DefinitionScripts
-                => All
-                    .Select(o => SafeSql.SQL($@"
-                        drop type if exists {ParameterizedSql.CreateDynamic(o.SqlTypeName)};
-                        create type {ParameterizedSql.CreateDynamic(o.SqlTypeName)}
-                        as table ({ParameterizedSql.CreateDynamic(o.TableDeclaration)});
-                    "))
-                    .ConcatenateSql();
+                => SQL($@"
+                    begin tran;
+                    {All
+                        .Select(o => SQL($@"
+                            drop type if exists {ParameterizedSql.CreateDynamic(o.SqlTypeName)};
+                            create type {ParameterizedSql.CreateDynamic(o.SqlTypeName)}
+                            as table ({ParameterizedSql.CreateDynamic(o.TableDeclaration)});
+                        "))
+                        .ConcatenateSql()
+                    }
+                    commit;
+                ");
         }
 
         interface ITableValuedParameterFactory
