@@ -9,6 +9,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using log4net;
+using Microsoft.Extensions.Caching.Memory;
 using ProgressOnderwijsUtils.Log4Net;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
@@ -137,13 +138,18 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 select attribute.Value).ToArray();
         }
 
-        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
-            => DownloadAndValidateMetaData(idp, sp);
+        static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
 
-        static Saml20MetaData DownloadAndValidateMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
+        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp, TimeSpan expiration)
+            => DownloadAndValidateMetaData(idp, sp, expiration);
+
+        static Saml20MetaData DownloadAndValidateMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp, TimeSpan expiration)
         {
             var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
-            return ValidatedSaml20MetaData(idp, DownloadMetaData(uri));
+            return memoryCache.GetOrCreate(uri, entry => {
+                entry.AbsoluteExpirationRelativeToNow = expiration;
+                return ValidatedSaml20MetaData(idp, DownloadMetaData(uri));
+            });
         }
 
         static XmlDocument DownloadMetaData(string uri)
