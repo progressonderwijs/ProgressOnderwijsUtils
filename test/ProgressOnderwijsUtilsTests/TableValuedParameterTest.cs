@@ -2,23 +2,20 @@
 using System.Data;
 using System.Data.Common;
 using System.Linq;
-using System.Net.Mime;
-using System.Security.Cryptography;
 using System.Text;
 using ExpressionToCodeLib;
-using Xunit;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Internal;
+using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
-    
     public class TableValuedParameterTest : TransactedLocalConnection
     {
         public enum SomeEnum
         { }
-        
+
         [Fact]
         public void DatabaseCanProcessTableValuedParameters()
         {
@@ -38,7 +35,7 @@ namespace ProgressOnderwijsUtilsTests
         [Fact]
         public void ParameterizedSqlCanIncludeEnumTvps()
         {
-            var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i =>(SomeEnum) i)} x");
+            var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100).Select(i => (SomeEnum)i)} x");
             var sum = (int)q.ReadScalar<SomeEnum>(Context);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
@@ -46,7 +43,7 @@ namespace ProgressOnderwijsUtilsTests
         [Fact]
         public void ParameterizedSqlTvpsCanCountDaysOfWeek()
         {
-            var q = SQL($@"select count(x.querytablevalue) from {new[]{DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday }} x");
+            var q = SQL($@"select count(x.querytablevalue) from {new[] { DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday }} x");
             var dayCount = q.ReadScalar<int>(Context);
             PAssert.That(() => dayCount == 5);
         }
@@ -79,7 +76,7 @@ namespace ProgressOnderwijsUtilsTests
         {
             PAssert.That(() => SQL($@"
                 select sum(datalength(hashes.QueryTableValue))
-                from {new[] {Encoding.ASCII.GetBytes( "0123456789"), Encoding.ASCII.GetBytes("abcdef") }} hashes
+                from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef") }} hashes
             ").ReadPlain<long>(Context).Single() == 16);
         }
 
