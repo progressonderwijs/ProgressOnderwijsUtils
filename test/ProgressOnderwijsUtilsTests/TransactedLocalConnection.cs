@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using System.Transactions;
 using ProgressOnderwijsUtils;
-using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -14,7 +13,7 @@ namespace ProgressOnderwijsUtilsTests
         public TransactedLocalConnection()
         {
             Transaction = new CommittableTransaction();
-            Context = new SqlCommandCreationContext(new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = localhost; Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer());
+            Context = new SqlCommandCreationContext(new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer());
             try {
                 Context.Connection.Open();
                 ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(Context);
