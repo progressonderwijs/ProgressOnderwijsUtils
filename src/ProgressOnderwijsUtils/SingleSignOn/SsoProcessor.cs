@@ -141,9 +141,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
 
         public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp, TimeSpan expiration)
-            => DownloadAndValidateMetaData(idp, sp, expiration);
-
-        static Saml20MetaData DownloadAndValidateMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp, TimeSpan expiration)
         {
             var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
             return memoryCache.GetOrCreate(uri, entry => {
