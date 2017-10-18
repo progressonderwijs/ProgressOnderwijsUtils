@@ -139,7 +139,9 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 select attribute.Value).ToArray();
         }
 
-        static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
+        static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions {
+            SizeLimit = 10
+        });
 
         public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
         {
