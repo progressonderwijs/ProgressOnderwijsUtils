@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -140,12 +141,16 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
         static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions());
 
-        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp, TimeSpan expiration)
+        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
         {
             var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
             return memoryCache.GetOrCreate(uri, entry => {
-                entry.AbsoluteExpirationRelativeToNow = expiration;
-                return ValidatedSaml20MetaData(idp, DownloadMetaData(uri));
+                var document = DownloadMetaData(uri);
+                var validUntil = document.DocumentElement.GetAttribute("validUntil");
+                entry.AbsoluteExpiration = string.IsNullOrEmpty(validUntil)
+                    ? default(DateTime?)
+                    : XmlConvert.ToDateTime(validUntil, XmlDateTimeSerializationMode.RoundtripKind);
+                return ValidatedSaml20MetaData(idp, document);
             });
         }
 
