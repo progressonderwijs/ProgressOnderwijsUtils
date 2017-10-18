@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data.SqlClient;
-using System.Linq;
 using System.Transactions;
 using ProgressOnderwijsUtils;
 
