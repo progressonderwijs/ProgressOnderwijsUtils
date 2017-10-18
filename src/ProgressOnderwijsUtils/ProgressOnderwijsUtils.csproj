@@ -8,7 +8,7 @@
       Various utility methods+classes used by Progress Onderwijs.
     </Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Set ForceAuthn to true in SAML requests</PackageReleaseNotes>
+    <PackageReleaseNotes>Allow ForceAuthn in SAML requests. Enable caching of SAML metadata.</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
