@@ -14,7 +14,7 @@
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFrameworks>net46</TargetFrameworks>
+    <TargetFrameworks>net461</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup>
     <OutputType>library</OutputType>
@@ -38,5 +38,6 @@
     <PackageReference Include="ValueUtils" version="1.4.0" />
     <PackageReference Include="System.ValueTuple" version="4.4.0" />
     <PackageReference Include="ZlibWithDictionary" version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
   </ItemGroup>
 </Project>
