@@ -9,10 +9,18 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 {
     public struct AuthnRequest
     {
-        public string ID { get; set; }
-        public string Destination { get; set; }
-        public ServiceProviderConfig Issuer { private get; set; }
+        public string ID { get; }
+        public string Destination { get; }
+        public ServiceProviderConfig Issuer { get; }
         public bool ForceAuthn { get; set; }
+
+        public AuthnRequest(string id, string destination, ServiceProviderConfig issuer)
+        {
+            ID = id;
+            Destination = destination;
+            Issuer = issuer;
+            ForceAuthn = false;
+        }
 
         public string Encode()
         {
