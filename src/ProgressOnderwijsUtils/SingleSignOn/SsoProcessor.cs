@@ -152,6 +152,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 entry.AbsoluteExpiration = string.IsNullOrEmpty(validUntil)
                     ? default(DateTime?)
                     : XmlConvert.ToDateTime(validUntil, XmlDateTimeSerializationMode.RoundtripKind);
+                entry.Size = 1;
                 return ValidatedSaml20MetaData(idp, document);
             });
         }
