@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.IO;
-using System.IO.Compression;
+using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -11,71 +10,22 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using log4net;
+using Microsoft.Extensions.Caching.Memory;
 using ProgressOnderwijsUtils.Log4Net;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
     public static class SsoProcessor
     {
-        struct AuthnRequest
-        {
-            public string ID { get; set; }
-            public string Destination { get; set; }
-            public string Issuer { private get; set; }
-
-            public string Encode()
-            {
-                var xml = Encoding.UTF8.GetBytes(ToXml().ToString());
-                using (var stream = new MemoryStream()) {
-                    using (var deflate = new DeflateStream(stream, CompressionMode.Compress))
-                        deflate.Write(xml, 0, xml.Length);
-                    return Convert.ToBase64String(stream.ToArray());
-                }
-            }
-
-            XElement ToXml()
-            {
-                return new XElement(
-                    SamlNamespaces.SAMLP_NS + "AuthnRequest",
-                    new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
-                    new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
-                    new XAttribute("ID", XmlConvert.EncodeLocalName(ID)),
-                    new XAttribute("Version", "2.0"),
-                    new XAttribute("IssueInstant", DateTime.UtcNow),
-                    new XAttribute("Destination", Destination),
-                    new XAttribute("ForceAuthn", "false"),
-                    new XAttribute("IsPassive", "false"),
-                    new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
-                    new XElement(SamlNamespaces.SAML_NS + "Issuer", Issuer)
-                    );
-            }
-        }
-
         const string UID = "urn:mace:dir:attribute-def:uid";
         const string MAIL = "urn:mace:dir:attribute-def:mail";
         const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
         const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
         static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
-        public static string GetRedirectUrl(string relayState, ServiceProviderConfig client, string singleSignOnServiceUrl)
+        public static string GetRedirectUrl(AuthnRequest request)
         {
-            var request = new AuthnRequest {
-                Destination = singleSignOnServiceUrl,
-                Issuer = client.entity,
-                ID = "_" + Guid.NewGuid()
-            };
-            var qs = CreateQueryString(request, relayState, client.certificate);
-            return CreateUrl(request, qs);
-        }
-
-        public static string GetRedirectUrlWithID(string id, ServiceProviderConfig client, string singleSignOnServiceUrl)
-        {
-            var request = new AuthnRequest {
-                Destination = singleSignOnServiceUrl,
-                Issuer = client.entity,
-                ID = id
-            };
-            var qs = CreateQueryString(request, null, client.certificate);
+            var qs = CreateQueryString(request, null, request.Issuer.certificate);
             return CreateUrl(request, qs);
         }
 
@@ -83,12 +33,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         {
             LOG.Debug(() => "Response");
             return samlResponse != null ? XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(samlResponse)), LoadOptions.PreserveWhitespace).Root : null;
-        }
-
-        public static SsoAttributes? Process(XElement response, X509Certificate2 certificate)
-        {
-            var assertion = GetAssertion(response, certificate);
-            return assertion == null ? default(SsoAttributes?) : GetAttributes(assertion, certificate);
         }
 
         public static XElement GetAssertion(XElement response, X509Certificate2 certificate)
@@ -195,12 +139,26 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 select attribute.Value).ToArray();
         }
 
-        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
-            => ValidatedSaml20MetaData(idp, ConextMetaDataXml(idp, sp));
+        static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions {
+            SizeLimit = 10
+        });
 
-        static XmlDocument ConextMetaDataXml(IdentityProviderConfig idp, ServiceProviderConfig sp)
+        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
         {
             var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
+            return memoryCache.GetOrCreate(uri, entry => {
+                var document = DownloadMetaData(uri);
+                var validUntil = document.DocumentElement.GetAttribute("validUntil");
+                entry.AbsoluteExpiration = string.IsNullOrEmpty(validUntil)
+                    ? default(DateTime?)
+                    : XmlConvert.ToDateTime(validUntil, XmlDateTimeSerializationMode.RoundtripKind);
+                entry.Size = 1;
+                return ValidatedSaml20MetaData(idp, document);
+            });
+        }
+
+        static XmlDocument DownloadMetaData(string uri)
+        {
             var document = new XmlDocument {
                 PreserveWhitespace = true,
             };
