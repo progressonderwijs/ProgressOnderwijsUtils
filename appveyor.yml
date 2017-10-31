@@ -6,8 +6,13 @@ image: Visual Studio 2017
 environment:
   CONNECTION_STRING: Server=(local)\SQL2016;Database=master;User ID=sa;Password=Password12!
 services: mssql2016
-cache: '%USERPROFILE%\.nuget\packages'
 build_script:
-- ps: dotnet build
+- ps: >-
+    dotnet build
+
+    if ($LastExitCode -ne 0) { exit $LastExitCode }
 test_script:
-- ps: dotnet test
+- ps: >-
+    dotnet test
+
+    if ($LastExitCode -ne 0) { exit $LastExitCode }
