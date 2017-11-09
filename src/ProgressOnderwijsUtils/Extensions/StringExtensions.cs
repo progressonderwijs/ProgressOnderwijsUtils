@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils
             // reguliere conversie 
             // (patroon A t/m Z gevolgd door 1 of meer wordcharacters, A t/m Z blijft staan, rest lowercase)
             var upc1 = Regex.Replace(
-                s,
+                s.ToUpper(),
                 @"\p{Lu}\w+",
                 match => {
                     var v = match.ToString();
