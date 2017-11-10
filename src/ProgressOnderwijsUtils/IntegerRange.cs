@@ -42,10 +42,6 @@ namespace ProgressOnderwijsUtils
         public bool Equals(IntegerRange other) => Begin == other.Begin && End == other.End;
         public override int GetHashCode() => Begin * 397 + End;
 
-        public override bool Equals(object obj)
-        {
-            var typed = obj as IntegerRange?;
-            return typed.HasValue && Equals(typed.Value);
-        }
+        public override bool Equals(object obj) => obj is IntegerRange typed && Equals(typed);
     }
 }
