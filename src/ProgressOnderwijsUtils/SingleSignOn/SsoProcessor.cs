@@ -146,7 +146,9 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         {
             return (
                 from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
+                // ReSharper disable PossibleNullReferenceException
                 where attribute.Parent.Attribute("Name").Value == key
+                // ReSharper restore PossibleNullReferenceException
                 select attribute.Value
                 ).SingleOrDefault();
         }
@@ -155,7 +157,9 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         static string[] GetAttributes([NotNull] XElement assertion, string key)
         {
             return (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
+                // ReSharper disable PossibleNullReferenceException
                 where attribute.Parent.Attribute("Name").Value == key
+                // ReSharper restore PossibleNullReferenceException
                 select attribute.Value).ToArray();
         }
 
@@ -168,6 +172,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
             return memoryCache.GetOrCreate(uri, entry => {
                 var document = DownloadMetaData(uri);
+                // ReSharper disable once PossibleNullReferenceException
                 var validUntil = document.DocumentElement.GetAttribute("validUntil");
                 entry.AbsoluteExpiration = string.IsNullOrEmpty(validUntil)
                     ? default(DateTime?)

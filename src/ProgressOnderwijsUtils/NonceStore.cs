@@ -76,8 +76,7 @@ namespace ProgressOnderwijsUtils
                     }
                     //stale nonce found!
                     noncesInCleanupOrder.Dequeue();
-                    byte ignore;
-                    seenNonces.TryRemove(nextNonceToCleanup, out ignore);
+                    seenNonces.TryRemove(nextNonceToCleanup, out _);
                 }
             }
         }

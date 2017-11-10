@@ -16,9 +16,12 @@ namespace ProgressOnderwijsUtilsTests
             object a = new object(), b = new object(), c = "3", d = 3.ToStringInvariant();
             Func<object, object, DeepEquals.ReferencePair> refpair = (o1, o2) => new DeepEquals.ReferencePair(o1, o2);
             PAssert.That(() => !DeepEquals.AreEqual(a, b) && DeepEquals.AreEqual(c, d));
+            // ReSharper disable EqualExpressionComparison - kind of the whole point!
             PAssert.That(() => refpair(a, b) == refpair(a, b) && !ReferenceEquals(refpair(a, b), refpair(a, b)));
+            // ReSharper restore EqualExpressionComparison
             PAssert.That(() => refpair(a, c) != refpair(a, d) && c.Equals(d));
             PAssert.That(() => refpair(a, b).Equals(refpair(a, b)));
+            // ReSharper disable once EqualExpressionComparison - kind of the whole point!
             PAssert.That(() => Equals(refpair(a, b), refpair(a, b)));
             PAssert.That(() => !Equals(null, Equals(refpair(a, b))));
             PAssert.That(() => !Equals(a, Equals(refpair(a, b))));
