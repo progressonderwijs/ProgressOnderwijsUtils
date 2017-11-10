@@ -144,11 +144,9 @@ namespace ProgressOnderwijsUtils
             return val;
         }
 
-        [CanBeNull]
-        public static Dictionary<TKey, TValue> Clone<TKey, TValue>([CanBeNull] this Dictionary<TKey, TValue> old)
-        {
-            return old == null ? null : new Dictionary<TKey, TValue>(old, old.Comparer);
-        }
+        [NotNull]
+        public static Dictionary<TKey, TValue> Clone<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old)
+            => new Dictionary<TKey, TValue>(old, old.Comparer);
 
         /// <summary>
         /// Merges two dictionaries. When both dictionaries contain the same key, the last value is used
