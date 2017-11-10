@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
 
         static Dictionary<object, string> GetLookup()
         {
-            if (nameLookupBag.TryDequeue(out Dictionary<object, string> lookup)) {
+            if (nameLookupBag.TryDequeue(out var lookup)) {
                 return lookup;
             }
             return new Dictionary<object, string>(8);

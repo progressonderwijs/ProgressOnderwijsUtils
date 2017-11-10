@@ -149,7 +149,7 @@ namespace ProgressOnderwijsUtils
         {
             var jpgInfo = ImageCodecInfo.GetImageEncoders().First(codecInfo => codecInfo.MimeType == "image/jpeg");
             using (var encParams = new EncoderParameters(1)) {
-                encParams.Param[0] = new EncoderParameter(Encoder.Quality, (long)(quality ?? 90)); //quality should be in the range [0..100]
+                encParams.Param[0] = new EncoderParameter(Encoder.Quality, quality ?? 90L); //quality should be in the range [0..100]
                 image.Save(outputStream, jpgInfo, encParams);
             }
         }

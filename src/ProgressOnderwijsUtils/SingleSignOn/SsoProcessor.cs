@@ -39,11 +39,14 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         [CanBeNull]
-        public static XElement GetAssertion(XElement response, X509Certificate2 certificate)
+        public static XElement GetAssertion([NotNull] XElement response, X509Certificate2 certificate)
         {
             LOG.Debug(() => $"GetAssertion(response='{response}')");
 
-            if (response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").Single().Attribute("Value").Value == "urn:oasis:names:tc:SAML:2.0:status:Success") {
+            var statusCodeAttribute = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").Single().Attribute("Value")
+                ?? throw new InvalidOperationException("Missing status code attribute");
+            
+            if (statusCodeAttribute.Value == "urn:oasis:names:tc:SAML:2.0:status:Success") {
                 var result = response.Descendants(SamlNamespaces.SAML_NS + "Assertion").Single();
                 Validate(result, certificate);
                 return result;
@@ -58,24 +61,28 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             LOG.Debug(() => $"GetAttributes(assertion='{assertion}')");
 
             Validate(assertion, certificate);
+            var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement") 
+                ?? throw new InvalidOperationException("Missing AuthnStatement element");
             return new SsoAttributes {
                 uid = GetAttribute(assertion, UID),
                 domain = GetAttribute(assertion, DOMAIN),
                 email = GetAttributes(assertion, MAIL),
                 roles = GetAttributes(assertion, ROLE),
                 InResponseTo = GetInResponseTo(assertion),
-                AuthnInstant = (DateTime)assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement").Attribute("AuthnInstant"),
+                AuthnInstant = (DateTime)authnStatement.Attribute("AuthnInstant"),
             };
         }
 
         [CanBeNull]
         static string GetInResponseTo([NotNull] XElement assertion)
         {
+            // ReSharper disable PossibleNullReferenceException
             var rawInResponseTo = (string)assertion
                 .Element(SamlNamespaces.SAML_NS + "Subject")
                 .Element(SamlNamespaces.SAML_NS + "SubjectConfirmation")
                 .Element(SamlNamespaces.SAML_NS + "SubjectConfirmationData")
                 .Attribute("InResponseTo");
+            // ReSharper restore PossibleNullReferenceException
             return XmlConvert.DecodeName(rawInResponseTo);
         }
 
@@ -94,8 +101,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         [NotNull]
         static NameValueCollection CreateQueryString(AuthnRequest req, [CanBeNull] string relayState, [NotNull] X509Certificate2 cer)
         {
-            var result = new NameValueCollection();
-            result.Add("SAMLRequest", req.Encode());
+            var result = new NameValueCollection { { "SAMLRequest", req.Encode() } };
             if (!string.IsNullOrWhiteSpace(relayState)) {
                 result.Add("RelayState", relayState);
             }
@@ -138,9 +144,11 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         [CanBeNull]
         static string GetNullableAttribute([NotNull] XElement assertion, string key)
         {
-            return (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
+            return (
+                from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 where attribute.Parent.Attribute("Name").Value == key
-                select attribute.Value).SingleOrDefault();
+                select attribute.Value
+                ).SingleOrDefault();
         }
 
         [NotNull]

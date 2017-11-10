@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils.WebSupport
             var cookieCount = cookies.Count;
             for (var i = 0; i < cookieCount; i++) {
                 //cookies.Get("ASP.NET_SessionId") has a nasty side-effect (sets the cookie), so we loop instead.
-                var cookie = cookies[i];
+                var cookie = cookies[i] ?? throw new Exception("cookie == null: this should be impossible");
                 if (cookie.Name == "ASP.NET_SessionId" || cookie.Name.StartsWith("ASPSESSIONID", StringComparison.Ordinal)) {
                     cookie.Secure = true;
                     cookie.HttpOnly = true;
