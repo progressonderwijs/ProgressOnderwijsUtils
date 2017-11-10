@@ -163,7 +163,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
 
             [Pure]
-            public int GetHashCode(Tree<T> obj)
+            public int GetHashCode([CanBeNull] Tree<T> obj)
             {
                 if (obj == null) {
                     return typeHash;

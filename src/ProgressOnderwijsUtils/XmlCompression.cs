@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -14,6 +15,9 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static void CleanupNamespaces([NotNull] XDocument doc)
         {
+            if (doc.Root == null) {
+                throw new InvalidOperationException("empty documents not supported");
+            }
             var usedNamespaces = doc.Descendants().Select(el => el.Name.Namespace).ToSet();
             usedNamespaces.UnionWith(doc.Descendants().Attributes().Select(attr => attr.Name.Namespace));
 

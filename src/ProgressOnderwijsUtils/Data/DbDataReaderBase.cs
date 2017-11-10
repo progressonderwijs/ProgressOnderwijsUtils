@@ -38,7 +38,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public override string GetDataTypeName(int ordinal) => GetFieldType(ordinal).ToString();
+        public override string GetDataTypeName(int ordinal) => (GetFieldType(ordinal) ?? throw new Exception("column " + ordinal + " untyped")).ToString();
+
         bool hasRows, afterFirstRowPeek;
         protected abstract bool ReadImpl();
 

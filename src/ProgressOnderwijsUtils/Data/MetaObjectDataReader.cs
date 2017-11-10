@@ -49,6 +49,7 @@ namespace ProgressOnderwijsUtils
 
         public override DataTable GetSchemaTable() => schemaTable;
         public override int FieldCount => columnInfos.Length;
+        [NotNull]
         public override Type GetFieldType(int ordinal) => columnInfos[ordinal].ColumnType;
         public override string GetName(int ordinal) => columnInfos[ordinal].Name;
         public override int GetOrdinal(string name) => columnIndexByName[name];
@@ -75,6 +76,7 @@ namespace ProgressOnderwijsUtils
         {
             public readonly string Name;
             //ColumnType is non nullable with enum types replaced by their underlying type
+            [NotNull]
             public readonly Type ColumnType;
             public readonly Func<T, object> GetUntypedColumnValue;
             //WhenNullable_IsColumnDBNull is itself null if column non-nullable

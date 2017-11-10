@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils.Html
             where TContent : struct, IConvertibleToFragment
             => htmlFragmentOrNull?.AsFragment() ?? HtmlFragment.Empty;
 
-        public static HtmlFragment JoinHtml<TFragments>([NotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
+        public static HtmlFragment JoinHtml<TFragments>([NotNull, ItemNotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
             where TFragments : IConvertibleToFragment
         {
             using (var enumerator = htmlEls.GetEnumerator()) {
@@ -70,12 +70,14 @@ namespace ProgressOnderwijsUtils.Html
                 }
                 var retval = FastArrayBuilder<HtmlFragment>.Create();
                 var joinerIsNonEmpty = !joiner.IsEmpty;
+                // ReSharper disable once PossibleNullReferenceException
                 var firstNode = enumerator.Current.AsFragment();
                 retval.Add(firstNode);
                 while (enumerator.MoveNext()) {
                     if (joinerIsNonEmpty) {
                         retval.Add(joiner);
                     }
+                    // ReSharper disable once PossibleNullReferenceException
                     retval.Add(enumerator.Current.AsFragment());
                 }
                 return HtmlFragment.Fragment(retval.ToArray());
