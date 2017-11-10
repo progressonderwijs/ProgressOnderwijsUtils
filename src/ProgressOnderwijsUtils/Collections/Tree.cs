@@ -8,6 +8,8 @@ namespace ProgressOnderwijsUtils.Collections
     public interface IRecursiveStructure<out TTree>
         where TTree : IRecursiveStructure<TTree>
     {
+        [ItemNotNull]
+        [NotNull]
         IReadOnlyList<TTree> Children { get; }
     }
 
@@ -85,7 +87,11 @@ namespace ProgressOnderwijsUtils.Collections
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
     {
         readonly T nodeValue;
+
+        [ItemNotNull]
+        [NotNull]
         readonly Tree<T>[] kidArray;
+
         public T NodeValue => nodeValue;
         public IReadOnlyList<Tree<T>> Children => kidArray;
 
