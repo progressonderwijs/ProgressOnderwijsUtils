@@ -11,9 +11,9 @@ namespace ProgressOnderwijsUtils.Collections
         [NotNull]
         public IEnumerable<RootedTree<T>> PathSelfToRoot() => PathSegments.NonEmptySuffixes.Select(path => new RootedTree<T>(path));
         public int IndexInParent() => PathSegments.Head.Index;
+        [NotNull]
         public Tree<T> UnrootedSubTree() => PathSegments.Head.ThisSubTree;
 
-        [NotNull]
         public IReadOnlyList<RootedTree<T>> Children
         {
             get {
@@ -56,7 +56,7 @@ namespace ProgressOnderwijsUtils.Collections
             [NotNull]
             public readonly Tree<T> ThisSubTree;
 
-            public TreePathSegment(int index, Tree<T> node)
+            public TreePathSegment(int index, [NotNull] Tree<T> node)
             {
                 Index = index;
                 ThisSubTree = node;
@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public RootedTree<T> ReplaceSubTree(Tree<T> newSubTree)
+        public RootedTree<T> ReplaceSubTree([NotNull] Tree<T> newSubTree)
         {
             if (IsRoot) {
                 return newSubTree.RootHere();

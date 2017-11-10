@@ -63,6 +63,7 @@ namespace ProgressOnderwijsUtils
         public static string DebugFriendlyCommandText([NotNull] SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo) 
             => CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
 
+        [NotNull]
         static string CommandParamStringOrEmpty(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo)
         {
             if (includeSensitiveInfo == SqlCommandTracerOptions.IncludeArgumentValuesInLog) {
