@@ -4,6 +4,7 @@ using System.IO.Compression;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
@@ -22,6 +23,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             ForceAuthn = false;
         }
 
+        [NotNull]
         public string Encode()
         {
             var xml = Encoding.UTF8.GetBytes(ToXml().ToString());
@@ -32,6 +34,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             }
         }
 
+        [NotNull]
         XElement ToXml()
         {
             return new XElement(

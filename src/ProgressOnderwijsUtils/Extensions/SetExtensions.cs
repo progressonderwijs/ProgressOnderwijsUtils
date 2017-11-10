@@ -6,6 +6,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class SetExtensions
     {
+        [NotNull]
         [Pure]
         public static ReadOnlySet<T> AsReadOnly<T>(this ISet<T> set)
         {

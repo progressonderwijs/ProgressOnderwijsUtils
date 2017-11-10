@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -26,6 +27,7 @@ namespace ProgressOnderwijsUtils
 
         public Stream GetResource(string filename) => typeof(T).GetResource(filename);
 
+        [ItemNotNull]
         public IEnumerable<string> GetResourceNames()
         {
             var nsPrefix = typeof(T).Namespace + ".";

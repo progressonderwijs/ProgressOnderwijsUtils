@@ -100,7 +100,7 @@ namespace ProgressOnderwijsUtils
         public static string FriendlyName(this Type type) => type.ToCSharpFriendlyTypeName();
 
         [Pure]
-        public static T Attr<T>(this MemberInfo mi) where T : Attribute
+        public static T Attr<T>([NotNull] this MemberInfo mi) where T : Attribute
         {
             var customAttributes = mi.GetCustomAttributes(typeof(T), true);
             if (customAttributes.Length == 0) {

@@ -8,6 +8,7 @@ namespace ProgressOnderwijsUtils.Collections
     public struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>>
     {
         public static RootedTree<T> RootTree(Tree<T> rootNode) => new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode)));
+        [NotNull]
         public IEnumerable<RootedTree<T>> PathSelfToRoot() => PathSegments.NonEmptySuffixes.Select(path => new RootedTree<T>(path));
         public int IndexInParent() => PathSegments.Head.Index;
         public Tree<T> UnrootedSubTree() => PathSegments.Head.ThisSubTree;
@@ -75,8 +76,9 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
+        [NotNull]
         [Pure]
-        static Tree<T>[] CopyArrayWithNewValueOnIndex(IReadOnlyList<Tree<T>> oldArray, int index, Tree<T> newValue)
+        static Tree<T>[] CopyArrayWithNewValueOnIndex([NotNull] IReadOnlyList<Tree<T>> oldArray, int index, Tree<T> newValue)
         {
             var copy = oldArray.ToArray();
             copy[index] = newValue;

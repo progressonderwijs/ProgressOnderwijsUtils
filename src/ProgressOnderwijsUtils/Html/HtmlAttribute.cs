@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
@@ -74,6 +75,7 @@ namespace ProgressOnderwijsUtils.Html
             }
 
             public HtmlAttribute Current => attributes[pos];
+            [NotNull]
             object IEnumerator.Current => attributes[pos];
             public void Dispose() { }
             public bool MoveNext() => ++pos < count;
@@ -81,7 +83,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public static HtmlAttributes Empty => default(HtmlAttributes);
-        public static HtmlAttributes FromArray(HtmlAttribute[] arr) => new HtmlAttributes(arr, arr.Length);
+        public static HtmlAttributes FromArray([NotNull] HtmlAttribute[] arr) => new HtmlAttributes(arr, arr.Length);
         public override string ToString() => string.Join("; ", this);
     }
 }

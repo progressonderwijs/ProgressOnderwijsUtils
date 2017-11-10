@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -7,11 +8,12 @@ namespace ProgressOnderwijsUtils
         readonly string[] lines;
         int position;
 
-        public LineScanner(string s)
+        public LineScanner([NotNull] string s)
         {
             lines = Regex.Split(s, "\r\n|\n");
         }
 
+        [CanBeNull]
         public string GetLine() => position != lines.Length ? lines[position++] : null;
 
         public void PushBack()

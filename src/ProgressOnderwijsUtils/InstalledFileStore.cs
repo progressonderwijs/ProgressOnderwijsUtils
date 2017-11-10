@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -12,7 +13,8 @@ namespace ProgressOnderwijsUtils
         const string PrivateBinPath = @"bin;bin\Release";
 #endif
 
-        public static string FileLocation(string name)
+        [NotNull]
+        public static string FileLocation([NotNull] string name)
         {
             var searchPaths = new[] { string.Empty }
                 .Concat((AppDomain.CurrentDomain.RelativeSearchPath ?? PrivateBinPath).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))

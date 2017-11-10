@@ -8,6 +8,7 @@ using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -40,7 +41,7 @@ namespace ProgressOnderwijsUtils
 
     public static class DisposableExtensions
     {
-        public static T Using<TDisposable, T>(this TDisposable disposable, Func<TDisposable, T> func) where TDisposable : IDisposable
+        public static T Using<TDisposable, T>(this TDisposable disposable, [NotNull] Func<TDisposable, T> func) where TDisposable : IDisposable
         {
             using (disposable)
                 return func(disposable);
@@ -63,7 +64,8 @@ namespace ProgressOnderwijsUtils
             return x == y || delta / magnitude < relativeEpsilon;
         }
 
-        public static Lazy<T> Lazy<T>(Func<T> factory)
+        [NotNull]
+        public static Lazy<T> Lazy<T>([NotNull] Func<T> factory)
         {
             return new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
         }
@@ -107,7 +109,7 @@ namespace ProgressOnderwijsUtils
             return TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
         }
 
-        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
+        public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
         {
             var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
@@ -122,7 +124,7 @@ namespace ProgressOnderwijsUtils
             return TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);
         }
 
-        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
+        public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
         {
             var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
@@ -132,7 +134,7 @@ namespace ProgressOnderwijsUtils
             return set;
         }
 
-        public static bool IsRetriableConnectionFailure(Exception e)
+        public static bool IsRetriableConnectionFailure([CanBeNull] Exception e)
         {
             if (e == null) {
                 return false;
@@ -196,7 +198,8 @@ namespace ProgressOnderwijsUtils
             return v;
         } //purely for delegate type inference
         // ReSharper restore UnusedMember.Global
-        public static string GetSqlExceptionDetailsString(Exception exception)
+        [CanBeNull]
+        public static string GetSqlExceptionDetailsString([NotNull] Exception exception)
         {
             var sql = exception as SqlException ?? exception.InnerException as SqlException;
             return sql == null ? null : $"[code='{sql.ErrorCode:x}'; number='{sql.Number}'; state='{sql.State}']";
@@ -218,7 +221,7 @@ namespace ProgressOnderwijsUtils
         /// waarbij nulwaarden voor datum of maand worden omgezet naar de waarde 1
         /// Alleen voor KVA4
         /// </summary>
-        public static DateTime? SLMaybeIncompleteDateConversion(string incompleteDate)
+        public static DateTime? SLMaybeIncompleteDateConversion([CanBeNull] string incompleteDate)
         {
             if (incompleteDate != null) {
                 var incompleteDateFragments = incompleteDate.Split('-');
@@ -240,6 +243,7 @@ namespace ProgressOnderwijsUtils
         /// Deze eigenschap geldt wanneer je m verifieert in C#, JS, SQL (, etc?)
         /// (want er worden alleen letters in 1 case en cijfers gebruikt)
         /// </summary>
+        [NotNull]
         public static string ToSortableShortString(long value)
         {
             var sb = new StringBuilder();
@@ -257,7 +261,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static void SssHelper(StringBuilder target, long value, int index)
+        static void SssHelper([NotNull] StringBuilder target, long value, int index)
         {
             if (value != 0) {
                 var digit = (int)(value % 36);
@@ -269,7 +273,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static void SssNegHelper(StringBuilder target, long value, int index)
+        static void SssNegHelper([NotNull] StringBuilder target, long value, int index)
         {
             if (value != 0) {
                 var digit = (int)(value % 36); //in range -35..0!!
@@ -290,7 +294,8 @@ namespace ProgressOnderwijsUtils
         ///   - rounding differences may exist for doubles like 1.005 which are not precisely representable.
         ///   - numbers over (2^64 - 2^10)/(2^precision) are slow.
         /// </summary>
-        public static string ToFixedPointString(double number, CultureInfo culture, int precision)
+        [NotNull]
+        public static string ToFixedPointString(double number, [NotNull] CultureInfo culture, int precision)
         {
             //TODO:add tests
             var fI = culture.NumberFormat;
@@ -433,7 +438,7 @@ namespace ProgressOnderwijsUtils
         readonly Func<T, T, bool> equals;
         readonly Func<T, int> hashCode;
 
-        public EqualsEqualityComparer(Func<T, T, bool> equals, Func<T, int> hashCode = null)
+        public EqualsEqualityComparer(Func<T, T, bool> equals, [CanBeNull] Func<T, int> hashCode = null)
         {
             this.equals = equals;
             this.hashCode = hashCode;

@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -31,29 +32,35 @@ namespace ProgressOnderwijsUtils
 
     public static class SqlCommandTracer
     {
+        [NotNull]
         public static ISqlCommandTracer CreateAlwaysOnTracer(SqlCommandTracerOptions includeSensitiveInfo)
             => new SqlCommandTracerImpl(includeSensitiveInfo);
 
         public static ISqlCommandTracer CreateAlwaysOffTracer() => NoopTracer.Instance;
 
+        [NotNull]
         public static ISqlCommandTracer CreateTogglableTracer(SqlCommandTracerOptions includeSensitiveInfo)
             => new ResettableCommandTracer(() => CreateAlwaysOnTracer(includeSensitiveInfo));
 
         sealed class NoopTracer : ISqlCommandTracer
         {
             public static readonly NoopTracer Instance = new NoopTracer();
+            [NotNull]
             public IEnumerable<Tuple<string, TimeSpan>> AllCommands => Array.Empty<Tuple<string, TimeSpan>>();
             public TimeSpan TotalDuration => TimeSpan.Zero;
             public int CommandCount => 0;
             public TimeSpan SlowestCommandDuration => TimeSpan.Zero;
             public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration) { }
+            [CanBeNull]
             public IDisposable StartCommandTimer(string commandText) => null;
+            [CanBeNull]
             public IDisposable StartCommandTimer(SqlCommand sqlCommand) => null;
             public void StartTracing() { }
             public void StopTracing() { }
         }
 
-        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo) 
+        [NotNull]
+        public static string DebugFriendlyCommandText([NotNull] SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo) 
             => CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
 
         static string CommandParamStringOrEmpty(SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo)
@@ -65,10 +72,11 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static string CommandParamString(SqlCommand sqlCommand)
+        static string CommandParamString([NotNull] SqlCommand sqlCommand)
             => sqlCommand.Parameters.Cast<SqlParameter>().Select(DeclareParameter).JoinStrings();
 
-        static string DeclareParameter(SqlParameter par)
+        [NotNull]
+        static string DeclareParameter([NotNull] SqlParameter par)
         {
             var declareVariable = "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par);
             if (par.SqlDbType != SqlDbType.Structured) {
@@ -82,7 +90,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static string ValuesClauseForTableValuedParameter(IReadOnlyList<object> tableValue)
+        [NotNull]
+        static string ValuesClauseForTableValuedParameter([CanBeNull] IReadOnlyList<object> tableValue)
         {
             if (tableValue == null) {
                 return "(/* UNKNOWN? */);\n";
@@ -93,12 +102,13 @@ namespace ProgressOnderwijsUtils
             return valuesString + valueCountCommentIfNecessary;
         }
 
-        static string SqlParamTypeString(SqlParameter par)
+        [NotNull]
+        static string SqlParamTypeString([NotNull] SqlParameter par)
             => par.SqlDbType == SqlDbType.Structured
                 ? par.TypeName
                 : par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
-        public static string InsecureSqlDebugString(object p, bool includeReadableEnumValue)
+        public static string InsecureSqlDebugString([CanBeNull] object p, bool includeReadableEnumValue)
         {
             if (p is DBNull || p == null) {
                 return "NULL";
@@ -141,10 +151,12 @@ namespace ProgressOnderwijsUtils
             readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
             Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
             public TimeSpan SlowestCommandDuration => slowest.Item1;
+            [NotNull]
             public IEnumerable<Tuple<string, TimeSpan>> AllCommands => allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1));
             public TimeSpan TotalDuration { get; private set; }
 
-            IDisposable StartCommandTimer(Func<string> commandText)
+            [NotNull]
+            IDisposable StartCommandTimer([NotNull] Func<string> commandText)
             {
                 if (commandText == null) {
                     throw new ArgumentNullException(nameof(commandText));
@@ -153,7 +165,7 @@ namespace ProgressOnderwijsUtils
                 return new SqlCommandTimer(this, commandText);
             }
 
-            public IDisposable StartCommandTimer(string commandText)
+            public IDisposable StartCommandTimer([NotNull] string commandText)
             {
                 if (commandText == null) {
                     throw new ArgumentNullException(nameof(commandText));
@@ -186,7 +198,7 @@ namespace ProgressOnderwijsUtils
                 readonly Func<string> lazySqlCommandText;
                 readonly Stopwatch commandStopwatch;
 
-                internal SqlCommandTimer(SqlCommandTracerImpl tracer, Func<string> lazySqlCommandText)
+                internal SqlCommandTimer([NotNull] SqlCommandTracerImpl tracer, Func<string> lazySqlCommandText)
                 {
                     this.tracer = tracer;
                     this.lazySqlCommandText = lazySqlCommandText;

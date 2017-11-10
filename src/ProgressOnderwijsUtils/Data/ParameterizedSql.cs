@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSql operator +(ParameterizedSql a, ParameterizedSql b)
             => (a.impl == null || b.impl == null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
 
-        public static ParameterizedSql CreateDynamic(string rawSqlString)
+        public static ParameterizedSql CreateDynamic([NotNull] string rawSqlString)
         {
             if (rawSqlString == null) {
                 throw new ArgumentNullException(nameof(rawSqlString));
@@ -145,11 +145,11 @@ namespace ProgressOnderwijsUtils
     {
         public static ParameterizedSql BuildableToQuery(this ISqlComponent q) => new ParameterizedSql(q);
 
-        public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery) =>
+        public static ParameterizedSql InterpolationToQuery([NotNull] FormattableString interpolatedQuery) =>
             interpolatedQuery.Format == "" ? ParameterizedSql.Empty :
                 new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
-        public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, string sql)
+        public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, [NotNull] string sql)
             where TCommandFactory : struct, ICommandFactory
             => factory.AppendSql(sql, 0, sql.Length);
     }
@@ -215,10 +215,10 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentDictionary<string, ParamRefSubString[]> parsedFormatStrings
             = new ConcurrentDictionary<string, ParamRefSubString[]>(new ReferenceEqualityComparer<string>());
 
-        static ParamRefSubString[] GetFormatStringParamRefs(string formatstring) => parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString_Delegate);
+        static ParamRefSubString[] GetFormatStringParamRefs([NotNull] string formatstring) => parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString_Delegate);
         static readonly Func<string, ParamRefSubString[]> ParseFormatString_Delegate = ParseFormatString;
 
-        static ParamRefSubString[] ParseFormatString(string formatstring)
+        static ParamRefSubString[] ParseFormatString([NotNull] string formatstring)
         {
             var arrayBuilder = FastArrayBuilder<ParamRefSubString>.Create();
             var pos = 0;

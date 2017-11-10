@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
@@ -48,7 +49,7 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
-        static void AppendCommaSeparatedFragments(ref FastShortStringBuilder stringBuilder, HtmlFragment[] fragments, int subIndent)
+        static void AppendCommaSeparatedFragments(ref FastShortStringBuilder stringBuilder, [NotNull] HtmlFragment[] fragments, int subIndent)
         {
             var isSubsequent = false;
             foreach (var fragment in fragments) {

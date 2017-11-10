@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using JetBrains.Annotations;
 
 //this is not recommended?? downsides are unclear though some suggest it might be slow.
 
@@ -21,7 +22,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Sets a graphics object to use high quality primitives (mostly for various scaling/blending operations)
         /// </summary>
-        public static void setHQ(Graphics g)
+        public static void setHQ([NotNull] Graphics g)
         {
             g.SmoothingMode = SmoothingMode.HighQuality;
             g.PixelOffsetMode = PixelOffsetMode.HighQuality;
@@ -29,7 +30,8 @@ namespace ProgressOnderwijsUtils
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
         }
 
-        public static Bitmap Resize(Image oldImage, int newWidth, int newHeight)
+        [NotNull]
+        public static Bitmap Resize([NotNull] Image oldImage, int newWidth, int newHeight)
         {
             Bitmap bitmap = null;
             try {
@@ -56,7 +58,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="newWidth">The target width</param>
         /// <param name="newHeight">The target height</param>
         /// <returns>A new Bitmap (don't forget to Dispose it!)</returns>
-        public static Bitmap DownscaleAndClip(Image oldImage, int newWidth, int newHeight)
+        [NotNull]
+        public static Bitmap DownscaleAndClip([NotNull] Image oldImage, int newWidth, int newHeight)
         {
             var oldWidth = oldImage.Width;
             var oldHeight = oldImage.Height;
@@ -98,6 +101,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="targetWidth">The target width</param>
         /// <param name="targetHeight">The target height</param>
         /// <returns>The bytes of the resulting JPEG, or NULL if the original is corrupt or too large.</returns>
+        [CanBeNull]
         public static byte[] Downscale_Clip_ConvertToJpeg(byte[] origImageData, int targetWidth, int targetHeight)
         {
             using (var uploadedImage = ToImage(origImageData)) {
@@ -116,7 +120,8 @@ namespace ProgressOnderwijsUtils
         }
 
         const int MAX_IMAGE_DIMENSION = 10000; //10 000 by 10 000 is quite insane ;-)
-        public static Image ToImage(byte[] arr) => Image.FromStream(new MemoryStream(arr), true, true);
+        [NotNull]
+        public static Image ToImage([NotNull] byte[] arr) => Image.FromStream(new MemoryStream(arr), true, true);
 
         /// <summary>
         /// Given a width and a height, and a aspect ratio, computes the clipping rectangle fitting within that width and height but of the right aspect ratio.
@@ -140,7 +145,7 @@ namespace ProgressOnderwijsUtils
             return new Rectangle(clipX, clipY, clipWidth, clipHeight);
         }
 
-        public static void SaveImageAsJpeg(Image image, Stream outputStream, int? quality = null)
+        public static void SaveImageAsJpeg([NotNull] Image image, [NotNull] Stream outputStream, int? quality = null)
         {
             var jpgInfo = ImageCodecInfo.GetImageEncoders().First(codecInfo => codecInfo.MimeType == "image/jpeg");
             using (var encParams = new EncoderParameters(1)) {

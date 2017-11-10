@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -20,7 +21,7 @@ namespace ProgressOnderwijsUtils
         public static DistinctArray<T> FromDistinct(IEnumerable<T> items)
             => FromDistinct(items, EqualityComparer<T>.Default);
 
-        public static DistinctArray<T> FromDistinct(IEnumerable<T> items, IEqualityComparer<T> comparer)
+        public static DistinctArray<T> FromDistinct([NotNull] IEnumerable<T> items, IEqualityComparer<T> comparer)
         {
             if (items.ContainsDuplicates(comparer)) {
                 throw new ArgumentException("items are not distinct");
@@ -34,7 +35,7 @@ namespace ProgressOnderwijsUtils
         public static DistinctArray<T> FromPossiblyNotDistinct(IEnumerable<T> items)
             => FromPossiblyNotDistinct(items, EqualityComparer<T>.Default);
 
-        public static DistinctArray<T> FromPossiblyNotDistinct(IEnumerable<T> items, IEqualityComparer<T> comparer)
+        public static DistinctArray<T> FromPossiblyNotDistinct([NotNull] IEnumerable<T> items, IEqualityComparer<T> comparer)
         {
             return new DistinctArray<T> {
                 items = items.Distinct(comparer).ToArray()

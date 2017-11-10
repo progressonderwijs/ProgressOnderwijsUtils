@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
         ColumnSort[] DirectAcessColumns => sortColumns ?? EmptyOrder;
         public static OrderByColumns Empty => default(OrderByColumns);
 
-        public OrderByColumns(IEnumerable<ColumnSort> order)
+        public OrderByColumns([NotNull] IEnumerable<ColumnSort> order)
         {
             var columns = new ColumnSort[4];
             var idx = 0;
@@ -96,7 +96,8 @@ namespace ProgressOnderwijsUtils
                 : new OrderByColumns(DirectAcessColumns.Prepend(new ColumnSort(kolomnaam, SortDirection.Desc)).ToArray());
         }
 
-        static IEnumerable<ColumnSort> PrependFiltered(ColumnSort head, IEnumerable<ColumnSort> tail)
+        [NotNull]
+        static IEnumerable<ColumnSort> PrependFiltered(ColumnSort head, [NotNull] IEnumerable<ColumnSort> tail)
         {
             return new[] { head }.Concat(tail.Where(sc => sc.ColumnName != head.ColumnName));
         }

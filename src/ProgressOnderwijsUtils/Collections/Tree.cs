@@ -13,24 +13,30 @@ namespace ProgressOnderwijsUtils.Collections
 
     public static class Tree
     {
+        [NotNull]
         [Pure]
         public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children) => new Tree<T>(value, children);
 
+        [NotNull]
         [Pure]
         public static Tree<T> Node<T>(T value, Tree<T> a) => new Tree<T>(value, new[] { a, });
 
+        [NotNull]
         [Pure]
         public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b) => new Tree<T>(value, new[] { a, b });
 
+        [NotNull]
         [Pure]
         [CodeThatsOnlyUsedForTests]
         public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c) => new Tree<T>(value, new[] { a, b, c });
 
         // ReSharper disable MethodOverloadWithOptionalParameter
+        [NotNull]
         [Pure]
         public static Tree<T> Node<T>(T value, params Tree<T>[] kids) => new Tree<T>(value, kids);
 
         // ReSharper restore MethodOverloadWithOptionalParameter
+        [NotNull]
         [Pure]
         public static Tree<T> Node<T>(T value) => new Tree<T>(value, null);
 
@@ -40,6 +46,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) => BuildRecursively(root, id => kidLookup.GetOrDefaultR(id));
 
+        [NotNull]
         [Pure]
         [CodeThatsOnlyUsedForTests]
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) => new Tree<T>.Comparer(valueComparer);
@@ -87,7 +94,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         /// <param name="value">The value of this node.</param>
         /// <param name="children">The children of this node, (null is allowed and means none).</param>
-        public Tree(T value, IEnumerable<Tree<T>> children)
+        public Tree(T value, [CanBeNull] IEnumerable<Tree<T>> children)
             : this(value, children == null ? null : children.ToArray()) { }
 
         /// <summary>
@@ -96,7 +103,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         /// <param name="value">The value of this node.</param>
         /// <param name="children">The children of this node, (null is allowed and means none).</param>
-        public Tree(T value, Tree<T>[] children)
+        public Tree(T value, [CanBeNull] Tree<T>[] children)
         {
             nodeValue = value;
             kidArray = children ?? Array.Empty<Tree<T>>();
@@ -177,8 +184,9 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public override string ToString() => "TREE:\n" + ToString("");
 
+        [NotNull]
         [Pure]
-        string ToString(string indent)
+        string ToString([NotNull] string indent)
         {
             if (indent.Length > 80) {
                 return "<<TOO DEEP>>";

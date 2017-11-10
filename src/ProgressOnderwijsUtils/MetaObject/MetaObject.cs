@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
     public static class MetaObject
     {
         [Pure]
-        public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) => GetCache(metaobj.GetType());
+        public static IMetaPropCache<IMetaProperty> GetMetaProperties([NotNull] this IMetaObject metaobj) => GetCache(metaobj.GetType());
 
         // ReSharper disable once UnusedParameter.Global
         [Pure]
@@ -62,8 +62,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [NotNull]
         [Pure]
-        public static MemberInfo GetMemberInfo<TObject, TProperty>(Expression<Func<TObject, TProperty>> property)
+        public static MemberInfo GetMemberInfo<TObject, TProperty>([NotNull] Expression<Func<TObject, TProperty>> property)
         {
             var bodyExpr = property.Body;
 
@@ -121,7 +122,7 @@ namespace ProgressOnderwijsUtils
         static IMetaPropCache<IMetaProperty> GetCache(Type t) => (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
 
         [Pure]
-        public static ParameterizedSql SqlColumnName(this IMetaProperty mp)
+        public static ParameterizedSql SqlColumnName([NotNull] this IMetaProperty mp)
         {
             return SQL($@"[{ParameterizedSql.CreateDynamic(mp.Name)}]");
         }

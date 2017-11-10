@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -11,7 +12,7 @@ namespace ProgressOnderwijsUtils
             paramArgs.Value = EquatableValue == CurrentTimeToken.Instance ? DateTime.Now : EquatableValue;
         }
 
-        public static void AppendScalarParameter<TCommandFactory>(ref TCommandFactory factory, object o)
+        public static void AppendScalarParameter<TCommandFactory>(ref TCommandFactory factory, [CanBeNull] object o)
             where TCommandFactory : struct, ICommandFactory
         {
             var param = new QueryScalarParameterComponent { EquatableValue = o ?? DBNull.Value };
