@@ -29,6 +29,7 @@ namespace ProgressOnderwijsUtilsTests
 
         class SampleBase : ArrayList { }
 
+        // ReSharper disable once UnusedTypeParameter
         class Sample<T> : SampleBase { }
 
         class SampleX<T> : Sample<T> { }
