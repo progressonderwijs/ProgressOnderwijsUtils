@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
     public static class ParameterizedSqlObjectMapper
     {
         [MustUseReturnValue]
-        public static T ExecuteQuery<T>(ParameterizedSql sql, SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, [NotNull] Func<SqlCommand, T> action)
+        public static T ExecuteQuery<T>(ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, [NotNull] Func<SqlCommand, T> action)
         {
             using (var cmd = sql.CreateSqlCommand(commandCreationContext))
                 try {
@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="qCommandCreationContext">The database connection</param>
         [MustUseReturnValue]
         [NotNull]
-        public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
+        public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
         {
             using (var reusableCmd = q.CreateSqlCommand(qCommandCreationContext)) {
                 var cmd = reusableCmd.Command;

@@ -1,4 +1,6 @@
-﻿namespace MicroOrmBench
+﻿using JetBrains.Annotations;
+
+namespace MicroOrmBench
 {
     static class Program
     {
@@ -10,7 +12,7 @@
             RunCurrentBenchmarks(benchmarker);
         }
 
-        static void RunCurrentBenchmarks(Benchmarker benchmarker)
+        static void RunCurrentBenchmarks([NotNull] Benchmarker benchmarker)
         {
             //HandrolledAdoNetExecutor.RunQuery(benchmarker);
             //DapperExecutor.RunQuery(benchmarker);

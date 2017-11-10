@@ -17,6 +17,7 @@ namespace ProgressOnderwijsUtils.Html
             return fastStringBuilder.FinishBuilding();
         }
 
+        [NotNull]
         public static string ToCSharp([NotNull] this IConvertibleToFragment rootElem) => rootElem.AsFragment().ToCSharp();
 
         [NotNull]

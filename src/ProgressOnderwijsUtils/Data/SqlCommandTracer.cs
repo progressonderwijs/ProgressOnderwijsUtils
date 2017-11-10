@@ -72,6 +72,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [NotNull]
         static string CommandParamString([NotNull] SqlCommand sqlCommand)
             => sqlCommand.Parameters.Cast<SqlParameter>().Select(DeclareParameter).JoinStrings();
 
@@ -176,6 +177,7 @@ namespace ProgressOnderwijsUtils
                 return StartCommandTimer(() => commandText);
             }
 
+            [NotNull]
             public IDisposable StartCommandTimer([NotNull] SqlCommand sqlCommand) => StartCommandTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
 
             public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)

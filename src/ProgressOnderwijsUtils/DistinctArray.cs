@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class DistinctArray
     {
-        public static DistinctArray<T> FromDistinct<T>(IEnumerable<T> items)
+        public static DistinctArray<T> FromDistinct<T>([NotNull] IEnumerable<T> items)
             => DistinctArray<T>.FromDistinct(items);
     }
 

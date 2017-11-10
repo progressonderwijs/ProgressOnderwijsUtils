@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return null;
         }
 
-        public static SsoAttributes GetAttributes(XElement assertion, X509Certificate2 certificate)
+        public static SsoAttributes GetAttributes(XElement assertion, [NotNull] X509Certificate2 certificate)
         {
             LOG.Debug(() => $"GetAttributes(assertion='{assertion}')");
 

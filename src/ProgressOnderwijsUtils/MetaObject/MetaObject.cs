@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         [Pure]
         [CodeThatsOnlyUsedForTests]
-        public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
+        public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>([NotNull] Expression<Func<TMetaObject, T>> propertyExpression)
             where TMetaObject : IMetaObject
         {
             return MetaInfo<TMetaObject>.Instance.GetByExpression(propertyExpression);

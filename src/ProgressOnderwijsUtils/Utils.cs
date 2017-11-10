@@ -104,6 +104,7 @@ namespace ProgressOnderwijsUtils
             other = tmp;
         }
 
+        [NotNull]
         public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
         {
             return TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
@@ -120,6 +121,7 @@ namespace ProgressOnderwijsUtils
             return set;
         }
 
+        [NotNull]
         public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
         {
             return TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);

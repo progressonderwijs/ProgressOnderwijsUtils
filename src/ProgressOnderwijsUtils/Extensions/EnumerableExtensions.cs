@@ -230,7 +230,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>(this IEnumerable<T> items)
+        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items)
             => DistinctArray<T>.FromPossiblyNotDistinct(items);
 
         [Pure]
@@ -238,7 +238,7 @@ namespace ProgressOnderwijsUtils
             => DistinctArray<T>.FromPossiblyNotDistinct(items, comparer);
 
         [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>(this IEnumerable<T> items)
+        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items)
             => DistinctArray<T>.FromDistinct(items);
 
         [Pure]
