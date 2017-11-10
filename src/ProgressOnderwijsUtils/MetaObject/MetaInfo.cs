@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -52,7 +53,8 @@ namespace ProgressOnderwijsUtils
             return metaProperties;
         }
 
-        public IMetaProperty<T> GetByExpression<TProp>(Expression<Func<T, TProp>> propertyExpression)
+        [NotNull]
+        public IMetaProperty<T> GetByExpression<TProp>([NotNull] Expression<Func<T, TProp>> propertyExpression)
         {
             var memberInfo = MetaObject.GetMemberInfo(propertyExpression);
             var retval = MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo); //TODO:get by name.

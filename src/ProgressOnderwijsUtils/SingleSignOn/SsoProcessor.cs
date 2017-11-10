@@ -9,6 +9,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
+using JetBrains.Annotations;
 using log4net;
 using Microsoft.Extensions.Caching.Memory;
 using ProgressOnderwijsUtils.Log4Net;
@@ -23,18 +24,21 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
         static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
+        [NotNull]
         public static string GetRedirectUrl(AuthnRequest request)
         {
             var qs = CreateQueryString(request, null, request.Issuer.certificate);
             return CreateUrl(request, qs);
         }
 
-        public static XElement Response(string samlResponse)
+        [CanBeNull]
+        public static XElement Response([CanBeNull] string samlResponse)
         {
             LOG.Debug(() => "Response");
             return samlResponse != null ? XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(samlResponse)), LoadOptions.PreserveWhitespace).Root : null;
         }
 
+        [CanBeNull]
         public static XElement GetAssertion(XElement response, X509Certificate2 certificate)
         {
             LOG.Debug(() => $"GetAssertion(response='{response}')");
@@ -49,7 +53,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return null;
         }
 
-        public static SsoAttributes GetAttributes(XElement assertion, X509Certificate2 certificate)
+        public static SsoAttributes GetAttributes(XElement assertion, [NotNull] X509Certificate2 certificate)
         {
             LOG.Debug(() => $"GetAttributes(assertion='{assertion}')");
 
@@ -64,7 +68,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             };
         }
 
-        static string GetInResponseTo(XElement assertion)
+        [CanBeNull]
+        static string GetInResponseTo([NotNull] XElement assertion)
         {
             var rawInResponseTo = (string)assertion
                 .Element(SamlNamespaces.SAML_NS + "Subject")
@@ -74,7 +79,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return XmlConvert.DecodeName(rawInResponseTo);
         }
 
-        static string CreateUrl(AuthnRequest req, NameValueCollection qs)
+        [NotNull]
+        static string CreateUrl(AuthnRequest req, [NotNull] NameValueCollection qs)
         {
             var builder = new UriBuilder(req.Destination);
             if (string.IsNullOrEmpty(builder.Query)) {
@@ -85,7 +91,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return builder.ToString();
         }
 
-        static NameValueCollection CreateQueryString(AuthnRequest req, string relayState, X509Certificate2 cer)
+        [NotNull]
+        static NameValueCollection CreateQueryString(AuthnRequest req, [CanBeNull] string relayState, [NotNull] X509Certificate2 cer)
         {
             var result = new NameValueCollection();
             result.Add("SAMLRequest", req.Encode());
@@ -97,14 +104,16 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return result;
         }
 
-        static string Signature(NameValueCollection qs, AsymmetricAlgorithm key)
+        [NotNull]
+        static string Signature([NotNull] NameValueCollection qs, AsymmetricAlgorithm key)
         {
             var data = Encoding.UTF8.GetBytes(ToQueryString(qs));
             var result = ((RSACryptoServiceProvider)key).SignData(data, new SHA1CryptoServiceProvider());
             return Convert.ToBase64String(result);
         }
 
-        static string ToQueryString(NameValueCollection qs)
+        [NotNull]
+        static string ToQueryString([NotNull] NameValueCollection qs)
         {
             var result = new StringBuilder();
             foreach (string key in qs.Keys) {
@@ -116,7 +125,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return result.ToString();
         }
 
-        static string GetAttribute(XElement assertion, string key)
+        [NotNull]
+        static string GetAttribute([NotNull] XElement assertion, string key)
         {
             var result = GetNullableAttribute(assertion, key);
             if (result == null) {
@@ -125,14 +135,16 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return result;
         }
 
-        static string GetNullableAttribute(XElement assertion, string key)
+        [CanBeNull]
+        static string GetNullableAttribute([NotNull] XElement assertion, string key)
         {
             return (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 where attribute.Parent.Attribute("Name").Value == key
                 select attribute.Value).SingleOrDefault();
         }
 
-        static string[] GetAttributes(XElement assertion, string key)
+        [NotNull]
+        static string[] GetAttributes([NotNull] XElement assertion, string key)
         {
             return (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 where attribute.Parent.Attribute("Name").Value == key
@@ -157,7 +169,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             });
         }
 
-        static XmlDocument DownloadMetaData(string uri)
+        [NotNull]
+        static XmlDocument DownloadMetaData([NotNull] string uri)
         {
             var document = new XmlDocument {
                 PreserveWhitespace = true,
@@ -166,7 +179,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return document;
         }
 
-        static Saml20MetaData ValidatedSaml20MetaData(IdentityProviderConfig idp, XmlDocument document)
+        [NotNull]
+        static Saml20MetaData ValidatedSaml20MetaData(IdentityProviderConfig idp, [NotNull] XmlDocument document)
         {
             ValidateSignature(document, idp.certificate);
             var xml = XElement.Parse(document.OuterXml, LoadOptions.PreserveWhitespace);
@@ -193,7 +207,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             }
         }
 
-        static void Validate(XElement assertion, X509Certificate2 cer)
+        static void Validate([NotNull] XElement assertion, [NotNull] X509Certificate2 cer)
         {
             ValidateSchema(assertion);
 
@@ -206,7 +220,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             ValidateSignature(doc, cer);
         }
 
-        static void ValidateSignature(XmlDocument document, X509Certificate2 cer)
+        static void ValidateSignature([NotNull] XmlDocument document, [NotNull] X509Certificate2 cer)
         {
             var dsig = new SignedXml(document);
             dsig.LoadXml(document.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());

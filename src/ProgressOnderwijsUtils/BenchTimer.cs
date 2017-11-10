@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -21,7 +22,7 @@ namespace ProgressOnderwijsUtils
             return bestTime;
         }
 
-        public static TimeSpan Time(Action a)
+        public static TimeSpan Time([NotNull] Action a)
         {
             var timer = Stopwatch.StartNew();
             a();

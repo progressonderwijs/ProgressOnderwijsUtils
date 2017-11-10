@@ -16,6 +16,7 @@ namespace ProgressOnderwijsUtils
         readonly SortDirection direction;
         public string ColumnName => column;
         public SortDirection SortDirection => direction;
+        [NotNull]
         public string SqlSortString() => column + " " + direction;
         public override string ToString() => "[" + column + " " + direction + "]";
 

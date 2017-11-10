@@ -283,7 +283,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static Maybe<TOk[], TError[]> WhenAllOk<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
+        public static Maybe<TOk[], TError[]> WhenAllOk<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             var okValues = new List<TOk>();
             var errValues = new List<TError>();

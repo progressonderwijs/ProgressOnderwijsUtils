@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Xml.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using Xunit;
 using ProgressOnderwijsUtils;
 
@@ -160,7 +161,7 @@ namespace ProgressOnderwijsUtilsTests
             AssertCompressionCompressesAndRoundTrips(docString, null);
         }
 
-        static void AssertCompressionCompressesAndRoundTrips(string docString, byte[] dictionary)
+        static void AssertCompressionCompressesAndRoundTrips([NotNull] string docString, byte[] dictionary)
         {
             var doc = XDocument.Parse(docString);
             var compressedBytes = XmlCompression.ToCompressedUtf8(doc, dictionary);

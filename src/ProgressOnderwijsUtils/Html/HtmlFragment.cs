@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes) => HtmlElement(new CustomHtmlElement(tagName, attributes, childNodes));
 
         [Pure]
-        public static HtmlFragment Fragment(params HtmlFragment[] htmlEls)
+        public static HtmlFragment Fragment([CanBeNull] params HtmlFragment[] htmlEls)
             => htmlEls == null || htmlEls.Length == 0
                 ? Empty
                 : htmlEls.Length == 1
@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils.Html
                     : new HtmlFragment(htmlEls);
 
         [Pure]
-        public static HtmlFragment Fragment<T>(IEnumerable<T> htmlEls)
+        public static HtmlFragment Fragment<T>([NotNull] IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
             => Fragment(htmlEls.Select(el => el.AsFragment()).Where(f => !f.IsEmpty).ToArray());
 

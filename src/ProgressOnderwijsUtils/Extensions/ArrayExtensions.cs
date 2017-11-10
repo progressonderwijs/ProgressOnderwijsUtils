@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="defaultValue">The value to get if the index is out of range.</param>
         /// <returns>The value at the index, or the default if the array does encompass that index.</returns>
         [Pure]
-        public static TValue GetOrDefault<TValue>(this TValue[] array, int index, TValue defaultValue)
+        public static TValue GetOrDefault<TValue>([CanBeNull] this TValue[] array, int index, TValue defaultValue)
         {
             return array != null && index < array.Length && index >= 0 ? array[index] : defaultValue;
         }
@@ -22,8 +22,9 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Return an empty array if it's null
         /// </summary>
+        [NotNull]
         [Pure]
-        public static T[] EmptyIfNull<T>(this T[] array)
+        public static T[] EmptyIfNull<T>([CanBeNull] this T[] array)
         {
             return array ?? Array.Empty<T>();
         }
@@ -31,8 +32,9 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Like Enumerable.Select, but faster due to specialization for arrays.
         /// </summary>
+        [NotNull]
         [Pure]
-        public static TR[] ArraySelect<T, TR>(this T[] array, Func<T, TR> mappingFunction)
+        public static TR[] ArraySelect<T, TR>([NotNull] this T[] array, Func<T, TR> mappingFunction)
         {
             var output = new TR[array.Length];
             for (var i = 0; i < array.Length; ++i) {
@@ -41,8 +43,9 @@ namespace ProgressOnderwijsUtils
             return output;
         }
 
+        [NotNull]
         [Pure]
-        public static TR[] ArraySelect<T, TR>(this IReadOnlyList<T> array, Func<T, TR> mappingFunction)
+        public static TR[] ArraySelect<T, TR>([NotNull] this IReadOnlyList<T> array, Func<T, TR> mappingFunction)
         {
             var output = new TR[array.Count];
             for (var i = 0; i < output.Length; ++i) {
@@ -51,7 +54,7 @@ namespace ProgressOnderwijsUtils
             return output;
         }
 
-        public static T[] AppendArrays<T>(this T[] beginning, T[] end)
+        public static T[] AppendArrays<T>([CanBeNull] this T[] beginning, T[] end)
         {
             if (beginning == null) {
                 return end;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -10,7 +11,8 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="strings">string sequence</param>
         /// <returns>a string</returns>
-        public static string JoinStrings(this IEnumerable<string> strings) => JoinStrings(strings, "");
+        [NotNull]
+        public static string JoinStrings([NotNull] this IEnumerable<string> strings) => JoinStrings(strings, "");
 
         //don't use optional params to allow usage in expression trees
         /// <summary>
@@ -19,10 +21,12 @@ namespace ProgressOnderwijsUtils
         /// <param name="strings">string sequence</param>
         /// <param name="separator">separator string</param>
         /// <returns>a string</returns>
-        public static string JoinStrings(this IEnumerable<string> strings, string separator)
+        [NotNull]
+        public static string JoinStrings([NotNull] this IEnumerable<string> strings, string separator)
             => string.Join(separator, strings);
 
-        public static string JoinStringsLimitLength(this IReadOnlyCollection<string> strings, string separator,
+        [NotNull]
+        public static string JoinStringsLimitLength([NotNull] this IReadOnlyCollection<string> strings, string separator,
             int maxCount)
         {
             return string.Join(separator, strings.Take(maxCount)) + (strings.Count > maxCount ? separator + "..." : "");

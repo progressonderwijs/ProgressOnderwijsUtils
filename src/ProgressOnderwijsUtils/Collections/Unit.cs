@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
@@ -9,7 +10,7 @@ namespace ProgressOnderwijsUtils.Collections
     {
         public static Unit Value => default(Unit);
 
-        public static Unit SideEffect(Action action)
+        public static Unit SideEffect([NotNull] Action action)
         {
             action();
             return Value;

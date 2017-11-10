@@ -76,24 +76,28 @@ namespace ProgressOnderwijsUtils.Collections
         /// <summary>
         /// Creates a succesful Maybe that stores the provided value.
         /// </summary>
+        [NotNull]
         [Pure]
         public static Maybe_Ok<T> Ok<T>(T val) => new Maybe_Ok<T>(val);
 
         /// <summary>
         /// Creates a succesful Maybe value without a value.
         /// </summary>
+        [NotNull]
         [Pure]
         public static Maybe_Ok<Unit> Ok() => new Maybe_Ok<Unit>(Unit.Value);
 
         /// <summary>
         /// Create a failed maybe with an error state describing a failed operation.
         /// </summary>
+        [NotNull]
         [Pure]
         public static Maybe_Error<TError> Error<TError>(TError error) => new Maybe_Error<TError>(error);
 
         /// <summary>
         /// Create a failed maybe without any additional information about the error.
         /// </summary>
+        [NotNull]
         [Pure]
         public static Maybe_Error<Unit> Error() => new Maybe_Error<Unit>(Unit.Value);
 
@@ -107,7 +111,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// Converts a error to a Maybe&lt;Unit, TError&gt;.  A null translatable represents success, any other value the error message to display.
         /// </summary>
         [Pure]
-        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>(TError val)
+        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError val)
             where TError : class
             => Either(val == null, Unit.Value, val);
 

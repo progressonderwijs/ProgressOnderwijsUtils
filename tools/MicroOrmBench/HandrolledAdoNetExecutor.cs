@@ -6,13 +6,14 @@ using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Data.SQLite;
 using System.Runtime.CompilerServices;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 
 namespace MicroOrmBench
 {
     static class HandrolledAdoNetExecutor
     {
-        public static void RunQuery(Benchmarker benchmarker)
+        public static void RunQuery([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSQLite("Raw (sqlite, cached)", ExecuteSqliteQueryCached);
             benchmarker.BenchSQLite("Raw (sqlite)", ExecuteSqliteQuery);
@@ -20,7 +21,7 @@ namespace MicroOrmBench
             benchmarker.BenchSqlServer("Raw (SqlDbTypes)", ExecuteQuery2);
         }
 
-        static int ExecuteQuery(SqlCommandCreationContext ctx, int rows)
+        static int ExecuteQuery([NotNull] SqlCommandCreationContext ctx, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = ExampleObject.RawQueryString;
@@ -123,7 +124,7 @@ namespace MicroOrmBench
 
         static readonly ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>> connCmdCache = new ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>>();
 
-        static int ExecuteSqliteQueryCached(SQLiteConnection ctx, int rows)
+        static int ExecuteSqliteQueryCached([NotNull] SQLiteConnection ctx, int rows)
         {
             if (!connCmdCache.TryGetValue(ctx, out var cmdCache)) {
                 cmdCache = connCmdCache.GetOrAdd(ctx, conn => {
@@ -191,7 +192,7 @@ namespace MicroOrmBench
         }
 
         // ReSharper disable once UnusedMember.Local
-        static int ExecuteQuery2(SqlCommandCreationContext ctx, int rows)
+        static int ExecuteQuery2([NotNull] SqlCommandCreationContext ctx, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = ExampleObject.RawQueryString;
@@ -247,16 +248,17 @@ namespace MicroOrmBench
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         static bool? ToNullableBool(this SqlBoolean num) => num.IsNull ? default(bool?) : num.Value;
 
+        [CanBeNull]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         // ReSharper disable once UnusedMember.Local
         static string ToNullableString(this SqlString str) => str.IsNull ? default(string) : str.Value;
 
-        public static void RunWideQuery(Benchmarker benchmarker)
+        public static void RunWideQuery([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("Raw (26-col)", ExecuteWideQuery);
         }
 
-        static int ExecuteWideQuery(SqlCommandCreationContext ctx, int rows)
+        static int ExecuteWideQuery([NotNull] SqlCommandCreationContext ctx, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = WideExampleObject.RawQueryString;

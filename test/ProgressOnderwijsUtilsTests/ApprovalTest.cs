@@ -4,6 +4,7 @@ using ApprovalTests.Approvers;
 using ApprovalTests.Core;
 using ApprovalTests.Reporters;
 using ApprovalTests.Writers;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtilsTests
 {
@@ -15,7 +16,7 @@ namespace ProgressOnderwijsUtilsTests
             public string Name { get; set; }
         }
 
-        public static void Verify(string text, object IGNORE_PAST_THIS = null, [CallerFilePath] string filepath = null, [CallerMemberName] string membername = null)
+        public static void Verify(string text, [CanBeNull] object IGNORE_PAST_THIS = null, [CanBeNull] [CallerFilePath] string filepath = null, [CanBeNull] [CallerMemberName] string membername = null)
         {
             var writer = WriterFactory.CreateTextWriter(text);
             var filename = Path.GetFileNameWithoutExtension(filepath);

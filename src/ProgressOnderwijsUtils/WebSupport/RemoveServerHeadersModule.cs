@@ -1,4 +1,5 @@
 ﻿using System.Web;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.WebSupport
 {
@@ -9,7 +10,7 @@ namespace ProgressOnderwijsUtils.WebSupport
             app.BeginRequest += (o, args) => RemoveIdentifyingHeaders((HttpApplication)o);
         }
 
-        static void RemoveIdentifyingHeaders(HttpApplication sender)
+        static void RemoveIdentifyingHeaders([NotNull] HttpApplication sender)
         {
             var context = sender.Context;
             var responseHeaders = context.Response.Headers;

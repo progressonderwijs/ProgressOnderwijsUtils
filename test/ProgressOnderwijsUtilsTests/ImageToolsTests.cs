@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 using Xunit;
 
@@ -16,6 +17,7 @@ namespace ProgressOnderwijsUtilsTests
     
     public class ImageToolsTests
     {
+        [NotNull]
         static Bitmap GetRainbow()
         {
             return (Bitmap)Image.FromStream(
@@ -24,7 +26,7 @@ namespace ProgressOnderwijsUtilsTests
                 );
         }
 
-        static void AssertImagesSimilar(Bitmap img1, Bitmap img2)
+        static void AssertImagesSimilar([NotNull] Bitmap img1, Bitmap img2)
         {
             PAssert.That(() => img1.Size == img2.Size);
 

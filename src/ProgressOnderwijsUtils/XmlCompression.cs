@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using JetBrains.Annotations;
 using ZlibWithDictionary;
 
 namespace ProgressOnderwijsUtils
@@ -11,8 +13,11 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Removes unused namespaces and makes sure the XMLSchema and XMLSchema-instance namespaces are mapped to the conventional prefix.
         /// </summary>
-        public static void CleanupNamespaces(XDocument doc)
+        public static void CleanupNamespaces([NotNull] XDocument doc)
         {
+            if (doc.Root == null) {
+                throw new InvalidOperationException("empty documents not supported");
+            }
             var usedNamespaces = doc.Descendants().Select(el => el.Name.Namespace).ToSet();
             usedNamespaces.UnionWith(doc.Descendants().Attributes().Select(attr => attr.Name.Namespace));
 
@@ -38,7 +43,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static void RemoveComments(XDocument doc)
+        public static void RemoveComments([NotNull] XDocument doc)
         {
             foreach (var comment in doc.DescendantNodes().OfType<XComment>().ToArray()) {
                 comment.Remove();
@@ -55,7 +60,8 @@ namespace ProgressOnderwijsUtils
             OmitXmlDeclaration = true,
         };
 
-        public static byte[] ToUtf8(XDocument doc)
+        [NotNull]
+        public static byte[] ToUtf8([NotNull] XDocument doc)
         {
             var sb = new StringBuilder();
             using (var xw = XmlWriter.Create(sb, xmlWriterSettings))
@@ -64,7 +70,8 @@ namespace ProgressOnderwijsUtils
             return Encoding.UTF8.GetBytes(sb.ToString());
         }
 
-        public static XDocument FromUtf8(byte[] utf8EncodedXml)
+        [NotNull]
+        public static XDocument FromUtf8([NotNull] byte[] utf8EncodedXml)
             => XDocument.Parse(Encoding.UTF8.GetString(utf8EncodedXml));
 
         /// <summary>
@@ -78,7 +85,7 @@ namespace ProgressOnderwijsUtils
         /// A null dictionary is permitted, which means "compress without dictionary".
         /// </param>
         /// <returns>The deflate-compressed document.</returns>
-        public static byte[] ToCompressedUtf8(XDocument doc, byte[] dictionary)
+        public static byte[] ToCompressedUtf8([NotNull] XDocument doc, byte[] dictionary)
         {
             CleanupNamespaces(doc);
             RemoveComments(doc);
@@ -90,6 +97,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Loads an XDocument that was saved with 'SaveUsingDeflateWithDictionary'.  You must provide the same dictionary used during compression. 
         /// </summary>
+        [NotNull]
         public static XDocument FromCompressedUtf8(byte[] compressedBytes, byte[] dictionary)
         {
             var bytes = DeflateCompression.ZlibDecompressWithDictionary(compressedBytes, dictionary);

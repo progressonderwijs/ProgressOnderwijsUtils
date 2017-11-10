@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using Xunit;
 using ProgressOnderwijsUtils;
 
@@ -10,6 +11,7 @@ namespace ProgressOnderwijsUtilsTests
     {
         public readonly string Name;
         readonly IReadOnlyList<string> Dependencies;
+        [NotNull]
         public IEnumerable<DagNode> Children(Dictionary<string, DagNode> lookup) => Dependencies.Select(name => lookup.GetOrDefault(name, new DagNode(name)));
 
         public DagNode(string name, params string[] dependencies)
