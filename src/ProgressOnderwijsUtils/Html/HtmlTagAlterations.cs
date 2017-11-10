@@ -7,10 +7,10 @@ namespace ProgressOnderwijsUtils.Html
     public static class HtmlTagAlterations
     {
         public static IHtmlTag ReplaceAttributes([NotNull] IHtmlTag tag, HtmlAttributes attributes) => tag.ApplyChange(new HtmlTagAtributeAlteration(attributes));
-        public static IHtmlTag ReplaceAttributes([NotNull] IHtmlTag tag, IEnumerable<HtmlAttribute> attributes) => tag.ApplyChange(new HtmlTagAtributeAlteration(attributes.ToHtmlAttributes()));
+        public static IHtmlTag ReplaceAttributes([NotNull] IHtmlTag tag, [NotNull] IEnumerable<HtmlAttribute> attributes) => tag.ApplyChange(new HtmlTagAtributeAlteration(attributes.ToHtmlAttributes()));
         public static IHtmlTagAllowingContent ReplaceContents([NotNull] IHtmlTagAllowingContent tag, HtmlFragment[] children) => (IHtmlTagAllowingContent)tag.ApplyChange(new HtmlTagContentAlteration(children));
 
-        public static IHtmlTag ReplaceAttributesAndContents(IHtmlTag tag, IEnumerable<HtmlAttribute> attributes, HtmlFragment[] children)
+        public static IHtmlTag ReplaceAttributesAndContents([NotNull] IHtmlTag tag, [NotNull] IEnumerable<HtmlAttribute> attributes, HtmlFragment[] children)
             => ReplaceAttributesAndContents(tag, attributes.ToHtmlAttributes(), children);
 
         public static IHtmlTag ReplaceAttributesAndContents([NotNull] IHtmlTag tag, HtmlAttributes attributes, [CanBeNull] HtmlFragment[] children)

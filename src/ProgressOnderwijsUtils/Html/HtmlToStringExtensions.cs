@@ -8,6 +8,7 @@ namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlToStringExtensions
     {
+        [NotNull]
         public static string SerializeToString([NotNull] this IConvertibleToFragment rootElem)
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
@@ -18,6 +19,7 @@ namespace ProgressOnderwijsUtils.Html
 
         public static string ToCSharp([NotNull] this IConvertibleToFragment rootElem) => rootElem.AsFragment().ToCSharp();
 
+        [NotNull]
         public static string SerializeToStringWithoutDoctype([NotNull] this IConvertibleToFragment rootElem)
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);

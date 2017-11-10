@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="targetHeight">The target height</param>
         /// <returns>The bytes of the resulting JPEG, or NULL if the original is corrupt or too large.</returns>
         [CanBeNull]
-        public static byte[] Downscale_Clip_ConvertToJpeg(byte[] origImageData, int targetWidth, int targetHeight)
+        public static byte[] Downscale_Clip_ConvertToJpeg([NotNull] byte[] origImageData, int targetWidth, int targetHeight)
         {
             using (var uploadedImage = ToImage(origImageData)) {
                 var oldHeight = uploadedImage.Height;
@@ -154,7 +154,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static void SaveResizedImage(byte[] pasfoto, int targetWidth, int targetHeight, Stream outputStream)
+        public static void SaveResizedImage([NotNull] byte[] pasfoto, int targetWidth, int targetHeight, [NotNull] Stream outputStream)
         {
             using (var fromDatabase = ToImage(pasfoto))
                 if (fromDatabase.Height == targetHeight) {

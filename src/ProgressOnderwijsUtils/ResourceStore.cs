@@ -25,6 +25,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [CanBeNull]
         public Stream GetResource(string filename) => typeof(T).GetResource(filename);
 
         [ItemNotNull]

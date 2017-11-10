@@ -7,6 +7,7 @@ namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlToCSharp
     {
+        [NotNull]
         public static string ToCSharp(this HtmlFragment fragment)
         {
             var builder = FastShortStringBuilder.Create();

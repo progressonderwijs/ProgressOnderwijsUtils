@@ -24,6 +24,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
         static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
+        [NotNull]
         public static string GetRedirectUrl(AuthnRequest request)
         {
             var qs = CreateQueryString(request, null, request.Issuer.certificate);
@@ -37,6 +38,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return samlResponse != null ? XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(samlResponse)), LoadOptions.PreserveWhitespace).Root : null;
         }
 
+        [CanBeNull]
         public static XElement GetAssertion(XElement response, X509Certificate2 certificate)
         {
             LOG.Debug(() => $"GetAssertion(response='{response}')");
@@ -78,7 +80,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         [NotNull]
-        static string CreateUrl(AuthnRequest req, NameValueCollection qs)
+        static string CreateUrl(AuthnRequest req, [NotNull] NameValueCollection qs)
         {
             var builder = new UriBuilder(req.Destination);
             if (string.IsNullOrEmpty(builder.Query)) {
@@ -103,7 +105,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         [NotNull]
-        static string Signature(NameValueCollection qs, AsymmetricAlgorithm key)
+        static string Signature([NotNull] NameValueCollection qs, AsymmetricAlgorithm key)
         {
             var data = Encoding.UTF8.GetBytes(ToQueryString(qs));
             var result = ((RSACryptoServiceProvider)key).SignData(data, new SHA1CryptoServiceProvider());
@@ -124,7 +126,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         [NotNull]
-        static string GetAttribute(XElement assertion, string key)
+        static string GetAttribute([NotNull] XElement assertion, string key)
         {
             var result = GetNullableAttribute(assertion, key);
             if (result == null) {
@@ -205,7 +207,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             }
         }
 
-        static void Validate([NotNull] XElement assertion, X509Certificate2 cer)
+        static void Validate([NotNull] XElement assertion, [NotNull] X509Certificate2 cer)
         {
             ValidateSchema(assertion);
 

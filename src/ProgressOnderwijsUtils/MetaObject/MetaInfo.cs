@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public IMetaProperty<T> GetByExpression<TProp>(Expression<Func<T, TProp>> propertyExpression)
+        public IMetaProperty<T> GetByExpression<TProp>([NotNull] Expression<Func<T, TProp>> propertyExpression)
         {
             var memberInfo = MetaObject.GetMemberInfo(propertyExpression);
             var retval = MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo); //TODO:get by name.

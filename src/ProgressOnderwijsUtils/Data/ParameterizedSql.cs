@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
             => impl?.AppendTo(ref factory);
 
-        public ReusableCommand CreateSqlCommand(SqlCommandCreationContext conn)
+        public ReusableCommand CreateSqlCommand([NotNull] SqlCommandCreationContext conn)
         {
             var factory = CommandFactory.Create();
             impl?.AppendTo(ref factory);
@@ -76,7 +76,7 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSql Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]
-        public static ParameterizedSql TableParamDynamic(Array o) => SqlParameterComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
+        public static ParameterizedSql TableParamDynamic([NotNull] Array o) => SqlParameterComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
 
         /// <summary>
         /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -138,7 +138,7 @@ namespace ProgressOnderwijsUtils
     public static class SafeSql
     {
         [Pure]
-        public static ParameterizedSql SQL(FormattableString interpolatedQuery) => ParameterizedSqlFactory.InterpolationToQuery(interpolatedQuery);
+        public static ParameterizedSql SQL([NotNull] FormattableString interpolatedQuery) => ParameterizedSqlFactory.InterpolationToQuery(interpolatedQuery);
     }
 
     static class ParameterizedSqlFactory

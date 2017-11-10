@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils.Radius
         const int udpTimeoutMs = 1000;
 
         //see http://tools.ietf.org/html/rfc2138
-        public static RadiusAuthResults Authenticate(string serverHostname, byte[] sharedSecret, byte[] username, byte[] password, [NotNull] params RadiusAttribute[] extraAttributes)
+        public static RadiusAuthResults Authenticate(string serverHostname, [NotNull] byte[] sharedSecret, byte[] username, [NotNull] byte[] password, [NotNull] params RadiusAttribute[] extraAttributes)
         {
             byte requestCode = 1; //means "Access-Request"
             var secureRandom = new RNGCryptoServiceProvider();

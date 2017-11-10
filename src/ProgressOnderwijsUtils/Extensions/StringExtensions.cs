@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [NotNull]
         [Pure]
-        public static string NormalizeWhitespace(this string str) => str.CollapseWhitespace().Trim();
+        public static string NormalizeWhitespace([NotNull] this string str) => str.CollapseWhitespace().Trim();
 
         /// <summary>
         /// HTML-alike whitespace collapsing of this string. This method does not trim.

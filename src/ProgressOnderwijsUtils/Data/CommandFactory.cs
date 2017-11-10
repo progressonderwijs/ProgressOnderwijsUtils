@@ -95,6 +95,7 @@ namespace ProgressOnderwijsUtils
             return new ReusableCommand { Command = command, QueryTimer = timer };
         }
 
+        [NotNull]
         public string FinishBuilding_CommandTextOnly()
         {
             FreeParamsAndLookup();
@@ -146,7 +147,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public void AppendSql(string sql, int startIndex, int length) => queryText.AppendText(sql, startIndex, length);
+        public void AppendSql([NotNull] string sql, int startIndex, int length) => queryText.AppendText(sql, startIndex, length);
     }
 
     /// <summary>
@@ -196,8 +197,9 @@ namespace ProgressOnderwijsUtils
     {
         FastShortStringBuilder debugText;
         public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter => SqlCommandTracer.InsecureSqlDebugString(o.EquatableValue, true);
-        public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
+        public void AppendSql([NotNull] string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
+        [NotNull]
         public static string DebugTextFor([CanBeNull] ISqlComponent impl)
         {
             var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create() };
@@ -212,13 +214,14 @@ namespace ProgressOnderwijsUtils
         int argOffset;
         FastArrayBuilder<object> paramValues;
 
+        [NotNull]
         public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter
         {
             paramValues.Add(o.EquatableValue);
             return CommandFactory.IndexToParameterName(argOffset++);
         }
 
-        public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
+        public void AppendSql([NotNull] string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
         public static ParameterizedSqlEquatableKey EqualityKey([CanBeNull] ISqlComponent impl)
         {

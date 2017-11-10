@@ -20,6 +20,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject => MetaInfo<T>.Instance;
 
+        [NotNull]
         [Pure]
         [CodeThatsOnlyUsedForTests]
         public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
@@ -33,7 +34,7 @@ namespace ProgressOnderwijsUtils
         {
             [UsefulToKeep("library method for getting base-class metaproperty")]
             [Pure]
-            public static IReadonlyMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
+            public static IReadonlyMetaProperty<TMetaObject> Get<TParent, T>([NotNull] Expression<Func<TParent, T>> propertyExpression)
             {
                 var memberInfo = GetMemberInfo(propertyExpression);
                 if (typeof(TParent).IsClass || typeof(TParent) == typeof(TMetaObject)) {

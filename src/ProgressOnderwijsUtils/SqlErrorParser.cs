@@ -121,7 +121,8 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        public static ISqlErrorParseResult Parse(SqlError error)
+        [CanBeNull]
+        public static ISqlErrorParseResult Parse([NotNull] SqlError error)
             => TryParseKeyConstraintViolation(error)
                 ?? TryParseDuplicateKeyUniqueIndex(error)
                     ?? TryParseCannotInsertNull(error)

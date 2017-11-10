@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
 
         [CanBeNull]
-        static ITableValuedParameterFactory CreateTableValuedParameterFactory(Type enumerableType)
+        static ITableValuedParameterFactory CreateTableValuedParameterFactory([NotNull] Type enumerableType)
         {
             var elementType = TryGetNonAmbiguousEnumerableElementType(enumerableType);
             if (elementType == null) {
@@ -162,6 +162,7 @@ namespace ProgressOnderwijsUtils
                 this.sqlTableTypeName = sqlTableTypeName;
             }
 
+            [NotNull]
             public ISqlComponent CreateFromPlainValues(IEnumerable enumerable)
             {
                 return ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject);

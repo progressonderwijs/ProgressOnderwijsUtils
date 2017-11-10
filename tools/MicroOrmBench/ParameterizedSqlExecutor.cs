@@ -1,12 +1,13 @@
 using System.Linq;
 using Dapper;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 
 namespace MicroOrmBench
 {
     static class ParameterizedSqlExecutor
     {
-        public static void RunQuery(Benchmarker benchmarker)
+        public static void RunQuery([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("ParameterizedSql",
                 (ctx, rows) => ExampleObject.ParameterizedSqlForRows(rows)
@@ -15,7 +16,7 @@ namespace MicroOrmBench
                 ;
         }
 
-        public static void RunWideQuery(Benchmarker benchmarker)
+        public static void RunWideQuery([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("ParameterizedSql (26-col)",
                 (ctx, rows) => WideExampleObject.ParameterizedSqlForRows(rows)
@@ -24,7 +25,7 @@ namespace MicroOrmBench
                 ;
         }
 
-        public static void ConstructWithoutExecuting(Benchmarker benchmarker)
+        public static void ConstructWithoutExecuting([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("ParameterizedSql noexec",
                 (ctx, rows) =>

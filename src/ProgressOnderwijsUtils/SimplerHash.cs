@@ -6,8 +6,9 @@ namespace ProgressOnderwijsUtils
 {
     public static class SimplerHash
     {
-        public static bool MD5VerifyHash(string plainText, string hashString) => hashString == MD5ComputeHash(plainText);
+        public static bool MD5VerifyHash([NotNull] string plainText, string hashString) => hashString == MD5ComputeHash(plainText);
 
+        [NotNull]
         public static string MD5ComputeHash([NotNull] string plainText)
         {
             return MakeMD5(Encoding.UTF8.GetBytes(plainText));

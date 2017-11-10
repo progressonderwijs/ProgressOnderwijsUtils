@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Internal;
 using Xunit;
@@ -113,7 +114,7 @@ namespace ProgressOnderwijsUtilsTests
                 Assert_DataReader_GetBytes_works(reader);
         }
 
-        static void Assert_DataReader_GetBytes_works(DbDataReader reader)
+        static void Assert_DataReader_GetBytes_works([NotNull] DbDataReader reader)
         {
             PAssert.That(() => reader.Read());
 

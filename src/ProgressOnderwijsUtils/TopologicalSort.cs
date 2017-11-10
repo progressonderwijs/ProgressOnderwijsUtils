@@ -10,7 +10,8 @@ namespace ProgressOnderwijsUtils
         /// Orders a DAG (directed acyclic graph), children before parents.  If two nodes are not related, they remain in the same order as in the seeds.
         /// All DAG nodes reachable via listChildrenOf are returned, not just the seeds - the output sequence can thus be larger than the input.
         /// </summary>
-        public static T[] OrderByTopology<T>(this IEnumerable<T> seeds, Func<T, IEnumerable<T>> listChildrenOf)
+        [NotNull]
+        public static T[] OrderByTopology<T>([NotNull] this IEnumerable<T> seeds, Func<T, IEnumerable<T>> listChildrenOf)
             => seeds.OrderByTopology(listChildrenOf, EqualityComparer<T>.Default);
 
         /// <summary>

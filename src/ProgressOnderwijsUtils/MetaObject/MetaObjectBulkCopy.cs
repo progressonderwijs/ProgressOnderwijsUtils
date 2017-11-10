@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static void WriteMetaObjectsToServer<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject, IPropertiesAreUsedImplicitly
+        public static void WriteMetaObjectsToServer<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlConnection sqlconn, [NotNull] string tableName) where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             bulkCopy.WriteMetaObjectsToServerAsync(metaObjects, sqlconn, tableName, CancellationToken.None).Wait();
         }
@@ -75,7 +75,8 @@ namespace ProgressOnderwijsUtils
             return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
         }
 
-        static FieldMapping[] ApplyMetaObjectColumnMapping<T>(SqlBulkCopy bulkCopy, MetaObjectDataReader<T> objectReader, SqlConnection sqlconn, string tableName) where T : IMetaObject
+        [NotNull]
+        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, [NotNull] SqlConnection sqlconn, string tableName) where T : IMetaObject
         {
             var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
             var clrColumns = ColumnDefinition.GetFromReader(objectReader);

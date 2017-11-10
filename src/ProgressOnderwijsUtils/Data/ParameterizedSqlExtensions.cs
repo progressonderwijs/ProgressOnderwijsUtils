@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
         /// Concatenate a sequence of sql expressions with a space separator.
         /// e.g.  concatenating 'a' and 'b' results in 'a b'
         /// </summary>
-        public static ParameterizedSql ConcatenateSql(this IEnumerable<ParameterizedSql> sqlExpressions) => ConcatenateSql(sqlExpressions, ParameterizedSql.Empty);
+        public static ParameterizedSql ConcatenateSql([NotNull] this IEnumerable<ParameterizedSql> sqlExpressions) => ConcatenateSql(sqlExpressions, ParameterizedSql.Empty);
 
         /// <summary>
         /// Concatenate a sequence of sql expressions with a separator (surrounded by space).  A sequence of N items includes the separator N-1 times.

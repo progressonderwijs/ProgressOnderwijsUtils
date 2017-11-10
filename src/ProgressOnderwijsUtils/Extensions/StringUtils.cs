@@ -107,6 +107,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static string SepaTekenset([NotNull] string s) => SepaStripperRegexes.sepaStripper.Replace(s, "");
 
+        [CanBeNull]
         [Pure]
         public static string SepaTekensetEnModificaties(string s)
         {
@@ -125,7 +126,7 @@ namespace ProgressOnderwijsUtils
         public static string Capitalize([NotNull] string name) => name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
 
         [Pure]
-        public static int LevenshteinDistance(string s, string t) => LevenshteinDistance(s, t, 1);
+        public static int LevenshteinDistance([NotNull] string s, [NotNull] string t) => LevenshteinDistance(s, t, 1);
 
 
         [Pure]

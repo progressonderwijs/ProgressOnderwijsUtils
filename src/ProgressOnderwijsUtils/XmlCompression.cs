@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils
         /// A null dictionary is permitted, which means "compress without dictionary".
         /// </param>
         /// <returns>The deflate-compressed document.</returns>
-        public static byte[] ToCompressedUtf8(XDocument doc, byte[] dictionary)
+        public static byte[] ToCompressedUtf8([NotNull] XDocument doc, byte[] dictionary)
         {
             CleanupNamespaces(doc);
             RemoveComments(doc);

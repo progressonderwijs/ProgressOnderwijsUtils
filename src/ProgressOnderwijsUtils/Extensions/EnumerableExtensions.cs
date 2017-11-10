@@ -92,13 +92,13 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static bool SetEqual<T>(this IEnumerable<T> list, [NotNull] IEnumerable<T> other)
+        public static bool SetEqual<T>([NotNull] this IEnumerable<T> list, [NotNull] IEnumerable<T> other)
         {
             return list.ToSet().SetEquals(other);
         }
 
         [Pure]
-        public static bool SetEqual<T>(this IEnumerable<T> list, [NotNull] IEnumerable<T> other, IEqualityComparer<T> comparer)
+        public static bool SetEqual<T>([NotNull] this IEnumerable<T> list, [NotNull] IEnumerable<T> other, IEqualityComparer<T> comparer)
         {
             return list.ToSet(comparer).SetEquals(other);
         }
@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static bool ContainsDuplicates<T>(this IEnumerable<T> list)
+        public static bool ContainsDuplicates<T>([NotNull] this IEnumerable<T> list)
             => ContainsDuplicates(list, EqualityComparer<T>.Default);
 
         [Pure]
@@ -132,8 +132,9 @@ namespace ProgressOnderwijsUtils
             return !list.All(set.Add);
         }
 
+        [NotNull]
         [Pure]
-        public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(this IEnumerable<T> list, Func<T, TKey> keySelector, Func<T, TVal> valSelector)
+        public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>([NotNull] this IEnumerable<T> list, [NotNull] Func<T, TKey> keySelector, Func<T, TVal> valSelector)
         {
             return list.ToSortedList(keySelector, valSelector, Comparer<TKey>.Default);
         }
@@ -233,7 +234,7 @@ namespace ProgressOnderwijsUtils
             => DistinctArray<T>.FromPossiblyNotDistinct(items);
 
         [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer)
+        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
             => DistinctArray<T>.FromPossiblyNotDistinct(items, comparer);
 
         [Pure]
@@ -241,7 +242,7 @@ namespace ProgressOnderwijsUtils
             => DistinctArray<T>.FromDistinct(items);
 
         [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>(this IEnumerable<T> items, IEqualityComparer<T> comparer)
+        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
             => DistinctArray<T>.FromDistinct(items, comparer);
     }
 }

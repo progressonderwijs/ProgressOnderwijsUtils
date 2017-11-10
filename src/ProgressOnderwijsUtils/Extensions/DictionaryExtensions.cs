@@ -53,12 +53,12 @@ namespace ProgressOnderwijsUtils
         /// <param name="dict">The dictionary to extract  from</param>
         /// <param name="key">The key whose value to get.</param>
         /// <returns>The value of the key, or the default if the dictionary does not contain the key.</returns>
-        public static TValue GetOrDefaultR<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dict, TKey key)
+        public static TValue GetOrDefaultR<TKey, TValue>([NotNull] this IReadOnlyDictionary<TKey, TValue> dict, [NotNull] TKey key)
         {
             return GetOrDefaultR(dict, key, default(TValue));
         }
 
-        public static TValue GetOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
+        public static TValue GetOrDefault<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dict, [NotNull] TKey key)
         {
             return GetOrDefault(dict, key, default(TValue));
         }
@@ -155,6 +155,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="old">This dictionary</param>
         /// <param name="others">The dictionary which should be merged into this array</param>
+        [CanBeNull]
         public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old,
             [NotNull] params Dictionary<TKey, TValue>[] others)
         {

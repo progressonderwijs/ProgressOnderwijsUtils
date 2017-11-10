@@ -43,6 +43,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public T Copy() => (T)MemberwiseClone();
 
+        [NotNull]
         public T CopyWith([NotNull] Action<T> action)
         {
             var copied = Copy();

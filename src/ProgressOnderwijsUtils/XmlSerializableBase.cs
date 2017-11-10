@@ -10,8 +10,8 @@ namespace ProgressOnderwijsUtils
 {
     public static class XmlSerializerHelper
     {
-        public static T Deserialize<T>(string xml) => XmlSerializerHelper<T>.Deserialize(xml);
-        public static T Deserialize<T>(XDocument xml) => XmlSerializerHelper<T>.Deserialize(xml);
+        public static T Deserialize<T>([NotNull] string xml) => XmlSerializerHelper<T>.Deserialize(xml);
+        public static T Deserialize<T>([NotNull] XDocument xml) => XmlSerializerHelper<T>.Deserialize(xml);
 
         [NotNull]
         public static string SerializeToString([NotNull] object o)

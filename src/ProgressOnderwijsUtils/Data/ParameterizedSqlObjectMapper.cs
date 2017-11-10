@@ -155,7 +155,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static string QueryExecutionErrorMessage<T>(SqlCommand cmd, [CanBeNull] [CallerMemberName] string caller = null) where T : IMetaObject, new()
+        static string QueryExecutionErrorMessage<T>([NotNull] SqlCommand cmd, [CanBeNull] [CallerMemberName] string caller = null) where T : IMetaObject, new()
         {
             return caller + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. \n\nQUERY:\n\n"
                 + SqlCommandTracer.DebugFriendlyCommandText(cmd, SqlCommandTracerOptions.IncludeArgumentValuesInLog);
@@ -352,6 +352,7 @@ namespace ProgressOnderwijsUtils
                 return colValueExpr;
             }
 
+            [NotNull]
             static TRowArrayReader<T> CreateLoadRowsMethod<T>([NotNull] Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
             {
                 //read this method bottom-to-top, because expression trees need to be constructed inside-out.
@@ -384,6 +385,7 @@ namespace ProgressOnderwijsUtils
                 return ConvertLambdaExpressionIntoDelegate<T, TRowArrayReader<T>>(loadRowsLambda);
             }
 
+            [NotNull]
             static TRowReader<T> CreateLoadRowMethod<T>([NotNull] Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
             {
                 var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
@@ -489,7 +491,7 @@ namespace ProgressOnderwijsUtils
                     LoadRow = new ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>>();
                 }
 
-                public static TRowArrayReader<T> DataReaderToRowArrayUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
+                public static TRowArrayReader<T> DataReaderToRowArrayUnpacker([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
                 {
                     AssertColumnsCanBeMappedToObject(reader, fieldMappingMode);
                     var ordering = new ColumnOrdering(reader);
@@ -502,7 +504,7 @@ namespace ProgressOnderwijsUtils
                     return cachedRowReaderWithCols.RowArrayReader;
                 }
 
-                public static TRowReader<T> DataReaderToSingleRowUnpacker(TReader reader, FieldMappingMode fieldMappingMode)
+                public static TRowReader<T> DataReaderToSingleRowUnpacker([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
                 {
                     AssertColumnsCanBeMappedToObject(reader, fieldMappingMode);
                     var ordering = new ColumnOrdering(reader);
@@ -601,7 +603,7 @@ namespace ProgressOnderwijsUtils
             public static class ReadByConstructorImpl<T>
             {
                 // ReSharper disable UnusedMember.Local
-                public static T[] VerifyShapeAndLoadRows(SqlDataReader reader)
+                public static T[] VerifyShapeAndLoadRows([NotNull] SqlDataReader reader)
                     // ReSharper restore UnusedMember.Local
                 {
                     DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.VerifyDataReaderShape(reader);

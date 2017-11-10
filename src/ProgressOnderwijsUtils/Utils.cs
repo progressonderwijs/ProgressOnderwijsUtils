@@ -104,11 +104,12 @@ namespace ProgressOnderwijsUtils
             other = tmp;
         }
 
-        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
+        public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
         {
             return TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
         }
 
+        [NotNull]
         public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
         {
             var distinctNewlyReachable = elems.ToArray();
@@ -119,11 +120,12 @@ namespace ProgressOnderwijsUtils
             return set;
         }
 
-        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
+        public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
         {
             return TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);
         }
 
+        [NotNull]
         public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
         {
             var distinctNewlyReachable = elems.ToArray();
@@ -251,7 +253,7 @@ namespace ProgressOnderwijsUtils
             return sb.ToString();
         }
 
-        public static void AppendSortableShortString(this StringBuilder target, long value)
+        public static void AppendSortableShortString([NotNull] this StringBuilder target, long value)
         {
             //This function is used on a hot-path in Programma and Resultaten export - it needs to be fast.
             if (value < 0) {

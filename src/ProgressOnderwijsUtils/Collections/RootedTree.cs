@@ -13,6 +13,7 @@ namespace ProgressOnderwijsUtils.Collections
         public int IndexInParent() => PathSegments.Head.Index;
         public Tree<T> UnrootedSubTree() => PathSegments.Head.ThisSubTree;
 
+        [NotNull]
         public IReadOnlyList<RootedTree<T>> Children
         {
             get {

@@ -72,9 +72,11 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [NotNull]
         public string GetStringOfLatinLower(int length) => GetString(length, 'a', 'z');
         [NotNull]
         public string GetStringCapitalized(int length) => GetString(1, 'A', 'Z') + GetString(length - 1, 'a', 'z');
+        [NotNull]
         public string GetStringOfLatinUpperOrLower(int length) => GetStringUpperAndLower(length, 'a', 'z');
         [NotNull]
         public string GetStringOfNumbers(int length) => GetString(1, '1', '9') + GetString(length - 1, '0', '9');

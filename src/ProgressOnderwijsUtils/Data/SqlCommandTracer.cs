@@ -108,6 +108,7 @@ namespace ProgressOnderwijsUtils
                 ? par.TypeName
                 : par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
+        [NotNull]
         public static string InsecureSqlDebugString([CanBeNull] object p, bool includeReadableEnumValue)
         {
             if (p is DBNull || p == null) {
@@ -165,6 +166,7 @@ namespace ProgressOnderwijsUtils
                 return new SqlCommandTimer(this, commandText);
             }
 
+            [NotNull]
             public IDisposable StartCommandTimer([NotNull] string commandText)
             {
                 if (commandText == null) {
@@ -174,7 +176,7 @@ namespace ProgressOnderwijsUtils
                 return StartCommandTimer(() => commandText);
             }
 
-            public IDisposable StartCommandTimer(SqlCommand sqlCommand) => StartCommandTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
+            public IDisposable StartCommandTimer([NotNull] SqlCommand sqlCommand) => StartCommandTimer(DebugFriendlyCommandText(sqlCommand, IncludeSensitiveInfo));
 
             public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration)
             {

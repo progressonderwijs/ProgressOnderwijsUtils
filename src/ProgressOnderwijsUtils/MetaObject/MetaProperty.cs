@@ -158,28 +158,28 @@ namespace ProgressOnderwijsUtils
         class OutCaster<TOut> : IOutCaster
         {
             [NotNull]
-            public Func<TObj, object> GetterBoxed<TObj>(MethodInfo method)
+            public Func<TObj, object> GetterBoxed<TObj>([NotNull] MethodInfo method)
             {
                 var f = MkDelegate<Func<TObj, TOut>>(method);
                 return o => f(o);
             }
 
             [NotNull]
-            public Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method)
+            public Func<TObj, object> StructGetterBoxed<TObj>([NotNull] MethodInfo method)
             {
                 var f = MkDelegate<StructGetterDel<TObj, TOut>>(method);
                 return o => f(ref o);
             }
 
             [NotNull]
-            public Setter<TObj> SetterChecked<TObj>(MethodInfo method)
+            public Setter<TObj> SetterChecked<TObj>([NotNull] MethodInfo method)
             {
                 var f = MkDelegate<Action<TObj, TOut>>(method);
                 return (ref TObj o, object v) => f(o, (TOut)v);
             }
 
             [NotNull]
-            public Setter<TObj> StructSetterChecked<TObj>(MethodInfo method)
+            public Setter<TObj> StructSetterChecked<TObj>([NotNull] MethodInfo method)
             {
                 var f = MkDelegate<StructSetterDel<TObj, TOut>>(method);
                 return (ref TObj o, object v) => f(ref o, (TOut)v);

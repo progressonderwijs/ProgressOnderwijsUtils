@@ -26,6 +26,7 @@ namespace ProgressOnderwijsUtils
         public static ColumnDefinition[] GetFromReader([NotNull] IDataRecord reader)
             => Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
 
+        [NotNull]
         public static ColumnDefinition[] GetFromTable([NotNull] SqlConnection sqlconn, string tableName)
         {
             using (var cmd = sqlconn.CreateCommand()) {
