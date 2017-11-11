@@ -3,7 +3,6 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    using static System.Data.DataRowExtensions;
     /// <summary>
     /// Extensions for DataRow
     /// </summary>
@@ -12,7 +11,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static T Field<T>([NotNull] this DataRowView row, [NotNull] string fieldname)
         {
-            return row.Row.Field<T>(fieldname);
+            return (T)row.Row[fieldname];
         }
     }
 }
