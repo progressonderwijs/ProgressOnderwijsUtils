@@ -146,12 +146,14 @@ namespace ProgressOnderwijsUtilsTests
     </nested>
 </test>");
 
-            var bytes = XmlCompression.ToUtf8(doc);
-            var str = UTF8.GetString(bytes);
+            var utf8BytesFromXml = XmlCompression.ToUtf8(doc);
+            var stringFromBytes = UTF8.GetString(utf8BytesFromXml);
 
-            PAssert.That(() => str == @"<test><nested><elements><here>
+            //XDocument.Parse/Serialize appears to sometimes lose CR's
+            //The behavior differs at least between net462 on windows and netcoreapp20 on linux
+            PAssert.That(() => stringFromBytes.Replace("\r", "") == @"<test><nested><elements><here>
                 Ƒϕϕ
-            </here></elements></nested></test>");
+            </here></elements></nested></test>".Replace("\r", ""));
         }
 
         [Fact]
