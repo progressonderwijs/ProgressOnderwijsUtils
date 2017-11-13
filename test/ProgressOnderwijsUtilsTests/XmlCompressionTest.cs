@@ -146,12 +146,13 @@ namespace ProgressOnderwijsUtilsTests
     </nested>
 </test>");
 
-            var bytes = XmlCompression.ToUtf8(doc);
-            var str = UTF8.GetString(bytes);
+            var utf8BytesFromXml = XmlCompression.ToUtf8(doc);
+            var stringFromBytes = UTF8.GetString(utf8BytesFromXml);
+            
 
-            PAssert.That(() => str == @"<test><nested><elements><here>
+            PAssert.That(() => stringFromBytes.Replace("\r", "") == @"<test><nested><elements><here>
                 Ƒϕϕ
-            </here></elements></nested></test>");
+            </here></elements></nested></test>".Replace("\r", ""));
         }
 
         [Fact]
