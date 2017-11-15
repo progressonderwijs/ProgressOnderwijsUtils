@@ -1,18 +1,8 @@
-version: 11.0.{build}
-pull_requests:
-  do_not_increment_build_number: true
+version: build-{build}
 branches:
   only:
   - master
 image: Visual Studio 2017
-dotnet_csproj:
-  patch: true
-  file: src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj
-  version: '{version}'
-  package_version: '{version}'
-  assembly_version: '{version}'
-  file_version: '{version}'
-  informational_version: '{version}'
 environment:
   CONNECTION_STRING: Server=(local)\SQL2016;Database=master;User ID=sa;Password=Password12!
 services: mssql2016
