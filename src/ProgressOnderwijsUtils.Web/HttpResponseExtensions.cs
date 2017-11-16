@@ -1,8 +1,7 @@
-﻿#if NET461
-using System.Web;
+﻿using System.Web;
 using JetBrains.Annotations;
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils.Web
 {
     public static class HttpResponseExtensions
     {
@@ -17,4 +16,3 @@ namespace ProgressOnderwijsUtils
         }
     }
 }
-#endif

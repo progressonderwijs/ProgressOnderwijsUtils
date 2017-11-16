@@ -19,10 +19,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HtmlFragmentBenchmark", "to
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroOrmBench", "tools\MicroOrmBench\MicroOrmBench.csproj", "{72D9CB53-24CC-48A5-867D-D24E355D64A0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Drawing", "src\ProgressOnderwijsUtils.Drawing\ProgressOnderwijsUtils.Drawing.csproj", "{33B4D898-0767-4F1A-B5BE-136056475690}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Web", "src\ProgressOnderwijsUtils.Web\ProgressOnderwijsUtils.Web.csproj", "{6CEA5F0B-40B9-4EB3-B0FF-5B5C4DC4A9E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Drawing.Test", "test\ProgressOnderwijsUtils.Drawing.Test\ProgressOnderwijsUtils.Drawing.Test.csproj", "{6EFEB272-8FA1-4D5C-8698-6F4DACCF360E}"
+EndProject
 Global
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -44,12 +47,27 @@ Global
 		{72D9CB53-24CC-48A5-867D-D24E355D64A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{72D9CB53-24CC-48A5-867D-D24E355D64A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{72D9CB53-24CC-48A5-867D-D24E355D64A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33B4D898-0767-4F1A-B5BE-136056475690}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33B4D898-0767-4F1A-B5BE-136056475690}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33B4D898-0767-4F1A-B5BE-136056475690}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33B4D898-0767-4F1A-B5BE-136056475690}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CEA5F0B-40B9-4EB3-B0FF-5B5C4DC4A9E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CEA5F0B-40B9-4EB3-B0FF-5B5C4DC4A9E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CEA5F0B-40B9-4EB3-B0FF-5B5C4DC4A9E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CEA5F0B-40B9-4EB3-B0FF-5B5C4DC4A9E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EFEB272-8FA1-4D5C-8698-6F4DACCF360E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EFEB272-8FA1-4D5C-8698-6F4DACCF360E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EFEB272-8FA1-4D5C-8698-6F4DACCF360E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EFEB272-8FA1-4D5C-8698-6F4DACCF360E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E1CE476-2F5C-4FCE-B590-175594609727}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

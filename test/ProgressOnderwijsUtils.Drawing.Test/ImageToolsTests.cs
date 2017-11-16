@@ -1,5 +1,4 @@
-﻿#if NET461
-using System;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -8,7 +7,7 @@ using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 using Xunit;
 
-namespace ProgressOnderwijsUtilsTests
+namespace ProgressOnderwijsUtils.Drawing.Test
 {
     static class Helper
     {
@@ -103,4 +102,3 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 }
-#endif

@@ -1,8 +1,7 @@
-﻿#if NET461
-using System.Web;
+﻿using System.Web;
 using JetBrains.Annotations;
 
-namespace ProgressOnderwijsUtils.WebSupport
+namespace ProgressOnderwijsUtils.Web
 {
     public class RemoveServerHeadersModule : IHttpModule
     {
@@ -22,4 +21,3 @@ namespace ProgressOnderwijsUtils.WebSupport
         public void Dispose() { }
     }
 }
-#endif

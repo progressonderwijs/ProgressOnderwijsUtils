@@ -1,5 +1,4 @@
-﻿#if NET461
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
@@ -8,7 +7,7 @@ using JetBrains.Annotations;
 
 //this is not recommended?? downsides are unclear though some suggest it might be slow.
 
-namespace ProgressOnderwijsUtils
+namespace ProgressOnderwijsUtils.Drawing
 {
     // Uses tips from http://www.glennjones.net/Post/799/Highqualitydynamicallyresizedimageswithnet.htm
     /// <summary>
@@ -167,4 +166,3 @@ namespace ProgressOnderwijsUtils
         }
     }
 }
-#endif
