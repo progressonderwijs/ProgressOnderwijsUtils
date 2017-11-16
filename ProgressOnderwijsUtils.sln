@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils", "src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj", "{6C13FAA1-9347-4256-BCFD-F111E6121480}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtilsTests", "test\ProgressOnderwijsUtilsTests\ProgressOnderwijsUtilsTests.csproj", "{4C25AC3F-293B-46BE-A853-CD5AF64E542E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Test", "test\ProgressOnderwijsUtils.Test\ProgressOnderwijsUtils.Test.csproj", "{4C25AC3F-293B-46BE-A853-CD5AF64E542E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAF8D43B-2F61-421B-BD61-43848D1192BE}"
 	ProjectSection(SolutionItems) = preProject
