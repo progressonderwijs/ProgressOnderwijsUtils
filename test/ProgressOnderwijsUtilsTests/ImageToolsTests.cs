@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if NET461
+using System;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -102,3 +103,4 @@ namespace ProgressOnderwijsUtilsTests
         }
     }
 }
+#endif

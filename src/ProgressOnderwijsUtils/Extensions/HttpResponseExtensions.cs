@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿#if NET461
+using System.Web;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
@@ -16,3 +17,4 @@ namespace ProgressOnderwijsUtils
         }
     }
 }
+#endif

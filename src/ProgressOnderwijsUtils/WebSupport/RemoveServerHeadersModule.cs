@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿#if NET461
+using System.Web;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.WebSupport
@@ -21,3 +22,4 @@ namespace ProgressOnderwijsUtils.WebSupport
         public void Dispose() { }
     }
 }
+#endif

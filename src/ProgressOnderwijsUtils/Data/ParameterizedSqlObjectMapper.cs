@@ -224,6 +224,7 @@ namespace ProgressOnderwijsUtils
                 .ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
         }
 
+#if NET461
         static readonly AssemblyBuilder assemblyBuilder;
         static readonly ModuleBuilder moduleBuilder;
         static int counter;
@@ -233,6 +234,7 @@ namespace ProgressOnderwijsUtils
             assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
             moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
         }
+#endif
 
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
@@ -401,17 +403,20 @@ namespace ProgressOnderwijsUtils
             static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda)
             {
                 try {
-                    if (!typeof(T).IsPublic) {
-                        return loadRowsLambda.Compile(); //generates slower code but works on non-public types
-                    }
-                    var typeBuilder = moduleBuilder.DefineType(
-                        "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
-                        TypeAttributes.Public);
-                    var methodBuilder = typeBuilder.DefineMethod("LoadRows", MethodAttributes.Public | MethodAttributes.Static);
-                    loadRowsLambda.CompileToMethod(methodBuilder); //generates faster code
-                    var newType = typeBuilder.CreateType();
+#if NET461
+                    if (typeof(T).IsPublic) {
+                        var typeBuilder = moduleBuilder.DefineType(
+                            "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
+                            TypeAttributes.Public);
+                        var methodBuilder = typeBuilder.DefineMethod("LoadRows", MethodAttributes.Public | MethodAttributes.Static);
+                        loadRowsLambda.CompileToMethod(methodBuilder); //generates faster code
+                        var newType = typeBuilder.CreateType();
 
-                    return (TDelegate)(object)Delegate.CreateDelegate(typeof(TDelegate), newType.GetMethod("LoadRows"));
+                        return (TDelegate)(object)Delegate.CreateDelegate(typeof(TDelegate), newType.GetMethod("LoadRows"));
+                    }
+#endif
+
+                    return loadRowsLambda.Compile(); //generates slower code but works on non-public types
                 } catch (Exception e) {
                     throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
                 }

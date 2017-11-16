@@ -108,7 +108,11 @@ namespace ProgressOnderwijsUtilsTests
             new BlaWithMissingClrFields[0].BulkCopyToSqlServer(Context.Connection, "#MyTable");
         }
 
+#if NET461
         [Fact]
+#else
+        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
+#endif
         public void BulkCopyAllowsExactMatch()
         {
             CreateTempTable();
@@ -117,7 +121,11 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
         }
 
+#if NET461
         [Fact]
+#else
+        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
+#endif
         public void BulkCopySupportsColumnReordering()
         {
             CreateTempTable();

@@ -3,7 +3,7 @@
     <DebugType>full</DebugType>
     <DebugSymbols>True</DebugSymbols>
     <OutputType>library</OutputType>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFrameworks>netcoreapp2.0;net461</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="rainbow.jpg" />
@@ -12,8 +12,9 @@
     <EmbeddedResource Include="rainbow.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Transactions" />
-    <PackageReference Include="ApprovalTests" Version="3.0.13" />
+    <Reference Include="System.Transactions" Condition="$(TargetFramework)=='net461'" />
+    <PackageReference Include="ApprovalUtilities" Version="3.0.13" NoWarn="NU1701" />
+    <PackageReference Include="ApprovalTests" Version="3.0.13" NoWarn="NU1701" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />

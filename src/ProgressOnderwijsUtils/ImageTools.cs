@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿#if NET461
+using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
@@ -166,3 +167,4 @@ namespace ProgressOnderwijsUtils
         }
     }
 }
+#endif

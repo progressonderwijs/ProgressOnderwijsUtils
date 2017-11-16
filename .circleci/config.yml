@@ -1,0 +1,18 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: microsoft/dotnet:2.0.0-sdk-2.0.2-stretch
+        environment:
+          - CONNECTION_STRING=Data Source=localhost;User Id=sa;Password=yourStrong(!)Password
+      - image: microsoft/mssql-server-linux:2017-CU1
+        environment:
+          - ACCEPT_EULA=Y
+          - SA_PASSWORD=yourStrong(!)Password
+    steps:
+      - checkout
+      - run:
+          name: Run tests
+          command: dotnet test test/ProgressOnderwijsUtilsTests/ProgressOnderwijsUtilsTests.csproj -f netcoreapp2.0 -c Release -d /artifacts/test.log -r /artifacts -l trx
+      - store_artifacts:
+          path: /artifacts

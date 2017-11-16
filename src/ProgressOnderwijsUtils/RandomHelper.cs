@@ -113,10 +113,12 @@ namespace ProgressOnderwijsUtils
             return new string(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
         }
 
+#if NET461
         [NotNull]
         public static string GetPasswordString(int length)
         {
             return System.Web.Security.Membership.GeneratePassword(length, 0);
         }
+#endif
     }
 }
