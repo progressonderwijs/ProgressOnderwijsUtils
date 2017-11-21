@@ -114,7 +114,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         static string Signature([NotNull] NameValueCollection qs, AsymmetricAlgorithm key)
         {
             var data = Encoding.UTF8.GetBytes(ToQueryString(qs));
-            var result = ((RSACryptoServiceProvider)key).SignData(data, new SHA1CryptoServiceProvider());
+            var result = ((RSA)key).SignData(data, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
             return Convert.ToBase64String(result);
         }
 
