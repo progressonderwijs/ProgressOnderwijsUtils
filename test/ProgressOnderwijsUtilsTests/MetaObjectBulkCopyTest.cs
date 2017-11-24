@@ -33,6 +33,24 @@ namespace ProgressOnderwijsUtilsTests
             public string Bla2 { get; set; }
         }
 
+        public struct CustomBla
+        {
+            readonly string value;
+            CustomBla(string value)
+            {
+                this.value = value;
+            }
+            public string AsString => value;
+            public static CustomBla Create(string value) => new CustomBla(value);
+        }
+
+        public sealed class BlaOk3 : ValueBase<BlaOk2>, IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            public int Id { get; set; }
+            public string Bla { get; set; }
+            public CustomBla Bla2 { get; set; }
+        }
+
         public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Idd { get; set; }
@@ -132,6 +150,19 @@ namespace ProgressOnderwijsUtilsTests
             SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(Context);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
+        }
+
+#if NET461
+        [Fact]
+#else
+        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
+#endif
+        public void MetaObjectSupportsCustomObject()
+        {
+            CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk3>(Context);
+            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
         }
     }
 }
