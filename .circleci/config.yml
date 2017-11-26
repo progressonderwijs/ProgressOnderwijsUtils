@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: microsoft/dotnet:2.0.0-sdk-2.0.2-stretch
+      - image: microsoft/dotnet:2.0.3-sdk-stretch
         environment:
           - CONNECTION_STRING=Data Source=localhost;User Id=sa;Password=yourStrong(!)Password
       - image: microsoft/mssql-server-linux:2017-CU1
