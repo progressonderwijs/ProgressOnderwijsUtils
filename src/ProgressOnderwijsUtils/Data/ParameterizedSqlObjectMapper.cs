@@ -235,7 +235,6 @@ namespace ProgressOnderwijsUtils
             moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
         }
 #endif
-
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
         const int AsciiUpperToLowerDiff = 'a' - 'A';
@@ -316,28 +315,31 @@ namespace ProgressOnderwijsUtils
 
             static bool SupportsTypeByCustomCreateMethod([NotNull] Type type)
             {
-                return CreateMethodOfTypeWithCreateMethod(type) != null;
+                return CreateMethodOfTypeWithCreateMethod(type, out var _);
             }
 
-            static MethodInfo CreateMethodOfTypeWithCreateMethod([NotNull] Type type)
+            static bool CreateMethodOfTypeWithCreateMethod([NotNull] Type type, [CanBeNull] out MethodInfo methodInfo)
             {
+                methodInfo = null;
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                foreach(var m in underlyingType.GetMethods()) {
-                    if (m.Name != "Create")
-                        continue;
-
-                    if (m.ReturnType != underlyingType)
-                        continue;
-
-                    var p = m.GetParameters();
-                    if (p.Length != 1)
-                        continue;
-
-                    if (SupportsType(p[0].ParameterType)){
-                        return m;
+                if (!underlyingType.IsValueType) {
+                    var method = underlyingType.GetMethod("Create", BindingFlags.Static | BindingFlags.Public);
+                    if (method == null) {
+                        return false;
+                    }
+                    if (method.ReturnType != underlyingType) {
+                        return false;
+                    }
+                    var parameters = method.GetParameters();
+                    if (parameters.Length != 1) {
+                        return false;
+                    }
+                    if (SupportsType(parameters[0].ParameterType)) {
+                        methodInfo = method;
+                        return true;
                     }
                 }
-                return null;
+                return false;
             }
 
             static MethodInfo GetterForType([NotNull] Type underlyingType)
@@ -346,6 +348,8 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
+                } else if (CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo)) {
+                    return InterfaceMap[getterMethodsByType[methodInfo.GetParameters()[0].ParameterType]];
                 } else {
                     return InterfaceMap[getterMethodsByType[underlyingType]];
                 }
@@ -369,21 +373,26 @@ namespace ProgressOnderwijsUtils
                 MethodCallExpression callExpr;
                 if (underlyingType == typeof(byte[])) {
                     callExpr = Expression.Call(getterMethodsByType[underlyingType], readerParamExpr, iConstant);
-                } else if (SupportsTypeByCustomCreateMethod(type)) {
-                    callExpr = Expression.Call(readerParamExpr, GetterForType(CreateMethodOfTypeWithCreateMethod(underlyingType).GetParameters()[0].ParameterType), iConstant);
                 } else {
                     callExpr = Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
                 }
                 Expression colValueExpr;
                 if (!canBeNull) {
                     colValueExpr = GetCastExpression(callExpr, type);
+                }
+                else if (CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo)) {
+                    var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
+                    var paramType = methodInfo.GetParameters()[0].ParameterType;
+                    var ifDbNull = Expression.Default(paramType);
+                    var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, paramType), paramType);
+                    colValueExpr = Expression.Call(methodInfo, Expression.Condition(test, ifDbNull, ifNotDbNull));
                 } else {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
                     var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
-
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
                 }
+
                 return colValueExpr;
             }
 
@@ -495,8 +504,10 @@ namespace ProgressOnderwijsUtils
 
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowArrayReaderWithCols<T>> LoadRows;
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>> LoadRow;
+
                 [NotNull]
                 static Type type => typeof(T);
+
                 static string FriendlyName => type.ToCSharpFriendlyTypeName();
                 static readonly uint[] ColHashPrimes;
                 static readonly MetaInfo<T> metadata = MetaInfo<T>.Instance;
@@ -651,10 +662,13 @@ namespace ProgressOnderwijsUtils
                 }
 
                 public static readonly TRowArrayReader<T> LoadRows;
+
                 [NotNull]
                 static Type type => typeof(T);
+
                 static string FriendlyName => type.ToCSharpFriendlyTypeName();
                 static readonly ConstructorInfo constructor;
+
                 [NotNull]
                 static ParameterInfo[] ConstructorParameters => constructor.GetParameters();
 
@@ -721,6 +735,7 @@ namespace ProgressOnderwijsUtils
             {
                 static string FriendlyName => type.ToCSharpFriendlyTypeName();
                 public static readonly TRowArrayReader<T> LoadRows;
+
                 [NotNull]
                 static Type type => typeof(T);
 

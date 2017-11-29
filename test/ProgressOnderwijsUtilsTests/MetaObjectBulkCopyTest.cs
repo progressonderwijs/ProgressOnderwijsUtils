@@ -34,10 +34,10 @@ namespace ProgressOnderwijsUtilsTests
             public string Bla2 { get; set; }
         }
 
-        public struct CustomBla
+        public class CustomBla
         {
             readonly string value;
-            CustomBla(string value)
+            public CustomBla(string value)
             {
                 this.value = value;
             }
@@ -161,6 +161,8 @@ namespace ProgressOnderwijsUtilsTests
 #endif
         public void MetaObjectSupportsCustomObject()
         {
+            PAssert.That(() => CustomBla.Create("aap").AsString == "aap");
+            PAssert.That(() => default(CustomBla) == null);
             CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk3>(Context);
