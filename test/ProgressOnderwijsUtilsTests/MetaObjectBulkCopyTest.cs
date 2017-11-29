@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Transactions;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -41,6 +42,7 @@ namespace ProgressOnderwijsUtilsTests
                 this.value = value;
             }
             public string AsString => value;
+            [UsedImplicitly]
             public static CustomBla Create(string value) => new CustomBla(value);
         }
 
