@@ -308,8 +308,36 @@ namespace ProgressOnderwijsUtils
             static bool SupportsType([NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                return getterMethodsByType.ContainsKey(underlyingType) ||
-                    isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset));
+
+                return getterMethodsByType.ContainsKey(underlyingType)
+                    || isSqlDataReader && (underlyingType == typeof(TimeSpan) || underlyingType == typeof(DateTimeOffset))
+                    ;
+            }
+
+            static bool SupportsTypeByCustomCreateMethod([NotNull] Type type)
+            {
+                return CreateMethodOfTypeWithCreateMethod(type) != null;
+            }
+
+            static MethodInfo CreateMethodOfTypeWithCreateMethod([NotNull] Type type)
+            {
+                var underlyingType = type.GetNonNullableUnderlyingType();
+                foreach(var m in underlyingType.GetMethods()) {
+                    if (m.Name != "Create")
+                        continue;
+
+                    if (m.ReturnType != underlyingType)
+                        continue;
+
+                    var p = m.GetParameters();
+                    if (p.Length != 1)
+                        continue;
+
+                    if (SupportsType(p[0].ParameterType)){
+                        return m;
+                    }
+                }
+                return null;
             }
 
             static MethodInfo GetterForType([NotNull] Type underlyingType)
@@ -338,9 +366,14 @@ namespace ProgressOnderwijsUtils
                 var canBeNull = type.CanBeNull();
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 var iConstant = Expression.Constant(i);
-                var callExpr = underlyingType == typeof(byte[])
-                    ? Expression.Call(getterMethodsByType[underlyingType], readerParamExpr, iConstant)
-                    : Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
+                MethodCallExpression callExpr;
+                if (underlyingType == typeof(byte[])) {
+                    callExpr = Expression.Call(getterMethodsByType[underlyingType], readerParamExpr, iConstant);
+                } else if (SupportsTypeByCustomCreateMethod(type)) {
+                    callExpr = Expression.Call(readerParamExpr, GetterForType(CreateMethodOfTypeWithCreateMethod(underlyingType).GetParameters()[0].ParameterType), iConstant);
+                } else {
+                    callExpr = Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
+                }
                 Expression colValueExpr;
                 if (!canBeNull) {
                     colValueExpr = GetCastExpression(callExpr, type);
@@ -472,12 +505,13 @@ namespace ProgressOnderwijsUtils
                 static ByMetaObjectImpl()
                 {
                     var writablePropCount = 0;
+                    var debug = "";
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && SupportsType(mp.DataType)) {
+                        if (mp.CanWrite && SupportsType(mp.DataType) || SupportsTypeByCustomCreateMethod(mp.DataType)) {
                             writablePropCount++;
                         }
+                        debug += $"{mp.Name} {mp.CanWrite} {SupportsType(mp.DataType)} {SupportsTypeByCustomCreateMethod(mp.DataType)} {mp.DataType.Name}\n";
                     }
-
                     ColHashPrimes = new uint[writablePropCount];
 
                     using (var pGen = Utils.Primes().GetEnumerator())
@@ -486,7 +520,7 @@ namespace ProgressOnderwijsUtils
                         }
                     hasUnsupportedColumns = false;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && !SupportsType(mp.DataType)) {
+                        if (mp.CanWrite && !SupportsType(mp.DataType) && !SupportsTypeByCustomCreateMethod(mp.DataType)) {
                             hasUnsupportedColumns = true;
                             break;
                         }
@@ -527,7 +561,7 @@ namespace ProgressOnderwijsUtils
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
-                        var publicWritableProperties = metadata.Where(mp => mp.CanWrite && SupportsType(mp.DataType)).Select(mp => mp.Name).ToArray();
+                        var publicWritableProperties = metadata.Where(mp => mp.CanWrite && SupportsType(mp.DataType) || SupportsTypeByCustomCreateMethod(mp.DataType)).Select(mp => mp.Name).ToArray();
                         var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
                         var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
                         throw new InvalidOperationException(
