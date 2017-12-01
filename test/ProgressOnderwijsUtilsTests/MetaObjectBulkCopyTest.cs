@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtilsTests
             public static CustomBla Create(string value) => new CustomBla(value);
         }
 
-        public sealed class BlaOk3 : ValueBase<BlaOk2>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Id { get; set; }
             public string Bla { get; set; }
