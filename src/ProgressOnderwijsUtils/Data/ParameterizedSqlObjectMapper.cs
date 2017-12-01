@@ -516,12 +516,10 @@ namespace ProgressOnderwijsUtils
                 static ByMetaObjectImpl()
                 {
                     var writablePropCount = 0;
-                    var debug = "";
                     foreach (var mp in metadata) { //perf:no LINQ
                         if (mp.CanWrite && SupportsType(mp.DataType) || SupportsTypeByCustomCreateMethod(mp.DataType)) {
                             writablePropCount++;
                         }
-                        debug += $"{mp.Name} {mp.CanWrite} {SupportsType(mp.DataType)} {SupportsTypeByCustomCreateMethod(mp.DataType)} {mp.DataType.Name}\n";
                     }
                     ColHashPrimes = new uint[writablePropCount];
 
