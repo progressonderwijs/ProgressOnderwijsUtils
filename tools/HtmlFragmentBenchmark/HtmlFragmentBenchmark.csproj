@@ -11,6 +11,6 @@
     <PackageReference Include="BenchmarkDotNet" Version="0.10.10" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
-    <ProjectReference Include="..\..\test\ProgressOnderwijsUtilsTests\ProgressOnderwijsUtilsTests.csproj" />
+    <ProjectReference Include="..\..\test\ProgressOnderwijsUtils.Test\ProgressOnderwijsUtils.Test.csproj" />
   </ItemGroup>
 </Project>

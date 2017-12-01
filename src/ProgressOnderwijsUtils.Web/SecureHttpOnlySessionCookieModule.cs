@@ -1,8 +1,7 @@
-﻿#if NET461
-using System;
+﻿using System;
 using System.Web;
 
-namespace ProgressOnderwijsUtils.WebSupport
+namespace ProgressOnderwijsUtils.Web
 {
     public class SecureHttpOnlySessionCookieModule : IHttpModule
     {
@@ -29,4 +28,3 @@ namespace ProgressOnderwijsUtils.WebSupport
         public void Dispose() { }
     }
 }
-#endif

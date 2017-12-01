@@ -17,7 +17,11 @@ build_script:
     if ($LastExitCode -ne 0) { exit $LastExitCode }
 test_script:
 - ps: >-
-    dotnet test test/ProgressOnderwijsUtilsTests/ProgressOnderwijsUtilsTests.csproj -c Release
+    dotnet test test/ProgressOnderwijsUtils.Test -c Release
+
+    if ($LastExitCode -ne 0) { exit $LastExitCode }
+
+    dotnet test test/ProgressOnderwijsUtils.Drawing.Test -c Release
 
     if ($LastExitCode -ne 0) { exit $LastExitCode }
 artifacts:

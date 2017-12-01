@@ -1,5 +1,4 @@
-﻿#if NET461
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using JetBrains.Annotations;
 
-namespace ProgressOnderwijsUtils.WebSupport
+namespace ProgressOnderwijsUtils.Web
 {
     public static class CommonHttpSecurityModules
     {
@@ -21,4 +20,3 @@ namespace ProgressOnderwijsUtils.WebSupport
         }
     }
 }
-#endif
