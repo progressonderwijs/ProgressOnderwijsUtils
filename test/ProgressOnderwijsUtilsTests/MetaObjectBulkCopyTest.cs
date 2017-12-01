@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtilsTests
             public string Bla2 { get; set; }
         }
 
-        public class CustomBla
+        public sealed class CustomBla
         {
             readonly string value;
             public CustomBla(string value)
