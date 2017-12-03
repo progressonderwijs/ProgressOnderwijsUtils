@@ -7,23 +7,11 @@ environment:
   CONNECTION_STRING: Server=(local)\SQL2016;Database=master;User ID=sa;Password=Password12!
 services: mssql2016
 build_script:
-- ps: >-
-    dotnet build -c Release
-
-    if ($LastExitCode -ne 0) { exit $LastExitCode }
-
-    dotnet pack src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj -c Release --include-symbols --include-source
-
-    if ($LastExitCode -ne 0) { exit $LastExitCode }
+- cmd: dotnet build -c Release
+- cmd: dotnet pack src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj -c Release --include-symbols --include-source
 test_script:
-- ps: >-
-    dotnet test test/ProgressOnderwijsUtils.Test -c Release
-
-    if ($LastExitCode -ne 0) { exit $LastExitCode }
-
-    dotnet test test/ProgressOnderwijsUtils.Drawing.Test -c Release
-
-    if ($LastExitCode -ne 0) { exit $LastExitCode }
+- cmd: dotnet test test/ProgressOnderwijsUtils.Test -c Release
+- cmd: dotnet test test/ProgressOnderwijsUtils.Drawing.Test -c Release
 artifacts:
 - path: '**\*.nupkg'
 deploy:
