@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtilsTests
 {
     public sealed class DateTagTest
     {
-        [Fact]
+        [Fact(Skip = "Extremely slow")]
         public void NoCollisionsSoon()
         {
             var start = DateTime.Now; //slightly evil in unit test;

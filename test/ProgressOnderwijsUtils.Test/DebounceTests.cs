@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtilsTests
             Assert.Equal(TaskStatus.RanToCompletion, task.Status);
         }
 
-        [Fact]
+        [Fact(Skip = "Flaky")]
         public void DebounceCallsAfterTheRightAmountOfTime()
         {
             var task = new TaskCompletionSource<int>();
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => elapsedMS >= 34 && elapsedMS < 100);
         }
 
-        [Fact]
+        [Fact(Skip = "Flaky")]
         public void DebounceCallsHandlersWithMutualExclusion()
         {
             var inCriticalSection = 0;

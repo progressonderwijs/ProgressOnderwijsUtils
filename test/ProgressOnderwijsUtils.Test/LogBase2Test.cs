@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtilsTests
 {
     public class LogBase2Test
     {
-        [Fact]
+        [Fact(Skip = "Extremely slow")]
         public void LogBase2RoundedDown_exhaustive_test()
         {
             for (uint i = 1; i < uint.MaxValue; i++) {
@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => Utils.LogBase2RoundedDown(uint.MaxValue) == 31);
         }
 
-        [Fact]
+        [Fact(Skip = "Extremely slow")]
         public void LogBase2RoundedUp_exhaustive_test()
         {
             for (uint i = 2; i < uint.MaxValue; i++) {
