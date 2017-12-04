@@ -17,4 +17,4 @@ test_script:
 artifacts:
 - path: '**\*.nupkg'
 deploy_script:
-- ps: push-to-nuget.ps1
+- ps: .\push-to-nuget.ps1
