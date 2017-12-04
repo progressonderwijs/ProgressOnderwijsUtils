@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtilsTests
             PAssert.That(() => counts.Count == 5);
         }
 
-        [Fact]
+        [Fact(Skip = "Flaky")]
         public void LotsOfCallsPreventHandlerFromFiring()
         {
             const int durationThatEventsAreFired = 300;
