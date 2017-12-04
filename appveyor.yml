@@ -20,3 +20,4 @@ deploy:
     secure: ZiRuPzJSYlkef3ZhmFaRBkNzEMa+VbPtNiHXwH6B3ZfSNwb6LzVeqk8Y3CchiXTG
   on:
     branch: master
+  skip_symbols: true # nuget.exe appears to do this anyway
