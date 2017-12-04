@@ -7,7 +7,7 @@ dotnet: 2.0.3
 before_install:
  - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux:2017-CU1
 script:
- - dotnet test test/ProgressOnderwijsUtils.Test -f netcoreapp2.0 -c Release
+ - dotnet test test/ProgressOnderwijsUtils.Tests -f netcoreapp2.0 -c Release
 env:
  - CONNECTION_STRING="Data Source=localhost;User Id=sa;Password=yourStrong(!)Password"
 branches:
