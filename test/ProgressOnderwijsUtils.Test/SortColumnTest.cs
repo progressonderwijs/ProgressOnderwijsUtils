@@ -13,21 +13,18 @@ namespace ProgressOnderwijsUtilsTests
             Assert.Equal(new ColumnSort("test", SortDirection.Asc), new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
             Assert.Equal(new ColumnSort("test", SortDirection.Asc), new ColumnSort("Test", SortDirection.Asc));
 
-            Assert.NotSame(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
             Assert.Equal(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Asc));
 
             Assert.NotEqual(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc));
             Assert.Equal(new ColumnSort("abc", SortDirection.Asc), new ColumnSort("abc", SortDirection.Desc).WithReverseDirection());
 
-            Assert.NotEqual((object)new ColumnSort("abc", SortDirection.Asc), null);
-
-            Assert.NotEqual(null, (object)new ColumnSort("abc", SortDirection.Asc));
+            Assert.False(new ColumnSort("abc", SortDirection.Asc).Equals(null));
         }
 
         [Fact]
         public void OperatorsOk()
         {
-            PAssert.That(()=>new ColumnSort("test", SortDirection.Asc) == new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
+            PAssert.That(() => new ColumnSort("test", SortDirection.Asc) == new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
             PAssert.That(() => !(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test")));
 
             PAssert.That(() => new ColumnSort("test", SortDirection.Asc) == new ColumnSort("Test", SortDirection.Asc));
@@ -37,8 +34,8 @@ namespace ProgressOnderwijsUtilsTests
         [Fact]
         public void CheckSqlSortString()
         {
-            Assert.Equal(new ColumnSort("ziggy", SortDirection.Asc).SqlSortString(), "ziggy Asc");
-            Assert.Equal(new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test").SqlSortString(), "test Asc");
+            Assert.Equal("ziggy Asc", new ColumnSort("ziggy", SortDirection.Asc).SqlSortString());
+            Assert.Equal("test Asc", new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test").SqlSortString());
         }
 
         [Fact]

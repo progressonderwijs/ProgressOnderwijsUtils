@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtilsTests
             public string Bla2 { get; set; }
         }
 
-        public void CreateTempTable()
+        void CreateTempTable()
         {
             SQL($@"create table #MyTable (id int not null primary key, bla nvarchar(max) null, bla2 nvarchar(max) not null)").ExecuteNonQuery(Context);
         }
