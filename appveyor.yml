@@ -8,7 +8,7 @@ environment:
 services: mssql2016
 build_script:
 - cmd: dotnet build -c Release
-- cmd: dotnet pack src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj -c Release --include-symbols --include-source
+- cmd: dotnet pack -c Release --include-symbols --include-source
 test_script:
 - cmd: dotnet test test/ProgressOnderwijsUtils.Test -c Release
 - cmd: dotnet test test/ProgressOnderwijsUtils.Drawing.Test -c Release
