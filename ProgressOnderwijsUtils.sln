@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils", "src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj", "{6C13FAA1-9347-4256-BCFD-F111E6121480}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Test", "test\ProgressOnderwijsUtils.Test\ProgressOnderwijsUtils.Test.csproj", "{4C25AC3F-293B-46BE-A853-CD5AF64E542E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Tests", "test\ProgressOnderwijsUtils.Tests\ProgressOnderwijsUtils.Tests.csproj", "{4C25AC3F-293B-46BE-A853-CD5AF64E542E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAF8D43B-2F61-421B-BD61-43848D1192BE}"
 	ProjectSection(SolutionItems) = preProject
@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Draw
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Web", "src\ProgressOnderwijsUtils.Web\ProgressOnderwijsUtils.Web.csproj", "{6CEA5F0B-40B9-4EB3-B0FF-5B5C4DC4A9E0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Drawing.Test", "test\ProgressOnderwijsUtils.Drawing.Test\ProgressOnderwijsUtils.Drawing.Test.csproj", "{6EFEB272-8FA1-4D5C-8698-6F4DACCF360E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Drawing.Tests", "test\ProgressOnderwijsUtils.Drawing.Tests\ProgressOnderwijsUtils.Drawing.Tests.csproj", "{6EFEB272-8FA1-4D5C-8698-6F4DACCF360E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AB343C95-4D8D-4931-AA14-F854F33AFE6C}"
 EndProject

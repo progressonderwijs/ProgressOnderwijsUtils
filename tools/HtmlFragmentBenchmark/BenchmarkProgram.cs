@@ -4,9 +4,9 @@ using System.Linq;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using ProgressOnderwijsUtils.Html;
-using ProgressOnderwijsUtilsTests;
+using ProgressOnderwijsUtils.Tests;
 
-namespace ProgressOnderwijsUtilsBenchmark
+namespace HtmlFragmentBenchmark
 {
     public class BenchmarkProgram
     {
