@@ -5,26 +5,16 @@ branches:
 image: Visual Studio 2017
 environment:
   CONNECTION_STRING: Server=(local)\SQL2016;Database=master;User ID=sa;Password=Password12!
+  NUGET_API_KEY:
+    secure: ZiRuPzJSYlkef3ZhmFaRBkNzEMa+VbPtNiHXwH6B3ZfSNwb6LzVeqk8Y3CchiXTG
 services: mssql2016
 build_script:
-- ps: >-
-    dotnet build -c Release
-
-    if ($LastExitCode -ne 0) { exit $LastExitCode }
-
-    dotnet pack src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj -c Release --include-symbols --include-source
-
-    if ($LastExitCode -ne 0) { exit $LastExitCode }
+- cmd: dotnet build -c Release
+- cmd: dotnet pack -c Release --include-symbols --include-source
 test_script:
-- ps: >-
-    dotnet test test/ProgressOnderwijsUtilsTests/ProgressOnderwijsUtilsTests.csproj -c Release
-
-    if ($LastExitCode -ne 0) { exit $LastExitCode }
+- cmd: dotnet test test/ProgressOnderwijsUtils.Tests -c Release
+- cmd: dotnet test test/ProgressOnderwijsUtils.Drawing.Tests -c Release
 artifacts:
 - path: '**\*.nupkg'
-deploy:
-- provider: NuGet
-  api_key:
-    secure: ZiRuPzJSYlkef3ZhmFaRBkNzEMa+VbPtNiHXwH6B3ZfSNwb6LzVeqk8Y3CchiXTG
-  on:
-    branch: master
+deploy_script:
+- ps: .\push-to-nuget.ps1
