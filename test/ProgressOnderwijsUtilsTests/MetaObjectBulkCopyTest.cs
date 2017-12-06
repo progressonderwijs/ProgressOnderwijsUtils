@@ -164,7 +164,7 @@ namespace ProgressOnderwijsUtilsTests
 #else
         [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
 #endif
-        public void MetaObjectSupportsCustomObject()
+        public void MetaObjectSupportsCustomObject_only_one_property()
         {
             PAssert.That(() => CustomBla.Create("aap").AsString == "aap");
             PAssert.That(() => default(CustomBla) == null);
@@ -179,7 +179,7 @@ namespace ProgressOnderwijsUtilsTests
 #else
         [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
 #endif
-        public void MetaObjectSupportsCustomObject2()
+        public void MetaObjectSupportsCustomObject_multiple_properties()
         {
             PAssert.That(() => CustomBla.Create("aap").AsString == "aap");
             PAssert.That(() => default(CustomBla) == null);
