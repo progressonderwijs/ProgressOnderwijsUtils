@@ -313,9 +313,14 @@ namespace ProgressOnderwijsUtils
                     ;
             }
 
-            static bool SupportsTypeByCustomCreateMethod([NotNull] Type type)
+            static bool IsWritableSimpletype([NotNull] IMetaProperty mp)
             {
-                return CreateMethodOfTypeWithCreateMethod(type, out var _);
+                return mp.CanWrite && SupportsType(mp.DataType);
+            }
+
+            static bool SupportsTypeByCustomCreateMethod([NotNull] IMetaProperty mp)
+            {
+                return mp.CanWrite && CreateMethodOfTypeWithCreateMethod(mp.DataType, out var _);
             }
 
             static bool CreateMethodOfTypeWithCreateMethod([NotNull] Type type, [CanBeNull] out MethodInfo methodInfo)
@@ -517,7 +522,7 @@ namespace ProgressOnderwijsUtils
                 {
                     var writablePropCount = 0;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && SupportsType(mp.DataType) || SupportsTypeByCustomCreateMethod(mp.DataType)) {
+                        if (IsWritableSimpletype(mp) || SupportsTypeByCustomCreateMethod(mp)) {
                             writablePropCount++;
                         }
                     }
@@ -529,7 +534,7 @@ namespace ProgressOnderwijsUtils
                         }
                     hasUnsupportedColumns = false;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && !SupportsType(mp.DataType) && !SupportsTypeByCustomCreateMethod(mp.DataType)) {
+                        if (!IsWritableSimpletype(mp) && !SupportsTypeByCustomCreateMethod(mp)) {
                             hasUnsupportedColumns = true;
                             break;
                         }
@@ -570,7 +575,7 @@ namespace ProgressOnderwijsUtils
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
-                        var publicWritableProperties = metadata.Where(mp => mp.CanWrite && SupportsType(mp.DataType) || SupportsTypeByCustomCreateMethod(mp.DataType)).Select(mp => mp.Name).ToArray();
+                        var publicWritableProperties = metadata.Where(mp => IsWritableSimpletype(mp) || SupportsTypeByCustomCreateMethod(mp)).Select(mp => mp.Name).ToArray();
                         var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
                         var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
                         throw new InvalidOperationException(
