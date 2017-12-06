@@ -315,12 +315,12 @@ namespace ProgressOnderwijsUtils
 
             static bool IsWritableSimpletype([NotNull] IMetaProperty mp)
             {
-                return mp.CanWrite && SupportsType(mp.DataType);
+                return SupportsType(mp.DataType);
             }
 
             static bool SupportsTypeByCustomCreateMethod([NotNull] IMetaProperty mp)
             {
-                return mp.CanWrite && CreateMethodOfTypeWithCreateMethod(mp.DataType, out var _);
+                return CreateMethodOfTypeWithCreateMethod(mp.DataType, out var _);
             }
 
             static bool CreateMethodOfTypeWithCreateMethod([NotNull] Type type, [CanBeNull] out MethodInfo methodInfo)
@@ -522,7 +522,7 @@ namespace ProgressOnderwijsUtils
                 {
                     var writablePropCount = 0;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (IsWritableSimpletype(mp) || SupportsTypeByCustomCreateMethod(mp)) {
+                        if (mp.CanWrite && (IsWritableSimpletype(mp) || SupportsTypeByCustomCreateMethod(mp))) {
                             writablePropCount++;
                         }
                     }
@@ -534,7 +534,7 @@ namespace ProgressOnderwijsUtils
                         }
                     hasUnsupportedColumns = false;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (!IsWritableSimpletype(mp) && !SupportsTypeByCustomCreateMethod(mp)) {
+                        if (mp.CanWrite && !IsWritableSimpletype(mp) && !SupportsTypeByCustomCreateMethod(mp)) {
                             hasUnsupportedColumns = true;
                             break;
                         }
