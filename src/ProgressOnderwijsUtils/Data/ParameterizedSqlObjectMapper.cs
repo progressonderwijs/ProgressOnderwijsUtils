@@ -313,6 +313,9 @@ namespace ProgressOnderwijsUtils
                     ;
             }
 
+            static bool SupportsMetaProperty([NotNull] IMetaProperty mp)
+                => IsSimpletype(mp) || IsCreatableType(mp);
+
             static bool IsSimpletype([NotNull] IMetaProperty mp)
             {
                 return SupportsType(mp.DataType);
@@ -522,7 +525,7 @@ namespace ProgressOnderwijsUtils
                 {
                     var writablePropCount = 0;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && (IsSimpletype(mp) || IsCreatableType(mp))) {
+                        if (mp.CanWrite && SupportsMetaProperty(mp)) {
                             writablePropCount++;
                         }
                     }
@@ -534,7 +537,7 @@ namespace ProgressOnderwijsUtils
                         }
                     hasUnsupportedColumns = false;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && !IsSimpletype(mp) && !IsCreatableType(mp)) {
+                        if (mp.CanWrite && !SupportsMetaProperty(mp)) {
                             hasUnsupportedColumns = true;
                             break;
                         }
@@ -575,7 +578,7 @@ namespace ProgressOnderwijsUtils
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
-                        var publicWritableProperties = metadata.Where(mp => IsSimpletype(mp) || IsCreatableType(mp)).Select(mp => mp.Name).ToArray();
+                        var publicWritableProperties = metadata.Where(SupportsMetaProperty).Select(mp => mp.Name).ToArray();
                         var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
                         var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
                         throw new InvalidOperationException(
