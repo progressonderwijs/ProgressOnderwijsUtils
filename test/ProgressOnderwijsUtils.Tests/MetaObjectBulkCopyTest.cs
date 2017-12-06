@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Transactions;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -42,8 +38,8 @@ namespace ProgressOnderwijsUtils.Tests
                 this.value = value;
             }
             public string AsString => value;
-            [UsedImplicitly]
-            public static CustomBla Create(string value) => new CustomBla(value);
+            [MetaObjectPropertyLoader]
+            public static CustomBla MethodWithIrrelevantName(string value) => new CustomBla(value);
         }
 
         public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -174,7 +170,7 @@ namespace ProgressOnderwijsUtils.Tests
 #endif
         public void MetaObjectSupportsCustomObject_only_one_property()
         {
-            PAssert.That(() => CustomBla.Create("aap").AsString == "aap");
+            PAssert.That(() => CustomBla.MethodWithIrrelevantName("aap").AsString == "aap");
             PAssert.That(() => default(CustomBla) == null);
             CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
@@ -189,7 +185,7 @@ namespace ProgressOnderwijsUtils.Tests
 #endif
         public void MetaObjectSupportsCustomObject_multiple_properties()
         {
-            PAssert.That(() => CustomBla.Create("aap").AsString == "aap");
+            PAssert.That(() => CustomBla.MethodWithIrrelevantName("aap").AsString == "aap");
             PAssert.That(() => default(CustomBla) == null);
             CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
@@ -204,7 +200,7 @@ namespace ProgressOnderwijsUtils.Tests
 #endif
         public void MetaObjectSupportsCustomObject_readonly()
         {
-            PAssert.That(() => CustomBla.Create("aap").AsString == "aap");
+            PAssert.That(() => CustomBla.MethodWithIrrelevantName("aap").AsString == "aap");
             PAssert.That(() => default(CustomBla) == null);
             CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
