@@ -10,6 +10,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class CascadedDelete
     {
+        [NotNull]
         public static DeletionPerformance[] Bla<TId>(
             [NotNull] SqlCommandCreationContext conn,
             [NotNull] string initialTable,
