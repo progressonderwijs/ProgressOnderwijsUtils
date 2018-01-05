@@ -35,7 +35,6 @@ namespace ProgressOnderwijsUtils
             var keys = SQL($@"
             select 
                 fk_id=fk.object_id,
-                fk_column_id=fkc.constraint_column_id,
                 pk_table=SCHEMA_NAME(o_pk.schema_id) + '.' + o_pk.name,
                 fk_table=SCHEMA_NAME(o_fk.schema_id) + '.' + o_fk.name,
                 pk_column=c_pk.name,
