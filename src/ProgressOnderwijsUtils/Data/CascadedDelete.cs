@@ -55,16 +55,15 @@ namespace ProgressOnderwijsUtils
                 );
 
             var pkeys = SQL($@"
-            select 
-                pk_table=SCHEMA_NAME(o_pk.schema_id) + '.' + o_pk.name,
-                pk_column=c_pk.name
-            from sys.key_constraints pk
-            join sys.objects o_pk on pk.parent_object_id = o_pk.object_id
-            join sys.index_columns as ic on ic.object_id = o_pk.object_id  and ic.index_id = pk.unique_index_id
-            join sys.columns c_pk on c_pk.object_id = pk.parent_object_id  and ic.column_id=c_pk.column_id 
-            where pk.type = 'PK'  and o_pk.type='U'
-            order by o_pk.object_id, ic.column_id
-        ").ReadMetaObjects<PkCol>(conn)
+                select 
+                    pk_table=object_schema_name(pk.parent_object_id) + '.' + object_name(pk.parent_object_id),
+                    pk_column=col_name(pk.parent_object_id, ic.column_id)
+                from sys.key_constraints pk
+                join sys.objects o_pk on pk.parent_object_id = o_pk.object_id
+                join sys.index_columns as ic on ic.object_id = pk.parent_object_id  and ic.index_id = pk.unique_index_id
+                where pk.type = 'PK'  and o_pk.type='U'
+                order by pk.parent_object_id, ic.column_id
+            ").ReadMetaObjects<PkCol>(conn)
                 .ToLookup(
                     row => row.Pk_table,
                     row => row.Pk_column,
