@@ -84,8 +84,8 @@ namespace ProgressOnderwijsUtils
 
             int delBatch = 0;
 
-            Stack<Action> deletionStack = new Stack<Action>();
-            List<DeletionPerformance> perflog = new List<DeletionPerformance>();
+            var deletionStack = new Stack<Action>();
+            var perflog = new List<DeletionPerformance>();
             long totalDeletes = 0;
             Action<string, ParameterizedSql, SList<string>> deleteKids = null;
             deleteKids = (tableName, tempTableName, stack) => {
