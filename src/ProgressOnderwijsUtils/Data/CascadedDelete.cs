@@ -87,8 +87,9 @@ namespace ProgressOnderwijsUtils
             var deletionStack = new Stack<Action>();
             var perflog = new List<DeletionPerformance>();
             long totalDeletes = 0;
-            Action<string, ParameterizedSql, SList<string>> deleteKids = null;
-            deleteKids = (tableName, tempTableName, stack) => {
+
+            void DeleteKids(string tableName, ParameterizedSql tempTableName, SList<string> stack)
+            {
                 var ttJoin = dyn(pkeys[tableName].Select(col => "pk." + col + "=tt." + col).JoinStrings(" and "));
 
                 deletionStack.Push(() => {
@@ -114,11 +115,7 @@ namespace ProgressOnderwijsUtils
                     var pkJoin = dyn(fk.columns.Select(col => "fk." + col.Fk_column + "=pk." + col.Pk_column).JoinStrings(" and "));
 
                     var newDelTable = dyn("[##del_" + delBatch + "]");
-                    var whereClause = !tableName.EqualsOrdinalCaseInsensitive(fk.Fk_table)
-                        ? SQL($"where 1=1")
-                        : SQL($"where ").Append(
-                            dyn(pkeys[tableName].Select(col => "pk." + col + "<>fk." + col).JoinStrings(" or "))
-                            );
+                    var whereClause = !tableName.EqualsOrdinalCaseInsensitive(fk.Fk_table) ? SQL($"where 1=1") : SQL($"where ").Append(dyn(pkeys[tableName].Select(col => "pk." + col + "<>fk." + col).JoinStrings(" or ")));
 
                     var statement = SQL($@"
                         select {referencingPkCols} 
@@ -142,11 +139,12 @@ namespace ProgressOnderwijsUtils
                         SQL($"drop table {newDelTable}").ExecuteNonQuery(conn);
                     } else {
                         delBatch++;
-                        deleteKids(fk.Fk_table, newDelTable, stack.Prepend(fk.Fk_table));
+                        DeleteKids(fk.Fk_table, newDelTable, stack.Prepend(fk.Fk_table));
                     }
                 }
-            };
-            deleteKids(initialTable, delTable, SList.SingleElement(initialTable));
+            }
+
+            DeleteKids(initialTable, delTable, SList.SingleElement(initialTable));
             while (deletionStack.Count > 0) {
                 deletionStack.Pop()();
             }
