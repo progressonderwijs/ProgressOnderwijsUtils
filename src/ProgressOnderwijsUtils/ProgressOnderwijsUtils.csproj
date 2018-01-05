@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>13.1.0</Version>
+    <Version>13.2.0</Version>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -19,8 +19,6 @@
   <PropertyGroup>
     <OutputType>library</OutputType>
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
-    <AssemblyVersion>13.2.0.0</AssemblyVersion>
-    <FileVersion>13.2.0.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
