@@ -34,19 +34,15 @@ namespace ProgressOnderwijsUtils
             log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete.Length} ids) from {initialTable})");
 
             var keys = SQL($@"
-            select 
-                fk_id=fk.object_id,
-                pk_table=SCHEMA_NAME(o_pk.schema_id) + '.' + o_pk.name,
-                fk_table=SCHEMA_NAME(o_fk.schema_id) + '.' + o_fk.name,
-                pk_column=c_pk.name,
-                fk_column=c_fk.name
-            from sys.foreign_keys fk
-            join sys.foreign_key_columns fkc on fkc.constraint_object_id = fk.object_id
-            join sys.columns c_pk on c_pk.object_id = fkc.referenced_object_id and c_pk.column_id = fkc.referenced_column_id
-            join sys.columns c_fk on c_fk.object_id = fkc.parent_object_id and c_fk.column_id = fkc.parent_column_id
-            join sys.objects o_pk on fk.referenced_object_id = o_pk.object_id
-            join sys.objects o_fk on fk.parent_object_id = o_fk.object_id
-            order by fk.object_id, fkc.constraint_column_id
+                select 
+                    fk_id = fk.object_id,
+                    pk_table=object_schema_name(fk.referenced_object_id) + '.' +  object_name(fk.referenced_object_id),
+                    fk_table=object_schema_name(fk.parent_object_id) + '.' + object_name(fk.parent_object_id),
+                    pk_column=COL_NAME( fkc.referenced_object_id , fkc.referenced_column_id),
+                    fk_column=COL_NAME( fkc.parent_object_id , fkc.parent_column_id)
+                from sys.foreign_keys fk
+                join sys.foreign_key_columns fkc on fkc.constraint_object_id = fk.object_id
+                order by fk.object_id, fkc.constraint_column_id
             ").ReadMetaObjects<FkCol>(conn)
                 .GroupBy(row => row.Fk_id)
                 .ToLookup(
