@@ -105,16 +105,16 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             if (!string.IsNullOrWhiteSpace(relayState)) {
                 result.Add("RelayState", relayState);
             }
-            result.Add("SigAlg", "http://www.w3.org/2000/09/xmldsig#rsa-sha1");
-            result.Add("Signature", Signature(result, cer.PrivateKey));
+            result.Add("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+            result.Add("Signature", Signature(result, cer.GetRSAPrivateKey()));
             return result;
         }
 
         [NotNull]
-        static string Signature([NotNull] NameValueCollection qs, AsymmetricAlgorithm key)
+        static string Signature([NotNull] NameValueCollection qs, [NotNull] RSA key)
         {
             var data = Encoding.UTF8.GetBytes(ToQueryString(qs));
-            var result = ((RSA)key).SignData(data, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
+            var result = key.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
             return Convert.ToBase64String(result);
         }
 

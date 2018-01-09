@@ -20,10 +20,10 @@ namespace ProgressOnderwijsUtils.Tests
                 entity = "http://example.com"
             }));
             var query = HttpUtility.ParseQueryString(new Uri(rawUri).Query);
-            var signedData = Encoding.UTF8.GetBytes($"SAMLRequest={Uri.EscapeDataString(query["SAMLRequest"])}&SigAlg={Uri.EscapeDataString("http://www.w3.org/2000/09/xmldsig#rsa-sha1")}");
+            var signedData = Encoding.UTF8.GetBytes($"SAMLRequest={Uri.EscapeDataString(query["SAMLRequest"])}&SigAlg={Uri.EscapeDataString("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")}");
             var signature = Convert.FromBase64String(query["Signature"]);
 
-            var signatureVerified = ((RSA)certificate.PublicKey.Key).VerifyData(signedData, signature, HashAlgorithmName.SHA1, RSASignaturePadding.Pkcs1);
+            var signatureVerified = ((RSA)certificate.PublicKey.Key).VerifyData(signedData, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
             PAssert.That(() => signatureVerified);
         }
     }
