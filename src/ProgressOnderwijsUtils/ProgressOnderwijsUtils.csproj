@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>13.1.0</Version>
+    <Version>13.2.0-beta1</Version>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -8,7 +8,7 @@
       Various utility methods+classes used by Progress Onderwijs.
     </Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Enable custom objects for IMetaObject</PackageReleaseNotes>
+    <PackageReleaseNotes>Update hashing algorithm used for signing SAML request to SHA2.</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
