@@ -367,11 +367,17 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
+                var isTypeWithCreateMethod = CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo);
                 var needsCast = underlyingType != type.GetNonNullableType();
+
+                if (isTypeWithCreateMethod) {
+                    return Expression.Call(methodInfo, callExpression);
+                } else 
                 if (needsCast) {
                     return Expression.Convert(callExpression, type.GetNonNullableType());
-                }
+                } else {
                 return callExpression;
+                }
             }
 
             public static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, [NotNull] Type type)
@@ -386,13 +392,7 @@ namespace ProgressOnderwijsUtils
                     callExpr = Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
                 }
                 Expression colValueExpr;
-                var isTypeWithCreateMethod = CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo);
-                if (isTypeWithCreateMethod) {
-                    var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
-                    var ifDbNull = Expression.Default(type);
-                    var ifNotDbNull = Expression.Convert(Expression.Call(methodInfo, callExpr), type);
-                    colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
-                } else if (canBeNull) {
+                if (canBeNull) {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
                     var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
