@@ -23,26 +23,19 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
         [NotNull]
-        public static string GetRedirectUrl(AuthnRequest request)
+        public static Uri GetRedirectUrl(AuthnRequest request)
         {
-            var result = new[] { ("SAMLRequest", request.Encode()), ("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256") };
-            var data = Encoding.UTF8.GetBytes(ToQueryString(result));
-            var base64Signature = Convert.ToBase64String(request.Issuer.certificate.GetRSAPrivateKey().SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
-            result = result.AppendArrays(new[] { ("Signature", base64Signature) });
-            var queryString = ToQueryString(result);
-            var builder = new UriBuilder(request.Destination);
-            if (string.IsNullOrEmpty(builder.Query)) {
-                builder.Query = queryString;
-            } else {
-                builder.Query = builder.Query.Substring(1) + "&" + queryString;
-            }
-            return builder.ToString();
+            //Don't escape colon: Uri.ToString doesn't either; and this is just a defense-in-depth we don't need
+            //ref: https://github.com/aspnet/HttpAbstractions/commit/1e9d57f80ca883881804292448fff4de8b112733
+            string Escape(string str) => Uri.EscapeDataString(str).Replace("%3A", ":");
+            string EncodeQueryParameter(string key, string value) => Escape(key) + "=" + Escape(value);
+
+            var samlRequestQueryString = EncodeQueryParameter("SAMLRequest", request.Encode()) + "&" + EncodeQueryParameter("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+            var rsaPrivateKey = request.Issuer.certificate.GetRSAPrivateKey();
+            var base64Signature = Convert.ToBase64String(rsaPrivateKey.SignData(Encoding.UTF8.GetBytes(samlRequestQueryString), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+            var signedQueryString = samlRequestQueryString + "&" + EncodeQueryParameter("Signature", base64Signature);
+            return new Uri(request.Destination + "?" + signedQueryString);
         }
-
-        [NotNull]
-        static string ToQueryString([NotNull] (string key, string value)[] qs) 
-            => qs.Select(argument => Uri.EscapeDataString(argument.key) + "=" + argument.value).JoinStrings("&");
-
 
         [CanBeNull]
         public static XElement Response([CanBeNull] string samlResponse)
