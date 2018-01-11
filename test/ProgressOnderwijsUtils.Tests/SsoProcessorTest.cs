@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils.Tests
                 certificate = certificate,
                 entity = "http://example.com"
             }));
-            var query = HttpUtility.ParseQueryString(new Uri(rawUri).Query);
+            var query = HttpUtility.ParseQueryString(rawUri.Query);
             var signedData = Encoding.UTF8.GetBytes($"SAMLRequest={Uri.EscapeDataString(query["SAMLRequest"])}&SigAlg={Uri.EscapeDataString("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")}");
             var signature = Convert.FromBase64String(query["Signature"]);
 
