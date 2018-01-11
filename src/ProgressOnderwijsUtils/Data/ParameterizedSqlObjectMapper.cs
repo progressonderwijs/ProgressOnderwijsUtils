@@ -331,21 +331,22 @@ namespace ProgressOnderwijsUtils
                 methodInfo = null;
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 var method = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public).SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
-                if (!underlyingType.IsValueType || method != null) {
-                    if (method == null) {
-                        return false;
-                    }
-                    if (method.ReturnType != underlyingType) {
-                        return false;
-                    }
-                    var parameters = method.GetParameters();
-                    if (parameters.Length != 1) {
-                        return false;
-                    }
-                    if (SupportsType(parameters[0].ParameterType)) {
-                        methodInfo = method;
-                        return true;
-                    }
+                if (underlyingType.IsValueType && method == null) {
+                    return false;
+                }
+                if (method == null) {
+                    return false;
+                }
+                if (method.ReturnType != underlyingType) {
+                    return false;
+                }
+                var parameters = method.GetParameters();
+                if (parameters.Length != 1) {
+                    return false;
+                }
+                if (SupportsType(parameters[0].ParameterType)) {
+                    methodInfo = method;
+                    return true;
                 }
                 return false;
             }
