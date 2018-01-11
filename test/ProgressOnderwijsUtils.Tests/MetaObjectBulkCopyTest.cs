@@ -262,5 +262,19 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_nullable_struct_property>(Context);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x =>  new BlaOk { Id = x.Id, Bla = x.Bla.HasValue ? x.Bla.Value.AsString : default(string), Bla2 = x.Bla2.AsString })));
         }
+
+
+#if NET461
+        [Fact]
+#else
+        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
+#endif
+        public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception()
+        {
+            PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
+            CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
+            Assert.ThrowsAny<Exception>(() => SQL($"select Id, Bla, Bla2 = cast(null as varchar) from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context));
+        }
     }
 }
