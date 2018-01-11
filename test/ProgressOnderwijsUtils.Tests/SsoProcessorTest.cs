@@ -2,7 +2,6 @@
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Web;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SingleSignOn;
 using Xunit;
@@ -19,12 +18,11 @@ namespace ProgressOnderwijsUtils.Tests
                 certificate = certificate,
                 entity = "http://example.com"
             }));
-            var query = HttpUtility.ParseQueryString(rawUri.Query);
-            var signedData = Encoding.UTF8.GetBytes($"SAMLRequest={Uri.EscapeDataString(query["SAMLRequest"])}&SigAlg={Uri.EscapeDataString("http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")}");
-            var signature = Convert.FromBase64String(query["Signature"]);
-
-            var signatureVerified = ((RSA)certificate.PublicKey.Key).VerifyData(signedData, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-            PAssert.That(() => signatureVerified);
+            var querySplit = rawUri.Query.Substring(1).Split(new[] { "&Signature=" }, StringSplitOptions.None);
+            var signedData = Encoding.UTF8.GetBytes(querySplit[0]);
+            var rsaKey = (RSA)certificate.PublicKey.Key;
+            var signature = Convert.FromBase64String(Uri.UnescapeDataString(querySplit[1]));
+            PAssert.That(() => rsaKey.VerifyData(signedData, signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
         }
     }
 }
