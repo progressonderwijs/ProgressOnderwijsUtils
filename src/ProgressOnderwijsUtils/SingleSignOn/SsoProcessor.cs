@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
-using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -25,10 +23,18 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
         [NotNull]
-        public static string GetRedirectUrl(AuthnRequest request)
+        public static Uri GetRedirectUrl(AuthnRequest request)
         {
-            var qs = CreateQueryString(request, null, request.Issuer.certificate);
-            return CreateUrl(request, qs);
+            //Don't escape colon: Uri.ToString doesn't either; and this is just a defense-in-depth we don't need
+            //ref: https://github.com/aspnet/HttpAbstractions/commit/1e9d57f80ca883881804292448fff4de8b112733
+            string Escape(string str) => Uri.EscapeDataString(str).Replace("%3A", ":");
+            string EncodeQueryParameter(string key, string value) => Escape(key) + "=" + Escape(value);
+
+            var samlRequestQueryString = EncodeQueryParameter("SAMLRequest", request.Encode()) + "&" + EncodeQueryParameter("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+            var rsaPrivateKey = request.Issuer.certificate.GetRSAPrivateKey();
+            var base64Signature = Convert.ToBase64String(rsaPrivateKey.SignData(Encoding.UTF8.GetBytes(samlRequestQueryString), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+            var signedQueryString = samlRequestQueryString + "&" + EncodeQueryParameter("Signature", base64Signature);
+            return new Uri(request.Destination + "?" + signedQueryString);
         }
 
         [CanBeNull]
@@ -45,7 +51,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
             var statusCodeAttribute = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").Single().Attribute("Value")
                 ?? throw new InvalidOperationException("Missing status code attribute");
-            
+
             if (statusCodeAttribute.Value == "urn:oasis:names:tc:SAML:2.0:status:Success") {
                 var result = response.Descendants(SamlNamespaces.SAML_NS + "Assertion").Single();
                 Validate(result, certificate);
@@ -61,7 +67,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             LOG.Debug(() => $"GetAttributes(assertion='{assertion}')");
 
             Validate(assertion, certificate);
-            var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement") 
+            var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
                 ?? throw new InvalidOperationException("Missing AuthnStatement element");
             return new SsoAttributes {
                 uid = GetAttribute(assertion, UID),
@@ -84,51 +90,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 .Attribute("InResponseTo");
             // ReSharper restore PossibleNullReferenceException
             return XmlConvert.DecodeName(rawInResponseTo);
-        }
-
-        [NotNull]
-        static string CreateUrl(AuthnRequest req, [NotNull] NameValueCollection qs)
-        {
-            var builder = new UriBuilder(req.Destination);
-            if (string.IsNullOrEmpty(builder.Query)) {
-                builder.Query = ToQueryString(qs);
-            } else {
-                builder.Query = builder.Query.Substring(1) + "&" + ToQueryString(qs);
-            }
-            return builder.ToString();
-        }
-
-        [NotNull]
-        static NameValueCollection CreateQueryString(AuthnRequest req, [CanBeNull] string relayState, [NotNull] X509Certificate2 cer)
-        {
-            var result = new NameValueCollection { { "SAMLRequest", req.Encode() } };
-            if (!string.IsNullOrWhiteSpace(relayState)) {
-                result.Add("RelayState", relayState);
-            }
-            result.Add("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-            result.Add("Signature", Signature(result, cer.GetRSAPrivateKey()));
-            return result;
-        }
-
-        [NotNull]
-        static string Signature([NotNull] NameValueCollection qs, [NotNull] RSA key)
-        {
-            var data = Encoding.UTF8.GetBytes(ToQueryString(qs));
-            var result = key.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-            return Convert.ToBase64String(result);
-        }
-
-        [NotNull]
-        static string ToQueryString([NotNull] NameValueCollection qs)
-        {
-            var result = new StringBuilder();
-            foreach (string key in qs.Keys) {
-                if (result.Length > 0) {
-                    result.Append("&");
-                }
-                result.AppendFormat("{0}={1}", key, Uri.EscapeDataString(qs[key]));
-            }
-            return result.ToString();
         }
 
         [NotNull]
