@@ -27,20 +27,15 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         [NotNull]
         public static string GetRedirectUrl(AuthnRequest request)
         {
-            var result = new NameValueCollection { { "SAMLRequest", request.Encode() } };
-            if (!string.IsNullOrWhiteSpace(null)) {
-                result.Add("RelayState", null);
-            }
-            result.Add("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+            var result = new NameValueCollection { { "SAMLRequest", request.Encode() }, { "SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" } };
             var data = Encoding.UTF8.GetBytes(ToQueryString(result));
-            var result1 = request.Issuer.certificate.GetRSAPrivateKey().SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-            result.Add("Signature", Convert.ToBase64String(result1));
-            var qs = result;
+            var base64Signature = Convert.ToBase64String(request.Issuer.certificate.GetRSAPrivateKey().SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
+            result.Add("Signature", base64Signature);
             var builder = new UriBuilder(request.Destination);
             if (string.IsNullOrEmpty(builder.Query)) {
-                builder.Query = ToQueryString(qs);
+                builder.Query = ToQueryString(result);
             } else {
-                builder.Query = builder.Query.Substring(1) + "&" + ToQueryString(qs);
+                builder.Query = builder.Query.Substring(1) + "&" + ToQueryString(result);
             }
             return builder.ToString();
         }
