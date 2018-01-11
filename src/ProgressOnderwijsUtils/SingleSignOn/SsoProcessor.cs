@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
-using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -27,18 +25,24 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         [NotNull]
         public static string GetRedirectUrl(AuthnRequest request)
         {
-            var result = new NameValueCollection { { "SAMLRequest", request.Encode() }, { "SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256" } };
+            var result = new[] { ("SAMLRequest", request.Encode()), ("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256") };
             var data = Encoding.UTF8.GetBytes(ToQueryString(result));
             var base64Signature = Convert.ToBase64String(request.Issuer.certificate.GetRSAPrivateKey().SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
-            result.Add("Signature", base64Signature);
+            result = result.AppendArrays(new[] { ("Signature", base64Signature) });
+            var queryString = ToQueryString(result);
             var builder = new UriBuilder(request.Destination);
             if (string.IsNullOrEmpty(builder.Query)) {
-                builder.Query = ToQueryString(result);
+                builder.Query = queryString;
             } else {
-                builder.Query = builder.Query.Substring(1) + "&" + ToQueryString(result);
+                builder.Query = builder.Query.Substring(1) + "&" + queryString;
             }
             return builder.ToString();
         }
+
+        [NotNull]
+        static string ToQueryString([NotNull] (string key, string value)[] qs) 
+            => qs.Select(argument => Uri.EscapeDataString(argument.key) + "=" + argument.value).JoinStrings("&");
+
 
         [CanBeNull]
         public static XElement Response([CanBeNull] string samlResponse)
@@ -54,7 +58,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
             var statusCodeAttribute = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").Single().Attribute("Value")
                 ?? throw new InvalidOperationException("Missing status code attribute");
-            
+
             if (statusCodeAttribute.Value == "urn:oasis:names:tc:SAML:2.0:status:Success") {
                 var result = response.Descendants(SamlNamespaces.SAML_NS + "Assertion").Single();
                 Validate(result, certificate);
@@ -70,7 +74,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             LOG.Debug(() => $"GetAttributes(assertion='{assertion}')");
 
             Validate(assertion, certificate);
-            var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement") 
+            var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
                 ?? throw new InvalidOperationException("Missing AuthnStatement element");
             return new SsoAttributes {
                 uid = GetAttribute(assertion, UID),
@@ -93,19 +97,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 .Attribute("InResponseTo");
             // ReSharper restore PossibleNullReferenceException
             return XmlConvert.DecodeName(rawInResponseTo);
-        }
-
-        [NotNull]
-        static string ToQueryString([NotNull] NameValueCollection qs)
-        {
-            var result = new StringBuilder();
-            foreach (string key in qs.Keys) {
-                if (result.Length > 0) {
-                    result.Append("&");
-                }
-                result.AppendFormat("{0}={1}", key, Uri.EscapeDataString(qs[key]));
-            }
-            return result.ToString();
         }
 
         [NotNull]
