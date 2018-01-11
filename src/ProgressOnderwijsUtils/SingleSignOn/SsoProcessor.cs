@@ -27,8 +27,22 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         [NotNull]
         public static string GetRedirectUrl(AuthnRequest request)
         {
-            var qs = CreateQueryString(request, null, request.Issuer.certificate);
-            return CreateUrl(request, qs);
+            var result = new NameValueCollection { { "SAMLRequest", request.Encode() } };
+            if (!string.IsNullOrWhiteSpace(null)) {
+                result.Add("RelayState", null);
+            }
+            result.Add("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
+            var data = Encoding.UTF8.GetBytes(ToQueryString(result));
+            var result1 = request.Issuer.certificate.GetRSAPrivateKey().SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            result.Add("Signature", Convert.ToBase64String(result1));
+            var qs = result;
+            var builder = new UriBuilder(request.Destination);
+            if (string.IsNullOrEmpty(builder.Query)) {
+                builder.Query = ToQueryString(qs);
+            } else {
+                builder.Query = builder.Query.Substring(1) + "&" + ToQueryString(qs);
+            }
+            return builder.ToString();
         }
 
         [CanBeNull]
@@ -84,38 +98,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 .Attribute("InResponseTo");
             // ReSharper restore PossibleNullReferenceException
             return XmlConvert.DecodeName(rawInResponseTo);
-        }
-
-        [NotNull]
-        static string CreateUrl(AuthnRequest req, [NotNull] NameValueCollection qs)
-        {
-            var builder = new UriBuilder(req.Destination);
-            if (string.IsNullOrEmpty(builder.Query)) {
-                builder.Query = ToQueryString(qs);
-            } else {
-                builder.Query = builder.Query.Substring(1) + "&" + ToQueryString(qs);
-            }
-            return builder.ToString();
-        }
-
-        [NotNull]
-        static NameValueCollection CreateQueryString(AuthnRequest req, [CanBeNull] string relayState, [NotNull] X509Certificate2 cer)
-        {
-            var result = new NameValueCollection { { "SAMLRequest", req.Encode() } };
-            if (!string.IsNullOrWhiteSpace(relayState)) {
-                result.Add("RelayState", relayState);
-            }
-            result.Add("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-            result.Add("Signature", Signature(result, cer.GetRSAPrivateKey()));
-            return result;
-        }
-
-        [NotNull]
-        static string Signature([NotNull] NameValueCollection qs, [NotNull] RSA key)
-        {
-            var data = Encoding.UTF8.GetBytes(ToQueryString(qs));
-            var result = key.SignData(data, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-            return Convert.ToBase64String(result);
         }
 
         [NotNull]
