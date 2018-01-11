@@ -387,19 +387,19 @@ namespace ProgressOnderwijsUtils
                 }
                 Expression colValueExpr;
                 var isTypeWithCreateMethod = CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo);
-                if (!canBeNull && !isTypeWithCreateMethod) {
-                    colValueExpr = GetCastExpression(callExpr, type);
-                }
-                else if (isTypeWithCreateMethod) {
+                if (isTypeWithCreateMethod) {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
                     var ifNotDbNull = Expression.Convert(Expression.Call(methodInfo, callExpr), type);
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
-                } else {
+                } else if (canBeNull) {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
                     var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
+                }
+                else {
+                    colValueExpr = GetCastExpression(callExpr, type); { }
                 }
 
                 return colValueExpr;
