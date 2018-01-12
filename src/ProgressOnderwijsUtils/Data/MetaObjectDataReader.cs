@@ -68,8 +68,7 @@ namespace ProgressOnderwijsUtils
 
         public override TColumn GetFieldValue<TColumn>(int ordinal)
         {
-            var getter = columnInfos[ordinal].TypedNonNullableGetter as Func<T, TColumn>;
-            if (getter == null) {
+            if (!(columnInfos[ordinal].TypedNonNullableGetter is Func<T, TColumn> getter)) {
                 throw new InvalidOperationException($"Tried to access field {columnInfos[ordinal].Name} of type {columnInfos[ordinal].ColumnType.ToCSharpFriendlyTypeName()} as type {typeof(TColumn).ToCSharpFriendlyTypeName()}.");
             }
             return getter(current);
