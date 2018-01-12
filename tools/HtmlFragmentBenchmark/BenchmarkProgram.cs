@@ -10,9 +10,7 @@ namespace HtmlFragmentBenchmark
 {
     public class BenchmarkProgram
     {
-        static BenchmarkProgram() { }
-
-        static void Main(string[] args)
+        static void Main()
         {
 #if FOR_PROFILING
             var sw = System.Diagnostics.Stopwatch.StartNew();
