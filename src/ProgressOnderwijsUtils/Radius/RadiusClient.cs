@@ -139,7 +139,7 @@ namespace ProgressOnderwijsUtils.Radius
 
             // Checking the length field of the paket. This value must be equal to the byteArray length
             // "receivedBytes.Length"
-            var responseLen = ((int)response[2] << 8) + (int)response[3];
+            var responseLen = (response[2] << 8) + response[3];
             if (responseLen != response.Length) {
                 return RadiusAuthResults.ServiceErrorPacketMalformed; //error
             }
@@ -190,7 +190,7 @@ namespace ProgressOnderwijsUtils.Radius
                 for (var j = 0; j < nHashRounds; j++) {
                     for (var i = 0; i < 16; i++) {
                         var pos = j * 16 + i;
-                        var pp = pos < password.Length ? (byte)password[pos] : (byte)0;
+                        var pp = pos < password.Length ? password[pos] : (byte)0;
                         Result[pos] = (byte)(pMD5Sum[i] ^ pp);
                     }
 
