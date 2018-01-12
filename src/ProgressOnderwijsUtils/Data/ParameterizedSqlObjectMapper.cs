@@ -8,9 +8,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+// ReSharper disable RedundantUsingDirective
+using System.Reflection.Emit;
 using System.Threading;
+// ReSharper restore RedundantUsingDirective
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;

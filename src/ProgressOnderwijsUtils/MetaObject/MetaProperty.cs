@@ -7,6 +7,7 @@ using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
+// ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
     public interface IMetaProperty : IColumnDefinition
