@@ -2,7 +2,6 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using ProgressOnderwijsUtils;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests

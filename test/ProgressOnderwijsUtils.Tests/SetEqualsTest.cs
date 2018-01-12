@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
 using Xunit;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Tests
 {

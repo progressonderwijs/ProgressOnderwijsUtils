@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 using Xunit;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Tests
 {

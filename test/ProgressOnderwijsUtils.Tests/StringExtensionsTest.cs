@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using ExpressionToCodeLib;
 using Xunit;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Tests
 {

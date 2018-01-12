@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Html;
 using Xunit;
 

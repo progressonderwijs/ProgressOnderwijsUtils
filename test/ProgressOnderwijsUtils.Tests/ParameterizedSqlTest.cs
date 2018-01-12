@@ -3,7 +3,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
-using ProgressOnderwijsUtils;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
