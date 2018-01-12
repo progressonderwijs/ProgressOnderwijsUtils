@@ -330,22 +330,20 @@ namespace ProgressOnderwijsUtils
             {
                 methodInfo = null;
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                if (!underlyingType.IsValueType) {
-                    var method = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public).SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
-                    if (method == null) {
-                        return false;
-                    }
-                    if (method.ReturnType != underlyingType) {
-                        return false;
-                    }
-                    var parameters = method.GetParameters();
-                    if (parameters.Length != 1) {
-                        return false;
-                    }
-                    if (SupportsType(parameters[0].ParameterType)) {
-                        methodInfo = method;
-                        return true;
-                    }
+                var method = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public).SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
+                if (method == null) {
+                    return false;
+                }
+                if (method.ReturnType != underlyingType) {
+                    return false;
+                }
+                var parameters = method.GetParameters();
+                if (parameters.Length != 1) {
+                    return false;
+                }
+                if (SupportsType(parameters[0].ParameterType)) {
+                    methodInfo = method;
+                    return true;
                 }
                 return false;
             }
@@ -366,11 +364,16 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
+                var isTypeWithCreateMethod = CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo);
                 var needsCast = underlyingType != type.GetNonNullableType();
-                if (needsCast) {
+
+                if (isTypeWithCreateMethod) {
+                    return Expression.Call(methodInfo, callExpression);
+                } else if (needsCast) {
                     return Expression.Convert(callExpression, type.GetNonNullableType());
+                } else {
+                    return callExpression;
                 }
-                return callExpression;
             }
 
             public static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, [NotNull] Type type)
@@ -385,20 +388,14 @@ namespace ProgressOnderwijsUtils
                     callExpr = Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
                 }
                 Expression colValueExpr;
-                if (!canBeNull) {
-                    colValueExpr = GetCastExpression(callExpr, type);
-                }
-                else if (CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo)) {
-                    var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
-                    var paramType = methodInfo.GetParameters()[0].ParameterType;
-                    var ifDbNull = Expression.Default(paramType);
-                    var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, paramType), paramType);
-                    colValueExpr = Expression.Call(methodInfo, Expression.Condition(test, ifDbNull, ifNotDbNull));
-                } else {
+                if (canBeNull) {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
                     var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
+                }
+                else {
+                    colValueExpr = GetCastExpression(callExpr, type);
                 }
 
                 return colValueExpr;

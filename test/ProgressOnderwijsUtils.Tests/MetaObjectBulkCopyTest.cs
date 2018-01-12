@@ -33,13 +33,25 @@ namespace ProgressOnderwijsUtils.Tests
         public sealed class CustomBla
         {
             readonly string value;
-            public CustomBla(string value)
+            CustomBla(string value)
             {
                 this.value = value;
             }
             public string AsString => value;
             [MetaObjectPropertyLoader]
             public static CustomBla MethodWithIrrelevantName(string value) => new CustomBla(value);
+        }
+
+        public struct CustomBlaStruct
+        {
+            readonly string value;
+            CustomBlaStruct(string value)
+            {
+                this.value = value;
+            }
+            public string AsString => value;
+            [MetaObjectPropertyLoader]
+            public static CustomBlaStruct MethodWithIrrelevantName(string value) => new CustomBlaStruct(value);
         }
 
         public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -60,6 +72,20 @@ namespace ProgressOnderwijsUtils.Tests
             public string Bla { get; set; }
             public CustomBla Bla2 { get; set; }
             public CustomBla Bla3 { get; }
+        }
+
+        public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            public int Id { get; set; }
+            public string Bla { get; set; }
+            public CustomBlaStruct Bla2 { get; set; }
+        }
+
+        public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            public int Id { get; set; }
+            public CustomBlaStruct? Bla { get; set; }
+            public CustomBlaStruct Bla2 { get; set; }
         }
 
         public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -209,5 +235,46 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => fromDb.All(x => x.Bla3 == null));
         }
 
+#if NET461
+        [Fact]
+#else
+        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
+#endif
+        public void MetaObjectSupportsCustomObject_struct()
+        {
+            PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
+            CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
+            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context);
+            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
+        }
+
+#if NET461
+        [Fact]
+#else
+        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
+#endif
+            public void MetaObjectSupportsCustomObject_nullable_struct()
+        {
+            PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
+            CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
+            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_nullable_struct_property>(Context);
+            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x =>  new BlaOk { Id = x.Id, Bla = x.Bla.HasValue ? x.Bla.Value.AsString : default(string), Bla2 = x.Bla2.AsString })));
+        }
+
+
+#if NET461
+        [Fact]
+#else
+        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
+#endif
+        public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception()
+        {
+            PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
+            CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
+            Assert.ThrowsAny<Exception>(() => SQL($"select Id, Bla, Bla2 = cast(null as varchar) from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context));
+        }
     }
 }
