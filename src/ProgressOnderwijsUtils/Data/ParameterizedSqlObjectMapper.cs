@@ -398,7 +398,7 @@ namespace ProgressOnderwijsUtils
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
                 }
                 else {
-                    colValueExpr = GetCastExpression(callExpr, type); { }
+                    colValueExpr = GetCastExpression(callExpr, type);
                 }
 
                 return colValueExpr;
