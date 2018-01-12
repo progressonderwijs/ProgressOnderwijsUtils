@@ -393,8 +393,7 @@ namespace ProgressOnderwijsUtils
                     var ifDbNull = Expression.Default(type);
                     var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
-                }
-                else {
+                } else {
                     colValueExpr = GetCastExpression(callExpr, type);
                 }
 

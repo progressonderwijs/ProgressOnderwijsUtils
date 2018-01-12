@@ -55,13 +55,13 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static HtmlFragment WrapInHtmlFragment<T>([NotNull] this IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
-            => HtmlFragment.Fragment(htmlEls.Select(el => el.AsFragment()).Where(frag=>!frag.IsEmpty).ToArray());
+            => HtmlFragment.Fragment(htmlEls.Select(el => el.AsFragment()).Where(frag => !frag.IsEmpty).ToArray());
 
         public static HtmlFragment EmptyIfNull<TContent>(this TContent? htmlFragmentOrNull)
             where TContent : struct, IConvertibleToFragment
             => htmlFragmentOrNull?.AsFragment() ?? HtmlFragment.Empty;
 
-        public static HtmlFragment JoinHtml<TFragments>([NotNull, ItemNotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
+        public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
             where TFragments : IConvertibleToFragment
         {
             using (var enumerator = htmlEls.GetEnumerator()) {

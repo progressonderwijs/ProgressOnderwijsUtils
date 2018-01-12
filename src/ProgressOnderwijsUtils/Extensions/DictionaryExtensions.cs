@@ -117,8 +117,7 @@ namespace ProgressOnderwijsUtils
         /// <returns>The value corresponding to the key in the dictionary (which may have just been added).</returns>
         public static TValue GetOrAdd<TKey, TValue>([NotNull] this IDictionary<TKey, TValue> dict, [NotNull] TKey key, TValue value)
         {
-            if (!dict.ContainsKey(key))
-            {
+            if (!dict.ContainsKey(key)) {
                 dict.Add(key, value);
             }
             return dict[key];
@@ -135,8 +134,7 @@ namespace ProgressOnderwijsUtils
             Func<TKey, TValue> factory)
         {
             TValue val;
-            if (dict.TryGetValue(key, out val))
-            {
+            if (dict.TryGetValue(key, out val)) {
                 return val;
             }
             val = factory(key);
@@ -157,8 +155,7 @@ namespace ProgressOnderwijsUtils
         public static Dictionary<TKey, TValue> Merge<TKey, TValue>([NotNull] this Dictionary<TKey, TValue> old,
             [NotNull] params Dictionary<TKey, TValue>[] others)
         {
-            if (old == null)
-            {
+            if (old == null) {
                 throw new ArgumentNullException(nameof(old));
             }
 
