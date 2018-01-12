@@ -372,11 +372,10 @@ namespace ProgressOnderwijsUtils
 
                 if (isTypeWithCreateMethod) {
                     return Expression.Call(methodInfo, callExpression);
-                } else 
-                if (needsCast) {
+                } else if (needsCast) {
                     return Expression.Convert(callExpression, type.GetNonNullableType());
                 } else {
-                return callExpression;
+                    return callExpression;
                 }
             }
 
