@@ -331,9 +331,6 @@ namespace ProgressOnderwijsUtils
                 methodInfo = null;
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 var method = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public).SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
-                if (underlyingType.IsValueType && method == null) {
-                    return false;
-                }
                 if (method == null) {
                     return false;
                 }
