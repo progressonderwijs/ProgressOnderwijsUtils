@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class Signer
+    public static class RsaStringSigner
     {
         [NotNull]
         public static string SignString(X509Certificate2 certificate, [NotNull] string input)
