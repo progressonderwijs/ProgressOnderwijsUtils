@@ -8,9 +8,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+// ReSharper disable RedundantUsingDirective
+using System.Reflection.Emit;
 using System.Threading;
+// ReSharper restore RedundantUsingDirective
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
@@ -81,6 +83,7 @@ namespace ProgressOnderwijsUtils
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The database connection</param>
+        /// <param name="fieldMappingMode"></param>
         [MustUseReturnValue]
         [NotNull]
         public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
@@ -186,8 +189,7 @@ namespace ProgressOnderwijsUtils
         {
             using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
-                int lastColumnRead;
-                return DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.LoadRows(reader, out lastColumnRead);
+                return DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.LoadRows(reader, out _);
             }
         }
 
@@ -225,13 +227,12 @@ namespace ProgressOnderwijsUtils
         }
 
 #if NET461
-        static readonly AssemblyBuilder assemblyBuilder;
         static readonly ModuleBuilder moduleBuilder;
         static int counter;
 
         static ParameterizedSqlObjectMapper()
         {
-            assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
+            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
             moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
         }
 #endif
@@ -393,8 +394,7 @@ namespace ProgressOnderwijsUtils
                     var ifDbNull = Expression.Default(type);
                     var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
-                }
-                else {
+                } else {
                     colValueExpr = GetCastExpression(callExpr, type);
                 }
 
@@ -485,7 +485,7 @@ namespace ProgressOnderwijsUtils
                         for (var i = 0; i < Cols.Length; i++) {
                             var name = reader.GetName(i);
                             Cols[i] = name;
-                            cachedHash += (ulong)primeArr[i] * CaseInsensitiveHash(name);
+                            cachedHash += primeArr[i] * CaseInsensitiveHash(name);
                         }
                     }
 
@@ -660,8 +660,7 @@ namespace ProgressOnderwijsUtils
                     // ReSharper restore UnusedMember.Local
                 {
                     DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.VerifyDataReaderShape(reader);
-                    int lastColumnRead;
-                    return DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.LoadRows(reader, out lastColumnRead);
+                    return DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.LoadRows(reader, out _);
                 }
 
                 public static readonly TRowArrayReader<T> LoadRows;

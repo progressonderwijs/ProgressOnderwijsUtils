@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
 using MoreLinq;
-using ProgressOnderwijsUtils;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests

@@ -7,6 +7,7 @@ using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
+// ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
     public interface IMetaProperty : IColumnDefinition
@@ -40,8 +41,10 @@ namespace ProgressOnderwijsUtils
             public string Name { get; }
             public IReadOnlyList<object> CustomAttributes { get; }
             public int Index { get; }
+
             [NotNull]
             public Type DataType => PropertyInfo.PropertyType;
+
             public PropertyInfo PropertyInfo { get; }
             public bool CanRead => getterMethod != null;
             public bool CanWrite => setterMethod != null;

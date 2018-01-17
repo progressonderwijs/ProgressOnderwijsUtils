@@ -1,7 +1,6 @@
 ﻿using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 

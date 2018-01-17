@@ -1,6 +1,5 @@
 ﻿using System;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests

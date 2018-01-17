@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
+// ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
     public static class MetaObjectBulkCopy

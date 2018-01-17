@@ -128,7 +128,6 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static int LevenshteinDistance([NotNull] string s, [NotNull] string t) => LevenshteinDistance(s, t, 1);
 
-
         [Pure]
         public static int LevenshteinDistance([NotNull] string s, [NotNull] string t, int substitutionCost)
         {
