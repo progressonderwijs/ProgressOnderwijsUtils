@@ -29,6 +29,7 @@
     <PackageReference Include="ExpressionToCodeLib" version="2.5.1" />
     <PackageReference Include="log4net" version="2.0.8" />
     <PackageReference Include="morelinq" version="2.8.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.0" />

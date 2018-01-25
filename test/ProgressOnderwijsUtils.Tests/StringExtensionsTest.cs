@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using ExpressionToCodeLib;
 using Xunit;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Tests
 {
@@ -168,6 +166,7 @@ namespace ProgressOnderwijsUtils.Tests
                 culture.NumberFormat = new NumberFormatInfo {NegativeSign = "X",};
                 Thread.CurrentThread.CurrentCulture = culture;
                 PAssert.That(() => (-3000).ToString() == "X3000");
+                // ReSharper disable once SpecifyACultureInStringConversionExplicitly
                 PAssert.That(() => (-3000m).ToString() == "X3000");
                 PAssert.That(() => (-3000).ToStringInvariant() == "-3000");
                 PAssert.That(() => 3000U.ToStringInvariant() == "3000");

@@ -63,8 +63,10 @@ namespace ProgressOnderwijsUtils.Radius
     {
         public RadiusAttributeType AttributeType { get; }
         public byte[] AttributeValue { get; set; }
+
         [NotNull]
         public byte[] Paket => new[] { (byte)(int)AttributeType, (byte)(AttributeValue.Length + 2) }.Concat(AttributeValue).ToArray();
+
         public int Length => AttributeValue.Length + 2;
 
         public RadiusAttribute(RadiusAttributeType Type, byte[] attributeValue)

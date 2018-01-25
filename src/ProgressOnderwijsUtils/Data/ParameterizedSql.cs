@@ -63,6 +63,7 @@ namespace ProgressOnderwijsUtils
 
         //ToString is constructed to be invalid sql, so that accidental string-concat doesn't result in something that looks reasonable to execute.
         public override string ToString() => "*/Pseudo-sql (with parameter values inlined!):/*\r\n" + DebugText();
+
         [NotNull]
         public string DebugText() => DebugCommandFactory.DebugTextFor(impl);
 

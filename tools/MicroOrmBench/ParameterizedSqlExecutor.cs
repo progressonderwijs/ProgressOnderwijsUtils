@@ -1,5 +1,3 @@
-using System.Linq;
-using Dapper;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 

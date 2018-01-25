@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -46,8 +45,9 @@ namespace ProgressOnderwijsUtils.Html
                 } else {
                     var oldArray = array;
                     array = new HtmlAttribute[count + 4 + (count >> 2) & ~1 | 2];
-                    for (int i = 0; i < count; i++)
+                    for (int i = 0; i < count; i++) {
                         array[i] = oldArray[i];
+                    }
                 }
             } else {
                 array = new HtmlAttribute[2];
@@ -75,8 +75,10 @@ namespace ProgressOnderwijsUtils.Html
             }
 
             public HtmlAttribute Current => attributes[pos];
+
             [NotNull]
             object IEnumerator.Current => attributes[pos];
+
             public void Dispose() { }
             public bool MoveNext() => ++pos < count;
             public void Reset() => pos = 0;

@@ -5,7 +5,6 @@ using System.Linq;
 using System.Text;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Internal;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;

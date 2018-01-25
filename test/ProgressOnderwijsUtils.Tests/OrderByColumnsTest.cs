@@ -1,8 +1,6 @@
 ﻿using System.Linq;
 using ExpressionToCodeLib;
-using MoreLinq;
 using Xunit;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Tests
 {

@@ -32,6 +32,7 @@ namespace ProgressOnderwijsUtils.Html
 
         [NotNull]
         string IHtmlTag.TagStart => "<" + TagName;
+
         [NotNull]
         string IHtmlTag.EndTag => Contents != null || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
 
@@ -48,6 +49,7 @@ namespace ProgressOnderwijsUtils.Html
 
         [NotNull]
         IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>([NotNull] THtmlTagAlteration change) => change.ChangeWithContent(this);
+
         CustomHtmlElement IHtmlTag<CustomHtmlElement>.WithAttributes(HtmlAttributes replacementAttributes) => new CustomHtmlElement(TagName, replacementAttributes, Contents);
         CustomHtmlElement IHtmlTagAllowingContent<CustomHtmlElement>.WithContents(HtmlFragment[] replacementContents) => new CustomHtmlElement(TagName, Attributes, replacementContents);
     }
