@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using JetBrains.Annotations;
@@ -60,6 +61,18 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool None<TSource>([NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, bool> predicate)
+        {
+            return !source.Any(predicate);
+        }
+
+        [Pure]
+        public static bool None<TSource>([NotNull] this IQueryable<TSource> source)
+        {
+            return !source.Any();
+        }
+
+        [Pure]
+        public static bool None<TSource>([NotNull] this IQueryable<TSource> source, [NotNull] Expression<Func<TSource, bool>> predicate)
         {
             return !source.Any(predicate);
         }
