@@ -14,6 +14,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public string Destination { get; }
         public ServiceProviderConfig Issuer { get; }
         public bool ForceAuthn { get; set; }
+        public string AuthnContextClassRef { get; set; }
 
         public AuthnRequest(string id, string destination, ServiceProviderConfig issuer)
         {
@@ -21,6 +22,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             Destination = destination;
             Issuer = issuer;
             ForceAuthn = false;
+            AuthnContextClassRef = null;
         }
 
         [NotNull]
@@ -48,7 +50,13 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 new XAttribute("ForceAuthn", ForceAuthn),
                 new XAttribute("IsPassive", "false"),
                 new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
-                new XElement(SamlNamespaces.SAML_NS + "Issuer", Issuer.entity)
+                new XElement(SamlNamespaces.SAML_NS + "Issuer", Issuer.entity),
+                AuthnContextClassRef == null
+                    ? null
+                    : new XElement(
+                        SamlNamespaces.SAMLP_NS + "RequestedAuthnContext",
+                        new XElement(SamlNamespaces.SAML_NS + "AuthnContextClassRef", AuthnContextClassRef)
+                        )
                 );
         }
     }
