@@ -65,11 +65,11 @@ namespace ProgressOnderwijsUtils
             ").ReadMetaObjects<PkCol>(conn)
                 .ToLookup(
                     row => row.Pk_table,
-                    row => row.Pk_column,
+                    row => ParameterizedSql.CreateDynamic(row.Pk_column),
                     StringComparer.OrdinalIgnoreCase
                 );
 
-            var initialPrimaryKeyColumn = ParameterizedSql.CreateDynamic(pkeys[initialTable.CommandText()].Single());
+            var initialPrimaryKeyColumn = pkeys[initialTable.CommandText()].Single();
 
             var delTable = SQL($"[##del_init]");
             var initialRowCountToDelete = SQL($@"
@@ -99,7 +99,7 @@ namespace ProgressOnderwijsUtils
                 if (pkeysOfCurrentTable.None()) {
                     throw new InvalidOperationException($"Table {tableName.CommandText()} is missing a primary key");
                 }
-                var ttJoin = ParameterizedSql.CreateDynamic(pkeysOfCurrentTable.Select(col => "pk." + col + "=tt." + col).JoinStrings(" and "));
+                var ttJoin = pkeysOfCurrentTable.Select(col => SQL($"pk.{col}=tt.{col}")).ConcatenateSql(SQL($" and "));
 
                 deletionStack.Push(() => {
                     var nrRowsToDelete = SQL($"select count(*) from {tempTableName}").ReadScalar<int>(conn);
@@ -120,13 +120,14 @@ namespace ProgressOnderwijsUtils
                 var fks = keys[tableName.CommandText()];
 
                 foreach (var fk in fks) {
-                    var referencingPkCols = ParameterizedSql.CreateDynamic(pkeys[fk.Fk_table].Select(col => "fk." + col).JoinStrings(", "));
+                    var referencingPkCols = pkeys[fk.Fk_table].Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
                     var pkJoin = ParameterizedSql.CreateDynamic(fk.columns.Select(col => "fk." + col.Fk_column + "=pk." + col.Pk_column).JoinStrings(" and "));
 
                     var newDelTable = ParameterizedSql.CreateDynamic("[##del_" + delBatch + "]");
                     var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.Fk_table)
                         ? SQL($"where 1=1")
-                        : SQL($"where ").Append(ParameterizedSql.CreateDynamic(pkeysOfCurrentTable.Select(col => "pk." + col + "<>fk." + col).JoinStrings(" or ")));
+                        : SQL($"where ").Append(
+                            pkeysOfCurrentTable.Select(col => SQL($"pk.{col}<>fk.{col}")).ConcatenateSql(SQL($" or "));
 
                     var fkTableSql = ParameterizedSql.CreateDynamic(fk.Fk_table);
 
