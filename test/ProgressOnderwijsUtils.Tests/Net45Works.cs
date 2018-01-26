@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using ProgressOnderwijsUtils;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests

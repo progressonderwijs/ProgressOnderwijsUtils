@@ -1,6 +1,5 @@
 ﻿using System;
 using JetBrains.Annotations;
-using ProgressOnderwijsUtils;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests

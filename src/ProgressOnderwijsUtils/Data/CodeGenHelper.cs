@@ -22,6 +22,7 @@ namespace ProgressOnderwijsUtils
         }
 
         static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
+
         [NotNull]
         public static string Indent([NotNull] string str, int indentCount = 1) => newLine.Replace(str, new string(' ', indentCount * 4));
 

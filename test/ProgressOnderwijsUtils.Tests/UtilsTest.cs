@@ -4,7 +4,6 @@ using System.Linq;
 using ExpressionToCodeLib;
 using MoreLinq;
 using Xunit;
-using ProgressOnderwijsUtils;
 using System.Data;
 
 namespace ProgressOnderwijsUtils.Tests

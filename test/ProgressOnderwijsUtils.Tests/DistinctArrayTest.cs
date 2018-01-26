@@ -2,7 +2,6 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Tests
 {
@@ -39,6 +38,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void Creating_DistinctArray_from_not_distinct_gives_error()
         {
             Assert.ThrowsAny<ArgumentException>(() => {
+                // ReSharper disable once UnusedVariable
                 var ignore = new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct();
             });
         }
@@ -47,6 +47,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void Creating_DistinctArray_from_not_distinct_with_custom_comparer_gives_error()
         {
             Assert.ThrowsAny<ArgumentException>(() => {
+                // ReSharper disable once UnusedVariable
                 var ignore = new[] { 1, 1, 2 }.ToDistinctArrayFromDistinct(new EqualsEqualityComparer<int>((a, b) => a == b, obj => obj.GetHashCode()));
             });
         }

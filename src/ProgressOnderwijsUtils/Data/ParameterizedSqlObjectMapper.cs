@@ -8,9 +8,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
+// ReSharper disable RedundantUsingDirective
+using System.Reflection.Emit;
 using System.Threading;
+// ReSharper restore RedundantUsingDirective
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
@@ -81,6 +83,7 @@ namespace ProgressOnderwijsUtils
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The database connection</param>
+        /// <param name="fieldMappingMode"></param>
         [MustUseReturnValue]
         [NotNull]
         public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
@@ -186,8 +189,7 @@ namespace ProgressOnderwijsUtils
         {
             using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
-                int lastColumnRead;
-                return DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.LoadRows(reader, out lastColumnRead);
+                return DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.LoadRows(reader, out _);
             }
         }
 
@@ -225,13 +227,12 @@ namespace ProgressOnderwijsUtils
         }
 
 #if NET461
-        static readonly AssemblyBuilder assemblyBuilder;
         static readonly ModuleBuilder moduleBuilder;
         static int counter;
 
         static ParameterizedSqlObjectMapper()
         {
-            assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
+            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
             moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
         }
 #endif
@@ -330,22 +331,20 @@ namespace ProgressOnderwijsUtils
             {
                 methodInfo = null;
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                if (!underlyingType.IsValueType) {
-                    var method = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public).SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
-                    if (method == null) {
-                        return false;
-                    }
-                    if (method.ReturnType != underlyingType) {
-                        return false;
-                    }
-                    var parameters = method.GetParameters();
-                    if (parameters.Length != 1) {
-                        return false;
-                    }
-                    if (SupportsType(parameters[0].ParameterType)) {
-                        methodInfo = method;
-                        return true;
-                    }
+                var method = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public).SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
+                if (method == null) {
+                    return false;
+                }
+                if (method.ReturnType != underlyingType) {
+                    return false;
+                }
+                var parameters = method.GetParameters();
+                if (parameters.Length != 1) {
+                    return false;
+                }
+                if (SupportsType(parameters[0].ParameterType)) {
+                    methodInfo = method;
+                    return true;
                 }
                 return false;
             }
@@ -366,11 +365,16 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
+                var isTypeWithCreateMethod = CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo);
                 var needsCast = underlyingType != type.GetNonNullableType();
-                if (needsCast) {
+
+                if (isTypeWithCreateMethod) {
+                    return Expression.Call(methodInfo, callExpression);
+                } else if (needsCast) {
                     return Expression.Convert(callExpression, type.GetNonNullableType());
+                } else {
+                    return callExpression;
                 }
-                return callExpression;
             }
 
             public static Expression GetColValueExpr(ParameterExpression readerParamExpr, int i, [NotNull] Type type)
@@ -385,20 +389,13 @@ namespace ProgressOnderwijsUtils
                     callExpr = Expression.Call(readerParamExpr, GetterForType(underlyingType), iConstant);
                 }
                 Expression colValueExpr;
-                if (!canBeNull) {
-                    colValueExpr = GetCastExpression(callExpr, type);
-                }
-                else if (CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo)) {
-                    var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
-                    var paramType = methodInfo.GetParameters()[0].ParameterType;
-                    var ifDbNull = Expression.Default(paramType);
-                    var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, paramType), paramType);
-                    colValueExpr = Expression.Call(methodInfo, Expression.Condition(test, ifDbNull, ifNotDbNull));
-                } else {
+                if (canBeNull) {
                     var test = Expression.Call(readerParamExpr, IsDBNullMethod, iConstant);
                     var ifDbNull = Expression.Default(type);
                     var ifNotDbNull = Expression.Convert(GetCastExpression(callExpr, type), type);
                     colValueExpr = Expression.Condition(test, ifDbNull, ifNotDbNull);
+                } else {
+                    colValueExpr = GetCastExpression(callExpr, type);
                 }
 
                 return colValueExpr;
@@ -488,7 +485,7 @@ namespace ProgressOnderwijsUtils
                         for (var i = 0; i < Cols.Length; i++) {
                             var name = reader.GetName(i);
                             Cols[i] = name;
-                            cachedHash += (ulong)primeArr[i] * CaseInsensitiveHash(name);
+                            cachedHash += primeArr[i] * CaseInsensitiveHash(name);
                         }
                     }
 
@@ -663,8 +660,7 @@ namespace ProgressOnderwijsUtils
                     // ReSharper restore UnusedMember.Local
                 {
                     DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.VerifyDataReaderShape(reader);
-                    int lastColumnRead;
-                    return DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.LoadRows(reader, out lastColumnRead);
+                    return DataReaderSpecialization<SqlDataReader>.ReadByConstructorImpl<T>.LoadRows(reader, out _);
                 }
 
                 public static readonly TRowArrayReader<T> LoadRows;

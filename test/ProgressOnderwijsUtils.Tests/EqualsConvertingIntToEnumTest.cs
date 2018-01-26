@@ -1,7 +1,6 @@
 ﻿using System;
 using ExpressionToCodeLib;
 using Xunit;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils.Tests
 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
-using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.Tests
@@ -158,6 +157,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact(Skip ="This causes OOM post-xUnit conversion; still needs to be investigated")]
         public void BuildDetectsCycles()
         {
+            // ReSharper disable once NotAccessedVariable
             Tree<int> ignore;
             Assert.Throws<InvalidOperationException>(() => ignore = Tree.BuildRecursively(0, i => new[] { (i + 1) % 10, (i + 2) % 13 }));
         }

@@ -45,22 +45,27 @@ namespace ProgressOnderwijsUtils
         sealed class NoopTracer : ISqlCommandTracer
         {
             public static readonly NoopTracer Instance = new NoopTracer();
+
             [NotNull]
             public IEnumerable<Tuple<string, TimeSpan>> AllCommands => Array.Empty<Tuple<string, TimeSpan>>();
+
             public TimeSpan TotalDuration => TimeSpan.Zero;
             public int CommandCount => 0;
             public TimeSpan SlowestCommandDuration => TimeSpan.Zero;
             public void FinishDisposableTimer(Func<string> commandText, TimeSpan duration) { }
+
             [CanBeNull]
             public IDisposable StartCommandTimer(string commandText) => null;
+
             [CanBeNull]
             public IDisposable StartCommandTimer(SqlCommand sqlCommand) => null;
+
             public void StartTracing() { }
             public void StopTracing() { }
         }
 
         [NotNull]
-        public static string DebugFriendlyCommandText([NotNull] SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo) 
+        public static string DebugFriendlyCommandText([NotNull] SqlCommand sqlCommand, SqlCommandTracerOptions includeSensitiveInfo)
             => CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
 
         [NotNull]
@@ -154,8 +159,10 @@ namespace ProgressOnderwijsUtils
             readonly List<Tuple<TimeSpan, Func<string>>> allqueries = new List<Tuple<TimeSpan, Func<string>>>();
             Tuple<TimeSpan, Func<string>> slowest = Tuple.Create(default(TimeSpan), (Func<string>)(() => "(none)"));
             public TimeSpan SlowestCommandDuration => slowest.Item1;
+
             [NotNull]
             public IEnumerable<Tuple<string, TimeSpan>> AllCommands => allqueries.Select(tup => Tuple.Create(tup.Item2(), tup.Item1));
+
             public TimeSpan TotalDuration { get; private set; }
 
             [NotNull]

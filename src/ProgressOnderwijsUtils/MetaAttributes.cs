@@ -17,12 +17,9 @@ namespace ProgressOnderwijsUtils
     {
         public UsefulToKeepAttribute([UsefulToKeep("for documentation")] string reason) { }
     }
-    
+
     [AttributeUsage(AttributeTargets.All)]
     [UsefulToKeep("library attribute")]
     [MeansImplicitUse]
-    public class UsedImplicitlyBySerializationAttribute : Attribute {
-
-    }
-
+    public class UsedImplicitlyBySerializationAttribute : Attribute { }
 }

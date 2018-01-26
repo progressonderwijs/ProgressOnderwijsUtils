@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System;
 using System.Data;
+using System.Linq;
 using System.Linq.Expressions;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
@@ -49,11 +49,14 @@ namespace ProgressOnderwijsUtils
 
         public override DataTable GetSchemaTable() => schemaTable;
         public override int FieldCount => columnInfos.Length;
+
         [NotNull]
         public override Type GetFieldType(int ordinal) => columnInfos[ordinal].ColumnType;
+
         public override string GetName(int ordinal) => columnInfos[ordinal].Name;
         public override int GetOrdinal(string name) => columnIndexByName[name];
         public override int GetInt32(int ordinal) => ((Func<T, int>)columnInfos[ordinal].TypedNonNullableGetter)(current);
+
         [NotNull]
         public override object GetValue(int ordinal) => columnInfos[ordinal].GetUntypedColumnValue(current) ?? DBNull.Value;
 
@@ -65,8 +68,7 @@ namespace ProgressOnderwijsUtils
 
         public override TColumn GetFieldValue<TColumn>(int ordinal)
         {
-            var getter = columnInfos[ordinal].TypedNonNullableGetter as Func<T, TColumn>;
-            if (getter == null) {
+            if (!(columnInfos[ordinal].TypedNonNullableGetter is Func<T, TColumn> getter)) {
                 throw new InvalidOperationException($"Tried to access field {columnInfos[ordinal].Name} of type {columnInfos[ordinal].ColumnType.ToCSharpFriendlyTypeName()} as type {typeof(TColumn).ToCSharpFriendlyTypeName()}.");
             }
             return getter(current);
@@ -78,6 +80,7 @@ namespace ProgressOnderwijsUtils
             //ColumnType is non nullable with enum types replaced by their underlying type
             [NotNull]
             public readonly Type ColumnType;
+
             public readonly Func<T, object> GetUntypedColumnValue;
             //WhenNullable_IsColumnDBNull is itself null if column non-nullable
             public readonly Func<T, bool> WhenNullable_IsColumnDBNull;

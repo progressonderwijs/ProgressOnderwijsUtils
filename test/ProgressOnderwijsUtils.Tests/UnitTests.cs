@@ -11,6 +11,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void TwoInstancesAreEqual()
         {
+            // ReSharper disable once EqualExpressionComparison
             PAssert.That(() => Unit.Value.Equals(Unit.Value));
             PAssert.That(() => Unit.Value.Equals(default(Unit)));
             PAssert.That(() => Unit.Value.Equals(new Unit()));
