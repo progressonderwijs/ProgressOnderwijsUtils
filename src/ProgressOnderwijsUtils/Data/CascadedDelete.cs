@@ -10,28 +10,28 @@ namespace ProgressOnderwijsUtils
 {
     public static class CascadedDelete
     {
+        /// <summary>
+        /// Recursively deletes records from a database table, including all its foreign-key dependents.
+        /// 
+        /// WARNING: this is still fairly rough code, and although it appears correct, it may fail with confusing error messages when it encounters any unsupported situation.
+        /// 
+        /// In particularly, this code cannot break cyclical dependencies, and also cannot detect them: when a dependency chain reaches 500 long, it will crash.
+        /// </summary>
         [NotNull]
-        public static DeletionPerformance[] Bla<TId>(
+        public static DeletionPerformance[] RecursivelyDelete<TId>(
             [NotNull] SqlCommandCreationContext conn,
-            ParameterizedSql initialTable,
-            ParameterizedSql initialPrimaryKeyColumn,
+            ParameterizedSql initialTableAsEntered,
             [NotNull] TId[] idsToDelete,
-            [NotNull] Action<string> log
+            [CanBeNull] Action<string> log
             )
             where TId : struct, IConvertible, IComparable
         {
+            log = log ?? (s => { });
             Func<string, ParameterizedSql> dyn = ParameterizedSql.CreateDynamic;
-            var delTable = SQL($"[##del_init]");
-            var initialRowCountToDelete = SQL($@"
-                select {initialPrimaryKeyColumn} 
-                into {delTable}
-                from {initialTable}
-                where {initialPrimaryKeyColumn} in {idsToDelete}
-                ;
-                select count(*) from {delTable}
-            ").ReadScalar<int>(conn);
-
-            log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete.Length} ids) from {initialTable.CommandText()})");
+            var initialTableName = initialTableAsEntered.CommandText();
+            var initialTable =
+                dyn(SQL($"select object_schema_name(object_id({initialTableName})) + '.' + object_name(object_id({initialTableName}))")
+                    .ReadScalar<string>(conn));
 
             var keys = SQL($@"
                 select 
@@ -70,17 +70,19 @@ namespace ProgressOnderwijsUtils
                     StringComparer.OrdinalIgnoreCase
                 );
 
-            var tableImpact =
-                keys.Select(g => g.Key).ToDictionary(
-                    pk_table => pk_table,
-                    pk_table =>
-                        Utils.TransitiveClosure(
-                            new[] { pk_table },
-                            table => keys[table].Select(fk => fk.Fk_table)
-                            )
-                            .Count(),
-                    StringComparer.OrdinalIgnoreCase
-                    );
+            var initialPrimaryKeyColumn = dyn(pkeys[initialTable.CommandText()].Single());
+
+            var delTable = SQL($"[##del_init]");
+            var initialRowCountToDelete = SQL($@"
+                select {initialPrimaryKeyColumn} 
+                into {delTable}
+                from {initialTable}
+                where {initialPrimaryKeyColumn} in {idsToDelete}
+                ;
+                select count(*) from {delTable}
+            ").ReadScalar<int>(conn);
+
+            log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete.Length} ids) from {initialTable.CommandText()})");
 
             int delBatch = 0;
 
@@ -88,9 +90,17 @@ namespace ProgressOnderwijsUtils
             var perflog = new List<DeletionPerformance>();
             long totalDeletes = 0;
 
-            void DeleteKids(ParameterizedSql tableName, ParameterizedSql tempTableName, SList<string> stack)
+            void DeleteKids(ParameterizedSql tableName, ParameterizedSql tempTableName, SList<string> stack, int depth)
             {
-                var ttJoin = dyn(pkeys[tableName.CommandText()].Select(col => "pk." + col + "=tt." + col).JoinStrings(" and "));
+                if (depth > 500) {
+                    throw new InvalidOperationException("A dependency chain of over 500 long was encountered; possible cycle: aborting.");
+                }
+
+                var pkeysOfCurrentTable = pkeys[tableName.CommandText()].ToArray();
+                if (pkeysOfCurrentTable.None()) {
+                    throw new InvalidOperationException($"Table {tableName.CommandText()} is missing a primary key");
+                }
+                var ttJoin = dyn(pkeysOfCurrentTable.Select(col => "pk." + col + "=tt." + col).JoinStrings(" and "));
 
                 deletionStack.Push(() => {
                     var nrRowsToDelete = SQL($"select count(*) from {tempTableName}").ReadScalar<int>(conn);
@@ -110,14 +120,14 @@ namespace ProgressOnderwijsUtils
 
                 var fks = keys[tableName.CommandText()];
 
-                foreach (var fk in fks) { //keys.OrderByDescending(g => tableImpact.GetOrDefault(g.Key));
+                foreach (var fk in fks) {
                     var referencingPkCols = dyn(pkeys[fk.Fk_table].Select(col => "fk." + col).JoinStrings(", "));
                     var pkJoin = dyn(fk.columns.Select(col => "fk." + col.Fk_column + "=pk." + col.Pk_column).JoinStrings(" and "));
 
                     var newDelTable = dyn("[##del_" + delBatch + "]");
-                    var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.Fk_table) 
-                        ? SQL($"where 1=1") 
-                        : SQL($"where ").Append(dyn(pkeys[tableName.CommandText()].Select(col => "pk." + col + "<>fk." + col).JoinStrings(" or ")));
+                    var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.Fk_table)
+                        ? SQL($"where 1=1")
+                        : SQL($"where ").Append(dyn(pkeysOfCurrentTable.Select(col => "pk." + col + "<>fk." + col).JoinStrings(" or ")));
 
                     var fkTableSql = dyn(fk.Fk_table);
 
@@ -143,12 +153,12 @@ namespace ProgressOnderwijsUtils
                         SQL($"drop table {newDelTable}").ExecuteNonQuery(conn);
                     } else {
                         delBatch++;
-                        DeleteKids(fkTableSql, newDelTable, stack.Prepend(fk.Fk_table));
+                        DeleteKids(fkTableSql, newDelTable, stack.Prepend(fk.Fk_table), depth + 1);
                     }
                 }
             }
 
-            DeleteKids(initialTable, delTable, SList.SingleElement(initialTable.CommandText()));
+            DeleteKids(initialTable, delTable, SList.SingleElement(initialTable.CommandText()), 0);
             while (deletionStack.Count > 0) {
                 deletionStack.Pop()();
             }
