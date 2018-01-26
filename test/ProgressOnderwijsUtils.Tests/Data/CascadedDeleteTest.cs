@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 create table TRoot ( root int primary key, B int);
                 create table T1 ( C int primary key, root int references TRoot (root));
                 create table T2 ( D int primary key, root int references TRoot (root));
-                create table TLeaf ( Z int primary key, C int references T1 (C), D int references T2 (C) );
+                create table TLeaf ( Z int primary key, C int references T1 (C), D int references T2 (D) );
             ").ExecuteNonQuery(Context);
         }
 
