@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtils
 
                 foreach (var fk in fks) {
                     var referencingPkCols = pkeys[fk.Fk_table].Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
-                    var pkJoin = ParameterizedSql.CreateDynamic(fk.columns.Select(col => "fk." + col.Fk_column + "=pk." + col.Pk_column).JoinStrings(" and "));
+                    var pkJoin = fk.columns.Select(col => SQL($"fk.{col.FkColumnSql}=pk.{col.PkColumnSql}")).ConcatenateSql(SQL($" and "));
 
                     var newDelTable = ParameterizedSql.CreateDynamic("[##del_" + delBatch + "]");
                     var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.Fk_table)
@@ -180,6 +180,9 @@ namespace ProgressOnderwijsUtils
             public string Fk_table { get; set; }
             public string Pk_column { get; set; }
             public string Fk_column { get; set; }
+            public ParameterizedSql PkColumnSql => ParameterizedSql.CreateDynamic(Pk_column);
+            public ParameterizedSql FkColumnSql => ParameterizedSql.CreateDynamic(Fk_column);
+
         }
 
         sealed class PkCol : IMetaObject
