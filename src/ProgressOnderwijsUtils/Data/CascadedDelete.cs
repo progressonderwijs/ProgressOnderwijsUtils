@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static DeletionPerformance[] Bla<TId>(
             [NotNull] SqlCommandCreationContext conn,
-            [NotNull] string initialTable,
+            ParameterizedSql initialTable,
             ParameterizedSql initialPrimaryKeyColumn,
             [NotNull] TId[] idsToDelete,
             [NotNull] Action<string> log
@@ -25,13 +25,13 @@ namespace ProgressOnderwijsUtils
             var initialRowCountToDelete = SQL($@"
                 select {initialPrimaryKeyColumn} 
                 into {delTable}
-                from {dyn(initialTable)}
+                from {initialTable}
                 where {initialPrimaryKeyColumn} in {idsToDelete}
                 ;
                 select count(*) from {delTable}
             ").ReadScalar<int>(conn);
 
-            log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete.Length} ids) from {initialTable})");
+            log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete.Length} ids) from {initialTable.CommandText()})");
 
             var keys = SQL($@"
                 select 
@@ -88,40 +88,44 @@ namespace ProgressOnderwijsUtils
             var perflog = new List<DeletionPerformance>();
             long totalDeletes = 0;
 
-            void DeleteKids(string tableName, ParameterizedSql tempTableName, SList<string> stack)
+            void DeleteKids(ParameterizedSql tableName, ParameterizedSql tempTableName, SList<string> stack)
             {
-                var ttJoin = dyn(pkeys[tableName].Select(col => "pk." + col + "=tt." + col).JoinStrings(" and "));
+                var ttJoin = dyn(pkeys[tableName.CommandText()].Select(col => "pk." + col + "=tt." + col).JoinStrings(" and "));
 
                 deletionStack.Push(() => {
                     var nrRowsToDelete = SQL($"select count(*) from {tempTableName}").ReadScalar<int>(conn);
-                    log($"Delete {nrRowsToDelete} from {tableName}...");
+                    log($"Delete {nrRowsToDelete} from {tableName.CommandText()}...");
                     var sw = Stopwatch.StartNew();
                     SQL($@"
                     delete pk
-                    from {dyn(tableName)} pk
+                    from {tableName} pk
                     join {tempTableName} tt on {ttJoin};
                     
                     drop table {tempTableName};
                 ").ExecuteNonQuery(conn);
                     sw.Stop();
                     log("...took {sw.Elapsed}");
-                    perflog.Add(new DeletionPerformance { Table = tableName, RowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed });
+                    perflog.Add(new DeletionPerformance { Table = tableName.CommandText(), RowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed });
                 });
 
-                var fks = keys[tableName];
+                var fks = keys[tableName.CommandText()];
 
                 foreach (var fk in fks) { //keys.OrderByDescending(g => tableImpact.GetOrDefault(g.Key));
                     var referencingPkCols = dyn(pkeys[fk.Fk_table].Select(col => "fk." + col).JoinStrings(", "));
                     var pkJoin = dyn(fk.columns.Select(col => "fk." + col.Fk_column + "=pk." + col.Pk_column).JoinStrings(" and "));
 
                     var newDelTable = dyn("[##del_" + delBatch + "]");
-                    var whereClause = !tableName.EqualsOrdinalCaseInsensitive(fk.Fk_table) ? SQL($"where 1=1") : SQL($"where ").Append(dyn(pkeys[tableName].Select(col => "pk." + col + "<>fk." + col).JoinStrings(" or ")));
+                    var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.Fk_table) 
+                        ? SQL($"where 1=1") 
+                        : SQL($"where ").Append(dyn(pkeys[tableName.CommandText()].Select(col => "pk." + col + "<>fk." + col).JoinStrings(" or ")));
+
+                    var fkTableSql = dyn(fk.Fk_table);
 
                     var statement = SQL($@"
                         select {referencingPkCols} 
                         into {newDelTable}
-                        from {dyn(fk.Fk_table)} as fk
-                        join {dyn(tableName)} as pk on {pkJoin}
+                        from {fkTableSql} as fk
+                        join {tableName} as pk on {pkJoin}
                         join {tempTableName} as tt on {ttJoin}
                         {whereClause}
                         ;
@@ -139,12 +143,12 @@ namespace ProgressOnderwijsUtils
                         SQL($"drop table {newDelTable}").ExecuteNonQuery(conn);
                     } else {
                         delBatch++;
-                        DeleteKids(fk.Fk_table, newDelTable, stack.Prepend(fk.Fk_table));
+                        DeleteKids(fkTableSql, newDelTable, stack.Prepend(fk.Fk_table));
                     }
                 }
             }
 
-            DeleteKids(initialTable, delTable, SList.SingleElement(initialTable));
+            DeleteKids(initialTable, delTable, SList.SingleElement(initialTable.CommandText()));
             while (deletionStack.Count > 0) {
                 deletionStack.Pop()();
             }
