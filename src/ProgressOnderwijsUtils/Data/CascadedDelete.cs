@@ -27,10 +27,9 @@ namespace ProgressOnderwijsUtils
             where TId : struct, IConvertible, IComparable
         {
             log = log ?? (s => { });
-            Func<string, ParameterizedSql> dyn = ParameterizedSql.CreateDynamic;
             var initialTableName = initialTableAsEntered.CommandText();
             var initialTable =
-                dyn(SQL($"select object_schema_name(object_id({initialTableName})) + '.' + object_name(object_id({initialTableName}))")
+                ParameterizedSql.CreateDynamic(SQL($"select object_schema_name(object_id({initialTableName})) + '.' + object_name(object_id({initialTableName}))")
                     .ReadScalar<string>(conn));
 
             var keys = SQL($@"
@@ -70,7 +69,7 @@ namespace ProgressOnderwijsUtils
                     StringComparer.OrdinalIgnoreCase
                 );
 
-            var initialPrimaryKeyColumn = dyn(pkeys[initialTable.CommandText()].Single());
+            var initialPrimaryKeyColumn = ParameterizedSql.CreateDynamic(pkeys[initialTable.CommandText()].Single());
 
             var delTable = SQL($"[##del_init]");
             var initialRowCountToDelete = SQL($@"
@@ -100,7 +99,7 @@ namespace ProgressOnderwijsUtils
                 if (pkeysOfCurrentTable.None()) {
                     throw new InvalidOperationException($"Table {tableName.CommandText()} is missing a primary key");
                 }
-                var ttJoin = dyn(pkeysOfCurrentTable.Select(col => "pk." + col + "=tt." + col).JoinStrings(" and "));
+                var ttJoin = ParameterizedSql.CreateDynamic(pkeysOfCurrentTable.Select(col => "pk." + col + "=tt." + col).JoinStrings(" and "));
 
                 deletionStack.Push(() => {
                     var nrRowsToDelete = SQL($"select count(*) from {tempTableName}").ReadScalar<int>(conn);
@@ -121,15 +120,15 @@ namespace ProgressOnderwijsUtils
                 var fks = keys[tableName.CommandText()];
 
                 foreach (var fk in fks) {
-                    var referencingPkCols = dyn(pkeys[fk.Fk_table].Select(col => "fk." + col).JoinStrings(", "));
-                    var pkJoin = dyn(fk.columns.Select(col => "fk." + col.Fk_column + "=pk." + col.Pk_column).JoinStrings(" and "));
+                    var referencingPkCols = ParameterizedSql.CreateDynamic(pkeys[fk.Fk_table].Select(col => "fk." + col).JoinStrings(", "));
+                    var pkJoin = ParameterizedSql.CreateDynamic(fk.columns.Select(col => "fk." + col.Fk_column + "=pk." + col.Pk_column).JoinStrings(" and "));
 
-                    var newDelTable = dyn("[##del_" + delBatch + "]");
+                    var newDelTable = ParameterizedSql.CreateDynamic("[##del_" + delBatch + "]");
                     var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.Fk_table)
                         ? SQL($"where 1=1")
-                        : SQL($"where ").Append(dyn(pkeysOfCurrentTable.Select(col => "pk." + col + "<>fk." + col).JoinStrings(" or ")));
+                        : SQL($"where ").Append(ParameterizedSql.CreateDynamic(pkeysOfCurrentTable.Select(col => "pk." + col + "<>fk." + col).JoinStrings(" or ")));
 
-                    var fkTableSql = dyn(fk.Fk_table);
+                    var fkTableSql = ParameterizedSql.CreateDynamic(fk.Fk_table);
 
                     var statement = SQL($@"
                         select {referencingPkCols} 
