@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
                 .ToLookup(
                     rowGroup => rowGroup.First().Pk_table,
                     rowGroup => new {
-                        rowGroup.First().Fk_table,
+                        FkTableSql = rowGroup.First().FkTableSql,
                         columns = rowGroup.ToArray(),
                     },
                     StringComparer.OrdinalIgnoreCase
@@ -120,21 +120,18 @@ namespace ProgressOnderwijsUtils
                 var fks = keys[tableName.CommandText()];
 
                 foreach (var fk in fks) {
-                    var referencingPkCols = pkeys[fk.Fk_table].Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
+                    var referencingPkCols = pkeys[fk.FkTableSql.CommandText()].Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
                     var pkJoin = fk.columns.Select(col => SQL($"fk.{col.FkColumnSql}=pk.{col.PkColumnSql}")).ConcatenateSql(SQL($" and "));
 
                     var newDelTable = ParameterizedSql.CreateDynamic("[##del_" + delBatch + "]");
-                    var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.Fk_table)
+                    var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.FkTableSql.CommandText())
                         ? SQL($"where 1=1")
-                        : SQL($"where ").Append(
-                            pkeysOfCurrentTable.Select(col => SQL($"pk.{col}<>fk.{col}")).ConcatenateSql(SQL($" or "));
-
-                    var fkTableSql = ParameterizedSql.CreateDynamic(fk.Fk_table);
+                        : SQL($"where {pkeysOfCurrentTable.Select(col => SQL($"pk.{col}<>fk.{col}")).ConcatenateSql(SQL($" or "))}");
 
                     var statement = SQL($@"
                         select {referencingPkCols} 
                         into {newDelTable}
-                        from {fkTableSql} as fk
+                        from {fk.FkTableSql} as fk
                         join {tableName} as pk on {pkJoin}
                         join {tempTableName} as tt on {ttJoin}
                         {whereClause}
@@ -147,13 +144,13 @@ namespace ProgressOnderwijsUtils
 
                     totalDeletes += kidRowsCount;
 
-                    log($"{delBatch,6}: Found {kidRowsCount} in {fk.Fk_table}->{stack.JoinStrings("->")}");
+                    log($"{delBatch,6}: Found {kidRowsCount} in {fk.FkTableSql.CommandText()}->{stack.JoinStrings("->")}");
 
                     if (kidRowsCount == 0) {
                         SQL($"drop table {newDelTable}").ExecuteNonQuery(conn);
                     } else {
                         delBatch++;
-                        DeleteKids(fkTableSql, newDelTable, stack.Prepend(fk.Fk_table), depth + 1);
+                        DeleteKids(fk.FkTableSql, newDelTable, stack.Prepend(fk.FkTableSql.CommandText()), depth + 1);
                     }
                 }
             }
@@ -180,6 +177,7 @@ namespace ProgressOnderwijsUtils
             public string Fk_table { get; set; }
             public string Pk_column { get; set; }
             public string Fk_column { get; set; }
+            public ParameterizedSql FkTableSql => ParameterizedSql.CreateDynamic(Fk_table);
             public ParameterizedSql PkColumnSql => ParameterizedSql.CreateDynamic(Pk_column);
             public ParameterizedSql FkColumnSql => ParameterizedSql.CreateDynamic(Fk_column);
 
