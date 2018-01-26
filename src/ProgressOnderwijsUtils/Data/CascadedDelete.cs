@@ -22,11 +22,12 @@ namespace ProgressOnderwijsUtils
             [NotNull] SqlCommandCreationContext conn,
             ParameterizedSql initialTableAsEntered,
             [NotNull] TId[] idsToDelete,
-            [CanBeNull] Action<string> log
+            [CanBeNull] Action<string> logger
             )
             where TId : struct, IConvertible, IComparable
         {
-            log = log ?? (s => { });
+            void log(string message) => logger?.Invoke(message);
+
             var initialTableName = initialTableAsEntered.CommandText();
             var initialTable =
                 ParameterizedSql.CreateDynamic(SQL($"select object_schema_name(object_id({initialTableName})) + '.' + object_name(object_id({initialTableName}))")
@@ -47,7 +48,7 @@ namespace ProgressOnderwijsUtils
                 .ToLookup(
                     rowGroup => rowGroup.First().Pk_table,
                     rowGroup => new {
-                        FkTableSql = rowGroup.First().FkTableSql,
+                        rowGroup.First().FkTableSql,
                         columns = rowGroup.ToArray(),
                     },
                     StringComparer.OrdinalIgnoreCase
@@ -89,7 +90,7 @@ namespace ProgressOnderwijsUtils
             var perflog = new List<DeletionPerformance>();
             long totalDeletes = 0;
 
-            void DeleteKids(ParameterizedSql tableName, ParameterizedSql tempTableName, SList<string> stack, int depth)
+            void DeleteKids(ParameterizedSql tableName, ParameterizedSql tempTableName, SList<string> logStack, int depth)
             {
                 if (depth > 500) {
                     throw new InvalidOperationException("A dependency chain of over 500 long was encountered; possible cycle: aborting.");
@@ -144,13 +145,13 @@ namespace ProgressOnderwijsUtils
 
                     totalDeletes += kidRowsCount;
 
-                    log($"{delBatch,6}: Found {kidRowsCount} in {fk.FkTableSql.CommandText()}->{stack.JoinStrings("->")}");
+                    log($"{delBatch,6}: Found {kidRowsCount} in {fk.FkTableSql.CommandText()}->{logStack.JoinStrings("->")}");
 
                     if (kidRowsCount == 0) {
                         SQL($"drop table {newDelTable}").ExecuteNonQuery(conn);
                     } else {
                         delBatch++;
-                        DeleteKids(fk.FkTableSql, newDelTable, stack.Prepend(fk.FkTableSql.CommandText()), depth + 1);
+                        DeleteKids(fk.FkTableSql, newDelTable, logStack.Prepend(fk.FkTableSql.CommandText()), depth + 1);
                     }
                 }
             }
@@ -160,6 +161,7 @@ namespace ProgressOnderwijsUtils
                 deletionStack.Pop()();
             }
 
+            log($"{totalDeletes} rows Deleted");
             return perflog.ToArray();
         }
 
