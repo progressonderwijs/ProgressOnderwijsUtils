@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             CascadedDelete.RecursivelyDelete(Context, SQL($"TRoot"), new[] { 1, 2 }, null);
 
             var finalT2 = SQL($"select D from T2").ReadPlain<int>(Context);
-            PAssert.That(() =>finalT2.SetEqual(new[] { 5 }));
+            PAssert.That(() => finalT2.SetEqual(new[] { 5 }));
 
             var finalTLeafKeys = SQL($"select Z from TLeaf").ReadPlain<int>(Context);
             PAssert.That(() => finalTLeafKeys.SetEqual(new[] { 3, 4 }));
