@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
     <Version>14.5.0</Version>
     <PackageReleaseNotes>Include intellisense in nuget package; include inital CascadedDelete implementation.</PackageReleaseNotes>
