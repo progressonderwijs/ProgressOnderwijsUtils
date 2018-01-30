@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>14.4.1</Version>
+    <Version>14.5.0</Version>
+    <PackageReleaseNotes>Include intellisense in nuget package; include inital CascadedDelete implementation.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -8,23 +9,20 @@
       Various utility methods+classes used by Progress Onderwijs.
     </Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Added AuthnContextClassRef property to AuthnRequest.</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
-  </PropertyGroup>
-  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup>
     <OutputType>library</OutputType>
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
-  </ItemGroup>
-  <ItemGroup>
+
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="ExpressionToCodeLib" version="2.5.1" />
     <PackageReference Include="log4net" version="2.0.8" />
