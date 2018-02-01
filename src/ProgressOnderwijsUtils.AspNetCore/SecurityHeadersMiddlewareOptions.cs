@@ -6,5 +6,6 @@
         public string ReferrerPolicy { get; set; } = "same-origin";
         public string XContentTypeOptions { get; set; } = "nosniff";
         public string XFrameOptions { get; set; } = "SAMEORIGIN";
+        public string XXssProtection { get; set; } = "1; mode=block";
     }
 }
