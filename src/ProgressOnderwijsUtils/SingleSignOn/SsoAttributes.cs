@@ -11,6 +11,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public string[] roles;
         public string InResponseTo;
         public DateTime AuthnInstant;
+        public string AuthnContextClassRef;
 
         public override string ToString()
         {
