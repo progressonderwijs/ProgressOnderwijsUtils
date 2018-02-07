@@ -76,6 +76,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 roles = GetAttributes(assertion, ROLE),
                 InResponseTo = GetInResponseTo(assertion),
                 AuthnInstant = (DateTime)authnStatement.Attribute("AuthnInstant"),
+                AuthnContextClassRef = (string)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext").Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
             };
         }
 

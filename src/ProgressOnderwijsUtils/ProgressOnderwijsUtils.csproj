@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>14.5.0</Version>
-    <PackageReleaseNotes>Include intellisense in nuget package; include inital CascadedDelete implementation.</PackageReleaseNotes>
+    <Version>14.6.0</Version>
+    <PackageReleaseNotes>Include AuthnContextClassRef in SsoAttributes.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
