@@ -42,7 +42,7 @@ namespace Progress.Business.Tools
                 tmpArray[i] = values[i];
             }
 
-            QuickSort(tmpArray, 0, originalLength);
+            QuickSort(tmpArray, 0, originalLength - 1);
             var newLength = RemoveDuplicates(tmpArray, originalLength);
             var output = new T[newLength];
             for (var i = 0; i < output.Length; i++) {
