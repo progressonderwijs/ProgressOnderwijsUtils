@@ -20,7 +20,20 @@ namespace Progress.Business.Tools
         static readonly T[] empty = Array.Empty<T>();
         static TOrder Ordering => default(TOrder);
         SortedSet(T[] sortedDistinctValues) => this.sortedDistinctValues = sortedDistinctValues;
-        public static SortedSet<T, TOrder> FromSortedDistinctValues(T[] sortedDistinctRechten) => new SortedSet<T, TOrder>(sortedDistinctRechten);
+
+        public static SortedSet<T, TOrder> FromValues(T[] values)
+        {
+            for (int i = 1; i < values.Length; i++) {
+                if (!Ordering.LessThan(values[i - 1], values[i])) {
+                    return FromUnsortedValues(values);
+                }
+            }
+            return FromSortedDistinctValues(values);
+        }
+
+        public static SortedSet<T, TOrder> FromSortedDistinctValues(T[] sortedDistinctRechten)
+            => new SortedSet<T, TOrder>(sortedDistinctRechten);
+
         public static SortedSet<T, TOrder> FromUnsortedValues(T[] values)
         {
             var originalLength = values.Length;
@@ -204,5 +217,12 @@ namespace Progress.Business.Tools
 
             public T Value => Arr[Pos];
         }
+    }
+
+    public static class SortedSetHelpers
+    {
+        public static SortedSet<T, TOrder> MergeSets<T, TOrder>(this IEnumerable<SortedSet<T, TOrder>> inputSets)
+            where TOrder : struct, IOrdering<T>
+            => SortedSet<T, TOrder>.MergeSets(inputSets);
     }
 }
