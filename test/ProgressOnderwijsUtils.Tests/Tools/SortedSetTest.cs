@@ -14,21 +14,21 @@ namespace Progress.Business.Tests.Tools
         public void TheEmptySetIsEmpty()
         {
             var set = IntSet.FromValues(new int[] { });
-            PAssert.That(() => set.Values.None());
+            PAssert.That(() => set.ValuesInOrder.None());
         }
 
         [Test]
         public void ThreeDistinctValuesRemainDistinct()
         {
             var set = IntSet.FromValues(new[] { 1, 2, 3 });
-            PAssert.That(() => set.Values.SetEqual(new[] { 3, 2, 1 }));
+            PAssert.That(() => set.ValuesInOrder.SetEqual(new[] { 3, 2, 1 }));
         }
 
         [Test]
         public void IdenticalValuesAreRemoved()
         {
             var set = IntSet.FromValues(new[] { 1, 2, 3, 3, 2, 1 });
-            PAssert.That(() => set.Values.SequenceEqual(new[] { 1, 2, 3 }));
+            PAssert.That(() => set.ValuesInOrder.SequenceEqual(new[] { 1, 2, 3 }));
         }
 
         [Test]

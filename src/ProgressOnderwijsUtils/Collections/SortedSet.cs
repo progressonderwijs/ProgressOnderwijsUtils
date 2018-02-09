@@ -51,7 +51,7 @@ namespace Progress.Business.Tools
             return new SortedSet<T, TOrder>(output);
         }
 
-        public T[] Values => sortedDistinctValues ?? empty;
+        public T[] ValuesInOrder => sortedDistinctValues ?? empty;
 
         [Pure]
         public bool Contains(T value)
@@ -93,8 +93,8 @@ namespace Progress.Business.Tools
                     Array.Resize(ref inputSetCursors, inputSetCount * 2);
                 }
 
-                inputSetCursors[inputSetCount++] = new Cursor(0, set.Values);
-                maxSize += set.Values.Length;
+                inputSetCursors[inputSetCount++] = new Cursor(0, set.ValuesInOrder);
+                maxSize += set.ValuesInOrder.Length;
             }
             var outputValues = GetCachedAccumulator(maxSize);
 
