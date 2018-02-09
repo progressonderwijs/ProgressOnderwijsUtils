@@ -13,13 +13,14 @@ namespace Progress.Business.Tools
         bool Equal(T a, T b);
     }
 
-    public struct SortedSet<T, TOrder>
+    public struct SortedSet<T, TOrder> : IEquatable<SortedSet<T, TOrder>>
         where TOrder : struct, IOrdering<T>
     {
         readonly T[] sortedDistinctValues;
         static readonly T[] empty = Array.Empty<T>();
         static TOrder Ordering => default(TOrder);
         SortedSet(T[] sortedDistinctValues) => this.sortedDistinctValues = sortedDistinctValues;
+        public static SortedSet<T, TOrder> Empty => FromSortedDistinctValues(Array.Empty<T>());
 
         public static SortedSet<T, TOrder> FromValues(T[] values)
         {
@@ -223,6 +224,21 @@ namespace Progress.Business.Tools
                 } while (readIdx < len);
                 return distinctUptoIdx + 1;
             }
+        }
+
+        public bool Equals(SortedSet<T, TOrder> other)
+        {
+            var a = ValuesInOrder;
+            var b = other.ValuesInOrder;
+            if (a.Length != b.Length) {
+                return false;
+            }
+            for (int i = 0; i < a.Length; i++) {
+                if (!Ordering.Equal(a[i], b[i])) {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 
