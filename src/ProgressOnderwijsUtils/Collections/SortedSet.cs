@@ -176,28 +176,28 @@ namespace Progress.Business.Tools
                 }
             }
 
-            static int Partition(T[] A, int lo, int hi)
+            static int Partition(T[] A, int rangeStart, int rangeEnd)
             {
-                var pivotValue = A[(lo + hi) / 2];
-                var i = lo;
-                var j = hi;
+                var pivotValue = A[(rangeStart + rangeEnd) / 2];
+                var currentStart = rangeStart;
+                var currentEnd = rangeEnd;
                 while (true) {
-                    while (Ordering.LessThan(A[i], pivotValue)) {
-                        i++;
+                    while (Ordering.LessThan(A[currentStart], pivotValue)) {
+                        currentStart++;
                     }
-                    while (Ordering.LessThan(pivotValue, A[j])) {
-                        j--;
+                    while (Ordering.LessThan(pivotValue, A[currentEnd])) {
+                        currentEnd--;
                     }
                     //so pivot <= A[i]  &  A[j] <= pivot
                     //and A[lo,i) < pivot  & pivot < A(j,hi]
-                    if (j <= i) {
-                        return j;
+                    if (currentEnd <= currentStart) {
+                        return currentEnd;
                     }
-                    var tmp = A[i];
-                    A[i] = A[j];
-                    A[j] = tmp;
-                    i++;
-                    j--;
+                    var tmp = A[currentStart];
+                    A[currentStart] = A[currentEnd];
+                    A[currentEnd] = tmp;
+                    currentStart++;
+                    currentEnd--;
                 }
             }
 
