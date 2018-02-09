@@ -43,7 +43,7 @@ namespace Progress.Business.Tools
             }
 
             Algorithms.QuickSort(tmpArray, 0, originalLength - 1);
-            var newLength = Algorithms.RemoveDuplicates(tmpArray, originalLength);
+            var newLength = Algorithms.CountAndMoveDistinctValuesToFront(tmpArray, originalLength);
             var output = new T[newLength];
             for (var i = 0; i < output.Length; i++) {
                 output[i] = tmpArray[i];
@@ -204,7 +204,7 @@ namespace Progress.Business.Tools
                 return end;
             }
 
-            public static int RemoveDuplicates(T[] arr, int len)
+            public static int CountAndMoveDistinctValuesToFront(T[] arr, int len)
             {
                 if (len < 2) {
                     return len;
