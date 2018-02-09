@@ -89,8 +89,19 @@ namespace Progress.Business.Tools
                     Array.Resize(ref inputSetCursors, inputSetCount * 2);
                 }
 
-                inputSetCursors[inputSetCount++] = new Cursor(0, set.ValuesInOrder);
-                maxSize += set.ValuesInOrder.Length;
+                var setValues = set.ValuesInOrder;
+                var setSize = setValues.Length;
+                if (setSize > 0) {
+                    inputSetCursors[inputSetCount++] = new Cursor(0, setValues);
+                    maxSize += setSize;
+                }
+            }
+            if (inputSetCount < 2) {
+                if (inputSetCount == 1) {
+                    return FromSortedDistinctValues(inputSetCursors[0].Arr);
+                } else {
+                    return Empty;
+                }
             }
             var outputValues = GetCachedAccumulator(maxSize);
 
