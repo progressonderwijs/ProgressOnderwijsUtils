@@ -9,7 +9,7 @@ using IntSet = Progress.Business.Tools.SortedSet<int, Progress.Business.Tests.To
 
 namespace Progress.Business.Tests.Tools
 {
-    public class SortedSet_CountAndMoveDistinctValuesToFrontTest
+    public sealed class SortedSet_CountAndMoveDistinctValuesToFrontTest
     {
         [Test]
         public void EmptyArrayDoesNothing()
