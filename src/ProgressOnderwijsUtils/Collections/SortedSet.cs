@@ -37,6 +37,9 @@ namespace Progress.Business.Tools
         public static SortedSet<T, TOrder> FromUnsortedValues(T[] values)
         {
             var originalLength = values.Length;
+            if (originalLength < 2) {
+                return new SortedSet<T, TOrder>(values);
+            }
             var tmpArray = GetCachedAccumulator(originalLength);
             for (var i = 0; i < originalLength; i++) {
                 tmpArray[i] = values[i];
