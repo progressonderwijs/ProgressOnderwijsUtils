@@ -58,7 +58,7 @@ namespace Progress.Business.Tests.Tools
             var setA = IntSet.FromValues(new[] { 3, 5, 2, 9, 9 });
             var setB = IntSet.FromValues(new[] { 2, 8, 7, 6, 2 });
             var setC = IntSet.FromValues(new[] { 1, 3, 4, });
-            var setExpected = IntSet.FromValues(Enumerable.Range(1, 9).ToArray());
+            var setExpected = IntSet.FromValues(Enumerable.Range(1, 9));
             var mergeResult = new[] { setA, setB, setC, }.MergeSets();
             PAssert.That(() => setExpected.Equals(mergeResult));
         }
@@ -68,7 +68,7 @@ namespace Progress.Business.Tests.Tools
         {
             var setA = IntSet.FromValues(new[] { 3, 5, });
             var setB = IntSet.FromValues(new[] { 2, 8, 7, 6, 2, 2, 9, 9, 10, 4, 1 });
-            var setExpected = IntSet.FromValues(Enumerable.Range(1, 10).ToArray());
+            var setExpected = IntSet.FromValues(Enumerable.Range(1, 10));
             var mergeResult = new[] { setA, setB, }.MergeSets();
             PAssert.That(() => setExpected.Equals(mergeResult));
         }
@@ -78,7 +78,7 @@ namespace Progress.Business.Tests.Tools
         {
             var setA = IntSet.FromValues(new[] { 3, 5, });
             var setB = IntSet.FromValues(new[] { 2, 8, 7, 6, 2, 2, 9, 9, 10, 4, 1 });
-            var setExpected = IntSet.FromValues(Enumerable.Range(1, 10).ToArray());
+            var setExpected = IntSet.FromValues(Enumerable.Range(1, 10));
             var mergeResult = new[] { setB, setA }.MergeSets();
             PAssert.That(() => setExpected.Equals(mergeResult));
         }
@@ -87,8 +87,8 @@ namespace Progress.Business.Tests.Tools
         public void ALargeMergeWorks()
         {
             var sets = Enumerable.Range(1, 100)
-                .Select(n => IntSet.FromValues(Enumerable.Range(1, 1000).Select(i => i * n % 2345).ToArray()));
-            var setExpected = IntSet.FromValues(Enumerable.Range(0, 2345).ToArray());
+                .Select(n => IntSet.FromValues(Enumerable.Range(1, 1000).Select(i => i * n % 2345)));
+            var setExpected = IntSet.FromValues(Enumerable.Range(0, 2345));
             var mergeResult = sets.MergeSets();
             PAssert.That(() => setExpected.Equals(mergeResult));
         }

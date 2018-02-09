@@ -21,6 +21,7 @@ namespace Progress.Business.Tools
         static TOrder Ordering => default(TOrder);
         SortedSet(T[] sortedDistinctValues) => this.sortedDistinctValues = sortedDistinctValues;
         public static SortedSet<T, TOrder> Empty => FromSortedDistinctValues(Array.Empty<T>());
+        public static SortedSet<T, TOrder> FromValues(IEnumerable<T> values) => FromValues(values as T[] ?? values.ToArray());
 
         public static SortedSet<T, TOrder> FromValues(T[] values)
         {

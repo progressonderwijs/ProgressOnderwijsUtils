@@ -48,7 +48,7 @@ namespace Progress.Business.Tests.Tools
         [Test]
         public void ContainsReturnsFalseForANumberNotSet()
         {
-            var set = IntSet.FromValues(Enumerable.Range(0, 1000).Select(i => i * 2).Reverse().ToArray());
+            var set = IntSet.FromValues(Enumerable.Range(0, 1000).Select(i => i * 2).Reverse());
             PAssert.That(() => !set.Contains(299));
         }
     }
