@@ -30,7 +30,7 @@ namespace Progress.Business.Tests.Tools
         public void IdenticalValuesAreRemoved()
         {
             var set = IntSet.FromValues(new[] { 1, 2, 3, 3, 2, 1 });
-            PAssert.That(() => set.Values.SetEqual(new[] { 3, 2, 1 }));
+            PAssert.That(() => set.Values.SequenceEqual(new[] { 1, 2, 3 }));
         }
 
         [Test]
