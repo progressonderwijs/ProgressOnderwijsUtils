@@ -165,39 +165,35 @@ namespace Progress.Business.Tools
 
         public static class Algorithms
         {
-            public static void QuickSort(T[] A) => QuickSort(A, 0, A.Length - 1);
+            public static void QuickSort(T[] array) => QuickSort(array, 0, array.Length - 1);
 
-            public static void QuickSort(T[] A, int lo, int hi)
+            public static void QuickSort(T[] array, int firstIdx, int lastIdx)
             {
-                if (lo < hi) {
-                    var pivot = Partition(A, lo, hi);
-                    QuickSort(A, lo, pivot);
-                    QuickSort(A, pivot + 1, hi);
+                if (firstIdx < lastIdx) {
+                    var pivot = Partition(array, firstIdx, lastIdx);
+                    QuickSort(array, firstIdx, pivot);
+                    QuickSort(array, pivot + 1, lastIdx);
                 }
             }
 
-            static int Partition(T[] A, int rangeStart, int rangeEnd)
+            static int Partition(T[] array, int firstIdx, int lastIdx)
             {
-                var pivotValue = A[(rangeStart + rangeEnd) / 2];
-                var currentStart = rangeStart;
-                var currentEnd = rangeEnd;
+                var pivotValue = array[(firstIdx + lastIdx) / 2];
                 while (true) {
-                    while (Ordering.LessThan(A[currentStart], pivotValue)) {
-                        currentStart++;
+                    while (Ordering.LessThan(array[firstIdx], pivotValue)) {
+                        firstIdx++;
                     }
-                    while (Ordering.LessThan(pivotValue, A[currentEnd])) {
-                        currentEnd--;
+                    while (Ordering.LessThan(pivotValue, array[lastIdx])) {
+                        lastIdx--;
                     }
-                    //so pivot <= A[i]  &  A[j] <= pivot
-                    //and A[lo,i) < pivot  & pivot < A(j,hi]
-                    if (currentEnd <= currentStart) {
-                        return currentEnd;
+                    if (lastIdx <= firstIdx) {
+                        return lastIdx;
                     }
-                    var tmp = A[currentStart];
-                    A[currentStart] = A[currentEnd];
-                    A[currentEnd] = tmp;
-                    currentStart++;
-                    currentEnd--;
+                    var tmp = array[firstIdx];
+                    array[firstIdx] = array[lastIdx];
+                    array[lastIdx] = tmp;
+                    firstIdx++;
+                    lastIdx--;
                 }
             }
 
