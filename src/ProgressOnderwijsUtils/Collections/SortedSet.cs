@@ -60,9 +60,6 @@ namespace Progress.Business.Tools
             return idxAfterLastLtNode < sortedDistinctValues.Length && Ordering.Equal(sortedDistinctValues[idxAfterLastLtNode], value);
         }
 
-        [ThreadStatic]
-        static T[] Accumulator;
-
         static int RemoveDuplicates(T[] arr, int len)
         {
             if (len < 2) {
@@ -79,6 +76,19 @@ namespace Progress.Business.Tools
             arr[j++] = arr[len - 1];
 
             return j;
+        }
+
+        [ThreadStatic]
+        static T[] Accumulator;
+
+        static T[] GetCachedAccumulator(int maxSize)
+        {
+            var outputValues = Accumulator ?? (Accumulator = new T[16]);
+            if (outputValues.Length < maxSize) {
+                var newSize = (int)Math.Max(maxSize, outputValues.Length * 3L / 2L);
+                Accumulator = outputValues = new T[newSize];
+            }
+            return outputValues;
         }
 
         [Pure]
@@ -134,16 +144,6 @@ namespace Progress.Business.Tools
                 output[i] = outputValues[i];
             }
             return FromSortedDistinctValues(output);
-        }
-
-        static T[] GetCachedAccumulator(int maxSize)
-        {
-            var outputValues = Accumulator ?? (Accumulator = new T[16]);
-            if (outputValues.Length < maxSize) {
-                var newSize = (int)Math.Max(maxSize, outputValues.Length * 3L / 2L);
-                Accumulator = outputValues = new T[newSize];
-            }
-            return outputValues;
         }
 
         struct Cursor
