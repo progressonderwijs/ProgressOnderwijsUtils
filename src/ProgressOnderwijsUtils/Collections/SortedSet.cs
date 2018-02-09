@@ -166,7 +166,13 @@ namespace Progress.Business.Tools
 
         public static class Algorithms
         {
-            public static void QuickSort(T[] array) => QuickSort(array, 0, array.Length - 1);
+            public static void Sort(T[] array) => QuickSort(array);
+
+            public static void MergeSort(T[] array)
+                => TopDownMergeSort(array, GetCachedAccumulator(array.Length), array.Length);
+
+            public static void QuickSort(T[] array)
+                => QuickSort(array, 0, array.Length - 1);
 
             public static void QuickSort(T[] array, int firstIdx, int lastIdx)
             {
@@ -195,6 +201,56 @@ namespace Progress.Business.Tools
                     array[lastIdx] = tmp;
                     firstIdx++;
                     lastIdx--;
+                }
+            }
+
+            // Array T[] A has the items to sort; array T[] B is a work array.
+            static void TopDownMergeSort(T[] A, T[] B, int n)
+            {
+                CopyArray(A, 0, n, B); // duplicate array T[] A into T[] B
+                TopDownSplitMerge(B, 0, n, A); // sort data from T[] B into T[] A
+            }
+
+            // Sort the given run of array T[] A using array T[] B as a source.
+            // iBegin is inclusive; iEnd is exclusive (A[iEnd] is not in the set).
+            static void TopDownSplitMerge(T[] B, int iBegin, int iEnd, T[] A)
+            {
+                if (iEnd - iBegin < 2) { // if run size == 1
+                    return; //   consider it sorted
+                }
+                // split the run longer than 1 item into halves
+                int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
+                // recursively sort both runs from array T[] A into T[] B
+                TopDownSplitMerge(A, iBegin, iMiddle, B); // sort the left  run
+                TopDownSplitMerge(A, iMiddle, iEnd, B); // sort the right run
+                // merge the resulting runs from array T[] B into T[] A
+                TopDownMerge(B, iBegin, iMiddle, iEnd, A);
+            }
+
+            //  Left source half is A[ iBegin:iMiddle-1].
+            // Right source half is A[iMiddle:iEnd-1   ].
+            // Result is            B[ iBegin:iEnd-1   ].
+            static void TopDownMerge(T[] A, int iBegin, int iMiddle, int iEnd, T[] B)
+            {
+                int i = iBegin, j = iMiddle;
+
+                // While there are elements in the left or right runs...
+                for (int k = iBegin; k < iEnd; k++) {
+                    // If left run head exists and is <= existing right run head.
+                    if (i < iMiddle && (j >= iEnd || !Ordering.LessThan(A[j], A[i]))) {
+                        B[k] = A[i];
+                        i = i + 1;
+                    } else {
+                        B[k] = A[j];
+                        j = j + 1;
+                    }
+                }
+            }
+
+            static void CopyArray(T[] A, int iBegin, int iEnd, T[] B)
+            {
+                for (int k = iBegin; k < iEnd; k++) {
+                    B[k] = A[k];
                 }
             }
 

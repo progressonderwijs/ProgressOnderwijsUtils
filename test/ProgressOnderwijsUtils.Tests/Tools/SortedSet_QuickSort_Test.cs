@@ -15,7 +15,7 @@ namespace Progress.Business.Tests.Tools
         public void SortedEmpyArrayIsEmtpy()
         {
             var array = new int[0];
-            SortedSet<int, IntOrdering>.Algorithms.QuickSort(array);
+            SortedSet<int, IntOrdering>.Algorithms.Sort(array);
             PAssert.That(() => ArrayEquals(array, Array.Empty<int>()));
         }
 
@@ -23,7 +23,7 @@ namespace Progress.Business.Tests.Tools
         public void SingleElementArrayRetainsElement()
         {
             var array = new[] { 1337 };
-            SortedSet<int, IntOrdering>.Algorithms.QuickSort(array);
+            SortedSet<int, IntOrdering>.Algorithms.Sort(array);
             PAssert.That(() => ArrayEquals(array, new[] { 1337 }));
         }
 
@@ -31,7 +31,7 @@ namespace Progress.Business.Tests.Tools
         public void TwoElementsOutOfOrderAreSorted()
         {
             var array = new[] { 1337, 37 };
-            SortedSet<int, IntOrdering>.Algorithms.QuickSort(array);
+            SortedSet<int, IntOrdering>.Algorithms.Sort(array);
             PAssert.That(() => ArrayEquals(array, new[] { 37, 1337 }));
         }
 
@@ -39,7 +39,7 @@ namespace Progress.Business.Tests.Tools
         public void TwoElementsInOrderRemainSorted()
         {
             var array = new[] { 4, 5 };
-            SortedSet<int, IntOrdering>.Algorithms.QuickSort(array);
+            SortedSet<int, IntOrdering>.Algorithms.Sort(array);
             PAssert.That(() => ArrayEquals(array, new[] { 4, 5 }));
         }
 
@@ -47,8 +47,17 @@ namespace Progress.Business.Tests.Tools
         public void CountDownBecomesCountUp()
         {
             var array = new[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
-            SortedSet<int, IntOrdering>.Algorithms.QuickSort(array);
+            SortedSet<int, IntOrdering>.Algorithms.Sort(array);
             PAssert.That(() => ArrayEquals(array, new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }));
+        }
+
+        [Test]
+        public void ExampleWithLargeNumbersSorts()
+        {
+            var array = new[] { 302596119, 269548474, 1122627734, 361709742, 563913476, 1555655117 };
+            var expected = array.OrderBy(n => n).ToArray();
+            SortedSet<int, IntOrdering>.Algorithms.Sort(array);
+            PAssert.That(() => ArrayEquals(array, expected));
         }
 
         [Test]
@@ -58,7 +67,7 @@ namespace Progress.Business.Tests.Tools
             for (int i = 0; i < 1000; i++) {
                 var array = MoreLinq.MoreEnumerable.GenerateByIndex(_ => r.Next(200) - r.Next(200)).Take(r.Next(100) + 1).ToArray();
                 var correctOrdering = array.OrderBy(n => n).ToArray();
-                SortedSet<int, IntOrdering>.Algorithms.QuickSort(array);
+                SortedSet<int, IntOrdering>.Algorithms.Sort(array);
                 PAssert.That(() => ArrayEquals(array, correctOrdering));
             }
         }
