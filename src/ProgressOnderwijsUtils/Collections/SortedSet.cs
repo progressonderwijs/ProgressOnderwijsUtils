@@ -209,18 +209,16 @@ namespace Progress.Business.Tools
                 if (len < 2) {
                     return len;
                 }
-                int nextWriteIdx = 0;
-                int readIdx = 0;
-                while (readIdx < len - 1) {
-                    if (!Ordering.Equal(arr[readIdx], arr[readIdx + 1])) {
-                        arr[nextWriteIdx++] = arr[readIdx];
+                int distinctUptoIdx = 0;
+                int readIdx = 1;
+                do {
+                    if (!Ordering.Equal(arr[distinctUptoIdx], arr[readIdx])) {
+                        distinctUptoIdx++;
+                        arr[distinctUptoIdx] = arr[readIdx];
                     }
                     readIdx++;
-                }
-
-                arr[nextWriteIdx++] = arr[readIdx];
-
-                return nextWriteIdx;
+                } while (readIdx < len);
+                return distinctUptoIdx + 1;
             }
         }
     }
