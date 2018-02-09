@@ -43,7 +43,7 @@ namespace Progress.Business.Tools
             }
 
             Algorithms.QuickSort(tmpArray, 0, originalLength - 1);
-            var newLength = RemoveDuplicates(tmpArray, originalLength);
+            var newLength = Algorithms.RemoveDuplicates(tmpArray, originalLength);
             var output = new T[newLength];
             for (var i = 0; i < output.Length; i++) {
                 output[i] = tmpArray[i];
@@ -58,24 +58,6 @@ namespace Progress.Business.Tools
         {
             var idxAfterLastLtNode = Algorithms.IdxAfterLastLtNode(sortedDistinctValues, value);
             return idxAfterLastLtNode < sortedDistinctValues.Length && Ordering.Equal(sortedDistinctValues[idxAfterLastLtNode], value);
-        }
-
-        static int RemoveDuplicates(T[] arr, int len)
-        {
-            if (len < 2) {
-                return len;
-            }
-            int j = 0;
-
-            for (int i = 1; i < len; i++) {
-                if (!Ordering.Equal(arr[i - 1], arr[i])) {
-                    arr[j++] = arr[i - 1];
-                }
-            }
-
-            arr[j++] = arr[len - 1];
-
-            return j;
         }
 
         [ThreadStatic]
@@ -220,6 +202,25 @@ namespace Progress.Business.Tools
                     }
                 }
                 return end;
+            }
+
+            public static int RemoveDuplicates(T[] arr, int len)
+            {
+                if (len < 2) {
+                    return len;
+                }
+                int nextWriteIdx = 0;
+                int readIdx = 0;
+                while (readIdx < len - 1) {
+                    if (!Ordering.Equal(arr[readIdx], arr[readIdx + 1])) {
+                        arr[nextWriteIdx++] = arr[readIdx];
+                    }
+                    readIdx++;
+                }
+
+                arr[nextWriteIdx++] = arr[readIdx];
+
+                return nextWriteIdx;
             }
         }
     }
