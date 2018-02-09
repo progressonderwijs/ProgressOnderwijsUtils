@@ -56,30 +56,12 @@ namespace Progress.Business.Tools
         [Pure]
         public bool Contains(T value)
         {
-            var idxAfterLastLtNode = IdxAfterLastLtNode(value);
+            var idxAfterLastLtNode = Algorithms.IdxAfterLastLtNode(sortedDistinctValues, value);
             return idxAfterLastLtNode < sortedDistinctValues.Length && Ordering.Equal(sortedDistinctValues[idxAfterLastLtNode], value);
         }
 
         [ThreadStatic]
         static T[] Accumulator;
-
-        int IdxAfterLastLtNode(T needle)
-        {
-            int start = 0, end = sortedDistinctValues.Length;
-            //invariant: only LT nodes before start
-            //invariant: only GTE nodes at or past end
-
-            while (end != start) {
-                var midpoint = end + start >> 1;
-                // start <= midpoint < end
-                if (Ordering.LessThan(sortedDistinctValues[midpoint], needle)) {
-                    start = midpoint + 1; //i.e.  midpoint < start1 so start0 < start1
-                } else {
-                    end = midpoint; //i.e end1 = midpoint so end1 < end0
-                }
-            }
-            return end;
-        }
 
         static int RemoveDuplicates(T[] arr, int len)
         {
@@ -186,6 +168,8 @@ namespace Progress.Business.Tools
 
         public static class Algorithms
         {
+            public static void QuickSort(T[] A) => QuickSort(A, 0, A.Length - 1);
+
             public static void QuickSort(T[] A, int lo, int hi)
             {
                 if (lo < hi) {
@@ -195,7 +179,7 @@ namespace Progress.Business.Tools
                 }
             }
 
-            public static int Partition(T[] A, int lo, int hi)
+            static int Partition(T[] A, int lo, int hi)
             {
                 var pivotValue = A[(lo + hi) / 2];
                 var i = lo;
@@ -218,6 +202,24 @@ namespace Progress.Business.Tools
                     i++;
                     j--;
                 }
+            }
+
+            public static int IdxAfterLastLtNode(T[] sortedArray, T needle)
+            {
+                int start = 0, end = sortedArray.Length;
+                //invariant: only LT nodes before start
+                //invariant: only GTE nodes at or past end
+
+                while (end != start) {
+                    var midpoint = end + start >> 1;
+                    // start <= midpoint < end
+                    if (Ordering.LessThan(sortedArray[midpoint], needle)) {
+                        start = midpoint + 1; //i.e.  midpoint < start1 so start0 < start1
+                    } else {
+                        end = midpoint; //i.e end1 = midpoint so end1 < end0
+                    }
+                }
+                return end;
             }
         }
     }
