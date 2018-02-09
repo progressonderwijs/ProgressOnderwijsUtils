@@ -42,7 +42,7 @@ namespace Progress.Business.Tools
                 tmpArray[i] = values[i];
             }
 
-            QuickSort(tmpArray, 0, originalLength - 1);
+            Algorithms.QuickSort(tmpArray, 0, originalLength - 1);
             var newLength = RemoveDuplicates(tmpArray, originalLength);
             var output = new T[newLength];
             for (var i = 0; i < output.Length; i++) {
@@ -97,40 +97,6 @@ namespace Progress.Business.Tools
             arr[j++] = arr[len - 1];
 
             return j;
-        }
-
-        static void QuickSort(T[] A, int lo, int hi)
-        {
-            if (lo < hi) {
-                var pivot = Partition(A, lo, hi);
-                QuickSort(A, lo, pivot);
-                QuickSort(A, pivot + 1, hi);
-            }
-        }
-
-        static int Partition(T[] A, int lo, int hi)
-        {
-            var pivotValue = A[(lo + hi) / 2];
-            var i = lo;
-            var j = hi;
-            while (true) {
-                while (Ordering.LessThan(A[i], pivotValue)) {
-                    i++;
-                }
-                while (Ordering.LessThan(pivotValue, A[j])) {
-                    j--;
-                }
-                //so pivot <= A[i]  &  A[j] <= pivot
-                //and A[lo,i) < pivot  & pivot < A(j,hi]
-                if (j <= i) {
-                    return j;
-                }
-                var tmp = A[i];
-                A[i] = A[j];
-                A[j] = tmp;
-                i++;
-                j--;
-            }
         }
 
         [Pure]
@@ -216,6 +182,43 @@ namespace Progress.Business.Tools
             }
 
             public T Value => Arr[Pos];
+        }
+
+        public static class Algorithms
+        {
+            public static void QuickSort(T[] A, int lo, int hi)
+            {
+                if (lo < hi) {
+                    var pivot = Partition(A, lo, hi);
+                    QuickSort(A, lo, pivot);
+                    QuickSort(A, pivot + 1, hi);
+                }
+            }
+
+            public static int Partition(T[] A, int lo, int hi)
+            {
+                var pivotValue = A[(lo + hi) / 2];
+                var i = lo;
+                var j = hi;
+                while (true) {
+                    while (Ordering.LessThan(A[i], pivotValue)) {
+                        i++;
+                    }
+                    while (Ordering.LessThan(pivotValue, A[j])) {
+                        j--;
+                    }
+                    //so pivot <= A[i]  &  A[j] <= pivot
+                    //and A[lo,i) < pivot  & pivot < A(j,hi]
+                    if (j <= i) {
+                        return j;
+                    }
+                    var tmp = A[i];
+                    A[i] = A[j];
+                    A[j] = tmp;
+                    i++;
+                    j--;
+                }
+            }
         }
     }
 
