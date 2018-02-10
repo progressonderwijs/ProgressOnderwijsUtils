@@ -166,7 +166,7 @@ namespace Progress.Business.Tools
 
         public static class Algorithms
         {
-            public static void Sort(T[] array) => QuickSort(array);
+            public static void Sort(T[] array) => MergeSort(array);
 
             public static void MergeSort(T[] array)
                 => TopDownMergeSort(array, GetCachedAccumulator(array.Length), array.Length);
