@@ -204,11 +204,11 @@ namespace Progress.Business.Tools
                 }
             }
 
-            // Array T[] A has the items to sort; array T[] B is a work array.
-            static void TopDownMergeSort(T[] A, T[] B, int n)
+
+            static void TopDownMergeSort(T[] items, T[] scratchSpace, int n)
             {
-                CopyArray(A, 0, n, B); // duplicate array T[] A into T[] B
-                TopDownSplitMerge(B, 0, n, A); // sort data from T[] B into T[] A
+                CopyArray(items, 0, n, scratchSpace);
+                TopDownSplitMerge(scratchSpace, 0, n, items);
             }
 
             // Sort the given run of array T[] A using array T[] B as a source.
