@@ -227,27 +227,27 @@ namespace Progress.Business.Tools
             //  Left source half is A[ iBegin:iMiddle-1].
             // Right source half is A[iMiddle:iEnd-1   ].
             // Result is            B[ iBegin:iEnd-1   ].
-            static void TopDownMerge(T[] A, int iBegin, int iMiddle, int iEnd, T[] B)
+            static void TopDownMerge(T[] source, int iBegin, int iMiddle, int iEnd, T[] target)
             {
                 int i = iBegin, j = iMiddle;
 
                 // While there are elements in the left or right runs...
                 for (int k = iBegin; k < iEnd; k++) {
                     // If left run head exists and is <= existing right run head.
-                    if (i < iMiddle && (j >= iEnd || !Ordering.LessThan(A[j], A[i]))) {
-                        B[k] = A[i];
-                        i = i + 1;
+                    if (i < iMiddle && (j >= iEnd || !Ordering.LessThan(source[j], source[i]))) {
+                        target[k] = source[i];
+                        i++;
                     } else {
-                        B[k] = A[j];
-                        j = j + 1;
+                        target[k] = source[j];
+                        j++;
                     }
                 }
             }
 
-            static void CopyArray(T[] A, int iBegin, int iEnd, T[] B)
+            static void CopyArray(T[] source, int iBegin, int iEnd, T[] target)
             {
                 for (int k = iBegin; k < iEnd; k++) {
-                    B[k] = A[k];
+                    target[k] = source[k];
                 }
             }
 
