@@ -176,7 +176,9 @@ namespace Progress.Business.Tools
 
             public static void QuickSort(T[] array, int firstIdx, int lastIdx)
             {
-                if (firstIdx < lastIdx) {
+                if (lastIdx - firstIdx < 48) {
+                    InsertionSort(array, firstIdx, lastIdx + 1);
+                } else {
                     var pivot = Partition(array, firstIdx, lastIdx);
                     QuickSort(array, firstIdx, pivot);
                     QuickSort(array, pivot + 1, lastIdx);
@@ -204,6 +206,25 @@ namespace Progress.Business.Tools
                 }
             }
 
+            static void InsertionSort(T[] array, int firstIdx, int idxEnd)
+            {
+                var writeIdx = firstIdx;
+                var readIdx = writeIdx + 1;
+                while (readIdx < idxEnd) {
+                    var x = array[readIdx];
+                    //writeIdx == readIdx -1;
+                    while (writeIdx >= firstIdx && Ordering.LessThan(x, array[writeIdx])) {
+                        array[writeIdx + 1] = array[writeIdx];
+                        writeIdx--;
+                    }
+
+                    if (writeIdx + 1 != readIdx) {
+                        array[writeIdx + 1] = x;
+                    }
+                    writeIdx = readIdx;
+                    readIdx = readIdx + 1;
+                }
+            }
 
             static void TopDownMergeSort(T[] items, T[] scratchSpace, int n)
             {
@@ -213,8 +234,9 @@ namespace Progress.Business.Tools
 
             static void TopDownSplitMerge(T[] source, int iBegin, int iEnd, T[] target)
             {
-                if (iEnd - iBegin < 2) { // if run size == 1
-                    return; //   consider it sorted
+                if (iEnd - iBegin < 48) { // if run size == 1
+                    InsertionSort(target, iBegin, iEnd);
+                    return; //   consider it sorted (and assume target is copy of source)
                 }
                 int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
                 // recursively sort both runs from array T[] A into T[] B
