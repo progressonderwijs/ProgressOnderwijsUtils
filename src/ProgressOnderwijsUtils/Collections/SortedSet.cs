@@ -211,20 +211,17 @@ namespace Progress.Business.Tools
                 TopDownSplitMerge(scratchSpace, 0, n, items);
             }
 
-            // Sort the given run of array T[] A using array T[] B as a source.
-            // iBegin is inclusive; iEnd is exclusive (A[iEnd] is not in the set).
-            static void TopDownSplitMerge(T[] B, int iBegin, int iEnd, T[] A)
+            static void TopDownSplitMerge(T[] source, int iBegin, int iEnd, T[] target)
             {
                 if (iEnd - iBegin < 2) { // if run size == 1
                     return; //   consider it sorted
                 }
-                // split the run longer than 1 item into halves
                 int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
                 // recursively sort both runs from array T[] A into T[] B
-                TopDownSplitMerge(A, iBegin, iMiddle, B); // sort the left  run
-                TopDownSplitMerge(A, iMiddle, iEnd, B); // sort the right run
+                TopDownSplitMerge(target, iBegin, iMiddle, source); // sort the left  run
+                TopDownSplitMerge(target, iMiddle, iEnd, source); // sort the right run
                 // merge the resulting runs from array T[] B into T[] A
-                TopDownMerge(B, iBegin, iMiddle, iEnd, A);
+                TopDownMerge(source, iBegin, iMiddle, iEnd, target);
             }
 
             //  Left source half is A[ iBegin:iMiddle-1].
