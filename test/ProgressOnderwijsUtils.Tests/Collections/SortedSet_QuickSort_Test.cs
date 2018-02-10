@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
-using Progress.Business.Tools;
+using Xunit;
 using ProgressOnderwijsUtils.Collections;
 
-namespace Progress.Business.Tests.Tools
+namespace ProgressOnderwijsUtils.Tests.Collections
 {
     public sealed class SortedSet_QuickSort_Test
     {
         static bool ArrayEquals(int[] a, int[] b) => ArrayComparer<int>.Default.Equals(a, b);
 
-        [Test]
+        [Fact]
         public void SortedEmpyArrayIsEmtpy()
         {
             var array = new int[0];
@@ -19,7 +18,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => ArrayEquals(array, Array.Empty<int>()));
         }
 
-        [Test]
+        [Fact]
         public void SingleElementArrayRetainsElement()
         {
             var array = new[] { 1337 };
@@ -27,7 +26,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => ArrayEquals(array, new[] { 1337 }));
         }
 
-        [Test]
+        [Fact]
         public void TwoElementsOutOfOrderAreSorted()
         {
             var array = new[] { 1337, 37 };
@@ -35,7 +34,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => ArrayEquals(array, new[] { 37, 1337 }));
         }
 
-        [Test]
+        [Fact]
         public void TwoElementsInOrderRemainSorted()
         {
             var array = new[] { 4, 5 };
@@ -43,7 +42,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => ArrayEquals(array, new[] { 4, 5 }));
         }
 
-        [Test]
+        [Fact]
         public void CountDownBecomesCountUp()
         {
             var array = new[] { 10, 9, 8, 7, 6, 5, 4, 3, 2, 1 };
@@ -51,7 +50,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => ArrayEquals(array, new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 }));
         }
 
-        [Test]
+        [Fact]
         public void ExampleWithLargeNumbersSorts()
         {
             var array = new[] { 302596119, 269548474, 1122627734, 361709742, 563913476, 1555655117 };
@@ -60,7 +59,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => ArrayEquals(array, expected));
         }
 
-        [Test]
+        [Fact]
         public void ABunchOfCases()
         {
             var r = new Random(37);

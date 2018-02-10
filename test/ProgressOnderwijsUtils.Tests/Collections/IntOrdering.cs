@@ -1,6 +1,6 @@
-﻿using Progress.Business.Tools;
+﻿using ProgressOnderwijsUtils.Collections;
 
-namespace Progress.Business.Tests.Tools
+namespace ProgressOnderwijsUtils.Tests.Collections
 {
     //For testing SortedSet.
     struct IntOrdering : IOrdering<int>

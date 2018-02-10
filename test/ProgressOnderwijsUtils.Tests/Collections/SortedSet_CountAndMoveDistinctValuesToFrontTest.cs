@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ExpressionToCodeLib;
-using NUnit.Framework;
-using IntSet = Progress.Business.Tools.SortedSet<int, Progress.Business.Tests.Tools.IntOrdering>;
+using Xunit;
+using IntSet = ProgressOnderwijsUtils.Collections.SortedSet<int, ProgressOnderwijsUtils.Tests.Collections.IntOrdering>;
 
-namespace Progress.Business.Tests.Tools
+namespace ProgressOnderwijsUtils.Tests.Collections
 {
     public sealed class SortedSet_CountAndMoveDistinctValuesToFrontTest
     {
-        [Test]
+        [Fact]
         public void EmptyArrayDoesNothing()
         {
             var arr = Array.Empty<int>();
@@ -20,7 +17,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => distinctCount == 0);
         }
 
-        [Test]
+        [Fact]
         public void SingleElementIsRetained()
         {
             var arr = new[] { 42 };
@@ -29,7 +26,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => arr.Take(distinctCount).SequenceEqual(new[] { 42 }));
         }
 
-        [Test]
+        [Fact]
         public void TwoDistinctElementsAreBothRetained()
         {
             var arr = new[] { -42, 42 };
@@ -38,7 +35,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => arr.Take(distinctCount).SequenceEqual(new[] { -42, 42 }));
         }
 
-        [Test]
+        [Fact]
         public void ThreeUniqueElementsAreRetained()
         {
             var arr = new[] { 10, 100, 1000 };
@@ -47,7 +44,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => arr.Take(distinctCount).SequenceEqual(new[] { 10, 100, 1000 }));
         }
 
-        [Test]
+        [Fact]
         public void TwoIdenticalElementsAreDeduplicated()
         {
             var arr = new[] { 13, 13 };
@@ -56,7 +53,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => arr.Take(distinctCount).SequenceEqual(new[] { 13 }));
         }
 
-        [Test]
+        [Fact]
         public void CanRemoveSequencesOfThreeTwice()
         {
             var arr = new[] { 1, 2, 2, 2, 3, 3, 3 };
@@ -65,7 +62,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => arr.Take(distinctCount).SequenceEqual(new[] { 1, 2, 3 }));
         }
 
-        [Test]
+        [Fact]
         public void IgnoresItemsPastLength()
         {
             var arr = new[] { 1, 2, 2, 2, 3, 3, 3 };

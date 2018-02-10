@@ -1,51 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using ExpressionToCodeLib;
-using NUnit.Framework;
+using Xunit;
 using ProgressOnderwijsUtils;
-using IntSet = Progress.Business.Tools.SortedSet<int, Progress.Business.Tests.Tools.IntOrdering>;
+using ProgressOnderwijsUtils.Collections;
+using IntSet = ProgressOnderwijsUtils.Collections.SortedSet<int, ProgressOnderwijsUtils.Tests.Collections.IntOrdering>;
 
-namespace Progress.Business.Tests.Tools
+namespace ProgressOnderwijsUtils.Tests.Collections
 {
     public sealed class SortedSetTest
     {
-        [Test]
+        [Fact]
         public void TheEmptySetIsEmpty()
         {
             var set = IntSet.FromValues(new int[] { });
             PAssert.That(() => set.ValuesInOrder.None());
         }
 
-        [Test]
+        [Fact]
         public void ThreeDistinctValuesRemainDistinct()
         {
             var set = IntSet.FromValues(new[] { 1, 2, 3 });
             PAssert.That(() => set.ValuesInOrder.SetEqual(new[] { 3, 2, 1 }));
         }
 
-        [Test]
+        [Fact]
         public void IdenticalValuesAreRemoved()
         {
             var set = IntSet.FromValues(new[] { 1, 2, 3, 3, 2, 1 });
             PAssert.That(() => set.ValuesInOrder.SequenceEqual(new[] { 1, 2, 3 }));
         }
 
-        [Test]
+        [Fact]
         public void ContainsReturnsTrueForANumberInSet()
         {
             var set = IntSet.FromValues(new[] { 1, 2, 4, 8, 16, 32 });
             PAssert.That(() => set.Contains(16));
         }
 
-        [Test]
+        [Fact]
         public void ContainsReturnsTrueForANegativeNumberInSet()
         {
             var set = IntSet.FromValues(new[] { 1, 2, 4, -8, 16, 32 });
             PAssert.That(() => set.Contains(-8));
         }
 
-        [Test]
+        [Fact]
         public void ContainsReturnsFalseForANumberNotSet()
         {
             var set = IntSet.FromValues(Enumerable.Range(0, 1000).Select(i => i * 2).Reverse());

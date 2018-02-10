@@ -1,32 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
+using ProgressOnderwijsUtils.Collections;
 using ExpressionToCodeLib;
-using NUnit.Framework;
-using Progress.Business.Tools;
-using IntSet = Progress.Business.Tools.SortedSet<int, Progress.Business.Tests.Tools.IntOrdering>;
+using Xunit;
+using IntSet = ProgressOnderwijsUtils.Collections.SortedSet<int, ProgressOnderwijsUtils.Tests.Collections.IntOrdering>;
 
-namespace Progress.Business.Tests.Tools
+namespace ProgressOnderwijsUtils.Tests.Collections
 {
     public sealed class SortedSet_MergeSetsTest
     {
-        [Test]
+        [Fact]
         public void MergeOfTwoEmptySetsIsEmpty()
         {
             var mergeResult = new[] { IntSet.Empty, IntSet.Empty }.MergeSets();
             PAssert.That(() => mergeResult.ValuesInOrder.Length == 0);
         }
 
-        [Test]
+        [Fact]
         public void TheEmptyMergeIsEmpty()
         {
             var mergeResult = new IntSet[0].MergeSets();
             PAssert.That(() => mergeResult.ValuesInOrder.Length == 0);
         }
 
-        [Test]
+        [Fact]
         public void MergeOfASingleSetIsThatSet()
         {
             var set = IntSet.FromValues(new[] { 3, 5, 2 });
@@ -35,7 +31,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => Equals(set.ValuesInOrder, mergeResult.ValuesInOrder), "Failed optimization: if the set is identical; reuse array");
         }
 
-        [Test]
+        [Fact]
         public void MergeOfEmptyWithASetIsThatSet()
         {
             var set = IntSet.FromValues(new[] { 3, 5, 2 });
@@ -44,7 +40,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => Equals(set.ValuesInOrder, mergeResult.ValuesInOrder), "Failed optimization: if the set is identical; reuse array");
         }
 
-        [Test]
+        [Fact]
         public void MergeOfASetWithItselfIsThatSet()
         {
             var set = IntSet.FromValues(new[] { 3, 5, 2, 9, 9 });
@@ -52,7 +48,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => set.Equals(mergeResult));
         }
 
-        [Test]
+        [Fact]
         public void MergeRemovesDuplicatedItems()
         {
             var setA = IntSet.FromValues(new[] { 3, 5, 2, 9, 9 });
@@ -63,7 +59,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => setExpected.Equals(mergeResult));
         }
 
-        [Test]
+        [Fact]
         public void MergeWorksShortSetFirst()
         {
             var setA = IntSet.FromValues(new[] { 3, 5, });
@@ -73,7 +69,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => setExpected.Equals(mergeResult));
         }
 
-        [Test]
+        [Fact]
         public void MergeWorksLongSetFirst()
         {
             var setA = IntSet.FromValues(new[] { 3, 5, });
@@ -83,7 +79,7 @@ namespace Progress.Business.Tests.Tools
             PAssert.That(() => setExpected.Equals(mergeResult));
         }
 
-        [Test]
+        [Fact]
         public void ALargeMergeWorks()
         {
             var sets = Enumerable.Range(1, 100)
