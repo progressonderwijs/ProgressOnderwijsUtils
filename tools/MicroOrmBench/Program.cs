@@ -1,10 +1,10 @@
 ﻿using JetBrains.Annotations;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace MicroOrmBench
 {
-    static class MicroOrmBenchmarkProgram
+    static class Program
     {
-        public static void RunBenchmarks()
+        public static void Main()
         {
             var benchmarker = new Benchmarker {IterationsPerTry = 2000, Tries = 100};
             benchmarker.ReportInitialDistribution();

@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace MicroOrmBench
 {
     static class HandrolledAdoNetExecutor
     {
