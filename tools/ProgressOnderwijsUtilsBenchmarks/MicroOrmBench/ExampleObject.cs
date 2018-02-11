@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using ProgressOnderwijsUtils;
 
-namespace MicroOrmBench
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 {
     public class ExampleObject : IMetaObject
     {
