@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Running;
+using ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks;
 
 namespace ProgressOnderwijsUtilsBenchmarks
 {
@@ -6,7 +7,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
     {
         static void Main()
         {
-            BenchmarkRunner.Run<HtmlFragmentBenchmark>();
+            BenchmarkRunner.Run<SortedSetBench>();
+            //BenchmarkRunner.Run<HtmlFragmentBenchmark>();
             //MicroOrm.MicroOrmBenchmarkProgram.RunBenchmarks();
         }
     }
