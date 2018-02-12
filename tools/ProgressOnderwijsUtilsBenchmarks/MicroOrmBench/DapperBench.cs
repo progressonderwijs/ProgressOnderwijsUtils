@@ -2,7 +2,7 @@ using System.Linq;
 using Dapper;
 using JetBrains.Annotations;
 
-namespace MicroOrmBench
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 {
     static class DapperExecutor
     {

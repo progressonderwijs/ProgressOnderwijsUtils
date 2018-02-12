@@ -1,7 +1,7 @@
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 
-namespace MicroOrmBench
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 {
     static class ParameterizedSqlExecutor
     {
