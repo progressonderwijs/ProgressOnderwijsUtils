@@ -294,8 +294,7 @@ namespace ProgressOnderwijsUtils.Collections
                         Merge(A, i, i + width, i + width + width, B);
                         i = i + width + width;
                     }
-                    int Min(int a, int b) => a < b ? a : b;
-                    Merge(A, i, Min(i + width, n), Min(i + 2 * width, n), B);
+                    Merge(A, i, i + width < n ? i + width : n, i + width + width < n ? i + width + width : n, B);
                     var tmp = A;
                     A = B;
                     B = tmp;
