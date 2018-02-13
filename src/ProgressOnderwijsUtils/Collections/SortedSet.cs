@@ -289,9 +289,13 @@ namespace ProgressOnderwijsUtils.Collections
                 var B = scratchSpace;
 
                 for (var width = insertionSortBatchSize; width < n; width = width << 1) {
-                    for (var i = 0; i < n; i += width << 1) {
-                        Merge(A, i, Math.Min(i + width, n), Math.Min(i + 2 * width, n), B);
+                    var i = 0;
+                    while (i + (width << 1) <= n) {
+                        Merge(A, i, i + width, i + width + width, B);
+                        i = i + width + width;
                     }
+                    int Min(int a, int b) => a < b ? a : b;
+                    Merge(A, i, Min(i + width, n), Min(i + 2 * width, n), B);
                     var tmp = A;
                     A = B;
                     B = tmp;

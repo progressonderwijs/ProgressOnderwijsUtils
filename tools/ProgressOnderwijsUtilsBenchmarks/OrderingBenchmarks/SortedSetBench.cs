@@ -86,6 +86,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
             }
         }
 
+#if !smallset
         [Benchmark]
         public void QuickSort()
         {
@@ -104,7 +105,6 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
             }
         }
 
-#if !smallset
         [Benchmark]
         public void SystemArraySort()
         {
