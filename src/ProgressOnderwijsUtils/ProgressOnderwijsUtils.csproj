@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>14.7.0</Version>
-    <PackageReleaseNotes>Include command timeout in message ParameterizedSqlExecutionException.</PackageReleaseNotes>
+    <Version>15.0.0</Version>
+    <PackageReleaseNotes>Update dependencies</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -26,11 +26,11 @@
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="ExpressionToCodeLib" version="2.5.1" />
     <PackageReference Include="log4net" version="2.0.8" />
-    <PackageReference Include="morelinq" version="2.8.0" />
+    <PackageReference Include="morelinq" version="2.10.0" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.0" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.2" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.1" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
     <PackageReference Include="DotNetZip" Version="1.10.1" NoWarn="NU1701" />
     <PackageReference Include="ZlibWithDictionary" version="2.1.1" NoWarn="NU1701" />

@@ -8,13 +8,13 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.9.9" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.10.10" />
+    <PackageReference Include="AngleSharp" Version="0.9.9.1" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.12" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
-    <PackageReference Include="Dapper" Version="1.50.2" />
-    <PackageReference Include="IncrementalMeanVarianceAccumulator" Version="0.1.0" />
+    <PackageReference Include="Dapper" Version="1.50.4" />
+    <PackageReference Include="IncrementalMeanVarianceAccumulator" Version="1.0.0" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
-    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.106" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.107" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
     <ProjectReference Include="..\..\test\ProgressOnderwijsUtils.Tests\ProgressOnderwijsUtils.Tests.csproj" />
   </ItemGroup>
