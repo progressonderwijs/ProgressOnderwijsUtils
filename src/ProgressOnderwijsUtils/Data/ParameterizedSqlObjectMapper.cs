@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return action(cmd.Command);
                 } catch (Exception e) {
-                    throw new ParameterizedSqlExecutionException(exceptionMessage() + "\n\nQUERY:\n\n" + SqlCommandTracer.DebugFriendlyCommandText(cmd.Command, SqlCommandTracerOptions.IncludeArgumentValuesInLog), e);
+                    throw new ParameterizedSqlExecutionException(exceptionMessage() + "\n\nCOMMAND TIMEOUT: " + cmd.Command.CommandTimeout + " s\n\nQUERY:\n\n" + SqlCommandTracer.DebugFriendlyCommandText(cmd.Command, SqlCommandTracerOptions.IncludeArgumentValuesInLog), e);
                 }
         }
 
