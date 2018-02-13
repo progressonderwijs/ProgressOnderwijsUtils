@@ -244,13 +244,13 @@ namespace ProgressOnderwijsUtils.Collections
                 TopDownSplitMerge(target, iBegin, iMiddle, source); // sort the left  run
                 TopDownSplitMerge(target, iMiddle, iEnd, source); // sort the right run
                 // merge the resulting runs from array T[] B into T[] A
-                TopDownMerge(source, iBegin, iMiddle, iEnd, target);
+                Merge(source, iBegin, iMiddle, iEnd, target);
             }
 
             //  Left source half is A[ iBegin:iMiddle-1].
             // Right source half is A[iMiddle:iEnd-1   ].
             // Result is            B[ iBegin:iEnd-1   ].
-            static void TopDownMerge(T[] source, int iBegin, int iMiddle, int iEnd, T[] target)
+            static void Merge(T[] source, int iBegin, int iMiddle, int iEnd, T[] target)
             {
                 int i = iBegin, j = iMiddle;
 
@@ -290,7 +290,7 @@ namespace ProgressOnderwijsUtils.Collections
 
                 for (var width = insertionSortBatchSize; width < n; width = width << 1) {
                     for (var i = 0; i < n; i += width << 1) {
-                        TopDownMerge(A, i, Math.Min(i + width, n), Math.Min(i + 2 * width, n), B);
+                        Merge(A, i, Math.Min(i + width, n), Math.Min(i + 2 * width, n), B);
                     }
                     var tmp = A;
                     A = B;
