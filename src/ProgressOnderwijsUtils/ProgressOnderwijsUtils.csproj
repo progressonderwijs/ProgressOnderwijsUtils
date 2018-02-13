@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>14.6.0</Version>
-    <PackageReleaseNotes>Include AuthnContextClassRef in SsoAttributes.</PackageReleaseNotes>
+    <Version>14.7.0</Version>
+    <PackageReleaseNotes>Include command timeout in message ParameterizedSqlExecutionException.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
