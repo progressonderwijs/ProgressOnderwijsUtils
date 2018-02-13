@@ -164,10 +164,13 @@ namespace ProgressOnderwijsUtils.Collections
 
         public static class Algorithms
         {
-            public static void Sort(T[] array) => MergeSort(array);
+            public static void Sort(T[] array) => BottomUpMergeSort(array);
 
             public static void MergeSort(T[] array)
                 => TopDownMergeSort(array, GetCachedAccumulator(array.Length), array.Length);
+
+            public static void BottomUpMergeSort(T[] array)
+                => BottomUpMergeSort(array, GetCachedAccumulator(array.Length), array.Length);
 
             public static void QuickSort(T[] array)
                 => QuickSort(array, 0, array.Length - 1);
@@ -261,6 +264,40 @@ namespace ProgressOnderwijsUtils.Collections
                         target[k] = source[j];
                         j++;
                     }
+                }
+            }
+
+            // array A[] has the items to sort; array B[] is a work array
+            static void BottomUpMergeSort(T[] target, T[] scratchSpace, int n)
+            {
+                const int insertionSortBatchSize = 48;
+
+                var batchesSortedUpto = 0;
+                while (true) {
+                    if (batchesSortedUpto + insertionSortBatchSize <= n) {
+                        InsertionSort(target, batchesSortedUpto, batchesSortedUpto + insertionSortBatchSize);
+                        batchesSortedUpto += insertionSortBatchSize;
+                    } else {
+                        if (n - batchesSortedUpto >= 2) {
+                            InsertionSort(target, batchesSortedUpto, n);
+                        }
+                        break;
+                    }
+                }
+
+                var A = target;
+                var B = scratchSpace;
+
+                for (var width = insertionSortBatchSize; width < n; width = width << 1) {
+                    for (var i = 0; i < n; i += width << 1) {
+                        TopDownMerge(A, i, Math.Min(i + width, n), Math.Min(i + 2 * width, n), B);
+                    }
+                    var tmp = A;
+                    A = B;
+                    B = tmp;
+                }
+                if (target != A) {
+                    CopyArray(A, 0, n, target);
                 }
             }
 
