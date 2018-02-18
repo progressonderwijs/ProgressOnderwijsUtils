@@ -27,6 +27,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         const int NumberOfSets = 1_000;
         static readonly IReadOnlyList<int>[] arrays;
         static readonly int[][] sortedArrays;
+        int[] _copy;
 
         static SortedSetBench()
         {
@@ -67,15 +68,16 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         }
 
 #if !smallset
+#endif
         [Benchmark]
         public void JustCopy()
         {
-            foreach (var arr in sortedArrays) {
-                var copy = arr.ToArray();
+            foreach (var arr in arrays) {
+                _copy = arr.ToArray();
             }
         }
-#endif
 
+#if !smallset
 
         [Benchmark]
         public void BottomUpMergeSort()
@@ -86,7 +88,6 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
             }
         }
 
-#if !smallset
         [Benchmark]
         public void QuickSort()
         {
