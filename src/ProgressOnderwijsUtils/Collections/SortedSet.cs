@@ -297,11 +297,11 @@ namespace ProgressOnderwijsUtils.Collections
                 var batchesSortedUpto = 0;
                 while (true) {
                     if (batchesSortedUpto + insertionSortBatchSize <= n) {
-                        InsertionSort(target, batchesSortedUpto, batchesSortedUpto + insertionSortBatchSize);
+                        InsertionSort_InPlace(target, batchesSortedUpto, batchesSortedUpto + insertionSortBatchSize);
                         batchesSortedUpto += insertionSortBatchSize;
                     } else {
                         if (n - batchesSortedUpto >= 2) {
-                            InsertionSort(target, batchesSortedUpto, n);
+                            InsertionSort_InPlace(target, batchesSortedUpto, n);
                         }
                         break;
                     }
