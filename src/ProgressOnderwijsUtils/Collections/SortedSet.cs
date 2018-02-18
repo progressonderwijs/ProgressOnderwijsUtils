@@ -290,11 +290,15 @@ namespace ProgressOnderwijsUtils.Collections
 
                 for (var width = insertionSortBatchSize; width < n; width = width << 1) {
                     var i = 0;
-                    while (i + (width << 1) <= n) {
+                    while (i + width + width <= n) {
                         Merge(A, i, i + width, i + width + width, B);
                         i = i + width + width;
                     }
-                    Merge(A, i, i + width < n ? i + width : n, i + width + width < n ? i + width + width : n, B);
+                    if (i + width < n) {
+                        Merge(A, i, i + width, n, B);
+                    } else {
+                        CopyArray(A, i, n, B);
+                    }
                     var tmp = A;
                     A = B;
                     B = tmp;
