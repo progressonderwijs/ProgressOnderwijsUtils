@@ -175,7 +175,7 @@ namespace ProgressOnderwijsUtils.Collections
             public static void QuickSort(T[] array, int firstIdx, int lastIdx)
             {
                 if (lastIdx - firstIdx < 48) {
-                    InsertionSort(array, firstIdx, lastIdx + 1);
+                    InsertionSort_InPlace(array, firstIdx, lastIdx + 1);
                 } else {
                     var pivot = Partition(array, firstIdx, lastIdx);
                     QuickSort(array, firstIdx, pivot);
@@ -204,7 +204,7 @@ namespace ProgressOnderwijsUtils.Collections
                 }
             }
 
-            static void InsertionSort(T[] array, int firstIdx, int idxEnd)
+            public static void InsertionSort_InPlace(T[] array, int firstIdx, int idxEnd)
             {
                 var writeIdx = firstIdx;
                 var readIdx = writeIdx + 1;
@@ -224,6 +224,28 @@ namespace ProgressOnderwijsUtils.Collections
                 }
             }
 
+            public static void InsertionSort_Copy(T[] source, int firstIdx, int idxEnd, T[] target)
+            {
+                if(firstIdx >= idxEnd)
+                    return;
+                var writeIdx = firstIdx;
+                var readIdx = writeIdx + 1;
+
+                target[writeIdx] = source[writeIdx];
+                while (readIdx < idxEnd) {
+                    var x = source[readIdx];
+                    //writeIdx == readIdx -1;
+                    while (writeIdx >= firstIdx && Ordering.LessThan(x, target[writeIdx])) {
+                        target[writeIdx + 1] = target[writeIdx];
+                        writeIdx--;
+                    }
+
+                    target[writeIdx + 1] = x;
+                    writeIdx = readIdx;
+                    readIdx = readIdx + 1;
+                }
+            }
+
             static void TopDownMergeSort(T[] items, T[] scratchSpace, int n)
             {
                 CopyArray(items, 0, n, scratchSpace);
@@ -233,7 +255,7 @@ namespace ProgressOnderwijsUtils.Collections
             static void TopDownSplitMerge(T[] source, int iBegin, int iEnd, T[] target)
             {
                 if (iEnd - iBegin < 48) { // if run size == 1
-                    InsertionSort(target, iBegin, iEnd);
+                    InsertionSort_InPlace(target, iBegin, iEnd);
                     return; //   consider it sorted (and assume target is copy of source)
                 }
                 int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
