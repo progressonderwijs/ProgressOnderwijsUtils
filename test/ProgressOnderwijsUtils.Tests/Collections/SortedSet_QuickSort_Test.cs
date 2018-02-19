@@ -36,6 +36,22 @@ namespace ProgressOnderwijsUtils.Tests.Collections
         }
 
         [Fact]
+        public void ThreeElementsOutOfOrderAreSorted()
+        {
+            var array = new[] { 1337, 2000, 37 };
+            Sort(array);
+            PAssert.That(() => ArrayEquals(array, new[] { 37, 1337,2000 }));
+        }
+
+        [Fact]
+        public void FourElementsOutOfOrderAreSorted()
+        {
+            var array = new[] { 1337, 2000, 37, 1 };
+            Sort(array);
+            PAssert.That(() => ArrayEquals(array, new[] { 1, 37, 1337,2000 }));
+        }
+
+        [Fact]
         public void TwoElementsInOrderRemainSorted()
         {
             var array = new[] { 4, 5 };
