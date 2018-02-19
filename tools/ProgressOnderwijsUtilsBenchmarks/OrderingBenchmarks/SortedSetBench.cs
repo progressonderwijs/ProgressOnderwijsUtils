@@ -1,4 +1,4 @@
-﻿#define smallset
+﻿//#define smallset
 
 using System;
 using System.Collections.Generic;
@@ -90,23 +90,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
 
 
 #if !smallset
-#endif
         [Benchmark]
         public void JustCopy()
         {
             foreach (var arr in arrays) {
                 _copy = arr.ToArray();
-            }
-        }
-
-#if !smallset
-
-        [Benchmark]
-        public void BottomUpMergeSort()
-        {
-            foreach (var arr in arrays) {
-                var copy = arr.ToArray();
-                SortedSet<int, IntOrdering>.Algorithms.BottomUpMergeSort(copy);
             }
         }
 
@@ -120,6 +108,16 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         }
 
         [Benchmark]
+        public void BottomUpMergeSort()
+        {
+            foreach (var arr in arrays) {
+                var copy = arr.ToArray();
+                SortedSet<int, IntOrdering>.Algorithms.BottomUpMergeSort(copy);
+            }
+        }
+#endif
+
+        [Benchmark]
         public void MergeSort()
         {
             foreach (var arr in arrays) {
@@ -127,6 +125,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
                 SortedSet<int, IntOrdering>.Algorithms.MergeSort(copy);
             }
         }
+#if !smallset
 
         [Benchmark]
         public void SystemArraySort()

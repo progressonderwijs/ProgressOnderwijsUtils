@@ -245,24 +245,68 @@ namespace ProgressOnderwijsUtils.Collections
                 }
             }
 
-            static void TopDownMergeSort(T[] items, T[] scratchSpace, int n)
-            {
-                CopyArray(items, 0, n, scratchSpace);
-                TopDownSplitMerge(scratchSpace, 0, n, items);
-            }
+            const int InsertionSortPower = 4;
+            const int InsertionSortCutoff = 1<<InsertionSortPower;
 
-            static void TopDownSplitMerge(T[] source, int iBegin, int iEnd, T[] target)
+            static void TopDownMergeSort0(T[] items, T[] scratch, int n)
+            {
+                CopyArray(items,0,n,scratch);
+                TopDownSplitMerge_Either(items, 0, n, scratch);
+            }
+            
+            static void TopDownSplitMerge_Either(T[] items, int iBegin, int iEnd, T[] scratch)
             {
                 if (iEnd - iBegin < 48) { // if run size == 1
-                    InsertionSort_InPlace(target, iBegin, iEnd);
+                    InsertionSort_InPlace(items, iBegin, iEnd);
                     return; //   consider it sorted (and assume target is copy of source)
                 }
                 int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
                 // recursively sort both runs from array T[] A into T[] B
-                TopDownSplitMerge(target, iBegin, iMiddle, source); // sort the left  run
-                TopDownSplitMerge(target, iMiddle, iEnd, source); // sort the right run
+                TopDownSplitMerge_Either(scratch, iBegin, iMiddle, items); // sort the left  run
+                TopDownSplitMerge_Either(scratch, iMiddle, iEnd, items); // sort the right run
                 // merge the resulting runs from array T[] B into T[] A
-                Merge(source, iBegin, iMiddle, iEnd, target);
+                Merge(scratch, iBegin, iMiddle, iEnd, items);
+            }
+            
+
+
+
+            static void TopDownMergeSort(T[] items, T[] scratch, int n)
+            {
+                var iters = Utils.LogBase2RoundedDown((uint)(n >> InsertionSortPower));
+
+                if((iters & 1)==0)
+                    TopDownSplitMerge_Even(items, 0, n, scratch,iters);
+                else 
+                    TopDownSplitMerge_Odd(items, 0, n, scratch,iters);
+
+            }
+
+            static void TopDownSplitMerge_Even(T[] items, int iBegin, int iEnd, T[] scratch, int itersToGo)
+            {
+                if (itersToGo ==0 ) { // if run size == 1
+                    InsertionSort_InPlace(items, iBegin, iEnd);
+                    return; //   consider it sorted (and assume target is copy of source)
+                }
+                int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
+                // recursively sort both runs from array T[] A into T[] B
+                TopDownSplitMerge_Even(scratch, iBegin, iMiddle, items, itersToGo-1); // sort the left  run
+                TopDownSplitMerge_Even(scratch, iMiddle, iEnd, items, itersToGo-1); // sort the right run
+                // merge the resulting runs from array T[] B into T[] A
+                Merge(scratch, iBegin, iMiddle, iEnd, items);
+            }
+            static void TopDownSplitMerge_Odd(T[] items, int iBegin, int iEnd, T[] scratch, int itersToGo)
+            {
+                if (itersToGo ==0 ) { // if run size == 1
+                    InsertionSort_Copy(scratch, iBegin, iEnd, items);
+                    return; //   consider it sorted (and assume target is copy of source)
+                }
+                int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
+                // recursively sort both runs from array T[] A into T[] B
+                TopDownSplitMerge_Odd(scratch, iBegin, iMiddle, items, itersToGo-1); // sort the left  run
+                TopDownSplitMerge_Odd(scratch, iMiddle, iEnd, items, itersToGo-1); // sort the right run
+                // merge the resulting runs from array T[] B into T[] A
+                Merge(scratch, iBegin, iMiddle, iEnd, items);
             }
 
             //  Left source half is A[ iBegin:iMiddle-1].
