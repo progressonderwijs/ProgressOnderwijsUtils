@@ -173,16 +173,16 @@ namespace ProgressOnderwijsUtils.Collections
                 => BottomUpMergeSort(array, GetCachedAccumulator(array.Length), array.Length);
 
             public static void QuickSort(T[] array)
-                => QuickSort(array, 0, array.Length - 1);
+                => QuickSort(array, 0, array.Length);
 
-            public static void QuickSort(T[] array, int firstIdx, int lastIdx)
+            public static void QuickSort(T[] array, int firstIdx, int endIdx)
             {
-                if (lastIdx - firstIdx < 48) {
-                    InsertionSort_InPlace(array, firstIdx, lastIdx + 1);
+                if (endIdx - firstIdx < 48) {
+                    InsertionSort_InPlace(array, firstIdx, endIdx);
                 } else {
-                    var pivot = Partition(array, firstIdx, lastIdx);
+                    var pivot = Partition(array, firstIdx, endIdx-1)+1;
                     QuickSort(array, firstIdx, pivot);
-                    QuickSort(array, pivot + 1, lastIdx);
+                    QuickSort(array, pivot, endIdx);
                 }
             }
 
