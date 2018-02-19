@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         const int MaximumIndividualSetSize = 1_000;
         const int MaximumValue = 1234567890;
         const int NumberOfSets = 1_000;
-        static readonly IReadOnlyList<int>[] arrays;
+        static readonly int[][] arrays;
         static readonly int[][] sortedArrays;
         int[] _copy;
 
@@ -35,14 +35,14 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
 
             arrays =
                 MoreEnumerable.GenerateByIndex(_ => (int)(Math.Exp(r.NextDouble() * Math.Log(MaximumIndividualSetSize)) + 0.5)).Take(NumberOfSets)
-                    .Select(len => (IReadOnlyList<int>)MoreEnumerable.GenerateByIndex(_ => r.Next(MaximumValue)).Take(len).ToArray())
+                    .Select(len => MoreEnumerable.GenerateByIndex(_ => r.Next(MaximumValue)).Take(len).ToArray())
                     .ToArray();
             sortedArrays = arrays.ArraySelect(arr => arr.OrderBy(n => n).ToArray());
         }
 
         public static void ReportDistributionAndRun()
         {
-            var lengths = arrays.ArraySelect(arr => (double)arr.Count);
+            var lengths = arrays.ArraySelect(arr => (double)arr.Length);
             Array.Sort(lengths);
             var lengthDistribution = MeanVarianceAccumulator.FromSequence(lengths);
             var mean = lengthDistribution.Mean;
@@ -66,6 +66,28 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
             Console.Error.WriteLine(distribSummary);
             BenchmarkRunner.Run<SortedSetBench>();
         }
+
+
+        //[Benchmark]
+        //public void Insertion_Copy()
+        //{
+        //    var dummy = new int[64];
+        //    foreach (var arr in arrays) {
+        //        SortedSet<int, IntOrdering>.Algorithms.InsertionSort_Copy(arr,0,Math.Min(64,arr.Length),dummy);
+        //    }
+        //}
+
+        //[Benchmark]
+        //public void Insertion_InPlace()
+        //{
+        //    var dummy = new int[64];
+        //    foreach (var arr in arrays) {
+        //        int n = Math.Min(64, arr.Length);
+        //        SortedSet<int, IntOrdering>.Algorithms.CopyArray(arr, 0, n, dummy);
+        //        SortedSet<int, IntOrdering>.Algorithms.InsertionSort_InPlace(dummy, 0, n);
+        //    }
+        //}
+
 
 #if !smallset
 #endif
