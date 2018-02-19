@@ -361,7 +361,7 @@ namespace ProgressOnderwijsUtils.Collections
                 }
             }
 
-            static void CopyArray(T[] source, int iBegin, int iEnd, T[] target)
+            public static void CopyArray(T[] source, int iBegin, int iEnd, T[] target)
             {
                 for (int k = iBegin; k < iEnd; k++) {
                     target[k] = source[k];
