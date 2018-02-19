@@ -229,23 +229,19 @@ namespace ProgressOnderwijsUtils.Collections
 
             public static void InsertionSort_Copy(T[] source, int firstIdx, int idxEnd, T[] target)
             {
-                if(firstIdx >= idxEnd)
-                    return;
+                var readIdx = firstIdx;
                 var writeIdx = firstIdx;
-                var readIdx = writeIdx + 1;
 
-                target[writeIdx] = source[writeIdx];
                 while (readIdx < idxEnd) {
                     var x = source[readIdx];
                     //writeIdx == readIdx -1;
-                    while (writeIdx >= firstIdx && Ordering.LessThan(x, target[writeIdx])) {
-                        target[writeIdx + 1] = target[writeIdx];
+                    while (writeIdx > firstIdx && Ordering.LessThan(x, target[writeIdx-1])) {
+                        target[writeIdx] = target[writeIdx-1];
                         writeIdx--;
                     }
 
-                    target[writeIdx + 1] = x;
-                    writeIdx = readIdx;
-                    readIdx = readIdx + 1;
+                    target[writeIdx] = x;
+                    readIdx = writeIdx = readIdx + 1;
                 }
             }
 
