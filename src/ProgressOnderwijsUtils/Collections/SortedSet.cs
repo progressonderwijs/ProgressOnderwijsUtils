@@ -268,7 +268,7 @@ namespace ProgressOnderwijsUtils.Collections
             //  Left source half is A[ iBegin:iMiddle-1].
             // Right source half is A[iMiddle:iEnd-1   ].
             // Result is            B[ iBegin:iEnd-1   ].
-            static void Merge(T[] source, int iBegin, int iMiddle, int iEnd, T[] target)
+            static void Merge0(T[] source, int iBegin, int iMiddle, int iEnd, T[] target)
             {
                 int i = iBegin, j = iMiddle;
 
@@ -281,6 +281,41 @@ namespace ProgressOnderwijsUtils.Collections
                     } else {
                         target[k] = source[j];
                         j++;
+                    }
+                }
+            }
+            //  Left source half is A[ iBegin:iMiddle-1].
+            // Right source half is A[iMiddle:iEnd-1   ].
+            // Result is            B[ iBegin:iEnd-1   ].
+            static void Merge(T[] source, int iBegin, int iMiddle, int iEnd, T[] target)
+            {
+                int i = iBegin, j = iMiddle, k = iBegin;
+                //if(i==iMiddle) {
+                //    while(j<iEnd)
+                //        target[k++] = source[j++];
+                //    return;
+                //}
+                //if(j==iEnd) {
+                //    while(i<iMiddle)
+                //        target[k++] = source[i++];
+                //    return;
+                //}
+
+                while(true) {
+                    if(!Ordering.LessThan(source[j], source[i])) {
+                        target[k++] = source[i++];
+                        if(i==iMiddle) {
+                            while(j<iEnd)
+                                target[k++] = source[j++];
+                            return;
+                        }
+                    } else {
+                        target[k++] = source[j++];
+                        if(j==iEnd) {
+                            while(i<iMiddle)
+                                target[k++] = source[i++];
+                            return;
+                        }
                     }
                 }
             }
