@@ -6,6 +6,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
 {
     public class CascadedDeleteTest : TransactedLocalConnection
     {
+        public struct AId : IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            public int A { get; set; }
+        }
+
         [Fact]
         public void CascadedDeleteFollowsAForeignKey()
         {
@@ -21,7 +26,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
 
-            CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), new[] { 1, 2 }, null);
+            CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), null, new AId { A = 1 }, new AId { A = 2 });
 
             var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalDependentValues.SetEqual(new[] { 333 }));
@@ -35,6 +40,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 create table T2 ( D int primary key, root int references TRoot (root));
                 create table TLeaf ( Z int primary key, C int references T1 (C), D int references T2 (D) );
             ").ExecuteNonQuery(Context);
+        }
+
+        public struct RootId : IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            public int Root { get; set; }
         }
 
         [Fact]
@@ -54,7 +64,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => initialTLeafKeys.SetEqual(new[] { 1, 2, 3, 4 }));
 
-            CascadedDelete.RecursivelyDelete(Context, SQL($"TRoot"), new[] { 1, 2 }, null);
+            CascadedDelete.RecursivelyDelete(Context, SQL($"TRoot"), null, new RootId { Root = 1, }, new RootId { Root = 2 });
 
             var finalT2 = SQL($"select D from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalT2.SetEqual(new[] { 5 }));
