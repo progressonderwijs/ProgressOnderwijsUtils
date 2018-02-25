@@ -166,8 +166,17 @@ namespace ProgressOnderwijsUtils.Collections
         {
             public static void Sort(T[] array) => BottomUpMergeSort(array);
 
-            public static void MergeSort(T[] array)
-                => TopDownMergeSort(array, GetCachedAccumulator(array.Length), array.Length);
+            public static void TopDownMergeSort(T[] array, int arrayLength)
+                => TopDownMergeSort(array, GetCachedAccumulator(arrayLength), arrayLength);
+
+            public static void TopDownMergeSort2(T[] array, int arrayLength)
+                => TopDownMergeSort2(array, GetCachedAccumulator(arrayLength), arrayLength);
+
+            public static T[] TopDownMergeSort_Copy(T[] array)
+                => CopyingTopDownMergeSort(array, new T[array.Length], array.Length);
+
+            public static void AltTopDownMergeSort(T[] array)
+                => AltTopDownMergeSort(array, GetCachedAccumulator(array.Length), array.Length);
 
             public static void BottomUpMergeSort(T[] array)
                 => BottomUpMergeSort(array, GetCachedAccumulator(array.Length), array.Length);
@@ -180,7 +189,7 @@ namespace ProgressOnderwijsUtils.Collections
                 if (endIdx - firstIdx < 48) {
                     InsertionSort_InPlace(array, firstIdx, endIdx);
                 } else {
-                    var pivot = Partition(array, firstIdx, endIdx-1)+1;
+                    var pivot = Partition(array, firstIdx, endIdx - 1) + 1;
                     QuickSort(array, firstIdx, pivot);
                     QuickSort(array, pivot, endIdx);
                 }
@@ -235,8 +244,8 @@ namespace ProgressOnderwijsUtils.Collections
                 while (readIdx < idxEnd) {
                     var x = source[readIdx];
                     //writeIdx == readIdx -1;
-                    while (writeIdx > firstIdx && Ordering.LessThan(x, target[writeIdx-1])) {
-                        target[writeIdx] = target[writeIdx-1];
+                    while (writeIdx > firstIdx && Ordering.LessThan(x, target[writeIdx - 1])) {
+                        target[writeIdx] = target[writeIdx - 1];
                         writeIdx--;
                     }
 
@@ -245,126 +254,137 @@ namespace ProgressOnderwijsUtils.Collections
                 }
             }
 
-            const int InsertionSortPower = 4;
-            const int InsertionSortCutoff = 1<<InsertionSortPower;
+            const int InsertionSortPower = 5;
 
-            static void TopDownMergeSort0(T[] items, T[] scratch, int n)
+            static void AltTopDownMergeSort(T[] items, T[] scratch, int n)
             {
-                CopyArray(items,0,n,scratch);
+                CopyArray(items, 0, n, scratch);
                 TopDownSplitMerge_Either(items, 0, n, scratch);
             }
-            
+
             static void TopDownSplitMerge_Either(T[] items, int iBegin, int iEnd, T[] scratch)
             {
-                if (iEnd - iBegin < 48) { // if run size == 1
+                if (iEnd - iBegin < 48) {
                     InsertionSort_InPlace(items, iBegin, iEnd);
-                    return; //   consider it sorted (and assume target is copy of source)
+                    return;
                 }
-                int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
-                // recursively sort both runs from array T[] A into T[] B
-                TopDownSplitMerge_Either(scratch, iBegin, iMiddle, items); // sort the left  run
-                TopDownSplitMerge_Either(scratch, iMiddle, iEnd, items); // sort the right run
-                // merge the resulting runs from array T[] B into T[] A
+                int iMiddle = (iEnd + iBegin) / 2;
+                TopDownSplitMerge_Either(scratch, iBegin, iMiddle, items);
+                TopDownSplitMerge_Either(scratch, iMiddle, iEnd, items);
                 Merge(scratch, iBegin, iMiddle, iEnd, items);
             }
-            
 
+            static T[] CopyingTopDownMergeSort(T[] items, T[] scratch, int n)
+            {
+                var n_div_43 = (uint)n + ((uint)n >> 1) >> 6;
+                var iters = Utils.LogBase2RoundedDown(n_div_43);
+                var retval = new T[n];
 
+                CopyingTopDownSplitMerge(items, retval, scratch, 0, n, iters);
+                return retval;
+            }
+
+            static void CopyingTopDownSplitMerge(T[] src, T[] items, T[] scratch, int iBegin, int iEnd, int iters)
+            {
+                if (iters == 0) {
+                    InsertionSort_Copy(src, iBegin, iEnd, items);
+                    return;
+                }
+                int iMiddle = (iEnd + iBegin) / 2;
+                CopyingTopDownSplitMerge(src, scratch, items, iBegin, iMiddle, iters - 1);
+                CopyingTopDownSplitMerge(src, scratch, items, iMiddle, iEnd, iters - 1);
+                Merge(scratch, iBegin, iMiddle, iEnd, items);
+            }
+
+            static void TopDownMergeSort2(T[] items, T[] scratch, int n)
+            {
+                TopDownSplitMerge_toItems(items, 0, n, scratch);
+            }
+
+            static void TopDownSplitMerge_toItems(T[] items, int iBegin, int iEnd, T[] scratch)
+            {
+                if (iEnd - iBegin < 43) {
+                    InsertionSort_InPlace(items, iBegin, iEnd);
+                    return;
+                }
+                int iMiddle = (iEnd + iBegin) / 2;
+                TopDownSplitMerge_toScratch(items, iBegin, iMiddle, scratch);
+                TopDownSplitMerge_toScratch(items, iMiddle, iEnd, scratch);
+                Merge(scratch, iBegin, iMiddle, iEnd, items);
+            }
+
+            static void TopDownSplitMerge_toScratch(T[] items, int iBegin, int iEnd, T[] scratch)
+            {
+                if (iEnd - iBegin < 43) {
+                    InsertionSort_Copy(items, iBegin, iEnd, scratch);
+                    return;
+                }
+                int iMiddle = (iEnd + iBegin) / 2;
+                TopDownSplitMerge_toItems(items, iBegin, iMiddle, scratch);
+                TopDownSplitMerge_toItems(items, iMiddle, iEnd, scratch);
+                Merge(items, iBegin, iMiddle, iEnd, scratch);
+            }
 
             static void TopDownMergeSort(T[] items, T[] scratch, int n)
             {
-                var iters = Utils.LogBase2RoundedDown((uint)(n >> InsertionSortPower));
+                var iters = Utils.LogBase2RoundedDown((uint)n+((uint)n>>1) + 96u>>6);
 
-                if((iters & 1)==0)
-                    TopDownSplitMerge_Even(items, 0, n, scratch,iters);
-                else 
-                    TopDownSplitMerge_Odd(items, 0, n, scratch,iters);
-
+                if ((iters & 1) == 0) {
+                    TopDownSplitMerge_Even(items, 0, n, scratch, iters);
+                } else {
+                    TopDownSplitMerge_Odd(items, 0, n, scratch, iters);
+                }
             }
 
             static void TopDownSplitMerge_Even(T[] items, int iBegin, int iEnd, T[] scratch, int itersToGo)
             {
-                if (itersToGo ==0 ) { // if run size == 1
+                if (itersToGo == 0) {
                     InsertionSort_InPlace(items, iBegin, iEnd);
-                    return; //   consider it sorted (and assume target is copy of source)
+                    return;
                 }
-                int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
-                // recursively sort both runs from array T[] A into T[] B
-                TopDownSplitMerge_Even(scratch, iBegin, iMiddle, items, itersToGo-1); // sort the left  run
-                TopDownSplitMerge_Even(scratch, iMiddle, iEnd, items, itersToGo-1); // sort the right run
-                // merge the resulting runs from array T[] B into T[] A
+                int iMiddle = (iEnd + iBegin) / 2;
+                TopDownSplitMerge_Even(scratch, iBegin, iMiddle, items, itersToGo - 1);
+                TopDownSplitMerge_Even(scratch, iMiddle, iEnd, items, itersToGo - 1);
                 Merge(scratch, iBegin, iMiddle, iEnd, items);
             }
+
             static void TopDownSplitMerge_Odd(T[] items, int iBegin, int iEnd, T[] scratch, int itersToGo)
             {
-                if (itersToGo ==0 ) { // if run size == 1
+                if (itersToGo == 0) {
                     InsertionSort_Copy(scratch, iBegin, iEnd, items);
-                    return; //   consider it sorted (and assume target is copy of source)
+                    return;
                 }
-                int iMiddle = (iEnd + iBegin) / 2; // iMiddle = mid point
-                // recursively sort both runs from array T[] A into T[] B
-                TopDownSplitMerge_Odd(scratch, iBegin, iMiddle, items, itersToGo-1); // sort the left  run
-                TopDownSplitMerge_Odd(scratch, iMiddle, iEnd, items, itersToGo-1); // sort the right run
-                // merge the resulting runs from array T[] B into T[] A
+                int iMiddle = (iEnd + iBegin) / 2;
+
+                TopDownSplitMerge_Odd(scratch, iBegin, iMiddle, items, itersToGo - 1);
+                TopDownSplitMerge_Odd(scratch, iMiddle, iEnd, items, itersToGo - 1);
                 Merge(scratch, iBegin, iMiddle, iEnd, items);
             }
 
-            //  Left source half is A[ iBegin:iMiddle-1].
-            // Right source half is A[iMiddle:iEnd-1   ].
-            // Result is            B[ iBegin:iEnd-1   ].
-            static void Merge0(T[] source, int iBegin, int iMiddle, int iEnd, T[] target)
-            {
-                int i = iBegin, j = iMiddle;
-
-                // While there are elements in the left or right runs...
-                for (int k = iBegin; k < iEnd; k++) {
-                    // If left run head exists and is <= existing right run head.
-                    if (i < iMiddle && (j >= iEnd || !Ordering.LessThan(source[j], source[i]))) {
-                        target[k] = source[i];
-                        i++;
-                    } else {
-                        target[k] = source[j];
-                        j++;
-                    }
-                }
-            }
-            //  Left source half is A[ iBegin:iMiddle-1].
-            // Right source half is A[iMiddle:iEnd-1   ].
-            // Result is            B[ iBegin:iEnd-1   ].
             static void Merge(T[] source, int iBegin, int iMiddle, int iEnd, T[] target)
             {
                 int i = iBegin, j = iMiddle, k = iBegin;
-                //if(i==iMiddle) {
-                //    while(j<iEnd)
-                //        target[k++] = source[j++];
-                //    return;
-                //}
-                //if(j==iEnd) {
-                //    while(i<iMiddle)
-                //        target[k++] = source[i++];
-                //    return;
-                //}
-
-                while(true) {
-                    if(!Ordering.LessThan(source[j], source[i])) {
+                while (true) {
+                    if (!Ordering.LessThan(source[j], source[i])) {
                         target[k++] = source[i++];
-                        if(i==iMiddle) {
-                            while(j<iEnd)
+                        if (i == iMiddle) {
+                            while (j < iEnd) {
                                 target[k++] = source[j++];
+                            }
                             return;
                         }
                     } else {
                         target[k++] = source[j++];
-                        if(j==iEnd) {
-                            while(i<iMiddle)
+                        if (j == iEnd) {
+                            while (i < iMiddle) {
                                 target[k++] = source[i++];
+                            }
                             return;
                         }
                     }
                 }
             }
 
-            // array A[] has the items to sort; array B[] is a work array
             static void BottomUpMergeSort(T[] target, T[] scratchSpace, int n)
             {
                 const int insertionSortBatchSize = 48;
