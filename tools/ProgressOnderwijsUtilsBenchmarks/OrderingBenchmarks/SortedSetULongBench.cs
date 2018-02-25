@@ -1,33 +1,74 @@
 ﻿using System;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes.Jobs;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Environments;
+using BenchmarkDotNet.Horology;
+using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Toolchains.InProcess;
 using ProgressOnderwijsUtils.Collections;
-using static ProgressOnderwijsUtils.Collections.SortedSet<ulong, ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks.ULongOrdering>;
+using AnInt = System.UInt32;
+// ReSharper disable BuiltInTypeReferenceStyle
 
 namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
 {
-    struct ULongOrdering : IOrdering<ulong>
+    using static SortedSet<AnInt, AnIntOrdering>;
+
+    struct AnIntOrdering : IOrdering<AnInt>
     {
-        public bool LessThan(ulong a, ulong b) => a < b;
-        public bool Equal(ulong a, ulong b) => a == b;
+        public bool LessThan(AnInt a, AnInt b) => a < b;
+        public bool Equal(AnInt a, AnInt b) => a == b;
     }
 
-    //[InProcess]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Assembly)]
+    public class QuickBenchAttribute : Attribute, IConfigSource
+    {
+        public QuickBenchAttribute()
+        {
+            var job = new Job();
+            job.Env.Platform = Platform.X64;
+            job.Run.RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput;
+            job.Run.WarmupCount = 1;
+            //job.Run.InvocationCount = 4;
+            job.Run.UnrollFactor = 1;
+            job.Infrastructure.Toolchain = InProcessToolchain.Instance;
+            job.Accuracy.MaxRelativeError=0.001;
+
+            Config = ManualConfig.CreateEmpty().With(job);
+        }
+
+        public IConfig Config { get; }
+    }
+
+    [QuickBench]
     public class SortedSetULongBench
     {
-        const int ArrSize = 1 << 24;
-        static readonly ulong[] array;
-        static readonly ulong[] copy;
+        const int ArrSize = 1 << 20;
+        static readonly AnInt[] sourcedata;
+        static readonly AnInt[] array;
+        static Random random = new Random(42);
 
         static SortedSetULongBench()
         {
-            array = new ulong[ArrSize];
-            copy = new ulong[ArrSize];
-            var random = new Random(42);
-            for (int j = 0; j < ArrSize; j++) {
-                array[j] = ((ulong)(uint)random.Next() << 32) + (uint)random.Next();
+            array = new AnInt[ArrSize];
+            sourcedata = new AnInt[array.Length*5];
+            Randomize(random, sourcedata);
+        }
+
+        static void Randomize(Random r, AnInt[] arr)
+        {
+            for (int j = 0; j < arr.Length; j++) {
+                var next = (AnInt)r.Next();
+                arr[j] = (next << (int)(next & 31u)) + next;
             }
+        }
+
+        static void RefreshData()
+        {
+            var offset = random.Next(array.Length << 2);
+            Array.Copy(sourcedata, offset, array, 0, array.Length);
         }
 
         public static void RunBenchmarks()
@@ -35,12 +76,26 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
             BenchmarkRunner.Run<SortedSetULongBench>();
         }
 
+
+        [Benchmark]
+        public void JustInit()
+        {
+            RefreshData();
+        }
+        
+        [Benchmark]
+        public void QuickSort()
+        {
+            RefreshData();
+            Algorithms.QuickSort(array);
+        }
+
         //[Benchmark]
         //public void Insertion_Copy()
         //{
         //    var dummy = new int[64];
         //    var arr = array;{
-        //        SortedSet<ulong, ULongOrdering>.Algorithms.InsertionSort_Copy(arr,0,Math.Min(64,arr.Length),dummy);
+        //        Algorithms.InsertionSort_Copy(arr,0,Math.Min(64,arr.Length),dummy);
         //    }
         //}
 
@@ -50,16 +105,13 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         //    var dummy = new int[64];
         //    var arr = array;{
         //        int n = Math.Min(64, arr.Length);
-        //        SortedSet<ulong, ULongOrdering>.Algorithms.CopyArray(arr, 0, n, dummy);
-        //        SortedSet<ulong, ULongOrdering>.Algorithms.InsertionSort_InPlace(dummy, 0, n);
+        //        Algorithms.CopyArray(arr, 0, n, dummy);
+        //        Algorithms.InsertionSort_InPlace(dummy, 0, n);
         //    }
         //}
-        [IterationSetup]
-        public void JustCopy()
-        {
-            Array.Copy(array, copy, array.Length);
-        }
 
+
+        /*
         [Benchmark]
         public void TopDownMergeSort()
         {
@@ -79,24 +131,18 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
                 Algorithms.TopDownMergeSort2(copy, len);
             }
         }
-
-        /*
         [Benchmark]
         public void BottomUpMergeSort()
         {
-            SortedSet<ulong, ULongOrdering>.Algorithms.BottomUpMergeSort(copy);
+            Algorithms.BottomUpMergeSort(copy);
         }
+        */
 
-        [Benchmark]
-        public void QuickSort()
-        {
-            SortedSet<ulong, ULongOrdering>.Algorithms.QuickSort(copy);
-        }
-
+        /*
         [Benchmark]
         public void AltTopDownMergeSort()
         {
-            SortedSet<ulong, ULongOrdering>.Algorithms.AltTopDownMergeSort(copy);
+            Algorithms.AltTopDownMergeSort(copy);
         }
 
         [Benchmark]
@@ -111,9 +157,9 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         public void QuickSort2()
         {
             var arr = array;{
-                copy = new ulong[arr.Length];
-                SortedSet<ulong, ULongOrdering>.Algorithms.CopyArray(arr, 0, arr.Length, copy);
-                SortedSet<ulong, ULongOrdering>.Algorithms.QuickSort(copy);
+                copy = new AnInt[arr.Length];
+                Algorithms.CopyArray(arr, 0, arr.Length, copy);
+                Algorithms.QuickSort(copy);
             }
         }
 
@@ -121,9 +167,9 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         public void MergeSort2()
         {
             var arr = array;{
-                copy = new ulong[arr.Length];
-                SortedSet<ulong, ULongOrdering>.Algorithms.CopyArray(arr, 0, arr.Length, copy);
-                SortedSet<ulong, ULongOrdering>.Algorithms.TopDownMergeSort(copy);
+                copy = new AnInt[arr.Length];
+                Algorithms.CopyArray(arr, 0, arr.Length, copy);
+                Algorithms.TopDownMergeSort(copy);
             }
         }
 
@@ -131,9 +177,9 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         public void BottomUpMergeSort2()
         {
             var arr = array;{
-                copy = new ulong[arr.Length];
-                SortedSet<ulong, ULongOrdering>.Algorithms.CopyArray(arr, 0, arr.Length, copy);
-                SortedSet<ulong, ULongOrdering>.Algorithms.BottomUpMergeSort(copy);
+                copy = new AnInt[arr.Length];
+                Algorithms.CopyArray(arr, 0, arr.Length, copy);
+                Algorithms.BottomUpMergeSort(copy);
             }
         }
 
@@ -141,9 +187,9 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         public void AltMergeSort2()
         {
             var arr = array;{
-                copy = new ulong[arr.Length];
-                SortedSet<ulong, ULongOrdering>.Algorithms.CopyArray(arr, 0, arr.Length, copy);
-                SortedSet<ulong, ULongOrdering>.Algorithms.AltTopDownMergeSort(copy);
+                copy = new AnInt[arr.Length];
+                Algorithms.CopyArray(arr, 0, arr.Length, copy);
+                Algorithms.AltTopDownMergeSort(copy);
             }
         }
 
@@ -151,7 +197,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         public void CopyingMergeSort()
         {
             var arr = array;{
-                copy = SortedSet<ulong, ULongOrdering>.Algorithms.TopDownMergeSort_Copy(arr);
+                copy = Algorithms.TopDownMergeSort_Copy(arr);
             }
         }
 
@@ -160,7 +206,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         {
             foreach (var arr in sortedArrays) {
                 //arr = arr.ToArray();
-                SortedSet<ulong, ULongOrdering>.Algorithms.QuickSort(arr);
+                Algorithms.QuickSort(arr);
             }
         }
 
@@ -169,7 +215,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         {
             foreach (var arr in sortedArrays) {
                 //arr = arr.ToArray();
-                SortedSet<ulong, ULongOrdering>.Algorithms.TopDownMergeSort(arr);
+                Algorithms.TopDownMergeSort(arr);
             }
         }
 
@@ -178,7 +224,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         {
             foreach (var arr in sortedArrays) {
                 //arr = arr.ToArray();
-                SortedSet<ulong, ULongOrdering>.Algorithms.AltTopDownMergeSort(arr);
+                Algorithms.AltTopDownMergeSort(arr);
             }
         }
 
@@ -187,7 +233,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         {
             foreach (var arr in sortedArrays) {
                 //arr = arr.ToArray();
-                SortedSet<ulong, ULongOrdering>.Algorithms.BottomUpMergeSort(arr);
+                Algorithms.BottomUpMergeSort(arr);
             }
         }
 
