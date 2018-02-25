@@ -101,6 +101,18 @@ namespace ProgressOnderwijsUtils.Tests.Collections
             Array.Copy(target,0,array, 0, array.Length);
         }
     }
+    public sealed class MergeSortCopying_Test : SortedSet_Sort_Test
+    {
+        protected override void Sort(int[] array)
+        {
+            var copy = array.ToArray();
+            var target = SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort_Copy(array);
+            if(!ArrayComparer<int>.Default.Equals(copy,array)) {
+                throw new Exception("original mutated");
+            }
+            Array.Copy(target,0,array, 0, array.Length);
+        }
+    }
 
     public sealed class InsertionSort_InPlaceTest : SortedSet_Sort_Test
     {
@@ -123,7 +135,7 @@ namespace ProgressOnderwijsUtils.Tests.Collections
     {
         protected override void Sort(int[] array)
         {
-            SortedSet<int, IntOrdering>.Algorithms.MergeSort(array);
+            SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort(array, array.Length);
         }
     }
 }
