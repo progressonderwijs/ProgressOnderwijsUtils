@@ -164,13 +164,8 @@ namespace ProgressOnderwijsUtils.Collections
 
         public static class Algorithms
         {
-            public static void Sort(T[] array) => BottomUpMergeSort(array);
-
-            public static void TopDownMergeSort(T[] array, int arrayLength)
-                => TopDownMergeSort(array, GetCachedAccumulator(arrayLength), arrayLength);
-
-            public static void TopDownMergeSort2(T[] array, int arrayLength)
-                => TopDownMergeSort2(array, GetCachedAccumulator(arrayLength), arrayLength);
+            public static void TopDownMergeSort(T[] array)
+                => TopDownMergeSort(array, GetCachedAccumulator(array.Length), array.Length);
 
             public static T[] TopDownMergeSort_Copy(T[] array)
                 => CopyingTopDownMergeSort(array, new T[array.Length], array.Length);
@@ -184,14 +179,26 @@ namespace ProgressOnderwijsUtils.Collections
             public static void QuickSort(T[] array)
                 => QuickSort(array, 0, array.Length);
 
-            public static void QuickSort(T[] array, int firstIdx, int endIdx)
+            public static void QuickSort(T[] array, int firstIdx, int endIdx) {
+                QuickSort_Inclusive(array, firstIdx, endIdx - 1);
+            }
+
+            static void QuickSort_Inclusive(T[] array, int firstIdx, int lastIdx)
             {
-                if (endIdx - firstIdx < 48) {
-                    InsertionSort_InPlace(array, firstIdx, endIdx);
-                } else {
-                    var pivot = Partition(array, firstIdx, endIdx - 1) + 1;
-                    QuickSort(array, firstIdx, pivot);
-                    QuickSort(array, pivot, endIdx);
+                while (true) {
+                    if (lastIdx - firstIdx < InsertionSortBatchSize - 1) {
+                        InsertionSort_InPlace(array, firstIdx, lastIdx + 1);
+                        return;
+                    } else {
+                        var pivot = Partition(array, firstIdx, lastIdx);
+                        if (pivot - firstIdx > lastIdx - pivot) {
+                            QuickSort_Inclusive(array, pivot + 1, lastIdx);
+                            lastIdx = pivot; //QuickSort(array, firstIdx, pivot);
+                        } else {
+                            QuickSort_Inclusive(array, firstIdx, pivot);
+                            firstIdx = pivot + 1; //QuickSort(array, pivot + 1, lastIdx);
+                        }
+                    }
                 }
             }
 
@@ -254,7 +261,7 @@ namespace ProgressOnderwijsUtils.Collections
                 }
             }
 
-            const int InsertionSortPower = 5;
+            const int InsertionSortBatchSize = 32;
 
             static void AltTopDownMergeSort(T[] items, T[] scratch, int n)
             {
@@ -264,7 +271,7 @@ namespace ProgressOnderwijsUtils.Collections
 
             static void TopDownSplitMerge_Either(T[] items, int iBegin, int iEnd, T[] scratch)
             {
-                if (iEnd - iBegin < 48) {
+                if (iEnd - iBegin < InsertionSortBatchSize) {
                     InsertionSort_InPlace(items, iBegin, iEnd);
                     return;
                 }
@@ -276,34 +283,33 @@ namespace ProgressOnderwijsUtils.Collections
 
             static T[] CopyingTopDownMergeSort(T[] items, T[] scratch, int n)
             {
-                var n_div_43 = (uint)n + ((uint)n >> 1) >> 6;
-                var iters = Utils.LogBase2RoundedDown(n_div_43);
                 var retval = new T[n];
-
-                CopyingTopDownSplitMerge(items, retval, scratch, 0, n, iters);
+                CopyingTopDownSplitMerge(items, retval, scratch, 0, n);
                 return retval;
             }
 
-            static void CopyingTopDownSplitMerge(T[] src, T[] items, T[] scratch, int iBegin, int iEnd, int iters)
+            static void CopyingTopDownSplitMerge(T[] src, T[] items, T[] scratch, int iBegin, int iEnd)
             {
-                if (iters == 0) {
+                if (iEnd- iBegin < InsertionSortBatchSize) {
+                    //CopyArray(src, iBegin, iEnd, items);
+                    //InsertionSort_InPlace(items, iBegin, iEnd);
                     InsertionSort_Copy(src, iBegin, iEnd, items);
                     return;
                 }
                 int iMiddle = (iEnd + iBegin) / 2;
-                CopyingTopDownSplitMerge(src, scratch, items, iBegin, iMiddle, iters - 1);
-                CopyingTopDownSplitMerge(src, scratch, items, iMiddle, iEnd, iters - 1);
+                CopyingTopDownSplitMerge(src, scratch, items, iBegin, iMiddle);
+                CopyingTopDownSplitMerge(src, scratch, items, iMiddle, iEnd);
                 Merge(scratch, iBegin, iMiddle, iEnd, items);
             }
 
-            static void TopDownMergeSort2(T[] items, T[] scratch, int n)
+            static void TopDownMergeSort(T[] items, T[] scratch, int n)
             {
                 TopDownSplitMerge_toItems(items, 0, n, scratch);
             }
 
             static void TopDownSplitMerge_toItems(T[] items, int iBegin, int iEnd, T[] scratch)
             {
-                if (iEnd - iBegin < 43) {
+                if (iEnd - iBegin < InsertionSortBatchSize) {
                     InsertionSort_InPlace(items, iBegin, iEnd);
                     return;
                 }
@@ -315,7 +321,7 @@ namespace ProgressOnderwijsUtils.Collections
 
             static void TopDownSplitMerge_toScratch(T[] items, int iBegin, int iEnd, T[] scratch)
             {
-                if (iEnd - iBegin < 43) {
+                if (iEnd - iBegin < InsertionSortBatchSize) {
                     InsertionSort_Copy(items, iBegin, iEnd, scratch);
                     return;
                 }
@@ -323,42 +329,6 @@ namespace ProgressOnderwijsUtils.Collections
                 TopDownSplitMerge_toItems(items, iBegin, iMiddle, scratch);
                 TopDownSplitMerge_toItems(items, iMiddle, iEnd, scratch);
                 Merge(items, iBegin, iMiddle, iEnd, scratch);
-            }
-
-            static void TopDownMergeSort(T[] items, T[] scratch, int n)
-            {
-                var iters = Utils.LogBase2RoundedDown((uint)n+((uint)n>>1) + 96u>>6);
-
-                if ((iters & 1) == 0) {
-                    TopDownSplitMerge_Even(items, 0, n, scratch, iters);
-                } else {
-                    TopDownSplitMerge_Odd(items, 0, n, scratch, iters);
-                }
-            }
-
-            static void TopDownSplitMerge_Even(T[] items, int iBegin, int iEnd, T[] scratch, int itersToGo)
-            {
-                if (itersToGo == 0) {
-                    InsertionSort_InPlace(items, iBegin, iEnd);
-                    return;
-                }
-                int iMiddle = (iEnd + iBegin) / 2;
-                TopDownSplitMerge_Even(scratch, iBegin, iMiddle, items, itersToGo - 1);
-                TopDownSplitMerge_Even(scratch, iMiddle, iEnd, items, itersToGo - 1);
-                Merge(scratch, iBegin, iMiddle, iEnd, items);
-            }
-
-            static void TopDownSplitMerge_Odd(T[] items, int iBegin, int iEnd, T[] scratch, int itersToGo)
-            {
-                if (itersToGo == 0) {
-                    InsertionSort_Copy(scratch, iBegin, iEnd, items);
-                    return;
-                }
-                int iMiddle = (iEnd + iBegin) / 2;
-
-                TopDownSplitMerge_Odd(scratch, iBegin, iMiddle, items, itersToGo - 1);
-                TopDownSplitMerge_Odd(scratch, iMiddle, iEnd, items, itersToGo - 1);
-                Merge(scratch, iBegin, iMiddle, iEnd, items);
             }
 
             static void Merge(T[] source, int iBegin, int iMiddle, int iEnd, T[] target)
@@ -387,7 +357,7 @@ namespace ProgressOnderwijsUtils.Collections
 
             static void BottomUpMergeSort(T[] target, T[] scratchSpace, int n)
             {
-                const int insertionSortBatchSize = 48;
+                const int insertionSortBatchSize = InsertionSortBatchSize;
 
                 var batchesSortedUpto = 0;
                 while (true) {

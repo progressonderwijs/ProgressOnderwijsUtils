@@ -208,7 +208,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         {
             foreach (var arr in sortedArrays) {
                 //arr = arr.ToArray();
-                SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort(arr, arr.Length);
+                SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort(arr);
             }
         }
         [Benchmark]

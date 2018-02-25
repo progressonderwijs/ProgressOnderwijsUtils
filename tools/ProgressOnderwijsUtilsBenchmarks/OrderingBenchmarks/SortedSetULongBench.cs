@@ -31,8 +31,6 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
             job.Env.Platform = Platform.X64;
             job.Run.RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput;
             job.Run.WarmupCount = 1;
-            //job.Run.InvocationCount = 4;
-            job.Run.UnrollFactor = 1;
             job.Infrastructure.Toolchain = InProcessToolchain.Instance;
             job.Accuracy.MaxRelativeError=0.001;
 
