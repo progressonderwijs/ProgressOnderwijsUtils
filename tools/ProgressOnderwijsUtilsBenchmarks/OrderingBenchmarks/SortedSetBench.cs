@@ -1,4 +1,4 @@
-﻿//#define smallset
+﻿#define smallset
 
 using System;
 using System.Collections.Generic;
@@ -19,12 +19,12 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         public bool Equal(int a, int b) => a == b;
     }
 
-    [InProcess]
+    //[InProcess]
     public class SortedSetBench
     {
-        const int MaximumIndividualSetSize = 1_000;
+        const int MaximumIndividualSetSize = 300_000_000;
         const int MaximumValue = 1234567890;
-        const int NumberOfSets = 1_000;
+        const int NumberOfSets = 2;
         static readonly int[][] arrays;
         static readonly int[][] sortedArrays;
         int[] _copy;
@@ -37,7 +37,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
                 MoreEnumerable.GenerateByIndex(_ => (int)(Math.Exp(r.NextDouble() * Math.Log(MaximumIndividualSetSize)) + 0.5)).Take(NumberOfSets)
                     .Select(len => MoreEnumerable.GenerateByIndex(_ => r.Next(MaximumValue)).Take(len).ToArray())
                     .ToArray();
-            sortedArrays = arrays.ArraySelect(arr => arr.OrderBy(n => n).ToArray());
+            sortedArrays = arrays.ArraySelect(arr => {
+                var copy = arr.ToArray();
+                Array.Sort(copy);
+                return copy;
+            });
         }
 
         public static void ReportDistributionAndRun()
@@ -99,6 +103,15 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         }
 
         [Benchmark]
+        public void BottomUpMergeSort()
+        {
+            foreach (var arr in arrays) {
+                var copy = arr.ToArray();
+                SortedSet<int, IntOrdering>.Algorithms.BottomUpMergeSort(copy);
+            }
+        }
+
+        [Benchmark]
         public void QuickSort()
         {
             foreach (var arr in arrays) {
@@ -108,31 +121,67 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         }
 
         [Benchmark]
-        public void BottomUpMergeSort()
-        {
-            foreach (var arr in arrays) {
-                var copy = arr.ToArray();
-                SortedSet<int, IntOrdering>.Algorithms.BottomUpMergeSort(copy);
-            }
-        }
-#endif
-
-        [Benchmark]
         public void MergeSort()
         {
             foreach (var arr in arrays) {
                 var copy = arr.ToArray();
-                SortedSet<int, IntOrdering>.Algorithms.MergeSort(copy);
+                SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort(copy);
             }
         }
-#if !smallset
+        [Benchmark]
+        public void QuickSort2()
+        {
+            foreach (var arr in arrays) {
+                var copy = new int[arr.Length];
+                SortedSet<int, IntOrdering>.Algorithms.CopyArray(arr,0,arr.Length,copy);
+                SortedSet<int, IntOrdering>.Algorithms.QuickSort(copy);
+            }
+        }
 
+        [Benchmark]
+        public void MergeSort2()
+        {
+            foreach (var arr in arrays) {
+                var copy = new int[arr.Length];
+                SortedSet<int, IntOrdering>.Algorithms.CopyArray(arr,0,arr.Length,copy);
+                SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort(copy);
+            }
+        }
+        [Benchmark]
+        public void BottomUpMergeSort2()
+        {
+            foreach (var arr in arrays) {
+                var copy = new int[arr.Length];
+                SortedSet<int, IntOrdering>.Algorithms.CopyArray(arr,0,arr.Length,copy);
+                SortedSet<int, IntOrdering>.Algorithms.BottomUpMergeSort(copy);
+            }
+        }
+
+        
         [Benchmark]
         public void SystemArraySort()
         {
             foreach (var arr in arrays) {
-                var copy = arr.ToArray();
+                var copy = new int[arr.Length];
+                SortedSet<int, IntOrdering>.Algorithms.CopyArray(arr,0,arr.Length,copy);
                 Array.Sort(copy);
+            }
+        }
+        [Benchmark]
+        public void AltMergeSort2()
+        {
+            foreach (var arr in arrays) {
+                var copy = new int[arr.Length];
+                SortedSet<int, IntOrdering>.Algorithms.CopyArray(arr,0,arr.Length,copy);
+                SortedSet<int, IntOrdering>.Algorithms.AltTopDownMergeSort(copy);
+            }
+        }
+
+        [Benchmark]
+        public void CopyingMergeSort()
+        {
+            foreach (var arr in arrays) {
+                var copy = SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort_Copy(arr);
             }
         }
 
@@ -143,13 +192,14 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
                 var copy = arr.OrderBy(i => i).ToArray();
             }
         }
+#endif
 
         [Benchmark]
         public void QuickSort_Sorted()
         {
             foreach (var arr in sortedArrays) {
-                var copy = arr.ToArray();
-                SortedSet<int, IntOrdering>.Algorithms.QuickSort(copy);
+                //arr = arr.ToArray();
+                SortedSet<int, IntOrdering>.Algorithms.QuickSort(arr);
             }
         }
 
@@ -157,8 +207,16 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         public void MergeSort_Sorted()
         {
             foreach (var arr in sortedArrays) {
-                var copy = arr.ToArray();
-                SortedSet<int, IntOrdering>.Algorithms.MergeSort(copy);
+                //arr = arr.ToArray();
+                SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort(arr, arr.Length);
+            }
+        }
+        [Benchmark]
+        public void AltMergeSort_Sorted()
+        {
+            foreach (var arr in sortedArrays) {
+                //arr = arr.ToArray();
+                SortedSet<int, IntOrdering>.Algorithms.AltTopDownMergeSort(arr);
             }
         }
 
@@ -166,8 +224,8 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         public void BottomUpMergeSort_Sorted()
         {
             foreach (var arr in sortedArrays) {
-                var copy = arr.ToArray();
-                SortedSet<int, IntOrdering>.Algorithms.BottomUpMergeSort(copy);
+                //arr = arr.ToArray();
+                SortedSet<int, IntOrdering>.Algorithms.BottomUpMergeSort(arr);
             }
         }
 
@@ -175,10 +233,13 @@ namespace ProgressOnderwijsUtilsBenchmarks.OrderingBenchmarks
         public void SystemArraySort_Sorted()
         {
             foreach (var arr in sortedArrays) {
-                var copy = arr.ToArray();
-                Array.Sort(copy);
+                //arr = arr.ToArray();
+                Array.Sort(arr);
             }
         }
+#if !smallset
+
+
 
         [Benchmark]
         public void LinqOrderBy_Sorted()

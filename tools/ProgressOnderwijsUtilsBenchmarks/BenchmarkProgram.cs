@@ -7,7 +7,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
     {
         static void Main()
         {
-            SortedSetBench.ReportDistributionAndRun();
+            //SortedSetBench.ReportDistributionAndRun();
+            SortedSetULongBench.RunBenchmarks();
             //BenchmarkRunner.Run<HtmlFragmentBenchmark>();
             //MicroOrm.MicroOrmBenchmarkProgram.RunBenchmarks();
         }
