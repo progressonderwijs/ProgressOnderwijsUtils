@@ -142,7 +142,13 @@ namespace ProgressOnderwijsUtils
         public static bool ContainsDuplicates<T>([NotNull] this IEnumerable<T> list, IEqualityComparer<T> comparer)
         {
             var set = new HashSet<T>(comparer);
-            return !list.All(set.Add);
+            foreach (var item in list) {
+                if (!set.Add(item)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [NotNull]
