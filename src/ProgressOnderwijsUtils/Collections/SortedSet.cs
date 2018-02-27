@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.Collections
         public static SortedSet<T, TOrder> Empty => FromSortedDistinctValues(Array.Empty<T>());
         public static SortedSet<T, TOrder> FromValues(IEnumerable<T> values) => FromValues(values as T[] ?? values.ToArray());
 
-        public static SortedSet<T, TOrder> FromValues(T[] values)
+        public static SortedSet<T, TOrder> FromValues([CanBeNull] T[] values)
         {
             for (int i = 1; i < values.Length; i++) {
                 if (!Ordering.LessThan(values[i - 1], values[i])) {
