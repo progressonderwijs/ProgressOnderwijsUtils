@@ -142,7 +142,13 @@ namespace ProgressOnderwijsUtils
         public static bool ContainsDuplicates<T>([NotNull] this IEnumerable<T> list, IEqualityComparer<T> comparer)
         {
             var set = new HashSet<T>(comparer);
-            return !list.All(set.Add);
+            foreach (var item in list) {
+                if (!set.Add(item)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [NotNull]
@@ -241,21 +247,5 @@ namespace ProgressOnderwijsUtils
                 action(item);
             }
         }
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items)
-            => DistinctArray<T>.FromPossiblyNotDistinct(items);
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
-            => DistinctArray<T>.FromPossiblyNotDistinct(items, comparer);
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items)
-            => DistinctArray<T>.FromDistinct(items);
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
-            => DistinctArray<T>.FromDistinct(items, comparer);
     }
 }

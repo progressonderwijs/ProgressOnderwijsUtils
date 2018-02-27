@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>15.1.0</Version>
+    <Version>16.0.0</Version>
     <PackageReleaseNotes>Implement ArrayOrderingComparer</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
