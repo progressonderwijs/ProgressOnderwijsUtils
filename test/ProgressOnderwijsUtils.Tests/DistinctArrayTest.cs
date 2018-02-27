@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class DistinctArrayTest
     {
         [Fact]
@@ -53,12 +54,65 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void DefaultIsEmpty()
+        {
+            var defaultValue = default(DistinctArray<string>);
+            PAssert.That(() => defaultValue.None());
+            PAssert.That(() => !((IEnumerable)defaultValue).GetEnumerator().MoveNext());
+            PAssert.That(() => !((IEnumerable<string>)defaultValue).GetEnumerator().MoveNext());
+            PAssert.That(() => !defaultValue.GetEnumerator().MoveNext());
+            PAssert.That(() => defaultValue.UnderlyingArrayThatShouldNeverBeMutated().None());
+            PAssert.That(() => defaultValue.Count == 0);
+        }
+
+        [Fact]
+        public void UncheckedDistinctArrayReturnsSameInstance()
+        {
+            var ints = new[] { 1, 2 };
+            var sut = ints.ToDistinctArrayFromDistinct_Unchecked();
+
+            PAssert.That(() => sut.UnderlyingArrayThatShouldNeverBeMutated() == ints);
+        }
+
+        [Fact]
         public void Created_DistinctArray_is_distinct()
         {
             var sut = new[] { 1, 1, 2 }.ToDistinctArray();
 
             PAssert.That(() => sut.Count == 2);
             PAssert.That(() => sut.SetEqual(new[] { 1, 2 }));
+        }
+
+        [Fact]
+        public void SupportsForeach()
+        {
+            var sut = new[] { 1, 2, 3, 2, 1 }.ToDistinctArray();
+            var sum = 0;
+            foreach (var n in sut) {
+                sum += n;
+            }
+
+            PAssert.That(() => sum == 6);
+        }
+
+        [Fact]
+        public void OverloadForSetsWorks()
+        {
+            var hashSet = new[] { 1, 2, 4, 5 }.ToSet();
+            var sut = hashSet.ToDistinctArray();
+
+            PAssert.That(() => sut.Count == 4);
+            PAssert.That(() => sut.SetEqual(hashSet));
+        }
+
+        [Fact]
+        public void OverloadForDictionaryKeysWorks()
+        {
+            var hashSet = new[] { 1, 2, 4, 5 }.ToDictionary(i => i);
+            var sut = hashSet.Keys.ToDistinctArray();
+
+            PAssert.That(() => sut.Count == 4);
+            PAssert.That(() => sut.SetEqual(new[] { 1, 2, 4, 5 }));
         }
 
         [Fact]

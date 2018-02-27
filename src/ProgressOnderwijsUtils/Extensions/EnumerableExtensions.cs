@@ -247,21 +247,5 @@ namespace ProgressOnderwijsUtils
                 action(item);
             }
         }
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items)
-            => DistinctArray<T>.FromPossiblyNotDistinct(items);
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
-            => DistinctArray<T>.FromPossiblyNotDistinct(items, comparer);
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items)
-            => DistinctArray<T>.FromDistinct(items);
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
-            => DistinctArray<T>.FromDistinct(items, comparer);
     }
 }
