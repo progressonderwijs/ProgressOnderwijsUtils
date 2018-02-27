@@ -135,7 +135,7 @@ namespace ProgressOnderwijsUtils.Tests.Collections
     {
         protected override void Sort(int[] array)
         {
-            SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort(array, array.Length);
+            SortedSet<int, IntOrdering>.Algorithms.TopDownMergeSort(array);
         }
     }
 }
