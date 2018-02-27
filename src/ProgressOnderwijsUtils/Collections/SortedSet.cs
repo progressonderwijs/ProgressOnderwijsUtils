@@ -254,8 +254,6 @@ namespace ProgressOnderwijsUtils.Collections
                 }
             }
 
-            const int InsertionSortPower = 5;
-
             static void AltTopDownMergeSort(T[] items, T[] scratch, int n)
             {
                 CopyArray(items, 0, n, scratch);
