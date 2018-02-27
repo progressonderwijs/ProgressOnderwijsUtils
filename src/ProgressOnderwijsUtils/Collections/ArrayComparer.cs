@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public bool Equals(T[] x, T[] y)
+        public bool Equals([CanBeNull] T[] x, [CanBeNull] T[] y)
         {
             if (x == null && y == null) {
                 return true;
