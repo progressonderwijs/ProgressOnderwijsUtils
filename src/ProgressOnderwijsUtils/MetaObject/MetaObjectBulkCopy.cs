@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -10,6 +11,7 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
 // ReSharper disable once CheckNamespace
+
 namespace ProgressOnderwijsUtils
 {
     public static class MetaObjectBulkCopy
@@ -26,15 +28,16 @@ namespace ProgressOnderwijsUtils
         {
             using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
                 bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
-                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn.Connection, tableName);
+                bulkCopy.WriteMetaObjectsToServerAsync(metaObjects, sqlconn, tableName, CancellationToken.None).Wait();
             }
         }
 
         /// <summary>
         /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
         /// </summary>
-        public static async Task WriteMetaObjectsToServerAsync<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlConnection sqlconn, [NotNull] string tableName, CancellationToken cancellationToken) where T : IMetaObject, IPropertiesAreUsedImplicitly
+        public static async Task WriteMetaObjectsToServerAsync<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName, CancellationToken cancellationToken) where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
+            var sqlconn = context.Connection;
             if (metaObjects == null) {
                 throw new ArgumentNullException(nameof(metaObjects));
             }
@@ -48,20 +51,24 @@ namespace ProgressOnderwijsUtils
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects)) {
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
-
+                var sw = Stopwatch.StartNew();
                 try {
                     await bulkCopy.WriteToServerAsync(objectReader, cancellationToken).ConfigureAwait(false);
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
                     var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + mapping.Single(m => m.DstIndex == destinationColumnIndex).SourceColumnDefinition.Name;
                     throw new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
+                } finally {
+                    TraceBulkInsertDuration(context.Tracer, tableName, sw, objectReader.RowsProcessed);
                 }
             }
         }
 
-        public static void WriteMetaObjectsToServer<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlConnection sqlconn, [NotNull] string tableName) where T : IMetaObject, IPropertiesAreUsedImplicitly
+        static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, string tableName, Stopwatch sw, int rowsInserted)
         {
-            bulkCopy.WriteMetaObjectsToServerAsync(metaObjects, sqlconn, tableName, CancellationToken.None).Wait();
+            if (tracerOrNull?.IsTracing ?? false) {
+                tracerOrNull.RegisterEvent("Bulk inserted " + rowsInserted + " rows into " + tableName, sw.Elapsed);
+            }
         }
 
         static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);

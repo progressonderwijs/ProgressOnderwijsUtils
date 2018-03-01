@@ -198,7 +198,7 @@ namespace ProgressOnderwijsUtils
         FastShortStringBuilder debugText;
 
         [NotNull]
-        public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter => SqlCommandTracer.InsecureSqlDebugString(o.EquatableValue, true);
+        public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter => SqlCommandDebugStringifier.InsecureSqlDebugString(o.EquatableValue, true);
 
         public void AppendSql([NotNull] string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
