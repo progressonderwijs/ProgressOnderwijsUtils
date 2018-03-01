@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void Creating_DistinctArray_from_not_distinct_with_custom_comparer_gives_error()
+        public void Creating_DistinctArray_from_not_disBtinct_with_custom_comparer_gives_error()
         {
             Assert.ThrowsAny<ArgumentException>(() => {
                 // ReSharper disable once UnusedVariable

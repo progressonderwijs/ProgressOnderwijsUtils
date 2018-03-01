@@ -24,6 +24,8 @@ namespace ProgressOnderwijsUtils
         readonly IEnumerator<T> metaObjects;
         readonly IReadOnlyList<T> objectsOrNull_ForDebugging;
         T current;
+        int rowsProcessed;
+        public int RowsProcessed => rowsProcessed;
 
         public MetaObjectDataReader([NotNull] IEnumerable<T> objects)
         {
@@ -43,6 +45,7 @@ namespace ProgressOnderwijsUtils
             var hasnext = metaObjects.MoveNext();
             if (hasnext) {
                 current = metaObjects.Current;
+                rowsProcessed++;
             }
             return hasnext;
         }
