@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>16.1.0</Version>
-    <PackageReleaseNotes>Implement ArrayOrderingComparer</PackageReleaseNotes>
+    <Version>17.0.0</Version>
+    <PackageReleaseNotes>Improve the api of SqlCommandTracer and trace bulk inserts too.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>

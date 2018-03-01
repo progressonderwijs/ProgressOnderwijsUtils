@@ -68,7 +68,11 @@ namespace ProgressOnderwijsUtils
         }
 
         static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, string tableName, Stopwatch sw, int rowsInserted)
-            => tracerOrNull?.FinishDisposableTimer(() => "Bulk inserted " + rowsInserted + " rows into " + tableName, sw.Elapsed);
+        {
+            if (tracerOrNull?.IsTracing ?? false) {
+                tracerOrNull.RegisterEvent("Bulk inserted " + rowsInserted + " rows into " + tableName, sw.Elapsed);
+            }
+        }
 
         static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
 

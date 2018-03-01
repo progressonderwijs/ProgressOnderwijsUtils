@@ -28,7 +28,8 @@ namespace ProgressOnderwijsUtils
                 try {
                     return action(cmd.Command);
                 } catch (Exception e) {
-                    throw new ParameterizedSqlExecutionException(exceptionMessage() + "\n\nCOMMAND TIMEOUT: " + cmd.Command.CommandTimeout + " s\n\nQUERY:\n\n" + SqlCommandTracer.DebugFriendlyCommandText(cmd.Command, SqlCommandTracerOptions.IncludeArgumentValuesInLog), e);
+                    var debugFriendlyCommandText = SqlCommandDebugStringifier.DebugFriendlyCommandText(cmd.Command, SqlTracerAgumentInclusion.IncludingArgumentValues);
+                    throw new ParameterizedSqlExecutionException(exceptionMessage() + "\n\nCOMMAND TIMEOUT: " + cmd.Command.CommandTimeout + " s\n\nQUERY:\n\n" + debugFriendlyCommandText, e);
                 }
         }
 
@@ -161,7 +162,7 @@ namespace ProgressOnderwijsUtils
         static string QueryExecutionErrorMessage<T>([NotNull] SqlCommand cmd, [CanBeNull] [CallerMemberName] string caller = null) where T : IMetaObject, new()
         {
             return caller + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. \n\nQUERY:\n\n"
-                + SqlCommandTracer.DebugFriendlyCommandText(cmd, SqlCommandTracerOptions.IncludeArgumentValuesInLog);
+                + SqlCommandDebugStringifier.DebugFriendlyCommandText(cmd, SqlTracerAgumentInclusion.IncludingArgumentValues);
         }
 
         /// <summary>
