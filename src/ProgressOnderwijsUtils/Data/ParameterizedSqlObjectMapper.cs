@@ -9,47 +9,38 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-// ReSharper disable RedundantUsingDirective
-using System.Reflection.Emit;
-using System.Threading;
-// ReSharper restore RedundantUsingDirective
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
+// ReSharper disable RedundantUsingDirective
+using System.Reflection.Emit;
+using System.Threading;
+
+// ReSharper restore RedundantUsingDirective
 
 namespace ProgressOnderwijsUtils
 {
     public static class ParameterizedSqlObjectMapper
     {
         [MustUseReturnValue]
-        public static T ExecuteQuery<T>(ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext, Func<string> exceptionMessage, [NotNull] Func<SqlCommand, T> action)
+        public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
         {
             using (var cmd = sql.CreateSqlCommand(commandCreationContext))
                 try {
-                    return action(cmd.Command);
+                    return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
                 } catch (Exception e) {
-                    var debugFriendlyCommandText = SqlCommandDebugStringifier.DebugFriendlyCommandText(cmd.Command, SqlTracerAgumentInclusion.IncludingArgumentValues);
-                    throw new ParameterizedSqlExecutionException(exceptionMessage() + "\n\nCOMMAND TIMEOUT: " + cmd.Command.CommandTimeout + " s\n\nQUERY:\n\n" + debugFriendlyCommandText, e);
+                    throw cmd.CreateExceptionWithTextAndArguments(e, "ReadScalar<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.");
                 }
-        }
-
-        [MustUseReturnValue]
-        public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-        {
-            return ExecuteQuery(
-                sql,
-                commandCreationContext,
-                () => "ReadScalar<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.",
-                command => DBNullRemover.Cast<T>(command.ExecuteScalar()));
         }
 
         public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
         {
-            return ExecuteQuery(
-                sql,
-                commandCreationContext,
-                () => "Non-query failed",
-                command => command.ExecuteNonQuery());
+            using (var cmd = sql.CreateSqlCommand(commandCreationContext))
+                try {
+                    return cmd.Command.ExecuteNonQuery();
+                } catch (Exception e) {
+                    throw cmd.CreateExceptionWithTextAndArguments(e, "Non-query failed");
+                }
         }
 
         /// <summary>
@@ -66,12 +57,35 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static T[] ReadMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
         {
-            return ExecuteQuery(
-                q,
-                qCommandCreationContext,
-                () => "ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.",
-                cmd => ReadMetaObjectsUnpacker<T>(cmd)
-                );
+            using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
+                try {
+                    return ReadMetaObjectsUnpacker<T>(cmd.Command);
+                } catch (Exception e) {
+                    throw cmd.CreateExceptionWithTextAndArguments(e, "ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.");
+                }
+        }
+
+        /// <summary>
+        /// Executes a  DataTable op basis van het huidige commando met de huidige parameters
+        /// </summary>
+        /// <param name="sql">De uit-te-voeren query</param>
+        /// <param name="conn">De database om tegen te query-en</param>
+        /// <param name="missingSchemaAction"></param>
+        [MustUseReturnValue]
+        [NotNull]
+        public static DataTable ReadDataTable(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
+        {
+            using (var cmd = sql.CreateSqlCommand(conn))
+            using (var adapter = new SqlDataAdapter(cmd.Command))
+                try {
+                    adapter.MissingSchemaAction = missingSchemaAction;
+                    var dt = new DataTable();
+                    adapter.Fill(dt);
+                    return dt;
+                } catch (Exception e) {
+                    var debugFriendlyCommandText = SqlCommandDebugStringifier.DebugFriendlyCommandText(cmd.Command, SqlTracerAgumentInclusion.IncludingArgumentValues);
+                    throw new ParameterizedSqlExecutionException("ReadDataTable failed" + "\n\nCOMMAND TIMEOUT: " + cmd.Command.CommandTimeout + " s\n\nQUERY:\n\n" + debugFriendlyCommandText, e);
+                }
         }
 
         /// <summary>
@@ -177,11 +191,12 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static T[] ReadPlain<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext)
         {
-            return ExecuteQuery(
-                q,
-                qCommandCreationContext,
-                () => "ReadPlain<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.",
-                ReadPlainUnpacker<T>);
+            using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
+                try {
+                    return ReadPlainUnpacker<T>(cmd.Command);
+                } catch (Exception e) {
+                    throw cmd.CreateExceptionWithTextAndArguments(e, "ReadPlain<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.");
+                }
         }
 
         [MustUseReturnValue]

@@ -40,6 +40,14 @@ namespace ProgressOnderwijsUtils
                 Command = null;
             }
         }
+
+        [NotNull]
+        public ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments(Exception e, string exceptionMessage)
+        {
+            var debugFriendlyCommandText = SqlCommandDebugStringifier.DebugFriendlyCommandText(Command, SqlTracerAgumentInclusion.IncludingArgumentValues);
+            var parameterizedSqlExecutionException = new ParameterizedSqlExecutionException(exceptionMessage + "\n\nCOMMAND TIMEOUT: " + Command.CommandTimeout + " s\n\nQUERY:\n\n" + debugFriendlyCommandText, e);
+            return parameterizedSqlExecutionException;
+        }
     }
 
     /// <summary>

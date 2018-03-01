@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using static ProgressOnderwijsUtils.SafeSql;
+
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace ProgressOnderwijsUtils
 {
@@ -18,15 +21,28 @@ namespace ProgressOnderwijsUtils
         /// In particularly, this code cannot break cyclical dependencies, and also cannot detect them: when a dependency chain reaches 500 long, it will crash.
         /// </summary>
         [NotNull]
-        public static DeletionPerformance[] RecursivelyDelete<TId>(
+        public static DeletionReport[] RecursivelyDelete<TId>(
             [NotNull] SqlCommandCreationContext conn,
             ParameterizedSql initialTableAsEntered,
-            [NotNull] TId[] idsToDelete,
-            [CanBeNull] Action<string> logger
+            bool OutputAllDeletedRows,
+            [CanBeNull] Action<string> logger,
+            [NotNull] params TId[] idsToDelete
             )
-            where TId : struct, IConvertible, IComparable
+            where TId : IPropertiesAreUsedImplicitly, IMetaObject
         {
             void log(string message) => logger?.Invoke(message);
+
+            DataTable ExecuteDeletion(ParameterizedSql deletionCommand)
+            {
+                if (OutputAllDeletedRows) {
+                    return deletionCommand.ReadDataTable(conn, MissingSchemaAction.Add);
+                } else {
+                    deletionCommand.ExecuteNonQuery(conn);
+                    return null;
+                }
+            }
+
+            var outputClause = OutputAllDeletedRows ? SQL($"output deleted.*") : default;
 
             var initialTableName = initialTableAsEntered.CommandText();
             var initialTable =
@@ -70,14 +86,27 @@ namespace ProgressOnderwijsUtils
                     StringComparer.OrdinalIgnoreCase
                 );
 
-            var initialPrimaryKeyColumn = pkeys[initialTable.CommandText()].Single();
+            var initialPrimaryKeyColumns = pkeys[initialTable.CommandText()].ToArray();
+            var initialPrimaryKeyColumnNames = initialPrimaryKeyColumns.Select(col => col.CommandText()).ToArray();
+            var providedIdColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
+            if (!providedIdColumns.SetEqual(initialPrimaryKeyColumnNames, StringComparer.OrdinalIgnoreCase)) {
+                throw new InvalidOperationException("Expected primary key columns: " + initialPrimaryKeyColumnNames.JoinStrings(", ") + "; provided columns: " + providedIdColumns.JoinStrings(", "));
+            }
 
             var delTable = SQL($"[##del_init]");
-            var initialRowCountToDelete = SQL($@"
-                select {initialPrimaryKeyColumn} 
+            SQL($@"
+                select {initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))} 
                 into {delTable}
                 from {initialTable}
-                where {initialPrimaryKeyColumn} in {idsToDelete}
+                where 1=0
+            ").ExecuteNonQuery(conn);
+            idsToDelete.BulkCopyToSqlServer(conn, delTable.CommandText());
+
+            var initialRowCountToDelete = SQL($@"
+                delete dt
+                from {delTable} dt
+                left join {initialTable} initT on {initialPrimaryKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
+                where {initialPrimaryKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
                 ;
                 select count(*) from {delTable}
             ").ReadScalar<int>(conn);
@@ -87,7 +116,7 @@ namespace ProgressOnderwijsUtils
             int delBatch = 0;
 
             var deletionStack = new Stack<Action>();
-            var perflog = new List<DeletionPerformance>();
+            var perflog = new List<DeletionReport>();
             long totalDeletes = 0;
 
             void DeleteKids(ParameterizedSql tableName, ParameterizedSql tempTableName, SList<string> logStack, int depth)
@@ -106,29 +135,54 @@ namespace ProgressOnderwijsUtils
                     var nrRowsToDelete = SQL($"select count(*) from {tempTableName}").ReadScalar<int>(conn);
                     log($"Delete {nrRowsToDelete} from {tableName.CommandText()}...");
                     var sw = Stopwatch.StartNew();
-                    SQL($@"
-                    delete pk
-                    from {tableName} pk
-                    join {tempTableName} tt on {ttJoin};
+                    var deletedRows = ExecuteDeletion(SQL($@"
+                        delete pk
+                        {outputClause}
+                        from {tableName} pk
+                        join {tempTableName} tt on {ttJoin};
                     
-                    drop table {tempTableName};
-                ").ExecuteNonQuery(conn);
+                        drop table {tempTableName};
+                    "));
                     sw.Stop();
                     log("...took {sw.Elapsed}");
-                    perflog.Add(new DeletionPerformance { Table = tableName.CommandText(), RowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed });
+                    perflog.Add(new DeletionReport { Table = tableName.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                 });
 
                 var fks = keys[tableName.CommandText()];
 
                 foreach (var fk in fks) {
-                    var referencingPkCols = pkeys[fk.FkTableSql.CommandText()].Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
+                    var pkeysOfReferencingTable = pkeys[fk.FkTableSql.CommandText()];
                     var pkJoin = fk.columns.Select(col => SQL($"fk.{col.FkColumnSql}=pk.{col.PkColumnSql}")).ConcatenateSql(SQL($" and "));
-
                     var newDelTable = ParameterizedSql.CreateDynamic("[##del_" + delBatch + "]");
+                    if (pkeysOfReferencingTable.None()) {
+                        log($"Warning: table {fk.FkTableSql.CommandText()}->{logStack.JoinStrings("->")} is missing a primary key");
+                        deletionStack.Push(() => {
+                            var nrRowsToDelete = SQL($@"
+                                select count(*)
+                                from {fk.FkTableSql} fk
+                                join {tableName} as pk on {pkJoin}
+                                join {tempTableName} as tt on {ttJoin}
+                            ").ReadScalar<int>(conn);
+                            log($"Delete {nrRowsToDelete} from {fk.FkTableSql.CommandText()}...");
+                            var sw = Stopwatch.StartNew();
+                            var deletedRows = ExecuteDeletion(SQL($@"
+                                delete fk
+                                {outputClause}
+                                from {fk.FkTableSql} fk
+                                join {tableName} as pk on {pkJoin}
+                                join {tempTableName} as tt on {ttJoin}
+                            "));
+                            sw.Stop();
+                            log("...took {sw.Elapsed}");
+                            perflog.Add(new DeletionReport { Table = fk.FkTableSql.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
+                        });
+                        continue;
+                    }
+
                     var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.FkTableSql.CommandText())
                         ? SQL($"where 1=1")
                         : SQL($"where {pkeysOfCurrentTable.Select(col => SQL($"pk.{col}<>fk.{col}")).ConcatenateSql(SQL($" or "))}");
-
+                    var referencingPkCols = pkeysOfReferencingTable.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
                     var statement = SQL($@"
                         select {referencingPkCols} 
                         into {newDelTable}
@@ -165,14 +219,15 @@ namespace ProgressOnderwijsUtils
             return perflog.ToArray();
         }
 
-        public struct DeletionPerformance
+        public struct DeletionReport
         {
             public string Table;
             public TimeSpan DeletionDuration;
-            public int RowCount;
+            public int DeletedAtMostRowCount;
+            public DataTable DeletedRows;
         }
 
-        [UsedImplicitly(ImplicitUseKindFlags.Assign,ImplicitUseTargetFlags.Members)]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
         sealed class FkCol : IMetaObject
         {
             public int Fk_id { get; set; }
@@ -183,10 +238,9 @@ namespace ProgressOnderwijsUtils
             public ParameterizedSql FkTableSql => ParameterizedSql.CreateDynamic(Fk_table);
             public ParameterizedSql PkColumnSql => ParameterizedSql.CreateDynamic(Pk_column);
             public ParameterizedSql FkColumnSql => ParameterizedSql.CreateDynamic(Fk_column);
-
         }
 
-        [UsedImplicitly(ImplicitUseKindFlags.Assign,ImplicitUseTargetFlags.Members)]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
         sealed class PkCol : IMetaObject
         {
             public string Pk_table { get; set; }

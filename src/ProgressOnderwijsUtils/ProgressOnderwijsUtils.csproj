@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>17.0.0</Version>
-    <PackageReleaseNotes>Improve the api of SqlCommandTracer and trace bulk inserts too.</PackageReleaseNotes>
+    <Version>18.0.0</Version>
+    <PackageReleaseNotes>Improve the api of CascadedDelete.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -19,6 +19,7 @@
     <DebugType>full</DebugType>
     <DebugSymbols>True</DebugSymbols>
     <NoWarn>CS1591</NoWarn>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="SingleSignOn\*.xsd" />

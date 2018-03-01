@@ -47,9 +47,6 @@ namespace ProgressOnderwijsUtils
             if (sqlconn.State != ConnectionState.Open) {
                 throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
             }
-            if (tableName.Contains('[') || tableName.Contains(']')) {
-                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, nameof(tableName));
-            }
             bulkCopy.DestinationTableName = tableName;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects)) {

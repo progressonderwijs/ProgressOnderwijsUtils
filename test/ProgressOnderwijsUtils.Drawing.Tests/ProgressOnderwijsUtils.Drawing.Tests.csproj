@@ -5,19 +5,16 @@
     <OutputType>library</OutputType>
     <TargetFrameworks>net461</TargetFrameworks>
     <IsPackable>false</IsPackable>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="rainbow.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="ExpressionToCodeLib" version="2.7.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.0" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils.Drawing\ProgressOnderwijsUtils.Drawing.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
   </ItemGroup>
 </Project>
