@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils
         /// In particularly, this code cannot break cyclical dependencies, and also cannot detect them: when a dependency chain reaches 500 long, it will crash.
         /// </summary>
         [NotNull]
-        public static DeletionPerformance[] RecursivelyDelete<TId>(
+        public static DeletionReport[] RecursivelyDelete<TId>(
             [NotNull] SqlCommandCreationContext conn,
             ParameterizedSql initialTableAsEntered,
             bool OutputAllDeletedRows,
@@ -116,7 +116,7 @@ namespace ProgressOnderwijsUtils
             int delBatch = 0;
 
             var deletionStack = new Stack<Action>();
-            var perflog = new List<DeletionPerformance>();
+            var perflog = new List<DeletionReport>();
             long totalDeletes = 0;
 
             void DeleteKids(ParameterizedSql tableName, ParameterizedSql tempTableName, SList<string> logStack, int depth)
@@ -145,7 +145,7 @@ namespace ProgressOnderwijsUtils
                     "));
                     sw.Stop();
                     log("...took {sw.Elapsed}");
-                    perflog.Add(new DeletionPerformance { Table = tableName.CommandText(), RowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
+                    perflog.Add(new DeletionReport { Table = tableName.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                 });
 
                 var fks = keys[tableName.CommandText()];
@@ -174,7 +174,7 @@ namespace ProgressOnderwijsUtils
                             "));
                             sw.Stop();
                             log("...took {sw.Elapsed}");
-                            perflog.Add(new DeletionPerformance { Table = fk.FkTableSql.CommandText(), RowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
+                            perflog.Add(new DeletionReport { Table = fk.FkTableSql.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                         });
                         continue;
                     }
@@ -219,11 +219,11 @@ namespace ProgressOnderwijsUtils
             return perflog.ToArray();
         }
 
-        public struct DeletionPerformance
+        public struct DeletionReport
         {
             public string Table;
             public TimeSpan DeletionDuration;
-            public int RowCount;
+            public int DeletedAtMostRowCount;
             public DataTable DeletedRows;
         }
 
