@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
@@ -23,12 +24,25 @@ namespace ProgressOnderwijsUtils
         public static DeletionPerformance[] RecursivelyDelete<TId>(
             [NotNull] SqlCommandCreationContext conn,
             ParameterizedSql initialTableAsEntered,
+            bool OutputAllDeletedRows,
             [CanBeNull] Action<string> logger,
             [NotNull] params TId[] idsToDelete
             )
             where TId : IPropertiesAreUsedImplicitly, IMetaObject
         {
             void log(string message) => logger?.Invoke(message);
+
+            DataTable ExecuteDeletion(ParameterizedSql deletionCommand)
+            {
+                if (OutputAllDeletedRows) {
+                    return deletionCommand.ReadDataTable(conn, MissingSchemaAction.Add);
+                } else {
+                    deletionCommand.ExecuteNonQuery(conn);
+                    return null;
+                }
+            }
+
+            var outputClause = OutputAllDeletedRows ? SQL($"output deleted.*") : default;
 
             var initialTableName = initialTableAsEntered.CommandText();
             var initialTable =
@@ -89,7 +103,7 @@ namespace ProgressOnderwijsUtils
             idsToDelete.BulkCopyToSqlServer(conn, delTable.CommandText());
 
             var initialRowCountToDelete = SQL($@"
-                delete dt 
+                delete dt
                 from {delTable} dt
                 left join {initialTable} initT on {initialPrimaryKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
                 where {initialPrimaryKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
@@ -121,16 +135,17 @@ namespace ProgressOnderwijsUtils
                     var nrRowsToDelete = SQL($"select count(*) from {tempTableName}").ReadScalar<int>(conn);
                     log($"Delete {nrRowsToDelete} from {tableName.CommandText()}...");
                     var sw = Stopwatch.StartNew();
-                    SQL($@"
-                    delete pk
-                    from {tableName} pk
-                    join {tempTableName} tt on {ttJoin};
+                    var deletedRows = ExecuteDeletion(SQL($@"
+                        delete pk
+                        {outputClause}
+                        from {tableName} pk
+                        join {tempTableName} tt on {ttJoin};
                     
-                    drop table {tempTableName};
-                ").ExecuteNonQuery(conn);
+                        drop table {tempTableName};
+                    "));
                     sw.Stop();
                     log("...took {sw.Elapsed}");
-                    perflog.Add(new DeletionPerformance { Table = tableName.CommandText(), RowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed });
+                    perflog.Add(new DeletionPerformance { Table = tableName.CommandText(), RowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                 });
 
                 var fks = keys[tableName.CommandText()];
@@ -150,19 +165,19 @@ namespace ProgressOnderwijsUtils
                             ").ReadScalar<int>(conn);
                             log($"Delete {nrRowsToDelete} from {fk.FkTableSql.CommandText()}...");
                             var sw = Stopwatch.StartNew();
-                            SQL($@"
+                            var deletedRows = ExecuteDeletion(SQL($@"
                                 delete fk
+                                {outputClause}
                                 from {fk.FkTableSql} fk
                                 join {tableName} as pk on {pkJoin}
                                 join {tempTableName} as tt on {ttJoin}
-                            ").ExecuteNonQuery(conn);
+                            "));
                             sw.Stop();
                             log("...took {sw.Elapsed}");
-                            perflog.Add(new DeletionPerformance { Table = fk.FkTableSql.CommandText(), RowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed });
+                            perflog.Add(new DeletionPerformance { Table = fk.FkTableSql.CommandText(), RowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                         });
                         continue;
                     }
-
 
                     var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.FkTableSql.CommandText())
                         ? SQL($"where 1=1")
@@ -209,9 +224,10 @@ namespace ProgressOnderwijsUtils
             public string Table;
             public TimeSpan DeletionDuration;
             public int RowCount;
+            public DataTable DeletedRows;
         }
 
-        [UsedImplicitly(ImplicitUseKindFlags.Assign,ImplicitUseTargetFlags.Members)]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
         sealed class FkCol : IMetaObject
         {
             public int Fk_id { get; set; }
@@ -224,7 +240,7 @@ namespace ProgressOnderwijsUtils
             public ParameterizedSql FkColumnSql => ParameterizedSql.CreateDynamic(Fk_column);
         }
 
-        [UsedImplicitly(ImplicitUseKindFlags.Assign,ImplicitUseTargetFlags.Members)]
+        [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
         sealed class PkCol : IMetaObject
         {
             public string Pk_table { get; set; }

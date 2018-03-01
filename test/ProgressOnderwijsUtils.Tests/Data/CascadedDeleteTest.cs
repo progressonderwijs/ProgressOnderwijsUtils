@@ -1,4 +1,6 @@
-﻿using ExpressionToCodeLib;
+﻿using System.Data;
+using System.Linq;
+using ExpressionToCodeLib;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -26,10 +28,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
 
-            CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), null, new AId { A = 1 }, new AId { A = 2 });
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, new AId { A = 1 }, new AId { A = 2 });
 
             var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalDependentValues.SetEqual(new[] { 333 }));
+            PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1" }));
         }
 
         void CreateDiamondFkTableSet()
@@ -64,13 +67,16 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => initialTLeafKeys.SetEqual(new[] { 1, 2, 3, 4 }));
 
-            CascadedDelete.RecursivelyDelete(Context, SQL($"TRoot"), null, new RootId { Root = 1, }, new RootId { Root = 2 });
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"TRoot"), true, null, new RootId { Root = 1, }, new RootId { Root = 2 });
 
             var finalT2 = SQL($"select D from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalT2.SetEqual(new[] { 5 }));
 
             var finalTLeafKeys = SQL($"select Z from TLeaf").ReadPlain<int>(Context);
             PAssert.That(() => finalTLeafKeys.SetEqual(new[] { 3, 4 }));
+
+            var rowsFromT1 = deletionReport.Where(t => t.Table == "dbo.T1").ToArray();
+            PAssert.That(() => rowsFromT1.Single().DeletedRows.Rows.Cast<DataRow>().Select(dr => (int)dr["C"]).SetEqual(new[] { 4, 5 }));
         }
     }
 }
