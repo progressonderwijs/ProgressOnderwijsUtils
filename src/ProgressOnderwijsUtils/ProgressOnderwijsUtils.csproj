@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>15.1.0</Version>
+    <Version>16.1.0</Version>
     <PackageReleaseNotes>Implement ArrayOrderingComparer</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
@@ -18,16 +18,17 @@
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
     <DebugType>full</DebugType>
     <DebugSymbols>True</DebugSymbols>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
 
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
-    <PackageReference Include="ExpressionToCodeLib" version="2.5.1" />
+    <PackageReference Include="ExpressionToCodeLib" version="2.7.0" />
     <PackageReference Include="log4net" version="2.0.8" />
     <PackageReference Include="morelinq" version="2.10.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.4.2" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.1" />

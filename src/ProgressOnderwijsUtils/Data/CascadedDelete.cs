@@ -211,6 +211,7 @@ namespace ProgressOnderwijsUtils
             public int RowCount;
         }
 
+        [UsedImplicitly(ImplicitUseKindFlags.Assign,ImplicitUseTargetFlags.Members)]
         sealed class FkCol : IMetaObject
         {
             public int Fk_id { get; set; }
@@ -223,6 +224,7 @@ namespace ProgressOnderwijsUtils
             public ParameterizedSql FkColumnSql => ParameterizedSql.CreateDynamic(Fk_column);
         }
 
+        [UsedImplicitly(ImplicitUseKindFlags.Assign,ImplicitUseTargetFlags.Members)]
         sealed class PkCol : IMetaObject
         {
             public string Pk_table { get; set; }
