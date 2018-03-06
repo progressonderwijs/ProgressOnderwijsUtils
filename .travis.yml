@@ -3,9 +3,9 @@ services:
   - docker
 language: csharp
 mono: none
-dotnet: 2.0.3
+dotnet: 2.1.4
 before_install:
- - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux:2017-CU3
+ - docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=yourStrong(!)Password' -p 1433:1433 -d microsoft/mssql-server-linux:2017-CU4
 script:
  - dotnet test test/ProgressOnderwijsUtils.Tests -f netcoreapp2.0 -c Release
 env:
