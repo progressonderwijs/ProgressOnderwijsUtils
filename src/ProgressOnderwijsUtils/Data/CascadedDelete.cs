@@ -94,9 +94,14 @@ namespace ProgressOnderwijsUtils
             }
 
             var delTable = SQL($"[##del_init]");
+            //union all is a nasty hack to enforce that the identity property is not propagated to the temp table
             SQL($@"
                 select {initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))} 
                 into {delTable}
+                from {initialTable}
+                where 1=0
+                union all
+                select {initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))} 
                 from {initialTable}
                 where 1=0
             ").ExecuteNonQuery(conn);

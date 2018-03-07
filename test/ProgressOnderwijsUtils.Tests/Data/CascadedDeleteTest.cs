@@ -49,6 +49,26 @@ namespace ProgressOnderwijsUtils.Tests.Data
             ").ExecuteNonQuery(Context);
         }
 
+#if NET461
+        [Fact]
+#else
+        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
+#endif
+        public void CascadedDeleteWorksWithIdentityKey()
+        {
+            SQL($@"
+                create table T1 ( A int primary key identity(1,1), B int);
+
+                insert into T1 values (11), (22), (33);
+            ").ExecuteNonQuery(Context);
+
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, new AId { A = 1 }, new AId { A = 2 });
+            var finalValues = SQL($"select B from T1").ReadPlain<int>(Context);
+
+            PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T1" }));
+            PAssert.That(() => finalValues.SetEqual(new[] { 33 }));
+        }
+
         public struct RootId : IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Root { get; set; }
