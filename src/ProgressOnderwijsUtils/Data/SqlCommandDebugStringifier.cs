@@ -9,7 +9,8 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class SqlCommandDebugStringifier {
+    public static class SqlCommandDebugStringifier
+    {
         [NotNull]
         public static string DebugFriendlyCommandText([NotNull] SqlCommand sqlCommand, SqlTracerAgumentInclusion includeSensitiveInfo)
             => CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
@@ -87,6 +88,14 @@ namespace ProgressOnderwijsUtils
                     return $"[[Exception in {nameof(SqlCommandTracer)}.{nameof(InsecureSqlDebugString)}: {e.Message}]]";
                 }
             }
+        }
+
+        [NotNull]
+        public static ParameterizedSqlExecutionException ExceptionWithTextAndArguments([NotNull] string message, [NotNull] SqlCommand failedCommand, [CanBeNull] Exception innerException)
+        {
+            var debugFriendlyCommandText = DebugFriendlyCommandText(failedCommand, SqlTracerAgumentInclusion.IncludingArgumentValues);
+            var timeoutMessage = SqlTimeoutDetection.IsTimeoutException(innerException) ? "\nCOMMAND TIMEOUT: " + failedCommand.CommandTimeout + "s" : "";
+            return new ParameterizedSqlExecutionException(message + timeoutMessage + "\n\nSqlCommandText:\n" + debugFriendlyCommandText, innerException);
         }
     }
 }
