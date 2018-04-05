@@ -1,0 +1,23 @@
+version: build-{build}
+branches:
+  only:
+  - master
+image: Visual Studio 2017
+environment:
+  CONNECTION_STRING: Server=(local)\SQL2016;Database=master;User ID=sa;Password=Password12!
+services: mssql2016
+build_script:
+- cmd: dotnet build -c Release
+- cmd: dotnet pack -c Release --include-symbols --include-source
+test_script:
+- cmd: dotnet test test/ProgressOnderwijsUtils.Tests -c Release
+- cmd: dotnet test test/ProgressOnderwijsUtils.Drawing.Tests -c Release
+artifacts:
+- path: '**\*.nupkg'
+deploy:
+- provider: NuGet
+  api_key:
+    secure: nwr/prYsgoobJb8qyUG6A/H66kCE17gb2r/jSLA9sJTZOLCbFO8TC0aI5kGrvI0r
+  skip_symbols: true
+  on:
+    branch: master

@@ -1,6 +1,7 @@
-﻿using System.Linq;
-using System;
+﻿using System;
 using System.Data.SqlClient;
+using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -22,6 +23,7 @@ namespace ProgressOnderwijsUtils
             DstIndex = dstIndex;
         }
 
+        [NotNull]
         public static FieldMapping[] VerifyAndCreate(
             IColumnDefinition[] srcFields,
             string srcSetDebugName,
@@ -70,7 +72,7 @@ namespace ProgressOnderwijsUtils
             return srcFieldsByName.Values.Select(srcCol => new FieldMapping(srcCol.Def, srcCol.Index, dstFieldsByName[srcCol.Def.Name].Index)).ToArray();
         }
 
-        public static void ApplyFieldMappingsToBulkCopy(FieldMapping[] mapping, SqlBulkCopy bulkCopy)
+        public static void ApplyFieldMappingsToBulkCopy([NotNull] FieldMapping[] mapping, [NotNull] SqlBulkCopy bulkCopy)
         {
             bulkCopy.ColumnMappings.Clear();
             foreach (var mapEntry in mapping) {

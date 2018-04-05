@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -7,13 +8,13 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Looks for the matching character for an html entity.  Also finds xml entities; e.g. "lt", "gt" and "amp"
         /// </summary>
-        /// <param name="entity">an entity reference without the preceding '&' and terminating ';'</param>
+        /// <param name="entity">an entity reference without the preceding '&amp;' and terminating ';'</param>
         /// <returns>the character corresponding to the entity, or null if no such entity is defined in HTML</returns>
-        public static char? Lookup(string entity) => lookup.GetOrDefaultR(entity, default(char?));
+        public static char? Lookup([NotNull] string entity) => lookup.GetOrDefaultR(entity, default(char?));
 
         /// <summary>
         /// All known HTML entities.  Includes xml entities; e.g. "lt", "gt" and "amp".
-        /// The key is the entity name without preceding '&' and terminating ';'.
+        /// The key is the entity name without preceding '&amp;' and terminating ';'.
         /// </summary>
         static readonly IReadOnlyDictionary<string, char> lookup = new Dictionary<string, char> {
             { @"Aacute", (char)0x00C1 },

@@ -6,7 +6,8 @@ namespace ProgressOnderwijsUtils
 {
     public static class GetResourceExtensions
     {
+        [CanBeNull]
         [Pure]
-        public static Stream GetResource(this Type type, string filename) => type.Assembly.GetManifestResourceStream(type, filename);
+        public static Stream GetResource([NotNull] this Type type, string filename) => type.Assembly.GetManifestResourceStream(type, filename);
     }
 }

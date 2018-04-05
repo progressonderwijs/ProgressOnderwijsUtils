@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 
@@ -16,7 +15,6 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsHtmlElement => Content is IHtmlTag;
         public bool IsCollectionOfFragments => Content is HtmlFragment[];
         public bool IsEmpty => Content == null;
-
         HtmlFragment(object content) => Content = content;
 
         [Pure]
@@ -32,7 +30,7 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes) => HtmlElement(new CustomHtmlElement(tagName, attributes, childNodes));
 
         [Pure]
-        public static HtmlFragment Fragment(params HtmlFragment[] htmlEls)
+        public static HtmlFragment Fragment([CanBeNull] params HtmlFragment[] htmlEls)
             => htmlEls == null || htmlEls.Length == 0
                 ? Empty
                 : htmlEls.Length == 1
@@ -40,7 +38,7 @@ namespace ProgressOnderwijsUtils.Html
                     : new HtmlFragment(htmlEls);
 
         [Pure]
-        public static HtmlFragment Fragment<T>(IEnumerable<T> htmlEls)
+        public static HtmlFragment Fragment<T>([NotNull] IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
             => Fragment(htmlEls.Select(el => el.AsFragment()).Where(f => !f.IsEmpty).ToArray());
 

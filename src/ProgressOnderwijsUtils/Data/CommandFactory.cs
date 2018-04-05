@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -39,6 +40,14 @@ namespace ProgressOnderwijsUtils
                 Command = null;
             }
         }
+
+        [NotNull]
+        public ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments(Exception e, string exceptionMessage)
+        {
+            var debugFriendlyCommandText = SqlCommandDebugStringifier.DebugFriendlyCommandText(Command, SqlTracerAgumentInclusion.IncludingArgumentValues);
+            var parameterizedSqlExecutionException = new ParameterizedSqlExecutionException(exceptionMessage + "\n\nCOMMAND TIMEOUT: " + Command.CommandTimeout + " s\n\nQUERY:\n\n" + debugFriendlyCommandText, e);
+            return parameterizedSqlExecutionException;
+        }
     }
 
     /// <summary>
@@ -50,7 +59,7 @@ namespace ProgressOnderwijsUtils
 
         static Dictionary<object, string> GetLookup()
         {
-            if (nameLookupBag.TryDequeue(out Dictionary<object, string> lookup)) {
+            if (nameLookupBag.TryDequeue(out var lookup)) {
                 return lookup;
             }
             return new Dictionary<object, string>(8);
@@ -70,7 +79,7 @@ namespace ProgressOnderwijsUtils
                     lookup = GetLookup()
                 };
 
-        public ReusableCommand FinishBuilding(SqlCommandCreationContext conn)
+        public ReusableCommand FinishBuilding([NotNull] SqlCommandCreationContext conn)
         {
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);
             command.Connection = conn.Connection;
@@ -94,6 +103,7 @@ namespace ProgressOnderwijsUtils
             return new ReusableCommand { Command = command, QueryTimer = timer };
         }
 
+        [NotNull]
         public string FinishBuilding_CommandTextOnly()
         {
             FreeParamsAndLookup();
@@ -115,9 +125,10 @@ namespace ProgressOnderwijsUtils
         static readonly string[] CachedParameterNames =
             Enumerable.Range(0, ParameterNameCacheSize).Select(IndexToParameterName).ToArray();
 
+        [NotNull]
         public static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
 
-        public string RegisterParameterAndGetName<T>(T o)
+        public string RegisterParameterAndGetName<T>([NotNull] T o)
             where T : IQueryParameter
         {
             if (!lookup.TryGetValue(o.EquatableValue, out var paramName)) {
@@ -144,7 +155,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public void AppendSql(string sql, int startIndex, int length) => queryText.AppendText(sql, startIndex, length);
+        public void AppendSql([NotNull] string sql, int startIndex, int length) => queryText.AppendText(sql, startIndex, length);
     }
 
     /// <summary>
@@ -156,9 +167,9 @@ namespace ProgressOnderwijsUtils
         int queryLen;
         public static FastShortStringBuilder Create() => new FastShortStringBuilder { charBuffer = PooledExponentialBufferAllocator<char>.GetByLength(4096) };
         public static FastShortStringBuilder Create(uint length) => new FastShortStringBuilder { charBuffer = PooledExponentialBufferAllocator<char>.GetByLength(length) };
-        public void AppendText(string text) => AppendText(text, 0, text.Length);
+        public void AppendText([NotNull] string text) => AppendText(text, 0, text.Length);
 
-        public void AppendText(string text, int startIndex, int length)
+        public void AppendText([NotNull] string text, int startIndex, int length)
         {
             if (charBuffer.Length < queryLen + length) {
                 var newLen = (uint)Math.Max(charBuffer.Length * 2, queryLen + length);
@@ -180,6 +191,7 @@ namespace ProgressOnderwijsUtils
             charBuffer = null;
         }
 
+        [NotNull]
         public string FinishBuilding()
         {
             var str = new string(charBuffer, 0, queryLen);
@@ -192,10 +204,14 @@ namespace ProgressOnderwijsUtils
     struct DebugCommandFactory : ICommandFactory
     {
         FastShortStringBuilder debugText;
-        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter => SqlCommandTracer.InsecureSqlDebugString(o.EquatableValue, true);
-        public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
-        public static string DebugTextFor(ISqlComponent impl)
+        [NotNull]
+        public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter => SqlCommandDebugStringifier.InsecureSqlDebugString(o.EquatableValue, true);
+
+        public void AppendSql([NotNull] string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
+
+        [NotNull]
+        public static string DebugTextFor([CanBeNull] ISqlComponent impl)
         {
             var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create() };
             impl?.AppendTo(ref factory);
@@ -209,15 +225,16 @@ namespace ProgressOnderwijsUtils
         int argOffset;
         FastArrayBuilder<object> paramValues;
 
-        public string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter
+        [NotNull]
+        public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter
         {
             paramValues.Add(o.EquatableValue);
             return CommandFactory.IndexToParameterName(argOffset++);
         }
 
-        public void AppendSql(string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
+        public void AppendSql([NotNull] string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
-        public static ParameterizedSqlEquatableKey EqualityKey(ISqlComponent impl)
+        public static ParameterizedSqlEquatableKey EqualityKey([CanBeNull] ISqlComponent impl)
         {
             var factory = new EqualityKeyCommandFactory {
                 debugText = FastShortStringBuilder.Create(),

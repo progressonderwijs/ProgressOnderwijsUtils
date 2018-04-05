@@ -7,23 +7,24 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using static ProgressOnderwijsUtils.SafeSql;
 
+// ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
-    [UsedImplicitly(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.WithMembers)]
     public interface IMetaObject { }
 
     public static class MetaObject
     {
         [Pure]
-        public static IMetaPropCache<IMetaProperty> GetMetaProperties(this IMetaObject metaobj) => GetCache(metaobj.GetType());
+        public static IMetaPropCache<IMetaProperty> GetMetaProperties([NotNull] this IMetaObject metaobj) => GetCache(metaobj.GetType());
 
         // ReSharper disable once UnusedParameter.Global
         [Pure]
         public static MetaInfo<T> GetMetaProperties<T>() where T : IMetaObject => MetaInfo<T>.Instance;
 
+        [NotNull]
         [Pure]
         [CodeThatsOnlyUsedForTests]
-        public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>(Expression<Func<TMetaObject, T>> propertyExpression)
+        public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>([NotNull] Expression<Func<TMetaObject, T>> propertyExpression)
             where TMetaObject : IMetaObject
         {
             return MetaInfo<TMetaObject>.Instance.GetByExpression(propertyExpression);
@@ -34,7 +35,7 @@ namespace ProgressOnderwijsUtils
         {
             [UsefulToKeep("library method for getting base-class metaproperty")]
             [Pure]
-            public static IReadonlyMetaProperty<TMetaObject> Get<TParent, T>(Expression<Func<TParent, T>> propertyExpression)
+            public static IReadonlyMetaProperty<TMetaObject> Get<TParent, T>([NotNull] Expression<Func<TParent, T>> propertyExpression)
             {
                 var memberInfo = GetMemberInfo(propertyExpression);
                 if (typeof(TParent).IsClass || typeof(TParent) == typeof(TMetaObject)) {
@@ -63,8 +64,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [NotNull]
         [Pure]
-        public static MemberInfo GetMemberInfo<TObject, TProperty>(Expression<Func<TObject, TProperty>> property)
+        public static MemberInfo GetMemberInfo<TObject, TProperty>([NotNull] Expression<Func<TObject, TProperty>> property)
         {
             var bodyExpr = property.Body;
 
@@ -122,7 +124,7 @@ namespace ProgressOnderwijsUtils
         static IMetaPropCache<IMetaProperty> GetCache(Type t) => (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
 
         [Pure]
-        public static ParameterizedSql SqlColumnName(this IMetaProperty mp)
+        public static ParameterizedSql SqlColumnName([NotNull] this IMetaProperty mp)
         {
             return SQL($@"[{ParameterizedSql.CreateDynamic(mp.Name)}]");
         }

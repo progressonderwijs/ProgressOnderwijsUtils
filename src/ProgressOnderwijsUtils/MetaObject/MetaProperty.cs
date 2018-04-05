@@ -5,7 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 
+// ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
     public interface IMetaProperty : IColumnDefinition
@@ -39,7 +41,10 @@ namespace ProgressOnderwijsUtils
             public string Name { get; }
             public IReadOnlyList<object> CustomAttributes { get; }
             public int Index { get; }
+
+            [NotNull]
             public Type DataType => PropertyInfo.PropertyType;
+
             public PropertyInfo PropertyInfo { get; }
             public bool CanRead => getterMethod != null;
             public bool CanWrite => setterMethod != null;
@@ -49,6 +54,7 @@ namespace ProgressOnderwijsUtils
             public Setter<TOwner> Setter => setter ?? (setter = MkSetter(setterMethod, PropertyInfo.PropertyType));
             Func<object, object> untypedGetter;
 
+            [CanBeNull]
             public Func<object, object> UntypedGetter
             {
                 get {
@@ -67,9 +73,10 @@ namespace ProgressOnderwijsUtils
                 return typedObj;
             }
 
+            [NotNull]
             public Expression PropertyAccessExpression(Expression paramExpr) => Expression.Property(paramExpr, PropertyInfo);
 
-            public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
+            public Impl([NotNull] PropertyInfo pi, int implicitOrder, [NotNull] object[] attrs)
             {
                 PropertyInfo = pi;
                 Name = pi.Name;
@@ -87,7 +94,7 @@ namespace ProgressOnderwijsUtils
 
             public override string ToString() => typeof(TOwner).ToCSharpFriendlyTypeName() + "." + Name;
 
-            static Setter<TOwner> MkSetter(MethodInfo setterMethod, Type propertyType)
+            static Setter<TOwner> MkSetter([CanBeNull] MethodInfo setterMethod, Type propertyType)
             {
                 if (setterMethod == null) {
                     return null;
@@ -109,7 +116,7 @@ namespace ProgressOnderwijsUtils
                 //		).Compile();
             }
 
-            static Func<TOwner, object> MkGetter(MethodInfo getterMethod, Type propertyType)
+            static Func<TOwner, object> MkGetter([CanBeNull] MethodInfo getterMethod, Type propertyType)
             {
                 //TODO:optimize: this is still a hotspot :-(
                 if (getterMethod == null) {
@@ -133,7 +140,8 @@ namespace ProgressOnderwijsUtils
             readonly MethodInfo getterMethod;
         }
 
-        static T MkDelegate<T>(MethodInfo mi)
+        [NotNull]
+        static T MkDelegate<T>([NotNull] MethodInfo mi)
         {
             return (T)(object)Delegate.CreateDelegate(typeof(T), mi);
         }
@@ -152,25 +160,29 @@ namespace ProgressOnderwijsUtils
 
         class OutCaster<TOut> : IOutCaster
         {
-            public Func<TObj, object> GetterBoxed<TObj>(MethodInfo method)
+            [NotNull]
+            public Func<TObj, object> GetterBoxed<TObj>([NotNull] MethodInfo method)
             {
                 var f = MkDelegate<Func<TObj, TOut>>(method);
                 return o => f(o);
             }
 
-            public Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method)
+            [NotNull]
+            public Func<TObj, object> StructGetterBoxed<TObj>([NotNull] MethodInfo method)
             {
                 var f = MkDelegate<StructGetterDel<TObj, TOut>>(method);
                 return o => f(ref o);
             }
 
-            public Setter<TObj> SetterChecked<TObj>(MethodInfo method)
+            [NotNull]
+            public Setter<TObj> SetterChecked<TObj>([NotNull] MethodInfo method)
             {
                 var f = MkDelegate<Action<TObj, TOut>>(method);
                 return (ref TObj o, object v) => f(o, (TOut)v);
             }
 
-            public Setter<TObj> StructSetterChecked<TObj>(MethodInfo method)
+            [NotNull]
+            public Setter<TObj> StructSetterChecked<TObj>([NotNull] MethodInfo method)
             {
                 var f = MkDelegate<StructSetterDel<TObj, TOut>>(method);
                 return (ref TObj o, object v) => f(ref o, (TOut)v);
@@ -180,7 +192,7 @@ namespace ProgressOnderwijsUtils
         static readonly OutCaster<object> outCasterObject = new OutCaster<object>();
         static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new ConcurrentDictionary<Type, IOutCaster>();
 
-        static IOutCaster GetCaster(Type propType)
+        static IOutCaster GetCaster([NotNull] Type propType)
         {
             return CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
         }

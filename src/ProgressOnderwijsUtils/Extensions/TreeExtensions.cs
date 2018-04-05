@@ -7,13 +7,14 @@ namespace ProgressOnderwijsUtils
     public static class TreeExtensions
     {
         [Pure]
-        public static RootedTree<T> RootHere<T>(this Tree<T> tree)
+        public static RootedTree<T> RootHere<T>([NotNull] this Tree<T> tree)
         {
             return RootedTree<T>.RootTree(tree);
         }
 
+        [ItemNotNull]
         [Pure]
-        public static IEnumerable<T> PreorderTraversal<T>(this T tree) where T : IRecursiveStructure<T>
+        public static IEnumerable<T> PreorderTraversal<T>([NotNull] this T tree) where T : IRecursiveStructure<T>
         {
             yield return tree;
 
@@ -26,7 +27,9 @@ namespace ProgressOnderwijsUtils
                     var children = todo.Peek();
                     if (children.MoveNext()) {
                         var currentNode = children.Current;
+                        // ReSharper disable once AssignNullToNotNullAttribute (todo only contains enumerators containing non-null trees; see IRecursiveStructure.Children)
                         yield return currentNode;
+                        // ReSharper disable once PossibleNullReferenceException (todo only contains enumerators containing non-null trees)
                         todo.Push(currentNode.Children.GetEnumerator());
                     } else {
                         children.Dispose();

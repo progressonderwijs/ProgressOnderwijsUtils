@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -21,6 +22,8 @@ namespace ProgressOnderwijsUtils
         public TimeSpan CpuTime() => currentProcess.TotalProcessorTime - start;
 
         public TimeSpan WallClockTime() => wallclock.Elapsed;
+
+        [NotNull]
         public static ProcessCpuTimer StartNew() => new ProcessCpuTimer();
     }
 }

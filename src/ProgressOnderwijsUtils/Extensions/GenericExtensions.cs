@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
         /// Vandaag.In(weekdays.thursday,weekdays.friday); //false
         /// </remarks>
         [Pure]
-        public static bool In<T>(this T obj, params T[] values)
+        public static bool In<T>(this T obj, [NotNull] params T[] values)
             where T : struct, IConvertible, IComparable
         {
             return values.Contains(obj);
@@ -67,11 +67,11 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static bool In(this string obj, params string[] values) => values.Contains(obj);
+        public static bool In(this string obj, [NotNull] params string[] values) => values.Contains(obj);
 
         [UsefulToKeep("overload")]
         [Pure]
-        public static bool In<T>(this T? obj, params T?[] values)
+        public static bool In<T>(this T? obj, [NotNull] params T?[] values)
             where T : struct, IConvertible, IComparable
         {
             return values.Contains(obj);

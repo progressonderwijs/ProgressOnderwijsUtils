@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -63,7 +64,8 @@ namespace ProgressOnderwijsUtils
             RegexOptions.Compiled
             );
 
-        static ISqlErrorParseResult TryParseKeyConstraintViolation(SqlError error)
+        [CanBeNull]
+        static ISqlErrorParseResult TryParseKeyConstraintViolation([NotNull] SqlError error)
         {
             var match = keyConstraintViolationRegex.Match(error.Message);
             if (match.Success) {
@@ -77,7 +79,8 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        static ISqlErrorParseResult TryParseDuplicateKeyUniqueIndex(SqlError error)
+        [CanBeNull]
+        static ISqlErrorParseResult TryParseDuplicateKeyUniqueIndex([NotNull] SqlError error)
         {
             var match = duplicateKeyUniqueIndexRegex.Match(error.Message);
             if (match.Success) {
@@ -90,7 +93,8 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        static ISqlErrorParseResult TryParseCannotInsertNull(SqlError error)
+        [CanBeNull]
+        static ISqlErrorParseResult TryParseCannotInsertNull([NotNull] SqlError error)
         {
             var match = cannotInsertNullRegex.Match(error.Message);
             if (match.Success) {
@@ -103,7 +107,8 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        static ISqlErrorParseResult TryParseGenericConstraintViolation(SqlError error)
+        [CanBeNull]
+        static ISqlErrorParseResult TryParseGenericConstraintViolation([NotNull] SqlError error)
         {
             var match = genericConstraintViolationRegex.Match(error.Message);
             if (match.Success) {
@@ -116,7 +121,8 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        public static ISqlErrorParseResult Parse(SqlError error)
+        [CanBeNull]
+        public static ISqlErrorParseResult Parse([NotNull] SqlError error)
             => TryParseKeyConstraintViolation(error)
                 ?? TryParseDuplicateKeyUniqueIndex(error)
                     ?? TryParseCannotInsertNull(error)

@@ -1,8 +1,10 @@
-﻿namespace ProgressOnderwijsUtils
+﻿using JetBrains.Annotations;
+
+namespace ProgressOnderwijsUtils
 {
     public static class HashCodeHelper
     {
-        public static int ComputeHash(params object[] obj)
+        public static int ComputeHash([NotNull] params object[] obj)
         {
             ulong res = 0;
             for (uint i = 0; i < obj.Length; i++) {

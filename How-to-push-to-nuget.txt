@@ -1,0 +1,14 @@
+﻿- Update the version number in the project file
+- AppVeyor is configured to deploy to NuGet when master is pushed. If you need to deploy manually instead:
+    - open the library directory (e.g from package manager console: cd src/ProgressOnderwijsUtils)
+    - Run:
+        dotnet clean
+        dotnet pack -c release --include-symbols --include-source
+        dotnet nuget push -s https://www.nuget.org/api/v2/package .\bin\Release\ProgressOnderwijsUtils.<version>.nupkg 
+
+ Nuget will complain if anything is wrong.  In particular: you may need to set the api-key, and you cannot overwrite existing versions.
+
+The API key can be found in Deplyment.kdbx > Overig > MSDN > View Entry > Advanced > NuGet API Key.
+To set it, run:
+nuget set-api-key xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+

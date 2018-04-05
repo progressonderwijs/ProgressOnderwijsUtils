@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using ProgressOnderwijsUtils;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
@@ -14,6 +14,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             this.md = md;
         }
 
+        [NotNull]
         public IEnumerable<string> GetEntities()
         {
             return (

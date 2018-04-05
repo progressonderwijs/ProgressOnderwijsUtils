@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Html
     public static class HtmlTagHelpers
     {
         [Pure]
-        public static THtmlTag Attributes<THtmlTag>(this THtmlTag htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
+        public static THtmlTag Attributes<THtmlTag>(this THtmlTag htmlTagExpr, [NotNull] IEnumerable<HtmlAttribute> attributes)
             where THtmlTag : struct, IHtmlTag<THtmlTag>
         {
             foreach (var attribute in attributes) {
@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public static THtmlTag Contents<THtmlTag, TContent>(this THtmlTag htmlTagExpr, IEnumerable<TContent> contents)
+        public static THtmlTag Contents<THtmlTag, TContent>(this THtmlTag htmlTagExpr, [NotNull] IEnumerable<TContent> contents)
             where THtmlTag : struct, IHtmlTagAllowingContent<THtmlTag>
             where TContent : IConvertibleToFragment
             => htmlTagExpr.Content(contents.Select(el => el.AsFragment()).ToArray());
@@ -48,20 +48,20 @@ namespace ProgressOnderwijsUtils.Html
             => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
         [Pure]
-        public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, string attrName, string attrValue)
+        public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, string attrName, [CanBeNull] string attrValue)
             where THtmlTag : struct, IHtmlTag<THtmlTag>
             => attrValue == null ? htmlTagExpr : htmlTagExpr.WithAttributes(htmlTagExpr.Attributes.Add(attrName, attrValue));
 
         [Pure]
-        public static HtmlFragment WrapInHtmlFragment<T>(this IEnumerable<T> htmlEls)
+        public static HtmlFragment WrapInHtmlFragment<T>([NotNull] this IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
-            => HtmlFragment.Fragment(htmlEls.Select(el => el.AsFragment()).Where(frag=>!frag.IsEmpty).ToArray());
+            => HtmlFragment.Fragment(htmlEls.Select(el => el.AsFragment()).Where(frag => !frag.IsEmpty).ToArray());
 
         public static HtmlFragment EmptyIfNull<TContent>(this TContent? htmlFragmentOrNull)
             where TContent : struct, IConvertibleToFragment
             => htmlFragmentOrNull?.AsFragment() ?? HtmlFragment.Empty;
 
-        public static HtmlFragment JoinHtml<TFragments>(this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
+        public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
             where TFragments : IConvertibleToFragment
         {
             using (var enumerator = htmlEls.GetEnumerator()) {
@@ -70,21 +70,24 @@ namespace ProgressOnderwijsUtils.Html
                 }
                 var retval = FastArrayBuilder<HtmlFragment>.Create();
                 var joinerIsNonEmpty = !joiner.IsEmpty;
+                // ReSharper disable once PossibleNullReferenceException
                 var firstNode = enumerator.Current.AsFragment();
                 retval.Add(firstNode);
                 while (enumerator.MoveNext()) {
                     if (joinerIsNonEmpty) {
                         retval.Add(joiner);
                     }
+                    // ReSharper disable once PossibleNullReferenceException
                     retval.Add(enumerator.Current.AsFragment());
                 }
                 return HtmlFragment.Fragment(retval.ToArray());
             }
         }
 
+        [NotNull]
         public static HtmlFragment[] Children(this IHtmlTag element) => (element as IHtmlTagAllowingContent)?.Contents ?? Array.Empty<HtmlFragment>();
 
-        public static HtmlAttributes ToHtmlAttributes(this IEnumerable<HtmlAttribute> attributes)
+        public static HtmlAttributes ToHtmlAttributes([NotNull] this IEnumerable<HtmlAttribute> attributes)
             => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
     }
 }

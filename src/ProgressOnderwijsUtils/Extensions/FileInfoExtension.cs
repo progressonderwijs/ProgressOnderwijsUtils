@@ -7,9 +7,10 @@ namespace ProgressOnderwijsUtils
     [CodeThatsOnlyUsedForTests]
     public static class FileInfoExtension
     {
+        [NotNull]
         [Pure]
         [CodeThatsOnlyUsedForTests]
-        public static string ReadToEnd(this FileInfo file)
+        public static string ReadToEnd([NotNull] this FileInfo file)
         {
             using (var reader = file.OpenText())
                 return reader.ReadToEnd();
@@ -20,7 +21,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [Pure]
         [CodeThatsOnlyUsedForTests]
-        public static bool SameContents(this FileInfo one, FileInfo other)
+        public static bool SameContents([NotNull] this FileInfo one, [NotNull] FileInfo other)
         {
             if (other == null) {
                 throw new ArgumentNullException(nameof(other));

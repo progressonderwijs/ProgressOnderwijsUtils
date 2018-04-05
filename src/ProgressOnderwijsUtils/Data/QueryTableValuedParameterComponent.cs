@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System;
+using System.Linq;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -19,6 +20,8 @@ namespace ProgressOnderwijsUtils
         readonly IEnumerable<TIn> values;
         readonly Func<IEnumerable<TIn>, TOut[]> projection;
         int cachedProjectedLength;
+
+        [NotNull]
         public object EquatableValue => Tuple.Create(values, DbTypeName);
 
         internal QueryTableValuedParameterComponent(string dbTypeName, IEnumerable<TIn> values, Func<IEnumerable<TIn>, TOut[]> projection)

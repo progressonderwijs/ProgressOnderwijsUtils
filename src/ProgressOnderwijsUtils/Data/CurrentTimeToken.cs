@@ -1,4 +1,5 @@
 using System;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -7,7 +8,7 @@ namespace ProgressOnderwijsUtils
         CurrentTimeToken() { }
         public static readonly CurrentTimeToken Instance = new CurrentTimeToken();
 
-        public static CurrentTimeToken Parse(string s)
+        public static CurrentTimeToken Parse([NotNull] string s)
         {
             if (s != "") {
                 throw new ArgumentException("Can only parse empty string as current time token!");

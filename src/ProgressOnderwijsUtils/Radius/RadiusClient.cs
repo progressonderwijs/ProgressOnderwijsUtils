@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography;
+using JetBrains.Annotations;
 
 //see http://tools.ietf.org/html/rfc2138 or http://en.wikipedia.org/wiki/RADIUS
 //really basic idea: each packet is 1 byte code, 1 byte "identifier" (random sequence number),
@@ -40,14 +41,15 @@ namespace ProgressOnderwijsUtils.Radius
     public static class RadiusClient
     {
         //Utility function to make working with RNGCryptoServiceProvider easier
-        public static byte[] NextBytes(this RNGCryptoServiceProvider secureRandom, int byteCount)
+        [NotNull]
+        public static byte[] NextBytes([NotNull] this RNGCryptoServiceProvider secureRandom, int byteCount)
         {
             var data = new byte[byteCount];
             secureRandom.GetBytes(data);
             return data;
         }
 
-        public static byte NextByte(this RNGCryptoServiceProvider secureRandom)
+        public static byte NextByte([NotNull] this RNGCryptoServiceProvider secureRandom)
         {
             var data = new byte[1];
             secureRandom.GetBytes(data);
@@ -59,7 +61,7 @@ namespace ProgressOnderwijsUtils.Radius
         const int udpTimeoutMs = 1000;
 
         //see http://tools.ietf.org/html/rfc2138
-        public static RadiusAuthResults Authenticate(string serverHostname, byte[] sharedSecret, byte[] username, byte[] password, params RadiusAttribute[] extraAttributes)
+        public static RadiusAuthResults Authenticate(string serverHostname, [NotNull] byte[] sharedSecret, byte[] username, [NotNull] byte[] password, [NotNull] params RadiusAttribute[] extraAttributes)
         {
             byte requestCode = 1; //means "Access-Request"
             var secureRandom = new RNGCryptoServiceProvider();
@@ -103,7 +105,8 @@ namespace ProgressOnderwijsUtils.Radius
             }
         }
 
-        static byte[] AuthNetworkHelper(string serverHostname, byte[] request)
+        [NotNull]
+        static byte[] AuthNetworkHelper([NotNull] string serverHostname, [NotNull] byte[] request)
         {
             using (var udpClient = new UdpClient()) {
                 udpClient.Client.SendTimeout = udpTimeoutMs;
@@ -120,7 +123,7 @@ namespace ProgressOnderwijsUtils.Radius
             }
         }
 
-        static RadiusAuthResults ProcessServerResponse(byte[] response, byte requestIdentifier, byte[] requestAuthenticator, byte[] sharedSecret)
+        static RadiusAuthResults ProcessServerResponse([NotNull] byte[] response, byte requestIdentifier, byte[] requestAuthenticator, byte[] sharedSecret)
         {
             // Checking the minimum paket length of 20 bytes
             if (response.Length < 20) {
@@ -136,7 +139,7 @@ namespace ProgressOnderwijsUtils.Radius
 
             // Checking the length field of the paket. This value must be equal to the byteArray length
             // "receivedBytes.Length"
-            var responseLen = ((int)response[2] << 8) + (int)response[3];
+            var responseLen = (response[2] << 8) + response[3];
             if (responseLen != response.Length) {
                 return RadiusAuthResults.ServiceErrorPacketMalformed; //error
             }
@@ -169,7 +172,8 @@ namespace ProgressOnderwijsUtils.Radius
             }
         }
 
-        public static byte[] HashPapPassword(byte[] password, byte[] sharedSecret, byte[] requestAuthenticator)
+        [NotNull]
+        public static byte[] HashPapPassword([NotNull] byte[] password, [NotNull] byte[] sharedSecret, [NotNull] byte[] requestAuthenticator)
         {
             using (var md5 = new MD5CryptoServiceProvider()) {
                 //Hashed password in generated in 16-byte chunks; for each 16-bytes an "unguessable" pad is generated which 
@@ -186,7 +190,7 @@ namespace ProgressOnderwijsUtils.Radius
                 for (var j = 0; j < nHashRounds; j++) {
                     for (var i = 0; i < 16; i++) {
                         var pos = j * 16 + i;
-                        var pp = pos < password.Length ? (byte)password[pos] : (byte)0;
+                        var pp = pos < password.Length ? password[pos] : (byte)0;
                         Result[pos] = (byte)(pMD5Sum[i] ^ pp);
                     }
 

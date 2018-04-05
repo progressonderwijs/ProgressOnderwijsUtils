@@ -16,7 +16,10 @@ namespace ProgressOnderwijsUtils
         readonly SortDirection direction;
         public string ColumnName => column;
         public SortDirection SortDirection => direction;
+
+        [NotNull]
         public string SqlSortString() => column + " " + direction;
+
         public override string ToString() => "[" + column + " " + direction + "]";
 
         public ColumnSort(string column, SortDirection direction)
@@ -39,13 +42,13 @@ namespace ProgressOnderwijsUtils
         public bool Equals(ColumnSort other)
             =>
                 string.Equals(ColumnName, other.ColumnName, StringComparison.OrdinalIgnoreCase) &&
-                SortDirection == other.SortDirection;
+                    SortDirection == other.SortDirection;
 
         [Pure]
-        public override bool Equals(object obj) => obj is ColumnSort && Equals((ColumnSort) obj);
+        public override bool Equals(object obj) => obj is ColumnSort && Equals((ColumnSort)obj);
 
         [Pure]
-        public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int) direction;
+        public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int)direction;
 
         [Pure]
         public static bool operator ==(ColumnSort a, ColumnSort b)

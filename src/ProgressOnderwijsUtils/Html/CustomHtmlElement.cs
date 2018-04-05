@@ -4,7 +4,7 @@ namespace ProgressOnderwijsUtils.Html
 {
     public struct CustomHtmlElement : IHtmlTagAllowingContent<CustomHtmlElement>
     {
-        public CustomHtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
+        public CustomHtmlElement(string tagName, [CanBeNull] HtmlAttribute[] attributes, [CanBeNull] HtmlFragment[] childNodes)
             : this(tagName,
                 attributes == null || attributes.Length == 0 ? HtmlAttributes.Empty : HtmlAttributes.FromArray(attributes),
                 childNodes == null || childNodes.Length == 0 ? null : childNodes) { }
@@ -30,7 +30,10 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public HtmlFragment AsFragment() => this;
 
+        [NotNull]
         string IHtmlTag.TagStart => "<" + TagName;
+
+        [NotNull]
         string IHtmlTag.EndTag => Contents != null || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
 
         /// <summary>
@@ -44,7 +47,9 @@ namespace ProgressOnderwijsUtils.Html
                 : HtmlTagAlterations.ReplaceAttributesAndContents(tagDescription.EmptyValue, Attributes, Contents);
         }
 
-        IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+        [NotNull]
+        IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>([NotNull] THtmlTagAlteration change) => change.ChangeWithContent(this);
+
         CustomHtmlElement IHtmlTag<CustomHtmlElement>.WithAttributes(HtmlAttributes replacementAttributes) => new CustomHtmlElement(TagName, replacementAttributes, Contents);
         CustomHtmlElement IHtmlTagAllowingContent<CustomHtmlElement>.WithContents(HtmlFragment[] replacementContents) => new CustomHtmlElement(TagName, Attributes, replacementContents);
     }

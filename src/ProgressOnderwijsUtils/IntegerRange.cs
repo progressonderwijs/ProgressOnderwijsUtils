@@ -44,8 +44,7 @@ namespace ProgressOnderwijsUtils
 
         public override bool Equals(object obj)
         {
-            var typed = obj as IntegerRange?;
-            return typed.HasValue && Equals(typed.Value);
+            return obj is IntegerRange typed && Equals(typed);
         }
     }
 }

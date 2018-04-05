@@ -40,9 +40,12 @@ namespace ProgressOnderwijsUtils
         public bool Equals(T other) => other != null && FieldwiseEquality<T>.Instance((T)this, other);
         public override bool Equals(object obj) => obj is T && Equals((T)obj);
         public override int GetHashCode() => FieldwiseHasher<T>.Instance((T)this);
+
+        [NotNull]
         public T Copy() => (T)MemberwiseClone();
 
-        public T CopyWith(Action<T> action)
+        [NotNull]
+        public T CopyWith([NotNull] Action<T> action)
         {
             var copied = Copy();
             action(copied);
@@ -61,7 +64,8 @@ namespace ProgressOnderwijsUtils
     {
         public static readonly Func<T, string> Func = byPublicMembers();
 
-        static MemberExpression MemberAccessExpression(Expression expr, MemberInfo mi)
+        [NotNull]
+        static MemberExpression MemberAccessExpression(Expression expr, [NotNull] MemberInfo mi)
         {
             return mi is FieldInfo ? Expression.Field(expr, (FieldInfo)mi) : Expression.Property(expr, (PropertyInfo)mi);
         }
@@ -69,6 +73,7 @@ namespace ProgressOnderwijsUtils
         [UsedImplicitly]
         static string ToString(object o) => ObjectToCode.ComplexObjectToPseudoCode(o);
 
+        [NotNull]
         static Func<T, string> byPublicMembers()
         {
             var concatMethod = ((Func<string[], string>)string.Concat).Method;
@@ -117,7 +122,8 @@ namespace ProgressOnderwijsUtils
             return Expression.Lambda<Func<T, string>>(toStringExpr, parA).Compile();
         }
 
-        static string FriendlyMemberName(MemberInfo fi)
+        [NotNull]
+        static string FriendlyMemberName([NotNull] MemberInfo fi)
         {
             bool isPublic;
             if (fi is FieldInfo) {

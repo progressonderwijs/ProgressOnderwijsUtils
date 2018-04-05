@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
@@ -30,6 +31,7 @@ namespace ProgressOnderwijsUtils.Html
                     StringComparer.OrdinalIgnoreCase
                 );
 
+        [NotNull]
         static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlTag emptyValue)
         {
             return typeof(AttributeConstructionMethods)
@@ -47,7 +49,7 @@ namespace ProgressOnderwijsUtils.Html
                     StringComparer.OrdinalIgnoreCase);
         }
 
-        public static TagDescription LookupTag(string tagName)
+        public static TagDescription LookupTag([NotNull] string tagName)
             =>
                 ByTagName.TryGetValue(tagName, out var desc)
                     ? desc

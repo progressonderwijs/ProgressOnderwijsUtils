@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Radius
 {
@@ -62,7 +63,10 @@ namespace ProgressOnderwijsUtils.Radius
     {
         public RadiusAttributeType AttributeType { get; }
         public byte[] AttributeValue { get; set; }
+
+        [NotNull]
         public byte[] Paket => new[] { (byte)(int)AttributeType, (byte)(AttributeValue.Length + 2) }.Concat(AttributeValue).ToArray();
+
         public int Length => AttributeValue.Length + 2;
 
         public RadiusAttribute(RadiusAttributeType Type, byte[] attributeValue)
@@ -74,6 +78,7 @@ namespace ProgressOnderwijsUtils.Radius
             }
         }
 
-        public static RadiusAttribute NASIPAddress(IPAddress addr) => new RadiusAttribute(RadiusAttributeType.NASIPAddress, addr.GetAddressBytes());
+        [NotNull]
+        public static RadiusAttribute NASIPAddress([NotNull] IPAddress addr) => new RadiusAttribute(RadiusAttributeType.NASIPAddress, addr.GetAddressBytes());
     }
 }

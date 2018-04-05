@@ -1,7 +1,10 @@
+using JetBrains.Annotations;
+
 namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlToTextContent
     {
+        [NotNull]
         public static string TextContent(this HtmlFragment fragment)
         {
             var fastStringBuilder = FastShortStringBuilder.Create();

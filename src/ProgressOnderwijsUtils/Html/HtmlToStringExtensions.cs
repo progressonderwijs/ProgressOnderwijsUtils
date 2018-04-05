@@ -1,13 +1,14 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlToStringExtensions
     {
-        public static string SerializeToString(this IConvertibleToFragment rootElem)
+        [NotNull]
+        public static string SerializeToString([NotNull] this IConvertibleToFragment rootElem)
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
@@ -15,16 +16,18 @@ namespace ProgressOnderwijsUtils.Html
             return fastStringBuilder.FinishBuilding();
         }
 
-        public static string ToCSharp(this IConvertibleToFragment rootElem) => rootElem.AsFragment().ToCSharp();
+        [NotNull]
+        public static string ToCSharp([NotNull] this IConvertibleToFragment rootElem) => rootElem.AsFragment().ToCSharp();
 
-        public static string SerializeToStringWithoutDoctype(this IConvertibleToFragment rootElem)
+        [NotNull]
+        public static string SerializeToStringWithoutDoctype([NotNull] this IConvertibleToFragment rootElem)
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
             AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
             return fastStringBuilder.FinishBuilding();
         }
 
-        public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, Encoding contentEncoding)
+        public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, [NotNull] Encoding contentEncoding)
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
@@ -65,7 +68,7 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
-        static void AppendTagContentAndEnd(ref FastShortStringBuilder stringBuilder, IHtmlTagAllowingContent htmlTagAllowingContent)
+        static void AppendTagContentAndEnd(ref FastShortStringBuilder stringBuilder, [NotNull] IHtmlTagAllowingContent htmlTagAllowingContent)
         {
             var contents = htmlTagAllowingContent.Contents ?? Array.Empty<HtmlFragment>();
             if (htmlTagAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlTagAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
@@ -119,7 +122,7 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
-        static void AppendEscapedText(ref FastShortStringBuilder stringBuilder, string stringContent)
+        static void AppendEscapedText(ref FastShortStringBuilder stringBuilder, [NotNull] string stringContent)
         {
             var uptoIndex = 0;
             for (var textIndex = 0; textIndex < stringContent.Length; textIndex++) {
@@ -146,7 +149,7 @@ namespace ProgressOnderwijsUtils.Html
             stringBuilder.AppendText(stringContent, uptoIndex, stringContent.Length - uptoIndex);
         }
 
-        static void AppendEscapedAttributeValue(ref FastShortStringBuilder stringBuilder, string attrValue)
+        static void AppendEscapedAttributeValue(ref FastShortStringBuilder stringBuilder, [NotNull] string attrValue)
         {
             var uptoIndex = 0;
             for (var textIndex = 0; textIndex < attrValue.Length; textIndex++) {

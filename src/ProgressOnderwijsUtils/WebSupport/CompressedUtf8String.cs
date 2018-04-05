@@ -1,12 +1,14 @@
 ﻿using System.IO;
 using System.IO.Compression;
 using System.Text;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.WebSupport
 {
     public sealed class CompressedUtf8String
     {
-        static byte[] ReadFully(Stream stream)
+        [NotNull]
+        static byte[] ReadFully([NotNull] Stream stream)
         {
             using (var ms = new MemoryStream()) {
                 stream.CopyTo(ms);
@@ -14,6 +16,7 @@ namespace ProgressOnderwijsUtils.WebSupport
             }
         }
 
+        [NotNull]
         public string StringData
         {
             get {
@@ -30,7 +33,7 @@ namespace ProgressOnderwijsUtils.WebSupport
             GzippedUtf8String = compressedData;
         }
 
-        public CompressedUtf8String(string stringData)
+        public CompressedUtf8String([NotNull] string stringData)
         {
             using (var compressedData = new MemoryStream()) {
                 var encodedData = Encoding.UTF8.GetBytes(stringData);

@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Reflection;
 using System.Threading;
+using JetBrains.Annotations;
 using log4net;
 
 namespace ProgressOnderwijsUtils.Log4Net
@@ -18,7 +19,7 @@ namespace ProgressOnderwijsUtils.Log4Net
 
         public static Lazy<ILog> For<T>() => LoggerCache<T>.Log;
 
-        public static Lazy<ILog> For(Type type)
+        public static Lazy<ILog> For([NotNull] Type type)
         {
             return dict.GetOrAdd(
                 type,

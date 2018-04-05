@@ -1,5 +1,6 @@
 using System;
 using System.Data.SqlClient;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -10,7 +11,9 @@ namespace ProgressOnderwijsUtils
         public int CommandTimeoutInS { get; }
         // ReSharper disable UnusedMember.Global
         // Handige generieke functionaliteit, maar niet altijd gebruikt
+        [NotNull]
         public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) => new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer);
+
         // ReSharper restore UnusedMember.Global
         public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, ISqlCommandTracer tracer)
         {
@@ -24,6 +27,7 @@ namespace ProgressOnderwijsUtils
             Connection.Dispose();
         }
 
+        [NotNull]
         public static implicit operator SqlCommandCreationContext(SqlConnection conn) => new SqlCommandCreationContext(conn, 0, null);
     }
 }

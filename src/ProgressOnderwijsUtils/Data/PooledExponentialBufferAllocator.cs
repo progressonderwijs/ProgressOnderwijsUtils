@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -9,6 +10,7 @@ namespace ProgressOnderwijsUtils
         static readonly int MaxArrayLength = 1 << MaxIndex;
         static readonly ConcurrentQueue<T[]>[] bagsByIndex = InitBags();
 
+        [NotNull]
         static ConcurrentQueue<T[]>[] InitBags()
         {
             var allBags = new ConcurrentQueue<T[]>[IndexCount];
@@ -41,7 +43,7 @@ namespace ProgressOnderwijsUtils
         /// It is inefficient to return "old" arrays into the pool; the most efficient usage is when the consumer only need needs few arrays simultaneously.
         /// Note that arrays are *NOT* cleared when they are returned to the pool; for reference types it may be advisable to clear the array to avoid unnecessary gc load.
         /// </summary>
-        public static void ReturnToPool(T[] arr)
+        public static void ReturnToPool([NotNull] T[] arr)
         {
             if (arr.Length > MaxArrayLength) {
                 return;

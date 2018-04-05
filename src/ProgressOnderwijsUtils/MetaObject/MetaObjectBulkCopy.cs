@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
+
+// ReSharper disable once CheckNamespace
 
 namespace ProgressOnderwijsUtils
 {
@@ -21,19 +25,20 @@ namespace ProgressOnderwijsUtils
         /// <param name="metaObjects">The list of entities to insert</param>
         /// <param name="sqlconn">The Sql connection to write to</param>
         /// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
-        public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlCommandCreationContext sqlconn, string tableName) where T : IMetaObject
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName) where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.UseInternalTransaction, null)) {
+            using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
                 bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
-                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn.Connection, tableName);
+                bulkCopy.WriteMetaObjectsToServerAsync(metaObjects, sqlconn, tableName, CancellationToken.None).Wait();
             }
         }
 
         /// <summary>
         /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
         /// </summary>
-        public static async Task WriteMetaObjectsToServerAsync<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName, CancellationToken cancellationToken) where T : IMetaObject
+        public static async Task WriteMetaObjectsToServerAsync<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName, CancellationToken cancellationToken) where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
+            var sqlconn = context.Connection;
             if (metaObjects == null) {
                 throw new ArgumentNullException(nameof(metaObjects));
             }
@@ -43,14 +48,11 @@ namespace ProgressOnderwijsUtils
             if (sqlconn.State != ConnectionState.Open) {
                 throw new InvalidOperationException("Cannot bulk copy into " + tableName + ": connection isn't open but " + sqlconn.State);
             }
-            if (tableName.Contains('[') || tableName.Contains(']')) {
-                throw new ArgumentException("Tablename may not contain '[' or ']': " + tableName, nameof(tableName));
-            }
             bulkCopy.DestinationTableName = tableName;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects)) {
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
-
+                var sw = Stopwatch.StartNew();
                 try {
                     await bulkCopy.WriteToServerAsync(objectReader, cancellationToken).ConfigureAwait(false);
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
@@ -70,25 +72,30 @@ namespace ProgressOnderwijsUtils
                     var sourceColumnName = mapping.Where(m => m.DstIndex == destinationColumnIndex).Select(m => m.SourceColumnDefinition.Name).FirstOrDefault();
                     var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + (sourceColumnName ?? "??unknown??");
                     throw new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
+                } finally {
+                    TraceBulkInsertDuration(context.Tracer, tableName, sw, objectReader.RowsProcessed);
                 }
             }
         }
 
-        public static void WriteMetaObjectsToServer<T>(this SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlConnection sqlconn, string tableName) where T : IMetaObject
+        static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, string tableName, Stopwatch sw, int rowsInserted)
         {
-            bulkCopy.WriteMetaObjectsToServerAsync(metaObjects, sqlconn, tableName, CancellationToken.None).Wait();
+            if (tracerOrNull?.IsTracing ?? false) {
+                tracerOrNull.RegisterEvent("Bulk inserted " + rowsInserted + " rows into " + tableName, sw.Elapsed);
+            }
         }
 
         static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
 
-        static int? ParseDestinationColumnIndexFromMessage(string message)
+        static int? ParseDestinationColumnIndexFromMessage([NotNull] string message)
         {
             //note: sql colid is 1-based!
             var match = colidMessageRegex.Match(message);
             return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
         }
 
-        static FieldMapping[] ApplyMetaObjectColumnMapping<T>(SqlBulkCopy bulkCopy, MetaObjectDataReader<T> objectReader, SqlConnection sqlconn, string tableName) where T : IMetaObject
+        [NotNull]
+        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, [NotNull] SqlConnection sqlconn, string tableName) where T : IMetaObject
         {
             var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
             var clrColumns = ColumnDefinition.GetFromReader(objectReader);

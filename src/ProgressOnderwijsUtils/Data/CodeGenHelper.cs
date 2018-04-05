@@ -3,6 +3,7 @@ using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -11,7 +12,8 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public static class CodeGenHelper
     {
-        public static string GetColumnProperty(ColumnDefinition col, Func<ColumnDefinition, string> colNameOverride = null)
+        [NotNull]
+        public static string GetColumnProperty([NotNull] ColumnDefinition col, [CanBeNull] Func<ColumnDefinition, string> colNameOverride = null)
         {
             Func<ColumnDefinition, string> friendlyTypeNameDefault = x => x.DataType.ToCSharpFriendlyTypeName();
             var friendlyTypeName = colNameOverride ?? friendlyTypeNameDefault;
@@ -20,13 +22,16 @@ namespace ProgressOnderwijsUtils
         }
 
         static readonly Regex newLine = new Regex("^(?!$)", RegexOptions.Multiline | RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture);
-        public static string Indent(string str, int indentCount = 1) => newLine.Replace(str, new string(' ', indentCount * 4));
+
+        [NotNull]
+        public static string Indent([NotNull] string str, int indentCount = 1) => newLine.Replace(str, new string(' ', indentCount * 4));
 
         /// <summary>
         ///     This method makes a "best effort" auto-generated metaobject class that can replace the current datatable.
         ///     It's not quite as accurate as GetMetaObjectClassDef on a QueryBuilder; use that in preference.
         /// </summary>
-        public static string DataTableToMetaObjectClassDef(this DataTable dt, string classNameOverride = null, Func<ColumnDefinition, string> colNameOverride = null)
+        [NotNull]
+        public static string DataTableToMetaObjectClassDef([NotNull] this DataTable dt, string classNameOverride = null, [CanBeNull] Func<ColumnDefinition, string> colNameOverride = null)
         {
             classNameOverride = classNameOverride ?? (string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName);
 

@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils.Collections
             return !a.Equals(b);
         }
 
-        public IEnumerable<SList<T>> NonEmpySuffixes
+        public IEnumerable<SList<T>> NonEmptySuffixes
         {
             get {
                 for (var current = this; !current.IsEmpty; current = current.Tail) {
@@ -120,7 +120,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> PrependReversed<T>(this SList<T> self, IEnumerable<T> items)
+        public static SList<T> PrependReversed<T>(this SList<T> self, [NotNull] IEnumerable<T> items)
         {
             var retval = self;
             foreach (var item in items) {
@@ -179,7 +179,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> Create<T>(IEnumerable<T> list)
+        public static SList<T> Create<T>([NotNull] IEnumerable<T> list)
         {
             if (list is IList<T>) {
                 return Create((IList<T>)list); //use IList interface for reverse iterability
@@ -189,7 +189,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> Create<T>(IList<T> list)
+        public static SList<T> Create<T>([NotNull] IList<T> list)
         {
             if (list is T[]) {
                 return Create((T[])list);
@@ -202,7 +202,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> Create<T>(T[] list)
+        public static SList<T> Create<T>([NotNull] T[] list)
         {
             var retval = default(SList<T>);
             for (var i = list.Length - 1; i >= 0; i--) {

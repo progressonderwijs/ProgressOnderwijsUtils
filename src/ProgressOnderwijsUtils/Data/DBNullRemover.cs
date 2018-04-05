@@ -40,7 +40,8 @@ namespace ProgressOnderwijsUtils
         {
             public static readonly Func<object, T> Extractor = GetExtractor(typeof(T));
 
-            static Func<object, T> GetExtractor(Type type)
+            [NotNull]
+            static Func<object, T> GetExtractor([NotNull] Type type)
             {
                 if (!type.IsValueType) {
                     return obj => obj == DBNull.Value ? default(T) : (T)obj;
@@ -56,7 +57,7 @@ namespace ProgressOnderwijsUtils
 
         static readonly MethodInfo extractNullableValueTypeMethod = typeof(DBNullRemover).GetMethod(nameof(ExtractNullableValueType), BindingFlags.Static | BindingFlags.NonPublic);
 
-        static TStruct? ExtractNullableValueType<TStruct>(object obj)
+        static TStruct? ExtractNullableValueType<TStruct>([CanBeNull] object obj)
             where TStruct : struct
             => obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj;
 
@@ -67,7 +68,7 @@ namespace ProgressOnderwijsUtils
             => genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });
 
         [Pure]
-        public static bool EqualsConvertingIntToEnum(object val1, object val2)
+        public static bool EqualsConvertingIntToEnum([CanBeNull] object val1, [CanBeNull] object val2)
         {
             if (val1 is Enum && val2 != null && !(val2 is Enum)) {
                 return Equals(val1, Enum.ToObject(val1.GetType(), val2));

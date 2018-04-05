@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -17,13 +18,16 @@ namespace ProgressOnderwijsUtils
         public Type DataType { get; }
         public string Name { get; }
 
-        public static ColumnDefinition Create(DataColumn col)
+        [NotNull]
+        public static ColumnDefinition Create([NotNull] DataColumn col)
             => new ColumnDefinition((col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType, col.ColumnName);
 
-        public static ColumnDefinition[] GetFromReader(IDataRecord reader)
+        [NotNull]
+        public static ColumnDefinition[] GetFromReader([NotNull] IDataRecord reader)
             => Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
 
-        public static ColumnDefinition[] GetFromTable(SqlConnection sqlconn, string tableName)
+        [NotNull]
+        public static ColumnDefinition[] GetFromTable([NotNull] SqlConnection sqlconn, string tableName)
         {
             using (var cmd = sqlconn.CreateCommand()) {
                 cmd.CommandText = "SET FMTONLY ON; select * from " + tableName + "; SET FMTONLY OFF";

@@ -738,14 +738,17 @@ namespace ProgressOnderwijsUtils.Html
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(I tag) => tag.AsFragment();
         }
-        public struct IFRAME : IHtmlTag<IFRAME>, IHasAttr_src, IHasAttr_srcdoc, IHasAttr_name, IHasAttr_sandbox, IHasAttr_allowfullscreen, IHasAttr_allowpaymentrequest, IHasAttr_allowusermedia, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy
+        public struct IFRAME : IHtmlTagAllowingContent<IFRAME>, IHasAttr_src, IHasAttr_srcdoc, IHasAttr_name, IHasAttr_sandbox, IHasAttr_allowfullscreen, IHasAttr_allowpaymentrequest, IHasAttr_allowusermedia, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy
         {
             public string TagName => "iframe";
             string IHtmlTag.TagStart => "<iframe";
-            string IHtmlTag.EndTag => "";
+            string IHtmlTag.EndTag => "</iframe>";
             HtmlAttributes attrs;
             IFRAME IHtmlTag<IFRAME>.WithAttributes(HtmlAttributes replacementAttributes) => new IFRAME { attrs = replacementAttributes };
             HtmlAttributes IHtmlTag.Attributes => attrs;
+            HtmlFragment[] children;
+            IFRAME IHtmlTagAllowingContent<IFRAME>.WithContents(HtmlFragment[] replacementContents) => new IFRAME { attrs = attrs, children = replacementContents };
+            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(IFRAME tag) => tag.AsFragment();

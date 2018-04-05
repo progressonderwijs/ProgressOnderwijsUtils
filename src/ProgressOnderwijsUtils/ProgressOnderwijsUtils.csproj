@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>4.3.1</Version>
+    <Version>18.0.2</Version>
+    <PackageReleaseNotes>Fix crash SsoProcessor.GetAssertion when multiple StatusCodes are present.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -8,34 +9,34 @@
       Various utility methods+classes used by Progress Onderwijs.
     </Description>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>html-generator simpler and faster</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TargetFrameworks>net46</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <OutputType>library</OutputType>
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>True</DebugSymbols>
+    <NoWarn>CS1591</NoWarn>
+    <LangVersion>7.2</LangVersion>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Web" />
 
-    <PackageReference Include="JetBrains.Annotations" Version="10.4.0" />
-    <PackageReference Include="EcmaScript.Net" version="1.0.1.0" />
-    <PackageReference Include="ExpressionToCodeLib" version="2.2.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
+    <PackageReference Include="ExpressionToCodeLib" version="2.7.0" />
     <PackageReference Include="log4net" version="2.0.8" />
-    <PackageReference Include="morelinq" version="2.3.0" />
+    <PackageReference Include="morelinq" version="2.10.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.2" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.1" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
-    <PackageReference Include="ZlibWithDictionary" version="2.1.1" />
+    <PackageReference Include="DotNetZip" Version="1.10.1" NoWarn="NU1701" />
+    <PackageReference Include="ZlibWithDictionary" version="2.1.1" NoWarn="NU1701" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
   </ItemGroup>
 </Project>
