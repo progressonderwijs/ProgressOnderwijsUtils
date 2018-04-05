@@ -57,25 +57,34 @@ namespace ProgressOnderwijsUtils
                     await bulkCopy.WriteToServerAsync(objectReader, cancellationToken).ConfigureAwait(false);
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
-
-                    var fi = typeof(SqlBulkCopy).GetField("_sortedColumnMappings", BindingFlags.NonPublic | BindingFlags.Instance);
-                    var sortedColumns = fi.GetValue(bulkCopy);
-                    var items = (Object[])sortedColumns.GetType().GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(sortedColumns);
-
-                    FieldInfo itemdata = items[destinationColumnIndex].GetType().GetField("_metadata", BindingFlags.NonPublic | BindingFlags.Instance);
-                    var metadata = itemdata.GetValue(items[destinationColumnIndex]);
-
-                    var column = metadata.GetType().GetField("column", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
-                    var length = metadata.GetType().GetField("length", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(metadata);
-                    throw new Exception($"Column: {column} contains data with a length greater than: {length}", ex);
-
-                    var sourceColumnName = mapping.Where(m => m.DstIndex == destinationColumnIndex).Select(m => m.SourceColumnDefinition.Name).FirstOrDefault();
-                    var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + (sourceColumnName ?? "??unknown??");
-                    throw new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
+                    throw HelpfulException(bulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException<T>(mapping, destinationColumnIndex, ex);
                 } finally {
                     TraceBulkInsertDuration(context.Tracer, tableName, sw, objectReader.RowsProcessed);
                 }
             }
+        }
+
+        [NotNull]
+        static Exception MetaObjectBasedException<T>([NotNull] FieldMapping[] mapping, int destinationColumnIndex, SqlException ex) where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            var sourceColumnName = mapping.Where(m => m.DstIndex == destinationColumnIndex).Select(m => m.SourceColumnDefinition.Name).FirstOrDefault();
+            var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + (sourceColumnName ?? "??unknown??");
+            return new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
+        }
+
+        [CanBeNull]
+        static Exception HelpfulException(SqlBulkCopy bulkCopy, int destinationColumnIndex, SqlException ex)
+        {
+            var fi = typeof(SqlBulkCopy).GetField("_sortedColumnMappings", BindingFlags.NonPublic | BindingFlags.Instance);
+            var sortedColumns = fi.GetValue(bulkCopy);
+            var items = (object[])sortedColumns.GetType().GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(sortedColumns);
+
+            var itemdata = items?[destinationColumnIndex].GetType().GetField("_metadata", BindingFlags.NonPublic | BindingFlags.Instance);
+            var metadata = itemdata?.GetValue(items[destinationColumnIndex]);
+
+            var column = metadata?.GetType().GetField("column", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(metadata);
+            var length = metadata?.GetType().GetField("length", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(metadata);
+            return column == null || length == null ? null : new Exception($"Column: {column} contains data with a length greater than: {length}", ex);
         }
 
         static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, string tableName, Stopwatch sw, int rowsInserted)
