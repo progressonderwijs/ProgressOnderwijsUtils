@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(e, "ReadScalar<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.");
+                    throw cmd.CreateExceptionWithTextAndArguments("ReadScalar<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
                 }
         }
 
@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return cmd.Command.ExecuteNonQuery();
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(e, "Non-query failed");
+                    throw cmd.CreateExceptionWithTextAndArguments("Non-query failed", e);
                 }
         }
 
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return ReadMetaObjectsUnpacker<T>(cmd.Command);
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(e, "ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.");
+                    throw cmd.CreateExceptionWithTextAndArguments("ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
                 }
         }
 
@@ -83,8 +83,7 @@ namespace ProgressOnderwijsUtils
                     adapter.Fill(dt);
                     return dt;
                 } catch (Exception e) {
-                    var debugFriendlyCommandText = SqlCommandDebugStringifier.DebugFriendlyCommandText(cmd.Command, SqlTracerAgumentInclusion.IncludingArgumentValues);
-                    throw new ParameterizedSqlExecutionException("ReadDataTable failed" + "\n\nCOMMAND TIMEOUT: " + cmd.Command.CommandTimeout + " s\n\nQUERY:\n\n" + debugFriendlyCommandText, e);
+                    throw cmd.CreateExceptionWithTextAndArguments("ReadDataTable failed", e);
                 }
         }
 
@@ -193,7 +192,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return ReadPlainUnpacker<T>(cmd.Command);
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(e, "ReadPlain<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.");
+                    throw cmd.CreateExceptionWithTextAndArguments("ReadPlain<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
                 }
         }
 
