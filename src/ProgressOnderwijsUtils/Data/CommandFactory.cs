@@ -42,12 +42,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments(Exception e, string exceptionMessage)
-        {
-            var debugFriendlyCommandText = SqlCommandDebugStringifier.DebugFriendlyCommandText(Command, SqlTracerAgumentInclusion.IncludingArgumentValues);
-            var parameterizedSqlExecutionException = new ParameterizedSqlExecutionException(exceptionMessage + "\n\nCOMMAND TIMEOUT: " + Command.CommandTimeout + " s\n\nQUERY:\n\n" + debugFriendlyCommandText, e);
-            return parameterizedSqlExecutionException;
-        }
+        public ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments([NotNull] string message, Exception innerException)
+            => SqlCommandDebugStringifier.ExceptionWithTextAndArguments(message, Command, innerException);
     }
 
     /// <summary>
