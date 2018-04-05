@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 
@@ -16,7 +15,6 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsHtmlElement => Content is IHtmlTag;
         public bool IsCollectionOfFragments => Content is HtmlFragment[];
         public bool IsEmpty => Content == null;
-
         HtmlFragment(object content) => Content = content;
 
         [Pure]

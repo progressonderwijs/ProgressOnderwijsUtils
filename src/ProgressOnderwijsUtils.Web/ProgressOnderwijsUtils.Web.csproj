@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <Authors>Progress Onderwijs</Authors>
+    <Owners>Progress Onderwijs</Owners>
+    <Title>ProgressOnderwijsUtils.Web</Title>
+    <Description>Various System.Web-related utilities used by Progress Onderwijs.</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>Split off ProgressOnderwijsUtils.Web as a separate package</PackageReleaseNotes>
+    <PackageTags>ProgressOnderwijs</PackageTags>
+    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
+    <TargetFrameworks>net461</TargetFrameworks>
+    <OutputType>library</OutputType>
+    <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
+    <LangVersion>7.2</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Web" />
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
+  </ItemGroup>
+</Project>

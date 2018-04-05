@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Collections.Concurrent;
-
 
 namespace ProgressOnderwijsUtils
 {
@@ -32,7 +31,6 @@ namespace ProgressOnderwijsUtils
 
         //seenNonces is the primary store.
         //whenever a nonce is added, it *eventually* is also added to noncesInCleanupOrder
-
         public NonceStore()
         {
             noncesInCleanupOrder = new Queue<TimestampedNonce>();
@@ -40,17 +38,14 @@ namespace ProgressOnderwijsUtils
             seenNonces = new ConcurrentDictionary<TimestampedNonce, byte>();
         }
 
-
         public long Generate() => Interlocked.Increment(ref nextNonce);
-
         public bool IsFreshAndPreviouslyUnusedNonce(TimestampedNonce item, DateTime utcNow) => IsFresh(item, utcNow) && PreviouslyUnused(item, utcNow);
         bool IsFresh(TimestampedNonce item, DateTime utcNow) => (utcNow - item.Timestamp).Duration() <= window;
 
         bool PreviouslyUnused(TimestampedNonce freshItem, DateTime utcNow)
         {
             var wasAdded = seenNonces.TryAdd(freshItem, 0);
-            if (wasAdded)
-            {
+            if (wasAdded) {
                 RegisterFutureCleanupThenCleanup(freshItem, utcNow);
             }
             return wasAdded;
@@ -58,19 +53,15 @@ namespace ProgressOnderwijsUtils
 
         void RegisterFutureCleanupThenCleanup(TimestampedNonce newNonce, DateTime utcNow)
         {
-            lock (cleanupSync)
-            {
+            lock (cleanupSync) {
                 noncesInCleanupOrder.Enqueue(newNonce);
-                while (true)
-                {
-                    if (noncesInCleanupOrder.Count == 0)
-                    {
+                while (true) {
+                    if (noncesInCleanupOrder.Count == 0) {
                         //clearly no need for further cleanup
                         return;
                     }
                     var nextNonceToCleanup = noncesInCleanupOrder.Peek();
-                    if (IsFresh(nextNonceToCleanup, utcNow))
-                    {
+                    if (IsFresh(nextNonceToCleanup, utcNow)) {
                         //head of the queue is fresh: assume most others are fresh too.
                         return;
                     }

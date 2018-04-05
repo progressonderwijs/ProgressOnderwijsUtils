@@ -40,6 +40,7 @@ namespace ProgressOnderwijsUtils
         public bool Equals(T other) => other != null && FieldwiseEquality<T>.Instance((T)this, other);
         public override bool Equals(object obj) => obj is T && Equals((T)obj);
         public override int GetHashCode() => FieldwiseHasher<T>.Instance((T)this);
+
         [NotNull]
         public T Copy() => (T)MemberwiseClone();
 

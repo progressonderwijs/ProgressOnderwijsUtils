@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading;
 using JetBrains.Annotations;
@@ -60,6 +61,18 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool None<TSource>([NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, bool> predicate)
+        {
+            return !source.Any(predicate);
+        }
+
+        [Pure]
+        public static bool None<TSource>([NotNull] this IQueryable<TSource> source)
+        {
+            return !source.Any();
+        }
+
+        [Pure]
+        public static bool None<TSource>([NotNull] this IQueryable<TSource> source, [NotNull] Expression<Func<TSource, bool>> predicate)
         {
             return !source.Any(predicate);
         }
@@ -129,7 +142,13 @@ namespace ProgressOnderwijsUtils
         public static bool ContainsDuplicates<T>([NotNull] this IEnumerable<T> list, IEqualityComparer<T> comparer)
         {
             var set = new HashSet<T>(comparer);
-            return !list.All(set.Add);
+            foreach (var item in list) {
+                if (!set.Add(item)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [NotNull]
@@ -228,21 +247,5 @@ namespace ProgressOnderwijsUtils
                 action(item);
             }
         }
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items)
-            => DistinctArray<T>.FromPossiblyNotDistinct(items);
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
-            => DistinctArray<T>.FromPossiblyNotDistinct(items, comparer);
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items)
-            => DistinctArray<T>.FromDistinct(items);
-
-        [Pure]
-        public static DistinctArray<T> ToDistinctArrayFromDistinct<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
-            => DistinctArray<T>.FromDistinct(items, comparer);
     }
 }

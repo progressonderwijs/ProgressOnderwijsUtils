@@ -7,6 +7,7 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using static ProgressOnderwijsUtils.SafeSql;
 
+// ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
     public interface IMetaObject { }

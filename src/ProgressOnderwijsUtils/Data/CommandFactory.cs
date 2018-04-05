@@ -40,6 +40,14 @@ namespace ProgressOnderwijsUtils
                 Command = null;
             }
         }
+
+        [NotNull]
+        public ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments(Exception e, string exceptionMessage)
+        {
+            var debugFriendlyCommandText = SqlCommandDebugStringifier.DebugFriendlyCommandText(Command, SqlTracerAgumentInclusion.IncludingArgumentValues);
+            var parameterizedSqlExecutionException = new ParameterizedSqlExecutionException(exceptionMessage + "\n\nCOMMAND TIMEOUT: " + Command.CommandTimeout + " s\n\nQUERY:\n\n" + debugFriendlyCommandText, e);
+            return parameterizedSqlExecutionException;
+        }
     }
 
     /// <summary>
@@ -196,8 +204,10 @@ namespace ProgressOnderwijsUtils
     struct DebugCommandFactory : ICommandFactory
     {
         FastShortStringBuilder debugText;
+
         [NotNull]
-        public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter => SqlCommandTracer.InsecureSqlDebugString(o.EquatableValue, true);
+        public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter => SqlCommandDebugStringifier.InsecureSqlDebugString(o.EquatableValue, true);
+
         public void AppendSql([NotNull] string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
 
         [NotNull]

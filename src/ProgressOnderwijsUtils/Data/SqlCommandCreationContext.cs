@@ -13,6 +13,7 @@ namespace ProgressOnderwijsUtils
         // Handige generieke functionaliteit, maar niet altijd gebruikt
         [NotNull]
         public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds) => new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer);
+
         // ReSharper restore UnusedMember.Global
         public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, ISqlCommandTracer tracer)
         {

@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils
             var oldSortCol = GetSortColumn(kolomnaam);
             return oldSortCol != null
                 ? FirstSortBy(oldSortCol.Value.WithReverseDirection())
-                : new OrderByColumns(DirectAcessColumns.Prepend(new ColumnSort(kolomnaam, SortDirection.Desc)).ToArray());
+                : new OrderByColumns(MoreEnumerable.Prepend(DirectAcessColumns, new ColumnSort(kolomnaam, SortDirection.Desc)).ToArray());
         }
 
         [NotNull]

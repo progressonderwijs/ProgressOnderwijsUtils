@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using JetBrains.Annotations;
 
+// ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
     public interface IMetaPropCache<out T> : IReadOnlyList<T>
