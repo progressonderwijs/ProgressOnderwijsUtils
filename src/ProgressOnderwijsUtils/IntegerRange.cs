@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace ProgressOnderwijsUtils
@@ -42,9 +42,6 @@ namespace ProgressOnderwijsUtils
         public bool Equals(IntegerRange other) => Begin == other.Begin && End == other.End;
         public override int GetHashCode() => Begin * 397 + End;
 
-        public override bool Equals(object obj)
-        {
-            return obj is IntegerRange typed && Equals(typed);
-        }
+        public override bool Equals(object obj) => obj is IntegerRange typed && Equals(typed);
     }
 }

@@ -398,7 +398,7 @@ namespace ProgressOnderwijsUtils
             }
             if (x >= 1 << 1) {
                 res += 1;
-                x = x >> 1;
+                //conceptually: x = x >> 1;
             }
             return res;
         }

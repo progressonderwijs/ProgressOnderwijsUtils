@@ -1,4 +1,6 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
@@ -18,9 +20,12 @@ namespace ProgressOnderwijsUtils.Tests
                     )
                 ").ExecuteNonQuery(Context);
             SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Context);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Context)).InnerException;
+            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Context)).InnerException
+                ?? throw new Exception("Expected an inner SqlException");
 
-            var violation = (KeyConstraintViolation)SqlErrorParser.Parse(exception.Errors[0]);
+            var exceptionError = exception.Errors[0] ?? throw new Exception("an sql error should have an error!");
+            
+            var violation = SqlErrorParser.Parse(exceptionError) as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
 
             PAssert.That(() => violation.ConstraintType == "UNIQUE KEY");
             PAssert.That(() => violation.ConstraintName == "uc_T_C");

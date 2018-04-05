@@ -1,4 +1,4 @@
-﻿// ReSharper disable PossiblyMistakenUseOfParamsMethod
+// ReSharper disable PossiblyMistakenUseOfParamsMethod
 
 using System;
 using System.Collections.Concurrent;
@@ -96,8 +96,6 @@ namespace ProgressOnderwijsUtils
         /// Watch out: while this enumerator is open, the underlying connection remains in use.
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
-        /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The database connection</param>
         /// <param name="fieldMappingMode"></param>
         [MustUseReturnValue]
         [NotNull]

@@ -14,6 +14,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             this.md = md;
         }
 
+        // ReSharper disable PossibleNullReferenceException
         [NotNull]
         public IEnumerable<string> GetEntities()
         {
@@ -37,5 +38,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 select elem.Attribute("Location").Value
                 ).Single();
         }
+        // ReSharper restore PossibleNullReferenceException
     }
 }
