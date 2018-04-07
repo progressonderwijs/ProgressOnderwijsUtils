@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils
                 throw new InvalidOperationException("Expected primary key columns: " + initialPrimaryKeyColumnNames.JoinStrings(", ") + "; provided columns: " + providedIdColumns.JoinStrings(", "));
             }
 
-            var delTable = SQL($"[##del_init]");
+            var delTable = SQL($"[#del_init]");
             //union all is a nasty hack to enforce that the identity property is not propagated to the temp table
             SQL($@"
                 select {initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))} 
@@ -158,7 +158,7 @@ namespace ProgressOnderwijsUtils
                 foreach (var fk in fks) {
                     var pkeysOfReferencingTable = pkeys[fk.FkTableSql.CommandText()];
                     var pkJoin = fk.columns.Select(col => SQL($"fk.{col.FkColumnSql}=pk.{col.PkColumnSql}")).ConcatenateSql(SQL($" and "));
-                    var newDelTable = ParameterizedSql.CreateDynamic("[##del_" + delBatch + "]");
+                    var newDelTable = ParameterizedSql.CreateDynamic("[#del_" + delBatch + "]");
                     if (pkeysOfReferencingTable.None()) {
                         log($"Warning: table {fk.FkTableSql.CommandText()}->{logStack.JoinStrings("->")} is missing a primary key");
                         deletionStack.Push(() => {
