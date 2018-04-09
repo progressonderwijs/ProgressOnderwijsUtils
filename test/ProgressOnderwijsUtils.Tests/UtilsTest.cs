@@ -209,6 +209,18 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void SLMaybeIncompleteDateConversionTest()
+        {
+            PAssert.That(() => Utils.SLMaybeIncompleteDateConversion(null) == null);
+            PAssert.That(() => Utils.SLMaybeIncompleteDateConversion("") == null);
+            PAssert.That(() => Utils.SLMaybeIncompleteDateConversion("2018-03") == null);
+            PAssert.That(() => Utils.SLMaybeIncompleteDateConversion("2018") == null);
+            PAssert.That(() => Utils.SLMaybeIncompleteDateConversion("0000-00-00") == DateTime.Parse("1900/01/01"));
+            PAssert.That(() => Utils.SLMaybeIncompleteDateConversion("2018-00-00") == DateTime.Parse("2018/01/01"));
+            PAssert.That(() => Utils.SLMaybeIncompleteDateConversion("2018-03-00") == DateTime.Parse("2018/03/01"));
+        }
+
+        [Fact]
         public void MultiTransitiveClosureWorks()
         {
             var nodes = new[] {2, 3,};

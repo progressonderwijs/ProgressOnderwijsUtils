@@ -223,18 +223,14 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// converteert incomplete studielinkdatums (bv 'yyyy-00-00' naar complete datum, 
         /// waarbij nulwaarden voor datum of maand worden omgezet naar de waarde 1
-        /// Alleen voor KVA4
+        /// en nullwaarde voor jaar naar 1900 (type staat nl ook "0000-00-00" toe)
         /// </summary>
-        public static DateTime? SLMaybeIncompleteDateConversion([CanBeNull] string incompleteDate)
-        {
-            if (incompleteDate != null) {
-                var incompleteDateFragments = incompleteDate.Split('-');
-                var month = incompleteDateFragments[1] == "00" ? "1" : incompleteDateFragments[1];
-                var date = incompleteDateFragments[2] == "00" ? "1" : incompleteDateFragments[2];
-                return DateTime.Parse(incompleteDateFragments[0] + "/" + month + "/" + date);
-            } else {
-                return null;
-            }
+        public static DateTime? SLMaybeIncompleteDateConversion([CanBeNull] string incompleteDate) {
+            var dateFrags = (incompleteDate ?? "")
+                .Split('-')
+                .Select(el => el == "0000" ? "1900" : el == "00" ? "1" : el)
+                .ToArray();
+            return dateFrags.Length == 3 ? (DateTime?)DateTime.Parse(string.Join("/", dateFrags)) : null;
         }
 
         /// <summary>
