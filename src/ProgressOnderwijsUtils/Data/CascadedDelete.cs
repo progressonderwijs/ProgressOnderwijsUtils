@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils
                 ParameterizedSql.CreateDynamic(SQL($"select object_schema_name(object_id({initialTableName})) + '.' + object_name(object_id({initialTableName}))")
                     .ReadScalar<string>(conn));
 
-            var keys = SQL($@"
+            var fksByParentTable = SQL($@"
                 select 
                     fk_id = fk.object_id,
                     pk_table=object_schema_name(fk.referenced_object_id) + '.' +  object_name(fk.referenced_object_id),
@@ -61,16 +61,10 @@ namespace ProgressOnderwijsUtils
                 order by fk.object_id, fkc.constraint_column_id
             ").ReadMetaObjects<FkCol>(conn)
                 .GroupBy(row => row.Fk_id)
-                .ToLookup(
-                    rowGroup => rowGroup.First().Pk_table,
-                    rowGroup => new {
-                        rowGroup.First().FkTableSql,
-                        columns = rowGroup.ToArray(),
-                    },
-                    StringComparer.OrdinalIgnoreCase
-                );
+                .Select(rowGroup => new ForeignKey { ParentTable = rowGroup.First().Pk_table, DependantTable = rowGroup.First().FkTableSql, Columns = rowGroup.ToArray(), })
+                .ToLookup(rowGroup => rowGroup.ParentTable, StringComparer.OrdinalIgnoreCase);
 
-            var pkeys = SQL($@"
+            var pkColumnsByTable = SQL($@"
                 select 
                     pk_table=object_schema_name(pk.parent_object_id) + '.' + object_name(pk.parent_object_id),
                     pk_column=col_name(pk.parent_object_id, ic.column_id)
@@ -86,14 +80,14 @@ namespace ProgressOnderwijsUtils
                     StringComparer.OrdinalIgnoreCase
                 );
 
-            var initialPrimaryKeyColumns = pkeys[initialTable.CommandText()].ToArray();
+            var initialPrimaryKeyColumns = pkColumnsByTable[initialTable.CommandText()].ToArray();
             var initialPrimaryKeyColumnNames = initialPrimaryKeyColumns.Select(col => col.CommandText()).ToArray();
             var providedIdColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
             if (!providedIdColumns.SetEqual(initialPrimaryKeyColumnNames, StringComparer.OrdinalIgnoreCase)) {
                 throw new InvalidOperationException("Expected primary key columns: " + initialPrimaryKeyColumnNames.JoinStrings(", ") + "; provided columns: " + providedIdColumns.JoinStrings(", "));
             }
 
-            var delTable = SQL($"[##del_init]");
+            var delTable = SQL($"[#del_init]");
             //union all is a nasty hack to enforce that the identity property is not propagated to the temp table
             SQL($@"
                 select {initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))} 
@@ -130,7 +124,7 @@ namespace ProgressOnderwijsUtils
                     throw new InvalidOperationException("A dependency chain of over 500 long was encountered; possible cycle: aborting.");
                 }
 
-                var pkeysOfCurrentTable = pkeys[tableName.CommandText()].ToArray();
+                var pkeysOfCurrentTable = pkColumnsByTable[tableName.CommandText()].ToArray();
                 if (pkeysOfCurrentTable.None()) {
                     throw new InvalidOperationException($"Table {tableName.CommandText()} is missing a primary key");
                 }
@@ -153,45 +147,45 @@ namespace ProgressOnderwijsUtils
                     perflog.Add(new DeletionReport { Table = tableName.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                 });
 
-                var fks = keys[tableName.CommandText()];
+                var fks = fksByParentTable[tableName.CommandText()];
 
                 foreach (var fk in fks) {
-                    var pkeysOfReferencingTable = pkeys[fk.FkTableSql.CommandText()];
-                    var pkJoin = fk.columns.Select(col => SQL($"fk.{col.FkColumnSql}=pk.{col.PkColumnSql}")).ConcatenateSql(SQL($" and "));
-                    var newDelTable = ParameterizedSql.CreateDynamic("[##del_" + delBatch + "]");
+                    var pkeysOfReferencingTable = pkColumnsByTable[fk.DependantTable.CommandText()];
+                    var pkJoin = fk.Columns.Select(col => SQL($"fk.{col.FkColumnSql}=pk.{col.PkColumnSql}")).ConcatenateSql(SQL($" and "));
+                    var newDelTable = ParameterizedSql.CreateDynamic("[#del_" + delBatch + "]");
                     if (pkeysOfReferencingTable.None()) {
-                        log($"Warning: table {fk.FkTableSql.CommandText()}->{logStack.JoinStrings("->")} is missing a primary key");
+                        log($"Warning: table {fk.DependantTable.CommandText()}->{logStack.JoinStrings("->")} is missing a primary key");
                         deletionStack.Push(() => {
                             var nrRowsToDelete = SQL($@"
                                 select count(*)
-                                from {fk.FkTableSql} fk
+                                from {fk.DependantTable} fk
                                 join {tableName} as pk on {pkJoin}
                                 join {tempTableName} as tt on {ttJoin}
                             ").ReadScalar<int>(conn);
-                            log($"Delete {nrRowsToDelete} from {fk.FkTableSql.CommandText()}...");
+                            log($"Delete {nrRowsToDelete} from {fk.DependantTable.CommandText()}...");
                             var sw = Stopwatch.StartNew();
                             var deletedRows = ExecuteDeletion(SQL($@"
                                 delete fk
                                 {outputClause}
-                                from {fk.FkTableSql} fk
+                                from {fk.DependantTable} fk
                                 join {tableName} as pk on {pkJoin}
                                 join {tempTableName} as tt on {ttJoin}
                             "));
                             sw.Stop();
                             log("...took {sw.Elapsed}");
-                            perflog.Add(new DeletionReport { Table = fk.FkTableSql.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
+                            perflog.Add(new DeletionReport { Table = fk.DependantTable.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                         });
                         continue;
                     }
 
-                    var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.FkTableSql.CommandText())
+                    var whereClause = !tableName.CommandText().EqualsOrdinalCaseInsensitive(fk.DependantTable.CommandText())
                         ? SQL($"where 1=1")
                         : SQL($"where {pkeysOfCurrentTable.Select(col => SQL($"pk.{col}<>fk.{col}")).ConcatenateSql(SQL($" or "))}");
                     var referencingPkCols = pkeysOfReferencingTable.Select(col => SQL($"fk.{col}")).ConcatenateSql(SQL($", "));
                     var statement = SQL($@"
                         select {referencingPkCols} 
                         into {newDelTable}
-                        from {fk.FkTableSql} as fk
+                        from {fk.DependantTable} as fk
                         join {tableName} as pk on {pkJoin}
                         join {tempTableName} as tt on {ttJoin}
                         {whereClause}
@@ -204,13 +198,13 @@ namespace ProgressOnderwijsUtils
 
                     totalDeletes += kidRowsCount;
 
-                    log($"{delBatch,6}: Found {kidRowsCount} in {fk.FkTableSql.CommandText()}->{logStack.JoinStrings("->")}");
+                    log($"{delBatch,6}: Found {kidRowsCount} in {fk.DependantTable.CommandText()}->{logStack.JoinStrings("->")}");
 
                     if (kidRowsCount == 0) {
                         SQL($"drop table {newDelTable}").ExecuteNonQuery(conn);
                     } else {
                         delBatch++;
-                        DeleteKids(fk.FkTableSql, newDelTable, logStack.Prepend(fk.FkTableSql.CommandText()), depth + 1);
+                        DeleteKids(fk.DependantTable, newDelTable, logStack.Prepend(fk.DependantTable.CommandText()), depth + 1);
                     }
                 }
             }
@@ -250,6 +244,13 @@ namespace ProgressOnderwijsUtils
         {
             public string Pk_table { get; set; }
             public string Pk_column { get; set; }
+        }
+
+        struct ForeignKey
+        {
+            public string ParentTable;
+            public ParameterizedSql DependantTable;
+            public FkCol[] Columns;
         }
     }
 }
