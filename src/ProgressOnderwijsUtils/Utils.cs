@@ -225,16 +225,9 @@ namespace ProgressOnderwijsUtils
         /// waarbij nulwaarden voor datum of maand worden omgezet naar de waarde 1
         /// Alleen voor KVA4
         /// </summary>
-        public static DateTime? SLMaybeIncompleteDateConversion(string incompleteDate)
-        {
-            if (!incompleteDate.IsNullOrWhiteSpace()) {
-                var incompleteDateFragments = incompleteDate.Split('-');
-                var month = incompleteDateFragments[1] == "00" ? "1" : incompleteDateFragments[1];
-                var date = incompleteDateFragments[2] == "00" ? "1" : incompleteDateFragments[2];
-                return DateTime.Parse(incompleteDateFragments[0] + "/" + month + "/" + date);
-            } else {
-                return null;
-            }
+        public static DateTime? SLMaybeIncompleteDateConversionLess([CanBeNull] string incompleteDate) {
+            var dateFrags = (incompleteDate ?? "").Split('-').Select(el => el == "00" ? "1" : el).ToArray();
+            return dateFrags.Length == 3 ? (DateTime?)DateTime.Parse(string.Join("/", dateFrags)) : null;
         }
 
         /// <summary>
