@@ -221,23 +221,6 @@ namespace ProgressOnderwijsUtils
         }
 
         /// <summary>
-        /// converteert incomplete studielinkdatums (bv 'yyyy-00-00' naar complete datum, 
-        /// waarbij nulwaarden voor datum of maand worden omgezet naar de waarde 1
-        /// Alleen voor KVA4
-        /// </summary>
-        public static DateTime? SLMaybeIncompleteDateConversion([CanBeNull] string incompleteDate)
-        {
-            if (incompleteDate != null) {
-                var incompleteDateFragments = incompleteDate.Split('-');
-                var month = incompleteDateFragments[1] == "00" ? "1" : incompleteDateFragments[1];
-                var date = incompleteDateFragments[2] == "00" ? "1" : incompleteDateFragments[2];
-                return DateTime.Parse(incompleteDateFragments[0] + "/" + month + "/" + date);
-            } else {
-                return null;
-            }
-        }
-
-        /// <summary>
         /// Volgordebehoudende transformatie van getal naar string, dus:
         /// 
         /// a kleiner dan b

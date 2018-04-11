@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>19.0.0</Version>
-    <PackageReleaseNotes>Include command timeout in exceptions only when command actually timed out.</PackageReleaseNotes>
+    <Version>19.0.1</Version>
+    <PackageReleaseNotes>Fix possible crashes with multiple concurrent cascaded deletes.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
