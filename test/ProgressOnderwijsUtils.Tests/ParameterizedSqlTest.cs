@@ -7,7 +7,6 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class ParameterizedSqlTest
     {
         [Fact]
@@ -160,6 +159,33 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void OperatorAndReturnsSqlWhenTrue()
+        {
+            var trueCondition = true;
+            PAssert.That(() => (!trueCondition && SQL($"test") || SQL($"test2")) == SQL($"test"));
+            PAssert.That(() => SQL($"maybe-{!trueCondition && SQL($"test")}") == SQL($"maybe-"));
+            PAssert.That(() => (trueCondition || SQL($"test")) == ParameterizedSql.Empty);
+            PAssert.That(() => (!trueCondition || SQL($"test")) == SQL($"test"));
+            ParameterizedSql bla = Array.Empty<int>().Length > 3;
+
+            int? henk = new Random().Next() > 20 ? 3 : default(int?);
+            var sql = SQL($@"
+                select bla 
+                where 1=1
+                    {henk.HasValue && SQL($"and 4 = {henk.Value}")}
+                    {(henk.HasValue ? SQL($"and 4 = {henk.Value}") : default)}
+                    and interstingICannotSpelllCondition Here
+                    ...
+            ");
+            var sql2 = SQL($@"select bla where 1=1")
+                + henk.HasValue && SQL($"and 4 = {henk.Value}")
+                ;
+            var MetRolFilter = "henk";
+            var RolFilterOrganisatieSpecifiek = true;
+            var ToegangFunctie = default(int?);
+            var bla = sdflkjsfdjlk(MetRolFilter, RolFilterOrganisatieSpecifiek, ToegangFunctie);
+        }
+        [Fact]
         public void PrependingEmptyHasNoEffect()
         {
             PAssert.That(() => ParameterizedSql.Empty + SQL($"abc") == SQL($"abc"));
@@ -230,7 +256,6 @@ namespace ProgressOnderwijsUtils.Tests
         {
             PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
         }
-
 
         [Fact]
         public void ParameterizedSqlSupportsNullParameters()
