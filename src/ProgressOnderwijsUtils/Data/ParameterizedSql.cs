@@ -6,6 +6,9 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
+    /// <summary>
+    /// Represents a string of SQL including parameter values.
+    /// </summary>
     public struct ParameterizedSql
     {
         readonly ISqlComponent impl;
@@ -19,6 +22,10 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
             => impl?.AppendTo(ref factory);
 
+        /// <summary>
+        /// Converts this parameterized sql statement into an sql command.
+        /// The underlying SqlCommand is pooled for performance; if the provided ReusableCommand is disposed, then the SqlCommand may be reused.
+        /// </summary>
         public ReusableCommand CreateSqlCommand([NotNull] SqlCommandCreationContext conn)
         {
             var factory = CommandFactory.Create();
@@ -26,11 +33,41 @@ namespace ProgressOnderwijsUtils
             return factory.FinishBuilding(conn);
         }
 
-        public static readonly ParameterizedSql Empty = new ParameterizedSql(null);
+        /// <summary>
+        /// The empty sql string.
+        /// </summary>
+        public static ParameterizedSql Empty => default;
 
+        public static readonly ParameterizedSql TruthyEmpty = new ParameterizedSql(new StringSqlFragment(""));
+        public bool IsEmpty => impl == TruthyEmpty.impl || this == Empty;
+        public static implicit operator ParameterizedSql(bool present) => present ? TruthyEmpty : Empty;
+
+        /// <summary>
+        /// Returns the provided sql only when the condition is true; empty otherwise.
+        /// </summary>
+        public static ParameterizedSql operator &(ParameterizedSql a, ParameterizedSql b) => a.impl != null ? b : a;
+
+        /// <summary>
+        /// Returns the provided sql only when the condition is true; empty otherwise.
+        /// </summary>
+        public static ParameterizedSql operator |(ParameterizedSql a, ParameterizedSql b) => a.impl != null ? a : b;
+
+        /// <summary>
+        /// Whether this sql fragment is not Empty (i.e. is non-empty or is TruthyEmpty)
+        /// </summary>
+        public static bool operator true(ParameterizedSql a) => a.impl != null;
+
+        /// <summary>
+        /// Whether this sql fragment is Empty (i.e. contains no content as is not TruthyEmpty)
+        /// </summary>
+        public static bool operator false(ParameterizedSql a) => a.impl == null;
+
+        /// <summary>
+        /// Concatenates two sql fragments.
+        /// </summary>
         [Pure]
         public static ParameterizedSql operator +(ParameterizedSql a, ParameterizedSql b)
-            => (a.impl == null || b.impl == null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
+            => (a.impl == null || b.impl == null ? a.impl ?? b.impl : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
 
         public static ParameterizedSql CreateDynamic([NotNull] string rawSqlString)
         {
@@ -49,8 +86,8 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool operator ==(ParameterizedSql a, ParameterizedSql b)
-            => ReferenceEquals(a.impl, b.impl)
-                || EqualityKeyCommandFactory.EqualityKey(a.impl).Equals(EqualityKeyCommandFactory.EqualityKey(b.impl));
+            => a.impl == b.impl
+                || a.impl != TruthyEmpty.impl && b.impl != TruthyEmpty.impl && EqualityKeyCommandFactory.EqualityKey(a.impl).Equals(EqualityKeyCommandFactory.EqualityKey(b.impl));
 
         [Pure]
         public bool Equals(ParameterizedSql other) => this == other;

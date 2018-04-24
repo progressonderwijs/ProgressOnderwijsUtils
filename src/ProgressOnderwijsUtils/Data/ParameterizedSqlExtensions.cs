@@ -9,22 +9,17 @@ namespace ProgressOnderwijsUtils
     {
         [Pure]
         public static ParameterizedSql Append(this ParameterizedSql source, ParameterizedSql extra)
-        {
-            return source + extra;
-        }
+            => source + extra;
 
         [Pure]
+        [Obsolete("Use && or ||")]
         public static ParameterizedSql AppendIf(this ParameterizedSql source, bool condition, ParameterizedSql extra)
-        {
-            return condition ? source.Append(extra) : source;
-        }
+            => condition ? source.Append(extra) : source;
 
         [Pure]
-        [UsefulToKeep("Library function, other overloads used")]
+        [Obsolete("Use && or ||")]
         public static ParameterizedSql AppendIf(this ParameterizedSql source, bool condition, Func<ParameterizedSql> extra)
-        {
-            return condition ? source.Append(extra()) : source;
-        }
+            => condition ? source.Append(extra()) : source;
 
         /// <summary>
         /// Concatenate a sequence of sql expressions with a space separator.

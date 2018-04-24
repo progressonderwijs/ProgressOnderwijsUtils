@@ -7,7 +7,6 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class ParameterizedSqlTest
     {
         [Fact]
@@ -160,6 +159,28 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void OperatorAndReturnsSqlWhenTrue()
+        {
+            var trueCondition = true;
+            var falseCondition = false;
+
+            PAssert.That(() => (trueCondition && SQL($"test")) == SQL($"test"));
+            PAssert.That(() => ParameterizedSql.TruthyEmpty != ParameterizedSql.Empty);
+            PAssert.That(() => falseCondition == ParameterizedSql.Empty);
+            PAssert.That(() => trueCondition == ParameterizedSql.TruthyEmpty);
+            PAssert.That(() => (falseCondition && SQL($"test") || SQL($"test2")) == SQL($"test2"));
+            PAssert.That(() => SQL($"maybe-{falseCondition && SQL($"test")}") == SQL($"maybe-"));
+            PAssert.That(() => (trueCondition || SQL($"test")) == ParameterizedSql.TruthyEmpty);
+            PAssert.That(() => (trueCondition || SQL($"test")) != ParameterizedSql.Empty);
+            PAssert.That(() => (falseCondition || SQL($"test")) == SQL($"test"));
+            PAssert.That(() => (SQL($"test") + falseCondition || SQL($"WhenFalse")) == SQL($"test"));
+            PAssert.That(() => SQL($"{ ParameterizedSql.TruthyEmpty}") == ParameterizedSql.Empty);
+
+            PAssert.That(() => SQL($"{trueCondition && SQL($"test")}") ==  SQL($"test"));
+            PAssert.That(() => SQL($"{trueCondition}") == ParameterizedSql.Param(true));
+        }
+
+        [Fact]
         public void PrependingEmptyHasNoEffect()
         {
             PAssert.That(() => ParameterizedSql.Empty + SQL($"abc") == SQL($"abc"));
@@ -230,7 +251,6 @@ namespace ProgressOnderwijsUtils.Tests
         {
             PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
         }
-
 
         [Fact]
         public void ParameterizedSqlSupportsNullParameters()
