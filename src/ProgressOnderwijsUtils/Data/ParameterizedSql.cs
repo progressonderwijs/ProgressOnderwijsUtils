@@ -39,6 +39,7 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSql Empty => default;
 
         public static readonly ParameterizedSql TruthyEmpty = new ParameterizedSql(new StringSqlFragment(""));
+        public bool IsEmpty => impl == TruthyEmpty.impl || this == Empty;
         public static implicit operator ParameterizedSql(bool present) => present ? TruthyEmpty : Empty;
 
         /// <summary>
