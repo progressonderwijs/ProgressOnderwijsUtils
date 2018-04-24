@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [Pure]
         public static ParameterizedSql operator +(ParameterizedSql a, ParameterizedSql b)
-            => (a.impl == null || b.impl == null ? (a.impl ?? b.impl) : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
+            => (a.impl == null || b.impl == null ? a.impl ?? b.impl : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
 
         public static ParameterizedSql CreateDynamic([NotNull] string rawSqlString)
         {
@@ -85,8 +85,8 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool operator ==(ParameterizedSql a, ParameterizedSql b)
-            => ReferenceEquals(a.impl, b.impl)
-                || EqualityKeyCommandFactory.EqualityKey(a.impl).Equals(EqualityKeyCommandFactory.EqualityKey(b.impl));
+            => a.impl == b.impl
+                || a.impl != TruthyEmpty.impl && b.impl != TruthyEmpty.impl && EqualityKeyCommandFactory.EqualityKey(a.impl).Equals(EqualityKeyCommandFactory.EqualityKey(b.impl));
 
         [Pure]
         public bool Equals(ParameterizedSql other) => this == other;

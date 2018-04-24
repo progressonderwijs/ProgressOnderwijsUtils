@@ -162,29 +162,24 @@ namespace ProgressOnderwijsUtils.Tests
         public void OperatorAndReturnsSqlWhenTrue()
         {
             var trueCondition = true;
-            PAssert.That(() => (!trueCondition && SQL($"test") || SQL($"test2")) == SQL($"test"));
-            PAssert.That(() => SQL($"maybe-{!trueCondition && SQL($"test")}") == SQL($"maybe-"));
-            PAssert.That(() => (trueCondition || SQL($"test")) == ParameterizedSql.Empty);
-            PAssert.That(() => (!trueCondition || SQL($"test")) == SQL($"test"));
-            ParameterizedSql bla = Array.Empty<int>().Length > 3;
+            var falseCondition = false;
 
-            int? henk = new Random().Next() > 20 ? 3 : default(int?);
-            var sql = SQL($@"
-                select bla 
-                where 1=1
-                    {henk.HasValue && SQL($"and 4 = {henk.Value}")}
-                    {(henk.HasValue ? SQL($"and 4 = {henk.Value}") : default)}
-                    and interstingICannotSpelllCondition Here
-                    ...
-            ");
-            var sql2 = SQL($@"select bla where 1=1")
-                + henk.HasValue && SQL($"and 4 = {henk.Value}")
-                ;
-            var MetRolFilter = "henk";
-            var RolFilterOrganisatieSpecifiek = true;
-            var ToegangFunctie = default(int?);
-            var bla = sdflkjsfdjlk(MetRolFilter, RolFilterOrganisatieSpecifiek, ToegangFunctie);
+            PAssert.That(() => (trueCondition && SQL($"test")) == SQL($"test"));
+            PAssert.That(() => ParameterizedSql.TruthyEmpty != ParameterizedSql.Empty);
+            PAssert.That(() => falseCondition == ParameterizedSql.Empty);
+            PAssert.That(() => trueCondition == ParameterizedSql.TruthyEmpty);
+            PAssert.That(() => (falseCondition && SQL($"test") || SQL($"test2")) == SQL($"test2"));
+            PAssert.That(() => SQL($"maybe-{falseCondition && SQL($"test")}") == SQL($"maybe-"));
+            PAssert.That(() => (trueCondition || SQL($"test")) == ParameterizedSql.TruthyEmpty);
+            PAssert.That(() => (trueCondition || SQL($"test")) != ParameterizedSql.Empty);
+            PAssert.That(() => (falseCondition || SQL($"test")) == SQL($"test"));
+            PAssert.That(() => (SQL($"test") + falseCondition || SQL($"WhenFalse")) == SQL($"test"));
+            PAssert.That(() => SQL($"{ ParameterizedSql.TruthyEmpty}") == ParameterizedSql.Empty);
+
+            PAssert.That(() => SQL($"{trueCondition && SQL($"test")}") ==  SQL($"test"));
+            PAssert.That(() => SQL($"{trueCondition}") == ParameterizedSql.Param(true));
         }
+
         [Fact]
         public void PrependingEmptyHasNoEffect()
         {
