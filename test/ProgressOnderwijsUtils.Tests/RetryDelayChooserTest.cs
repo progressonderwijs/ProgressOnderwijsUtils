@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public sealed class ErrorRateToRetryDelayTest
+    public sealed class RetryDelayChooserTest
     {
         [Fact]
         public void NoErrorRateMeansFastRetry()
