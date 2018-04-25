@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.Html
 {
@@ -30,22 +32,77 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes) => HtmlElement(new CustomHtmlElement(tagName, attributes, childNodes));
 
         [Pure]
+        public static HtmlFragment Fragment() => Empty;
+
+        [Pure]
+        public static HtmlFragment Fragment(HtmlFragment htmlEl) => htmlEl;
+
+        [Pure]
         public static HtmlFragment Fragment([CanBeNull] params HtmlFragment[] htmlEls)
-            => htmlEls == null || htmlEls.Length == 0
-                ? Empty
-                : htmlEls.Length == 1
-                    ? htmlEls[0]
-                    : new HtmlFragment(htmlEls);
+        {
+            if (htmlEls == null || htmlEls.Length == 0) {
+                return Empty;
+            }
+            if (htmlEls.Length == 1) {
+                return htmlEls[0];
+            }
+            if (htmlEls.Length < 16) {
+                var totalKids = 0;
+                var flattenRelevant = false;
+                foreach (var child in htmlEls) {
+                    if (child.Content is HtmlFragment[] childContents) {
+                        totalKids += childContents.Length;
+                        flattenRelevant = true;
+                    } else if (child.IsEmpty) {
+                        flattenRelevant = true;
+                    } else {
+                        totalKids++;
+                    }
+                }
+                if (flattenRelevant && totalKids < 64) {
+                    var retval = new HtmlFragment[totalKids];
+                    var writeIdx = 0;
+                    foreach (var child in htmlEls) {
+                        if (child.Content is HtmlFragment[] childContents) {
+                            foreach (var grandChild in childContents) {
+                                retval[writeIdx++] = grandChild;
+                            }
+                        } else if (!child.IsEmpty) {
+                            retval[writeIdx++] = child;
+                        }
+                    }
+                    Debug.Assert(writeIdx == totalKids);
+                    return new HtmlFragment(retval);
+                }
+            }
+
+            return new HtmlFragment(htmlEls);
+        }
 
         [Pure]
         public static HtmlFragment Fragment<T>([NotNull] IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
-            => Fragment(htmlEls.Select(el => el.AsFragment()).Where(f => !f.IsEmpty).ToArray());
+        {
+            var retval = FastArrayBuilder<HtmlFragment>.Create();
+            foreach (var el in htmlEls) {
+                var htmlFragment = el.AsFragment();
+                if (htmlFragment.Content is HtmlFragment[] kids && kids.Length < 64) {
+                    foreach (var grandchild in kids) {
+                        retval.Add(grandchild);
+                    }
+                } else if (!htmlFragment.IsEmpty) {
+                    retval.Add(htmlFragment);
+                }
+            }
+            return new HtmlFragment(retval.ToArray());
+        }
 
         public override string ToString() => "HtmlFragment: " + this.SerializeToStringWithoutDoctype();
         public static HtmlFragment Empty => default(HtmlFragment);
         public static implicit operator HtmlFragment(CustomHtmlElement element) => HtmlElement(element);
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
+        public HtmlFragment Append(HtmlFragment tail) => Fragment(this, tail);
+        public HtmlFragment Append(HtmlFragment tail, params HtmlFragment[] longTail) => Fragment(Fragment(this, tail), Fragment(longTail));
 
         [Pure]
         HtmlFragment IConvertibleToFragment.AsFragment() => this;
