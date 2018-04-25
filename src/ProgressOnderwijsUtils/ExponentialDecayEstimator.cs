@@ -16,6 +16,7 @@ namespace ProgressOnderwijsUtils
         public readonly TimeSpan halflife;
         DateTime timestampOfValue = default(DateTime).ToUniversalTime();
         double currentValue;
+        public DateTime UtcTimestampOfValue => timestampOfValue;
 
         public ExponentialDecayEstimator(TimeSpan halflife)
             => this.halflife = halflife;
