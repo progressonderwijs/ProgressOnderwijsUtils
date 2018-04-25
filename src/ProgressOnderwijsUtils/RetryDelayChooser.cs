@@ -28,11 +28,8 @@ namespace ProgressOnderwijsUtils
         public TimeSpan RetryDelayAt(DateTime moment)
             => ErrorsPerDayToRetryDelay(errorRateEstimator.EstimatedRateOfChangePerHalflife(moment) * halflivesPerDay);
 
-        public TimeSpan RegisterErrorAndGetDelay(DateTime errorMoment)
-        {
-            RegisterErrorAt(errorMoment);
-            return ErrorsPerDayToRetryDelay(errorRateEstimator.EstimatedRateOfChangePerHalflife() * halflivesPerDay);
-        }
+        public TimeSpan RegisterErrorAndGetDelay(DateTime errorMoment) 
+            => ErrorsPerDayToRetryDelay(errorRateEstimator.AddAmount(errorMoment, 1.0).EstimatedEventCountPerHalflife * halflivesPerDay);
 
         public TimeSpan ErrorsPerDayToRetryDelay(double approximateErrorsPerDay)
             => TimeSpan.FromSeconds(approximateErrorsPerDay * approximateErrorsPerDay * scaleFactor);

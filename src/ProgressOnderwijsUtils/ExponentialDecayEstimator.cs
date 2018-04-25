@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
         /// This simply returns RawValueAt(last-added-amount-timestamp) * ln(2)
         /// </summary>
         public double EstimatedRateOfChangePerHalflife()
-            => ValueAt(timestampOfValue).EstimatedRateOfChangePerHalflife;
+            => ValueAt(timestampOfValue).EstimatedEventCountPerHalflife;
 
         /// <summary>
         /// Returns the estimated average rate of value adding of some stochastic process (per half-life).
@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtils
         /// This simply returns RawValueAt(moment) * ln(2)
         /// </summary>
         public double EstimatedRateOfChangePerHalflife(DateTime moment)
-            => ValueAt(moment).EstimatedRateOfChangePerHalflife;
+            => ValueAt(moment).EstimatedEventCountPerHalflife;
 
         /// <summary>
         /// Returns the estimated average rate of value adding of some stochastic process (per half-life).
@@ -66,10 +66,11 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Adding amounts with a little timestamp jitter doesn't cause huge accuracy issues, but if the timestamps are (relative to the halflife) significantly in the past, you
         /// </summary>
-        public void AddAmount(DateTime timestamp, double amount)
+        public ExponentialDecayEstimatorValue AddAmount(DateTime timestamp, double amount)
         {
             currentValue = ValueAt(timestamp).RawValue + amount;
             timestampOfValue = timestamp;
+            return new ExponentialDecayEstimatorValue(currentValue);
         }
 
         public override string ToString()
@@ -86,7 +87,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// The estimated number of events that a hidden stochastic process triggers on average per half-life.  (Numerically this is simply RawValue * ln(2)).
         /// </summary>
-        public double EstimatedRateOfChangePerHalflife => RawValue * -ExponentialDecayEstimator.LogOfHalf;
+        public double EstimatedEventCountPerHalflife => RawValue * -ExponentialDecayEstimator.LogOfHalf;
         public ExponentialDecayEstimatorValue(double rawValue) => RawValue = rawValue;
     }
 }
