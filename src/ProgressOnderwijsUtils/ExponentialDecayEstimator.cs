@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public sealed class ExponentialDecayEstimator
     {
-        static readonly double logOfHalf = Math.Log(0.5);
+        public const double LogOfHalf = -0.69314718055994529; //Math.Log(0.5);
         public readonly TimeSpan halflife;
         DateTime timestampOfValue = default(DateTime).ToUniversalTime();
         double currentValue;
@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
             Debug.Assert(moment.Kind == DateTimeKind.Utc, "Error:non-UTC DateTime detected; all moments should be in UTC to make reasoning about exponential decays simpler.");
             var halflives = (moment - timestampOfValue).TotalSeconds / halflife.TotalSeconds;
 
-            return currentValue * Math.Exp(logOfHalf * Math.Max(0.0, halflives));
+            return currentValue * Math.Exp(LogOfHalf * Math.Max(0.0, halflives));
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
         /// This simply returns RawValueAt(last-added-amount-timestamp) * ln(2)
         /// </summary>
         public double EstimatedRateOfChangePerHalflife()
-            => currentValue * -logOfHalf;
+            => currentValue * -LogOfHalf;
 
         /// <summary>
         /// Returns the estimated average rate of value adding of some stochastic process (per half-life).
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils
         /// This simply returns RawValueAt(moment) * ln(2)
         /// </summary>
         public double EstimatedRateOfChangePerHalflife(DateTime moment)
-            => RawValueAt(moment) * -logOfHalf;
+            => RawValueAt(moment) * -LogOfHalf;
 
         /// <summary>
         /// Adding amounts with a little timestamp jitter doesn't cause huge accuracy issues, but if the timestamps are (relative to the halflife) significantly in the past, you

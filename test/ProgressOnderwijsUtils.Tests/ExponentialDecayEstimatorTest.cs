@@ -10,6 +10,13 @@ namespace ProgressOnderwijsUtils.Tests
         readonly DateTime someTime = new DateTime(2020, 6, 6, 0, 0, 0, 0, DateTimeKind.Utc);
 
         [Fact]
+        public void LogOfHalfIsCorrect()
+        {
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            PAssert.That(() => Math.Exp(ExponentialDecayEstimator.LogOfHalf) == 0.5);
+        }
+
+        [Fact]
         public void ValueIsInitially0()
         {
             var estimator = new ExponentialDecayEstimator(halflife);
