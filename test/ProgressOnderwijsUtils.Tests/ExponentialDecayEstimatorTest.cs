@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void ValueIsInitially0()
         {
             var estimator = new ExponentialDecayEstimator(halflife);
-            PAssert.That(() => Utils.FuzzyEquals(estimator.RawValueAt(someTime), 0.0));
+            PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime).RawValue, 0.0));
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var estimator = new ExponentialDecayEstimator(halflife);
             estimator.AddAmount(someTime, 1.337);
-            PAssert.That(() => Utils.FuzzyEquals(estimator.RawValueAt(someTime), 1.337));
+            PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime).RawValue, 1.337));
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils.Tests
             var estimator = new ExponentialDecayEstimator(halflife);
             estimator.AddAmount(someTime, 1.337);
             estimator.AddAmount(someTime, 1.337);
-            PAssert.That(() => Utils.FuzzyEquals(estimator.RawValueAt(someTime), 2 * 1.337));
+            PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime).RawValue, 2 * 1.337));
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils.Tests
             var estimator = new ExponentialDecayEstimator(halflife);
             estimator.AddAmount(someTime, 20);
 
-            PAssert.That(() => Utils.FuzzyEquals(estimator.RawValueAt(someTime + halflife), 10));
+            PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime + halflife).RawValue, 10));
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.Tests
             var estimator = new ExponentialDecayEstimator(halflife);
             estimator.AddAmount(someTime, 20);
 
-            PAssert.That(() => Utils.FuzzyEquals(estimator.RawValueAt(someTime - halflife), 20));
+            PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime - halflife).RawValue, 20));
         }
 
         [Fact]
@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtils.Tests
             estimator.AddAmount(someTime, 20);
             estimator.AddAmount(someTime + halflife, 20);
 
-            PAssert.That(() => Utils.FuzzyEquals(estimator.RawValueAt(someTime + halflife + halflife), 15));
+            PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime + halflife + halflife).RawValue, 15));
         }
 
         [Fact]
@@ -78,7 +78,7 @@ namespace ProgressOnderwijsUtils.Tests
             var someLargeAmount = double.MaxValue;
             estimator.AddAmount(someTime, someLargeAmount);
             var farFutureMoment = someTime.AddDays(halflife.TotalDays * 10000);
-            PAssert.That(() => Utils.FuzzyEquals(estimator.RawValueAt(farFutureMoment), 0));
+            PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(farFutureMoment).RawValue, 0));
         }
 
         [Fact]

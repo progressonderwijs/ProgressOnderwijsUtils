@@ -22,12 +22,6 @@ namespace ProgressOnderwijsUtils
             => this.halflife = halflife;
 
         /// <summary>
-        /// This is the raw value; i.e. when you add some value X to the empty estimator at some moment, then the raw value at that moment is X, and is X/2 one half-life later.
-        /// However, if you continually add values at moments based on some stochastic process, and wish to estimate what the average rate of added values now is, then this value is too large; use EstimatedRateOfChangePerHalflife instead.
-        /// </summary>
-        public double RawValueAt(DateTime moment)
-            => ValueAt(moment).RawValue;
-        /// <summary>
         /// Returns the estimated average rate of value adding of some stochastic process (per half-life).
         /// This converges to the true average when you register events over many halflives and when the time between events is typically significantly smaller than the half-life.
         /// When you register values for a short period of time (e.g. just for a single half-life or even less), this will under-estimate the true value.
