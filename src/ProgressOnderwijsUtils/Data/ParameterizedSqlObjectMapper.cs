@@ -162,11 +162,21 @@ namespace ProgressOnderwijsUtils
             var mp = mps.GetByName(sqlColName);
 
             var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
-            var expectedCsTypeName = reader.GetFieldType(lastColumnRead).ToCSharpFriendlyTypeName();
-            var actualCsTypeName = mp.DataType.ToCSharpFriendlyTypeName();
+            var nonNullableFieldType = reader.GetFieldType(lastColumnRead);
 
-            return "Cannot unpack column " + sqlColName + " of type " + sqlTypeName + " (C#:" + expectedCsTypeName + ") into " + metaObjectTypeName + "." + mp.Name
-                + " of type " + actualCsTypeName;
+            bool? isValueNull = null;
+            try {
+                isValueNull = reader.IsDBNull(lastColumnRead);
+            } catch {
+                // ignore crash in error handling.
+            }
+            var fieldType = isValueNull ?? true ? nonNullableFieldType?.MakeNullableType() ?? nonNullableFieldType : nonNullableFieldType;
+
+            var expectedCsTypeName = fieldType.ToCSharpFriendlyTypeName();
+            var actualCsTypeName = mp.DataType.ToCSharpFriendlyTypeName();
+            var nullValueWarning = isValueNull ?? false ? "NULL value from " : "";
+
+            return $"Cannot unpack {nullValueWarning}column {sqlColName} of type {sqlTypeName} (C#:{expectedCsTypeName}) into {metaObjectTypeName}.{mp.Name} of type {actualCsTypeName}";
         }
 
         [NotNull]
