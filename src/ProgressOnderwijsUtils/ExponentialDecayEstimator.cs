@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils
     /// The value can be queried for any moment - at any time before the last increase the value is fixed;
     /// at any time after the last increase the value decays exponentially.
     /// 
-    /// See Progress.Business.Test.Taken.ExponentialDecayEstimatorTest for example scenarios.
+    /// See ExponentialDecayEstimatorTest for example scenarios.
     /// </summary>
     public sealed class ExponentialDecayEstimator
     {
@@ -18,9 +18,7 @@ namespace ProgressOnderwijsUtils
         double currentValue;
 
         public ExponentialDecayEstimator(TimeSpan halflife)
-        {
-            this.halflife = halflife;
-        }
+            => this.halflife = halflife;
 
         /// <summary>
         /// This is the raw value; i.e. when you add some value X to the empty estimator at some moment, then the raw value at that moment is X, and is X/2 one half-life later.
