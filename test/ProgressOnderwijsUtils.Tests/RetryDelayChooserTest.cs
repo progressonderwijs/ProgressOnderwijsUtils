@@ -35,6 +35,24 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void InitialDelayIsZero()
+        {
+            var delayChooser = new RetryDelayChooser(TimeSpan.FromMinutes(5));
+            var startMoment = new DateTime(2020, 2, 20).ToUniversalTime(); //arbitrary
+            PAssert.That(() => delayChooser.RetryDelayAt(startMoment) == TimeSpan.Zero);
+        }
+
+        [Fact]
+        public void OneErrorIsBla()
+        {
+            var constantFailureDelayTarget = TimeSpan.FromHours(1);
+            var delayChooser = new RetryDelayChooser(constantFailureDelayTarget);
+            var startMoment = new DateTime(2040, 4, 4).ToUniversalTime(); //arbitrary
+            delayChooser.RegisterErrorAt(startMoment);
+            PAssert.That(() => Utils.FuzzyEquals(delayChooser.RetryDelayAt(startMoment).TotalSeconds * 299.7252518, constantFailureDelayTarget.TotalSeconds));
+        }
+
+        [Fact]
         public void SomeErrorsMeansRetryInMinutes()
         {
             var delay = new RetryDelayChooser(TimeSpan.FromMinutes(5)).ErrorsPerDayToRetryDelay(200.0);
