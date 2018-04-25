@@ -27,18 +27,6 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public double RawValueAt(DateTime moment)
             => ValueAt(moment).RawValue;
-
-        /// <summary>
-        /// Returns the estimated average rate of value adding of some stochastic process (per half-life).
-        /// This converges to the true average when you register events over many halflives and when the time between events is typically significantly smaller than the halflife.
-        /// When you register values for a short period of time (e.g. just for a single half-life or even less), this will under-estimate the true value.
-        /// When you register values too infrequently (i.e. the half-life is too short), then this will over-estimate the true value.
-        /// 
-        /// This simply returns RawValueAt(last-added-amount-timestamp) * ln(2)
-        /// </summary>
-        public double EstimatedRateOfChangePerHalflife()
-            => ValueAt(timestampOfValue).EstimatedEventCountPerHalflife;
-
         /// <summary>
         /// Returns the estimated average rate of value adding of some stochastic process (per half-life).
         /// This converges to the true average when you register events over many halflives and when the time between events is typically significantly smaller than the half-life.
