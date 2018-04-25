@@ -26,12 +26,7 @@ namespace ProgressOnderwijsUtils
         /// However, if you continually add values at moments based on some stochastic process, and wish to estimate what the average rate of added values now is, then this value is too large; use EstimatedRateOfChangePerHalflife instead.
         /// </summary>
         public double RawValueAt(DateTime moment)
-        {
-            Debug.Assert(moment.Kind == DateTimeKind.Utc, "Error:non-UTC DateTime detected; all moments should be in UTC to make reasoning about exponential decays simpler.");
-            var halflives = (moment - timestampOfValue).TotalSeconds / halflife.TotalSeconds;
-
-            return currentValue * Math.Exp(LogOfHalf * Math.Max(0.0, halflives));
-        }
+            => ValueAt(moment).RawValue;
 
         /// <summary>
         /// Returns the estimated average rate of value adding of some stochastic process (per half-life).
@@ -63,7 +58,9 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public ExponentialDecayEstimatorValue ValueAt(DateTime moment)
         {
-            return new ExponentialDecayEstimatorValue(RawValueAt(moment));
+            Debug.Assert(moment.Kind == DateTimeKind.Utc, "Error:non-UTC DateTime detected; all moments should be in UTC to make reasoning about exponential decays simpler.");
+            var halflives = (moment - timestampOfValue).TotalSeconds / halflife.TotalSeconds;
+            return new ExponentialDecayEstimatorValue(currentValue * Math.Exp(LogOfHalf * Math.Max(0.0, halflives)));
         }
 
         /// <summary>
