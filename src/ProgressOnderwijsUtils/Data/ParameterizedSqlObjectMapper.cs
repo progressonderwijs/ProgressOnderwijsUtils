@@ -95,7 +95,6 @@ namespace ProgressOnderwijsUtils
         /// Watch out: while this enumerator is open, the underlying connection remains in use.
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
-        /// <param name="fieldMappingMode"></param>
         [MustUseReturnValue]
         [NotNull]
         public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
