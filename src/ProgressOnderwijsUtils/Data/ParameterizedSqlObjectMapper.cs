@@ -33,6 +33,7 @@ namespace ProgressOnderwijsUtils
                 }
         }
 
+        /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server interaction for whitespace-only commands.</summary>
         public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
         {
             using (var cmd = sql.CreateSqlCommand(commandCreationContext))
