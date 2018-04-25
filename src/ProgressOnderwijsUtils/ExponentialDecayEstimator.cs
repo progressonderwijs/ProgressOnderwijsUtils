@@ -41,9 +41,7 @@ namespace ProgressOnderwijsUtils
         /// This simply returns RawValueAt(last-added-amount-timestamp) * ln(2)
         /// </summary>
         public double EstimatedRateOfChangePerHalflife()
-        {
-            return currentValue * 1.0 * -logOfHalf;
-        }
+            => currentValue * -logOfHalf;
 
         /// <summary>
         /// Returns the estimated average rate of value adding of some stochastic process (per half-life).
