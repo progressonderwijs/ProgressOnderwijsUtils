@@ -78,7 +78,14 @@ namespace ProgressOnderwijsUtils
 
     public readonly struct ExponentialDecayEstimatorValue
     {
+        /// <summary>
+        /// The raw value of an exponential decay estimation.  This is NOT an estimation of the number of events per halflife; use EstimatedRateOfChangePerHalflife for that.
+        /// </summary>
         public readonly double RawValue;
+        
+        /// <summary>
+        /// The estimated number of events that a hidden stochastic process triggers on average per half-life.  (Numerically this is simply RawValue * ln(2)).
+        /// </summary>
         public double EstimatedRateOfChangePerHalflife => RawValue * -ExponentialDecayEstimator.LogOfHalf;
         public ExponentialDecayEstimatorValue(double rawValue) => RawValue = rawValue;
     }
