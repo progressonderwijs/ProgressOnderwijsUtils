@@ -33,10 +33,14 @@ namespace ProgressOnderwijsUtils
                 }
         }
 
+        /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server interaction for whitespace-only commands.</summary>
         public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
         {
             using (var cmd = sql.CreateSqlCommand(commandCreationContext))
                 try {
+                    if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+                        return 0;
+                    }
                     return cmd.Command.ExecuteNonQuery();
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments("Non-query failed", e);
@@ -95,7 +99,6 @@ namespace ProgressOnderwijsUtils
         /// Watch out: while this enumerator is open, the underlying connection remains in use.
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
-        /// <param name="fieldMappingMode"></param>
         [MustUseReturnValue]
         [NotNull]
         public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
