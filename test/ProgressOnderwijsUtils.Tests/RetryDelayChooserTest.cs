@@ -21,6 +21,20 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void SimulatedErrorPerHourResultsInAroundTwoSecondDelay()
+        {
+            var delayChooser = new RetryDelayChooser(TimeSpan.FromMinutes(5));
+            var startMoment = new DateTime(1999, 1, 1).ToUniversalTime(); //arbitrary
+            var endMoment = startMoment.AddDays(4);
+            for (var moment = startMoment; moment < endMoment; moment = moment.AddHours(1)) {
+                delayChooser.RegisterErrorAt(moment);
+            }
+            var delay = delayChooser.RetryDelayAt(endMoment);
+            //so now we've had 30 errors a day for a few days
+            PAssert.That(() => Utils.FuzzyEquals(delay.TotalSeconds, 1.95));
+        }
+
+        [Fact]
         public void SomeErrorsMeansRetryInMinutes()
         {
             var delay = new RetryDelayChooser(TimeSpan.FromMinutes(5)).ErrorsPerDayToRetryDelay(200.0);
