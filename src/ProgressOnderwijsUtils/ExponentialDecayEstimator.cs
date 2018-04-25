@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public double EstimatedRateOfChangePerHalflife()
         {
-            var halflives = (timestampOfValue - timestampOfValue).TotalSeconds / halflife.TotalSeconds;
+            var halflives = 0;
             return currentValue * Math.Exp(logOfHalf * Math.Max(0.0, halflives)) * -logOfHalf;
         }
 
