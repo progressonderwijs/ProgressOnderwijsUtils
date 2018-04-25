@@ -41,7 +41,10 @@ namespace ProgressOnderwijsUtils
         /// This simply returns RawValueAt(last-added-amount-timestamp) * ln(2)
         /// </summary>
         public double EstimatedRateOfChangePerHalflife()
-            => RawValueAt(timestampOfValue) * -logOfHalf;
+        {
+            var halflives = (timestampOfValue - timestampOfValue).TotalSeconds / halflife.TotalSeconds;
+            return currentValue * Math.Exp(logOfHalf * Math.Max(0.0, halflives)) * -logOfHalf;
+        }
 
         /// <summary>
         /// Returns the estimated average rate of value adding of some stochastic process (per half-life).
