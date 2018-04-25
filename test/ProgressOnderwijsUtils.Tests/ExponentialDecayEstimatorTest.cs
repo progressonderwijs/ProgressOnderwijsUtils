@@ -67,7 +67,6 @@ namespace ProgressOnderwijsUtils.Tests
             var estimator = new ExponentialDecayEstimator(halflife);
             estimator.AddAmount(someTime, 20);
             estimator.AddAmount(someTime + halflife, 20);
-
             PAssert.That(() => Utils.FuzzyEquals(estimator.ValueAt(someTime + halflife + halflife).RawValue, 15));
         }
 
