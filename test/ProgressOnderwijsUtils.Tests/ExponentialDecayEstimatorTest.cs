@@ -91,14 +91,14 @@ namespace ProgressOnderwijsUtils.Tests
             var stepSizeInHalfLives = 0.001;
             var stepSize = TimeSpan.FromSeconds(halflife.TotalSeconds * stepSizeInHalfLives);
             var random = new Random(42);
-
+            var currentEstimation = estimator.ValueAt(startingMoment);
             for (var currentMoment = startingMoment; currentMoment < endAt; currentMoment = currentMoment + stepSize) {
                 var randomValueMeanOne = random.NextDouble() * 2;
 
-                estimator.AddAmount(currentMoment, randomValueMeanOne * stepSizeInHalfLives * actualRatePerHalfLife);
+                currentEstimation = estimator.AddAmount(currentMoment, randomValueMeanOne * stepSizeInHalfLives * actualRatePerHalfLife);
             }
 
-            PAssert.That(() => Math.Abs(estimator.EstimatedRateOfChangePerHalflife() - actualRatePerHalfLife) < actualRatePerHalfLife * 0.05,
+            PAssert.That(() => Math.Abs(currentEstimation.EstimatedEventCountPerHalflife - actualRatePerHalfLife) < actualRatePerHalfLife * 0.05,
                 "if I observe 1000 events per half-life for 100 halflives, then the current estimate should be within 5% of the true value");
         }
     }
