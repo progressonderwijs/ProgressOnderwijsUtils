@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
     <Version>20.1.0</Version>
-    <PackageReleaseNotes>Add exponential decay estimator + retry delay chooser.</PackageReleaseNotes>
+    <PackageReleaseNotes>Remove AppendIf</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
