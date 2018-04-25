@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public void AddAmount(DateTime timestamp, double amount)
         {
-            currentValue = RawValueAt(timestamp) + amount;
+            currentValue = ValueAt(timestamp).RawValue + amount;
             timestampOfValue = timestamp;
         }
 
