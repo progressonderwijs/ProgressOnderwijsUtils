@@ -37,6 +37,9 @@ namespace ProgressOnderwijsUtils
         {
             using (var cmd = sql.CreateSqlCommand(commandCreationContext))
                 try {
+                    if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+                        return 0;
+                    }
                     return cmd.Command.ExecuteNonQuery();
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments("Non-query failed", e);
