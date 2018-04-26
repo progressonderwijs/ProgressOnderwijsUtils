@@ -50,6 +50,8 @@ namespace ProgressOnderwijsUtils.Html
         [NotNull]
         IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>([NotNull] THtmlTagAlteration change) => change.ChangeWithContent(this);
 
+        public static HtmlFragment operator +(CustomHtmlElement head, string tail) => head.Append(tail);
+        public static HtmlFragment operator +(string head, CustomHtmlElement tail) => head.Append(tail);
         CustomHtmlElement IHtmlTag<CustomHtmlElement>.WithAttributes(HtmlAttributes replacementAttributes) => new CustomHtmlElement(TagName, replacementAttributes, Contents);
         CustomHtmlElement IHtmlTagAllowingContent<CustomHtmlElement>.WithContents(HtmlFragment[] replacementContents) => new CustomHtmlElement(TagName, Attributes, replacementContents);
     }
