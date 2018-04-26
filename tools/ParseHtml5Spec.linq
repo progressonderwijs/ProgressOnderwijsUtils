@@ -2,7 +2,7 @@
   <Reference>&lt;RuntimeDirectory&gt;\System.Net.Http.dll</Reference>
   <Reference>&lt;RuntimeDirectory&gt;\System.Net.Http.WebRequest.dll</Reference>
   <NuGetReference>AngleSharp</NuGetReference>
-  <NuGetReference Prerelease="true">ExpressionToCodeLib</NuGetReference>
+  <NuGetReference>ExpressionToCodeLib</NuGetReference>
   <NuGetReference>morelinq</NuGetReference>
   <Namespace>AngleSharp</Namespace>
   <Namespace>AngleSharp.Attributes</Namespace>
