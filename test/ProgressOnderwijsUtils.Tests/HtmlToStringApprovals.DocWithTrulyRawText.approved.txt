@@ -1,1 +1,1 @@
-﻿<!DOCTYPE html><html><head><script type="mytype">Hello world: a < b & "b" > 'c'; </style> </script><style type="mytype">Hello world: a < b & "b" > 'c'; </script> </style></head><body><p>Hello world!</p></body></html>
+﻿<!DOCTYPE html><html><head><script type="mytype">Hello world: a < b & "b" > 'c'; </style> </script><style id="myId">Hello world: a < b & "b" > 'c'; </script> </style></head><body><p>Hello world!</p></body></html>
