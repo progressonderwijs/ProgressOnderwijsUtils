@@ -31,6 +31,8 @@ using (var client = new HttpClient(new WebRequestHandler {
 })) {
     var content = await client.GetStringAsync(specUri);
     var document = new HtmlParser().Parse(content);
+    
+    var voidElements = document.GetElementById("void-elements").ParentElement.NextElementSibling.TextContent.Split(',').Select(s=>s.Trim()).ToArray();
     var tableOfElements = document.QuerySelectorAll("h3#elements-3 + p + table").Single();
     
     var columns = tableOfElements.QuerySelectorAll("thead tr th").Select(el=>el.TextContent.Trim()).ToArray();
@@ -137,7 +139,7 @@ using (var client = new HttpClient(new WebRequestHandler {
 
     var elTagNameClasses = elements
         .Select(el =>
-        el.children.Length == 0 
+        voidElements.Contains(el.elementName) 
         ? $@"
         public struct {el.csUpperName} : IHtmlTag<{el.csUpperName}>{
             string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
