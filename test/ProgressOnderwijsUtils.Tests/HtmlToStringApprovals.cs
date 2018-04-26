@@ -150,7 +150,7 @@ namespace ProgressOnderwijsUtils.Tests
             _html.Content(
                 _head.Content(
                     _script._type("mytype").Content("Hello world: a < b & \"b\" > 'c'; </style> "),
-                    _style._type("mytype").Content("Hello world: a < b & \"b\" > 'c'; </script> ")
+                    _style._id("myId").Content("Hello world: a < b & \"b\" > 'c'; </script> ")
                     ),
                 _body.Content(
                     _p.Content("Hello world!")

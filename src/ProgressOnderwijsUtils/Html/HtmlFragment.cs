@@ -103,6 +103,7 @@ namespace ProgressOnderwijsUtils.Html
         public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
         public HtmlFragment Append(HtmlFragment tail) => Fragment(this, tail);
         public HtmlFragment Append(HtmlFragment tail, params HtmlFragment[] longTail) => Fragment(Fragment(this, tail), Fragment(longTail));
+        public static HtmlFragment operator +(HtmlFragment left, HtmlFragment right) => left.Append(right);
 
         [Pure]
         HtmlFragment IConvertibleToFragment.AsFragment() => this;

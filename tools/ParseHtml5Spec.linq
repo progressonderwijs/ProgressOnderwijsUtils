@@ -2,7 +2,7 @@
   <Reference>&lt;RuntimeDirectory&gt;\System.Net.Http.dll</Reference>
   <Reference>&lt;RuntimeDirectory&gt;\System.Net.Http.WebRequest.dll</Reference>
   <NuGetReference>AngleSharp</NuGetReference>
-  <NuGetReference Prerelease="true">ExpressionToCodeLib</NuGetReference>
+  <NuGetReference>ExpressionToCodeLib</NuGetReference>
   <NuGetReference>morelinq</NuGetReference>
   <Namespace>AngleSharp</Namespace>
   <Namespace>AngleSharp.Attributes</Namespace>
@@ -31,6 +31,8 @@ using (var client = new HttpClient(new WebRequestHandler {
 })) {
     var content = await client.GetStringAsync(specUri);
     var document = new HtmlParser().Parse(content);
+    
+    var voidElements = document.GetElementById("void-elements").ParentElement.NextElementSibling.TextContent.Split(',').Select(s=>s.Trim()).ToArray();
     var tableOfElements = document.QuerySelectorAll("h3#elements-3 + p + table").Single();
     
     var columns = tableOfElements.QuerySelectorAll("thead tr th").Select(el=>el.TextContent.Trim()).ToArray();
@@ -137,11 +139,12 @@ using (var client = new HttpClient(new WebRequestHandler {
 
     var elTagNameClasses = elements
         .Select(el =>
-        el.children.Length == 0 
+        voidElements.Contains(el.elementName) 
         ? $@"
         public struct {el.csUpperName} : IHtmlTag<{el.csUpperName}>{
             string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
-            } {{ 
+            }
+        {{
             public string TagName => ""{el.elementName}"";
             string IHtmlTag.TagStart => ""<{el.elementName}"";
             string IHtmlTag.EndTag => """";
@@ -151,12 +154,15 @@ using (var client = new HttpClient(new WebRequestHandler {
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
+            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }}"
 
         : $@"
         public struct {el.csUpperName} : IHtmlTagAllowingContent<{el.csUpperName}>{
             string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
-            } {{ 
+            }
+        {{
             public string TagName => ""{el.elementName}"";
             string IHtmlTag.TagStart => ""<{el.elementName}"";
             string IHtmlTag.EndTag => ""</{el.elementName}>"";
@@ -169,6 +175,8 @@ using (var client = new HttpClient(new WebRequestHandler {
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
+            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }}"
 );
 
@@ -189,14 +197,13 @@ using (var client = new HttpClient(new WebRequestHandler {
     }}";
 
     $@"using JetBrains.Annotations;
-    
+
 namespace ProgressOnderwijsUtils.Html
 {{
     using AttributeNameInterfaces;
-    {tagNamesClass}
-    {tagsClass}
-    {attrNamesClass}
-    {attrExtensionMethodsClass}
-}}
-".Dump();
+{tagNamesClass}
+{tagsClass}
+{attrNamesClass}
+{attrExtensionMethodsClass}
+}}".Dump();
 }
