@@ -64,6 +64,20 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment AsFragment([CanBeNull] this string textContent)
             => string.IsNullOrEmpty(textContent) ? HtmlFragment.Empty : HtmlFragment.TextContent(textContent);
 
+        public static HtmlFragment Append<T>([CanBeNull] this T head, HtmlFragment tail)
+            where T : IConvertibleToFragment
+            => (head?.AsFragment() ?? HtmlFragment.Empty).Append(tail);
+
+        public static HtmlFragment Append<T>([CanBeNull] this T head, HtmlFragment tail, params HtmlFragment[] longTail)
+            where T : IConvertibleToFragment
+            => (head?.AsFragment() ?? HtmlFragment.Empty).Append(tail, longTail);
+
+        public static HtmlFragment Append([CanBeNull] this string head, HtmlFragment tail)
+            => head.AsFragment().Append(tail);
+
+        public static HtmlFragment Append([CanBeNull] this string head, HtmlFragment tail, params HtmlFragment[] longTail)
+            => head.AsFragment().Append(tail, longTail);
+
         public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
             where TFragments : IConvertibleToFragment
         {
