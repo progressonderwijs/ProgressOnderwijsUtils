@@ -141,7 +141,8 @@ using (var client = new HttpClient(new WebRequestHandler {
         ? $@"
         public struct {el.csUpperName} : IHtmlTag<{el.csUpperName}>{
             string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
-            } {{ 
+            }
+        {{
             public string TagName => ""{el.elementName}"";
             string IHtmlTag.TagStart => ""<{el.elementName}"";
             string IHtmlTag.EndTag => """";
@@ -156,7 +157,8 @@ using (var client = new HttpClient(new WebRequestHandler {
         : $@"
         public struct {el.csUpperName} : IHtmlTagAllowingContent<{el.csUpperName}>{
             string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
-            } {{ 
+            }
+        {{
             public string TagName => ""{el.elementName}"";
             string IHtmlTag.TagStart => ""<{el.elementName}"";
             string IHtmlTag.EndTag => ""</{el.elementName}>"";
@@ -189,14 +191,13 @@ using (var client = new HttpClient(new WebRequestHandler {
     }}";
 
     $@"using JetBrains.Annotations;
-    
+
 namespace ProgressOnderwijsUtils.Html
 {{
     using AttributeNameInterfaces;
-    {tagNamesClass}
-    {tagsClass}
-    {attrNamesClass}
-    {attrExtensionMethodsClass}
-}}
-".Dump();
+{tagNamesClass}
+{tagsClass}
+{attrNamesClass}
+{attrExtensionMethodsClass}
+}}".Dump();
 }
