@@ -20,6 +20,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(A tag) => tag.AsFragment();
+            public static HtmlFragment operator +(A head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, A tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct ABBR : IHtmlTagAllowingContent<ABBR>
         {
@@ -35,6 +37,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(ABBR tag) => tag.AsFragment();
+            public static HtmlFragment operator +(ABBR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, ABBR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct ADDRESS : IHtmlTagAllowingContent<ADDRESS>
         {
@@ -50,6 +54,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(ADDRESS tag) => tag.AsFragment();
+            public static HtmlFragment operator +(ADDRESS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, ADDRESS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct AREA : IHtmlTag<AREA>, IHasAttr_alt, IHasAttr_coords, IHasAttr_shape, IHasAttr_href, IHasAttr_target, IHasAttr_download, IHasAttr_ping, IHasAttr_rel, IHasAttr_referrerpolicy
         {
@@ -62,6 +68,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(AREA tag) => tag.AsFragment();
+            public static HtmlFragment operator +(AREA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, AREA tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct ARTICLE : IHtmlTagAllowingContent<ARTICLE>
         {
@@ -77,6 +85,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(ARTICLE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(ARTICLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, ARTICLE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct ASIDE : IHtmlTagAllowingContent<ASIDE>
         {
@@ -92,6 +102,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(ASIDE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(ASIDE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, ASIDE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct AUDIO : IHtmlTagAllowingContent<AUDIO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls
         {
@@ -107,6 +119,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(AUDIO tag) => tag.AsFragment();
+            public static HtmlFragment operator +(AUDIO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, AUDIO tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct B : IHtmlTagAllowingContent<B>
         {
@@ -122,6 +136,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(B tag) => tag.AsFragment();
+            public static HtmlFragment operator +(B head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, B tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct BASE : IHtmlTag<BASE>, IHasAttr_href, IHasAttr_target
         {
@@ -134,6 +150,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BASE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(BASE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, BASE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct BDI : IHtmlTagAllowingContent<BDI>
         {
@@ -149,6 +167,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BDI tag) => tag.AsFragment();
+            public static HtmlFragment operator +(BDI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, BDI tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct BDO : IHtmlTagAllowingContent<BDO>
         {
@@ -164,6 +184,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BDO tag) => tag.AsFragment();
+            public static HtmlFragment operator +(BDO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, BDO tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct BLOCKQUOTE : IHtmlTagAllowingContent<BLOCKQUOTE>, IHasAttr_cite
         {
@@ -179,6 +201,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BLOCKQUOTE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(BLOCKQUOTE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, BLOCKQUOTE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct BODY : IHtmlTagAllowingContent<BODY>, IHasAttr_onafterprint, IHasAttr_onbeforeprint, IHasAttr_onbeforeunload, IHasAttr_onhashchange, IHasAttr_onlanguagechange, IHasAttr_onmessage, IHasAttr_onmessageerror, IHasAttr_onoffline, IHasAttr_ononline, IHasAttr_onpagehide, IHasAttr_onpageshow, IHasAttr_onpopstate, IHasAttr_onrejectionhandled, IHasAttr_onstorage, IHasAttr_onunhandledrejection, IHasAttr_onunload
         {
@@ -194,6 +218,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BODY tag) => tag.AsFragment();
+            public static HtmlFragment operator +(BODY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, BODY tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct BR : IHtmlTag<BR>
         {
@@ -206,6 +232,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BR tag) => tag.AsFragment();
+            public static HtmlFragment operator +(BR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, BR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct BUTTON : IHtmlTagAllowingContent<BUTTON>, IHasAttr_autofocus, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_name, IHasAttr_type, IHasAttr_value
         {
@@ -221,6 +249,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(BUTTON tag) => tag.AsFragment();
+            public static HtmlFragment operator +(BUTTON head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, BUTTON tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct CANVAS : IHtmlTagAllowingContent<CANVAS>, IHasAttr_width, IHasAttr_height
         {
@@ -236,6 +266,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(CANVAS tag) => tag.AsFragment();
+            public static HtmlFragment operator +(CANVAS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, CANVAS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct CAPTION : IHtmlTagAllowingContent<CAPTION>
         {
@@ -251,6 +283,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(CAPTION tag) => tag.AsFragment();
+            public static HtmlFragment operator +(CAPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, CAPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct CITE : IHtmlTagAllowingContent<CITE>
         {
@@ -266,6 +300,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(CITE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(CITE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, CITE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct CODE : IHtmlTagAllowingContent<CODE>
         {
@@ -281,6 +317,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(CODE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(CODE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, CODE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct COL : IHtmlTag<COL>, IHasAttr_span
         {
@@ -293,6 +331,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(COL tag) => tag.AsFragment();
+            public static HtmlFragment operator +(COL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, COL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct COLGROUP : IHtmlTagAllowingContent<COLGROUP>, IHasAttr_span
         {
@@ -308,6 +348,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(COLGROUP tag) => tag.AsFragment();
+            public static HtmlFragment operator +(COLGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, COLGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DATA : IHtmlTagAllowingContent<DATA>, IHasAttr_value
         {
@@ -323,6 +365,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DATA tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DATA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DATA tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DATALIST : IHtmlTagAllowingContent<DATALIST>
         {
@@ -338,6 +382,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DATALIST tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DATALIST head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DATALIST tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DD : IHtmlTagAllowingContent<DD>
         {
@@ -353,6 +399,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DD tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DEL : IHtmlTagAllowingContent<DEL>, IHasAttr_cite, IHasAttr_datetime
         {
@@ -368,6 +416,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DEL tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DEL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DEL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DETAILS : IHtmlTagAllowingContent<DETAILS>, IHasAttr_open
         {
@@ -383,6 +433,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DETAILS tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DETAILS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DETAILS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DFN : IHtmlTagAllowingContent<DFN>
         {
@@ -398,6 +450,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DFN tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DFN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DFN tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DIALOG : IHtmlTagAllowingContent<DIALOG>, IHasAttr_open
         {
@@ -413,6 +467,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DIALOG tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DIALOG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DIALOG tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DIV : IHtmlTagAllowingContent<DIV>
         {
@@ -428,6 +484,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DIV tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DIV head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DIV tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DL : IHtmlTagAllowingContent<DL>
         {
@@ -443,6 +501,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DL tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct DT : IHtmlTagAllowingContent<DT>
         {
@@ -458,6 +518,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(DT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(DT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, DT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct EM : IHtmlTagAllowingContent<EM>
         {
@@ -473,6 +535,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(EM tag) => tag.AsFragment();
+            public static HtmlFragment operator +(EM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, EM tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct EMBED : IHtmlTag<EMBED>, IHasAttr_src, IHasAttr_type, IHasAttr_width, IHasAttr_height
         {
@@ -485,6 +549,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(EMBED tag) => tag.AsFragment();
+            public static HtmlFragment operator +(EMBED head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, EMBED tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct FIELDSET : IHtmlTagAllowingContent<FIELDSET>, IHasAttr_disabled, IHasAttr_form, IHasAttr_name
         {
@@ -500,6 +566,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FIELDSET tag) => tag.AsFragment();
+            public static HtmlFragment operator +(FIELDSET head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, FIELDSET tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct FIGCAPTION : IHtmlTagAllowingContent<FIGCAPTION>
         {
@@ -515,6 +583,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FIGCAPTION tag) => tag.AsFragment();
+            public static HtmlFragment operator +(FIGCAPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, FIGCAPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct FIGURE : IHtmlTagAllowingContent<FIGURE>
         {
@@ -530,6 +600,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FIGURE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(FIGURE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, FIGURE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct FOOTER : IHtmlTagAllowingContent<FOOTER>
         {
@@ -545,6 +617,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FOOTER tag) => tag.AsFragment();
+            public static HtmlFragment operator +(FOOTER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, FOOTER tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct FORM : IHtmlTagAllowingContent<FORM>, IHasAttr_accept_charset, IHasAttr_action, IHasAttr_autocomplete, IHasAttr_enctype, IHasAttr_method, IHasAttr_name, IHasAttr_novalidate, IHasAttr_target
         {
@@ -560,6 +634,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(FORM tag) => tag.AsFragment();
+            public static HtmlFragment operator +(FORM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, FORM tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct H1 : IHtmlTagAllowingContent<H1>
         {
@@ -575,6 +651,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H1 tag) => tag.AsFragment();
+            public static HtmlFragment operator +(H1 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, H1 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct H2 : IHtmlTagAllowingContent<H2>
         {
@@ -590,6 +668,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H2 tag) => tag.AsFragment();
+            public static HtmlFragment operator +(H2 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, H2 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct H3 : IHtmlTagAllowingContent<H3>
         {
@@ -605,6 +685,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H3 tag) => tag.AsFragment();
+            public static HtmlFragment operator +(H3 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, H3 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct H4 : IHtmlTagAllowingContent<H4>
         {
@@ -620,6 +702,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H4 tag) => tag.AsFragment();
+            public static HtmlFragment operator +(H4 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, H4 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct H5 : IHtmlTagAllowingContent<H5>
         {
@@ -635,6 +719,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H5 tag) => tag.AsFragment();
+            public static HtmlFragment operator +(H5 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, H5 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct H6 : IHtmlTagAllowingContent<H6>
         {
@@ -650,6 +736,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(H6 tag) => tag.AsFragment();
+            public static HtmlFragment operator +(H6 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, H6 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct HEAD : IHtmlTagAllowingContent<HEAD>
         {
@@ -665,6 +753,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HEAD tag) => tag.AsFragment();
+            public static HtmlFragment operator +(HEAD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, HEAD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct HEADER : IHtmlTagAllowingContent<HEADER>
         {
@@ -680,6 +770,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HEADER tag) => tag.AsFragment();
+            public static HtmlFragment operator +(HEADER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, HEADER tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct HGROUP : IHtmlTagAllowingContent<HGROUP>
         {
@@ -695,6 +787,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HGROUP tag) => tag.AsFragment();
+            public static HtmlFragment operator +(HGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, HGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct HR : IHtmlTag<HR>
         {
@@ -707,6 +801,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HR tag) => tag.AsFragment();
+            public static HtmlFragment operator +(HR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, HR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct HTML : IHtmlTagAllowingContent<HTML>, IHasAttr_manifest
         {
@@ -722,6 +818,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(HTML tag) => tag.AsFragment();
+            public static HtmlFragment operator +(HTML head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, HTML tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct I : IHtmlTagAllowingContent<I>
         {
@@ -737,6 +835,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(I tag) => tag.AsFragment();
+            public static HtmlFragment operator +(I head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, I tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct IFRAME : IHtmlTagAllowingContent<IFRAME>, IHasAttr_src, IHasAttr_srcdoc, IHasAttr_name, IHasAttr_sandbox, IHasAttr_allowfullscreen, IHasAttr_allowpaymentrequest, IHasAttr_allowusermedia, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy
         {
@@ -752,6 +852,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(IFRAME tag) => tag.AsFragment();
+            public static HtmlFragment operator +(IFRAME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, IFRAME tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct IMG : IHtmlTag<IMG>, IHasAttr_alt, IHasAttr_src, IHasAttr_srcset, IHasAttr_crossorigin, IHasAttr_usemap, IHasAttr_ismap, IHasAttr_width, IHasAttr_height, IHasAttr_decoding, IHasAttr_referrerpolicy
         {
@@ -764,6 +866,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(IMG tag) => tag.AsFragment();
+            public static HtmlFragment operator +(IMG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, IMG tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct INPUT : IHtmlTag<INPUT>, IHasAttr_accept, IHasAttr_alt, IHasAttr_autocomplete, IHasAttr_autofocus, IHasAttr_checked, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_height, IHasAttr_list, IHasAttr_max, IHasAttr_maxlength, IHasAttr_min, IHasAttr_minlength, IHasAttr_multiple, IHasAttr_name, IHasAttr_pattern, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_size, IHasAttr_src, IHasAttr_step, IHasAttr_type, IHasAttr_value, IHasAttr_width
         {
@@ -776,6 +880,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(INPUT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(INPUT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, INPUT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct INS : IHtmlTagAllowingContent<INS>, IHasAttr_cite, IHasAttr_datetime
         {
@@ -791,6 +897,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(INS tag) => tag.AsFragment();
+            public static HtmlFragment operator +(INS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, INS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct KBD : IHtmlTagAllowingContent<KBD>
         {
@@ -806,6 +914,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(KBD tag) => tag.AsFragment();
+            public static HtmlFragment operator +(KBD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, KBD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct LABEL : IHtmlTagAllowingContent<LABEL>, IHasAttr_for
         {
@@ -821,6 +931,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(LABEL tag) => tag.AsFragment();
+            public static HtmlFragment operator +(LABEL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, LABEL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct LEGEND : IHtmlTagAllowingContent<LEGEND>
         {
@@ -836,6 +948,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(LEGEND tag) => tag.AsFragment();
+            public static HtmlFragment operator +(LEGEND head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, LEGEND tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct LI : IHtmlTagAllowingContent<LI>, IHasAttr_value
         {
@@ -851,6 +965,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(LI tag) => tag.AsFragment();
+            public static HtmlFragment operator +(LI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, LI tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct LINK : IHtmlTag<LINK>, IHasAttr_href, IHasAttr_crossorigin, IHasAttr_rel, IHasAttr_as, IHasAttr_media, IHasAttr_hreflang, IHasAttr_type, IHasAttr_sizes, IHasAttr_referrerpolicy, IHasAttr_integrity
         {
@@ -863,6 +979,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(LINK tag) => tag.AsFragment();
+            public static HtmlFragment operator +(LINK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, LINK tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct MAIN : IHtmlTagAllowingContent<MAIN>
         {
@@ -878,6 +996,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(MAIN tag) => tag.AsFragment();
+            public static HtmlFragment operator +(MAIN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, MAIN tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct MAP : IHtmlTagAllowingContent<MAP>, IHasAttr_name
         {
@@ -893,6 +1013,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(MAP tag) => tag.AsFragment();
+            public static HtmlFragment operator +(MAP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, MAP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct MARK : IHtmlTagAllowingContent<MARK>
         {
@@ -908,6 +1030,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(MARK tag) => tag.AsFragment();
+            public static HtmlFragment operator +(MARK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, MARK tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct MENU : IHtmlTagAllowingContent<MENU>
         {
@@ -923,6 +1047,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(MENU tag) => tag.AsFragment();
+            public static HtmlFragment operator +(MENU head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, MENU tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct META : IHtmlTag<META>, IHasAttr_name, IHasAttr_http_equiv, IHasAttr_content, IHasAttr_charset
         {
@@ -935,6 +1061,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(META tag) => tag.AsFragment();
+            public static HtmlFragment operator +(META head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, META tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct METER : IHtmlTagAllowingContent<METER>, IHasAttr_value, IHasAttr_min, IHasAttr_max, IHasAttr_low, IHasAttr_high, IHasAttr_optimum
         {
@@ -950,6 +1078,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(METER tag) => tag.AsFragment();
+            public static HtmlFragment operator +(METER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, METER tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct NAV : IHtmlTagAllowingContent<NAV>
         {
@@ -965,6 +1095,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(NAV tag) => tag.AsFragment();
+            public static HtmlFragment operator +(NAV head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, NAV tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct NOSCRIPT : IHtmlTagAllowingContent<NOSCRIPT>
         {
@@ -980,6 +1112,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(NOSCRIPT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(NOSCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, NOSCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct OBJECT : IHtmlTagAllowingContent<OBJECT>, IHasAttr_data, IHasAttr_type, IHasAttr_typemustmatch, IHasAttr_name, IHasAttr_usemap, IHasAttr_form, IHasAttr_width, IHasAttr_height
         {
@@ -995,6 +1129,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OBJECT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(OBJECT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, OBJECT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct OL : IHtmlTagAllowingContent<OL>, IHasAttr_reversed, IHasAttr_start, IHasAttr_type
         {
@@ -1010,6 +1146,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OL tag) => tag.AsFragment();
+            public static HtmlFragment operator +(OL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, OL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct OPTGROUP : IHtmlTagAllowingContent<OPTGROUP>, IHasAttr_disabled, IHasAttr_label
         {
@@ -1025,6 +1163,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OPTGROUP tag) => tag.AsFragment();
+            public static HtmlFragment operator +(OPTGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, OPTGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct OPTION : IHtmlTagAllowingContent<OPTION>, IHasAttr_disabled, IHasAttr_label, IHasAttr_selected, IHasAttr_value
         {
@@ -1040,6 +1180,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OPTION tag) => tag.AsFragment();
+            public static HtmlFragment operator +(OPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, OPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct OUTPUT : IHtmlTagAllowingContent<OUTPUT>, IHasAttr_for, IHasAttr_form, IHasAttr_name
         {
@@ -1055,6 +1197,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(OUTPUT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(OUTPUT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, OUTPUT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct P : IHtmlTagAllowingContent<P>
         {
@@ -1070,6 +1214,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(P tag) => tag.AsFragment();
+            public static HtmlFragment operator +(P head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, P tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct PARAM : IHtmlTag<PARAM>, IHasAttr_name, IHasAttr_value
         {
@@ -1082,6 +1228,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(PARAM tag) => tag.AsFragment();
+            public static HtmlFragment operator +(PARAM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, PARAM tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct PICTURE : IHtmlTagAllowingContent<PICTURE>
         {
@@ -1097,6 +1245,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(PICTURE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(PICTURE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, PICTURE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct PRE : IHtmlTagAllowingContent<PRE>
         {
@@ -1112,6 +1262,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(PRE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(PRE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, PRE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct PROGRESS : IHtmlTagAllowingContent<PROGRESS>, IHasAttr_value, IHasAttr_max
         {
@@ -1120,6 +1272,7 @@ namespace ProgressOnderwijsUtils.Html
             string IHtmlTag.EndTag => "</progress>";
             HtmlAttributes attrs;
             PROGRESS IHtmlTag<PROGRESS>.WithAttributes(HtmlAttributes replacementAttributes) => new PROGRESS { attrs = replacementAttributes, children = children };
+
             HtmlAttributes IHtmlTag.Attributes => attrs;
             HtmlFragment[] children;
             PROGRESS IHtmlTagAllowingContent<PROGRESS>.WithContents(HtmlFragment[] replacementContents) => new PROGRESS { attrs = attrs, children = replacementContents };
@@ -1127,6 +1280,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(PROGRESS tag) => tag.AsFragment();
+            public static HtmlFragment operator +(PROGRESS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, PROGRESS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct Q : IHtmlTagAllowingContent<Q>, IHasAttr_cite
         {
@@ -1142,6 +1297,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(Q tag) => tag.AsFragment();
+            public static HtmlFragment operator +(Q head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, Q tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct RP : IHtmlTagAllowingContent<RP>
         {
@@ -1157,6 +1314,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(RP tag) => tag.AsFragment();
+            public static HtmlFragment operator +(RP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, RP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct RT : IHtmlTagAllowingContent<RT>
         {
@@ -1172,6 +1331,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(RT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(RT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, RT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct RUBY : IHtmlTagAllowingContent<RUBY>
         {
@@ -1187,6 +1348,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(RUBY tag) => tag.AsFragment();
+            public static HtmlFragment operator +(RUBY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, RUBY tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct S : IHtmlTagAllowingContent<S>
         {
@@ -1202,6 +1365,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(S tag) => tag.AsFragment();
+            public static HtmlFragment operator +(S head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, S tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SAMP : IHtmlTagAllowingContent<SAMP>
         {
@@ -1217,6 +1382,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SAMP tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SAMP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SAMP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SCRIPT : IHtmlTagAllowingContent<SCRIPT>, IHasAttr_src, IHasAttr_type, IHasAttr_async, IHasAttr_defer, IHasAttr_crossorigin, IHasAttr_integrity
         {
@@ -1232,6 +1399,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SCRIPT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SECTION : IHtmlTagAllowingContent<SECTION>
         {
@@ -1247,6 +1416,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SECTION tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SECTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SECTION tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SELECT : IHtmlTagAllowingContent<SELECT>, IHasAttr_autocomplete, IHasAttr_autofocus, IHasAttr_disabled, IHasAttr_form, IHasAttr_multiple, IHasAttr_name, IHasAttr_required, IHasAttr_size
         {
@@ -1262,6 +1433,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SELECT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SELECT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SELECT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SLOT : IHtmlTagAllowingContent<SLOT>, IHasAttr_name
         {
@@ -1277,6 +1450,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SLOT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SLOT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SLOT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SMALL : IHtmlTagAllowingContent<SMALL>
         {
@@ -1292,6 +1467,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SMALL tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SMALL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SMALL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SOURCE : IHtmlTag<SOURCE>, IHasAttr_src, IHasAttr_sizes, IHasAttr_media
         {
@@ -1304,6 +1481,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SOURCE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SOURCE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SOURCE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SPAN : IHtmlTagAllowingContent<SPAN>
         {
@@ -1319,6 +1498,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SPAN tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SPAN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SPAN tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct STRONG : IHtmlTagAllowingContent<STRONG>
         {
@@ -1334,6 +1515,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(STRONG tag) => tag.AsFragment();
+            public static HtmlFragment operator +(STRONG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, STRONG tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct STYLE : IHtmlTagAllowingContent<STYLE>, IHasAttr_media
         {
@@ -1349,6 +1532,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(STYLE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(STYLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, STYLE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SUB : IHtmlTagAllowingContent<SUB>
         {
@@ -1364,13 +1549,14 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SUB tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SUB head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SUB tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SUMMARY : IHtmlTagAllowingContent<SUMMARY>
         {
             public string TagName => "summary";
             string IHtmlTag.TagStart => "<summary";
             string IHtmlTag.EndTag => "</summary>";
-
             HtmlAttributes attrs;
             SUMMARY IHtmlTag<SUMMARY>.WithAttributes(HtmlAttributes replacementAttributes) => new SUMMARY { attrs = replacementAttributes, children = children };
             HtmlAttributes IHtmlTag.Attributes => attrs;
@@ -1380,6 +1566,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SUMMARY tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SUMMARY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SUMMARY tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct SUP : IHtmlTagAllowingContent<SUP>
         {
@@ -1395,6 +1583,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(SUP tag) => tag.AsFragment();
+            public static HtmlFragment operator +(SUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, SUP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TABLE : IHtmlTagAllowingContent<TABLE>
         {
@@ -1410,6 +1600,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TABLE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TABLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TABLE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TBODY : IHtmlTagAllowingContent<TBODY>
         {
@@ -1425,6 +1617,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TBODY tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TBODY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TBODY tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TD : IHtmlTagAllowingContent<TD>, IHasAttr_colspan, IHasAttr_rowspan, IHasAttr_headers
         {
@@ -1440,6 +1634,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TD tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TEMPLATE : IHtmlTagAllowingContent<TEMPLATE>
         {
@@ -1455,6 +1651,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TEMPLATE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TEMPLATE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TEMPLATE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TEXTAREA : IHtmlTagAllowingContent<TEXTAREA>, IHasAttr_autofocus, IHasAttr_cols, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_maxlength, IHasAttr_minlength, IHasAttr_name, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_rows, IHasAttr_wrap
         {
@@ -1470,6 +1668,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TEXTAREA tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TEXTAREA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TEXTAREA tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TFOOT : IHtmlTagAllowingContent<TFOOT>
         {
@@ -1485,6 +1685,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TFOOT tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TFOOT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TFOOT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TH : IHtmlTagAllowingContent<TH>, IHasAttr_colspan, IHasAttr_rowspan, IHasAttr_headers, IHasAttr_scope, IHasAttr_abbr
         {
@@ -1500,6 +1702,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TH tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TH head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TH tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct THEAD : IHtmlTagAllowingContent<THEAD>
         {
@@ -1515,6 +1719,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(THEAD tag) => tag.AsFragment();
+            public static HtmlFragment operator +(THEAD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, THEAD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TIME : IHtmlTagAllowingContent<TIME>, IHasAttr_datetime
         {
@@ -1530,6 +1736,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TIME tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TIME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TIME tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TITLE : IHtmlTagAllowingContent<TITLE>
         {
@@ -1545,6 +1753,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TITLE tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TITLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TITLE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TR : IHtmlTagAllowingContent<TR>
         {
@@ -1560,6 +1770,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TR tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct TRACK : IHtmlTag<TRACK>, IHasAttr_default, IHasAttr_kind, IHasAttr_label, IHasAttr_src, IHasAttr_srclang
         {
@@ -1572,6 +1784,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(TRACK tag) => tag.AsFragment();
+            public static HtmlFragment operator +(TRACK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, TRACK tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct U : IHtmlTagAllowingContent<U>
         {
@@ -1587,6 +1801,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(U tag) => tag.AsFragment();
+            public static HtmlFragment operator +(U head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, U tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct UL : IHtmlTagAllowingContent<UL>
         {
@@ -1602,6 +1818,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(UL tag) => tag.AsFragment();
+            public static HtmlFragment operator +(UL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, UL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct VAR : IHtmlTagAllowingContent<VAR>
         {
@@ -1617,6 +1835,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(VAR tag) => tag.AsFragment();
+            public static HtmlFragment operator +(VAR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, VAR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct VIDEO : IHtmlTagAllowingContent<VIDEO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_poster, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_playsinline, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls, IHasAttr_width, IHasAttr_height
         {
@@ -1632,6 +1852,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(VIDEO tag) => tag.AsFragment();
+            public static HtmlFragment operator +(VIDEO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, VIDEO tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
         public struct WBR : IHtmlTag<WBR>
         {
@@ -1644,6 +1866,8 @@ namespace ProgressOnderwijsUtils.Html
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment(WBR tag) => tag.AsFragment();
+            public static HtmlFragment operator +(WBR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, WBR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }
     }
 
@@ -1898,6 +2122,7 @@ namespace ProgressOnderwijsUtils.Html
 
         ///<summary>Computer output. See: <a href="https://html.spec.whatwg.org/#the-samp-element">https://html.spec.whatwg.org/#the-samp-element</a><br /></summary>
         public static readonly HtmlTagKinds.SAMP _samp = new HtmlTagKinds.SAMP();
+
 
         ///<summary>Embedded script. See: <a href="https://html.spec.whatwg.org/#the-script-element">https://html.spec.whatwg.org/#the-script-element</a><br /></summary>
         public static readonly HtmlTagKinds.SCRIPT _script = new HtmlTagKinds.SCRIPT();
@@ -2294,7 +2519,6 @@ namespace ProgressOnderwijsUtils.Html
             => htmlTagExpr.Attribute("formaction", attrValue);
         public static THtmlTag _formenctype<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_formenctype, IHtmlTag<THtmlTag>
-
             => htmlTagExpr.Attribute("formenctype", attrValue);
         public static THtmlTag _formmethod<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_formmethod, IHtmlTag<THtmlTag>
