@@ -40,19 +40,22 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void AppendingToFragmentsWorks() { 
+        public void AppendingToFragmentsWorks()
+        {
             var html = _div.AsFragment().Append("test").SerializeToStringWithoutDoctype();
             PAssert.That(() => html == "<div></div>test");
         }
 
         [Fact]
-        public void AppendingThreeThingsWorks() { 
+        public void AppendingThreeThingsWorks()
+        {
             var html = _div.AsFragment().Append("test", _b.Content("la")).SerializeToStringWithoutDoctype();
             PAssert.That(() => html == "<div></div>test<b>la</b>");
         }
 
         [Fact]
-        public void PerfIterativeAppendingDoesNotCreateLotsOfArrays () { 
+        public void PerfIterativeAppendingDoesNotCreateLotsOfArrays()
+        {
             var html = "1".AsFragment().Append("2").Append("3").Append("4");
             var kids = (HtmlFragment[])html.Content;
             PAssert.That(() => kids.First().SerializeToStringWithoutDoctype() == "1");
