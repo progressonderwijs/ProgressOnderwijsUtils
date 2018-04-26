@@ -154,6 +154,8 @@ using (var client = new HttpClient(new WebRequestHandler {
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
+            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }}"
 
         : $@"
@@ -173,6 +175,8 @@ using (var client = new HttpClient(new WebRequestHandler {
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
+            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
+            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         }}"
 );
 
