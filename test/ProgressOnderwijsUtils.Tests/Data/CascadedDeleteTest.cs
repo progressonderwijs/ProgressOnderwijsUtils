@@ -13,11 +13,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public int A { get; set; }
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void CascadedDeleteFollowsAForeignKey()
         {
             SQL($@"
@@ -49,11 +45,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             ").ExecuteNonQuery(Context);
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void CascadedDeleteWorksWithIdentityKey()
         {
             SQL($@"
@@ -74,11 +66,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public int Root { get; set; }
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void CascadedDeleteFollowsADiamondOfForeignKey()
         {
             CreateDiamondFkTableSet();

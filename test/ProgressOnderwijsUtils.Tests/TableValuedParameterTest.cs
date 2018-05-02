@@ -56,11 +56,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => dayCount == 2);
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void MetaObjectReadersCanIncludeNull()
         {
             var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };

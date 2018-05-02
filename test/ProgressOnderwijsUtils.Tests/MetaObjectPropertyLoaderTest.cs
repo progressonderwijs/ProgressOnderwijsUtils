@@ -90,11 +90,7 @@ namespace ProgressOnderwijsUtils.Tests
             SQL($@"create table #MyTable (id int not null primary key, bla nvarchar(max) null, bla2 nvarchar(max) not null)").ExecuteNonQuery(Context);
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void MetaObjectSupportsCustomObject_only_one_property()
         {
             PAssert.That(() => CustomBla.MethodWithIrrelevantName("aap").AsString == "aap");
@@ -105,11 +101,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => SampleObjects.Select(s => s.Bla2).SequenceEqual(fromDb.Select(x => x.Bla2.AsString)));
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void MetaObjectSupportsCustomObject_multiple_properties()
         {
             PAssert.That(() => CustomBla.MethodWithIrrelevantName("aap").AsString == "aap");
@@ -120,11 +112,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void MetaObjectSupportsCustomObject_readonly()
         {
             PAssert.That(() => CustomBla.MethodWithIrrelevantName("aap").AsString == "aap");
@@ -136,11 +124,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => fromDb.All(x => x.Bla3 == null));
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void MetaObjectSupportsCustomObject_struct()
         {
             PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
@@ -150,11 +134,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void MetaObjectSupportsCustomObject_nullable_struct()
         {
             PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
@@ -164,11 +144,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla.HasValue ? x.Bla.Value.AsString : default(string), Bla2 = x.Bla2.AsString })));
         }
 
-#if NET461
         [Fact]
-#else
-        [Fact(Skip = "MetaObjectBulkCopy does not have a way to set a transaction that's supported on .NET Core.")]
-#endif
         public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception()
         {
             PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
