@@ -15,12 +15,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void EmptyConcatenateFails()
-        {
-            Assert.ThrowsAny<Exception>(() => new ParameterizedSql[] { }.ConcatenateSql(SafeSql.SQL($"bla")));
-        }
-
-        [Fact]
         public void ConcatenateIsFastEnoughForLargeSequences()
         {
             var someSqls = Enumerable.Range(0, 10000).Select(i => ParameterizedSql.CreateDynamic(i.ToStringInvariant())).ToArray();
