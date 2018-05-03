@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>21.1.0</Version>
+    <Version>21.2.0</Version>
     <PackageReleaseNotes>Update SqlClient to 4.5.0-preview2-26406-04, so that .NET Core apps can use CommittableTransaction.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
