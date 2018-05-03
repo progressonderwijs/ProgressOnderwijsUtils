@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public struct ParameterizedSql
     {
-        readonly ISqlComponent impl;
+        internal readonly ISqlComponent impl;
 
         internal ParameterizedSql(ISqlComponent impl)
         {
@@ -212,6 +212,29 @@ namespace ProgressOnderwijsUtils
             b.AppendTo(ref factory);
         }
     }
+
+    class SeveralSqlFragments : ISqlComponent
+    {
+        readonly ISqlComponent[] kids;
+
+        public SeveralSqlFragments(ISqlComponent[] kids)
+        {
+            this.kids = kids;
+        }
+
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
+        {
+            if (kids == null || kids.Length == 0)
+                return;
+            kids[0].AppendTo(ref factory);
+            for (var index = 1; index < kids.Length; index++) {
+                factory.AppendSql(" ", 0, 1);
+                kids[index].AppendTo(ref factory);
+            }
+        }
+    }
+
 
     class InterpolatedSqlFragment : ISqlComponent
     {
