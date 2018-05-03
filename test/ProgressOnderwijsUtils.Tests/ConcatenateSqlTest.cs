@@ -2,22 +2,29 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class ConcatenateSqlTest
     {
         [Fact]
-        public void ConcatenateWithEmptySeparatorIsStillSpaced()
+        public void ConcatenatationOfEmptySequenceIsEmpty()
         {
-            PAssert.That(() => new[] { SafeSql.SQL($"een"), SafeSql.SQL($"twee"), SafeSql.SQL($"drie") }.ConcatenateSql() == SafeSql.SQL($"een twee drie"));
+            PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql() == ParameterizedSql.Empty);
+            PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql(SQL($"bla")) == ParameterizedSql.Empty);
         }
 
         [Fact]
-        public void EmptyConcatenateFails()
+        public void ConcatenateWithEmptySeparatorIsStillSpaced()
         {
-            Assert.ThrowsAny<Exception>(() => new ParameterizedSql[] { }.ConcatenateSql(SafeSql.SQL($"bla")));
+            PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql() == SQL($"een twee drie"));
+        }
+
+        [Fact]
+        public void ConcatenateWithSeparatorUsesSeparatorSpaced()
+        {
+            PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql(SQL($"!")) == SQL($"een ! twee ! drie"));
         }
 
         [Fact]
@@ -31,12 +38,6 @@ namespace ProgressOnderwijsUtils.Tests
             //At 1ns per op (equiv to approx 4 clock cycles), a quadratic implementation would use some multiple of 100 ms.  Even with an extremely low 
             //scaling factor, if it's faster than 5ms, it's almost certainly better than quadratic, and in any case fast enough.
             PAssert.That(() => time.TotalMilliseconds < 5.0);
-        }
-
-        [Fact]
-        public void ConcatenateWithSeparatorUsesSeparatorSpaced()
-        {
-            PAssert.That(() => new[] { SafeSql.SQL($"een"), SafeSql.SQL($"twee"), SafeSql.SQL($"drie") }.ConcatenateSql(SafeSql.SQL($"!")) == SafeSql.SQL($"een ! twee ! drie"));
         }
     }
 }
