@@ -2,16 +2,16 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class ConcatenateSqlTest
     {
         [Fact]
         public void ConcatenateWithEmptySeparatorIsStillSpaced()
         {
-            PAssert.That(() => new[] { SafeSql.SQL($"een"), SafeSql.SQL($"twee"), SafeSql.SQL($"drie") }.ConcatenateSql() == SafeSql.SQL($"een twee drie"));
+            PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql() == SQL($"een twee drie"));
         }
 
         [Fact]
@@ -30,7 +30,23 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ConcatenateWithSeparatorUsesSeparatorSpaced()
         {
-            PAssert.That(() => new[] { SafeSql.SQL($"een"), SafeSql.SQL($"twee"), SafeSql.SQL($"drie") }.ConcatenateSql(SafeSql.SQL($"!")) == SafeSql.SQL($"een ! twee ! drie"));
+            PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql(SQL($"!")) == SQL($"een ! twee ! drie"));
+        }
+
+        [Fact]
+        public void ConcatenatationOfEmptySequenceIsEmpty()
+        {
+            PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql() == ParameterizedSql.Empty);
+            PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql(SQL($"bla")) == ParameterizedSql.Empty);
+        }
+
+        [Fact]
+        public void ConcatenateOfNonEmptyWorks()
+        {
+            var sqls = new[] { SQL($"a"), SQL($"b"), SQL($"c") };
+
+            PAssert.That(() => sqls.ConcatenateSql() == SQL($"a b c"));
+            PAssert.That(() => sqls.ConcatenateSql(SQL($";")) == SQL($"a ; b ; c"));
         }
     }
 }
