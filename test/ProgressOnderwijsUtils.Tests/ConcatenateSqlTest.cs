@@ -39,14 +39,5 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql() == ParameterizedSql.Empty);
             PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql(SQL($"bla")) == ParameterizedSql.Empty);
         }
-
-        [Fact]
-        public void ConcatenateOfNonEmptyWorks()
-        {
-            var sqls = new[] { SQL($"a"), SQL($"b"), SQL($"c") };
-
-            PAssert.That(() => sqls.ConcatenateSql() == SQL($"a b c"));
-            PAssert.That(() => sqls.ConcatenateSql(SQL($";")) == SQL($"a ; b ; c"));
-        }
     }
 }
