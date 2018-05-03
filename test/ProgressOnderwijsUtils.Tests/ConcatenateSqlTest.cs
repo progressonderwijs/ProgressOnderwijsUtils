@@ -9,9 +9,22 @@ namespace ProgressOnderwijsUtils.Tests
     public sealed class ConcatenateSqlTest
     {
         [Fact]
+        public void ConcatenatationOfEmptySequenceIsEmpty()
+        {
+            PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql() == ParameterizedSql.Empty);
+            PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql(SQL($"bla")) == ParameterizedSql.Empty);
+        }
+
+        [Fact]
         public void ConcatenateWithEmptySeparatorIsStillSpaced()
         {
             PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql() == SQL($"een twee drie"));
+        }
+
+        [Fact]
+        public void ConcatenateWithSeparatorUsesSeparatorSpaced()
+        {
+            PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql(SQL($"!")) == SQL($"een ! twee ! drie"));
         }
 
         [Fact]
@@ -25,19 +38,6 @@ namespace ProgressOnderwijsUtils.Tests
             //At 1ns per op (equiv to approx 4 clock cycles), a quadratic implementation would use some multiple of 100 ms.  Even with an extremely low 
             //scaling factor, if it's faster than 5ms, it's almost certainly better than quadratic, and in any case fast enough.
             PAssert.That(() => time.TotalMilliseconds < 5.0);
-        }
-
-        [Fact]
-        public void ConcatenateWithSeparatorUsesSeparatorSpaced()
-        {
-            PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql(SQL($"!")) == SQL($"een ! twee ! drie"));
-        }
-
-        [Fact]
-        public void ConcatenatationOfEmptySequenceIsEmpty()
-        {
-            PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql() == ParameterizedSql.Empty);
-            PAssert.That(() => Array.Empty<ParameterizedSql>().ConcatenateSql(SQL($"bla")) == ParameterizedSql.Empty);
         }
     }
 }
