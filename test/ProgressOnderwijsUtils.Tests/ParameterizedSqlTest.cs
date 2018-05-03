@@ -174,9 +174,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => (trueCondition || SQL($"test")) != ParameterizedSql.Empty);
             PAssert.That(() => (falseCondition || SQL($"test")) == SQL($"test"));
             PAssert.That(() => (SQL($"test") + falseCondition || SQL($"WhenFalse")) == SQL($"test"));
-            PAssert.That(() => SQL($"{ ParameterizedSql.TruthyEmpty}") == ParameterizedSql.Empty);
+            PAssert.That(() => SQL($"{ParameterizedSql.TruthyEmpty}") == ParameterizedSql.Empty);
 
-            PAssert.That(() => SQL($"{trueCondition && SQL($"test")}") ==  SQL($"test"));
+            PAssert.That(() => SQL($"{trueCondition && SQL($"test")}") == SQL($"test"));
             PAssert.That(() => SQL($"{trueCondition}") == ParameterizedSql.Param(true));
         }
 
