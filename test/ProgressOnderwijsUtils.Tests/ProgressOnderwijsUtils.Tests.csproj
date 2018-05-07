@@ -10,12 +10,12 @@
   <ItemGroup>
     <Reference Include="System.Transactions" Condition="$(TargetFramework)=='net461'" />
     <Reference Include="System.Web" Condition="$(TargetFramework)=='net461'" />
-    <PackageReference Include="ApprovalUtilities" Version="3.0.13" NoWarn="NU1701" />
-    <PackageReference Include="ApprovalTests" Version="3.0.13" NoWarn="NU1701" />
+    <PackageReference Include="ApprovalUtilities" Version="3.0.14" NoWarn="NU1701" />
+    <PackageReference Include="ApprovalTests" Version="3.0.14" NoWarn="NU1701" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.0" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
