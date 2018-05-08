@@ -219,7 +219,7 @@ namespace ProgressOnderwijsUtils
     {
         FastShortStringBuilder debugText;
         int argOffset;
-        ArrayBuilder_WithArraySegments<object> paramValues;
+        ArrayBuilder<object> paramValues;
 
         [NotNull]
         public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter
@@ -235,7 +235,7 @@ namespace ProgressOnderwijsUtils
             var factory = new EqualityKeyCommandFactory {
                 debugText = FastShortStringBuilder.Create(),
                 argOffset = 0,
-                paramValues = ArrayBuilder_WithArraySegments<object>.Create(),
+                paramValues = default,
             };
             impl?.AppendTo(ref factory);
             var key = new ParameterizedSqlEquatableKey {

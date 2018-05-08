@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment Fragment<T>([NotNull] IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
         {
-            var retval = ArrayBuilder_WithArraySegments<HtmlFragment>.Create();
+            var retval = new ArrayBuilder<HtmlFragment>();
             foreach (var el in htmlEls) {
                 var htmlFragment = el.AsFragment();
                 if (htmlFragment.Content is HtmlFragment[] kids && kids.Length < 64) {

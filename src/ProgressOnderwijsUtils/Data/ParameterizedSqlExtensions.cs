@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static ParameterizedSql ConcatenateSql([NotNull] this IEnumerable<ParameterizedSql> sqlExpressions, ParameterizedSql separator)
         {
-            var builder = ArrayBuilder_WithArraySegments<ISqlComponent>.Create();
+            var builder = new ArrayBuilder<ISqlComponent>();
             bool isBuilderEmpty = true;
             foreach (var expr in sqlExpressions) {
                 if (expr.IsEmpty) {
