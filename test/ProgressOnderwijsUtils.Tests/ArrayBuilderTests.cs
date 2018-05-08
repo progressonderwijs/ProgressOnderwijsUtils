@@ -47,5 +47,20 @@ namespace ProgressOnderwijsUtils.Tests
                 Assert.Equal(Enumerable.Range(0, size).Select(n => n.ToString()), builder.ToArray());
             }
         }
+
+        [Fact(Skip = "slow and tricky on 32-bit runners.")]
+        public void TestMaxSizeArray()
+        {
+            var builder = new ArrayBuilder<byte>();
+            var approxMaxSize = int.MaxValue - 100;
+            for (uint i = 0; i < approxMaxSize; i++) {
+                builder.Add((byte)i);
+            }
+            var twoGbArray = builder.ToArray();
+            Assert.Equal(approxMaxSize, twoGbArray.Length);
+            Assert.Equal(37, twoGbArray[37]);
+            Assert.Equal(1234567 % 256, twoGbArray[1234567]);
+            Assert.Equal(approxMaxSize - 1 & 0xff, twoGbArray[approxMaxSize - 1]);
+        }
     }
 }
