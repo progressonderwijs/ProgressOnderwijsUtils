@@ -433,7 +433,7 @@ namespace ProgressOnderwijsUtils
                 //read this method bottom-to-top, because expression trees need to be constructed inside-out.
                 var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
                 var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                var arrayBuilderOfRowsType = typeof(FastArrayBuilder<T>);
+                var arrayBuilderOfRowsType = typeof(ArrayBuilder<T>);
                 var arrayBuilderVar = Expression.Variable(arrayBuilderOfRowsType, "rowList");
                 var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
                 var addRowToBuilderExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
@@ -442,8 +442,7 @@ namespace ProgressOnderwijsUtils
                 var breakIfAtEndOfReaderExpr = Expression.IfThen(Expression.Not(callReader_Read), Expression.Break(loopExitLabel));
                 var loopAddRowThenReadExpr = Expression.Loop(Expression.Block(addRowToBuilderExpr, breakIfAtEndOfReaderExpr), loopExitLabel);
                 var finishArrayExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("ToArray"));
-                var arrayBuilderCreateMethod = arrayBuilderOfRowsType.GetMethod("Create", BindingFlags.Public | BindingFlags.Static);
-                var initializeArrayBuilderExpr = Expression.Assign(arrayBuilderVar, Expression.Call(arrayBuilderCreateMethod));
+                var initializeArrayBuilderExpr = Expression.Assign(arrayBuilderVar, Expression.New(arrayBuilderOfRowsType));
                 var rowVar = Expression.Variable(typeof(T), "row");
                 var addRowVarToArrayBuilder = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), rowVar);
                 var createArrayGivenRowInVarAndReaderAtValidRow =

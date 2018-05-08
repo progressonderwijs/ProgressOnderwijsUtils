@@ -3,7 +3,7 @@
     <DebugType>full</DebugType>
     <DebugSymbols>True</DebugSymbols>
     <OutputType>library</OutputType>
-    <TargetFrameworks>net461</TargetFrameworks>
+    <TargetFrameworks>net471</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <LangVersion>7.2</LangVersion>
   </PropertyGroup>

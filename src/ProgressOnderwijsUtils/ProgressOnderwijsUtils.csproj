@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>21.3.0</Version>
-    <PackageReleaseNotes>Update dependencies</PackageReleaseNotes>
+    <Version>22.0.0</Version>
+    <PackageReleaseNotes>Faster ArrayBuilder and simpler api.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -13,7 +13,7 @@
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
     <OutputType>library</OutputType>
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
     <DebugType>full</DebugType>
@@ -21,6 +21,7 @@
     <NoWarn>CS1591</NoWarn>
     <LangVersion>7.2</LangVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
@@ -33,6 +34,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.5.0-rc1" Condition="$(TargetFramework)=='netstandard2.0'" />
+    <PackageReference Include="System.Memory" Version="4.5.0-rc1" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.1" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
     <PackageReference Include="DotNetZip" Version="1.10.1" NoWarn="NU1701" />

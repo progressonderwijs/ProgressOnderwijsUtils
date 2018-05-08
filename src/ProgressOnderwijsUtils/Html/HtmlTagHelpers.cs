@@ -85,7 +85,7 @@ namespace ProgressOnderwijsUtils.Html
                 if (!enumerator.MoveNext()) {
                     return HtmlFragment.Empty;
                 }
-                var retval = FastArrayBuilder<HtmlFragment>.Create();
+                var retval = new ArrayBuilder<HtmlFragment>();
                 var joinerIsNonEmpty = !joiner.IsEmpty;
                 // ReSharper disable once PossibleNullReferenceException
                 var firstNode = enumerator.Current.AsFragment();

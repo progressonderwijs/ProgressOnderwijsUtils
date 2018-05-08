@@ -283,7 +283,7 @@ namespace ProgressOnderwijsUtils
 
         static ParamRefSubString[] ParseFormatString([NotNull] string formatstring)
         {
-            var arrayBuilder = FastArrayBuilder<ParamRefSubString>.Create();
+            var arrayBuilder = new ArrayBuilder<ParamRefSubString>();
             var pos = 0;
             var strLen = formatstring.Length;
             while (true) {

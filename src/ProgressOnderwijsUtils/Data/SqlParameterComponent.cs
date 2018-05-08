@@ -221,7 +221,7 @@ namespace ProgressOnderwijsUtils
                     return projectedArray;
                 }
 
-                var arrayBuilder = FastArrayBuilder<TableValuedParameterWrapper<T>>.Create();
+                var arrayBuilder = new ArrayBuilder<TableValuedParameterWrapper<T>>();
                 foreach (var item in typedEnumerable) {
                     arrayBuilder.Add(new TableValuedParameterWrapper<T> { QueryTableValue = item });
                 }

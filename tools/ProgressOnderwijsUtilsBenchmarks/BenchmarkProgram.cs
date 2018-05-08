@@ -2,12 +2,24 @@
 
 namespace ProgressOnderwijsUtilsBenchmarks
 {
-    public class BenchmarkProgram
+    public static class BenchmarkProgram
     {
         static void Main()
         {
-            BenchmarkRunner.Run<HtmlFragmentBenchmark>();
+            RunArrayBuilderBenchmarks();
+            //BenchmarkRunner.Run<HtmlFragmentBenchmark>();
             //MicroOrm.MicroOrmBenchmarkProgram.RunBenchmarks();
+        }
+
+        static void RunArrayBuilderBenchmarks()
+        {
+            new BenchmarkSwitcher(new[] {
+                typeof(IntArrayBuilderBenchmark),
+                typeof(BigStructArrayBuilderBenchmark),
+                typeof(ByteArrayBuilderBenchmark),
+                typeof(ReferenceTypeArrayBuilderBenchmark),
+                typeof(SmallStructArrayBuilderBenchmark),
+            }).RunAllJoined();
         }
     }
 }
