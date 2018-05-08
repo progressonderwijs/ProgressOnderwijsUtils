@@ -4,7 +4,9 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    
+    /// <summary>
+    /// A fast way to build arrays.  Store the first 16 values inline (no heap allocation); then grows the scratch-space by less than 10% each time so that not too much memory is wasted during building.
+    /// </summary>
     public struct ArrayBuilder<T>
     {
         const int InitSize2Pow = 4;
