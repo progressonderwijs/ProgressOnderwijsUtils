@@ -433,7 +433,7 @@ namespace ProgressOnderwijsUtils
                 //read this method bottom-to-top, because expression trees need to be constructed inside-out.
                 var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
                 var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                var arrayBuilderOfRowsType = typeof(FastArrayBuilder<T>);
+                var arrayBuilderOfRowsType = typeof(ArrayBuilder_WithArraySegments<T>);
                 var arrayBuilderVar = Expression.Variable(arrayBuilderOfRowsType, "rowList");
                 var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
                 var addRowToBuilderExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);

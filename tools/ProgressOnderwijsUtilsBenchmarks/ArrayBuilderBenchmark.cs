@@ -116,7 +116,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
-                    var builder = FastArrayBuilder<T>.Create();
+                    var builder = ArrayBuilder_WithArraySegments<T>.Create();
                     for (int i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
-                    var builder = new FastArrayBuilder2<T>();
+                    var builder = new ArrayBuilder_Inline63ValuesAndSegments<T>();
                     for (int i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
@@ -144,7 +144,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
-                    var builder = new FastArrayBuilder2b<T>();
+                    var builder = new ArrayBuilder_Inline16ValuesAndSegments<T>();
                     for (int i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
@@ -158,7 +158,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
-                    var builder = new FastArrayBuilder2c<T>();
+                    var builder = new ArrayBuilder<T>();
                     for (int i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
@@ -172,7 +172,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
-                    var builder = new FastArrayBuilder3<T>();
+                    var builder = new ArrayBuilder_Inline32ValuesAndSegments<T>();
                     for (int i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
