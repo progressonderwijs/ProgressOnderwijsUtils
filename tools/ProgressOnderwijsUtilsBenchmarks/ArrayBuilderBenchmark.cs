@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
     {
         public struct Factory : IFactory<object>
         {
-            static readonly object[] Values = new object[] { "test", null, Tuple.Create(1, 2, 3), "lala", new List<int>(), new object(), new object(), new object(), };
+            static readonly object[] Values = { "test", null, Tuple.Create(1, 2, 3), "lala", new List<int>(), new object(), new object(), new object(), };
             public object Init(int value) => Values[value & 7];
         }
     }
