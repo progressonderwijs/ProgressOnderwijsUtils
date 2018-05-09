@@ -52,6 +52,7 @@ namespace ProgressOnderwijsUtils
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects)) {
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
+                var start = DateTimeOffset.Now;
                 var sw = Stopwatch.StartNew();
                 try {
                     await bulkCopy.WriteToServerAsync(objectReader, cancellationToken).ConfigureAwait(false);
@@ -59,7 +60,7 @@ namespace ProgressOnderwijsUtils
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
                     throw HelpfulException(bulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException<T>(mapping, destinationColumnIndex, ex);
                 } finally {
-                    TraceBulkInsertDuration(context.Tracer, tableName, sw, objectReader.RowsProcessed);
+                    TraceBulkInsertDuration(context.Tracer, tableName, start, sw, objectReader.RowsProcessed);
                 }
             }
         }
@@ -87,10 +88,10 @@ namespace ProgressOnderwijsUtils
             return column == null || length == null ? null : new Exception($"Column: {column} contains data with a length greater than: {length}", ex);
         }
 
-        static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, string tableName, Stopwatch sw, int rowsInserted)
+        static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, string tableName, DateTimeOffset start, Stopwatch sw, int rowsInserted)
         {
             if (tracerOrNull?.IsTracing ?? false) {
-                tracerOrNull.RegisterEvent("Bulk inserted " + rowsInserted + " rows into " + tableName, sw.Elapsed);
+                tracerOrNull.RegisterEvent("Bulk inserted " + rowsInserted + " rows into " + tableName, start, sw.Elapsed);
             }
         }
 

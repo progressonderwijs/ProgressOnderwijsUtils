@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         SqlTraceEvent[] ListAllCommands();
 
-        void RegisterEvent(string commandText, TimeSpan duration);
+        void RegisterEvent(string commandText, DateTimeOffset start, TimeSpan duration);
         SqlTracerAgumentInclusion ArgumentInclusion { get; }
         bool IsTracing { get; }
     }
@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils
         {
             public AlwaysOffTracer(SqlTracerAgumentInclusion agumentInclusion) => ArgumentInclusion = agumentInclusion;
             public SqlTraceEvent[] ListAllCommands() => Array.Empty<SqlTraceEvent>();
-            public void RegisterEvent(string commandText, TimeSpan duration) { }
+            public void RegisterEvent(string commandText, DateTimeOffset start, TimeSpan duration) { }
             public SqlTracerAgumentInclusion ArgumentInclusion { get; }
             public bool IsTracing => false;
         }
@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            public void RegisterEvent(string commandText, TimeSpan duration)
+            public void RegisterEvent(string commandText, DateTimeOffset start, TimeSpan duration)
             {
                 lock (allqueries) {
                     allqueries.Add(new SqlTraceEvent { EventContent = commandText, Duration = duration, CumulativeElapsedTime = ElapsedTime.Elapsed });
@@ -92,10 +92,10 @@ namespace ProgressOnderwijsUtils
 
             public SqlTraceEvent[] ListAllCommands() => Inner.ListAllCommands();
 
-            public void RegisterEvent(string commandText, TimeSpan duration)
+            public void RegisterEvent(string commandText, DateTimeOffset start, TimeSpan duration)
             {
-                Inner.RegisterEvent(commandText, duration);
-                Original.RegisterEvent(commandText, duration);
+                Inner.RegisterEvent(commandText, start, duration);
+                Original.RegisterEvent(commandText, start, duration);
             }
 
             public SqlTracerAgumentInclusion ArgumentInclusion => Original.ArgumentInclusion;
@@ -114,19 +114,21 @@ namespace ProgressOnderwijsUtils
         {
             readonly ISqlCommandTracer tracer;
             readonly string sqlCommandText;
+            readonly DateTimeOffset start;
             readonly Stopwatch commandStopwatch;
 
             internal SqlCommandTimer([NotNull] ISqlCommandTracer tracer, string sqlCommandText)
             {
                 this.tracer = tracer;
                 this.sqlCommandText = sqlCommandText;
+                start = DateTimeOffset.Now;
                 commandStopwatch = Stopwatch.StartNew();
             }
 
             public void Dispose()
             {
                 commandStopwatch.Stop();
-                tracer.RegisterEvent(sqlCommandText, commandStopwatch.Elapsed);
+                tracer.RegisterEvent(sqlCommandText, start, commandStopwatch.Elapsed);
             }
         }
     }
