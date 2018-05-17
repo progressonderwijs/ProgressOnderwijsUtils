@@ -17,12 +17,14 @@ namespace ProgressOnderwijsUtils
         {
             //see https://github.com/xunit/xunit/blame/master/src/xunit.runner.utility/Sinks/DelegatingSinks/DelegatingXmlCreationSink.cs#L249
             int nextSlash = message.IndexOf('\\');
-            if (nextSlash < 0 || message.Length == nextSlash + 1) {
+            if (nextSlash < 0 || message.Length == nextSlash + 1)
+            {
                 return message;
             }
             var output = new StringBuilder();
             int doneUpto = 0;
-            while (true) {
+            while (true)
+            {
                 output.Append(message, doneUpto, nextSlash - doneUpto);
                 var nextChar = message[nextSlash + 1];
                 output.Append(
@@ -35,7 +37,8 @@ namespace ProgressOnderwijsUtils
                 );
                 doneUpto = nextSlash + 2;
                 nextSlash = message.IndexOf('\\', doneUpto);
-                if (nextSlash < 0 || message.Length == nextSlash + 1) {
+                if (nextSlash < 0 || message.Length == nextSlash + 1)
+                {
                     output.Append(message, doneUpto, message.Length - doneUpto);
                     return output.ToString();
                 }
