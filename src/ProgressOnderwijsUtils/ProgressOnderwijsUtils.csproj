@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>22.1.0</Version>
-    <PackageReleaseNotes>Helper objects of xunit xml deserialization.</PackageReleaseNotes>
+    <Version>23.0.0</Version>
+    <PackageReleaseNotes>Rename AuthnRequest.Encode to EncodeAsQueryArgument and add method EncodeAndSignAsFormArgument.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
