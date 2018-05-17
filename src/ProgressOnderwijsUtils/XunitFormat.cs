@@ -1,13 +1,43 @@
-﻿using System.Xml;
+﻿using System.Text;
+using System.Xml;
 using System.Xml.Serialization;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtils
 {
     public static class XunitFormat
     {
+
         public static XunitResultReport LoadFromXmlFile(string xUnitXmlReportPath)
             => XmlReader.Create(xUnitXmlReportPath).Using(XmlSerializerHelper<XunitResultReport>.Deserialize);
+        
+        public static string xUnitUnescapeString(string message)
+        {
+            //see https://github.com/xunit/xunit/blame/master/src/xunit.runner.utility/Sinks/DelegatingSinks/DelegatingXmlCreationSink.cs#L249
+            int nextSlash = message.IndexOf('\\');
+            if (nextSlash < 0 || message.Length == nextSlash + 1) {
+                return message;
+            }
+            var output = new StringBuilder();
+            int doneUpto = 0;
+            while (true) {
+                output.Append(message, doneUpto, nextSlash - doneUpto);
+                var nextChar = message[nextSlash + 1];
+                output.Append(
+                    nextChar == 'n' ? '\n' :
+                    nextChar == 'r' ? '\r' :
+                    nextChar == '\\' ? '\\' :
+                    nextChar == 't' ? '\t' :
+                    nextChar == '"' ? '"' :
+                    nextChar
+                );
+                doneUpto = nextSlash + 2;
+                nextSlash = message.IndexOf('\\', doneUpto);
+                if (nextSlash < 0 || message.Length == nextSlash + 1) {
+                    output.Append(message, doneUpto, message.Length - doneUpto);
+                    return output.ToString();
+                }
+            }
+        }
 
         //Manually transcribed from https://xunit.github.io/docs/format-xml-v2
         [XmlRoot(ElementName = "assemblies")]
