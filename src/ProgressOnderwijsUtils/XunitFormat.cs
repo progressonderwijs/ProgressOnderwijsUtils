@@ -6,10 +6,9 @@ namespace ProgressOnderwijsUtils
 {
     public static class XunitFormat
     {
+        public static XunitResultReport LoadFromXmlReport(string xUnitXmlReportUri) => LoadFromXmlReport(XmlReader.Create(xUnitXmlReportUri));
+        public static XunitResultReport LoadFromXmlReport(XmlReader reader) => reader.Using(XmlSerializerHelper<XunitResultReport>.Deserialize);
 
-        public static XunitResultReport LoadFromXmlFile(string xUnitXmlReportPath)
-            => XmlReader.Create(xUnitXmlReportPath).Using(XmlSerializerHelper<XunitResultReport>.Deserialize);
-        
         /// <summary>
         /// xUnit escapes most content; replacing e.g. newlines with \n. This function unescapes that.
         /// </summary>
