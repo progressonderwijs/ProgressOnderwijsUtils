@@ -10,6 +10,9 @@ namespace ProgressOnderwijsUtils
         public static XunitResultReport LoadFromXmlFile(string xUnitXmlReportPath)
             => XmlReader.Create(xUnitXmlReportPath).Using(XmlSerializerHelper<XunitResultReport>.Deserialize);
         
+        /// <summary>
+        /// xUnit escapes most content; replacing e.g. newlines with \n. This function unescapes that.
+        /// </summary>
         public static string xUnitUnescapeString(string message)
         {
             //see https://github.com/xunit/xunit/blame/master/src/xunit.runner.utility/Sinks/DelegatingSinks/DelegatingXmlCreationSink.cs#L249
