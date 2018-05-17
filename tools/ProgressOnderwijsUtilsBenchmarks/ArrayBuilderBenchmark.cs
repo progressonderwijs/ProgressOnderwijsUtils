@@ -6,6 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Columns;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
+using BenchmarkDotNet.Toolchains.InProcess;
 using JetBrains.Annotations;
 using MoreLinq;
 using ProgressOnderwijsUtils.Collections;
@@ -76,26 +79,45 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
+    class ArrBenchConfig : ManualConfig
+    {
+        public ArrBenchConfig()
+        {
+            Add(
+                new Job(RunMode.Dry) {
+                    Run = { UnrollFactor = 1, RunStrategy = BenchmarkDotNet.Engines.RunStrategy.Throughput, WarmupCount = 3, TargetCount = 100, InvocationCount = 2, },
+                    Accuracy = { MaxRelativeError = 0.01, RemoveOutliers = true, MinInvokeCount = 50, }
+                }.WithGcForce(true));
+        }
+    }
+
     //[ClrJob]
     //[CoreJob]
     [RankColumn]
+    [Config(typeof(ArrBenchConfig))]
     public abstract class ArrayBuilderBenchmark<T, TFactory>
         where TFactory : struct, IFactory<T>
     {
-        [Params(3, 21, 1000, 1000)] //, 10_000, 100_000, 1000_000
-        public int MaxSize;
+        [ParamsSource(nameof(Configs))]
+        public (int MaxSize, int Threads, int Count, double avgLength) Config;
 
-        [Params(3)]
-        public int Threads;
+        public static IEnumerable<(int MaxSize, int Threads, int Count, double avgLength)> Configs
+            =>
+                from maxSize in new[] { 3, 21, 600 , 10_000, 300_000 }
+                from threads in new[] { /*1,*/ 7 }
+                let objCost = typeof(T).IsValueType ? Unsafe.SizeOf<T>() : 12
+                let count = (int)(0.5 + 400_000_000.0 / ((maxSize+1)*(objCost + 1)+ 20))
+                select (maxSize,threads,count, Math.Round(Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * maxSize + 0.5)).Average(), 2));
 
         public int[] Sizes;
         public T[] Values;
+        public int Threads => Config.Threads;
 
         [GlobalSetup]
         public void Setup()
         {
-            var count = 100_000 / (MaxSize + 4);
-            Sizes = Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * MaxSize + 0.5)).RandomSubset(count + 1, new Random(42)).ToArray();
+            var count = Config.Count;
+            Sizes = Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * Config.MaxSize + 0.5)).RandomSubset(count + 1, new Random(42)).ToArray();
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => { Thread.Yield(); }, TaskCreationOptions.LongRunning)).ToArray()); //I don't want to benchmark thread-pool startup.
         }
 
@@ -105,6 +127,20 @@ namespace ProgressOnderwijsUtilsBenchmarks
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new List<T>();
+                    for (int i = 0; i < size; i++) {
+                        builder.Add(default(TFactory).Init(i));
+                    }
+                    GC.KeepAlive(builder.ToArray());
+                }
+            }, TaskCreationOptions.LongRunning)).ToArray());
+        }
+
+        [Benchmark]
+        public void ArrayBuilder()
+        {
+            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+                foreach (var size in Sizes) {
+                    var builder = new ArrayBuilder<T>();
                     for (int i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
@@ -147,20 +183,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline16ValuesAndSegments<T>();
-                    for (int i = 0; i < size; i++) {
-                        builder.Add(default(TFactory).Init(i));
-                    }
-                    GC.KeepAlive(builder.ToArray());
-                }
-            }, TaskCreationOptions.LongRunning)).ToArray());
-        }
-
-        [Benchmark]
-        public void ArrayBuilder()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
-                    var builder = new ArrayBuilder<T>();
                     for (int i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
