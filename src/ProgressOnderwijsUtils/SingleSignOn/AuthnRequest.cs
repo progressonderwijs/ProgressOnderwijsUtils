@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Security.Cryptography;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
@@ -26,7 +28,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         [NotNull]
-        public string Encode()
+        public string EncodeAsQueryArgument()
         {
             var xml = Encoding.UTF8.GetBytes(ToXml().ToString());
             using (var stream = new MemoryStream()) {
@@ -34,6 +36,25 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                     deflate.Write(xml, 0, xml.Length);
                 return Convert.ToBase64String(stream.ToArray());
             }
+        }
+
+        [NotNull]
+        public string EncodeAndSignAsFormArgument([NotNull] RSA key)
+        {
+            var doc = new XmlDocument { PreserveWhitespace = false };
+            doc.Load(ToXml().CreateReader());
+            var signedXml = new SignedXml(doc) { SigningKey = key };
+            var reference = new Reference { Uri = "" };
+            var env = new XmlDsigEnvelopedSignatureTransform();
+            reference.AddTransform(env);
+            signedXml.AddReference(reference);
+            var keyInfo = new KeyInfo();
+            keyInfo.AddClause(new RSAKeyValue(key));
+            signedXml.KeyInfo = keyInfo;
+            signedXml.ComputeSignature();
+            var xmlDigitalSignature = signedXml.GetXml();
+            doc.DocumentElement.AppendChild(doc.ImportNode(xmlDigitalSignature, true));
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.InnerXml));
         }
 
         [NotNull]
