@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>23.0.0</Version>
-    <PackageReleaseNotes>Rename AuthnRequest.Encode to EncodeAsQueryArgument and add method EncodeAndSignAsFormArgument.</PackageReleaseNotes>
+    <Version>23.1.0</Version>
+    <PackageReleaseNotes>Bump version to reduce warnings of net-standard-to-net-framework dependencies.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
@@ -37,8 +37,8 @@
     <PackageReference Include="System.Memory" Version="4.5.0-rc1" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.2" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
-    <PackageReference Include="DotNetZip" Version="1.11.0" NoWarn="NU1701"/>
-    <PackageReference Include="ZlibWithDictionary" version="2.1.1" NoWarn="NU1701" />
+    <PackageReference Include="DotNetZip" Version="1.11.0" NoWarn="NU1701" />
+    <PackageReference Include="ZlibWithDictionary" version="2.2.0" NoWarn="NU1701" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.2" />
   </ItemGroup>
 </Project>
