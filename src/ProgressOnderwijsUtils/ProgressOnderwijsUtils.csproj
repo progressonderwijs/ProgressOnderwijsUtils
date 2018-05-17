@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
     <Version>22.1.1</Version>
-    <PackageReleaseNotes>Bump versions of dependant package</PackageReleaseNotes>
+    <PackageReleaseNotes>Bump versions of dependencies</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
