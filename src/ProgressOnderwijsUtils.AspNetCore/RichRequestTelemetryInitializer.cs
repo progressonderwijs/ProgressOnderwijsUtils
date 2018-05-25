@@ -8,9 +8,9 @@ namespace ProgressOnderwijsUtils.AspNetCore
 {
     public sealed class RichRequestTelemetryInitializer : ITelemetryInitializer
     {
-        readonly HttpContextAccessor _httpContextAccessor;
+        readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RichRequestTelemetryInitializer(HttpContextAccessor httpContextAccessor)
+        public RichRequestTelemetryInitializer(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
         }
