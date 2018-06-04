@@ -8,7 +8,6 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
-using BenchmarkDotNet.Toolchains.InProcess;
 using JetBrains.Annotations;
 using MoreLinq;
 using ProgressOnderwijsUtils.Collections;
@@ -91,8 +90,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
-    //[ClrJob]
-    //[CoreJob]
     [RankColumn]
     [Config(typeof(ArrBenchConfig))]
     public abstract class ArrayBuilderBenchmark<T, TFactory>
@@ -103,28 +100,28 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         public static IEnumerable<(int MaxSize, int Threads, int Count, double avgLength)> Configs
             =>
-                from maxSize in new[] { 3, 21, 600 , 10_000, 300_000 }
-                from threads in new[] { /*1,*/ 7 }
+                from maxSize in new[] { 3, 17,98,561,18_347,104_920,600_000}
+                from threads in new[] { 1, 4, 8 }
                 let objCost = typeof(T).IsValueType ? Unsafe.SizeOf<T>() : 12
-                let count = (int)(0.5 + 400_000_000.0 / ((maxSize+1)*(objCost + 1)+ 20))
-                select (maxSize,threads,count, Math.Round(Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * maxSize + 0.5)).Average(), 2));
+                let count = (int)(0.5 + 600_000_000.0 / ((maxSize+1)*(objCost + 1)+ 20))
+                select (maxSize,threads,count,  Math.Round(GetSizes(count,maxSize).Average(), 2));
 
         public int[] Sizes;
         public T[] Values;
-        public int Threads => Config.Threads;
 
         [GlobalSetup]
         public void Setup()
         {
-            var count = Config.Count;
-            Sizes = Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * Config.MaxSize + 0.5)).RandomSubset(count + 1, new Random(42)).ToArray();
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => { Thread.Yield(); }, TaskCreationOptions.LongRunning)).ToArray()); //I don't want to benchmark thread-pool startup.
+            Sizes = GetSizes(Config.Count, Config.MaxSize).RandomSubset(Config.Count + 1, new Random(42)).ToArray();
+            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => { Thread.Yield(); }, TaskCreationOptions.LongRunning)).ToArray()); //I don't want to benchmark thread-pool startup.
         }
+
+        static int[] GetSizes(int count, int maxSize) => Enumerable.Range(0, count + 1).Select(i => (int)(i / (double)count * maxSize + 0.5)).RandomSubset(count + 1, new Random(42)).ToArray();
 
         [Benchmark]
         public void List()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new List<T>();
                     for (int i = 0; i < size; i++) {
@@ -138,7 +135,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder<T>();
                     for (int i = 0; i < size; i++) {
@@ -152,7 +149,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder_WithArraySegments()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = ArrayBuilder_WithArraySegments<T>.Create();
                     for (int i = 0; i < size; i++) {
@@ -166,7 +163,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder_Inline63ValuesAndSegments()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline63ValuesAndSegments<T>();
                     for (int i = 0; i < size; i++) {
@@ -180,7 +177,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder_Inline16ValuesAndSegments()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline16ValuesAndSegments<T>();
                     for (int i = 0; i < size; i++) {
@@ -194,7 +191,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder_Inline32ValuesAndSegments()
         {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            Task.WaitAll(Enumerable.Range(0, Config.Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline32ValuesAndSegments<T>();
                     for (int i = 0; i < size; i++) {
