@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup Label="Configuration">
-    <Version>23.2.0</Version>
-    <PackageReleaseNotes>Update dependencies</PackageReleaseNotes>
+    <Version>23.2.1</Version>
+    <PackageReleaseNotes>Small optimization for ParameterizedSql when running on .NET Framework.</PackageReleaseNotes>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils</Title>
