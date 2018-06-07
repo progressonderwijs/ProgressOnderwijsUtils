@@ -33,7 +33,6 @@
     <PackageReference Include="morelinq" version="2.10.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.0-rc1" Condition="$(TargetFramework)=='netstandard2.0'" />
     <PackageReference Include="System.Data.SqlClient" Version="4.5.0" />
     <PackageReference Include="System.Memory" Version="4.5.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
