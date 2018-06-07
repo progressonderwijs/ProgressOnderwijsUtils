@@ -252,16 +252,17 @@ namespace ProgressOnderwijsUtils
                 .ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
         }
 
-#if NET461
         static readonly ModuleBuilder moduleBuilder;
+#pragma warning disable 169
         static int counter;
+#pragma warning restore 169
 
         static ParameterizedSqlObjectMapper()
         {
-            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
+            var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
             moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
         }
-#endif
+
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
         const int AsciiUpperToLowerDiff = 'a' - 'A';
@@ -475,7 +476,7 @@ namespace ProgressOnderwijsUtils
             static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda)
             {
                 try {
-#if NET461
+#if !NETSTANDARD2_0
                     if (typeof(T).IsPublic) {
                         var typeBuilder = moduleBuilder.DefineType(
                             "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
