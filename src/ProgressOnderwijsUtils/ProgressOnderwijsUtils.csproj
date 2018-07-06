@@ -28,7 +28,7 @@
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
 
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
-    <PackageReference Include="ExpressionToCodeLib" version="3.0.0" />
+    <PackageReference Include="ExpressionToCodeLib" version="2.7.0" />
     <PackageReference Include="log4net" version="2.0.8" />
     <PackageReference Include="morelinq" version="3.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
