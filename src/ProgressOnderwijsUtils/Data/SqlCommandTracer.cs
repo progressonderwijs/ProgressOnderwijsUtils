@@ -68,10 +68,16 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
+            const int maxEventCount = 1000;
+
             public void RegisterEvent(string commandText, TimeSpan duration)
             {
                 lock (allqueries) {
-                    allqueries.Add(new SqlTraceEvent { EventContent = commandText, Duration = duration, CumulativeElapsedTime = ElapsedTime.Elapsed });
+                    if (allqueries.Count < maxEventCount) {
+                        allqueries.Add(new SqlTraceEvent { EventContent = commandText, Duration = duration, CumulativeElapsedTime = ElapsedTime.Elapsed });
+                    } else if (allqueries.Count == maxEventCount) {
+                        allqueries.Add(new SqlTraceEvent { EventContent = $"Max event count ({maxEventCount}) reached", CumulativeElapsedTime = ElapsedTime.Elapsed });
+                    }
                 }
             }
 
