@@ -54,6 +54,8 @@ namespace ProgressOnderwijsUtils
         {
             readonly Stopwatch ElapsedTime = Stopwatch.StartNew();
             readonly List<SqlTraceEvent> allqueries = new List<SqlTraceEvent>();
+            const int maxTotalEventContentSize = 1_000_000;
+            int totalEventContentSize;
 
             public AlwaysOnTracer(SqlTracerAgumentInclusion agumentInclusion)
             {
@@ -68,15 +70,16 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            const int maxEventCount = 1000;
-
             public void RegisterEvent(string commandText, TimeSpan duration)
             {
                 lock (allqueries) {
-                    if (allqueries.Count < maxEventCount) {
-                        allqueries.Add(new SqlTraceEvent { EventContent = commandText, Duration = duration, CumulativeElapsedTime = ElapsedTime.Elapsed });
-                    } else if (allqueries.Count == maxEventCount) {
-                        allqueries.Add(new SqlTraceEvent { EventContent = $"Max event count ({maxEventCount}) reached", CumulativeElapsedTime = ElapsedTime.Elapsed });
+                    if (totalEventContentSize >= maxTotalEventContentSize) {
+                        return;
+                    }
+                    allqueries.Add(new SqlTraceEvent { EventContent = commandText, Duration = duration, CumulativeElapsedTime = ElapsedTime.Elapsed });
+                    totalEventContentSize += commandText.Length;
+                    if (totalEventContentSize >= maxTotalEventContentSize) {
+                        allqueries.Add(new SqlTraceEvent { EventContent = $"Max event data size ({totalEventContentSize}) reached", CumulativeElapsedTime = ElapsedTime.Elapsed });
                     }
                 }
             }
