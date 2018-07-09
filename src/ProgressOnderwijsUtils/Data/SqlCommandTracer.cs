@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
         {
             readonly Stopwatch ElapsedTime = Stopwatch.StartNew();
             readonly List<SqlTraceEvent> allqueries = new List<SqlTraceEvent>();
-            const int maxTotalEventContentSize = 1_000_000;
+            const int maxTotalEventContentSize = 100_000_000;
             int totalEventContentSize;
 
             public AlwaysOnTracer(SqlTracerAgumentInclusion agumentInclusion)
