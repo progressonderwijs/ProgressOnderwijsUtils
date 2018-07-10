@@ -240,8 +240,8 @@ namespace ProgressOnderwijsUtils
         //static readonly MethodInfo ReadMethod = typeof(IDataReader).GetMethod("Read", binding);
         [NotNull]
         static Dictionary<MethodInfo, MethodInfo> MakeMap([NotNull] params InterfaceMapping[] mappings)
-            => mappings.SelectMany(
-                map => map.InterfaceMethods.Zip(map.TargetMethods, (interfaceMethod, targetMethod) => (interfaceMethod, targetMethod)))
+            => mappings
+                .SelectMany(map => map.InterfaceMethods.Zip(map.TargetMethods, (interfaceMethod, targetMethod) => (interfaceMethod, targetMethod)))
                 .ToDictionary(methodPair => methodPair.interfaceMethod, methodPair => methodPair.targetMethod);
 
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
