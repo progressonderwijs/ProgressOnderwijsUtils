@@ -9,6 +9,10 @@
     <PackageReleaseNotes>Split off ProgressOnderwijsUtils.Web as a separate package</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <RepositoryUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</RepositoryUrl>
     <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
     <TargetFrameworks>net471</TargetFrameworks>
     <OutputType>library</OutputType>
