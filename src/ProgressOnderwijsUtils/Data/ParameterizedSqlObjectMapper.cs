@@ -1,5 +1,3 @@
-// ReSharper disable PossiblyMistakenUseOfParamsMethod
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,13 +8,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
+using FastExpressionCompiler;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
-// ReSharper disable RedundantUsingDirective
-using System.Reflection.Emit;
-using System.Threading;
-
-// ReSharper restore RedundantUsingDirective
 
 namespace ProgressOnderwijsUtils
 {
@@ -239,29 +233,12 @@ namespace ProgressOnderwijsUtils
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
             };
 
-        //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
-        //static MethodInfo GetterForType(Type type) => GetterMethodsByType[type];
 
-        //static readonly MethodInfo IsDBNullMethod = typeof(IDataRecord).GetMethod("IsDBNull", binding);
-        //static readonly MethodInfo ReadMethod = typeof(IDataReader).GetMethod("Read", binding);
         [NotNull]
         static Dictionary<MethodInfo, MethodInfo> MakeMap([NotNull] params InterfaceMapping[] mappings)
-        {
-            return mappings.SelectMany(
-                map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
-                .ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
-        }
-
-        static readonly ModuleBuilder moduleBuilder;
-#pragma warning disable 169
-        static int counter;
-#pragma warning restore 169
-
-        static ParameterizedSqlObjectMapper()
-        {
-            var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
-            moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
-        }
+            => mappings
+                .SelectMany(map => map.InterfaceMethods.Zip(map.TargetMethods, (interfaceMethod, targetMethod) => (interfaceMethod, targetMethod)))
+                .ToDictionary(methodPair => methodPair.interfaceMethod, methodPair => methodPair.targetMethod);
 
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
@@ -332,7 +309,7 @@ namespace ProgressOnderwijsUtils
             static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
-            static bool SupportsType([NotNull] Type type)
+            static bool IsSupportedBasicType([NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
 
@@ -341,39 +318,23 @@ namespace ProgressOnderwijsUtils
                     ;
             }
 
-            static bool SupportsMetaProperty([NotNull] IMetaProperty mp)
-                => IsSimpletype(mp) || IsCreatableType(mp);
+            static bool IsSupportedType([NotNull] Type type)
+                => IsSupportedBasicType(type) || CustomLoaderForType(type) != null;
 
-            static bool IsSimpletype([NotNull] IMetaProperty mp)
+            [CanBeNull]
+            static MethodInfo CustomLoaderForType([NotNull] Type type)
             {
-                return SupportsType(mp.DataType);
-            }
-
-            static bool IsCreatableType([NotNull] IMetaProperty mp)
-            {
-                return CreateMethodOfTypeWithCreateMethod(mp.DataType, out var _);
-            }
-
-            static bool CreateMethodOfTypeWithCreateMethod([NotNull] Type type, [CanBeNull] out MethodInfo methodInfo)
-            {
-                methodInfo = null;
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var method = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public).SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
-                if (method == null) {
-                    return false;
-                }
-                if (method.ReturnType != underlyingType) {
-                    return false;
-                }
-                var parameters = method.GetParameters();
-                if (parameters.Length != 1) {
-                    return false;
-                }
-                if (SupportsType(parameters[0].ParameterType)) {
-                    methodInfo = method;
-                    return true;
-                }
-                return false;
+                var methods = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public);
+                var method = methods.SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
+                return
+                    method != null
+                        && method.ReturnType == underlyingType
+                        && method.GetParameters() is var parameters
+                        && parameters.Length == 1
+                        && IsSupportedBasicType(parameters[0].ParameterType)
+                        ? method
+                        : null;
             }
 
             static MethodInfo GetterForType([NotNull] Type underlyingType)
@@ -382,7 +343,7 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo)) {
+                } else if (CustomLoaderForType(underlyingType) is var methodInfo && methodInfo != null) {
                     return InterfaceMap[getterMethodsByType[methodInfo.GetParameters()[0].ParameterType]];
                 } else {
                     return InterfaceMap[getterMethodsByType[underlyingType]];
@@ -392,7 +353,9 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var isTypeWithCreateMethod = CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo);
+                var methodInfo = CustomLoaderForType(underlyingType);
+                var isTypeWithCreateMethod = methodInfo != null;
+
                 var needsCast = underlyingType != type.GetNonNullableType();
 
                 if (isTypeWithCreateMethod) {
@@ -473,10 +436,10 @@ namespace ProgressOnderwijsUtils
             }
 
             [NotNull]
-            static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda)
+            static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda) where TDelegate : class
             {
                 try {
-                    return loadRowsLambda.Compile(); //TODO: use FastExpressionCompiler
+                    return loadRowsLambda.CompileFast<TDelegate>();
                 } catch (Exception e) {
                     throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
                 }
@@ -535,7 +498,7 @@ namespace ProgressOnderwijsUtils
                 {
                     var writablePropCount = 0;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && SupportsMetaProperty(mp)) {
+                        if (mp.CanWrite && IsSupportedType(mp.DataType)) {
                             writablePropCount++;
                         }
                     }
@@ -547,7 +510,7 @@ namespace ProgressOnderwijsUtils
                         }
                     hasUnsupportedColumns = false;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && !SupportsMetaProperty(mp)) {
+                        if (mp.CanWrite && !IsSupportedType(mp.DataType)) {
                             hasUnsupportedColumns = true;
                             break;
                         }
@@ -588,7 +551,7 @@ namespace ProgressOnderwijsUtils
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
-                        var publicWritableProperties = metadata.Where(SupportsMetaProperty).Select(mp => mp.Name).ToArray();
+                        var publicWritableProperties = metadata.Where(mp => IsSupportedType(mp.DataType)).Select(mp => mp.Name).ToArray();
                         var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
                         var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
                         throw new InvalidOperationException(
@@ -713,11 +676,11 @@ namespace ProgressOnderwijsUtils
                     }
                     var retval = constructors.Single();
 
-                    if (!retval.GetParameters().All(pi => SupportsType(pi.ParameterType))) {
+                    if (!retval.GetParameters().All(pi => IsSupportedBasicType(pi.ParameterType))) {
                         throw new ArgumentException(
                             FriendlyName + " : ILoadFromDbByConstructor's constructor must have only simple types: cannot support "
                                 + retval.GetParameters()
-                                    .Where(pi => !SupportsType(pi.ParameterType))
+                                    .Where(pi => !IsSupportedBasicType(pi.ParameterType))
                                     .Select(pi => pi.ParameterType.ToCSharpFriendlyTypeName() + " " + pi.Name)
                                     .JoinStrings(", "));
                     }
@@ -762,7 +725,7 @@ namespace ProgressOnderwijsUtils
 
                 static void VerifyTypeValidity()
                 {
-                    if (!SupportsType(type)) {
+                    if (!IsSupportedBasicType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
                                 + getterMethodsByType.Keys.Select(ObjectToCode.ToCSharpFriendlyTypeName).JoinStrings(", ") + ")!");
