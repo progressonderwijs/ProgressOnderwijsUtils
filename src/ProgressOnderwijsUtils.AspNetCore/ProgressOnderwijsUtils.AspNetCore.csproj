@@ -1,21 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
     <Version>2.2.1</Version>
-    <Authors>Progress Onderwijs</Authors>
-    <Owners>Progress Onderwijs</Owners>
     <Title>ProgressOnderwijsUtils.AspNetCore</Title>
-    <Description>
-      Various utility methods+classes used by Progress Onderwijs.
-    </Description>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>ProgressOnderwijs utility methods+classes for asp.net core.</Description>
     <PackageReleaseNotes>Update dependencies</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
-    <LangVersion>7.2</LangVersion>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
-    <OutputType>library</OutputType>
-    <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
