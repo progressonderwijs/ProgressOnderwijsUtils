@@ -242,8 +242,8 @@ namespace ProgressOnderwijsUtils
         static Dictionary<MethodInfo, MethodInfo> MakeMap([NotNull] params InterfaceMapping[] mappings)
         {
             return mappings.SelectMany(
-                map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
-                .ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
+                map => map.InterfaceMethods.Zip(map.TargetMethods, (interfaceMethod, targetMethod) => (interfaceMethod, targetMethod)))
+                .ToDictionary(methodPair => methodPair.interfaceMethod, methodPair => methodPair.targetMethod);
         }
 
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
