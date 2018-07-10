@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>2.2.1</Version>
+    <Version>2.3.0</Version>
     <Title>ProgressOnderwijsUtils.AspNetCore</Title>
     <Description>ProgressOnderwijs utility methods+classes for asp.net core.</Description>
-    <PackageReleaseNotes>Update dependencies</PackageReleaseNotes>
+    <PackageReleaseNotes>Add SourceLink support</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>

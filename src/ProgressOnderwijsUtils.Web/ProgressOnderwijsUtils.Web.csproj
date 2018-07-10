@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Title>ProgressOnderwijsUtils.Web</Title>
     <Description>Various System.Web-related utilities used by Progress Onderwijs.</Description>
-    <PackageReleaseNotes>Split off ProgressOnderwijsUtils.Web as a separate package</PackageReleaseNotes>
+    <PackageReleaseNotes>Add SourceLink support</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <TargetFrameworks>net471</TargetFrameworks>
   </PropertyGroup>
