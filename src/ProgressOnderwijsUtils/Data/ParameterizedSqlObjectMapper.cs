@@ -233,11 +233,7 @@ namespace ProgressOnderwijsUtils
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
             };
 
-        //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
-        //static MethodInfo GetterForType(Type type) => GetterMethodsByType[type];
 
-        //static readonly MethodInfo IsDBNullMethod = typeof(IDataRecord).GetMethod("IsDBNull", binding);
-        //static readonly MethodInfo ReadMethod = typeof(IDataReader).GetMethod("Read", binding);
         [NotNull]
         static Dictionary<MethodInfo, MethodInfo> MakeMap([NotNull] params InterfaceMapping[] mappings)
             => mappings
