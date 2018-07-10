@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
+using FastExpressionCompiler;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 // ReSharper disable RedundantUsingDirective
@@ -473,10 +474,10 @@ namespace ProgressOnderwijsUtils
             }
 
             [NotNull]
-            static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda)
+            static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda) where TDelegate : class
             {
                 try {
-                    return loadRowsLambda.Compile(); //TODO: use FastExpressionCompiler
+                    return loadRowsLambda.CompileFast<TDelegate>();
                 } catch (Exception e) {
                     throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
                 }
