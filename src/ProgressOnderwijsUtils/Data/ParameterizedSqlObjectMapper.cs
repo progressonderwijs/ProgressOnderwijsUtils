@@ -324,11 +324,11 @@ namespace ProgressOnderwijsUtils
                     ;
             }
 
-            static bool SupportsMetaProperty([NotNull] Type type)
-                => IsSupportedBasicType(type) || CreateMethodOfTypeWithCreateMethod(type) != null;
+            static bool IsSupportedType([NotNull] Type type)
+                => IsSupportedBasicType(type) || IsTypeWithCustomLoader(type) != null;
 
             [CanBeNull]
-            static MethodInfo CreateMethodOfTypeWithCreateMethod([NotNull] Type type)
+            static MethodInfo IsTypeWithCustomLoader([NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 var methods = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public);
@@ -349,7 +349,7 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (CreateMethodOfTypeWithCreateMethod(underlyingType) is var methodInfo && methodInfo != null) {
+                } else if (IsTypeWithCustomLoader(underlyingType) is var methodInfo && methodInfo != null) {
                     return InterfaceMap[getterMethodsByType[methodInfo.GetParameters()[0].ParameterType]];
                 } else {
                     return InterfaceMap[getterMethodsByType[underlyingType]];
@@ -359,7 +359,7 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var methodInfo = CreateMethodOfTypeWithCreateMethod(underlyingType);
+                var methodInfo = IsTypeWithCustomLoader(underlyingType);
                 var isTypeWithCreateMethod = methodInfo != null;
 
                 var needsCast = underlyingType != type.GetNonNullableType();
@@ -504,7 +504,7 @@ namespace ProgressOnderwijsUtils
                 {
                     var writablePropCount = 0;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && SupportsMetaProperty(mp.DataType)) {
+                        if (mp.CanWrite && IsSupportedType(mp.DataType)) {
                             writablePropCount++;
                         }
                     }
@@ -516,7 +516,7 @@ namespace ProgressOnderwijsUtils
                         }
                     hasUnsupportedColumns = false;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && !SupportsMetaProperty(mp.DataType)) {
+                        if (mp.CanWrite && !IsSupportedType(mp.DataType)) {
                             hasUnsupportedColumns = true;
                             break;
                         }
@@ -557,7 +557,7 @@ namespace ProgressOnderwijsUtils
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
-                        var publicWritableProperties = metadata.Where(mp => SupportsMetaProperty(mp.DataType)).Select(mp => mp.Name).ToArray();
+                        var publicWritableProperties = metadata.Where(mp => IsSupportedType(mp.DataType)).Select(mp => mp.Name).ToArray();
                         var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
                         var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
                         throw new InvalidOperationException(
