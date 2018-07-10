@@ -324,8 +324,8 @@ namespace ProgressOnderwijsUtils
                     ;
             }
 
-            static bool SupportsMetaProperty([NotNull] IMetaProperty mp)
-                => IsSupportedBasicType(mp.DataType) || CreateMethodOfTypeWithCreateMethod(mp.DataType) != null;
+            static bool SupportsMetaProperty([NotNull] IMetaProperty mp, [NotNull] Type type)
+                => IsSupportedBasicType(type) || CreateMethodOfTypeWithCreateMethod(type) != null;
 
             [CanBeNull]
             static MethodInfo CreateMethodOfTypeWithCreateMethod([NotNull] Type type)
@@ -504,7 +504,7 @@ namespace ProgressOnderwijsUtils
                 {
                     var writablePropCount = 0;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && SupportsMetaProperty(mp)) {
+                        if (mp.CanWrite && SupportsMetaProperty(mp, mp.DataType)) {
                             writablePropCount++;
                         }
                     }
@@ -516,7 +516,7 @@ namespace ProgressOnderwijsUtils
                         }
                     hasUnsupportedColumns = false;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && !SupportsMetaProperty(mp)) {
+                        if (mp.CanWrite && !SupportsMetaProperty(mp, mp.DataType)) {
                             hasUnsupportedColumns = true;
                             break;
                         }
@@ -557,7 +557,7 @@ namespace ProgressOnderwijsUtils
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
-                        var publicWritableProperties = metadata.Where(SupportsMetaProperty).Select(mp => mp.Name).ToArray();
+                        var publicWritableProperties = metadata.Where(mp => SupportsMetaProperty(mp, mp.DataType)).Select(mp => mp.Name).ToArray();
                         var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
                         var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
                         throw new InvalidOperationException(
