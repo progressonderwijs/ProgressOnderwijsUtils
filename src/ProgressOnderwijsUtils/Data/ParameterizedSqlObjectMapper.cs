@@ -331,21 +331,16 @@ namespace ProgressOnderwijsUtils
             static MethodInfo CreateMethodOfTypeWithCreateMethod([NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var method = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public).SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
-                if (method == null) {
-                    return null;
-                }
-                if (method.ReturnType != underlyingType) {
-                    return null;
-                }
-                var parameters = method.GetParameters();
-                if (parameters.Length != 1) {
-                    return null;
-                }
-                if (SupportsType(parameters[0].ParameterType)) {
-                    return method;
-                }
-                return null;
+                var methods = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public);
+                var method = methods.SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
+                return
+                    method != null
+                        && method.ReturnType == underlyingType
+                        && method.GetParameters() is var parameters
+                        && parameters.Length == 1
+                        && SupportsType(parameters[0].ParameterType)
+                        ? method
+                        : null;
             }
 
             static MethodInfo GetterForType([NotNull] Type underlyingType)
