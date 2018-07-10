@@ -327,10 +327,8 @@ namespace ProgressOnderwijsUtils
             static bool SupportsMetaProperty([NotNull] IMetaProperty mp)
                 => IsSimpletype(mp) || IsCreatableType(mp);
 
-            static bool IsSimpletype([NotNull] IMetaProperty mp)
-            {
-                return SupportsType(mp.DataType);
-            }
+            static bool IsSimpletype([NotNull] IMetaProperty mp) 
+                => SupportsType(mp.DataType);
 
             static bool IsCreatableType([NotNull] IMetaProperty mp) 
                 => CreateMethodOfTypeWithCreateMethod(mp.DataType) != null;
