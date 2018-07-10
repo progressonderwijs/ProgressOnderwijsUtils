@@ -319,10 +319,10 @@ namespace ProgressOnderwijsUtils
             }
 
             static bool IsSupportedType([NotNull] Type type)
-                => IsSupportedBasicType(type) || IsTypeWithCustomLoader(type) != null;
+                => IsSupportedBasicType(type) || CustomLoaderForType(type) != null;
 
             [CanBeNull]
-            static MethodInfo IsTypeWithCustomLoader([NotNull] Type type)
+            static MethodInfo CustomLoaderForType([NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
                 var methods = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public);
@@ -343,7 +343,7 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (IsTypeWithCustomLoader(underlyingType) is var methodInfo && methodInfo != null) {
+                } else if (CustomLoaderForType(underlyingType) is var methodInfo && methodInfo != null) {
                     return InterfaceMap[getterMethodsByType[methodInfo.GetParameters()[0].ParameterType]];
                 } else {
                     return InterfaceMap[getterMethodsByType[underlyingType]];
@@ -353,7 +353,7 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var methodInfo = IsTypeWithCustomLoader(underlyingType);
+                var methodInfo = CustomLoaderForType(underlyingType);
                 var isTypeWithCreateMethod = methodInfo != null;
 
                 var needsCast = underlyingType != type.GetNonNullableType();
