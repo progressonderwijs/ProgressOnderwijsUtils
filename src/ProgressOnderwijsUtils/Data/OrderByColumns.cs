@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
-using MoreLinq;
 
 namespace ProgressOnderwijsUtils
 {
@@ -93,7 +92,7 @@ namespace ProgressOnderwijsUtils
             var oldSortCol = GetSortColumn(kolomnaam);
             return oldSortCol != null
                 ? FirstSortBy(oldSortCol.Value.WithReverseDirection())
-                : new OrderByColumns(MoreEnumerable.Prepend(DirectAcessColumns, new ColumnSort(kolomnaam, SortDirection.Desc)).ToArray());
+                : new OrderByColumns(DirectAcessColumns.Prepend(new ColumnSort(kolomnaam, SortDirection.Desc)).ToArray());
         }
 
         [NotNull]
@@ -113,7 +112,7 @@ namespace ProgressOnderwijsUtils
         {
             return DirectAcessColumns.Any(sc => streq(sc.ColumnName, thenby.ColumnName))
                 ? this
-                : new OrderByColumns(DirectAcessColumns.Concat(thenby).ToArray());
+                : new OrderByColumns(DirectAcessColumns.Append(thenby).ToArray());
         }
 
         [Pure]
