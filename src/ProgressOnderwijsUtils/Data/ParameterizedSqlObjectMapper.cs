@@ -476,20 +476,7 @@ namespace ProgressOnderwijsUtils
             static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda)
             {
                 try {
-#if !NETSTANDARD2_0
-                    if (typeof(T).IsPublic) {
-                        var typeBuilder = moduleBuilder.DefineType(
-                            "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
-                            TypeAttributes.Public);
-                        var methodBuilder = typeBuilder.DefineMethod("LoadRows", MethodAttributes.Public | MethodAttributes.Static);
-                        loadRowsLambda.CompileToMethod(methodBuilder); //generates faster code
-                        var newType = typeBuilder.CreateType();
-
-                        return (TDelegate)(object)Delegate.CreateDelegate(typeof(TDelegate), newType.GetMethod("LoadRows"));
-                    }
-#endif
-
-                    return loadRowsLambda.Compile(); //generates slower code but works on non-public types
+                    return loadRowsLambda.Compile(); //TODO: use FastExpressionCompiler
                 } catch (Exception e) {
                     throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
                 }
