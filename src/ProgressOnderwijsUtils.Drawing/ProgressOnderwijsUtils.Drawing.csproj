@@ -13,7 +13,7 @@
     <TargetFrameworks>net471</TargetFrameworks>
     <OutputType>library</OutputType>
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
-    <LangVersion>7.2</LangVersion>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
