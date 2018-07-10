@@ -1,5 +1,3 @@
-// ReSharper disable PossiblyMistakenUseOfParamsMethod
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,16 +6,12 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
 using FastExpressionCompiler;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
-// ReSharper disable RedundantUsingDirective
-using System.Reflection.Emit;
-using System.Threading;
-
-// ReSharper restore RedundantUsingDirective
 
 namespace ProgressOnderwijsUtils
 {
@@ -252,18 +246,6 @@ namespace ProgressOnderwijsUtils
                 map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
                 .ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
         }
-
-        static readonly ModuleBuilder moduleBuilder;
-#pragma warning disable 169
-        static int counter;
-#pragma warning restore 169
-
-        static ParameterizedSqlObjectMapper()
-        {
-            var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
-            moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
-        }
-
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
         const int AsciiUpperToLowerDiff = 'a' - 'A';
