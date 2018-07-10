@@ -315,7 +315,7 @@ namespace ProgressOnderwijsUtils
             static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
-            static bool SupportsType([NotNull] Type type)
+            static bool IsSupportedBasicType([NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
 
@@ -325,7 +325,7 @@ namespace ProgressOnderwijsUtils
             }
 
             static bool SupportsMetaProperty([NotNull] IMetaProperty mp)
-                => SupportsType(mp.DataType) || CreateMethodOfTypeWithCreateMethod(mp.DataType) != null;
+                => IsSupportedBasicType(mp.DataType) || CreateMethodOfTypeWithCreateMethod(mp.DataType) != null;
 
             [CanBeNull]
             static MethodInfo CreateMethodOfTypeWithCreateMethod([NotNull] Type type)
@@ -338,7 +338,7 @@ namespace ProgressOnderwijsUtils
                         && method.ReturnType == underlyingType
                         && method.GetParameters() is var parameters
                         && parameters.Length == 1
-                        && SupportsType(parameters[0].ParameterType)
+                        && IsSupportedBasicType(parameters[0].ParameterType)
                         ? method
                         : null;
             }
@@ -682,11 +682,11 @@ namespace ProgressOnderwijsUtils
                     }
                     var retval = constructors.Single();
 
-                    if (!retval.GetParameters().All(pi => SupportsType(pi.ParameterType))) {
+                    if (!retval.GetParameters().All(pi => IsSupportedBasicType(pi.ParameterType))) {
                         throw new ArgumentException(
                             FriendlyName + " : ILoadFromDbByConstructor's constructor must have only simple types: cannot support "
                                 + retval.GetParameters()
-                                    .Where(pi => !SupportsType(pi.ParameterType))
+                                    .Where(pi => !IsSupportedBasicType(pi.ParameterType))
                                     .Select(pi => pi.ParameterType.ToCSharpFriendlyTypeName() + " " + pi.Name)
                                     .JoinStrings(", "));
                     }
@@ -731,7 +731,7 @@ namespace ProgressOnderwijsUtils
 
                 static void VerifyTypeValidity()
                 {
-                    if (!SupportsType(type)) {
+                    if (!IsSupportedBasicType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
                                 + getterMethodsByType.Keys.Select(ObjectToCode.ToCSharpFriendlyTypeName).JoinStrings(", ") + ")!");
