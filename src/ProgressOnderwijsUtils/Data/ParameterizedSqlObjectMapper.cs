@@ -439,7 +439,7 @@ namespace ProgressOnderwijsUtils
             static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda) where TDelegate : class
             {
                 try {
-                    return loadRowsLambda.CompileFast<TDelegate>();
+                    return loadRowsLambda.Compile(); //CompileFast<TDelegate> causes IL errors
                 } catch (Exception e) {
                     throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
                 }
