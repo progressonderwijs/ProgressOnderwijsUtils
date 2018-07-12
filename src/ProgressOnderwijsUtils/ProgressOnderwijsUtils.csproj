@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>25.0.0</Version>
-    <PackageReleaseNotes>Add SourceLink support; update dependencies</PackageReleaseNotes>
+    <Version>25.1.0</Version>
+    <PackageReleaseNotes>Revert to Expression.Compile (do not use FastExpressionCompiler)</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
