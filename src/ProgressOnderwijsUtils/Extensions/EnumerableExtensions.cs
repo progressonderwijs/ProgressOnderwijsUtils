@@ -199,17 +199,17 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         [Pure]
-        public static string ToCsv<T>([NotNull] this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", bool useQuotesForStrings = false)
+        public static string ToCsv<T>([NotNull] this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", bool useQuotesForStrings = false, bool useQuotesForNull = true)
             where T : class
         {
             var csvBuilder = new StringBuilder();
             var properties = typeof(T).GetProperties();
 
             if (useHeader) {
-                csvBuilder.AppendLine(string.Join(delimiter, properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings)).ToArray()));
+                csvBuilder.AppendLine(string.Join(delimiter, properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings, useQuotesForNull)).ToArray()));
             }
             foreach (var item in items) {
-                var line = string.Join(delimiter, properties.Select(p => p.GetValue(item, null).ToCsvValue(delimiter, useQuotesForStrings)).ToArray());
+                var line = string.Join(delimiter, properties.Select(p => p.GetValue(item, null).ToCsvValue(delimiter, useQuotesForStrings,useQuotesForNull)).ToArray());
                 csvBuilder.AppendLine(line);
             }
             return csvBuilder.ToString();
@@ -217,7 +217,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         [Pure]
-        static string ToCsvValue<T>([CanBeNull] this T item, [NotNull] string delimiter, bool useQuotesForStrings)
+        static string ToCsvValue<T>([CanBeNull] this T item, [NotNull] string delimiter, bool useQuotesForStrings, bool useQuotesForNull)
         {
             var csvValueWithoutQuotes = item?.ToString() ?? "";
 
@@ -230,7 +230,7 @@ namespace ProgressOnderwijsUtils
             }
 
             if (item == null) {
-                return "\"\"";
+                return useQuotesForNull ? "\"\"" : string.Empty;
             }
 
             if (item is string) {
