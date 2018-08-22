@@ -172,7 +172,7 @@ namespace ProgressOnderwijsUtils
                                 join {tempTableName} as tt on {ttJoin}
                             "));
                             sw.Stop();
-                            log("...took {sw.Elapsed}");
+                            log($"...took {sw.Elapsed}");
                             perflog.Add(new DeletionReport { Table = fk.DependantTable.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                         });
                         continue;
