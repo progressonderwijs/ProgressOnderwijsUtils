@@ -143,7 +143,7 @@ namespace ProgressOnderwijsUtils
                         drop table {tempTableName};
                     "));
                     sw.Stop();
-                    log("...took {sw.Elapsed}");
+                    log($"...took {sw.Elapsed}");
                     perflog.Add(new DeletionReport { Table = tableName.CommandText(), DeletedAtMostRowCount = nrRowsToDelete, DeletionDuration = sw.Elapsed, DeletedRows = deletedRows });
                 });
 
