@@ -25,6 +25,6 @@
     <PackageReference Include="ValueUtils" version="1.4.0" />
     <PackageReference Include="DotNetZip" Version="1.11.0" NoWarn="NU1701" />
     <PackageReference Include="ZlibWithDictionary" version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.2" />
   </ItemGroup>
 </Project>
