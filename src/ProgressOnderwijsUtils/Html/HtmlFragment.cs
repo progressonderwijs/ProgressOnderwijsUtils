@@ -15,13 +15,13 @@ namespace ProgressOnderwijsUtils.Html
         /// </summary>
         public readonly object Implementation;
 
-        public bool IsTextContent
+        public bool IsTextContent()
             => Implementation is string;
 
-        public bool IsHtmlElement
+        public bool IsHtmlElement()
             => Implementation is IHtmlTag;
 
-        public bool IsCollectionOfFragments
+        public bool IsCollectionOfFragments()
             => Implementation is HtmlFragment[];
 
         public bool IsEmpty
