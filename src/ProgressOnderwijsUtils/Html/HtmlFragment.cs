@@ -33,6 +33,13 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsCollectionOfFragments(out HtmlFragment[] nodes)
             => (nodes = Implementation as HtmlFragment[]) != null;
 
+        public void Deconstruct(out string textContent, out IHtmlTag tag, out HtmlFragment[] nodes)
+        {
+            textContent = Implementation as string;
+            tag = Implementation as IHtmlTag;
+            nodes = Implementation as HtmlFragment[];
+        }
+
         public bool IsEmpty
             => Implementation == null;
 
