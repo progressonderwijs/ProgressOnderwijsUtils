@@ -16,10 +16,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             A IHtmlElementAllowingContent<A>.WithContents(HtmlFragment replacementContents) => new A { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(A tag) => tag.AsFragment();
@@ -36,10 +33,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             ABBR IHtmlElementAllowingContent<ABBR>.WithContents(HtmlFragment replacementContents) => new ABBR { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(ABBR tag) => tag.AsFragment();
@@ -56,10 +50,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             ADDRESS IHtmlElementAllowingContent<ADDRESS>.WithContents(HtmlFragment replacementContents) => new ADDRESS { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(ADDRESS tag) => tag.AsFragment();
@@ -90,10 +81,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             ARTICLE IHtmlElementAllowingContent<ARTICLE>.WithContents(HtmlFragment replacementContents) => new ARTICLE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(ARTICLE tag) => tag.AsFragment();
@@ -110,10 +98,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             ASIDE IHtmlElementAllowingContent<ASIDE>.WithContents(HtmlFragment replacementContents) => new ASIDE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(ASIDE tag) => tag.AsFragment();
@@ -130,10 +115,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             AUDIO IHtmlElementAllowingContent<AUDIO>.WithContents(HtmlFragment replacementContents) => new AUDIO { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(AUDIO tag) => tag.AsFragment();
@@ -150,10 +132,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             B IHtmlElementAllowingContent<B>.WithContents(HtmlFragment replacementContents) => new B { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(B tag) => tag.AsFragment();
@@ -184,10 +163,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             BDI IHtmlElementAllowingContent<BDI>.WithContents(HtmlFragment replacementContents) => new BDI { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BDI tag) => tag.AsFragment();
@@ -204,10 +180,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             BDO IHtmlElementAllowingContent<BDO>.WithContents(HtmlFragment replacementContents) => new BDO { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BDO tag) => tag.AsFragment();
@@ -224,10 +197,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             BLOCKQUOTE IHtmlElementAllowingContent<BLOCKQUOTE>.WithContents(HtmlFragment replacementContents) => new BLOCKQUOTE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BLOCKQUOTE tag) => tag.AsFragment();
@@ -244,10 +214,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             BODY IHtmlElementAllowingContent<BODY>.WithContents(HtmlFragment replacementContents) => new BODY { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BODY tag) => tag.AsFragment();
@@ -278,10 +245,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             BUTTON IHtmlElementAllowingContent<BUTTON>.WithContents(HtmlFragment replacementContents) => new BUTTON { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BUTTON tag) => tag.AsFragment();
@@ -298,10 +262,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             CANVAS IHtmlElementAllowingContent<CANVAS>.WithContents(HtmlFragment replacementContents) => new CANVAS { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(CANVAS tag) => tag.AsFragment();
@@ -318,10 +279,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             CAPTION IHtmlElementAllowingContent<CAPTION>.WithContents(HtmlFragment replacementContents) => new CAPTION { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(CAPTION tag) => tag.AsFragment();
@@ -338,10 +296,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             CITE IHtmlElementAllowingContent<CITE>.WithContents(HtmlFragment replacementContents) => new CITE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(CITE tag) => tag.AsFragment();
@@ -358,10 +313,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             CODE IHtmlElementAllowingContent<CODE>.WithContents(HtmlFragment replacementContents) => new CODE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(CODE tag) => tag.AsFragment();
@@ -392,10 +344,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             COLGROUP IHtmlElementAllowingContent<COLGROUP>.WithContents(HtmlFragment replacementContents) => new COLGROUP { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(COLGROUP tag) => tag.AsFragment();
@@ -412,10 +361,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DATA IHtmlElementAllowingContent<DATA>.WithContents(HtmlFragment replacementContents) => new DATA { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DATA tag) => tag.AsFragment();
@@ -432,10 +378,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DATALIST IHtmlElementAllowingContent<DATALIST>.WithContents(HtmlFragment replacementContents) => new DATALIST { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DATALIST tag) => tag.AsFragment();
@@ -452,10 +395,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DD IHtmlElementAllowingContent<DD>.WithContents(HtmlFragment replacementContents) => new DD { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DD tag) => tag.AsFragment();
@@ -472,10 +412,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DEL IHtmlElementAllowingContent<DEL>.WithContents(HtmlFragment replacementContents) => new DEL { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DEL tag) => tag.AsFragment();
@@ -492,10 +429,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DETAILS IHtmlElementAllowingContent<DETAILS>.WithContents(HtmlFragment replacementContents) => new DETAILS { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DETAILS tag) => tag.AsFragment();
@@ -512,10 +446,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DFN IHtmlElementAllowingContent<DFN>.WithContents(HtmlFragment replacementContents) => new DFN { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DFN tag) => tag.AsFragment();
@@ -532,10 +463,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DIALOG IHtmlElementAllowingContent<DIALOG>.WithContents(HtmlFragment replacementContents) => new DIALOG { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DIALOG tag) => tag.AsFragment();
@@ -552,10 +480,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DIV IHtmlElementAllowingContent<DIV>.WithContents(HtmlFragment replacementContents) => new DIV { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DIV tag) => tag.AsFragment();
@@ -572,10 +497,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DL IHtmlElementAllowingContent<DL>.WithContents(HtmlFragment replacementContents) => new DL { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DL tag) => tag.AsFragment();
@@ -592,10 +514,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             DT IHtmlElementAllowingContent<DT>.WithContents(HtmlFragment replacementContents) => new DT { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DT tag) => tag.AsFragment();
@@ -612,10 +531,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             EM IHtmlElementAllowingContent<EM>.WithContents(HtmlFragment replacementContents) => new EM { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(EM tag) => tag.AsFragment();
@@ -646,10 +562,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             FIELDSET IHtmlElementAllowingContent<FIELDSET>.WithContents(HtmlFragment replacementContents) => new FIELDSET { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FIELDSET tag) => tag.AsFragment();
@@ -666,10 +579,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             FIGCAPTION IHtmlElementAllowingContent<FIGCAPTION>.WithContents(HtmlFragment replacementContents) => new FIGCAPTION { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FIGCAPTION tag) => tag.AsFragment();
@@ -686,10 +596,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             FIGURE IHtmlElementAllowingContent<FIGURE>.WithContents(HtmlFragment replacementContents) => new FIGURE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FIGURE tag) => tag.AsFragment();
@@ -706,10 +613,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             FOOTER IHtmlElementAllowingContent<FOOTER>.WithContents(HtmlFragment replacementContents) => new FOOTER { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FOOTER tag) => tag.AsFragment();
@@ -726,10 +630,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             FORM IHtmlElementAllowingContent<FORM>.WithContents(HtmlFragment replacementContents) => new FORM { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FORM tag) => tag.AsFragment();
@@ -746,10 +647,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             H1 IHtmlElementAllowingContent<H1>.WithContents(HtmlFragment replacementContents) => new H1 { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H1 tag) => tag.AsFragment();
@@ -766,10 +664,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             H2 IHtmlElementAllowingContent<H2>.WithContents(HtmlFragment replacementContents) => new H2 { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H2 tag) => tag.AsFragment();
@@ -786,10 +681,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             H3 IHtmlElementAllowingContent<H3>.WithContents(HtmlFragment replacementContents) => new H3 { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H3 tag) => tag.AsFragment();
@@ -806,10 +698,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             H4 IHtmlElementAllowingContent<H4>.WithContents(HtmlFragment replacementContents) => new H4 { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H4 tag) => tag.AsFragment();
@@ -826,10 +715,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             H5 IHtmlElementAllowingContent<H5>.WithContents(HtmlFragment replacementContents) => new H5 { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H5 tag) => tag.AsFragment();
@@ -846,10 +732,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             H6 IHtmlElementAllowingContent<H6>.WithContents(HtmlFragment replacementContents) => new H6 { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H6 tag) => tag.AsFragment();
@@ -866,10 +749,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             HEAD IHtmlElementAllowingContent<HEAD>.WithContents(HtmlFragment replacementContents) => new HEAD { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(HEAD tag) => tag.AsFragment();
@@ -886,10 +766,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             HEADER IHtmlElementAllowingContent<HEADER>.WithContents(HtmlFragment replacementContents) => new HEADER { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(HEADER tag) => tag.AsFragment();
@@ -906,10 +783,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             HGROUP IHtmlElementAllowingContent<HGROUP>.WithContents(HtmlFragment replacementContents) => new HGROUP { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(HGROUP tag) => tag.AsFragment();
@@ -940,10 +814,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             HTML IHtmlElementAllowingContent<HTML>.WithContents(HtmlFragment replacementContents) => new HTML { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(HTML tag) => tag.AsFragment();
@@ -960,17 +831,14 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             I IHtmlElementAllowingContent<I>.WithContents(HtmlFragment replacementContents) => new I { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(I tag) => tag.AsFragment();
             public static HtmlFragment operator +(I head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, I tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct IFRAME : IHtmlElementAllowingContent<IFRAME>, IHasAttr_src, IHasAttr_srcdoc, IHasAttr_name, IHasAttr_sandbox, IHasAttr_allowfullscreen, IHasAttr_allowpaymentrequest, IHasAttr_allowusermedia, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy
+        public struct IFRAME : IHtmlElementAllowingContent<IFRAME>, IHasAttr_src, IHasAttr_srcdoc, IHasAttr_name, IHasAttr_sandbox, IHasAttr_allow, IHasAttr_allowfullscreen, IHasAttr_allowpaymentrequest, IHasAttr_allowusermedia, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy
         {
             public string TagName => "iframe";
             string IHtmlElement.TagStart => "<iframe";
@@ -980,10 +848,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             IFRAME IHtmlElementAllowingContent<IFRAME>.WithContents(HtmlFragment replacementContents) => new IFRAME { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(IFRAME tag) => tag.AsFragment();
@@ -1028,10 +893,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             INS IHtmlElementAllowingContent<INS>.WithContents(HtmlFragment replacementContents) => new INS { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(INS tag) => tag.AsFragment();
@@ -1048,10 +910,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             KBD IHtmlElementAllowingContent<KBD>.WithContents(HtmlFragment replacementContents) => new KBD { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(KBD tag) => tag.AsFragment();
@@ -1068,10 +927,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             LABEL IHtmlElementAllowingContent<LABEL>.WithContents(HtmlFragment replacementContents) => new LABEL { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(LABEL tag) => tag.AsFragment();
@@ -1088,10 +944,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             LEGEND IHtmlElementAllowingContent<LEGEND>.WithContents(HtmlFragment replacementContents) => new LEGEND { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(LEGEND tag) => tag.AsFragment();
@@ -1108,10 +961,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             LI IHtmlElementAllowingContent<LI>.WithContents(HtmlFragment replacementContents) => new LI { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(LI tag) => tag.AsFragment();
@@ -1142,10 +992,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             MAIN IHtmlElementAllowingContent<MAIN>.WithContents(HtmlFragment replacementContents) => new MAIN { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(MAIN tag) => tag.AsFragment();
@@ -1162,10 +1009,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             MAP IHtmlElementAllowingContent<MAP>.WithContents(HtmlFragment replacementContents) => new MAP { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(MAP tag) => tag.AsFragment();
@@ -1182,10 +1026,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             MARK IHtmlElementAllowingContent<MARK>.WithContents(HtmlFragment replacementContents) => new MARK { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(MARK tag) => tag.AsFragment();
@@ -1202,10 +1043,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             MENU IHtmlElementAllowingContent<MENU>.WithContents(HtmlFragment replacementContents) => new MENU { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(MENU tag) => tag.AsFragment();
@@ -1236,10 +1074,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             METER IHtmlElementAllowingContent<METER>.WithContents(HtmlFragment replacementContents) => new METER { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(METER tag) => tag.AsFragment();
@@ -1256,10 +1091,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             NAV IHtmlElementAllowingContent<NAV>.WithContents(HtmlFragment replacementContents) => new NAV { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(NAV tag) => tag.AsFragment();
@@ -1276,10 +1108,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             NOSCRIPT IHtmlElementAllowingContent<NOSCRIPT>.WithContents(HtmlFragment replacementContents) => new NOSCRIPT { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(NOSCRIPT tag) => tag.AsFragment();
@@ -1296,10 +1125,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             OBJECT IHtmlElementAllowingContent<OBJECT>.WithContents(HtmlFragment replacementContents) => new OBJECT { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OBJECT tag) => tag.AsFragment();
@@ -1316,10 +1142,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             OL IHtmlElementAllowingContent<OL>.WithContents(HtmlFragment replacementContents) => new OL { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OL tag) => tag.AsFragment();
@@ -1336,10 +1159,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             OPTGROUP IHtmlElementAllowingContent<OPTGROUP>.WithContents(HtmlFragment replacementContents) => new OPTGROUP { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OPTGROUP tag) => tag.AsFragment();
@@ -1356,10 +1176,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             OPTION IHtmlElementAllowingContent<OPTION>.WithContents(HtmlFragment replacementContents) => new OPTION { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OPTION tag) => tag.AsFragment();
@@ -1376,10 +1193,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             OUTPUT IHtmlElementAllowingContent<OUTPUT>.WithContents(HtmlFragment replacementContents) => new OUTPUT { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OUTPUT tag) => tag.AsFragment();
@@ -1396,10 +1210,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             P IHtmlElementAllowingContent<P>.WithContents(HtmlFragment replacementContents) => new P { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(P tag) => tag.AsFragment();
@@ -1430,10 +1241,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             PICTURE IHtmlElementAllowingContent<PICTURE>.WithContents(HtmlFragment replacementContents) => new PICTURE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(PICTURE tag) => tag.AsFragment();
@@ -1450,10 +1258,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             PRE IHtmlElementAllowingContent<PRE>.WithContents(HtmlFragment replacementContents) => new PRE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(PRE tag) => tag.AsFragment();
@@ -1467,17 +1272,14 @@ namespace ProgressOnderwijsUtils.Html
             string IHtmlElement.EndTag => "</progress>";
             HtmlAttributes attrs;
             PROGRESS IHtmlElement<PROGRESS>.WithAttributes(HtmlAttributes replacementAttributes) => new PROGRESS { attrs = replacementAttributes, children = children };
-
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             PROGRESS IHtmlElementAllowingContent<PROGRESS>.WithContents(HtmlFragment replacementContents) => new PROGRESS { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(PROGRESS tag) => tag.AsFragment();
+
             public static HtmlFragment operator +(PROGRESS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, PROGRESS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
@@ -1491,10 +1293,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             Q IHtmlElementAllowingContent<Q>.WithContents(HtmlFragment replacementContents) => new Q { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(Q tag) => tag.AsFragment();
@@ -1511,10 +1310,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             RP IHtmlElementAllowingContent<RP>.WithContents(HtmlFragment replacementContents) => new RP { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(RP tag) => tag.AsFragment();
@@ -1531,10 +1327,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             RT IHtmlElementAllowingContent<RT>.WithContents(HtmlFragment replacementContents) => new RT { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(RT tag) => tag.AsFragment();
@@ -1551,10 +1344,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             RUBY IHtmlElementAllowingContent<RUBY>.WithContents(HtmlFragment replacementContents) => new RUBY { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(RUBY tag) => tag.AsFragment();
@@ -1571,10 +1361,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             S IHtmlElementAllowingContent<S>.WithContents(HtmlFragment replacementContents) => new S { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(S tag) => tag.AsFragment();
@@ -1591,17 +1378,14 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SAMP IHtmlElementAllowingContent<SAMP>.WithContents(HtmlFragment replacementContents) => new SAMP { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SAMP tag) => tag.AsFragment();
             public static HtmlFragment operator +(SAMP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, SAMP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SCRIPT : IHtmlElementAllowingContent<SCRIPT>, IHasAttr_src, IHasAttr_type, IHasAttr_async, IHasAttr_defer, IHasAttr_crossorigin, IHasAttr_integrity
+        public struct SCRIPT : IHtmlElementAllowingContent<SCRIPT>, IHasAttr_src, IHasAttr_type, IHasAttr_async, IHasAttr_defer, IHasAttr_crossorigin, IHasAttr_integrity, IHasAttr_referrerpolicy
         {
             public string TagName => "script";
             string IHtmlElement.TagStart => "<script";
@@ -1611,10 +1395,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SCRIPT IHtmlElementAllowingContent<SCRIPT>.WithContents(HtmlFragment replacementContents) => new SCRIPT { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SCRIPT tag) => tag.AsFragment();
@@ -1631,10 +1412,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SECTION IHtmlElementAllowingContent<SECTION>.WithContents(HtmlFragment replacementContents) => new SECTION { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SECTION tag) => tag.AsFragment();
@@ -1651,10 +1429,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SELECT IHtmlElementAllowingContent<SELECT>.WithContents(HtmlFragment replacementContents) => new SELECT { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SELECT tag) => tag.AsFragment();
@@ -1671,10 +1446,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SLOT IHtmlElementAllowingContent<SLOT>.WithContents(HtmlFragment replacementContents) => new SLOT { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SLOT tag) => tag.AsFragment();
@@ -1691,10 +1463,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SMALL IHtmlElementAllowingContent<SMALL>.WithContents(HtmlFragment replacementContents) => new SMALL { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SMALL tag) => tag.AsFragment();
@@ -1725,10 +1494,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SPAN IHtmlElementAllowingContent<SPAN>.WithContents(HtmlFragment replacementContents) => new SPAN { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SPAN tag) => tag.AsFragment();
@@ -1745,10 +1511,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             STRONG IHtmlElementAllowingContent<STRONG>.WithContents(HtmlFragment replacementContents) => new STRONG { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(STRONG tag) => tag.AsFragment();
@@ -1765,10 +1528,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             STYLE IHtmlElementAllowingContent<STYLE>.WithContents(HtmlFragment replacementContents) => new STYLE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(STYLE tag) => tag.AsFragment();
@@ -1785,10 +1545,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SUB IHtmlElementAllowingContent<SUB>.WithContents(HtmlFragment replacementContents) => new SUB { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SUB tag) => tag.AsFragment();
@@ -1805,10 +1562,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SUMMARY IHtmlElementAllowingContent<SUMMARY>.WithContents(HtmlFragment replacementContents) => new SUMMARY { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SUMMARY tag) => tag.AsFragment();
@@ -1825,10 +1579,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             SUP IHtmlElementAllowingContent<SUP>.WithContents(HtmlFragment replacementContents) => new SUP { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SUP tag) => tag.AsFragment();
@@ -1845,10 +1596,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TABLE IHtmlElementAllowingContent<TABLE>.WithContents(HtmlFragment replacementContents) => new TABLE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TABLE tag) => tag.AsFragment();
@@ -1865,10 +1613,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TBODY IHtmlElementAllowingContent<TBODY>.WithContents(HtmlFragment replacementContents) => new TBODY { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TBODY tag) => tag.AsFragment();
@@ -1885,10 +1630,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TD IHtmlElementAllowingContent<TD>.WithContents(HtmlFragment replacementContents) => new TD { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TD tag) => tag.AsFragment();
@@ -1905,10 +1647,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TEMPLATE IHtmlElementAllowingContent<TEMPLATE>.WithContents(HtmlFragment replacementContents) => new TEMPLATE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TEMPLATE tag) => tag.AsFragment();
@@ -1925,10 +1664,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TEXTAREA IHtmlElementAllowingContent<TEXTAREA>.WithContents(HtmlFragment replacementContents) => new TEXTAREA { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TEXTAREA tag) => tag.AsFragment();
@@ -1945,10 +1681,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TFOOT IHtmlElementAllowingContent<TFOOT>.WithContents(HtmlFragment replacementContents) => new TFOOT { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TFOOT tag) => tag.AsFragment();
@@ -1965,10 +1698,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TH IHtmlElementAllowingContent<TH>.WithContents(HtmlFragment replacementContents) => new TH { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TH tag) => tag.AsFragment();
@@ -1985,10 +1715,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             THEAD IHtmlElementAllowingContent<THEAD>.WithContents(HtmlFragment replacementContents) => new THEAD { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(THEAD tag) => tag.AsFragment();
@@ -2005,10 +1732,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TIME IHtmlElementAllowingContent<TIME>.WithContents(HtmlFragment replacementContents) => new TIME { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TIME tag) => tag.AsFragment();
@@ -2025,10 +1749,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TITLE IHtmlElementAllowingContent<TITLE>.WithContents(HtmlFragment replacementContents) => new TITLE { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TITLE tag) => tag.AsFragment();
@@ -2045,10 +1766,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             TR IHtmlElementAllowingContent<TR>.WithContents(HtmlFragment replacementContents) => new TR { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TR tag) => tag.AsFragment();
@@ -2079,10 +1797,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             U IHtmlElementAllowingContent<U>.WithContents(HtmlFragment replacementContents) => new U { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(U tag) => tag.AsFragment();
@@ -2099,10 +1814,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             UL IHtmlElementAllowingContent<UL>.WithContents(HtmlFragment replacementContents) => new UL { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(UL tag) => tag.AsFragment();
@@ -2119,10 +1831,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             VAR IHtmlElementAllowingContent<VAR>.WithContents(HtmlFragment replacementContents) => new VAR { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(VAR tag) => tag.AsFragment();
@@ -2139,10 +1848,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             VIDEO IHtmlElementAllowingContent<VIDEO>.WithContents(HtmlFragment replacementContents) => new VIDEO { attrs = attrs, children = replacementContents };
-
-            HtmlFragment IHtmlElementAllowingContent.Contents()
-                => children;
-
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(VIDEO tag) => tag.AsFragment();
@@ -2417,7 +2123,6 @@ namespace ProgressOnderwijsUtils.Html
         ///<summary>Computer output. See: <a href="https://html.spec.whatwg.org/#the-samp-element">https://html.spec.whatwg.org/#the-samp-element</a><br /></summary>
         public static readonly HtmlTagKinds.SAMP _samp = new HtmlTagKinds.SAMP();
 
-
         ///<summary>Embedded script. See: <a href="https://html.spec.whatwg.org/#the-script-element">https://html.spec.whatwg.org/#the-script-element</a><br /></summary>
         public static readonly HtmlTagKinds.SCRIPT _script = new HtmlTagKinds.SCRIPT();
 
@@ -2435,6 +2140,7 @@ namespace ProgressOnderwijsUtils.Html
 
         ///<summary>Image source for img or media source for video or audio. See: <a href="https://html.spec.whatwg.org/#the-source-element">https://html.spec.whatwg.org/#the-source-element</a><br /></summary>
         public static readonly HtmlTagKinds.SOURCE _source = new HtmlTagKinds.SOURCE();
+
 
         ///<summary>Generic phrasing container. See: <a href="https://html.spec.whatwg.org/#the-span-element">https://html.spec.whatwg.org/#the-span-element</a><br /></summary>
         public static readonly HtmlTagKinds.SPAN _span = new HtmlTagKinds.SPAN();
@@ -2567,6 +2273,7 @@ namespace ProgressOnderwijsUtils.Html
         public interface IHasAttr_manifest { }
         public interface IHasAttr_srcdoc { }
         public interface IHasAttr_sandbox { }
+        public interface IHasAttr_allow { }
         public interface IHasAttr_allowfullscreen { }
         public interface IHasAttr_allowpaymentrequest { }
         public interface IHasAttr_allowusermedia { }
@@ -2871,6 +2578,9 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _sandbox<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_sandbox, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("sandbox", attrValue);
+        public static THtmlTag _allow<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+            where THtmlTag : struct, IHasAttr_allow, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("allow", attrValue);
         public static THtmlTag _allowfullscreen<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_allowfullscreen, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("allowfullscreen", attrValue);
