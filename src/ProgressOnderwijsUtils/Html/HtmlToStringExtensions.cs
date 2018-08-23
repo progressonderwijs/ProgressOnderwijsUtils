@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils.Html
 
         static void AppendTagContentAndEnd(ref FastShortStringBuilder stringBuilder, [NotNull] IHtmlElementAllowingContent htmlElementAllowingContent)
         {
-            var contents = htmlElementAllowingContent.Contents;
+            var contents = htmlElementAllowingContent.Contents();
             if (htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
                 if (contents.Implementation is HtmlFragment[] fragments) {
                     foreach (var childNode in fragments) {

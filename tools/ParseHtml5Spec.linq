@@ -171,7 +171,7 @@ using (var client = new HttpClient(new WebRequestHandler {
             HtmlAttributes IHtmlElement.Attributes => attrs;
             HtmlFragment children;
             {el.csUpperName} IHtmlElementAllowingContent<{el.csUpperName}>.WithContents(HtmlFragment replacementContents) => new {el.csUpperName} {{ attrs = attrs, children = replacementContents }};
-            HtmlFragment IHtmlElementAllowingContent.Contents => children;
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
             IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();

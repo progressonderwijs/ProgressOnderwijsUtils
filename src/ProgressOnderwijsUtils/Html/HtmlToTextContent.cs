@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils.Html
                 foreach (var child in childFragments) {
                     AppendTextContent(ref fastStringBuilder, child.Implementation);
                 }
-            } else if (fragmentContent is IHtmlElementAllowingContent elemWithContent && elemWithContent.Contents.Implementation is object nonNullFragmentContent) {
+            } else if (fragmentContent is IHtmlElementAllowingContent elemWithContent && elemWithContent.Contents().Implementation is object nonNullFragmentContent) {
                 AppendTextContent(ref fastStringBuilder, nonNullFragmentContent);
             }
         }

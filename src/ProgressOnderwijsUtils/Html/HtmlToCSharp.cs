@@ -29,14 +29,14 @@ namespace ProgressOnderwijsUtils.Html
                     stringBuilder.AppendText(")");
                 }
                 var wereAttributesRendered = AppendAttributesAsCSharp(ref stringBuilder, htmlTag.Attributes, description.AttributeMethodsByName, indent);
-                if (htmlTag is IHtmlElementAllowingContent withContent && !withContent.Contents.IsEmpty) {
+                if (htmlTag is IHtmlElementAllowingContent withContent && !withContent.Contents().IsEmpty) {
                     var subIndent = wereAttributesRendered ? indent + 8 : indent + 4;
                     if (wereAttributesRendered) {
                         AppendNewline(ref stringBuilder);
                         AppendIndent(ref stringBuilder, indent + 4);
                     }
                     stringBuilder.AppendText(".Content(");
-                    AppendCommaSeparatedFragments(ref stringBuilder, withContent.Contents, subIndent);
+                    AppendCommaSeparatedFragments(ref stringBuilder, withContent.Contents(), subIndent);
                     AppendIndent(ref stringBuilder, indent);
                     stringBuilder.AppendText(")");
                 }

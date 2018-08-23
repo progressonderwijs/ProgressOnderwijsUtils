@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Html
 
     public interface IHtmlElementAllowingContent : IHtmlElement
     {
-        HtmlFragment Contents { get; }
+        HtmlFragment Contents();
     }
 
     public interface IHtmlElement<out TSelf> : IHtmlElement
