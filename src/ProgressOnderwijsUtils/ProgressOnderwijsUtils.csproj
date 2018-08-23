@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>25.1.2</Version>
-    <PackageReleaseNotes>Fix error in logging CascadedDelete</PackageReleaseNotes>
+    <Version>26.0.0</Version>
+    <PackageReleaseNotes>Make HtmlFragment API's a little friendlier.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
