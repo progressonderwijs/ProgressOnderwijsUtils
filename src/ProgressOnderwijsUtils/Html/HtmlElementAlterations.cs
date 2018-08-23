@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
-    public static class HtmlTagAlterations
+    public static class HtmlElementAlterations
     {
         public static IHtmlElement ReplaceAttributes([NotNull] IHtmlElement element, HtmlAttributes attributes)
             => element.ApplyChange(new AttributeAlteration(attributes));

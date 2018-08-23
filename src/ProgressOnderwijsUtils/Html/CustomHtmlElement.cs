@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils.Html
             var tagDescription = TagDescription.LookupTag(TagName);
             return tagDescription.EmptyValue == null
                 ? this
-                : HtmlTagAlterations.ReplaceAttributesAndContents(tagDescription.EmptyValue, Attributes, Contents());
+                : HtmlElementAlterations.ReplaceAttributesAndContents(tagDescription.EmptyValue, Attributes, Contents());
         }
 
         [NotNull]
