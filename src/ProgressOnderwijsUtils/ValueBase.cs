@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
             var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
             var readableProperties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic).Where(pi => pi.CanRead && pi.GetGetMethod() != null);
             var fieldsAndProperties = fields.Cast<MemberInfo>().Concat(readableProperties);
-            var nonCompilerGeneratedMembers = fieldsAndProperties.Where(fi => !fi.Name.StartsWith("<"));
+            var nonCompilerGeneratedMembers = fieldsAndProperties.Where(fi => !fi.Name.StartsWith("<", StringComparison.Ordinal));
 
             var replaceMethod = ((Func<string, string, string>)"".Replace).Method;
 
