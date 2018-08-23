@@ -13,22 +13,22 @@ namespace ProgressOnderwijsUtils.Html
         /// <summary>
         /// Either a string, an IHtmlTag, a non-empty HtmlFragment[], or null (the empty fragment).
         /// </summary>
-        public readonly object Content;
+        public readonly object Implementation;
 
         public bool IsTextContent
-            => Content is string;
+            => Implementation is string;
 
         public bool IsHtmlElement
-            => Content is IHtmlTag;
+            => Implementation is IHtmlTag;
 
         public bool IsCollectionOfFragments
-            => Content is HtmlFragment[];
+            => Implementation is HtmlFragment[];
 
         public bool IsEmpty
-            => Content == null;
+            => Implementation == null;
 
         HtmlFragment(object content)
-            => Content = content;
+            => Implementation = content;
 
         [Pure]
         public static HtmlFragment TextContent(string textContent)
@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils.Html
                 var totalKids = 0;
                 var flattenRelevant = false;
                 foreach (var child in htmlEls) {
-                    if (child.Content is HtmlFragment[] childContents) {
+                    if (child.Implementation is HtmlFragment[] childContents) {
                         totalKids += childContents.Length;
                         flattenRelevant = true;
                     } else if (child.IsEmpty) {
@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils.Html
                     var retval = new HtmlFragment[totalKids];
                     var writeIdx = 0;
                     foreach (var child in htmlEls) {
-                        if (child.Content is HtmlFragment[] childContents) {
+                        if (child.Implementation is HtmlFragment[] childContents) {
                             foreach (var grandChild in childContents) {
                                 retval[writeIdx++] = grandChild;
                             }
@@ -103,7 +103,7 @@ namespace ProgressOnderwijsUtils.Html
             var retval = new ArrayBuilder<HtmlFragment>();
             foreach (var el in htmlEls) {
                 var htmlFragment = el.AsFragment();
-                if (htmlFragment.Content is HtmlFragment[] kids && kids.Length < 64) {
+                if (htmlFragment.Implementation is HtmlFragment[] kids && kids.Length < 64) {
                     foreach (var grandchild in kids) {
                         retval.Add(grandchild);
                     }
@@ -143,12 +143,12 @@ namespace ProgressOnderwijsUtils.Html
             => this;
 
         public HtmlFragment[] NodesOfFragment()
-            => Content as HtmlFragment[] ?? (IsEmpty ? EmptyNodes : new[] { this });
+            => Implementation as HtmlFragment[] ?? (IsEmpty ? EmptyNodes : new[] { this });
 
         public HtmlFragment[] ChildNodes()
-            => Content is IHtmlTagAllowingContent elem
+            => Implementation is IHtmlTagAllowingContent elem
                 ? elem.Contents.NodesOfFragment()
-                : Content as HtmlFragment[] ?? EmptyNodes;
+                : Implementation as HtmlFragment[] ?? EmptyNodes;
 
         public static HtmlFragment[] EmptyNodes
             => Array.Empty<HtmlFragment>();

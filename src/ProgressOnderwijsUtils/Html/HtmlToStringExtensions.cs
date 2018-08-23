@@ -50,9 +50,9 @@ namespace ProgressOnderwijsUtils.Html
 
         static void AppendToBuilder(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment)
         {
-            if (fragment.Content is string stringContent) {
+            if (fragment.Implementation is string stringContent) {
                 AppendEscapedText(ref stringBuilder, stringContent);
-            } else if (fragment.Content is IHtmlTag htmlTag) {
+            } else if (fragment.Implementation is IHtmlTag htmlTag) {
                 stringBuilder.AppendText(htmlTag.TagStart);
                 if (htmlTag.Attributes.Count > 0) {
                     AppendAttributes(ref stringBuilder, htmlTag.Attributes);
@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils.Html
                 if (htmlTag is IHtmlTagAllowingContent htmlTagAllowingContent) {
                     AppendTagContentAndEnd(ref stringBuilder, htmlTagAllowingContent);
                 }
-            } else if (fragment.Content is HtmlFragment[] fragments) {
+            } else if (fragment.Implementation is HtmlFragment[] fragments) {
                 foreach (var child in fragments) {
                     AppendToBuilder(ref stringBuilder, child);
                 }
@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils.Html
         {
             var contents = htmlTagAllowingContent.Contents;
             if (htmlTagAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlTagAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
-                if (contents.Content is HtmlFragment[] fragments) {
+                if (contents.Implementation is HtmlFragment[] fragments) {
                     foreach (var childNode in fragments) {
                         AppendAsRawTextToBuilder(ref stringBuilder, childNode);
                     }
@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils.Html
                     AppendAsRawTextToBuilder(ref stringBuilder, contents);
                 }
             } else {
-                if (contents.Content is HtmlFragment[] fragments) {
+                if (contents.Implementation is HtmlFragment[] fragments) {
                     foreach (var childNode in fragments) {
                         AppendToBuilder(ref stringBuilder, childNode);
                     }
@@ -120,13 +120,13 @@ namespace ProgressOnderwijsUtils.Html
 
         static void AppendAsRawTextToBuilder(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment)
         {
-            if (fragment.Content is HtmlFragment[] fragments) {
+            if (fragment.Implementation is HtmlFragment[] fragments) {
                 foreach (var childNode in fragments) {
                     AppendAsRawTextToBuilder(ref stringBuilder, childNode);
                 }
-            } else if (fragment.Content is string contentString) {
+            } else if (fragment.Implementation is string contentString) {
                 stringBuilder.AppendText(contentString);
-            } else if (fragment.Content is IHtmlTag) {
+            } else if (fragment.Implementation is IHtmlTag) {
                 throw new InvalidOperationException("script and style tags cannot contain child elements");
             }
         }

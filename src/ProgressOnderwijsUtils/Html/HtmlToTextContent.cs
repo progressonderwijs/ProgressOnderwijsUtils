@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils.Html
         public static string TextContent(this HtmlFragment fragment)
         {
             var fastStringBuilder = FastShortStringBuilder.Create();
-            AppendTextContent(ref fastStringBuilder, fragment.Content);
+            AppendTextContent(ref fastStringBuilder, fragment.Implementation);
             return fastStringBuilder.FinishBuilding();
         }
 
@@ -18,9 +18,9 @@ namespace ProgressOnderwijsUtils.Html
                 fastStringBuilder.AppendText(str);
             } else if (fragmentContent is HtmlFragment[] childFragments) {
                 foreach (var child in childFragments) {
-                    AppendTextContent(ref fastStringBuilder, child.Content);
+                    AppendTextContent(ref fastStringBuilder, child.Implementation);
                 }
-            } else if (fragmentContent is IHtmlTagAllowingContent elemWithContent && elemWithContent.Contents.Content is object nonNullFragmentContent) {
+            } else if (fragmentContent is IHtmlTagAllowingContent elemWithContent && elemWithContent.Contents.Implementation is object nonNullFragmentContent) {
                 AppendTextContent(ref fastStringBuilder, nonNullFragmentContent);
             }
         }

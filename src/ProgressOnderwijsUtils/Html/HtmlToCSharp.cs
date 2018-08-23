@@ -17,9 +17,9 @@ namespace ProgressOnderwijsUtils.Html
 
         static void AppendCSharpTo(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment, int indent)
         {
-            if (fragment.Content is string stringContent) {
+            if (fragment.Implementation is string stringContent) {
                 stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(stringContent));
-            } else if (fragment.Content is IHtmlTag htmlTag) {
+            } else if (fragment.Implementation is IHtmlTag htmlTag) {
                 var description = TagDescription.LookupTag(htmlTag.TagName);
                 if (description.FieldName != null) {
                     stringBuilder.AppendText(description.FieldName);
@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils.Html
                     AppendIndent(ref stringBuilder, indent);
                     stringBuilder.AppendText(")");
                 }
-            } else if (fragment.Content is HtmlFragment[] fragments) {
+            } else if (fragment.Implementation is HtmlFragment[] fragments) {
                 stringBuilder.AppendText("HtmlFragment.Fragment(");
                 AppendCommaSeparatedFragments(ref stringBuilder, fragments, indent + 4);
                 AppendIndent(ref stringBuilder, indent);
@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils.Html
 
         static void AppendCommaSeparatedFragments(ref FastShortStringBuilder stringBuilder, HtmlFragment contents, int subIndent)
         {
-            if (contents.Content is HtmlFragment[] fragments) {
+            if (contents.Implementation is HtmlFragment[] fragments) {
                 var isSubsequent = false;
                 foreach (var fragment in fragments) {
                     if (isSubsequent) {
@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtils.Html
 
                     isSubsequent = true;
                 }
-            } else if (contents.Content != null) {
+            } else if (contents.Implementation != null) {
                 AppendNewline(ref stringBuilder);
                 AppendIndent(ref stringBuilder, subIndent);
                 AppendCSharpTo(ref stringBuilder, contents, subIndent);
