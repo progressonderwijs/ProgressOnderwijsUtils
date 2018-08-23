@@ -79,6 +79,10 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment Append([CanBeNull] this string head, HtmlFragment tail, params HtmlFragment[] longTail)
             => head.AsFragment().Append(tail, longTail);
 
+        public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls)
+            where TFragments : IConvertibleToFragment
+            => JoinHtml(htmlEls, HtmlFragment.Empty);
+
         public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
             where TFragments : IConvertibleToFragment
         {
