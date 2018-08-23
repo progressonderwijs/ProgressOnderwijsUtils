@@ -118,5 +118,21 @@ namespace ProgressOnderwijsUtils.Html
         public static bool IsNamed<TTag>([NotNull] this IHtmlElement element, TTag tagName)
             where TTag : struct, IHtmlElement<TTag>
             => element.TagName.Equals(tagName.TagName, StringComparison.OrdinalIgnoreCase);
+
+        public static IEnumerable<IHtmlElement> DescendantsOrSelfElements(this HtmlFragment fragment)
+        {
+            var stack = new Stack<HtmlFragment>();
+            stack.Push(fragment);
+            while (stack.Count > 0) {
+                var next = stack.Pop();
+                if (next.IsElement(out var elem)) {
+                    yield return elem;
+                }
+                var childNodes = next.ChildNodes();
+                foreach (var kid in childNodes.Reverse()) {
+                    stack.Push(kid);
+                }
+            }
+        }
     }
 }
