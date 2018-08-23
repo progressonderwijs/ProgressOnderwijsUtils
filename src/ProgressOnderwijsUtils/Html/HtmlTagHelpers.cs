@@ -54,9 +54,9 @@ namespace ProgressOnderwijsUtils.Html
             => attrValue == null ? htmlTagExpr : htmlTagExpr.WithAttributes(htmlTagExpr.Attributes.Add(attrName, attrValue));
 
         [Pure]
-        public static HtmlFragment WrapInHtmlFragment<T>([NotNull] this IEnumerable<T> htmlEls)
+        public static HtmlFragment WrapInHtmlFragment<T>([NotNull] this IEnumerable<T> htmlContents)
             where T : IConvertibleToFragment
-            => HtmlFragment.Fragment(htmlEls.Select(el => el.AsFragment()).Where(frag => !frag.IsEmpty).ToArray());
+            => HtmlFragment.Fragment(htmlContents.Select(el => el.AsFragment()).Where(frag => !frag.IsEmpty).ToArray());
 
         public static HtmlFragment EmptyIfNull<TContent>(this TContent? htmlFragmentOrNull)
             where TContent : struct, IConvertibleToFragment
