@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Html
                 attributes == null || attributes.Length == 0 ? HtmlAttributes.Empty : HtmlAttributes.FromArray(attributes),
                 childNodes == null || childNodes.Length == 0 ? null : childNodes) { }
 
-        internal CustomHtmlElement(string tagName, HtmlAttributes attributes, HtmlFragment[] childNodes)
+        internal CustomHtmlElement(string tagName, HtmlAttributes attributes, HtmlFragment childNodes)
         {
             TagName = tagName;
             Attributes = attributes;
@@ -20,12 +20,12 @@ namespace ProgressOnderwijsUtils.Html
         {
             TagName = tagName;
             Attributes = HtmlAttributes.Empty;
-            Contents = null;
+            Contents = HtmlFragment.Empty;
         }
 
         public string TagName { get; }
         public HtmlAttributes Attributes { get; }
-        public HtmlFragment[] Contents { get; }
+        public HtmlFragment Contents { get; }
 
         [Pure]
         public HtmlFragment AsFragment() => this;
@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils.Html
         string IHtmlTag.TagStart => "<" + TagName;
 
         [NotNull]
-        string IHtmlTag.EndTag => Contents != null || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
+        string IHtmlTag.EndTag => !Contents.IsEmpty || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
 
         /// <summary>
         /// Returns the predefined implementation for non-custom html tags (e.g. HtmlTagKinds.TABLE for a custom-tag with name "table").
@@ -53,6 +53,6 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment operator +(CustomHtmlElement head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
         public static HtmlFragment operator +(string head, CustomHtmlElement tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
         CustomHtmlElement IHtmlTag<CustomHtmlElement>.WithAttributes(HtmlAttributes replacementAttributes) => new CustomHtmlElement(TagName, replacementAttributes, Contents);
-        CustomHtmlElement IHtmlTagAllowingContent<CustomHtmlElement>.WithContents(HtmlFragment[] replacementContents) => new CustomHtmlElement(TagName, Attributes, replacementContents);
+        CustomHtmlElement IHtmlTagAllowingContent<CustomHtmlElement>.WithContents(HtmlFragment replacementContents) => new CustomHtmlElement(TagName, Attributes, replacementContents);
     }
 }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
@@ -13,29 +15,44 @@ namespace ProgressOnderwijsUtils.Html
         /// </summary>
         public readonly object Content;
 
-        public bool IsTextContent => Content is string;
-        public bool IsHtmlElement => Content is IHtmlTag;
-        public bool IsCollectionOfFragments => Content is HtmlFragment[];
-        public bool IsEmpty => Content == null;
-        HtmlFragment(object content) => Content = content;
+        public bool IsTextContent
+            => Content is string;
+
+        public bool IsHtmlElement
+            => Content is IHtmlTag;
+
+        public bool IsCollectionOfFragments
+            => Content is HtmlFragment[];
+
+        public bool IsEmpty
+            => Content == null;
+
+        HtmlFragment(object content)
+            => Content = content;
 
         [Pure]
-        public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent);
+        public static HtmlFragment TextContent(string textContent)
+            => new HtmlFragment(textContent);
 
         [Pure]
-        public static HtmlFragment HtmlElement(IHtmlTag element) => new HtmlFragment(element);
+        public static HtmlFragment HtmlElement(IHtmlTag element)
+            => new HtmlFragment(element);
 
         [Pure]
-        public static HtmlFragment HtmlElement(CustomHtmlElement element) => new HtmlFragment(element.Canonicalize());
+        public static HtmlFragment HtmlElement(CustomHtmlElement element)
+            => new HtmlFragment(element.Canonicalize());
 
         [Pure]
-        public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes) => HtmlElement(new CustomHtmlElement(tagName, attributes, childNodes));
+        public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
+            => HtmlElement(new CustomHtmlElement(tagName, attributes, childNodes));
 
         [Pure]
-        public static HtmlFragment Fragment() => Empty;
+        public static HtmlFragment Fragment()
+            => Empty;
 
         [Pure]
-        public static HtmlFragment Fragment(HtmlFragment htmlEl) => htmlEl;
+        public static HtmlFragment Fragment(HtmlFragment htmlEl)
+            => htmlEl;
 
         [Pure]
         public static HtmlFragment Fragment([CanBeNull] params HtmlFragment[] htmlEls)
@@ -97,16 +114,43 @@ namespace ProgressOnderwijsUtils.Html
             return new HtmlFragment(retval.ToArray());
         }
 
-        public override string ToString() => "HtmlFragment: " + this.SerializeToStringWithoutDoctype();
-        public static HtmlFragment Empty => default(HtmlFragment);
-        public static implicit operator HtmlFragment(CustomHtmlElement element) => HtmlElement(element);
-        public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
-        public static implicit operator HtmlFragment(HtmlFragment[] fragments) => Fragment(fragments);
-        public HtmlFragment Append(HtmlFragment tail) => Fragment(this, tail);
-        public HtmlFragment Append(HtmlFragment tail, params HtmlFragment[] longTail) => Fragment(Fragment(this, tail), Fragment(longTail));
-        public static HtmlFragment operator +(HtmlFragment left, HtmlFragment right) => left.Append(right);
+        public override string ToString()
+            => "HtmlFragment: " + this.SerializeToStringWithoutDoctype();
+
+        public static HtmlFragment Empty
+            => default(HtmlFragment);
+
+        public static implicit operator HtmlFragment(CustomHtmlElement element)
+            => HtmlElement(element);
+
+        public static implicit operator HtmlFragment(string textContent)
+            => TextContent(textContent);
+
+        public static implicit operator HtmlFragment(HtmlFragment[] fragments)
+            => Fragment(fragments);
+
+        public HtmlFragment Append(HtmlFragment tail)
+            => Fragment(this, tail);
+
+        public HtmlFragment Append(HtmlFragment tail, params HtmlFragment[] longTail)
+            => Fragment(Fragment(this, tail), Fragment(longTail));
+
+        public static HtmlFragment operator +(HtmlFragment left, HtmlFragment right)
+            => left.Append(right);
 
         [Pure]
-        HtmlFragment IConvertibleToFragment.AsFragment() => this;
+        HtmlFragment IConvertibleToFragment.AsFragment()
+            => this;
+
+        public HtmlFragment[] NodesOfFragment()
+            => Content as HtmlFragment[] ?? (IsEmpty ? EmptyNodes : new[] { this });
+
+        public HtmlFragment[] ChildNodes()
+            => Content is IHtmlTagAllowingContent elem
+                ? elem.Contents.NodesOfFragment()
+                : Content as HtmlFragment[] ?? EmptyNodes;
+
+        public static HtmlFragment[] EmptyNodes
+            => Array.Empty<HtmlFragment>();
     }
 }

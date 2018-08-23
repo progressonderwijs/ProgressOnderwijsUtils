@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils.Html
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, params HtmlFragment[] contents)
             where THtmlTag : struct, IHtmlTagAllowingContent<THtmlTag>
-            => htmlTagExpr.WithContents(htmlTagExpr.Contents.AppendArrays(contents));
+            => htmlTagExpr.WithContents(HtmlFragment.Fragment(htmlTagExpr.Contents, HtmlFragment.Fragment(contents)));
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -100,9 +100,14 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
-        [NotNull]
-        public static HtmlFragment[] Children(this IHtmlTag element)
-            => (element as IHtmlTagAllowingContent)?.Contents ?? Array.Empty<HtmlFragment>();
+        public static HtmlFragment ContainedContent(this IHtmlTag element)
+            => element is IHtmlTagAllowingContent elemWithContent ? elemWithContent.Contents : HtmlFragment.Empty;
+
+        public static HtmlFragment[] ChildNodes(this IHtmlTag element)
+            => element is IHtmlTagAllowingContent elemWithContent ? elemWithContent.ChildNodes() : HtmlFragment.EmptyNodes;
+
+        public static HtmlFragment[] ChildNodes(this IHtmlTagAllowingContent elemWithContent)
+            => elemWithContent.Contents.NodesOfFragment() ?? HtmlFragment.EmptyNodes;
 
         public static HtmlAttributes ToHtmlAttributes([NotNull] this IEnumerable<HtmlAttribute> attributes)
             => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());

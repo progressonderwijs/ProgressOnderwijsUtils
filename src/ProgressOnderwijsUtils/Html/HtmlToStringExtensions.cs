@@ -17,7 +17,8 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [NotNull]
-        public static string ToCSharp([NotNull] this IConvertibleToFragment rootElem) => rootElem.AsFragment().ToCSharp();
+        public static string ToCSharp([NotNull] this IConvertibleToFragment rootElem)
+            => rootElem.AsFragment().ToCSharp();
 
         [NotNull]
         public static string SerializeToStringWithoutDoctype([NotNull] this IConvertibleToFragment rootElem)
@@ -70,14 +71,22 @@ namespace ProgressOnderwijsUtils.Html
 
         static void AppendTagContentAndEnd(ref FastShortStringBuilder stringBuilder, [NotNull] IHtmlTagAllowingContent htmlTagAllowingContent)
         {
-            var contents = htmlTagAllowingContent.Contents ?? Array.Empty<HtmlFragment>();
+            var contents = htmlTagAllowingContent.Contents;
             if (htmlTagAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlTagAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
-                foreach (var childNode in contents) {
-                    AppendAsRawTextToBuilder(ref stringBuilder, childNode);
+                if (contents.Content is HtmlFragment[] fragments) {
+                    foreach (var childNode in fragments) {
+                        AppendAsRawTextToBuilder(ref stringBuilder, childNode);
+                    }
+                } else if (!contents.IsEmpty) {
+                    AppendAsRawTextToBuilder(ref stringBuilder, contents);
                 }
             } else {
-                foreach (var childNode in contents) {
-                    AppendToBuilder(ref stringBuilder, childNode);
+                if (contents.Content is HtmlFragment[] fragments) {
+                    foreach (var childNode in fragments) {
+                        AppendToBuilder(ref stringBuilder, childNode);
+                    }
+                } else if (!contents.IsEmpty) {
+                    AppendToBuilder(ref stringBuilder, contents);
                 }
             }
             stringBuilder.AppendText(htmlTagAllowingContent.EndTag);

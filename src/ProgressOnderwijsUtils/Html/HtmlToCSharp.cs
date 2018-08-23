@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils.Html
                     stringBuilder.AppendText(")");
                 }
                 var wereAttributesRendered = AppendAttributesAsCSharp(ref stringBuilder, htmlTag.Attributes, description.AttributeMethodsByName, indent);
-                if (htmlTag is IHtmlTagAllowingContent withContent && (withContent.Contents?.Length ?? 0) > 0) {
+                if (htmlTag is IHtmlTagAllowingContent withContent && !withContent.Contents.IsEmpty) {
                     var subIndent = wereAttributesRendered ? indent + 8 : indent + 4;
                     if (wereAttributesRendered) {
                         AppendNewline(ref stringBuilder);
@@ -50,24 +50,33 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
-        static void AppendCommaSeparatedFragments(ref FastShortStringBuilder stringBuilder, [NotNull] HtmlFragment[] fragments, int subIndent)
+        static void AppendCommaSeparatedFragments(ref FastShortStringBuilder stringBuilder, HtmlFragment contents, int subIndent)
         {
-            var isSubsequent = false;
-            foreach (var fragment in fragments) {
-                if (isSubsequent) {
-                    stringBuilder.AppendText(",");
+            if (contents.Content is HtmlFragment[] fragments) {
+                var isSubsequent = false;
+                foreach (var fragment in fragments) {
+                    if (isSubsequent) {
+                        stringBuilder.AppendText(",");
+                    }
+                    AppendNewline(ref stringBuilder);
+                    AppendIndent(ref stringBuilder, subIndent);
+                    AppendCSharpTo(ref stringBuilder, fragment, subIndent);
+
+                    isSubsequent = true;
                 }
+            } else if (contents.Content != null) {
                 AppendNewline(ref stringBuilder);
                 AppendIndent(ref stringBuilder, subIndent);
-                AppendCSharpTo(ref stringBuilder, fragment, subIndent);
-
-                isSubsequent = true;
+                AppendCSharpTo(ref stringBuilder, contents, subIndent);
             }
             AppendNewline(ref stringBuilder);
         }
 
-        static void AppendNewline(ref FastShortStringBuilder stringBuilder) => stringBuilder.AppendText("\n");
-        static void AppendIndent(ref FastShortStringBuilder stringBuilder, int indent) => stringBuilder.AppendText(new string(' ', indent));
+        static void AppendNewline(ref FastShortStringBuilder stringBuilder)
+            => stringBuilder.AppendText("\n");
+
+        static void AppendIndent(ref FastShortStringBuilder stringBuilder, int indent)
+            => stringBuilder.AppendText(new string(' ', indent));
 
         static bool AppendAttributesAsCSharp(ref FastShortStringBuilder stringBuilder, HtmlAttributes htmlAttributes, IReadOnlyDictionary<string, string> attributeMethodsByName, int indent)
         {

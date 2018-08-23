@@ -169,9 +169,9 @@ using (var client = new HttpClient(new WebRequestHandler {
             HtmlAttributes attrs;
             {el.csUpperName} IHtmlTag<{el.csUpperName}>.WithAttributes(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes, children = children }};
             HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            {el.csUpperName} IHtmlTagAllowingContent<{el.csUpperName}>.WithContents(HtmlFragment[] replacementContents) => new {el.csUpperName} {{ attrs = attrs, children = replacementContents }};
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
+            HtmlFragment children;
+            {el.csUpperName} IHtmlTagAllowingContent<{el.csUpperName}>.WithContents(HtmlFragment replacementContents) => new {el.csUpperName} {{ attrs = attrs, children = replacementContents }};
+            HtmlFragment IHtmlTagAllowingContent.Contents => children;
             IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();

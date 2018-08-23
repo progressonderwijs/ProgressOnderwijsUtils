@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Html
 
     public interface IHtmlTagAllowingContent : IHtmlTag
     {
-        HtmlFragment[] Contents { get; }
+        HtmlFragment Contents { get; }
     }
 
     public interface IHtmlTag<out TSelf> : IHtmlTag
@@ -43,6 +43,6 @@ namespace ProgressOnderwijsUtils.Html
     public interface IHtmlTagAllowingContent<out TSelf> : IHtmlTag<TSelf>, IHtmlTagAllowingContent
         where TSelf : struct, IHtmlTagAllowingContent<TSelf>
     {
-        TSelf WithContents(HtmlFragment[] replacementContents);
+        TSelf WithContents(HtmlFragment replacementContents);
     }
 }
