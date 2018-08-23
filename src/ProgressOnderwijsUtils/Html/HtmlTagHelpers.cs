@@ -33,7 +33,8 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static HtmlFragment AsFragment(this IHtmlTag tag) => HtmlFragment.HtmlElement(tag);
+        public static HtmlFragment AsFragment(this IHtmlTag tag)
+            => HtmlFragment.HtmlElement(tag);
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -102,7 +103,8 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [NotNull]
-        public static HtmlFragment[] Children(this IHtmlTag element) => (element as IHtmlTagAllowingContent)?.Contents ?? Array.Empty<HtmlFragment>();
+        public static HtmlFragment[] Children(this IHtmlTag element)
+            => (element as IHtmlTagAllowingContent)?.Contents ?? Array.Empty<HtmlFragment>();
 
         public static HtmlAttributes ToHtmlAttributes([NotNull] this IEnumerable<HtmlAttribute> attributes)
             => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
