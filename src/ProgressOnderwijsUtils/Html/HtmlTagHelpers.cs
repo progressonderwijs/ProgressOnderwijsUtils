@@ -111,5 +111,12 @@ namespace ProgressOnderwijsUtils.Html
 
         public static HtmlAttributes ToHtmlAttributes([NotNull] this IEnumerable<HtmlAttribute> attributes)
             => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
+
+        public static bool IsTagNamed([NotNull] this IHtmlTag tag, string tagName)
+            => tag.TagName.Equals(tagName, StringComparison.OrdinalIgnoreCase); //IHtmlTag
+
+        public static bool IsTagNamed<TTag>([NotNull] this IHtmlTag tag, TTag tagName)
+            where TTag : struct, IHtmlTag<TTag>
+            => tag.TagName.Equals(tagName.TagName, StringComparison.OrdinalIgnoreCase);
     }
 }

@@ -27,6 +27,13 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsHtmlElement(out IHtmlTag tag)
             => (tag = Implementation as IHtmlTag) != null;
 
+        public bool IsHtmlElementAllowingContent()
+            => Implementation is IHtmlTagAllowingContent;
+
+        public bool IsHtmlElementAllowingContent(out IHtmlTagAllowingContent tag)
+            => (tag = Implementation as IHtmlTagAllowingContent) != null;
+
+
         public bool IsCollectionOfFragments()
             => Implementation is HtmlFragment[];
 
