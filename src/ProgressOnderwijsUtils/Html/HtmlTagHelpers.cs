@@ -20,12 +20,6 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public static THtmlTag Contents<THtmlTag, TContent>(this THtmlTag htmlTagExpr, [NotNull] IEnumerable<TContent> contents)
-            where THtmlTag : struct, IHtmlTagAllowingContent<THtmlTag>
-            where TContent : IConvertibleToFragment
-            => htmlTagExpr.Content(contents.Select(el => el.AsFragment()).ToArray());
-
-        [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, params HtmlFragment[] contents)
             where THtmlTag : struct, IHtmlTagAllowingContent<THtmlTag>
