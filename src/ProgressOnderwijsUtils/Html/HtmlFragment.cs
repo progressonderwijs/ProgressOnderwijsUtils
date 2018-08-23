@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils.Html
     public struct HtmlFragment : IConvertibleToFragment
     {
         /// <summary>
-        /// Either a string, an IHtmlTag, a non-empty HtmlFragment[], or null (the empty fragment).
+        /// Either a string, an IHtmlElement, a non-empty HtmlFragment[], or null (the empty fragment).
         /// </summary>
         public readonly object Implementation;
 
@@ -21,32 +21,32 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsTextContent(out string textContent)
             => (textContent = Implementation as string) != null;
 
-        public bool IsHtmlElement()
-            => Implementation is IHtmlTag;
+        public bool IsElement()
+            => Implementation is IHtmlElement;
 
-        public bool IsHtmlElement(out IHtmlTag tag)
-            => (tag = Implementation as IHtmlTag) != null;
+        public bool IsElement(out IHtmlElement element)
+            => (element = Implementation as IHtmlElement) != null;
 
-        public bool IsHtmlElementAllowingContent()
-            => Implementation is IHtmlTagAllowingContent;
+        public bool IsElementAllowingContent()
+            => Implementation is IHtmlElementAllowingContent;
 
-        public bool IsHtmlElementAllowingContent(out IHtmlTagAllowingContent tag)
-            => (tag = Implementation as IHtmlTagAllowingContent) != null;
+        public bool IsElementAllowingContent(out IHtmlElementAllowingContent element)
+            => (element = Implementation as IHtmlElementAllowingContent) != null;
 
 
-        public bool IsCollectionOfFragments()
+        public bool IsMultipleNodes()
             => Implementation is HtmlFragment[];
 
-        public bool IsCollectionOfFragments(out HtmlFragment[] nodes)
+        public bool IsMultipleNodes(out HtmlFragment[] nodes)
             => (nodes = Implementation as HtmlFragment[]) != null;
 
         /// <summary>
         /// Sets at most one of the out parameters to a non-null value.
         /// </summary>
-        public void Deconstruct(out string textContent, out IHtmlTag tag, out HtmlFragment[] nodes)
+        public void Deconstruct(out string textContent, out IHtmlElement element, out HtmlFragment[] nodes)
         {
             textContent = Implementation as string;
-            tag = Implementation as IHtmlTag;
+            element = Implementation as IHtmlElement;
             nodes = Implementation as HtmlFragment[];
         }
 
@@ -61,16 +61,16 @@ namespace ProgressOnderwijsUtils.Html
             => new HtmlFragment(textContent);
 
         [Pure]
-        public static HtmlFragment HtmlElement(IHtmlTag element)
+        public static HtmlFragment Element(IHtmlElement element)
             => new HtmlFragment(element);
 
         [Pure]
-        public static HtmlFragment HtmlElement(CustomHtmlElement element)
+        public static HtmlFragment Element(CustomHtmlElement element)
             => new HtmlFragment(element.Canonicalize());
 
         [Pure]
-        public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
-            => HtmlElement(new CustomHtmlElement(tagName, attributes, childNodes));
+        public static HtmlFragment Element(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
+            => Element(new CustomHtmlElement(tagName, attributes, childNodes));
 
         [Pure]
         public static HtmlFragment Fragment()
@@ -147,7 +147,7 @@ namespace ProgressOnderwijsUtils.Html
             => default(HtmlFragment);
 
         public static implicit operator HtmlFragment(CustomHtmlElement element)
-            => HtmlElement(element);
+            => Element(element);
 
         public static implicit operator HtmlFragment(string textContent)
             => TextContent(textContent);
@@ -172,7 +172,7 @@ namespace ProgressOnderwijsUtils.Html
             => Implementation as HtmlFragment[] ?? (IsEmpty ? EmptyNodes : new[] { this });
 
         public HtmlFragment[] ChildNodes()
-            => Implementation is IHtmlTagAllowingContent elem
+            => Implementation is IHtmlElementAllowingContent elem
                 ? elem.Contents.NodesOfFragment()
                 : Implementation as HtmlFragment[] ?? EmptyNodes;
 

@@ -2,7 +2,7 @@
 
 namespace ProgressOnderwijsUtils.Html
 {
-    public struct CustomHtmlElement : IHtmlTagAllowingContent<CustomHtmlElement>
+    public struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtmlElement>
     {
         public CustomHtmlElement(string tagName, [CanBeNull] HtmlAttribute[] attributes, [CanBeNull] HtmlFragment[] childNodes)
             : this(tagName,
@@ -31,15 +31,15 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlFragment AsFragment() => this;
 
         [NotNull]
-        string IHtmlTag.TagStart => "<" + TagName;
+        string IHtmlElement.TagStart => "<" + TagName;
 
         [NotNull]
-        string IHtmlTag.EndTag => !Contents.IsEmpty || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
+        string IHtmlElement.EndTag => !Contents.IsEmpty || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
 
         /// <summary>
         /// Returns the predefined implementation for non-custom html tags (e.g. HtmlTagKinds.TABLE for a custom-tag with name "table").
         /// </summary>
-        public IHtmlTag Canonicalize()
+        public IHtmlElement Canonicalize()
         {
             var tagDescription = TagDescription.LookupTag(TagName);
             return tagDescription.EmptyValue == null
@@ -48,11 +48,11 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [NotNull]
-        IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>([NotNull] THtmlTagAlteration change) => change.ChangeWithContent(this);
+        IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>([NotNull] THtmlTagAlteration change) => change.ChangeWithContent(this);
 
-        public static HtmlFragment operator +(CustomHtmlElement head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-        public static HtmlFragment operator +(string head, CustomHtmlElement tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
-        CustomHtmlElement IHtmlTag<CustomHtmlElement>.WithAttributes(HtmlAttributes replacementAttributes) => new CustomHtmlElement(TagName, replacementAttributes, Contents);
-        CustomHtmlElement IHtmlTagAllowingContent<CustomHtmlElement>.WithContents(HtmlFragment replacementContents) => new CustomHtmlElement(TagName, Attributes, replacementContents);
+        public static HtmlFragment operator +(CustomHtmlElement head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+        public static HtmlFragment operator +(string head, CustomHtmlElement tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
+        CustomHtmlElement IHtmlElement<CustomHtmlElement>.WithAttributes(HtmlAttributes replacementAttributes) => new CustomHtmlElement(TagName, replacementAttributes, Contents);
+        CustomHtmlElement IHtmlElementAllowingContent<CustomHtmlElement>.WithContents(HtmlFragment replacementContents) => new CustomHtmlElement(TagName, Attributes, replacementContents);
     }
 }

@@ -6,79 +6,77 @@ namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlTagAlterations
     {
-        public static IHtmlTag ReplaceAttributes([NotNull] IHtmlTag tag, HtmlAttributes attributes)
-            => tag.ApplyChange(new HtmlTagAtributeAlteration(attributes));
+        public static IHtmlElement ReplaceAttributes([NotNull] IHtmlElement element, HtmlAttributes attributes)
+            => element.ApplyChange(new AttributeAlteration(attributes));
 
-        public static IHtmlTag ReplaceAttributes([NotNull] IHtmlTag tag, [NotNull] IEnumerable<HtmlAttribute> attributes)
-            => tag.ApplyChange(new HtmlTagAtributeAlteration(attributes.ToHtmlAttributes()));
+        public static IHtmlElement ReplaceAttributes([NotNull] IHtmlElement element, [NotNull] IEnumerable<HtmlAttribute> attributes)
+            => element.ApplyChange(new AttributeAlteration(attributes.ToHtmlAttributes()));
 
-        public static IHtmlTagAllowingContent ReplaceContents([NotNull] IHtmlTagAllowingContent tag, HtmlFragment[] children)
-            => (IHtmlTagAllowingContent)tag.ApplyChange(new HtmlTagContentAlteration(children));
+        public static IHtmlElementAllowingContent ReplaceContents([NotNull] this  IHtmlElementAllowingContent element, HtmlFragment children)
+            => (IHtmlElementAllowingContent)element.ApplyChange(new ContentAlteration(children));
 
-        public static IHtmlTag ReplaceAttributesAndContents([NotNull] IHtmlTag tag, [NotNull] IEnumerable<HtmlAttribute> attributes, HtmlFragment children)
-            => ReplaceAttributesAndContents(tag, attributes.ToHtmlAttributes(), children);
+        public static IHtmlElement ReplaceAttributesAndContents([NotNull] IHtmlElement element, [NotNull] IEnumerable<HtmlAttribute> attributes, HtmlFragment children)
+            => ReplaceAttributesAndContents(element, attributes.ToHtmlAttributes(), children);
 
-        public static IHtmlTag ReplaceAttributesAndContents([NotNull] IHtmlTag tag, HtmlAttributes attributes, HtmlFragment children)
+        public static IHtmlElement ReplaceAttributesAndContents([NotNull] IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
         {
-            if (!children.IsEmpty && !(tag is IHtmlTagAllowingContent)) {
+            if (!children.IsEmpty && !(element is IHtmlElementAllowingContent)) {
                 throw new InvalidOperationException("Cannot insert content into empty tag");
             }
-            return tag.ApplyChange(new HtmlTagContentAndAttributeAlteration(attributes, children));
+            return element.ApplyChange(new HtmlElementContentAndAttributeAlteration(attributes, children));
         }
 
-        struct HtmlTagContentAndAttributeAlteration : IHtmlTagAlteration
+        struct HtmlElementContentAndAttributeAlteration : IHtmlElementAlteration
         {
             readonly HtmlAttributes newAttributes;
             readonly HtmlFragment newContents;
 
-            public HtmlTagContentAndAttributeAlteration(HtmlAttributes newAttributes, HtmlFragment newContents)
+            public HtmlElementContentAndAttributeAlteration(HtmlAttributes newAttributes, HtmlFragment newContents)
             {
                 this.newContents = newContents;
                 this.newAttributes = newAttributes;
             }
 
             public TSelf ChangeEmpty<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlTag<TSelf>
+                where TSelf : struct, IHtmlElement<TSelf>
                 => typed.WithAttributes(newAttributes);
 
             public TSelf ChangeWithContent<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlTagAllowingContent<TSelf>
+                where TSelf : struct, IHtmlElementAllowingContent<TSelf>
                 => typed.WithAttributes(newAttributes).WithContents(newContents);
         }
 
-        struct HtmlTagContentAlteration : IHtmlTagAlteration
+        struct ContentAlteration : IHtmlElementAlteration
         {
-            readonly HtmlFragment newContents;
+            readonly HtmlFragment newContent;
 
-            public HtmlTagContentAlteration(HtmlFragment[] newContents)
-            {
-                this.newContents = newContents;
-            }
+            public ContentAlteration(HtmlFragment newContent)
+                => this.newContent = newContent;
 
             public TSelf ChangeEmpty<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlTag<TSelf>
+                where TSelf : struct, IHtmlElement<TSelf>
                 => typed;
 
             public TSelf ChangeWithContent<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlTagAllowingContent<TSelf>
-                => typed.WithContents(newContents);
+                where TSelf : struct, IHtmlElementAllowingContent<TSelf>
+                => typed.WithContents(newContent);
         }
 
-        struct HtmlTagAtributeAlteration : IHtmlTagAlteration
+        struct AttributeAlteration : IHtmlElementAlteration
         {
             readonly HtmlAttributes newAttributes;
 
-            public HtmlTagAtributeAlteration(HtmlAttributes newAttributes)
+            public AttributeAlteration(HtmlAttributes newAttributes)
             {
                 this.newAttributes = newAttributes;
             }
 
             public TSelf ChangeEmpty<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlTag<TSelf>
+                where TSelf : struct, IHtmlElement<TSelf>
                 => typed.WithAttributes(newAttributes);
 
             public TSelf ChangeWithContent<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlTagAllowingContent<TSelf>
+                where TSelf : struct, IHtmlElementAllowingContent<TSelf>
                 => typed.WithAttributes(newAttributes);
         }
     }

@@ -7,11 +7,11 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.Html
 {
-    public static class HtmlTagHelpers
+    public static class HtmlHelpers
     {
         [Pure]
         public static THtmlTag Attributes<THtmlTag>(this THtmlTag htmlTagExpr, [NotNull] IEnumerable<HtmlAttribute> attributes)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
         {
             foreach (var attribute in attributes) {
                 htmlTagExpr = htmlTagExpr.Attribute(attribute.Name, attribute.Value);
@@ -22,29 +22,29 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, params HtmlFragment[] contents)
-            where THtmlTag : struct, IHtmlTagAllowingContent<THtmlTag>
+            where THtmlTag : struct, IHtmlElementAllowingContent<THtmlTag>
             => htmlTagExpr.WithContents(HtmlFragment.Fragment(htmlTagExpr.Contents, HtmlFragment.Fragment(contents)));
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static HtmlFragment AsFragment(this IHtmlTag tag)
-            => HtmlFragment.HtmlElement(tag);
+        public static HtmlFragment AsFragment(this IHtmlElement element)
+            => HtmlFragment.Element(element);
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, HtmlAttribute attribute)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute(attribute.Name, attribute.Value);
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, HtmlAttribute? attributeOrNull)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
         [Pure]
         public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, string attrName, [CanBeNull] string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => attrValue == null ? htmlTagExpr : htmlTagExpr.WithAttributes(htmlTagExpr.Attributes.Add(attrName, attrValue));
 
         [Pure]
@@ -100,23 +100,23 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
-        public static HtmlFragment ContainedContent(this IHtmlTag element)
-            => element is IHtmlTagAllowingContent elemWithContent ? elemWithContent.Contents : HtmlFragment.Empty;
+        public static HtmlFragment ContainedContent(this IHtmlElement element)
+            => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.Contents : HtmlFragment.Empty;
 
-        public static HtmlFragment[] ChildNodes(this IHtmlTag element)
-            => element is IHtmlTagAllowingContent elemWithContent ? elemWithContent.ChildNodes() : HtmlFragment.EmptyNodes;
+        public static HtmlFragment[] ChildNodes(this IHtmlElement element)
+            => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.ChildNodes() : HtmlFragment.EmptyNodes;
 
-        public static HtmlFragment[] ChildNodes(this IHtmlTagAllowingContent elemWithContent)
+        public static HtmlFragment[] ChildNodes(this IHtmlElementAllowingContent elemWithContent)
             => elemWithContent.Contents.NodesOfFragment() ?? HtmlFragment.EmptyNodes;
 
         public static HtmlAttributes ToHtmlAttributes([NotNull] this IEnumerable<HtmlAttribute> attributes)
             => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
 
-        public static bool IsTagNamed([NotNull] this IHtmlTag tag, string tagName)
-            => tag.TagName.Equals(tagName, StringComparison.OrdinalIgnoreCase); //IHtmlTag
+        public static bool IsNamed([NotNull] this IHtmlElement element, string tagName)
+            => element.TagName.Equals(tagName, StringComparison.OrdinalIgnoreCase); //IHtmlTag
 
-        public static bool IsTagNamed<TTag>([NotNull] this IHtmlTag tag, TTag tagName)
-            where TTag : struct, IHtmlTag<TTag>
-            => tag.TagName.Equals(tagName.TagName, StringComparison.OrdinalIgnoreCase);
+        public static bool IsNamed<TTag>([NotNull] this IHtmlElement element, TTag tagName)
+            where TTag : struct, IHtmlElement<TTag>
+            => element.TagName.Equals(tagName.TagName, StringComparison.OrdinalIgnoreCase);
     }
 }

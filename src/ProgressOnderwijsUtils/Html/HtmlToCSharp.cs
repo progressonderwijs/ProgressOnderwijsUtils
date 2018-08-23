@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils.Html
         {
             if (fragment.Implementation is string stringContent) {
                 stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(stringContent));
-            } else if (fragment.Implementation is IHtmlTag htmlTag) {
+            } else if (fragment.Implementation is IHtmlElement htmlTag) {
                 var description = TagDescription.LookupTag(htmlTag.TagName);
                 if (description.FieldName != null) {
                     stringBuilder.AppendText(description.FieldName);
@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils.Html
                     stringBuilder.AppendText(")");
                 }
                 var wereAttributesRendered = AppendAttributesAsCSharp(ref stringBuilder, htmlTag.Attributes, description.AttributeMethodsByName, indent);
-                if (htmlTag is IHtmlTagAllowingContent withContent && !withContent.Contents.IsEmpty) {
+                if (htmlTag is IHtmlElementAllowingContent withContent && !withContent.Contents.IsEmpty) {
                     var subIndent = wereAttributesRendered ? indent + 8 : indent + 4;
                     if (wereAttributesRendered) {
                         AppendNewline(ref stringBuilder);
