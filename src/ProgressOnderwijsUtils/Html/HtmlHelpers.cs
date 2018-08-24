@@ -27,6 +27,12 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, HtmlFragment contents)
+            where THtmlTag : struct, IHtmlElementAllowingContent<THtmlTag>
+            => htmlTagExpr.WithContents(HtmlFragment.Fragment(htmlTagExpr.Contents(), contents));
+
+        [Pure]
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static HtmlFragment AsFragment(this IHtmlElement element)
             => HtmlFragment.Element(element);
 

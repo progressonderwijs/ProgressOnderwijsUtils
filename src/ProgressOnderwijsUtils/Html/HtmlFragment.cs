@@ -33,7 +33,6 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsElementAllowingContent(out IHtmlElementAllowingContent element)
             => (element = Implementation as IHtmlElementAllowingContent) != null;
 
-
         public bool IsMultipleNodes()
             => Implementation is HtmlFragment[];
 
@@ -79,6 +78,26 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static HtmlFragment Fragment(HtmlFragment htmlEl)
             => htmlEl;
+
+        [Pure]
+        public static HtmlFragment Fragment(HtmlFragment a, HtmlFragment b)
+        {
+            if (a.IsEmpty) {
+                //optimize very common case, when appending to empty.
+                return b;
+            }
+            var kidCounter = new KidCounter();
+            kidCounter.CountForKid(a);
+            kidCounter.CountForKid(b);
+            if (!kidCounter.ShouldUseCollector()) {
+                return new HtmlFragment(new[] { a, b });
+            }
+            var collector = kidCounter.MakeCollector();
+            collector.AddKid(a);
+            collector.AddKid(b);
+            Debug.Assert(collector.IsFull());
+            return new HtmlFragment(collector.retval);
+        }
 
         [Pure]
         public static HtmlFragment Fragment([CanBeNull] params HtmlFragment[] htmlEls)
