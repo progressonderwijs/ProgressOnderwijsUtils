@@ -90,36 +90,67 @@ namespace ProgressOnderwijsUtils.Html
                 return htmlEls[0];
             }
             if (htmlEls.Length < 16) {
-                var totalKids = 0;
-                var flattenRelevant = false;
+                var kidCounter = new KidCounter();
                 foreach (var child in htmlEls) {
-                    if (child.Implementation is HtmlFragment[] childContents) {
-                        totalKids += childContents.Length;
-                        flattenRelevant = true;
-                    } else if (child.IsEmpty) {
-                        flattenRelevant = true;
-                    } else {
-                        totalKids++;
-                    }
+                    kidCounter.CountForKid(child);
                 }
-                if (flattenRelevant && totalKids < 64) {
-                    var retval = new HtmlFragment[totalKids];
-                    var writeIdx = 0;
+                if (kidCounter.ShouldUseCollector()) {
+                    var collector = kidCounter.MakeCollector();
                     foreach (var child in htmlEls) {
-                        if (child.Implementation is HtmlFragment[] childContents) {
-                            foreach (var grandChild in childContents) {
-                                retval[writeIdx++] = grandChild;
-                            }
-                        } else if (!child.IsEmpty) {
-                            retval[writeIdx++] = child;
-                        }
+                        collector.AddKid(child);
                     }
-                    Debug.Assert(writeIdx == totalKids);
-                    return new HtmlFragment(retval);
+                    Debug.Assert(collector.IsFull());
+                    return new HtmlFragment(collector.retval);
                 }
             }
 
             return new HtmlFragment(htmlEls);
+        }
+
+        struct KidCounter
+        {
+            int totalKids;
+            bool flattenRelevant;
+
+            public void CountForKid(HtmlFragment child)
+            {
+                if (child.Implementation is HtmlFragment[] childContents) {
+                    totalKids += childContents.Length;
+                    flattenRelevant = true;
+                } else if (child.IsEmpty) {
+                    flattenRelevant = true;
+                } else {
+                    totalKids++;
+                }
+            }
+
+            public bool ShouldUseCollector() => flattenRelevant && totalKids < 64;
+            public KidCollector MakeCollector() => new KidCollector(totalKids);
+        }
+
+        struct KidCollector
+        {
+            public readonly HtmlFragment[] retval;
+            public int writeIdx;
+
+            public KidCollector(int totalKids)
+            {
+                retval = new HtmlFragment[totalKids];
+                writeIdx = 0;
+            }
+
+            public void AddKid(HtmlFragment child)
+            {
+                if (child.Implementation is HtmlFragment[] childContents) {
+                    foreach (var grandChild in childContents) {
+                        retval[writeIdx++] = grandChild;
+                    }
+                } else if (!child.IsEmpty) {
+                    retval[writeIdx++] = child;
+                }
+            }
+
+            public bool IsFull() => writeIdx == retval.Length;
         }
 
         [Pure]
