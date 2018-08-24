@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -208,8 +207,8 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlFragment Append(HtmlFragment tail)
             => Fragment(this, tail);
 
-        public HtmlFragment Append(HtmlFragment tail, params HtmlFragment[] longTail)
-            => Fragment(Fragment(this, tail), Fragment(longTail));
+        public HtmlFragment Append(params HtmlFragment[] longTail)
+            => Fragment(this, Fragment(longTail));
 
         public static HtmlFragment operator +(HtmlFragment left, HtmlFragment right)
             => left.Append(right);

@@ -69,38 +69,40 @@ namespace ProgressOnderwijsUtils.Html
             where T : IConvertibleToFragment
             => (head?.AsFragment() ?? HtmlFragment.Empty).Append(tail);
 
-        public static HtmlFragment Append<T>([CanBeNull] this T head, HtmlFragment tail, params HtmlFragment[] longTail)
+        public static HtmlFragment Append<T>([CanBeNull] this T head, params HtmlFragment[] longTail)
             where T : IConvertibleToFragment
-            => (head?.AsFragment() ?? HtmlFragment.Empty).Append(tail, longTail);
+            => (head?.AsFragment() ?? HtmlFragment.Empty).Append(longTail);
 
         public static HtmlFragment Append([CanBeNull] this string head, HtmlFragment tail)
             => head.AsFragment().Append(tail);
 
-        public static HtmlFragment Append([CanBeNull] this string head, HtmlFragment tail, params HtmlFragment[] longTail)
-            => head.AsFragment().Append(tail, longTail);
+        public static HtmlFragment Append([CanBeNull] this string head, params HtmlFragment[] longTail)
+            => head.AsFragment().Append(longTail);
 
         public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls)
             where TFragments : IConvertibleToFragment
-            => JoinHtml(htmlEls, HtmlFragment.Empty);
+            => HtmlFragment.Fragment(htmlEls.ToArray());
 
         public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
             where TFragments : IConvertibleToFragment
         {
+            if (joiner.IsEmpty) {
+                return htmlEls.JoinHtml();
+            }
             using (var enumerator = htmlEls.GetEnumerator()) {
                 if (!enumerator.MoveNext()) {
                     return HtmlFragment.Empty;
                 }
                 var retval = new ArrayBuilder<HtmlFragment>();
-                var joinerIsNonEmpty = !joiner.IsEmpty;
                 // ReSharper disable once PossibleNullReferenceException
                 var firstNode = enumerator.Current.AsFragment();
                 retval.Add(firstNode);
                 while (enumerator.MoveNext()) {
-                    if (joinerIsNonEmpty) {
-                        retval.Add(joiner);
-                    }
+                    retval.Add(joiner);
                     // ReSharper disable once PossibleNullReferenceException
-                    retval.Add(enumerator.Current.AsFragment());
+                    var nextFragment = enumerator.Current.AsFragment();
+                    if(!nextFragment.IsEmpty)
+                        retval.Add(nextFragment);
                 }
                 return HtmlFragment.Fragment(retval.ToArray());
             }
