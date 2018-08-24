@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>25.1.2</Version>
-    <PackageReleaseNotes>Fix error in logging CascadedDelete</PackageReleaseNotes>
+    <Version>26.0.0</Version>
+    <PackageReleaseNotes>Make HtmlFragment API's a little friendlier.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
@@ -25,6 +25,6 @@
     <PackageReference Include="ValueUtils" version="1.4.0" />
     <PackageReference Include="DotNetZip" Version="1.11.0" NoWarn="NU1701" />
     <PackageReference Include="ZlibWithDictionary" version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.1.2" />
   </ItemGroup>
 </Project>

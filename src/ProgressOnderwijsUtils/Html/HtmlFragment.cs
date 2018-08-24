@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
@@ -9,33 +10,93 @@ namespace ProgressOnderwijsUtils.Html
     public struct HtmlFragment : IConvertibleToFragment
     {
         /// <summary>
-        /// Either a string, an IHtmlTag, a non-empty HtmlFragment[], or null (the empty fragment).
+        /// Either a string, an IHtmlElement, a non-empty HtmlFragment[], or null (the empty fragment).
         /// </summary>
-        public readonly object Content;
+        public readonly object Implementation;
 
-        public bool IsTextContent => Content is string;
-        public bool IsHtmlElement => Content is IHtmlTag;
-        public bool IsCollectionOfFragments => Content is HtmlFragment[];
-        public bool IsEmpty => Content == null;
-        HtmlFragment(object content) => Content = content;
+        public bool IsTextContent()
+            => Implementation is string;
+
+        public bool IsTextContent(out string textContent)
+            => (textContent = Implementation as string) != null;
+
+        public bool IsElement()
+            => Implementation is IHtmlElement;
+
+        public bool IsElement(out IHtmlElement element)
+            => (element = Implementation as IHtmlElement) != null;
+
+        public bool IsElementAllowingContent()
+            => Implementation is IHtmlElementAllowingContent;
+
+        public bool IsElementAllowingContent(out IHtmlElementAllowingContent element)
+            => (element = Implementation as IHtmlElementAllowingContent) != null;
+
+        public bool IsMultipleNodes()
+            => Implementation is HtmlFragment[];
+
+        public bool IsMultipleNodes(out HtmlFragment[] nodes)
+            => (nodes = Implementation as HtmlFragment[]) != null;
+
+        /// <summary>
+        /// Sets at most one of the out parameters to a non-null value.
+        /// </summary>
+        public void Deconstruct(out string textContent, out IHtmlElement element, out HtmlFragment[] nodes)
+        {
+            textContent = Implementation as string;
+            element = Implementation as IHtmlElement;
+            nodes = Implementation as HtmlFragment[];
+        }
+
+        public bool IsEmpty
+            => Implementation == null;
+
+        HtmlFragment(object content)
+            => Implementation = content;
 
         [Pure]
-        public static HtmlFragment TextContent(string textContent) => new HtmlFragment(textContent);
+        public static HtmlFragment TextContent(string textContent)
+            => new HtmlFragment(textContent);
 
         [Pure]
-        public static HtmlFragment HtmlElement(IHtmlTag element) => new HtmlFragment(element);
+        public static HtmlFragment Element(IHtmlElement element)
+            => new HtmlFragment(element);
 
         [Pure]
-        public static HtmlFragment HtmlElement(CustomHtmlElement element) => new HtmlFragment(element.Canonicalize());
+        public static HtmlFragment Element(CustomHtmlElement element)
+            => new HtmlFragment(element.Canonicalize());
 
         [Pure]
-        public static HtmlFragment HtmlElement(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes) => HtmlElement(new CustomHtmlElement(tagName, attributes, childNodes));
+        public static HtmlFragment Element(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
+            => Element(new CustomHtmlElement(tagName, attributes, childNodes));
 
         [Pure]
-        public static HtmlFragment Fragment() => Empty;
+        public static HtmlFragment Fragment()
+            => Empty;
 
         [Pure]
-        public static HtmlFragment Fragment(HtmlFragment htmlEl) => htmlEl;
+        public static HtmlFragment Fragment(HtmlFragment htmlEl)
+            => htmlEl;
+
+        [Pure]
+        public static HtmlFragment Fragment(HtmlFragment a, HtmlFragment b)
+        {
+            if (a.IsEmpty) {
+                //optimize very common case, when appending to empty.
+                return b;
+            }
+            var kidCounter = new KidCounter();
+            kidCounter.CountForKid(a);
+            kidCounter.CountForKid(b);
+            if (!kidCounter.ShouldUseCollector()) {
+                return new HtmlFragment(new[] { a, b });
+            }
+            var collector = kidCounter.MakeCollector();
+            collector.AddKid(a);
+            collector.AddKid(b);
+            Debug.Assert(collector.IsFull());
+            return new HtmlFragment(collector.retval);
+        }
 
         [Pure]
         public static HtmlFragment Fragment([CanBeNull] params HtmlFragment[] htmlEls)
@@ -47,36 +108,67 @@ namespace ProgressOnderwijsUtils.Html
                 return htmlEls[0];
             }
             if (htmlEls.Length < 16) {
-                var totalKids = 0;
-                var flattenRelevant = false;
+                var kidCounter = new KidCounter();
                 foreach (var child in htmlEls) {
-                    if (child.Content is HtmlFragment[] childContents) {
-                        totalKids += childContents.Length;
-                        flattenRelevant = true;
-                    } else if (child.IsEmpty) {
-                        flattenRelevant = true;
-                    } else {
-                        totalKids++;
-                    }
+                    kidCounter.CountForKid(child);
                 }
-                if (flattenRelevant && totalKids < 64) {
-                    var retval = new HtmlFragment[totalKids];
-                    var writeIdx = 0;
+                if (kidCounter.ShouldUseCollector()) {
+                    var collector = kidCounter.MakeCollector();
                     foreach (var child in htmlEls) {
-                        if (child.Content is HtmlFragment[] childContents) {
-                            foreach (var grandChild in childContents) {
-                                retval[writeIdx++] = grandChild;
-                            }
-                        } else if (!child.IsEmpty) {
-                            retval[writeIdx++] = child;
-                        }
+                        collector.AddKid(child);
                     }
-                    Debug.Assert(writeIdx == totalKids);
-                    return new HtmlFragment(retval);
+                    Debug.Assert(collector.IsFull());
+                    return new HtmlFragment(collector.retval);
                 }
             }
 
             return new HtmlFragment(htmlEls);
+        }
+
+        struct KidCounter
+        {
+            int totalKids;
+            bool flattenRelevant;
+
+            public void CountForKid(HtmlFragment child)
+            {
+                if (child.Implementation is HtmlFragment[] childContents) {
+                    totalKids += childContents.Length;
+                    flattenRelevant = true;
+                } else if (child.IsEmpty) {
+                    flattenRelevant = true;
+                } else {
+                    totalKids++;
+                }
+            }
+
+            public bool ShouldUseCollector() => flattenRelevant && totalKids < 64;
+            public KidCollector MakeCollector() => new KidCollector(totalKids);
+        }
+
+        struct KidCollector
+        {
+            public readonly HtmlFragment[] retval;
+            public int writeIdx;
+
+            public KidCollector(int totalKids)
+            {
+                retval = new HtmlFragment[totalKids];
+                writeIdx = 0;
+            }
+
+            public void AddKid(HtmlFragment child)
+            {
+                if (child.Implementation is HtmlFragment[] childContents) {
+                    foreach (var grandChild in childContents) {
+                        retval[writeIdx++] = grandChild;
+                    }
+                } else if (!child.IsEmpty) {
+                    retval[writeIdx++] = child;
+                }
+            }
+
+            public bool IsFull() => writeIdx == retval.Length;
         }
 
         [Pure]
@@ -86,7 +178,7 @@ namespace ProgressOnderwijsUtils.Html
             var retval = new ArrayBuilder<HtmlFragment>();
             foreach (var el in htmlEls) {
                 var htmlFragment = el.AsFragment();
-                if (htmlFragment.Content is HtmlFragment[] kids && kids.Length < 64) {
+                if (htmlFragment.Implementation is HtmlFragment[] kids && kids.Length < 64) {
                     foreach (var grandchild in kids) {
                         retval.Add(grandchild);
                     }
@@ -97,15 +189,43 @@ namespace ProgressOnderwijsUtils.Html
             return new HtmlFragment(retval.ToArray());
         }
 
-        public override string ToString() => "HtmlFragment: " + this.SerializeToStringWithoutDoctype();
-        public static HtmlFragment Empty => default(HtmlFragment);
-        public static implicit operator HtmlFragment(CustomHtmlElement element) => HtmlElement(element);
-        public static implicit operator HtmlFragment(string textContent) => TextContent(textContent);
-        public HtmlFragment Append(HtmlFragment tail) => Fragment(this, tail);
-        public HtmlFragment Append(HtmlFragment tail, params HtmlFragment[] longTail) => Fragment(Fragment(this, tail), Fragment(longTail));
-        public static HtmlFragment operator +(HtmlFragment left, HtmlFragment right) => left.Append(right);
+        public override string ToString()
+            => "HtmlFragment: " + this.SerializeToStringWithoutDoctype();
+
+        public static HtmlFragment Empty
+            => default(HtmlFragment);
+
+        public static implicit operator HtmlFragment(CustomHtmlElement element)
+            => Element(element);
+
+        public static implicit operator HtmlFragment(string textContent)
+            => TextContent(textContent);
+
+        public static implicit operator HtmlFragment(HtmlFragment[] fragments)
+            => Fragment(fragments);
+
+        public HtmlFragment Append(HtmlFragment tail)
+            => Fragment(this, tail);
+
+        public HtmlFragment Append(params HtmlFragment[] longTail)
+            => Fragment(this, Fragment(longTail));
+
+        public static HtmlFragment operator +(HtmlFragment left, HtmlFragment right)
+            => left.Append(right);
 
         [Pure]
-        HtmlFragment IConvertibleToFragment.AsFragment() => this;
+        HtmlFragment IConvertibleToFragment.AsFragment()
+            => this;
+
+        public HtmlFragment[] NodesOfFragment()
+            => Implementation as HtmlFragment[] ?? (IsEmpty ? EmptyNodes : new[] { this });
+
+        public HtmlFragment[] ChildNodes()
+            => Implementation is IHtmlElementAllowingContent elem
+                ? elem.Contents().NodesOfFragment()
+                : Implementation as HtmlFragment[] ?? EmptyNodes;
+
+        public static HtmlFragment[] EmptyNodes
+            => Array.Empty<HtmlFragment>();
     }
 }

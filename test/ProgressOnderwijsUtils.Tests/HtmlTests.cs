@@ -19,10 +19,10 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void IsHtmlElementLooksAtOutermostNode()
         {
-            PAssert.That(() => _div.Content("bla").AsFragment().IsHtmlElement);
-            PAssert.That(() => ((HtmlFragment)"bla").IsHtmlElement == false);
-            PAssert.That(() => new[] { HtmlFragment.Empty, _div }.WrapInHtmlFragment().IsHtmlElement);
-            PAssert.That(() => new[] { _div, _div }.WrapInHtmlFragment().IsHtmlElement == false);
+            PAssert.That(() => _div.Content("bla").AsFragment().IsElement());
+            PAssert.That(() => ((HtmlFragment)"bla").IsElement() == false);
+            PAssert.That(() => new[] { HtmlFragment.Empty, _div }.AsFragment().IsElement());
+            PAssert.That(() => new[] { _div, _div }.AsFragment().IsElement() == false);
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void PerfIterativeAppendingDoesNotCreateLotsOfArrays()
         {
             var html = "1".AsFragment().Append("2").Append("3").Append("4");
-            var kids = (HtmlFragment[])html.Content;
+            var kids = (HtmlFragment[])html.Implementation;
             PAssert.That(() => kids.First().SerializeToStringWithoutDoctype() == "1");
             PAssert.That(() => kids.Last().SerializeToStringWithoutDoctype() == "4");
         }

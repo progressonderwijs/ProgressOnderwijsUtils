@@ -109,7 +109,7 @@ using (var client = new HttpClient(new WebRequestHandler {
     var globalAttributeExtensionMethods = globalAttributes
         .Select(attrName => $@"
         public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
 
@@ -123,7 +123,7 @@ using (var client = new HttpClient(new WebRequestHandler {
     var elAttrExtensionMethods = specificAttributes
         .Select(attrName => $@"
         public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_{toClassName(attrName)}, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_{toClassName(attrName)}, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
 
@@ -141,42 +141,42 @@ using (var client = new HttpClient(new WebRequestHandler {
         .Select(el =>
         voidElements.Contains(el.elementName) 
         ? $@"
-        public struct {el.csUpperName} : IHtmlTag<{el.csUpperName}>{
+        public struct {el.csUpperName} : IHtmlElement<{el.csUpperName}>{
             string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
             }
         {{
             public string TagName => ""{el.elementName}"";
-            string IHtmlTag.TagStart => ""<{el.elementName}"";
-            string IHtmlTag.EndTag => """";
+            string IHtmlElement.TagStart => ""<{el.elementName}"";
+            string IHtmlElement.EndTag => """";
             HtmlAttributes attrs;
-            {el.csUpperName} IHtmlTag<{el.csUpperName}>.WithAttributes(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes }};
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            {el.csUpperName} IHtmlElement<{el.csUpperName}>.WithAttributes(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes }};
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
-            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }}"
 
         : $@"
-        public struct {el.csUpperName} : IHtmlTagAllowingContent<{el.csUpperName}>{
+        public struct {el.csUpperName} : IHtmlElementAllowingContent<{el.csUpperName}>{
             string.Join("", el.attributes.Select(attrName => $", IHasAttr_{toClassName(attrName)}"))
             }
         {{
             public string TagName => ""{el.elementName}"";
-            string IHtmlTag.TagStart => ""<{el.elementName}"";
-            string IHtmlTag.EndTag => ""</{el.elementName}>"";
+            string IHtmlElement.TagStart => ""<{el.elementName}"";
+            string IHtmlElement.EndTag => ""</{el.elementName}>"";
             HtmlAttributes attrs;
-            {el.csUpperName} IHtmlTag<{el.csUpperName}>.WithAttributes(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes, children = children }};
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            {el.csUpperName} IHtmlTagAllowingContent<{el.csUpperName}>.WithContents(HtmlFragment[] replacementContents) => new {el.csUpperName} {{ attrs = attrs, children = replacementContents }};
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            {el.csUpperName} IHtmlElement<{el.csUpperName}>.WithAttributes(HtmlAttributes replacementAttributes) => new {el.csUpperName} {{ attrs = replacementAttributes, children = children }};
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            {el.csUpperName} IHtmlElementAllowingContent<{el.csUpperName}>.WithContents(HtmlFragment replacementContents) => new {el.csUpperName} {{ attrs = attrs, children = replacementContents }};
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment({el.csUpperName} tag) => tag.AsFragment();
-            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +({el.csUpperName} head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, {el.csUpperName} tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }}"
 );
 

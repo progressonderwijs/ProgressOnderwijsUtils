@@ -151,14 +151,14 @@ namespace ProgressOnderwijsUtils
                 return sqlE.Number == timeoutExpired
                     || sqlE.Number == failedToEstablishConnection
                     || sqlE.Number == deadlockVictim
-                    || e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.") //number 121 and possibly others
-                    || e.Message.StartsWith("A transport-level error has occurred when sending the request to the server."); //number 121 and possibly others
+                    || e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.", StringComparison.Ordinal) //number 121 and possibly others
+                    || e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.", StringComparison.Ordinal); //number 121 and possibly others
             } else if (e is DBConcurrencyException) {
-                return e.Message.StartsWith("Concurrency violation:");
+                return e.Message.StartsWith("Concurrency violation:", StringComparison.Ordinal);
             } else if (e is DataException) {
                 return e.Message == "The underlying provider failed on Open.";
-            } else if (e is AggregateException) {
-                return ((AggregateException)e).Flatten().InnerExceptions.DefaultIfEmpty().All(IsRetriableConnectionFailure);
+            } else if (e is AggregateException aggEx) {
+                return aggEx.Flatten().InnerExceptions.DefaultIfEmpty().All(IsRetriableConnectionFailure);
             } else {
                 return IsRetriableConnectionFailure(e.InnerException);
             }

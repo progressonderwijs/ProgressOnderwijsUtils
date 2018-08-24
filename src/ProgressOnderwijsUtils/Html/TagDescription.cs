@@ -12,27 +12,27 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsSelfClosing { get; private set; }
         public string FieldName { get; private set; }
         public bool IsPredefined => FieldName != null;
-        public IHtmlTag EmptyValue { get; private set; }
+        public IHtmlElement EmptyValue { get; private set; }
         public IReadOnlyDictionary<string, string> AttributeMethodsByName { get; private set; }
 
         static readonly IReadOnlyDictionary<string, TagDescription> ByTagName =
             typeof(Tags).GetTypeInfo()
                 .GetFields(BindingFlags.Static | BindingFlags.Public)
-                .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlTag)field.GetValue(null) })
+                .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlElement)field.GetValue(null) })
                 .ToDictionary(
                     field => field.FieldValue.TagName,
                     field => new TagDescription {
                         TagName = field.FieldValue.TagName,
                         EmptyValue = field.FieldValue,
                         FieldName = field.FieldName,
-                        IsSelfClosing = !(field.FieldValue is IHtmlTagAllowingContent),
+                        IsSelfClosing = !(field.FieldValue is IHtmlElementAllowingContent),
                         AttributeMethodsByName = AttributeLookup(field.FieldType, field.FieldValue)
                     },
                     StringComparer.OrdinalIgnoreCase
                 );
 
         [NotNull]
-        static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlTag emptyValue)
+        static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlElement emptyValue)
         {
             return typeof(AttributeConstructionMethods)
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -41,10 +41,10 @@ namespace ProgressOnderwijsUtils.Html
                     return typeArgument.GetGenericParameterConstraints()
                         .All(constraint =>
                             constraint.IsAssignableFrom(tagType)
-                                || constraint == typeof(IHtmlTag<>).MakeGenericType(typeArgument) && typeof(IHtmlTag<>).MakeGenericType(tagType).IsAssignableFrom(tagType));
+                                || constraint == typeof(IHtmlElement<>).MakeGenericType(typeArgument) && typeof(IHtmlElement<>).MakeGenericType(tagType).IsAssignableFrom(tagType));
                 })
                 .ToDictionary(
-                    method => ((IHtmlTag)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })).Attributes.Last().Name,
+                    method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })).Attributes.Last().Name,
                     method => method.Name,
                     StringComparer.OrdinalIgnoreCase);
         }

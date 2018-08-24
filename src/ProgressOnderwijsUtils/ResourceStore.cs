@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
         {
             var nsPrefix = typeof(T).Namespace + ".";
             foreach (var fullname in typeof(T).Assembly.GetManifestResourceNames()) {
-                if (fullname.StartsWith(nsPrefix)) {
+                if (fullname.StartsWith(nsPrefix, StringComparison.Ordinal)) {
                     yield return fullname.Substring(nsPrefix.Length);
                 }
             }

@@ -9,12 +9,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Transactions" />
-    <PackageReference Include="ApprovalUtilities" Version="[3.0.13]" NoWarn="NU1701" />
-    <PackageReference Include="ApprovalTests" Version="[3.0.13]" NoWarn="NU1701" />
-    <PackageReference Include="xunit" Version="2.3.1" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="ApprovalUtilities" Version="3.0.15" NoWarn="NU1701" />
+    <PackageReference Include="ApprovalTests" Version="3.0.15" NoWarn="NU1701" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
     <ProjectReference Include="..\..\src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
