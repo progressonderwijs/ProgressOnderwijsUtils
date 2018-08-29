@@ -73,20 +73,21 @@ namespace ProgressOnderwijsUtils.Tests
         public void SupportsLargeIO()
         {
             var token = new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token;
-            var inputLineCount = 64*1024;
-            var inputLines = Enumerable.Repeat(new string('a', 126), inputLineCount);
+            var inputLine = new string('a', 1022);
+            var inputLineCount = 32768;
+            //32 MB streamed; 64MB in UCS2 encoding in .net memory.
+            var inputLines = Enumerable.Repeat(inputLine, inputLineCount);
             var result = new ProcessStartSettings {
-                ExecutableName = "more.com",
+                ExecutableName = "findstr", Arguments = "^",
                 Stdlnput = string.Join("\r\n", inputLines),
             }.StartProcess(token);
             var collected = new List<string>();
-            result.Output.Subscribe(o => collected.Add(o.Line));
+            result.Output.Subscribe(o => { collected.Add(o.Line); });
 
             result.Output.Wait();
             var outputLineCount = collected.Count;
             PAssert.That(() => outputLineCount == inputLineCount && result.ExitCode.Status == TaskStatus.RanToCompletion);
-            PAssert.That(() => collected.Distinct().Single() == new string('a', 126));
-            PAssert.That(() => result.StdOutput().Result.SequenceEqual(inputLines));
+            PAssert.That(() => collected.Distinct().Single() == inputLine);
         }
     }
 }
