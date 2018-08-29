@@ -106,7 +106,6 @@ namespace ProgressOnderwijsUtils
                 //Beware: microsoft is utterly incompetent, so this code is in an intrinsic race condition with process exit, which you can emulate by sleeping before this try.
                 fakeStdOutputEnd();
             }
-            WriteStdIn(proc);
             token.Register(() => {
                 if (Interlocked.Increment(ref completionEventsFired) == 1) {
                     exitCodeCompletion.SetCanceled();
@@ -121,6 +120,7 @@ namespace ProgressOnderwijsUtils
                     }
                 }
             }, false);
+            WriteStdIn(proc);
 
             return new AsyncProcessResult {
                 ExitCode = exitCodeCompletion.Task,
