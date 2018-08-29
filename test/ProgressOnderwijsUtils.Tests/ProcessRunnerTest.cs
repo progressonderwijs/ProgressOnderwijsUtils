@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
@@ -66,6 +67,26 @@ namespace ProgressOnderwijsUtils.Tests
 
             var outputCompletedInTime = result.Output.ToTask(CancellationToken.None).Wait(1000);
             PAssert.That(() => outputCompletedInTime);
+        }
+
+        [Fact]
+        public void SupportsLargeIO()
+        {
+            var token = new CancellationTokenSource(TimeSpan.FromSeconds(10)).Token;
+            var inputLineCount = 64*1024;
+            var inputLines = Enumerable.Repeat(new string('a', 126), inputLineCount);
+            var result = new ProcessStartSettings {
+                ExecutableName = "more.com",
+                Stdlnput = string.Join("\r\n", inputLines),
+            }.StartProcess(token);
+            var collected = new List<string>();
+            result.Output.Subscribe(o => collected.Add(o.Line));
+
+            result.Output.Wait();
+            var outputLineCount = collected.Count;
+            PAssert.That(() => outputLineCount == inputLineCount && result.ExitCode.Status == TaskStatus.RanToCompletion);
+            PAssert.That(() => collected.Distinct().Single() == new string('a', 126));
+            PAssert.That(() => result.StdOutput().Result.SequenceEqual(inputLines));
         }
     }
 }
