@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
@@ -51,7 +52,7 @@ namespace ProgressOnderwijsUtils
         public void ToSqlParameter(ref SqlParamArgs paramArgs)
         {
             var objs = projection(values);
-            paramArgs.Value = new MetaObjectDataReader<TOut>(objs);
+            paramArgs.Value = new MetaObjectDataReader<TOut>(objs, CancellationToken.None);
             paramArgs.TypeName = DbTypeName;
             cachedProjectedLength = objs.Length;
         }
