@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
@@ -21,14 +22,16 @@ namespace ProgressOnderwijsUtils
     public sealed class MetaObjectDataReader<T> : DbDataReaderBase, IOptionalObjectListForDebugging
         where T : IMetaObject
     {
+        readonly CancellationToken _cancellationToken;
         readonly IEnumerator<T> metaObjects;
         readonly IReadOnlyList<T> objectsOrNull_ForDebugging;
         T current;
         int rowsProcessed;
         public int RowsProcessed => rowsProcessed;
 
-        public MetaObjectDataReader([NotNull] IEnumerable<T> objects)
+        public MetaObjectDataReader([NotNull] IEnumerable<T> objects, CancellationToken cancellationToken)
         {
+            _cancellationToken = cancellationToken;
             metaObjects = objects.GetEnumerator();
             objectsOrNull_ForDebugging = objects as IReadOnlyList<T>;
         }
@@ -42,6 +45,7 @@ namespace ProgressOnderwijsUtils
 
         protected override bool ReadImpl()
         {
+            _cancellationToken.ThrowIfCancellationRequested();
             var hasnext = metaObjects.MoveNext();
             if (hasnext) {
                 current = metaObjects.Current;

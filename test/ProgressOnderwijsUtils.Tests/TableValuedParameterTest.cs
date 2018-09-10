@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Internal;
@@ -91,7 +92,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void Test_DbDataReaderBase_GetBytes_works_the_same_as_in_SqlDataReader()
         {
             var testen = new[] { new TestDataMetaObject { Data = testData } };
-            var reader = new MetaObjectDataReader<TestDataMetaObject>(testen);
+            var reader = new MetaObjectDataReader<TestDataMetaObject>(testen, CancellationToken.None);
             Assert_DataReader_GetBytes_works(reader);
         }
 

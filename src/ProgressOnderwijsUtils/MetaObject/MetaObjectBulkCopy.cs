@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
@@ -29,14 +28,17 @@ namespace ProgressOnderwijsUtils
         {
             using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
                 bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
-                bulkCopy.WriteMetaObjectsToServerAsync(metaObjects, sqlconn, tableName, CancellationToken.None).Wait();
+                var token = sqlconn.CommandTimeoutInS == 0
+                    ? CancellationToken.None
+                    : new CancellationTokenSource(TimeSpan.FromSeconds(sqlconn.CommandTimeoutInS)).Token;
+                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn, tableName, token); //.Wait(token);
             }
         }
 
         /// <summary>
         /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
         /// </summary>
-        public static async Task WriteMetaObjectsToServerAsync<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName, CancellationToken cancellationToken) where T : IMetaObject, IPropertiesAreUsedImplicitly
+        public static void WriteMetaObjectsToServer<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName, CancellationToken cancellationToken) where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             var sqlconn = context.Connection;
             if (metaObjects == null) {
@@ -50,11 +52,13 @@ namespace ProgressOnderwijsUtils
             }
             bulkCopy.DestinationTableName = tableName;
 
-            using (var objectReader = new MetaObjectDataReader<T>(metaObjects)) {
+            using (var objectReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken)) {
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
                 var sw = Stopwatch.StartNew();
                 try {
-                    await bulkCopy.WriteToServerAsync(objectReader, cancellationToken).ConfigureAwait(false);
+                    bulkCopy.WriteToServer(objectReader);
+                    //so why no async?
+                    //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating metaObjects, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
                     throw HelpfulException(bulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException<T>(mapping, destinationColumnIndex, ex);
