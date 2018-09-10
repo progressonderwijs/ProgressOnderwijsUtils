@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests.Data
@@ -59,5 +60,20 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var value = enumerable.Skip(1).First();
             Assert.Equal(new ExampleRow { Id = 37, Content = "hmm" }, value);
         }
+
+
+        [Fact]
+        public void ConcurrentReadersCrash()
+        {
+            var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Context);
+            using (var enumerator = enumerable.GetEnumerator())
+            using(var enumerator2 = enumerable.GetEnumerator())
+            {
+                enumerator.MoveNext();
+                Assert.ThrowsAny<Exception>(() => enumerator2.MoveNext());
+            }
+        }
+
+
     }
 }
