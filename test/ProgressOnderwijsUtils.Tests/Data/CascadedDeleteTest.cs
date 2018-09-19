@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -8,9 +9,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
 {
     public class CascadedDeleteTest : TransactedLocalConnection
     {
-        public struct AId : IMetaObject, IPropertiesAreUsedImplicitly
+        [NotNull]
+        static DataTable PksToDelete(string name, [NotNull] params int[] pks)
         {
-            public int A { get; set; }
+            var table = new DataTable();
+            table.Columns.Add(name, typeof(int));
+            foreach (var pk in pks) {
+                table.Rows.Add(pk);
+            }
+            return table;
         }
 
         [Fact]
@@ -28,7 +35,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
 
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, new AId { A = 1 }, new AId { A = 2 });
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, PksToDelete("A", 1, 2));
 
             var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalDependentValues.SetEqual(new[] { 333 }));
@@ -54,16 +61,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 insert into T1 values (11), (22), (33);
             ").ExecuteNonQuery(Context);
 
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, new AId { A = 1 }, new AId { A = 2 });
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, PksToDelete("A", 1, 2));
             var finalValues = SQL($"select B from T1").ReadPlain<int>(Context);
 
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T1" }));
             PAssert.That(() => finalValues.SetEqual(new[] { 33 }));
-        }
-
-        public struct RootId : IMetaObject, IPropertiesAreUsedImplicitly
-        {
-            public int Root { get; set; }
         }
 
         [Fact]
@@ -83,7 +85,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => initialTLeafKeys.SetEqual(new[] { 1, 2, 3, 4 }));
 
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"TRoot"), true, null, new RootId { Root = 1, }, new RootId { Root = 2 });
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"TRoot"), true, null, PksToDelete("Root", 1, 2));
 
             var finalT2 = SQL($"select D from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalT2.SetEqual(new[] { 5 }));

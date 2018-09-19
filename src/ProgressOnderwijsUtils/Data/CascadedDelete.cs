@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
@@ -21,14 +22,13 @@ namespace ProgressOnderwijsUtils
         /// In particularly, this code cannot break cyclical dependencies, and also cannot detect them: when a dependency chain reaches 500 long, it will crash.
         /// </summary>
         [NotNull]
-        public static DeletionReport[] RecursivelyDelete<TId>(
+        public static DeletionReport[] RecursivelyDelete(
             [NotNull] SqlCommandCreationContext conn,
             ParameterizedSql initialTableAsEntered,
             bool OutputAllDeletedRows,
             [CanBeNull] Action<string> logger,
-            [NotNull] params TId[] idsToDelete
+            [NotNull] DataTable pksToDelete
             )
-            where TId : IPropertiesAreUsedImplicitly, IMetaObject
         {
             void log(string message) => logger?.Invoke(message);
 
@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils
 
             var initialPrimaryKeyColumns = pkColumnsByTable[initialTable.CommandText()].ToArray();
             var initialPrimaryKeyColumnNames = initialPrimaryKeyColumns.Select(col => col.CommandText()).ToArray();
-            var providedIdColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
+            var providedIdColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
             if (!providedIdColumns.SetEqual(initialPrimaryKeyColumnNames, StringComparer.OrdinalIgnoreCase)) {
                 throw new InvalidOperationException("Expected primary key columns: " + initialPrimaryKeyColumnNames.JoinStrings(", ") + "; provided columns: " + providedIdColumns.JoinStrings(", "));
             }
@@ -99,7 +99,11 @@ namespace ProgressOnderwijsUtils
                 from {initialTable}
                 where 1=0
             ").ExecuteNonQuery(conn);
-            idsToDelete.BulkCopyToSqlServer(conn, delTable.CommandText());
+            using (var bulkCopy = new SqlBulkCopy(conn.Connection)) {
+                bulkCopy.BulkCopyTimeout = conn.CommandTimeoutInS;
+                bulkCopy.DestinationTableName = delTable.CommandText();
+                bulkCopy.WriteToServer(pksToDelete);
+            }
 
             var initialRowCountToDelete = SQL($@"
                 delete dt
@@ -110,7 +114,7 @@ namespace ProgressOnderwijsUtils
                 select count(*) from {delTable}
             ").ReadScalar<int>(conn);
 
-            log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete.Length} ids) from {initialTable.CommandText()})");
+            log($"Recursively deleting {initialRowCountToDelete} rows (of {pksToDelete.Rows.Count} ids) from {initialTable.CommandText()})");
 
             int delBatch = 0;
 

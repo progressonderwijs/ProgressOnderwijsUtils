@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>28.0.0</Version>
-    <PackageReleaseNotes>Replace AuthnInstant in SsoAttributes with IssueInstant.</PackageReleaseNotes>
+    <Version>29.0.0</Version>
+    <PackageReleaseNotes>Use DataTable instead of generic type for pks to delete in CascadedDelete.RecursivelyDelete.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
