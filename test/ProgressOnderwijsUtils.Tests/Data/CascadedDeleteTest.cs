@@ -8,9 +8,10 @@ namespace ProgressOnderwijsUtils.Tests.Data
 {
     public class CascadedDeleteTest : TransactedLocalConnection
     {
-        public struct AId : IMetaObject, IPropertiesAreUsedImplicitly
+        enum AId
         {
-            public int A { get; set; }
+            One = 1,
+            Two = 2,
         }
 
         [Fact]
@@ -28,33 +29,33 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
 
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, new AId { A = 1 }, new AId { A = 2 });
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, "A", AId.One, AId.Two);
 
             var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalDependentValues.SetEqual(new[] { 333 }));
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T2", "dbo.T1" }));
         }
 
-        void CreateDiamondFkTableSet()
-        {
-            SQL($@"
-                create table TRoot ( root int primary key, B int);
-                create table T1 ( C int primary key, root int references TRoot (root));
-                create table T2 ( D int primary key, root int references TRoot (root));
-                create table TLeaf ( Z int primary key, C int references T1 (C), D int references T2 (D) );
-            ").ExecuteNonQuery(Context);
-        }
-
         [Fact]
         public void CascadedDeleteWorksWithIdentityKey()
         {
+            DataTable PksToDelete(string name, params int[] pks)
+            {
+                var table = new DataTable();
+                table.Columns.Add(name, typeof(int));
+                foreach (var pk in pks) {
+                    table.Rows.Add(pk);
+                }
+                return table;
+            }
+
             SQL($@"
                 create table T1 ( A int primary key identity(1,1), B int);
 
                 insert into T1 values (11), (22), (33);
             ").ExecuteNonQuery(Context);
 
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, new AId { A = 1 }, new AId { A = 2 });
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, PksToDelete("A", 1, 2));
             var finalValues = SQL($"select B from T1").ReadPlain<int>(Context);
 
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T1" }));
@@ -69,7 +70,12 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CascadedDeleteFollowsADiamondOfForeignKey()
         {
-            CreateDiamondFkTableSet();
+            SQL($@"
+                create table TRoot ( root int primary key, B int);
+                create table T1 ( C int primary key, root int references TRoot (root));
+                create table T2 ( D int primary key, root int references TRoot (root));
+                create table TLeaf ( Z int primary key, C int references T1 (C), D int references T2 (D) );
+            ").ExecuteNonQuery(Context);
 
             SQL($@"
                 insert into TRoot values (1,11), (2,22), (3, 33);
