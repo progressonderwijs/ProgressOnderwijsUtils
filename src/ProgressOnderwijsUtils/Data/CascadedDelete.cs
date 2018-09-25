@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
             var pkColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-            CloneTableWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
+            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
             pksToDelete.BulkCopyToSqlServer(conn, pksTable.CommandText());
 
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, pkColumns, SQL($@"
@@ -74,7 +74,7 @@ namespace ProgressOnderwijsUtils
             var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-            CloneTableWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
+            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
             using (var bulkCopy = new SqlBulkCopy(conn.Connection)) {
                 bulkCopy.BulkCopyTimeout = conn.CommandTimeoutInS;
                 bulkCopy.DestinationTableName = pksTable.CommandText();
@@ -168,7 +168,7 @@ namespace ProgressOnderwijsUtils
             }
 
             var delTable = SQL($"[#del_init]");
-            CloneTableWithoutIdentityProperties(conn, initialTable, initialPrimaryKeyColumns, delTable);
+            CloneTableSchemaWithoutIdentityProperties(conn, initialTable, initialPrimaryKeyColumns, delTable);
 
             var idsToDelete = SQL($@"
                 insert into {delTable} ({initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))})
@@ -329,7 +329,7 @@ namespace ProgressOnderwijsUtils
             public FkCol[] Columns;
         }
 
-        static void CloneTableWithoutIdentityProperties([NotNull] SqlCommandCreationContext conn, ParameterizedSql fromTable, [NotNull] ParameterizedSql[] columnsToClone, ParameterizedSql newTable)
+        static void CloneTableSchemaWithoutIdentityProperties([NotNull] SqlCommandCreationContext conn, ParameterizedSql fromTable, [NotNull] ParameterizedSql[] columnsToClone, ParameterizedSql newTable)
         {
             var columns = columnsToClone.ConcatenateSql(SQL($", "));
             SQL($@"
