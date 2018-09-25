@@ -44,23 +44,13 @@ namespace ProgressOnderwijsUtils
         {
             var pksTable = SQL($"#pksTable");
             var pkColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
-            var pkColumnsSql = pkColumns.Select(ParameterizedSql.CreateDynamic).ConcatenateSql(SQL($", "));
+            var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-            //union all is a nasty hack to enforce that the identity property is not propagated to the temp table
-            SQL($@"
-                select {pkColumnsSql} 
-                into {pksTable}
-                from {initialTableAsEntered}
-                where 1=0
-                union all
-                select {pkColumnsSql} 
-                from {initialTableAsEntered}
-                where 1=0
-            ").ExecuteNonQuery(conn);
+            CloneTableWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
             pksToDelete.BulkCopyToSqlServer(conn, pksTable.CommandText());
 
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, pkColumns, SQL($@"
-                select {pkColumnsSql}
+                select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}
             "));
 
@@ -82,19 +72,9 @@ namespace ProgressOnderwijsUtils
         {
             var pksTable = SQL($"#pksTable");
             var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
-            var pkColumnsSql = pkColumns.Select(ParameterizedSql.CreateDynamic).ConcatenateSql(SQL($", "));
+            var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-            //union all is a nasty hack to enforce that the identity property is not propagated to the temp table
-            SQL($@"
-                select {pkColumnsSql} 
-                into {pksTable}
-                from {initialTableAsEntered}
-                where 1=0
-                union all
-                select {pkColumnsSql} 
-                from {initialTableAsEntered}
-                where 1=0
-            ").ExecuteNonQuery(conn);
+            CloneTableWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
             using (var bulkCopy = new SqlBulkCopy(conn.Connection)) {
                 bulkCopy.BulkCopyTimeout = conn.CommandTimeoutInS;
                 bulkCopy.DestinationTableName = pksTable.CommandText();
@@ -102,7 +82,7 @@ namespace ProgressOnderwijsUtils
             }
 
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, pkColumns, SQL($@"
-                select {pkColumnsSql}
+                select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}
             "));
 
@@ -188,17 +168,7 @@ namespace ProgressOnderwijsUtils
             }
 
             var delTable = SQL($"[#del_init]");
-            //union all is a nasty hack to enforce that the identity property is not propagated to the temp table
-            SQL($@"
-                select {initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))} 
-                into {delTable}
-                from {initialTable}
-                where 1=0
-                union all
-                select {initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))} 
-                from {initialTable}
-                where 1=0
-            ").ExecuteNonQuery(conn);
+            CloneTableWithoutIdentityProperties(conn, initialTable, initialPrimaryKeyColumns, delTable);
 
             var idsToDelete = SQL($@"
                 insert into {delTable} ({initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))})
@@ -357,6 +327,23 @@ namespace ProgressOnderwijsUtils
             public string ParentTable;
             public ParameterizedSql DependantTable;
             public FkCol[] Columns;
+        }
+
+        static void CloneTableWithoutIdentityProperties([NotNull] SqlCommandCreationContext conn, ParameterizedSql fromTable, [NotNull] ParameterizedSql[] columnsToClone, ParameterizedSql newTable)
+        {
+            var columns = columnsToClone.ConcatenateSql(SQL($", "));
+            SQL($@"
+                select {columns} 
+                into {newTable}
+                from {fromTable}
+                where 1=0
+
+                union all -- union all is a nasty hack to enforce that the identity property is not propagated to the temp table
+
+                select {columns} 
+                from {fromTable}
+                where 1=0
+            ").ExecuteNonQuery(conn);
         }
     }
 }
