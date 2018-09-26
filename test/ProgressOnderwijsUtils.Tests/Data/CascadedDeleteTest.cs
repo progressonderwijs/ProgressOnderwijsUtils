@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
 
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, "A", AId.One, AId.Two);
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, null, "A", AId.One, AId.Two);
 
             var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalDependentValues.SetEqual(new[] { 333 }));
@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 insert into T1 values (11), (22), (33);
             ").ExecuteNonQuery(Context);
 
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, PksToDelete("A", 1, 2));
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, null, PksToDelete("A", 1, 2));
             var finalValues = SQL($"select B from T1").ReadPlain<int>(Context);
 
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T1" }));
@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             PAssert.That(() => initialTLeafKeys.SetEqual(new[] { 1, 2, 3, 4 }));
 
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"TRoot"), true, null, new RootId { Root = 1, }, new RootId { Root = 2 });
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"TRoot"), true, null, null, new RootId { Root = 1, }, new RootId { Root = 2 });
 
             var finalT2 = SQL($"select D from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalT2.SetEqual(new[] { 5 }));
@@ -99,6 +99,27 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
             var rowsFromT1 = deletionReport.Where(t => t.Table == "dbo.T1").ToArray();
             PAssert.That(() => rowsFromT1.Single().DeletedRows.Rows.Cast<DataRow>().Select(dr => (int)dr["C"]).SetEqual(new[] { 4, 5 }));
+        }
+
+        [Fact]
+        public void CascadeDeleteBreaksOnSpecificTable()
+        {
+            SQL($@"
+                create table T1 (A int primary key);
+                create table T2 (B int primary key, A int references T1 (A) on delete set null);
+                create table T3 (C int primary key, A int references T1 (A));
+
+                insert into T1 values (1);
+                insert into T2 values (2, 1);
+                insert into T3 values (3, 1);
+            ").ExecuteNonQuery(Context);
+
+            bool StopCascading(string onTable)
+                => onTable == "dbo.T2";
+
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, SQL($"T1"), false, null, StopCascading, "A", AId.One);
+
+            PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T3", "dbo.T1" }));
         }
     }
 }
