@@ -20,13 +20,14 @@ namespace ProgressOnderwijsUtils
             ParameterizedSql initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,
+            [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] string pkColumn,
             [NotNull] params TId[] pksToDelete
             )
             where TId : Enum
         {
             var pkColumnSql = ParameterizedSql.CreateDynamic(pkColumn);
-            return RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, new[] { pkColumn }, SQL($@"
+            return RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, new[] { pkColumn }, SQL($@"
                 select {pkColumnSql} = q.QueryTableValue 
                 from {pksToDelete} q
             "));
@@ -38,6 +39,7 @@ namespace ProgressOnderwijsUtils
             ParameterizedSql initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,
+            [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] params TId[] pksToDelete
             )
             where TId : IPropertiesAreUsedImplicitly, IMetaObject
@@ -49,7 +51,7 @@ namespace ProgressOnderwijsUtils
             CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
             pksToDelete.BulkCopyToSqlServer(conn, pksTable.CommandText());
 
-            var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, pkColumns, SQL($@"
+            var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}
             "));
@@ -67,6 +69,7 @@ namespace ProgressOnderwijsUtils
             ParameterizedSql initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,
+            [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] DataTable pksToDelete
             )
         {
@@ -81,7 +84,7 @@ namespace ProgressOnderwijsUtils
                 bulkCopy.WriteToServer(pksToDelete);
             }
 
-            var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, pkColumns, SQL($@"
+            var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}
             "));
@@ -107,11 +110,15 @@ namespace ProgressOnderwijsUtils
             ParameterizedSql initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,
+            [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] string[] pkColumns,
             ParameterizedSql pksTVParameter
             )
         {
             void log(string message) => logger?.Invoke(message);
+
+            bool StopCascading(ParameterizedSql tableName)
+                => stopCascading?.Invoke(tableName.CommandText()) ?? false;
 
             DataTable ExecuteDeletion(ParameterizedSql deletionCommand)
             {
@@ -196,6 +203,10 @@ namespace ProgressOnderwijsUtils
 
             void DeleteKids(ParameterizedSql tableName, ParameterizedSql tempTableName, SList<string> logStack, int depth)
             {
+                if (StopCascading(tableName)) {
+                    return;
+                }
+
                 if (depth > 500) {
                     throw new InvalidOperationException("A dependency chain of over 500 long was encountered; possible cycle: aborting.");
                 }
