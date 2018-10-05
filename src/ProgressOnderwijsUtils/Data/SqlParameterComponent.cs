@@ -156,17 +156,15 @@ namespace ProgressOnderwijsUtils
         class TableValuedParameterFactory<T> : ITableValuedParameterFactory
         {
             readonly string sqlTableTypeName;
+            //cache delegate to save some allocs and avoid risking slow paths like COMDelegate::DelegateConstruct
+            readonly Func<IEnumerable<T>, TableValuedParameterWrapper<T>[]> WrapPlainValueInMetaObject = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject;
 
             public TableValuedParameterFactory(string sqlTableTypeName)
-            {
-                this.sqlTableTypeName = sqlTableTypeName;
-            }
+                => this.sqlTableTypeName = sqlTableTypeName;
 
             [NotNull]
             public ISqlComponent CreateFromPlainValues(IEnumerable enumerable)
-            {
-                return ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject);
-            }
+                => ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, WrapPlainValueInMetaObject);
         }
 
         [CanBeNull]
@@ -203,6 +201,7 @@ namespace ProgressOnderwijsUtils
             /// Efficiently wraps an enumerable of objects in DbTableValuedParameterWrapper and materialized the sequence as array.
             /// Effectively it's like .Select(x => new DbTableValuedParameterWrapper { querytablevalue = x }).ToArray() but faster.
             /// </summary>
+            [NotNull]
             public static TableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>([NotNull] IEnumerable<T> typedEnumerable)
             {
                 if (typedEnumerable is T[] typedArray) {
