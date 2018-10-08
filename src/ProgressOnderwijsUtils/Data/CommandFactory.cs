@@ -116,22 +116,23 @@ namespace ProgressOnderwijsUtils
             lookup = null;
         }
 
-        const int ParameterNameCacheSize = 20;
+        const int ParameterNameCacheSize = 100;
 
         static readonly string[] CachedParameterNames =
             Enumerable.Range(0, ParameterNameCacheSize).Select(IndexToParameterName).ToArray();
 
         [NotNull]
-        public static string IndexToParameterName(int parameterIndex) => "@par" + parameterIndex.ToStringInvariant();
+        public static string IndexToParameterName(int parameterIndex)
+            => parameterIndex < CachedParameterNames.Length
+                ? CachedParameterNames[parameterIndex]
+                : "@par" + parameterIndex;
 
         public string RegisterParameterAndGetName<T>([NotNull] T o)
             where T : IQueryParameter
         {
             if (!lookup.TryGetValue(o.EquatableValue, out var paramName)) {
                 var parameterIndex = lookup.Count;
-                paramName = parameterIndex < CachedParameterNames.Length
-                    ? CachedParameterNames[parameterIndex]
-                    : IndexToParameterName(parameterIndex);
+                paramName = IndexToParameterName(parameterIndex);
                 EnsureParamsArrayCanGrow();
                 o.ToSqlParameter(ref paramObjs[paramCount]);
                 paramCount++;
