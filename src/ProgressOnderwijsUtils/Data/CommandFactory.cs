@@ -119,7 +119,7 @@ namespace ProgressOnderwijsUtils
         const int ParameterNameCacheSize = 100;
 
         static readonly string[] CachedParameterNames =
-            Enumerable.Range(0, ParameterNameCacheSize).Select(IndexToParameterName).ToArray();
+            Enumerable.Range(0, ParameterNameCacheSize).Select(parameterIndex => "@par" + parameterIndex).ToArray();
 
         [NotNull]
         public static string IndexToParameterName(int parameterIndex)
