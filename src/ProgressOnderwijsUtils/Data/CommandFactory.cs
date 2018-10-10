@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils
         void FreeParamsAndLookup()
         {
             Array.Clear(paramObjs, 0, paramCount);
-            sqlParamsArgsPool.Return(paramObjs, true);
+            sqlParamsArgsPool.Return(paramObjs);
             paramObjs = null;
             lookup.Clear();
             nameLookupBag.Enqueue(lookup);
@@ -149,7 +149,7 @@ namespace ProgressOnderwijsUtils
                 var newArray = sqlParamsArgsPool.Rent(paramCount * 2);
                 Array.Copy(paramObjs, newArray, paramCount);
                 Array.Clear(paramObjs, 0, paramCount);
-                sqlParamsArgsPool.Return(paramObjs, true);
+                sqlParamsArgsPool.Return(paramObjs);
                 paramObjs = newArray;
             }
         }
