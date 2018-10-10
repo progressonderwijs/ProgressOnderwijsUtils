@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -31,6 +32,19 @@ namespace ProgressOnderwijsUtils.Tests
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
             var sum = q.ReadScalar<int>(Context);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
+        }
+
+
+        [Fact]
+        public void SingletonTvPsCanBeExecuted()
+        {
+            var q = SQL($"select sum(x.querytablevalue) from {Enumerable.Range(1, 1).ToArray()} x");
+            using (var cmd = q.CreateSqlCommand(Context)) {
+                //make sure I'm actually testing that exceptional single-value case, not the general Strucutured case.
+                PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.SqlDbType).SequenceEqual(new[] { SqlDbType.Int }));
+            }
+            var sum = q.ReadScalar<int>(Context);
+            PAssert.That(() => sum == 1);
         }
 
         [Fact]

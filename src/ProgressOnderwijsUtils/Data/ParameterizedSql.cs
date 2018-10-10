@@ -129,7 +129,9 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => SqlParameterComponent.ToTableValuedParameter(typeName, objects, o => (T[])o).BuildableToQuery();
+            => (objects.Length == 1 ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<T>(objects[0])
+                : new QueryTableValuedParameterComponent<T, T>(typeName, objects, arr => (T[])arr)
+                ).BuildableToQuery();
 
         public static IReadOnlyDictionary<Type, string> BuiltInTabledValueTypes => SqlParameterComponent.CustomTableType.SqlTableTypeNameByDotnetType;
         public static ParameterizedSql TableValuedTypeDefinitionScripts => SqlParameterComponent.CustomTableType.DefinitionScripts;
