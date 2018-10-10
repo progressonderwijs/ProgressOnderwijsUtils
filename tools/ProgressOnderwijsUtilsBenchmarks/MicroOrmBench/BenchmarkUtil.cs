@@ -8,9 +8,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
 using IncrementalMeanVarianceAccumulator;
 using ProgressOnderwijsUtils;
-using Dapper;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 {
@@ -50,6 +50,9 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 
         public void BenchSqlServer(string name, Func<SqlCommandCreationContext, int, int> action)
         {
+            using (var ctx = CreateSqlConnection())
+                ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(ctx);
+
             Bench(name, CreateSqlConnection, action);
         }
 
@@ -64,28 +67,27 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             bool ok = false;
             try {
                 conn.Open();
-                
+
                 var sqlCommandCreationContext = new SqlCommandCreationContext(conn, 0, null);
                 ok = true;
                 return sqlCommandCreationContext;
             } finally {
-                if (!ok)
+                if (!ok) {
                     conn.Dispose();
+                }
             }
         }
 
         public static SQLiteConnection CreateSqliteConnection()
         {
-            var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder
-            {
-                DataSource = @":memory:",//benchmark.db
+            var conn = new SQLiteConnection(new SQLiteConnectionStringBuilder {
+                DataSource = @":memory:", //benchmark.db
                 JournalMode = SQLiteJournalModeEnum.Wal,
                 FailIfMissing = false,
                 DateTimeFormat = SQLiteDateFormats.Ticks,
             }.ToString());
             bool ok = false;
-            try
-            {
+            try {
                 conn.Open();
 
                 conn.Query<ExampleObject>(@"
@@ -108,11 +110,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
                 ");
                 ok = true;
                 return conn;
-            }
-            finally
-            {
-                if (!ok)
+            } finally {
+                if (!ok) {
                     conn.Dispose();
+                }
             }
         }
 

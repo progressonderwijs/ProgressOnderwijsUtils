@@ -49,6 +49,5 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         public static readonly string RawSqliteQueryString = string.Format(formatSqliteString,  "@Num2",  "@Hehe", "@Arg", "@Top");
         public static readonly long someInt64Value = int.MaxValue * (long)short.MinValue;
         public static ParameterizedSql ParameterizedSqliteForRows(int rows) => SafeSql.SQL(FormattableStringFactory.Create(formatSqliteString, 2, "hehe", someInt64Value, rows));
-
     }
 }
