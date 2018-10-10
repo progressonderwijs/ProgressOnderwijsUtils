@@ -225,8 +225,9 @@ namespace ProgressOnderwijsUtils
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
         {
-            if (kids == null || kids.Length == 0)
+            if (kids == null || kids.Length == 0) {
                 return;
+            }
             kids[0].AppendTo(ref factory);
             for (var index = 1; index < kids.Length; index++) {
                 factory.AppendSql(" ", 0, 1);
@@ -234,7 +235,6 @@ namespace ProgressOnderwijsUtils
             }
         }
     }
-
 
     class InterpolatedSqlFragment : ISqlComponent
     {
