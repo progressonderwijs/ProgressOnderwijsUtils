@@ -6,10 +6,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
     {
         static void Main()
         {
-            BenchmarkRunner.Run<HtmlFragmentBenchmark>();
+            MicroOrm.MicroOrmBenchmarkProgram.RunBenchmarks();
             return;
             RunArrayBuilderBenchmarks();
-            MicroOrm.MicroOrmBenchmarkProgram.RunBenchmarks();
+            BenchmarkRunner.Run<HtmlFragmentBenchmark>();
         }
 
         static void RunArrayBuilderBenchmarks()
