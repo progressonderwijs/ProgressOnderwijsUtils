@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -52,6 +53,7 @@ namespace ProgressOnderwijsUtils
     struct CommandFactory : ICommandFactory
     {
         static readonly ConcurrentQueue<Dictionary<object, string>> nameLookupBag = new ConcurrentQueue<Dictionary<object, string>>();
+        static readonly ArrayPool<SqlParamArgs> sqlParamsArgsPool = ArrayPool<SqlParamArgs>.Shared;
 
         static Dictionary<object, string> GetLookup()
         {
@@ -70,7 +72,7 @@ namespace ProgressOnderwijsUtils
             =>
                 new CommandFactory {
                     queryText = FastShortStringBuilder.Create(),
-                    paramObjs = PooledExponentialBufferAllocator<SqlParamArgs>.GetByLength(16),
+                    paramObjs = sqlParamsArgsPool.Rent(16),
                     paramCount = 0,
                     lookup = GetLookup()
                 };
@@ -109,7 +111,7 @@ namespace ProgressOnderwijsUtils
         void FreeParamsAndLookup()
         {
             Array.Clear(paramObjs, 0, paramCount);
-            PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
+            sqlParamsArgsPool.Return(paramObjs, true);
             paramObjs = null;
             lookup.Clear();
             nameLookupBag.Enqueue(lookup);
@@ -144,10 +146,10 @@ namespace ProgressOnderwijsUtils
         void EnsureParamsArrayCanGrow()
         {
             if (paramObjs.Length == paramCount) {
-                var newArray = PooledExponentialBufferAllocator<SqlParamArgs>.GetByLength((uint)paramCount * 2);
+                var newArray = sqlParamsArgsPool.Rent(paramCount * 2);
                 Array.Copy(paramObjs, newArray, paramCount);
                 Array.Clear(paramObjs, 0, paramCount);
-                PooledExponentialBufferAllocator<SqlParamArgs>.ReturnToPool(paramObjs);
+                sqlParamsArgsPool.Return(paramObjs, true);
                 paramObjs = newArray;
             }
         }
@@ -160,40 +162,38 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     struct FastShortStringBuilder
     {
-        char[] charBuffer;
-        int queryLen;
-        public static FastShortStringBuilder Create() => new FastShortStringBuilder { charBuffer = PooledExponentialBufferAllocator<char>.GetByLength(4096) };
-        public static FastShortStringBuilder Create(uint length) => new FastShortStringBuilder { charBuffer = PooledExponentialBufferAllocator<char>.GetByLength(length) };
+        public char[] CurrentCharacterBuffer;
+        public int CurrentLength;
+        static readonly ArrayPool<char> charPool = ArrayPool<char>.Shared;
+        public static FastShortStringBuilder Create() => new FastShortStringBuilder { CurrentCharacterBuffer = charPool.Rent(4096) };
+        public static FastShortStringBuilder Create(int length) => new FastShortStringBuilder { CurrentCharacterBuffer = charPool.Rent(length) };
         public void AppendText([NotNull] string text) => AppendText(text, 0, text.Length);
 
         public void AppendText([NotNull] string text, int startIndex, int length)
         {
-            if (charBuffer.Length < queryLen + length) {
-                var newLen = (uint)Math.Max(charBuffer.Length * 2, queryLen + length);
-                var newArray = PooledExponentialBufferAllocator<char>.GetByLength(newLen);
-                Array.Copy(charBuffer, newArray, queryLen);
-                PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);
-                charBuffer = newArray;
+            if (CurrentCharacterBuffer.Length < CurrentLength + length) {
+                var newLen = Math.Max(CurrentCharacterBuffer.Length * 2, CurrentLength + length);
+                var newArray = charPool.Rent(newLen);
+                Array.Copy(CurrentCharacterBuffer, newArray, CurrentLength);
+                charPool.Return(CurrentCharacterBuffer);
+                CurrentCharacterBuffer = newArray;
             }
-            text.CopyTo(startIndex, charBuffer, queryLen, length);
-            queryLen += length;
+            text.CopyTo(startIndex, CurrentCharacterBuffer, CurrentLength, length);
+            CurrentLength += length;
         }
-
-        public int CurrentLength => queryLen;
-        public char[] CurrentCharacterBuffer => charBuffer;
 
         public void DiscardBuilder()
         {
-            PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);
-            charBuffer = null;
+            charPool.Return(CurrentCharacterBuffer);
+            CurrentCharacterBuffer = null;
         }
 
         [NotNull]
         public string FinishBuilding()
         {
-            var str = new string(charBuffer, 0, queryLen);
-            PooledExponentialBufferAllocator<char>.ReturnToPool(charBuffer);
-            charBuffer = null;
+            var str = new string(CurrentCharacterBuffer, 0, CurrentLength);
+            charPool.Return(CurrentCharacterBuffer);
+            CurrentCharacterBuffer = null;
             return str;
         }
     }

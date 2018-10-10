@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.IO;
 using System.Text;
 using JetBrains.Annotations;
@@ -10,7 +11,7 @@ namespace ProgressOnderwijsUtils.Html
         [NotNull]
         public static string SerializeToString([NotNull] this IConvertibleToFragment rootElem)
         {
-            var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
+            var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
             AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
             return fastStringBuilder.FinishBuilding();
@@ -23,19 +24,19 @@ namespace ProgressOnderwijsUtils.Html
         [NotNull]
         public static string SerializeToStringWithoutDoctype([NotNull] this IConvertibleToFragment rootElem)
         {
-            var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
+            var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
             AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
             return fastStringBuilder.FinishBuilding();
         }
 
         public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, [NotNull] Encoding contentEncoding)
         {
-            var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
+            var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
             AppendToBuilder(ref fastStringBuilder, rootElem);
             const int charsPerBuffer = 2048;
             var maxBufferSize = contentEncoding.GetMaxByteCount(charsPerBuffer);
-            var byteBuffer = PooledExponentialBufferAllocator<byte>.GetByLength((uint)maxBufferSize);
+            var byteBuffer = ArrayPool<byte>.Shared.Rent(maxBufferSize);
 
             var charCount = fastStringBuilder.CurrentLength;
             var charsWritten = 0;
@@ -45,7 +46,7 @@ namespace ProgressOnderwijsUtils.Html
                 outputStream.Write(byteBuffer, 0, bytesWritten);
                 charsWritten += charsPerBuffer;
             }
-            PooledExponentialBufferAllocator<byte>.ReturnToPool(byteBuffer);
+            ArrayPool<byte>.Shared.Return(byteBuffer);
         }
 
         static void AppendToBuilder(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment)
