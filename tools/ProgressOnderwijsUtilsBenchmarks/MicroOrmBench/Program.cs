@@ -16,10 +16,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         {
             ParameterizedSqlExecutor.ConstructWithoutExecuting(benchmarker);
             ParameterizedSqlExecutor.RunQuery(benchmarker);
-            ParameterizedSqlExecutor.RunTvpQuery(benchmarker);
+            //ParameterizedSqlExecutor.RunTvpQuery(benchmarker);
             //DapperExecutor.RunQuery(benchmarker);
-            ParameterizedSqlExecutor.RunWideQuery(benchmarker);
-            HandrolledAdoNetExecutor.RunQuery(benchmarker);
+            //ParameterizedSqlExecutor.RunWideQuery(benchmarker);
+            //HandrolledAdoNetExecutor.RunQuery(benchmarker);
             //HandrolledAdoNetExecutor.RunWideQuery(benchmarker);
             //DapperExecutor.RunWideQuery(benchmarker);
 
