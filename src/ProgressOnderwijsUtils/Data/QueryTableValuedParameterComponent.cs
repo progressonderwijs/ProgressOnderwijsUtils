@@ -20,7 +20,6 @@ namespace ProgressOnderwijsUtils
         readonly string DbTypeName;
         readonly IEnumerable<TIn> values;
         readonly Func<IEnumerable<TIn>, TOut[]> projection;
-        int cachedProjectedLength;
 
         [NotNull]
         public object EquatableValue => Tuple.Create(values, DbTypeName);
@@ -35,18 +34,13 @@ namespace ProgressOnderwijsUtils
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
         {
+            var paramName = factory.RegisterParameterAndGetName(this);
+
             ParameterizedSqlFactory.AppendSql(ref factory, subselect_part1);
             ParameterizedSqlFactory.AppendSql(ref factory, columnListClause);
             ParameterizedSqlFactory.AppendSql(ref factory, subselect_part3);
-            ParameterizedSqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(this));
+            ParameterizedSqlFactory.AppendSql(ref factory, paramName);
             ParameterizedSqlFactory.AppendSql(ref factory, subselect_part5);
-
-            if (cachedProjectedLength > 0) {
-                //Insert length category token in TVP sql output, so that the query
-                //optimizer uses differing query plans for arrays.  In effect, every
-                //factor of 8 a new query plan is used.
-                ParameterizedSqlFactory.AppendSql(ref factory, querySizeToken[LengthToCategory(cachedProjectedLength)]);
-            }
         }
 
         public void ToSqlParameter(ref SqlParamArgs paramArgs)
@@ -54,11 +48,6 @@ namespace ProgressOnderwijsUtils
             var objs = projection(values);
             paramArgs.Value = new MetaObjectDataReader<TOut>(objs, CancellationToken.None);
             paramArgs.TypeName = DbTypeName;
-            cachedProjectedLength = objs.Length;
         }
-
-        static int LengthToCategory(int length) => Utils.LogBase2RoundedDown((uint)length) / 3;
-        static readonly int maxCategory = LengthToCategory(int.MaxValue);
-        static readonly string[] querySizeToken = Enumerable.Range(0, maxCategory + 1).Select(n => $"/*{n}*/").ToArray();
     }
 }
