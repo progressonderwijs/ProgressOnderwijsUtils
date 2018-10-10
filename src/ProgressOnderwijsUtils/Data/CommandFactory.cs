@@ -164,18 +164,21 @@ namespace ProgressOnderwijsUtils
     {
         public char[] CurrentCharacterBuffer;
         public int CurrentLength;
-        static readonly ArrayPool<char> charPool = ArrayPool<char>.Shared;
-        public static FastShortStringBuilder Create() => new FastShortStringBuilder { CurrentCharacterBuffer = charPool.Rent(4096) };
-        public static FastShortStringBuilder Create(int length) => new FastShortStringBuilder { CurrentCharacterBuffer = charPool.Rent(length) };
+        public static FastShortStringBuilder Create() => new FastShortStringBuilder { CurrentCharacterBuffer = Allocate(4096) };
+
+        static char[] Allocate(int length) => ArrayPool<char>.Shared.Rent(length);
+        void Free() => ArrayPool<char>.Shared.Return(CurrentCharacterBuffer);
+
+        public static FastShortStringBuilder Create(int length) => new FastShortStringBuilder { CurrentCharacterBuffer = Allocate(length) };
         public void AppendText([NotNull] string text) => AppendText(text, 0, text.Length);
 
         public void AppendText([NotNull] string text, int startIndex, int length)
         {
             if (CurrentCharacterBuffer.Length < CurrentLength + length) {
                 var newLen = Math.Max(CurrentCharacterBuffer.Length * 2, CurrentLength + length);
-                var newArray = charPool.Rent(newLen);
+                var newArray = Allocate(newLen);
                 Array.Copy(CurrentCharacterBuffer, newArray, CurrentLength);
-                charPool.Return(CurrentCharacterBuffer);
+                Free();
                 CurrentCharacterBuffer = newArray;
             }
             text.CopyTo(startIndex, CurrentCharacterBuffer, CurrentLength, length);
@@ -184,7 +187,7 @@ namespace ProgressOnderwijsUtils
 
         public void DiscardBuilder()
         {
-            charPool.Return(CurrentCharacterBuffer);
+            Free();
             CurrentCharacterBuffer = null;
         }
 
@@ -192,7 +195,7 @@ namespace ProgressOnderwijsUtils
         public string FinishBuilding()
         {
             var str = new string(CurrentCharacterBuffer, 0, CurrentLength);
-            charPool.Return(CurrentCharacterBuffer);
+            Free();
             CurrentCharacterBuffer = null;
             return str;
         }
