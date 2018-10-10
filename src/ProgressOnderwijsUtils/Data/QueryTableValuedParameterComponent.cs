@@ -50,4 +50,36 @@ namespace ProgressOnderwijsUtils
             paramArgs.TypeName = DbTypeName;
         }
     }
+
+    sealed class SingletonQueryTableValuedParameterComponent<TOut> : ISqlComponent
+        where TOut : IMetaObject
+    {
+        readonly TOut row;
+
+        internal SingletonQueryTableValuedParameterComponent(TOut row)
+        {
+            this.row = row;
+        }
+
+        public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
+            where TCommandFactory : struct, ICommandFactory
+        {
+            bool isFirst = true;
+            ParameterizedSqlFactory.AppendSql(ref factory, "(select ");
+            foreach (var metaProp in MetaObject.GetMetaProperties<TOut>()) {
+                if (metaProp.CanRead) {
+                    if (!isFirst) {
+                        ParameterizedSqlFactory.AppendSql(ref factory, ", ");
+                    } else {
+                        isFirst = false;
+                    }
+
+                    ParameterizedSqlFactory.AppendSql(ref factory, metaProp.Name);
+                    ParameterizedSqlFactory.AppendSql(ref factory, " = ");
+                    QueryScalarParameterComponent.AppendScalarParameter(ref factory, metaProp.Getter(row));
+                }
+            }
+            ParameterizedSqlFactory.AppendSql(ref factory, ")");
+        }
+    }
 }
