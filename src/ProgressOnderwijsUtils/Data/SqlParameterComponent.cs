@@ -83,7 +83,10 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static ISqlComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection)
             where TOut : IMetaObject, new()
-            => new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
+            =>
+                set is IReadOnlyList<TIn> fixedSizeList && fixedSizeList.Count == 1
+                    ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<TOut>(projection(set)[0])
+                    : new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
 
         static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
 

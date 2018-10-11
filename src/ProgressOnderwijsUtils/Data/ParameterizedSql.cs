@@ -129,7 +129,9 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => SqlParameterComponent.ToTableValuedParameter(typeName, objects, o => (T[])o).BuildableToQuery();
+            => (objects.Length == 1 ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<T>(objects[0])
+                : new QueryTableValuedParameterComponent<T, T>(typeName, objects, arr => (T[])arr)
+                ).BuildableToQuery();
 
         public static IReadOnlyDictionary<Type, string> BuiltInTabledValueTypes => SqlParameterComponent.CustomTableType.SqlTableTypeNameByDotnetType;
         public static ParameterizedSql TableValuedTypeDefinitionScripts => SqlParameterComponent.CustomTableType.DefinitionScripts;
@@ -225,8 +227,9 @@ namespace ProgressOnderwijsUtils
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
         {
-            if (kids == null || kids.Length == 0)
+            if (kids == null || kids.Length == 0) {
                 return;
+            }
             kids[0].AppendTo(ref factory);
             for (var index = 1; index < kids.Length; index++) {
                 factory.AppendSql(" ", 0, 1);
@@ -234,7 +237,6 @@ namespace ProgressOnderwijsUtils
             }
         }
     }
-
 
     class InterpolatedSqlFragment : ISqlComponent
     {
