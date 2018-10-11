@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>29.0.0</Version>
-    <PackageReleaseNotes>Added 'stopCascading' delegate to the CascadeDelete parameters.
-So callers can tune the wanted casdading, for example with FK's that are set to null on delete.</PackageReleaseNotes>
+    <Version>29.1.0</Version>
+    <PackageReleaseNotes>Tweak TVP implementation details to avoid TVP for singleton sets.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
