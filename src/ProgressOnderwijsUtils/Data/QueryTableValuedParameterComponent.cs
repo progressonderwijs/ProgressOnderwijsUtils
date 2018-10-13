@@ -41,10 +41,10 @@ namespace ProgressOnderwijsUtils
                 var roundedUpToNearestPowerOfFourOrZeroOrMinusOne = cachedLength == 0 ? 0
                     : cachedLength > 1 << 20 ? -1
                         : 1 << (Utils.LogBase2RoundedUp((uint)cachedLength) + 1 >> 1 << 1);
-                if (cachedLength > roundedUpToNearestPowerOfFourOrZeroOrMinusOne) {
-                    throw new Exception("Internal error: " + cachedLength + " > " + roundedUpToNearestPowerOfFourOrZeroOrMinusOne);
-                }
                 if (roundedUpToNearestPowerOfFourOrZeroOrMinusOne >= 0) {
+                    if (cachedLength > roundedUpToNearestPowerOfFourOrZeroOrMinusOne) {
+                        throw new Exception("Internal error: " + cachedLength + " > " + roundedUpToNearestPowerOfFourOrZeroOrMinusOne);
+                    }
                     ParameterizedSqlFactory.AppendSql(ref factory, "top(");
                     ParameterizedSqlFactory.AppendSql(ref factory, roundedUpToNearestPowerOfFourOrZeroOrMinusOne.ToString());
                     ParameterizedSqlFactory.AppendSql(ref factory, ") ");
