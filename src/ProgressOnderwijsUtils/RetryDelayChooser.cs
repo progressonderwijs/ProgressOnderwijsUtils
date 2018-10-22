@@ -19,12 +19,26 @@ namespace ProgressOnderwijsUtils
         readonly double halflivesPerSecond;
         readonly double delayTargetInSecondsCubed;
 
+        /// <param name="constantFailureDelayTarget">The target delay to converge to during a long service outage.  The error rate half-life will be 100 times this value.</param>
         public RetryDelayChooser(TimeSpan constantFailureDelayTarget)
+            : this(constantFailureDelayTarget, 100) { }
+
+        /// <param name="constantFailureDelayTarget">The target delay to converge to during a long service outage</param>
+        /// <param name="halflifeFactor">The halflife (as a factor of the constantFailureDelayTarget) of the error rate estimate.  Larger values ramp and recover more slowly; smaller values ramp and recover more quickly.</param>
+        public RetryDelayChooser(TimeSpan constantFailureDelayTarget, double halflifeFactor)
         {
-            errorRateEstimator = new ExponentialDecayEstimator(TimeSpan.FromHours(12));
+            if (halflifeFactor < 1.0)
+                throw new Exception("For reasonably convergence, the error-rate half-life must exceed the delay target; i.e. halflifeFactor must exceed 1.0.  A reasonable value might be 10.");
+            var delaysPerHalflife = 1.0 / halflifeFactor;
+            var convergenceOverestimateRatio = 1 + 0.230 * delaysPerHalflife + 0.09761662037037 * delaysPerHalflife * delaysPerHalflife;
+
+            var halfLife = TimeSpan.FromSeconds(constantFailureDelayTarget.TotalSeconds * halflifeFactor);
+            errorRateEstimator = new ExponentialDecayEstimator(halfLife);
             halflivesPerSecond = 1.0 / errorRateEstimator.halflife.TotalSeconds;
 
-            delayTargetInSecondsCubed = constantFailureDelayTarget.TotalSeconds * constantFailureDelayTarget.TotalSeconds * constantFailureDelayTarget.TotalSeconds;
+            var compensatedTargetConvergedDelay = constantFailureDelayTarget.TotalSeconds / convergenceOverestimateRatio;
+
+            delayTargetInSecondsCubed = compensatedTargetConvergedDelay * compensatedTargetConvergedDelay * compensatedTargetConvergedDelay;
         }
 
         public void RegisterErrorAt(DateTime errorMoment)
