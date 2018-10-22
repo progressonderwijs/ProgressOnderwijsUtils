@@ -19,9 +19,9 @@ namespace ProgressOnderwijsUtils
         readonly double halflivesPerSecond;
         readonly double delayTargetInSecondsCubed;
 
-        /// <param name="constantFailureDelayTarget">The target delay to converge to during a long service outage.  The error rate half-life will be 100 times this value.</param>
+        /// <param name="constantFailureDelayTarget">The target delay to converge to during a long service outage.  The error rate half-life will be 20 times this value.</param>
         public RetryDelayChooser(TimeSpan constantFailureDelayTarget)
-            : this(constantFailureDelayTarget, 100) { }
+            : this(constantFailureDelayTarget, 20.0) { }
 
         /// <param name="constantFailureDelayTarget">The target delay to converge to during a long service outage</param>
         /// <param name="halflifeFactor">The halflife (as a factor of the constantFailureDelayTarget) of the error rate estimate.  Larger values ramp and recover more slowly; smaller values ramp and recover more quickly.</param>
