@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>29.2.1</Version>
-    <PackageReleaseNotes>Tweak TVP implementation details to use top to express cardinality hints.</PackageReleaseNotes>
+    <Version>29.3.0</Version>
+    <PackageReleaseNotes>Tweak RetryDelayChooser to more aggressively ramp and recover around a service outage, and to make the error-rate halflife parameterizable.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
