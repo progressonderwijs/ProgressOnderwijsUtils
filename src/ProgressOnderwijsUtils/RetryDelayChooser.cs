@@ -33,14 +33,13 @@ namespace ProgressOnderwijsUtils
         public TimeSpan RetryDelayAt(DateTime moment)
             => ErrorsPerDayToRetryDelay(errorRateEstimator.EstimatedRateOfChangePerHalflife(moment) * halflivesPerDay);
 
-        public TimeSpan RegisterErrorAndGetDelay(DateTime errorMoment) 
+        public TimeSpan RegisterErrorAndGetDelay(DateTime errorMoment)
             => ErrorsPerDayToRetryDelay(errorRateEstimator.AddAmount(errorMoment, 1.0).EstimatedEventCountPerHalflife * halflivesPerDay);
 
+        public TimeSpan ErrorsPerDayToRetryDelay(double approximateErrorsPerDay) 
+            => ErrorsPerSecondToRetryDelay(approximateErrorsPerDay / TimeSpan.FromDays(1).TotalSeconds);
 
-        public TimeSpan ErrorsPerDayToRetryDelay(double approximateErrorsPerDay)
-        {
-            var approximateErrorsPerSecond = approximateErrorsPerDay / TimeSpan.FromDays(1).TotalSeconds;
-            return TimeSpan.FromSeconds(approximateErrorsPerSecond * approximateErrorsPerSecond * scaleFactor);
-        }
+        public TimeSpan ErrorsPerSecondToRetryDelay(double approximateErrorsPerSecond) 
+            => TimeSpan.FromSeconds(approximateErrorsPerSecond * approximateErrorsPerSecond * scaleFactor);
     }
 }
