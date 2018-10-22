@@ -17,14 +17,14 @@ namespace ProgressOnderwijsUtils
     {
         readonly ExponentialDecayEstimator errorRateEstimator;
         readonly double halflivesPerDay;
-        readonly double scaleFactor;
+        readonly double delayTargetInSecondsCubed;
 
         public RetryDelayChooser(TimeSpan constantFailureDelayTarget)
         {
             errorRateEstimator = new ExponentialDecayEstimator(TimeSpan.FromHours(12));
             halflivesPerDay = 1.0 / errorRateEstimator.halflife.TotalDays;
 
-            scaleFactor = constantFailureDelayTarget.TotalSeconds * constantFailureDelayTarget.TotalSeconds * constantFailureDelayTarget.TotalSeconds;
+            delayTargetInSecondsCubed = constantFailureDelayTarget.TotalSeconds * constantFailureDelayTarget.TotalSeconds * constantFailureDelayTarget.TotalSeconds;
         }
 
         public void RegisterErrorAt(DateTime errorMoment)
@@ -36,10 +36,10 @@ namespace ProgressOnderwijsUtils
         public TimeSpan RegisterErrorAndGetDelay(DateTime errorMoment)
             => ErrorsPerDayToRetryDelay(errorRateEstimator.AddAmount(errorMoment, 1.0).EstimatedEventCountPerHalflife * halflivesPerDay);
 
-        public TimeSpan ErrorsPerDayToRetryDelay(double approximateErrorsPerDay) 
+        public TimeSpan ErrorsPerDayToRetryDelay(double approximateErrorsPerDay)
             => ErrorsPerSecondToRetryDelay(approximateErrorsPerDay / TimeSpan.FromDays(1).TotalSeconds);
 
-        public TimeSpan ErrorsPerSecondToRetryDelay(double approximateErrorsPerSecond) 
-            => TimeSpan.FromSeconds(approximateErrorsPerSecond * approximateErrorsPerSecond * scaleFactor);
+        public TimeSpan ErrorsPerSecondToRetryDelay(double approximateErrorsPerSecond)
+            => TimeSpan.FromSeconds(approximateErrorsPerSecond * approximateErrorsPerSecond * delayTargetInSecondsCubed);
     }
 }
