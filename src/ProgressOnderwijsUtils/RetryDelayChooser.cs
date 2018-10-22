@@ -24,9 +24,9 @@ namespace ProgressOnderwijsUtils
             errorRateEstimator = new ExponentialDecayEstimator(TimeSpan.FromHours(12));
             halflivesPerDay = 1.0 / errorRateEstimator.halflife.TotalDays;
 
-            var targetConvergedDelaysPerDay = TimeSpan.FromDays(1).TotalSeconds / constantFailureDelayTarget.TotalSeconds;
+            var days_per_targetConvergedDelays = constantFailureDelayTarget.TotalSeconds / TimeSpan.FromDays(1).TotalSeconds;
             //choose scaleFactor such that: delayConvergenceTarget.TotalSeconds == targetConvergedDelaysPerDay * targetConvergedDelaysPerDay * scaleFactor
-            scaleFactor = constantFailureDelayTarget.TotalSeconds / (targetConvergedDelaysPerDay * targetConvergedDelaysPerDay);
+            scaleFactor = constantFailureDelayTarget.TotalSeconds * (days_per_targetConvergedDelays * days_per_targetConvergedDelays);
         }
 
         public void RegisterErrorAt(DateTime errorMoment)
