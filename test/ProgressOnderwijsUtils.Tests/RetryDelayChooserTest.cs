@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void OneContinuouslyFailingProcessRetriesAsPredicted()
         {
             var convergedDelay = ConvergedDelay(1, TimeSpan.FromMinutes(5));
-            PAssert.That(() => convergedDelay > TimeSpan.FromMinutes(4.99) && convergedDelay < TimeSpan.FromMinutes(5.01));
+            PAssert.That(() => 4.99 < convergedDelay.TotalMinutes && convergedDelay.TotalMinutes < 5.01);
         }
 
         static TimeSpan ConvergedDelay(int parallelFailingProcesses, TimeSpan constantFailureDelayTarget)
