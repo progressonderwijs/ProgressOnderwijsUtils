@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
             halflivesPerDay = 1.0 / errorRateEstimator.halflife.TotalDays;
 
             var days_per_targetConvergedDelays = constantFailureDelayTarget.TotalSeconds / TimeSpan.FromDays(1).TotalSeconds;
-            //choose scaleFactor such that: delayConvergenceTarget.TotalSeconds == targetConvergedDelaysPerDay * targetConvergedDelaysPerDay * scaleFactor
+            
             scaleFactor = constantFailureDelayTarget.TotalSeconds * (days_per_targetConvergedDelays * days_per_targetConvergedDelays);
         }
 
