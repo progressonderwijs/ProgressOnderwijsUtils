@@ -45,11 +45,11 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void OneErrorIsBla()
         {
-            var constantFailureDelayTarget = TimeSpan.FromHours(1);
+            var constantFailureDelayTarget = TimeSpan.FromMinutes(1);
             var delayChooser = new RetryDelayChooser(constantFailureDelayTarget);
             var startMoment = new DateTime(2040, 4, 4).ToUniversalTime(); //arbitrary
             delayChooser.RegisterErrorAt(startMoment);
-            PAssert.That(() => Utils.FuzzyEquals(delayChooser.RetryDelayAt(startMoment).TotalSeconds * 299.7252518, constantFailureDelayTarget.TotalSeconds));
+            PAssert.That(() => Utils.FuzzyEquals(delayChooser.RetryDelayAt(startMoment).TotalMinutes * 20_000, constantFailureDelayTarget.TotalMinutes));
         }
 
         [Fact]
