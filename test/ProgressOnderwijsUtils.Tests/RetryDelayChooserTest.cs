@@ -21,17 +21,17 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void SimulatedErrorPerHourResultsInAroundTwoSecondDelay()
+        public void AFewSimulatedErrorsPerHour_ResultsIn_LowDelay()
         {
-            var delayChooser = new RetryDelayChooser(TimeSpan.FromMinutes(5));
-            var startMoment = new DateTime(1999, 1, 1).ToUniversalTime(); //arbitrary
-            var endMoment = startMoment.AddDays(4);
-            for (var moment = startMoment; moment < endMoment; moment = moment.AddHours(1)) {
+            var delayChooser = new RetryDelayChooser(TimeSpan.FromMinutes(10));
+            var moment = new DateTime(1999, 1, 1).ToUniversalTime(); //arbitrary
+            for (var i =0; i< 1000;i++) {
                 delayChooser.RegisterErrorAt(moment);
+                moment = moment.AddMinutes(30);
             }
-            var delay = delayChooser.RetryDelayAt(endMoment);
+            var delay = delayChooser.RetryDelayAt(moment);
             //so now we've had 30 errors a day for a few days
-            PAssert.That(() => Utils.FuzzyEquals(delay.TotalSeconds, 1.951));
+            PAssert.That(() => Utils.FuzzyEquals(delay.TotalMinutes,0.96605));
         }
 
         [Fact]
@@ -45,11 +45,11 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void OneErrorIsBla()
         {
-            var constantFailureDelayTarget = TimeSpan.FromHours(1);
+            var constantFailureDelayTarget = TimeSpan.FromMinutes(1);
             var delayChooser = new RetryDelayChooser(constantFailureDelayTarget);
             var startMoment = new DateTime(2040, 4, 4).ToUniversalTime(); //arbitrary
             delayChooser.RegisterErrorAt(startMoment);
-            PAssert.That(() => Utils.FuzzyEquals(delayChooser.RetryDelayAt(startMoment).TotalSeconds * 299.7252518, constantFailureDelayTarget.TotalSeconds));
+            PAssert.That(() => Utils.FuzzyEquals(delayChooser.RetryDelayAt(startMoment).TotalMinutes * 6_000/7.0, constantFailureDelayTarget.TotalMinutes));
         }
 
         [Fact]
@@ -57,6 +57,24 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var delay = new RetryDelayChooser(TimeSpan.FromMinutes(5)).ErrorsPerDayToRetryDelay(200.0);
             PAssert.That(() => delay >= TimeSpan.FromMinutes(2) && delay <= TimeSpan.FromMinutes(3));
+        }
+
+        [Fact]
+        public void After22ErrorsHalfOfDelayLimitIsReached()
+        {
+            var chooser = new RetryDelayChooser(TimeSpan.FromHours(1));
+            var currentMoment = new DateTime(2025, 6, 1).ToUniversalTime(); //whenever
+            var errorsNecessaryToReachHalfOfDelayLimit = 0;
+            while (errorsNecessaryToReachHalfOfDelayLimit < 10_000) {
+                var delay = chooser.RegisterErrorAndGetDelay(currentMoment);
+                if (delay.TotalHours >= 0.5) { //half of the convergened limit
+                    break;
+                }
+                currentMoment = currentMoment + delay;
+                errorsNecessaryToReachHalfOfDelayLimit++;
+            }
+
+            PAssert.That(() => errorsNecessaryToReachHalfOfDelayLimit == 22);
         }
 
         [Fact]
@@ -70,7 +88,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void OneContinuouslyFailingProcessRetriesAsPredicted()
         {
             var convergedDelay = ConvergedDelay(1, TimeSpan.FromMinutes(5));
-            PAssert.That(() => convergedDelay > TimeSpan.FromMinutes(4.99) && convergedDelay < TimeSpan.FromMinutes(5.01));
+            PAssert.That(() => 4.99 < convergedDelay.TotalMinutes && convergedDelay.TotalMinutes < 5.01);
         }
 
         static TimeSpan ConvergedDelay(int parallelFailingProcesses, TimeSpan constantFailureDelayTarget)
