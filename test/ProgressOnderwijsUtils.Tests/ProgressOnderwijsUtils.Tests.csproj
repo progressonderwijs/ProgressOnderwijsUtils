@@ -9,9 +9,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Transactions" />
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
     <PackageReference Include="ApprovalUtilities" Version="3.0.18" NoWarn="NU1701" />
-    <PackageReference Include="ApprovalTests" Version="3.0.15" NoWarn="NU1701" />
+    <PackageReference Include="ApprovalTests" Version="3.0.18" NoWarn="NU1701" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0">
       <PrivateAssets>all</PrivateAssets>
