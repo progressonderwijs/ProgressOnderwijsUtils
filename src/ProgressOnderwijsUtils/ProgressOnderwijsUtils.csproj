@@ -1,12 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>29.3.0</Version>
-    <PackageReleaseNotes>Tweak RetryDelayChooser to more aggressively ramp and recover around a service outage, and to make the error-rate halflife parameterizable.</PackageReleaseNotes>
+    <Version>29.4.0</Version>
+    <PackageReleaseNotes>Added MetaObjectBulkCopy functions with extra column mapping parameter.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <AssemblyVersion>29.4.0.0</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="System.Buffers" Version="4.5.0" />

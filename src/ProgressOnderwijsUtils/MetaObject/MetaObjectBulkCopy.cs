@@ -10,8 +10,6 @@ using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
-// ReSharper disable once CheckNamespace
-
 namespace ProgressOnderwijsUtils
 {
     public static class MetaObjectBulkCopy
@@ -24,21 +22,31 @@ namespace ProgressOnderwijsUtils
         /// <param name="metaObjects">The list of entities to insert</param>
         /// <param name="sqlconn">The Sql connection to write to</param>
         /// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
-        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName) where T : IMetaObject, IPropertiesAreUsedImplicitly
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+            => BulkCopyToSqlServerWithSpecificColumnMapping(metaObjects, context, tableName, FieldMappingMode.IgnoreExtraDestinationFields);
+
+        public static void BulkCopyToSqlServerWithSpecificColumnMapping<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName, FieldMappingMode mode)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
-                bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
-                var token = sqlconn.CommandTimeoutInS == 0
+            using (var bulkCopy = new SqlBulkCopy(context.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
+                bulkCopy.BulkCopyTimeout = context.CommandTimeoutInS;
+                var token = context.CommandTimeoutInS == 0
                     ? CancellationToken.None
-                    : new CancellationTokenSource(TimeSpan.FromSeconds(sqlconn.CommandTimeoutInS)).Token;
-                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn, tableName, token); //.Wait(token);
+                    : new CancellationTokenSource(TimeSpan.FromSeconds(context.CommandTimeoutInS)).Token;
+                bulkCopy.WriteMetaObjectsToServerWithSpecificColumnMapping(metaObjects, context, tableName, token, mode); //.Wait(token);
             }
         }
 
         /// <summary>
         /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
         /// </summary>
-        public static void WriteMetaObjectsToServer<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName, CancellationToken cancellationToken) where T : IMetaObject, IPropertiesAreUsedImplicitly
+        public static void WriteMetaObjectsToServer<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName, CancellationToken cancellationToken)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+            => WriteMetaObjectsToServerWithSpecificColumnMapping(bulkCopy, metaObjects, context, tableName, cancellationToken, FieldMappingMode.IgnoreExtraDestinationFields);
+
+        public static void WriteMetaObjectsToServerWithSpecificColumnMapping<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName, CancellationToken cancellationToken, FieldMappingMode mode)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             var sqlconn = context.Connection;
             if (metaObjects == null) {
@@ -53,7 +61,7 @@ namespace ProgressOnderwijsUtils
             bulkCopy.DestinationTableName = tableName;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken)) {
-                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName);
+                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, sqlconn, tableName, mode);
                 var sw = Stopwatch.StartNew();
                 try {
                     bulkCopy.WriteToServer(objectReader);
@@ -108,7 +116,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, [NotNull] SqlConnection sqlconn, string tableName) where T : IMetaObject
+        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, [NotNull] SqlConnection sqlconn, string tableName, FieldMappingMode mode)
+            where T : IMetaObject
         {
             var dataColumns = ColumnDefinition.GetFromTable(sqlconn, tableName);
             var clrColumns = ColumnDefinition.GetFromReader(objectReader);
@@ -117,7 +126,7 @@ namespace ProgressOnderwijsUtils
                 typeof(T).ToCSharpFriendlyTypeName(),
                 dataColumns,
                 "table " + tableName,
-                FieldMappingMode.IgnoreExtraDestinationFields);
+                mode);
 
             FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, bulkCopy);
             return mapping;

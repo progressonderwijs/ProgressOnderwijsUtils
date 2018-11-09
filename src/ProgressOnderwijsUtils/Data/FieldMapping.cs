@@ -9,6 +9,7 @@ namespace ProgressOnderwijsUtils
     {
         RequireExactColumnMatches,
         IgnoreExtraDestinationFields,
+        IgnoreExtraSourceFields,
     }
 
     public struct FieldMapping
@@ -39,12 +40,13 @@ namespace ProgressOnderwijsUtils
 
             var srcFieldsByName = mkFieldDict(srcFields);
             var dstFieldsByName = mkFieldDict(dstFields);
-            var colCountMismatch = srcFieldsByName.Count > dstFieldsByName.Count
-                || mode == FieldMappingMode.RequireExactColumnMatches && srcFieldsByName.Count < dstFieldsByName.Count;
+            var colCountMismatch = mode == FieldMappingMode.RequireExactColumnMatches && srcFieldsByName.Count != dstFieldsByName.Count
+                || mode == FieldMappingMode.IgnoreExtraDestinationFields && srcFieldsByName.Count > dstFieldsByName.Count
+                || mode == FieldMappingMode.IgnoreExtraSourceFields && srcFieldsByName.Count < dstFieldsByName.Count;
 
             if (colCountMismatch || srcFieldsByName.Any(
                 srcField =>
-                    !dstFieldsByName.ContainsKey(srcField.Key) || dstFieldsByName[srcField.Key].UnderlyingType != srcField.Value.UnderlyingType
+                    dstFieldsByName.ContainsKey(srcField.Key) && dstFieldsByName[srcField.Key].UnderlyingType != srcField.Value.UnderlyingType
                 )) {
                 var extraSrcCols = srcFieldsByName.Keys.Where(dbcol => !dstFieldsByName.ContainsKey(dbcol)).ToArray();
                 var extraDstCols = dstFieldsByName.Keys.Where(prop => !srcFieldsByName.ContainsKey(prop)).ToArray();
@@ -69,7 +71,11 @@ namespace ProgressOnderwijsUtils
                     );
             }
 
-            return srcFieldsByName.Values.Select(srcCol => new FieldMapping(srcCol.Def, srcCol.Index, dstFieldsByName[srcCol.Def.Name].Index)).ToArray();
+            return srcFieldsByName
+                .Where(srcField => dstFieldsByName.ContainsKey(srcField.Key))
+                .Select(srcField => srcField.Value)
+                .Select(srcCol => new FieldMapping(srcCol.Def, srcCol.Index, dstFieldsByName[srcCol.Def.Name].Index))
+                .ToArray();
         }
 
         public static void ApplyFieldMappingsToBulkCopy([NotNull] FieldMapping[] mapping, [NotNull] SqlBulkCopy bulkCopy)
