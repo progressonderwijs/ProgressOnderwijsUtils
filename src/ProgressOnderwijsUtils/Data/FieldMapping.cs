@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils
     {
         RequireExactColumnMatches,
         IgnoreExtraDestinationFields,
-        IgnoreExtraSourceFields,
+        IgnoreExtraSourceFields
     }
 
     public struct FieldMapping
@@ -46,7 +46,9 @@ namespace ProgressOnderwijsUtils
 
             if (colCountMismatch || srcFieldsByName.Any(
                 srcField =>
-                    dstFieldsByName.ContainsKey(srcField.Key) && dstFieldsByName[srcField.Key].UnderlyingType != srcField.Value.UnderlyingType
+                    mode == FieldMappingMode.IgnoreExtraSourceFields
+                        ? dstFieldsByName.ContainsKey(srcField.Key) && dstFieldsByName[srcField.Key].UnderlyingType != srcField.Value.UnderlyingType
+                        : !dstFieldsByName.ContainsKey(srcField.Key) || dstFieldsByName[srcField.Key].UnderlyingType != srcField.Value.UnderlyingType
                 )) {
                 var extraSrcCols = srcFieldsByName.Keys.Where(dbcol => !dstFieldsByName.ContainsKey(dbcol)).ToArray();
                 var extraDstCols = dstFieldsByName.Keys.Where(prop => !srcFieldsByName.ContainsKey(prop)).ToArray();

@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type of metaobject to be inserted</typeparam>
         /// <param name="metaObjects">The list of entities to insert</param>
-        /// <param name="sqlconn">The Sql connection to write to</param>
+        /// <param name="context">The Sql connection to write to</param>
         /// <param name="tableName">The name of the table to import into; must be a valid sql identifier (i.e. you must escape special characters if any).</param>
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] string tableName)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
