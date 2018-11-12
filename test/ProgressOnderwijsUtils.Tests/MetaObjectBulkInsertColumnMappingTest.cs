@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Tests
 {
     public sealed class MetaObjectBulkInsertColumnMappingTest : TransactedLocalConnection
     {
-        static readonly ParameterizedSql testTableName = ParameterizedSql.CreateDynamic(nameof(MetaObjectBulkInsertColumnMappingTest) + "Table");
+        static readonly ParameterizedSql testTableName = SQL($"MetaObjectBulkInsertColumnMappingTestTable");
 
         void CreateTestTable()
         {
