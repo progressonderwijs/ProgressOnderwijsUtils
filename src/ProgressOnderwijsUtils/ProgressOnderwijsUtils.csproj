@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>29.3.0</Version>
-    <PackageReleaseNotes>Tweak RetryDelayChooser to more aggressively ramp and recover around a service outage, and to make the error-rate halflife parameterizable.</PackageReleaseNotes>
+    <Version>29.4.0</Version>
+    <PackageReleaseNotes>Added SchemaReflection.DatabaseDescription abstraction for querying the tables, columns and foreign key metadata of a SqlServer database.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
