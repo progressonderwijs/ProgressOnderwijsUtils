@@ -26,19 +26,43 @@ namespace ProgressOnderwijsUtils
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] DatabaseDescription.Table table)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
+            metaObjects.BulkCopyToSqlServer(sqlconn, table.QualifiedName, table.Columns);
+        }
+
+
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DatabaseDescription.TableColumn[] columns)
+                where T : IMetaObject, IPropertiesAreUsedImplicitly
+            {
             using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
                 bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
                 var token = sqlconn.CommandTimeoutInS == 0
                     ? CancellationToken.None
                     : new CancellationTokenSource(TimeSpan.FromSeconds(sqlconn.CommandTimeoutInS)).Token;
-                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn, table, token); //.Wait(token);
+                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn, tableName, columns, token); //.Wait(token);
             }
         }
 
         /// <summary>
         /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
         /// </summary>
-        public static void WriteMetaObjectsToServer<T>([NotNull] this SqlBulkCopy bulkCopy, [NotNull] IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext context, [NotNull] DatabaseDescription.Table table, CancellationToken cancellationToken)
+        public static void WriteMetaObjectsToServer<T>(
+            [NotNull] this SqlBulkCopy bulkCopy,
+            [NotNull] IEnumerable<T> metaObjects,
+            [NotNull] SqlCommandCreationContext context,
+            [NotNull] DatabaseDescription.Table table,
+            CancellationToken cancellationToken)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, table.QualifiedName, table.Columns, cancellationToken);
+        }
+
+        public static void WriteMetaObjectsToServer<T>(
+            [NotNull] this SqlBulkCopy bulkCopy,
+            [NotNull] IEnumerable<T> metaObjects,
+            [NotNull] SqlCommandCreationContext context,
+            [NotNull] string tableName,
+            [NotNull] DatabaseDescription.TableColumn[] columns,
+            CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             var sqlconn = context.Connection;
@@ -49,12 +73,12 @@ namespace ProgressOnderwijsUtils
                 throw new ArgumentNullException(nameof(sqlconn));
             }
             if (sqlconn.State != ConnectionState.Open) {
-                throw new InvalidOperationException($"Cannot bulk copy into {table.QualifiedName}: connection isn't open but {sqlconn.State}.");
+                throw new InvalidOperationException($"Cannot bulk copy into {tableName}: connection isn't open but {sqlconn.State}.");
             }
-            bulkCopy.DestinationTableName = table.QualifiedName;
+            bulkCopy.DestinationTableName = tableName;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken)) {
-                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, table);
+                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, columns);
                 var sw = Stopwatch.StartNew();
                 try {
                     bulkCopy.WriteToServer(objectReader);
@@ -64,7 +88,7 @@ namespace ProgressOnderwijsUtils
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
                     throw HelpfulException(bulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException<T>(mapping, destinationColumnIndex, ex);
                 } finally {
-                    TraceBulkInsertDuration(context.Tracer, table, sw, objectReader.RowsProcessed);
+                    TraceBulkInsertDuration(context.Tracer, tableName, sw, objectReader.RowsProcessed);
                 }
             }
         }
@@ -92,10 +116,10 @@ namespace ProgressOnderwijsUtils
             return column == null || length == null ? null : new Exception($"Column: {column} contains data with a length greater than: {length}", ex);
         }
 
-        static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, DatabaseDescription.Table table, Stopwatch sw, int rowsInserted)
+        static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, string tableName, Stopwatch sw, int rowsInserted)
         {
             if (tracerOrNull?.IsTracing ?? false) {
-                tracerOrNull.RegisterEvent($"Bulk inserted {rowsInserted} rows into {table.QualifiedName}.", sw.Elapsed);
+                tracerOrNull.RegisterEvent($"Bulk inserted {rowsInserted} rows into {tableName}.", sw.Elapsed);
             }
         }
 
@@ -109,16 +133,16 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, DatabaseDescription.Table table)
+        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] DatabaseDescription.TableColumn[] columns)
             where T : IMetaObject
         {
-            var dataColumns = ColumnDefinition.GetFromTable(table);
+            var dataColumns = ColumnDefinition.GetFromTable(columns);
             var clrColumns = ColumnDefinition.GetFromReader(objectReader);
             var mapping = FieldMapping.VerifyAndCreate(
                 clrColumns,
                 typeof(T).ToCSharpFriendlyTypeName(),
                 dataColumns,
-                "table " + table,
+                "table " + tableName,
                 FieldMappingMode.IgnoreExtraDestinationFields);
 
             FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, bulkCopy);
