@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 select
                     ObjectId = t.object_id
                     , QualifiedName = schema_name(t.schema_id) + '.' + t.name
-                from {DatabaseDescription.TempDb}.sys.tables t
+                from {DatabaseDescription.TempDb}sys.tables t
             ").ReadMetaObjects<DbNamedTableId>(conn);
     }
 
