@@ -1,11 +1,12 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
+using ProgressOnderwijsUtils.SchemaReflection;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Collections;
 using static ProgressOnderwijsUtils.SafeSql;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -44,12 +45,14 @@ namespace ProgressOnderwijsUtils
             )
             where TId : IPropertiesAreUsedImplicitly, IMetaObject
         {
-            var pksTable = SQL($"#pksTable");
+            var tableName = "#pksTable";
+            var pksTable = ParameterizedSql.CreateDynamic($"{tableName}");
             var pkColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
             CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
-            pksToDelete.BulkCopyToSqlServer(conn, pksTable.CommandText());
+            var table = DatabaseDescription.LoadTempDb(conn).TableByName(tableName);
+            pksToDelete.BulkCopyToSqlServer(conn, table);
 
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}

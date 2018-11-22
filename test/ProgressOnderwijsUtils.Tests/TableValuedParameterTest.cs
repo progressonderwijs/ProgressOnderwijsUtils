@@ -8,6 +8,7 @@ using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Internal;
+using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -79,7 +80,8 @@ namespace ProgressOnderwijsUtils.Tests
 
             SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(Context);
             //manual bulk insert because our default TVP types explicitly forbid null
-            metaObjects.BulkCopyToSqlServer(Context.Connection, "#strings");
+            var table = DatabaseDescription.LoadTempDb(Context.Connection).TableByName("#strings");
+            metaObjects.BulkCopyToSqlServer(Context.Connection, table);
 
             var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(Context);
             SQL($@"drop table #strings").ExecuteNonQuery(Context);

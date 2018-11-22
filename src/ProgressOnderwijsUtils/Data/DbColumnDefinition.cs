@@ -1,9 +1,9 @@
-﻿using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using ExpressionToCodeLib;
+﻿using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtils.SchemaReflection;
+using System;
+using System.Data;
+using System.Linq;
 
 namespace ProgressOnderwijsUtils
 {
@@ -27,14 +27,8 @@ namespace ProgressOnderwijsUtils
             => Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
 
         [NotNull]
-        public static ColumnDefinition[] GetFromTable([NotNull] SqlConnection sqlconn, string tableName)
-        {
-            using (var cmd = sqlconn.CreateCommand()) {
-                cmd.CommandText = "SET FMTONLY ON; select * from " + tableName + "; SET FMTONLY OFF";
-                using (var fmtReader = cmd.ExecuteReader())
-                    return GetFromReader(fmtReader);
-            }
-        }
+        public static ColumnDefinition[] GetFromTable([NotNull] DatabaseDescription.Table table) 
+            => table.Columns.ArraySelect(column => new ColumnDefinition(column.User_Type_Id.SqlUnderlyingTypeInfo().ClrType, column.ColumnName));
 
         ColumnDefinition(Type dataType, string name)
         {

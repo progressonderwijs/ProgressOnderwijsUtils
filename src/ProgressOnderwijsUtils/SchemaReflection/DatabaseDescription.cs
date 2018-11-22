@@ -1,8 +1,7 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
@@ -22,12 +21,26 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public string QualifiedName { get; set; }
 
         public static DbNamedTableId[] LoadAll(SqlCommandCreationContext conn)
-            => SQL($"select ObjectId=t.object_id, QualifiedName = schema_name(t.schema_id)+'.'+t.name from sys.tables t")
-                .ReadMetaObjects<DbNamedTableId>(conn);
+            => SQL($@"
+                select
+                    ObjectId = t.object_id
+                    , QualifiedName = schema_name(t.schema_id) + '.' + t.name
+                from sys.tables t
+            ").ReadMetaObjects<DbNamedTableId>(conn);
+
+        public static DbNamedTableId[] LoadTempDb(SqlCommandCreationContext conn)
+            => SQL($@"
+                select
+                    ObjectId = t.object_id
+                    , QualifiedName = schema_name(t.schema_id) + '.' + t.name
+                from {DatabaseDescription.TempDb}.sys.tables t
+            ").ReadMetaObjects<DbNamedTableId>(conn);
     }
 
     public sealed class DatabaseDescription
     {
+        public static readonly ParameterizedSql TempDb = SQL($"tempdb.");
+
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly ForeignKeyLookup foreignKeyLookup;
         readonly Lazy<Dictionary<string, Table>> tableByQualifiedName;
@@ -39,10 +52,16 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
         }
 
+        public static DatabaseDescription LoadTempDb(SqlCommandCreationContext conn)
+        {
+            var columnsByTableId = DbColumnMetaData.LoadTempDb(conn);
+            return new DatabaseDescription(DbNamedTableId.LoadTempDb(conn), columnsByTableId, ForeignKeyLookup.LoadTempDb(conn));
+
+        }
         public static DatabaseDescription LoadFromSchemaTables(SqlCommandCreationContext conn)
         {
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
-            return new DatabaseDescription(DbNamedTableId.LoadAll(conn), columnsByTableId, ForeignKeyLookup.Load(conn));
+            return new DatabaseDescription(DbNamedTableId.LoadAll(conn), columnsByTableId, ForeignKeyLookup.LoadAll(conn));
         }
 
         public IEnumerable<Table> AllTables

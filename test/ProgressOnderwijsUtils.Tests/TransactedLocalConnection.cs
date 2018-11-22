@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         public TransactedLocalConnection()
         {
-            Context = new SqlCommandCreationContext(new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer(SqlTracerAgumentInclusion.IncludingArgumentValues));
+            Context = new SqlCommandCreationContext(new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\ProjectsV13; Integrated Security = true"), 60, SqlCommandTracer.CreateAlwaysOffTracer(SqlTracerAgumentInclusion.IncludingArgumentValues));
             try {
                 Context.Connection.Open();
                 ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(Context);
