@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     , c.is_nullable
                     , c.is_computed
                     , is_primary_key = iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
-                from {database}sys.columns c
+                from {database}{(database.IsEmpty ? ParameterizedSql.Empty : SQL($"."))}sys.columns c
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
                 where 1=1
             ");

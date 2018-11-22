@@ -53,8 +53,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     , ReferencedParentColumn = fkc.referenced_column_id
                     , ReferencingChildColumn = fkc.parent_column_id
                     , fk.name
-                from {database}sys.foreign_keys fk
-                join {database}sys.foreign_key_columns fkc on fkc.constraint_object_id = fk.object_id
+                from {database}{(database.IsEmpty ? ParameterizedSql.Empty : SQL($"."))}sys.foreign_keys fk
+                join {database}{(database.IsEmpty ? ParameterizedSql.Empty : SQL($"."))}sys.foreign_key_columns fkc on fkc.constraint_object_id = fk.object_id
                 order by 
                     fk.object_id
                     , fkc.constraint_column_id

@@ -32,14 +32,14 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => SQL($@"
                 select
                     ObjectId = t.object_id
-                    , QualifiedName = schema_name(t.schema_id) + '.' + t.name
-                from {DatabaseDescription.TempDb}sys.tables t
+                    , QualifiedName = substring(t.name, 0, patindex('%[____]%', t.name))
+                from {DatabaseDescription.TempDb}.sys.tables t
             ").ReadMetaObjects<DbNamedTableId>(conn);
     }
 
     public sealed class DatabaseDescription
     {
-        public static readonly ParameterizedSql TempDb = SQL($"tempdb.");
+        public static readonly ParameterizedSql TempDb = SQL($"tempdb");
 
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly ForeignKeyLookup foreignKeyLookup;
