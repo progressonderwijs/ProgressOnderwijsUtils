@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => SQL($@"
                 select
                     ObjectId = t.object_id
-                    , QualifiedName = substring(t.name, 0, patindex('%[____]%', t.name))
+                    , QualifiedName = schema_name(t.schema_id) + '.' + t.name
                 from {DatabaseDescription.TempDb}.sys.tables t
             ").ReadMetaObjects<DbNamedTableId>(conn);
     }
@@ -70,6 +70,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         [CanBeNull]
         public Table TableByName(string qualifiedName)
             => tableByQualifiedName.Value.TryGetValue(qualifiedName, out var id) ? id : null;
+
+        [CanBeNull]
+        public Table TableByTempDbName(SqlCommandCreationContext conn, string tempName)
+        {
+            var objectId = SQL($"select object_id({$"tempdb..{tempName}"})").ReadScalar<DbObjectId?>(conn);
+            return objectId == null ? null : TableById(objectId.Value);
+        }
 
         [CanBeNull]
         public Table TableById(DbObjectId id)

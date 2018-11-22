@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils.Tests
             ").ExecuteNonQuery(Context);
 
             var db = DatabaseDescription.LoadTempDb(Context.Connection);
-            return db.TableByName("#MyTable");
+            return db.TableByTempDbName(Context.Connection, "#MyTable");
         }
 
         [Fact]

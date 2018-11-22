@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             ").ExecuteNonQuery(Context);
 
             var db = DatabaseDescription.LoadTempDb(Context.Connection);
-            return db.TableByName("#test");
+            return db.TableByTempDbName(Context.Connection, "#test");
         }
 
         sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IPropertiesAreUsedImplicitly
