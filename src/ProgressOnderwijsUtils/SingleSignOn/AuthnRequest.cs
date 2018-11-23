@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         [NotNull]
         public string EncodeAsQueryArgument()
         {
-            var xml = Encoding.UTF8.GetBytes(ToXml().ToString());
+            var xml = Encoding.UTF8.GetBytes(ToXml("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect").ToString());
             using (var stream = new MemoryStream()) {
                 using (var deflate = new DeflateStream(stream, CompressionMode.Compress))
                     deflate.Write(xml, 0, xml.Length);
@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public string EncodeAndSignAsFormArgument([NotNull] RSA key)
         {
             var doc = new XmlDocument { PreserveWhitespace = false };
-            doc.Load(ToXml().CreateReader());
+            doc.Load(ToXml("urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST").CreateReader());
             var signedXml = new SignedXml(doc) { SigningKey = key };
             var reference = new Reference { Uri = "" };
             var env = new XmlDsigEnvelopedSignatureTransform();
@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         [NotNull]
-        XElement ToXml()
+        XElement ToXml(string protocolBinding)
         {
             return new XElement(
                 SamlNamespaces.SAMLP_NS + "AuthnRequest",
@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 new XAttribute("Destination", Destination),
                 new XAttribute("ForceAuthn", ForceAuthn),
                 new XAttribute("IsPassive", "false"),
-                new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
+                new XAttribute("ProtocolBinding", protocolBinding),
                 new XElement(SamlNamespaces.SAML_NS + "Issuer", Issuer.entity),
                 AuthnContextClassRef == null
                     ? null
