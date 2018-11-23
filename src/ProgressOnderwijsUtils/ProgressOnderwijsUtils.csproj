@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>29.4.1</Version>
+    <Version>29.4.2</Version>
     <PackageReleaseNotes>Fix AuthnRequest ProtocolBinding</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
