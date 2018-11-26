@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>30.0.0</Version>
-    <PackageReleaseNotes>Use DatabaseDescription in the BulkCopy and CascadeDelete API's. Provides more important information about the table being copied to / deleted from. The caller can easily cache this information, resulting in better performance as this library does not have to query the database for this information itself.</PackageReleaseNotes>
+    <Version>30.0.1</Version>
+    <PackageReleaseNotes>Do not mix possible different collations in the determinations of the db-tables.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
