@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => SQL($@"
                 select
                     ObjectId = t.object_id
-                    , QualifiedName = schema_name(t.schema_id) + '.' + t.name
+                    , QualifiedName = schema_name(t.schema_id) + N'.' + object_name(t.object_id)
                 from sys.tables t
             ").ReadMetaObjects<DbNamedTableId>(conn);
 
@@ -32,8 +32,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => SQL($@"
                 select
                     ObjectId = t.object_id
-                    , QualifiedName = schema_name(t.schema_id) + '.' + t.name
-                from {DatabaseDescription.TempDb}.sys.tables t
+                    , QualifiedName = s.name + N'.' + t.name
+                from tempdb.sys.tables t
+                join tempdb.sys.schemas s on s.schema_id = t.schema_id
             ").ReadMetaObjects<DbNamedTableId>(conn);
     }
 
