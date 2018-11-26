@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
             => Enumerable.Range(0, reader.FieldCount).Select(fI => new ColumnDefinition(reader.GetFieldType(fI), reader.GetName(fI))).ToArray();
 
         [NotNull]
-        public static ColumnDefinition[] GetFromTable([NotNull] DatabaseDescription.TableColumn[] columns) 
+        public static ColumnDefinition[] GetFromTable([NotNull] DbColumnMetaData[] columns) 
             => columns.ArraySelect(column => new ColumnDefinition(column.User_Type_Id.SqlUnderlyingTypeInfo().ClrType, column.ColumnName));
 
         ColumnDefinition(Type dataType, string name)

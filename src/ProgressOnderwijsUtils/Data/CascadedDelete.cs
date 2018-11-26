@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
             CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, pkColumnsSql, pksTable);
-            pksToDelete.BulkCopyToSqlServer(conn, tableName, initialTableAsEntered.Columns);
+            pksToDelete.BulkCopyToSqlServer(conn, tableName, initialTableAsEntered.Columns.ArraySelect(column => column.ColumnMetaData));
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}

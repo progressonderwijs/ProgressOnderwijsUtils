@@ -26,11 +26,11 @@ namespace ProgressOnderwijsUtils
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] DatabaseDescription.Table table)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            metaObjects.BulkCopyToSqlServer(sqlconn, table.QualifiedName, table.Columns);
+            metaObjects.BulkCopyToSqlServer(sqlconn, table.QualifiedName, table.Columns.ArraySelect(column => column.ColumnMetaData));
         }
 
 
-        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DatabaseDescription.TableColumn[] columns)
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns)
                 where T : IMetaObject, IPropertiesAreUsedImplicitly
             {
             using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils
             CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, table.QualifiedName, table.Columns, cancellationToken);
+            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, table.QualifiedName, table.Columns.ArraySelect(column => column.ColumnMetaData), cancellationToken);
         }
 
         public static void WriteMetaObjectsToServer<T>(
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
             [NotNull] IEnumerable<T> metaObjects,
             [NotNull] SqlCommandCreationContext context,
             [NotNull] string tableName,
-            [NotNull] DatabaseDescription.TableColumn[] columns,
+            [NotNull] DbColumnMetaData[] columns,
             CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
@@ -133,7 +133,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] DatabaseDescription.TableColumn[] columns)
+        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] DbColumnMetaData[] columns)
             where T : IMetaObject
         {
             var dataColumns = ColumnDefinition.GetFromTable(columns);
