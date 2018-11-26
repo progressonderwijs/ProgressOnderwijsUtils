@@ -54,7 +54,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public DataColumn ToDataColumn()
             => new DataColumn(ColumnName, User_Type_Id.SqlUnderlyingTypeInfo().ClrType);
 
-        static readonly ParameterizedSql baseQuery = SQL($@"
+        static ParameterizedSql BaseQuery(ParameterizedSql database)
+            => SQL($@"
                 with pks (object_id, column_id) as (
                     select i.object_id, ic.column_id
                     from sys.index_columns ic 
@@ -71,7 +72,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     , c.is_nullable
                     , c.is_computed
                     , is_primary_key = iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
-                from sys.columns c
+                from {database}{(database.IsEmpty ? ParameterizedSql.Empty : SQL($"."))}sys.columns c
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
                 where 1=1
             ");
@@ -80,14 +81,18 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => ColumnMetaDatas(conn, objectName.CommandText());
 
         public static DbColumnMetaData[] ColumnMetaDatas(SqlCommandCreationContext conn, string qualifiedObjectName)
-            => baseQuery.Append(SQL($@"
+            => BaseQuery(ParameterizedSql.Empty).Append(SQL($@"
                     and c.object_id = object_id({qualifiedObjectName})
                 order by c.column_id
                 "))
                 .ReadMetaObjects<DbColumnMetaData>(conn);
 
         public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlCommandCreationContext conn)
-            => baseQuery.ReadMetaObjects<DbColumnMetaData>(conn)
+            => BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<DbColumnMetaData>(conn)
+                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.ToArray());
+
+        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadTempDb(SqlCommandCreationContext conn)
+            => BaseQuery(DatabaseDescription.TempDb).ReadMetaObjects<DbColumnMetaData>(conn)
                 .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.ToArray());
 
         static readonly Regex isSafeForSql = new Regex("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);

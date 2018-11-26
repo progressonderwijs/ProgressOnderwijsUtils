@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -65,51 +66,60 @@ namespace ProgressOnderwijsUtils.Tests
             public string Bla2 { get; set; }
         }
 
-        void CreateTempTable()
+        DatabaseDescription.Table CreateTempTable()
         {
-            SQL($@"create table #MyTable (id int not null primary key, bla nvarchar(max) null, bla2 nvarchar(max) not null)").ExecuteNonQuery(Context);
+            SQL($@"
+                create table #MyTable (
+                    id int not null primary key
+                    , bla nvarchar(max) null
+                    , bla2 nvarchar(max) not null
+                )
+            ").ExecuteNonQuery(Context);
+
+            var db = DatabaseDescription.LoadTempDb(Context.Connection);
+            return db.TableByTempDbName(Context.Connection, "#MyTable");
         }
 
         [Fact]
         public void BulkCopyChecksNames()
         {
-            CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(Context.Connection, "#MyTable"));
+            var table = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(Context.Connection, table));
         }
 
         [Fact]
         public void BulkCopyChecksTypes()
         {
-            CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(Context.Connection, "#MyTable"));
+            var table = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(Context.Connection, table));
         }
 
         [Fact]
         public void BulkCopyChecksTypes2()
         {
-            CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(Context.Connection, "#MyTable"));
+            var table = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(Context.Connection, table));
         }
 
         [Fact]
         public void BulkCopyVerifiesExistanceOfDestinationColumns()
         {
-            CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(Context.Connection, "#MyTable"));
+            var table = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(Context.Connection, table));
         }
 
         [Fact]
         public void BulkCopyAllowsExtraDestinationColumns()
         {
-            CreateTempTable();
-            new BlaWithMissingClrFields[0].BulkCopyToSqlServer(Context.Connection, "#MyTable");
+            var table = CreateTempTable();
+            new BlaWithMissingClrFields[0].BulkCopyToSqlServer(Context.Connection, table);
         }
 
         [Fact]
         public void BulkCopyAllowsExactMatch()
         {
-            CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
+            var table = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, table);
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(Context);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
         }
@@ -117,11 +127,10 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void BulkCopySupportsColumnReordering()
         {
-            CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context.Connection, "#MyTable");
+            var table = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, table);
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(Context);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
         }
-
     }
 }

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
+using ProgressOnderwijsUtils.SchemaReflection;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Collections;
 using static ProgressOnderwijsUtils.SafeSql;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -17,7 +18,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static DeletionReport[] RecursivelyDelete<TId>(
             [NotNull] SqlCommandCreationContext conn,
-            ParameterizedSql initialTableAsEntered,
+            [NotNull] DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,
             [CanBeNull] Func<string, bool> stopCascading,
@@ -36,7 +37,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static DeletionReport[] RecursivelyDelete<TId>(
             [NotNull] SqlCommandCreationContext conn,
-            ParameterizedSql initialTableAsEntered,
+            [NotNull] DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,
             [CanBeNull] Func<string, bool> stopCascading,
@@ -44,13 +45,13 @@ namespace ProgressOnderwijsUtils
             )
             where TId : IPropertiesAreUsedImplicitly, IMetaObject
         {
-            var pksTable = SQL($"#pksTable");
+            var tableName = "#pksTable";
+            var pksTable = ParameterizedSql.CreateDynamic($"{tableName}");
             var pkColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
-            pksToDelete.BulkCopyToSqlServer(conn, pksTable.CommandText());
-
+            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, pkColumnsSql, pksTable);
+            pksToDelete.BulkCopyToSqlServer(conn, tableName, initialTableAsEntered.Columns.ArraySelect(column => column.ColumnMetaData));
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}
@@ -66,7 +67,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static DeletionReport[] RecursivelyDelete(
             [NotNull] SqlCommandCreationContext conn,
-            ParameterizedSql initialTableAsEntered,
+            DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,
             [CanBeNull] Func<string, bool> stopCascading,
@@ -77,7 +78,7 @@ namespace ProgressOnderwijsUtils
             var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered, pkColumnsSql, pksTable);
+            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, pkColumnsSql, pksTable);
             using (var bulkCopy = new SqlBulkCopy(conn.Connection)) {
                 bulkCopy.BulkCopyTimeout = conn.CommandTimeoutInS;
                 bulkCopy.DestinationTableName = pksTable.CommandText();
@@ -107,7 +108,7 @@ namespace ProgressOnderwijsUtils
         [UsefulToKeep("Library function")]
         public static DeletionReport[] RecursivelyDelete(
             [NotNull] SqlCommandCreationContext conn,
-            ParameterizedSql initialTableAsEntered,
+            [NotNull] DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,
             [CanBeNull] Func<string, bool> stopCascading,
@@ -131,12 +132,6 @@ namespace ProgressOnderwijsUtils
             }
 
             var outputClause = outputAllDeletedRows ? SQL($"output deleted.*") : default;
-
-            var initialTableName = initialTableAsEntered.CommandText();
-            var initialTable =
-                ParameterizedSql.CreateDynamic(SQL($"select object_schema_name(object_id({initialTableName})) + '.' + object_name(object_id({initialTableName}))")
-                    .ReadScalar<string>(conn));
-
             var fksByParentTable = SQL($@"
                 select 
                     fk_id = fk.object_id,
@@ -168,14 +163,14 @@ namespace ProgressOnderwijsUtils
                     StringComparer.OrdinalIgnoreCase
                 );
 
-            var initialPrimaryKeyColumns = pkColumnsByTable[initialTable.CommandText()].ToArray();
+            var initialPrimaryKeyColumns = pkColumnsByTable[initialTableAsEntered.QualifiedName].ToArray();
             var initialPrimaryKeyColumnNames = initialPrimaryKeyColumns.Select(col => col.CommandText()).ToArray();
             if (!pkColumns.SetEqual(initialPrimaryKeyColumnNames, StringComparer.OrdinalIgnoreCase)) {
                 throw new InvalidOperationException("Expected primary key columns: " + initialPrimaryKeyColumnNames.JoinStrings(", ") + "; provided columns: " + pkColumns.JoinStrings(", "));
             }
 
             var delTable = SQL($"[#del_init]");
-            CloneTableSchemaWithoutIdentityProperties(conn, initialTable, initialPrimaryKeyColumns, delTable);
+            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, initialPrimaryKeyColumns, delTable);
 
             var idsToDelete = SQL($@"
                 insert into {delTable} ({initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))})
@@ -187,13 +182,13 @@ namespace ProgressOnderwijsUtils
             var initialRowCountToDelete = SQL($@"
                 delete dt
                 from {delTable} dt
-                left join {initialTable} initT on {initialPrimaryKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
+                left join {initialTableAsEntered.QualifiedNameSql} initT on {initialPrimaryKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
                 where {initialPrimaryKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
                 ;
                 select count(*) from {delTable}
             ").ReadScalar<int>(conn);
 
-            log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete} ids) from {initialTable.CommandText()})");
+            log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete} ids) from {initialTableAsEntered.QualifiedName})");
 
             int delBatch = 0;
 
@@ -296,7 +291,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            DeleteKids(initialTable, delTable, SList.SingleElement(initialTable.CommandText()), 0);
+            DeleteKids(initialTableAsEntered.QualifiedNameSql, delTable, SList.SingleElement(initialTableAsEntered.QualifiedName), 0);
             while (deletionStack.Count > 0) {
                 deletionStack.Pop()();
             }
