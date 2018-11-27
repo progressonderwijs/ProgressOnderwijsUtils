@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils.Tests
             var tableName = SQL($"#strings");
             SQL($@"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Context);
             //manual bulk insert because our default TVP types explicitly forbid null
-            metaObjects.BulkCopyToSqlServer(Context.Connection, tableName.CommandText(), DbColumnMetaData.ColumnMetaDatasOfTempDbTable(Context.Connection, tableName));
+            metaObjects.BulkCopyToSqlServer(Context.Connection, tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
 
             var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(Context);
             SQL($@"drop table #strings").ExecuteNonQuery(Context);

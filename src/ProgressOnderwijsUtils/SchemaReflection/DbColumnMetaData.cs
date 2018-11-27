@@ -54,6 +54,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public DataColumn ToDataColumn()
             => new DataColumn(ColumnName, User_Type_Id.SqlUnderlyingTypeInfo().ClrType);
 
+        static readonly ParameterizedSql tempDb = SQL($"tempdb");
+
         static ParameterizedSql BaseQuery(ParameterizedSql database)
             => SQL($@"
                 with pks (object_id, column_id) as (
@@ -81,22 +83,19 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => ColumnMetaDatas(conn, objectName.CommandText());
 
         public static DbColumnMetaData[] ColumnMetaDatas(SqlCommandCreationContext conn, string qualifiedObjectName)
-            => BaseQuery(ParameterizedSql.Empty).Append(SQL($@"
-                    and c.object_id = object_id({qualifiedObjectName})
-                order by c.column_id
-                "))
-                .ReadMetaObjects<DbColumnMetaData>(conn);
-
-        static readonly ParameterizedSql tempDb = SQL($"tempdb");
-
-        public static DbColumnMetaData[] ColumnMetaDatasOfTempDbTable(SqlCommandCreationContext conn, ParameterizedSql tempDbTableName)
-            => ColumnMetaDatasOfTempDbTable(conn, tempDbTableName.CommandText());
-
-        public static DbColumnMetaData[] ColumnMetaDatasOfTempDbTable(SqlCommandCreationContext conn, string tempDbTableName)
-            => BaseQuery(tempDb).Append(SQL($@"
-                    and c.object_id = object_id({$"{tempDb.CommandText()}..{tempDbTableName}"})
-                order by c.column_id
-            ")).ReadMetaObjects<DbColumnMetaData>(conn);
+        {
+            if (qualifiedObjectName.StartsWith("#")) {
+                return BaseQuery(tempDb).Append(SQL($@"
+                        and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})
+                    order by c.column_id
+                ")).ReadMetaObjects<DbColumnMetaData>(conn);
+            } else {
+                return BaseQuery(ParameterizedSql.Empty).Append(SQL($@"
+                        and c.object_id = object_id({qualifiedObjectName})
+                    order by c.column_id
+                ")).ReadMetaObjects<DbColumnMetaData>(conn);
+            }
+        }
 
         public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlCommandCreationContext conn)
             => BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<DbColumnMetaData>(conn)

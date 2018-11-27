@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils.Tests
                 )
             ").ExecuteNonQuery(Context);
 
-            return (tableName.CommandText(), DbColumnMetaData.ColumnMetaDatasOfTempDbTable(Context.Connection, tableName));
+            return (tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
         }
 
         [Fact]

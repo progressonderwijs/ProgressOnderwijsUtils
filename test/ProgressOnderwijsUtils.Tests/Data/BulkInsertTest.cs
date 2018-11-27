@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 )
             ").ExecuteNonQuery(Context);
 
-            return (tableName.CommandText(), DbColumnMetaData.ColumnMetaDatasOfTempDbTable(Context.Connection, tableName));
+            return (tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
         }
 
         sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IPropertiesAreUsedImplicitly
