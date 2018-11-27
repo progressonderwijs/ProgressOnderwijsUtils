@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using ExpressionToCodeLib;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
 {
@@ -48,61 +50,63 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public static class SqlXTypeExtensions
     {
-        static readonly (SqlXType xType, Type clrType)[] typeLookup = {
-            (SqlXType.Image, typeof(byte[])),
-            (SqlXType.UniqueIdentifier, typeof(Guid)),
-            (SqlXType.Date, typeof(DateTime)),
-            (SqlXType.Time, typeof(TimeSpan)),
-            (SqlXType.DateTime2, typeof(DateTime)),
-            (SqlXType.DateTimeOffset, typeof(DateTimeOffset)),
-            (SqlXType.TinyInt, typeof(byte)),
-            (SqlXType.SmallInt, typeof(short)),
-            (SqlXType.Int, typeof(int)),
-            (SqlXType.SmallDateTime, typeof(DateTime)),
-            (SqlXType.DateTime, typeof(DateTime)),
-            (SqlXType.Sql_variant, typeof(object)),
-            (SqlXType.Bit, typeof(bool)),
-            (SqlXType.Float, typeof(double)),
-            (SqlXType.Decimal, typeof(decimal)),
-            (SqlXType.Numeric, typeof(decimal)),
-            (SqlXType.BigInt, typeof(long)),
-            (SqlXType.VarBinary, typeof(byte[])),
-            (SqlXType.VarChar, typeof(string)),
-            (SqlXType.Binary, typeof(byte[])),
-            (SqlXType.Char, typeof(string)),
-            (SqlXType.RowVersion, typeof(byte[])),
-            (SqlXType.NVarChar, typeof(string)),
-            (SqlXType.NChar, typeof(string)),
-            (SqlXType.Xml, typeof(string)),
+        static readonly (Type clrType, SqlXType xType)[] typeLookup = {
+            //this list is ordered: earlier rows are better matches, and picked first.
+            (typeof(bool), SqlXType.Bit),
+            (typeof(byte), SqlXType.TinyInt),
+            (typeof(byte[]), SqlXType.VarBinary),
+            (typeof(byte[]), SqlXType.Binary),
+            (typeof(byte[]), SqlXType.Image),
+            (typeof(byte[]), SqlXType.RowVersion),
+            (typeof(DateTime), SqlXType.DateTime2),
+            (typeof(DateTime), SqlXType.DateTime),
+            (typeof(DateTime), SqlXType.Date),
+            (typeof(DateTime), SqlXType.SmallDateTime),
+            (typeof(DateTimeOffset), SqlXType.DateTimeOffset),
+            (typeof(decimal), SqlXType.Decimal),
+            (typeof(decimal), SqlXType.Numeric),
+            (typeof(double), SqlXType.Float),
+            (typeof(Guid), SqlXType.UniqueIdentifier),
+            (typeof(short), SqlXType.SmallInt),
+            (typeof(int), SqlXType.Int),
+            (typeof(long), SqlXType.BigInt),
+            (typeof(object), SqlXType.Sql_variant),
+            (typeof(string), SqlXType.NVarChar),
+            (typeof(string), SqlXType.Char),
+            (typeof(string), SqlXType.NChar),
+            (typeof(string), SqlXType.VarChar),
+            (typeof(string), SqlXType.Xml),
+            (typeof(char), SqlXType.NChar),
+            (typeof(TimeSpan), SqlXType.Time),
         };
 
+        /// <summary>
+        /// Finds the best mapping of this xType to a clr-type.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
         public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlXType sqlXType)
-            => new SqlUnderlyingTypeInfo(sqlXType, typeLookup.Single(vt => vt.xType == sqlXType).clrType);
+        {
+            foreach (var o in typeLookup) {
+                if (o.xType == sqlXType) {
+                    return new SqlUnderlyingTypeInfo(sqlXType, o.clrType);
+                }
+            }
+            throw new ArgumentOutOfRangeException(nameof(sqlXType), "Could not find a clr-type for the XType " + sqlXType);
+        }
 
-        public static SqlXType NetTypeToSqlXType(Type type)
+        /// <summary>
+        /// Finds the best mapping of this clr-type to an sql XType.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
+        public static SqlXType NetTypeToSqlXType([NotNull] Type type)
         {
             var underlyingType = type.GetNonNullableUnderlyingType();
-            if (underlyingType == typeof(int)) {
-                return SqlXType.Int;
-            } else if (underlyingType == typeof(DateTime)) {
-                return SqlXType.DateTime;
-            } else if (underlyingType == typeof(bool)) {
-                return SqlXType.Bit;
-            } else if (underlyingType == typeof(double)) {
-                return SqlXType.Float;
-            } else if (underlyingType == typeof(decimal)) {
-                return SqlXType.Decimal;
-            } else if (underlyingType == typeof(long)) {
-                return SqlXType.BigInt;
-            } else if (underlyingType == typeof(string)) {
-                return SqlXType.NVarChar;
-            } else if (underlyingType == typeof(byte[])) {
-                return SqlXType.VarBinary;
-            } else if (underlyingType == typeof(char)) {
-                return SqlXType.NChar;
-            } else {
-                return typeLookup.Single(tv => tv.clrType == type).xType;
+            foreach (var o in typeLookup) {
+                if (o.clrType == underlyingType) {
+                    return o.xType;
+                }
             }
+            throw new ArgumentOutOfRangeException(nameof(type), "Could not find an sql XType for the clr-type " + underlyingType.ToCSharpFriendlyTypeName() + (type == underlyingType ? "" : ", which is the underlying type of " + type.ToCSharpFriendlyTypeName()));
         }
     }
 }
