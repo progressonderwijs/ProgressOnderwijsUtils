@@ -77,7 +77,14 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         };
 
         public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlXType sqlXType)
-            => new SqlUnderlyingTypeInfo(sqlXType, typeLookup.Single(vt => vt.xType == sqlXType).clrType);
+        {
+            foreach (var o in typeLookup) {
+                if (o.xType == sqlXType) {
+                    return new SqlUnderlyingTypeInfo(sqlXType, o.clrType);
+                }
+            }
+            throw new ArgumentOutOfRangeException(nameof(sqlXType), "Could not find a clr-type for the XType " + sqlXType);
+        }
 
         public static SqlXType NetTypeToSqlXType(Type type)
         {
