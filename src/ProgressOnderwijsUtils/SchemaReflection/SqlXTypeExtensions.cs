@@ -51,6 +51,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     public static class SqlXTypeExtensions
     {
         static readonly (Type clrType, SqlXType xType)[] typeLookup = {
+            //this list is ordered: earlier rows are better matches, and picked first.
             (typeof(bool), SqlXType.Bit),
             (typeof(byte), SqlXType.TinyInt),
             (typeof(byte[]), SqlXType.VarBinary),
