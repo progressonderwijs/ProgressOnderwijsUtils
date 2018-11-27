@@ -7,7 +7,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests.Data
 {
-    public class BulkInsertTest : TransactedLocalConnection
+    public sealed class BulkInsertTest : TransactedLocalConnection
     {
         DatabaseDescription.Table CreateTable()
         {
@@ -84,6 +84,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => missingInDb.None());
             PAssert.That(() => extraInDb.None());
             PAssert.That(() => fromDb.Length == SampleData.Length);
+        }
+
+        [Fact]
+        public void EmptyBulkInsertAndReadRoundTrips()
+        {
+            var table = CreateTable();
+            SampleData.Take(0).BulkCopyToSqlServer(Context, table);
+            var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Context);
+            PAssert.That(() => fromDb.None());
         }
     }
 }
