@@ -13,6 +13,9 @@ using ProgressOnderwijsUtils.SchemaReflection;
 
 namespace ProgressOnderwijsUtils
 {
+    /// <summary>
+    /// Contains extension methods to insert metaobjects (POCOs) into database tables using SqlBulkCopy.
+    /// </summary>
     public static class MetaObjectBulkCopy
     {
         /// <summary>
@@ -30,6 +33,15 @@ namespace ProgressOnderwijsUtils
         }
 
 
+        /// <summary>
+        /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout, and options CheckConstraints | UseInternalTransaction.
+        /// For more fine-grained control, create an SqlBulkCopy instance manually, and call bulkCopy.WriteMetaObjectsToServer(objs, sqlConnection, tableName)
+        /// </summary>
+        /// <typeparam name="T">The type of metaobject to be inserted</typeparam>
+        /// <param name="metaObjects">The list of entities to insert</param>
+        /// <param name="sqlconn">The Sql connection to write to</param>
+        /// <param name="tableName">The name of the table to insert into.</param>
+        /// <param name="columns">The schema of the table as it currently exists in the database.</param>
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns)
                 where T : IMetaObject, IPropertiesAreUsedImplicitly
             {
@@ -56,6 +68,9 @@ namespace ProgressOnderwijsUtils
             bulkCopy.WriteMetaObjectsToServer(metaObjects, context, table.QualifiedName, table.Columns.ArraySelect(column => column.ColumnMetaData), cancellationToken);
         }
 
+        /// <summary>
+        /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
+        /// </summary>
         public static void WriteMetaObjectsToServer<T>(
             [NotNull] this SqlBulkCopy bulkCopy,
             [NotNull] IEnumerable<T> metaObjects,
