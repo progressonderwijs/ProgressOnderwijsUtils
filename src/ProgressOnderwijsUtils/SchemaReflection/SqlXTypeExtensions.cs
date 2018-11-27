@@ -78,6 +78,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             (typeof(TimeSpan), SqlXType.Time),
         };
 
+        /// <summary>
+        /// Finds the best mapping of this xType to a clr-type.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
         public static SqlUnderlyingTypeInfo SqlUnderlyingTypeInfo(this SqlXType sqlXType)
         {
             foreach (var o in typeLookup) {
@@ -88,6 +92,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             throw new ArgumentOutOfRangeException(nameof(sqlXType), "Could not find a clr-type for the XType " + sqlXType);
         }
 
+        /// <summary>
+        /// Finds the best mapping of this clr-type to an sql XType.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
         public static SqlXType NetTypeToSqlXType([NotNull] Type type)
         {
             var underlyingType = type.GetNonNullableUnderlyingType();
