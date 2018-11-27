@@ -85,6 +85,7 @@ namespace ProgressOnderwijsUtils.Tests
             result.Output.Subscribe(o => { collected.Add(o.Line); });
 
             result.Output.Wait();
+            result.ExitCode.Wait(100);
             var finalExitCodeStatus = result.ExitCode.Status;
 
             var outputLineCount = collected.Count;
