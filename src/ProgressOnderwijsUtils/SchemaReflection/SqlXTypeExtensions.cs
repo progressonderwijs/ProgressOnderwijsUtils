@@ -76,6 +76,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             (typeof(string), SqlXType.NChar),
             (typeof(string), SqlXType.VarChar),
             (typeof(string), SqlXType.Xml),
+            (typeof(char), SqlXType.NChar),
             (typeof(TimeSpan), SqlXType.Time),
         };
 
