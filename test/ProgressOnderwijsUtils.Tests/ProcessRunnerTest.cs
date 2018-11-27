@@ -85,8 +85,10 @@ namespace ProgressOnderwijsUtils.Tests
             result.Output.Subscribe(o => { collected.Add(o.Line); });
 
             result.Output.Wait();
+            var finalExitCodeStatus = result.ExitCode.Status;
+
             var outputLineCount = collected.Count;
-            PAssert.That(() => outputLineCount == inputLineCount && result.ExitCode.Status == TaskStatus.RanToCompletion);
+            PAssert.That(() => outputLineCount == inputLineCount && finalExitCodeStatus == TaskStatus.RanToCompletion);
             PAssert.That(() => collected.Distinct().Single() == inputLine);
         }
     }
