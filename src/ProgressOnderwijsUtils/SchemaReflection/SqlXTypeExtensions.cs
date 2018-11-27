@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using ExpressionToCodeLib;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
 {
@@ -86,30 +88,15 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             throw new ArgumentOutOfRangeException(nameof(sqlXType), "Could not find a clr-type for the XType " + sqlXType);
         }
 
-        public static SqlXType NetTypeToSqlXType(Type type)
+        public static SqlXType NetTypeToSqlXType([NotNull] Type type)
         {
             var underlyingType = type.GetNonNullableUnderlyingType();
-            if (underlyingType == typeof(int)) {
-                return SqlXType.Int;
-            } else if (underlyingType == typeof(DateTime)) {
-                return SqlXType.DateTime;
-            } else if (underlyingType == typeof(bool)) {
-                return SqlXType.Bit;
-            } else if (underlyingType == typeof(double)) {
-                return SqlXType.Float;
-            } else if (underlyingType == typeof(decimal)) {
-                return SqlXType.Decimal;
-            } else if (underlyingType == typeof(long)) {
-                return SqlXType.BigInt;
-            } else if (underlyingType == typeof(string)) {
-                return SqlXType.NVarChar;
-            } else if (underlyingType == typeof(byte[])) {
-                return SqlXType.VarBinary;
-            } else if (underlyingType == typeof(char)) {
-                return SqlXType.NChar;
-            } else {
-                return typeLookup.Single(tv => tv.clrType == type).xType;
+            foreach (var o in typeLookup) {
+                if (o.clrType == underlyingType) {
+                    return o.xType;
+                }
             }
+            throw new ArgumentOutOfRangeException(nameof(type), "Could not find an sql XType for the clr-type " + underlyingType.ToCSharpFriendlyTypeName() + (type == underlyingType ? "" : ", which is the underlying type of " + type.ToCSharpFriendlyTypeName()));
         }
     }
 }
