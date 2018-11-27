@@ -36,12 +36,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     public sealed class ForeignKeyLookup
     {
         public static ForeignKeyLookup LoadAll(SqlCommandCreationContext conn)
-            => Load(conn, ParameterizedSql.Empty);
-
-        public static ForeignKeyLookup LoadTempDb(SqlCommandCreationContext conn)
-            => Load(conn, DatabaseDescription.TempDb);
-
-        static ForeignKeyLookup Load(SqlCommandCreationContext conn, ParameterizedSql database)
         {
             var foreignKeys = SQL($@"
                 select 
@@ -53,8 +47,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     , ReferencedParentColumn = fkc.referenced_column_id
                     , ReferencingChildColumn = fkc.parent_column_id
                     , fk.name
-                from {database}{(database.IsEmpty ? ParameterizedSql.Empty : SQL($"."))}sys.foreign_keys fk
-                join {database}{(database.IsEmpty ? ParameterizedSql.Empty : SQL($"."))}sys.foreign_key_columns fkc on fkc.constraint_object_id = fk.object_id
+                from sys.foreign_keys fk
+                join sys.foreign_key_columns fkc on fkc.constraint_object_id = fk.object_id
                 order by 
                     fk.object_id
                     , fkc.constraint_column_id

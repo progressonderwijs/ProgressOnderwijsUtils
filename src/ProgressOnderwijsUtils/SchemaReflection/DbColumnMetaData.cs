@@ -87,12 +87,19 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 "))
                 .ReadMetaObjects<DbColumnMetaData>(conn);
 
+        static readonly ParameterizedSql tempDb = SQL($"tempdb");
+
+        public static DbColumnMetaData[] ColumnMetaDatasOfTempDbTable(SqlCommandCreationContext conn, ParameterizedSql tempDbTableName)
+            => ColumnMetaDatasOfTempDbTable(conn, tempDbTableName.CommandText());
+
+        public static DbColumnMetaData[] ColumnMetaDatasOfTempDbTable(SqlCommandCreationContext conn, string tempDbTableName)
+            => BaseQuery(tempDb).Append(SQL($@"
+                    and c.object_id = object_id({$"{tempDb.CommandText()}..{tempDbTableName}"})
+                order by c.column_id
+            ")).ReadMetaObjects<DbColumnMetaData>(conn);
+
         public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlCommandCreationContext conn)
             => BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<DbColumnMetaData>(conn)
-                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.ToArray());
-
-        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadTempDb(SqlCommandCreationContext conn)
-            => BaseQuery(DatabaseDescription.TempDb).ReadMetaObjects<DbColumnMetaData>(conn)
                 .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.ToArray());
 
         static readonly Regex isSafeForSql = new Regex("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);

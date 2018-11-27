@@ -66,60 +66,60 @@ namespace ProgressOnderwijsUtils.Tests
             public string Bla2 { get; set; }
         }
 
-        DatabaseDescription.Table CreateTempTable()
+        (string tableName, DbColumnMetaData[] columns) CreateTempTable()
         {
+            var tableName = SQL($"#MyTable");
             SQL($@"
-                create table #MyTable (
+                create table {tableName} (
                     id int not null primary key
                     , bla nvarchar(max) null
                     , bla2 nvarchar(max) not null
                 )
             ").ExecuteNonQuery(Context);
 
-            var db = DatabaseDescription.LoadTempDb(Context.Connection);
-            return db.TableByTempDbName(Context.Connection, "#MyTable");
+            return (tableName.CommandText(), DbColumnMetaData.ColumnMetaDatasOfTempDbTable(Context.Connection, tableName));
         }
 
         [Fact]
         public void BulkCopyChecksNames()
         {
-            var table = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(Context.Connection, table));
+            var (table, columns) = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(Context.Connection, table, columns));
         }
 
         [Fact]
         public void BulkCopyChecksTypes()
         {
-            var table = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(Context.Connection, table));
+            var (table, columns) = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(Context.Connection, table, columns));
         }
 
         [Fact]
         public void BulkCopyChecksTypes2()
         {
-            var table = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(Context.Connection, table));
+            var (table, columns) = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(Context.Connection, table, columns));
         }
 
         [Fact]
         public void BulkCopyVerifiesExistanceOfDestinationColumns()
         {
-            var table = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(Context.Connection, table));
+            var (table, columns) = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(Context.Connection, table, columns));
         }
 
         [Fact]
         public void BulkCopyAllowsExtraDestinationColumns()
         {
-            var table = CreateTempTable();
-            new BlaWithMissingClrFields[0].BulkCopyToSqlServer(Context.Connection, table);
+            var (table, columns) = CreateTempTable();
+            new BlaWithMissingClrFields[0].BulkCopyToSqlServer(Context.Connection, table, columns);
         }
 
         [Fact]
         public void BulkCopyAllowsExactMatch()
         {
-            var table = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context.Connection, table);
+            var (table, columns) = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, table, columns);
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(Context);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
         }
@@ -127,8 +127,8 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void BulkCopySupportsColumnReordering()
         {
-            var table = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context.Connection, table);
+            var (table, columns) = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, table, columns);
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(Context);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
         }

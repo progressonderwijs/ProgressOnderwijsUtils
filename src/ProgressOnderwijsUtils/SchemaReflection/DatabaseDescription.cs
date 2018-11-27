@@ -27,21 +27,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     , QualifiedName = schema_name(t.schema_id) + N'.' + object_name(t.object_id)
                 from sys.tables t
             ").ReadMetaObjects<DbNamedTableId>(conn);
-
-        public static DbNamedTableId[] LoadTempDb(SqlCommandCreationContext conn)
-            => SQL($@"
-                select
-                    ObjectId = t.object_id
-                    , QualifiedName = s.name + N'.' + t.name
-                from tempdb.sys.tables t
-                join tempdb.sys.schemas s on s.schema_id = t.schema_id
-            ").ReadMetaObjects<DbNamedTableId>(conn);
     }
 
     public sealed class DatabaseDescription
     {
-        public static readonly ParameterizedSql TempDb = SQL($"tempdb");
-
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly ForeignKeyLookup foreignKeyLookup;
         readonly Lazy<Dictionary<string, Table>> tableByQualifiedName;
@@ -53,12 +42,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
         }
 
-        public static DatabaseDescription LoadTempDb(SqlCommandCreationContext conn)
-        {
-            var columnsByTableId = DbColumnMetaData.LoadTempDb(conn);
-            return new DatabaseDescription(DbNamedTableId.LoadTempDb(conn), columnsByTableId, ForeignKeyLookup.LoadTempDb(conn));
-
-        }
         public static DatabaseDescription LoadFromSchemaTables(SqlCommandCreationContext conn)
         {
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
@@ -72,12 +55,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public Table TableByName(string qualifiedName)
             => tableByQualifiedName.Value.TryGetValue(qualifiedName, out var id) ? id : null;
 
-        [CanBeNull]
-        public Table TableByTempDbName(SqlCommandCreationContext conn, string tempName)
-        {
-            var objectId = SQL($"select object_id({$"tempdb..{tempName}"})").ReadScalar<DbObjectId?>(conn);
-            return objectId == null ? null : TableById(objectId.Value);
-        }
+        [NotNull]
+        public Table ExistingTableByName(string qualifiedName)
+            => TableByName(qualifiedName) ?? throw new ArgumentException($"Table '{qualifiedName}' should exist.", nameof(qualifiedName));
 
         [CanBeNull]
         public Table TableById(DbObjectId id)
