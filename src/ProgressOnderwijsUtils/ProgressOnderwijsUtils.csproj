@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>30.0.1</Version>
-    <PackageReleaseNotes>Do not mix possible different collations in the determinations of the db-tables.</PackageReleaseNotes>
+    <Version>31.0.0</Version>
+    <PackageReleaseNotes>Removed loading complete tempdb-description. Instead, added retrieving DbColumnMetaData for temdb tables.
+Also added method for retrieving existing NotNull-able table from the db-description.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

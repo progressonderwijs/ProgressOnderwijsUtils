@@ -9,10 +9,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class BulkInsertTest : TransactedLocalConnection
     {
-        DatabaseDescription.Table CreateTable()
+        (string tableName, DbColumnMetaData[] columns) CreateTable()
         {
+            var tableName = SQL($"#test");
             SQL($@"
-                create table #test (
+                create table {tableName} (
                     AnEnum int not null
                     , ADateTime datetime2
                     , SomeString nvarchar(max)
@@ -21,8 +22,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 )
             ").ExecuteNonQuery(Context);
 
-            var db = DatabaseDescription.LoadTempDb(Context.Connection);
-            return db.TableByTempDbName(Context.Connection, "#test");
+            return (tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
         }
 
         sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -68,16 +68,16 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void BulkCopysWithConcurrentQueriesCrash()
         {
-            var table = CreateTable();
+            var (table, columns) = CreateTable();
             var evilEnumerable = SampleData.Where(o => SQL($"select 1").ReadScalar<int>(Context) == 1);
-            Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Context, table));
+            Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Context, table, columns));
         }
 
         [Fact]
         public void BulkInsertAndReadRoundTrips()
         {
-            var table = CreateTable();
-            SampleData.BulkCopyToSqlServer(Context, table);
+            var (table, columns) = CreateTable();
+            SampleData.BulkCopyToSqlServer(Context, table, columns);
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Context);
             var missingInDb = SampleData.Except(fromDb);
             var extraInDb = fromDb.Except(SampleData);
@@ -89,8 +89,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void EmptyBulkInsertAndReadRoundTrips()
         {
-            var table = CreateTable();
-            SampleData.Take(0).BulkCopyToSqlServer(Context, table);
+            var (table, columns) = CreateTable();
+            SampleData.Take(0).BulkCopyToSqlServer(Context, table, columns);
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Context);
             PAssert.That(() => fromDb.None());
         }
