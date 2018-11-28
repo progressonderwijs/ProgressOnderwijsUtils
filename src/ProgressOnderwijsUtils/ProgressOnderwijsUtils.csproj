@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>31.0.0</Version>
-    <PackageReleaseNotes>Removed loading complete tempdb-description. Instead, added retrieving DbColumnMetaData for temdb tables.
-Also added method for retrieving existing NotNull-able table from the db-description.</PackageReleaseNotes>
+    <Version>31.0.1</Version>
+    <PackageReleaseNotes>Use the column-index from the db itself, instead of assuming the order of the columns-array.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
