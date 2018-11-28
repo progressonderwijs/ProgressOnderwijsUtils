@@ -51,16 +51,16 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public IEnumerable<Table> AllTables
             => tableById.Values;
 
+        [NotNull]
+        public Table GetTableByName(string qualifiedName)
+            => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
+
         [CanBeNull]
-        public Table TableByName(string qualifiedName)
+        public Table TryGetTableByName(string qualifiedName)
             => tableByQualifiedName.Value.TryGetValue(qualifiedName, out var id) ? id : null;
 
-        [NotNull]
-        public Table ExistingTableByName(string qualifiedName)
-            => TableByName(qualifiedName) ?? throw new ArgumentException($"Table '{qualifiedName}' should exist.", nameof(qualifiedName));
-
         [CanBeNull]
-        public Table TableById(DbObjectId id)
+        public Table TryGetTableById(DbObjectId id)
             => tableById.GetOrDefaultR(id);
 
         public sealed class ForeignKey
@@ -74,8 +74,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public static ForeignKey Create(DatabaseDescription db, DbForeignKey fk)
             {
-                var parentTable = db.TableById(fk.ReferencedParentTable);
-                var childTable = db.TableById(fk.ReferencingChildTable);
+                var parentTable = db.TryGetTableById(fk.ReferencedParentTable);
+                var childTable = db.TryGetTableById(fk.ReferencingChildTable);
                 return new ForeignKey {
                     ReferencedParentTable = parentTable,
                     ReferencingChildTable = childTable,
@@ -170,7 +170,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 => Columns.Where(c => c.Is_Primary_Key);
 
             public IEnumerable<Table> AllDependantTables
-                => db.foreignKeyLookup.AllDependantTables(ObjectId).Select(id => db.TableById(id));
+                => db.foreignKeyLookup.AllDependantTables(ObjectId).Select(id => db.TryGetTableById(id));
 
             public IEnumerable<ForeignKey> KeysToReferencedParents
                 => db.foreignKeyLookup.KeysByReferencingChildTable[ObjectId].Select(fk => ForeignKey.Create(db, fk));
