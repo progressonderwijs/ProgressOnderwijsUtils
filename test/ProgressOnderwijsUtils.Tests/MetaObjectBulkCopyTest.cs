@@ -160,6 +160,38 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void BulkCopySupportsCumputedColumnEvenAfterDropTable()
+        {
+            var tableName = SQL($"#MyTable");
+            SQL($@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , ToDrop int null
+                    , Computed as convert(bit, 1) -- deliberately not placed at the end
+                    , Bla nvarchar(max) not null
+                )
+            ").ExecuteNonQuery(Context);
+
+            SQL($@"
+                alter table {tableName}
+                drop column ToDrop;
+            ").ExecuteNonQuery(Context);
+
+            new[] {
+                new ComputedColumnExample {
+                    Id = 11,
+                    Bla = "Something"
+                }
+            }.BulkCopyToSqlServer(Context.Connection, tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
+
+            var fromDb = SQL($@"
+                select *
+                from {tableName}
+            ").ReadMetaObjects<ComputedColumnExample>(Context).Single();
+            PAssert.That(() => fromDb.Computed);
+        }
+
+        [Fact]
         public void BulkCopyVerifiesExistanceOfDestinationColumns()
         {
             var (table, columns) = CreateTempTable();

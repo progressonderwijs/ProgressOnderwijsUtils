@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static ColumnDefinition[] GetFromTable([NotNull] DbColumnMetaData[] columns) 
-            => columns.ArraySelect(column => new ColumnDefinition(column.User_Type_Id.SqlUnderlyingTypeInfo().ClrType, column.ColumnName, (int)column.ColumnId - 1));
+            => columns.ArraySelect(column => new ColumnDefinition(column.User_Type_Id.SqlUnderlyingTypeInfo().ClrType, column.ColumnName, column.Ordinal));
 
         ColumnDefinition(Type dataType, string name, int index)
         {

@@ -32,10 +32,15 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public string ColumnName { get; set; }
 
         /// <summary>
-        /// Note: this index is 1-based.
+        /// This id is 1-based and may contain gaps due to dropping of columns.
         /// </summary>
         public ColumnIndex ColumnId { get; set; }
 
+        /// <summary>
+        /// This is the actual zero-based index within the table.
+        /// </summary>
+        public int Ordinal { get; set; }
+        
         public SqlXType User_Type_Id { get; set; }
         public short Max_Length { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
         public byte Precision { get; set; }
@@ -72,6 +77,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     DbObjectId = c.object_id
                     , ColumnName = c.name
                     , ColumnId = c.column_id
+                    , Ordinal = convert(int, row_number() over(partition by c.object_id order by c.column_id)) - 1
                     , c.user_type_id
                     , c.max_length
                     , c.precision
