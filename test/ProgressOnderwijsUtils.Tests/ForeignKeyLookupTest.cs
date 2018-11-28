@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Tests
             ").ExecuteNonQuery(Context.Connection);
             var db = DatabaseDescription.LoadFromSchemaTables(Context.Connection);
 
-            var dependencies = db.TableByName("dbo.ForeignKeyLookupRoot").AllDependantTables;
+            var dependencies = db.GetTableByName("dbo.ForeignKeyLookupRoot").AllDependantTables;
 
             PAssert.That(() => dependencies.Select(dependency => dependency.QualifiedName).SetEqual(new[] { "dbo.ForeignKeyLookupRoot", "dbo.ForeignKeyLookupLevel", "dbo.ForeignKeyLookupLeaf" }, StringComparer.OrdinalIgnoreCase));
         }
