@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
         {
             var mkFieldDict = Utils.F(
                 (IColumnDefinition[] fields) => fields
-                    .Select((colDef, i) => new { Index = i, Def = colDef, UnderlyingType = colDef.DataType.GetNonNullableUnderlyingType() })
+                    .Select(colDef => new { Def = colDef, UnderlyingType = colDef.DataType.GetNonNullableUnderlyingType() })
                     .ToDictionary(col => col.Def.Name ?? "!!UNNAMED COLUMN!!", StringComparer.OrdinalIgnoreCase)
                 );
 
@@ -69,7 +69,7 @@ namespace ProgressOnderwijsUtils
                     );
             }
 
-            return srcFieldsByName.Values.Select(srcCol => new FieldMapping(srcCol.Def, srcCol.Index, dstFieldsByName[srcCol.Def.Name].Index)).ToArray();
+            return srcFieldsByName.Values.Select(srcCol => new FieldMapping(srcCol.Def, srcCol.Def.Index, dstFieldsByName[srcCol.Def.Name].Def.Index)).ToArray();
         }
 
         public static void ApplyFieldMappingsToBulkCopy([NotNull] FieldMapping[] mapping, [NotNull] SqlBulkCopy bulkCopy)

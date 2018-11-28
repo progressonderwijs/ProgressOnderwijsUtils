@@ -30,7 +30,12 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public DbObjectId DbObjectId { get; set; }
         public string ColumnName { get; set; }
+
+        /// <summary>
+        /// Note: this index is 1-based.
+        /// </summary>
         public ColumnIndex ColumnId { get; set; }
+
         public SqlXType User_Type_Id { get; set; }
         public short Max_Length { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
         public byte Precision { get; set; }

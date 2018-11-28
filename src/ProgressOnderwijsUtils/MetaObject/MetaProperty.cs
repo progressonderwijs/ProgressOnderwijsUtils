@@ -14,7 +14,6 @@ namespace ProgressOnderwijsUtils
     {
         Func<object, object> UntypedGetter { get; }
         object UnsafeSetPropertyAndReturnObject(object obj, object newValue);
-        int Index { get; }
         Expression PropertyAccessExpression(Expression paramExpr);
         bool IsKey { get; }
         bool CanRead { get; }
