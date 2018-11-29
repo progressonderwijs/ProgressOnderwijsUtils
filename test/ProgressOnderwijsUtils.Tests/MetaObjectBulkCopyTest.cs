@@ -97,13 +97,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void BulkCopyAllowsExtraDestinationColumns()
-        {
-            var (table, columns) = CreateTempTable();
-            new BlaWithMissingClrFields[0].BulkCopyToSqlServer(Context.Connection, table, columns);
-        }
-
-        [Fact]
         public void BulkCopyChecksNames()
         {
             var (table, columns) = CreateTempTable();

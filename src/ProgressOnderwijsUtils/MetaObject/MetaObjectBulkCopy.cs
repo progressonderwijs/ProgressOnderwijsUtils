@@ -43,8 +43,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="tableName">The name of the table to insert into.</param>
         /// <param name="columns">The schema of the table as it currently exists in the database.</param>
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns)
-                where T : IMetaObject, IPropertiesAreUsedImplicitly
-            {
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
             using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
                 bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
                 var token = sqlconn.CommandTimeoutInS == 0
@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils
             bulkCopy.DestinationTableName = tableName;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken)) {
-                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, columns);
+                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, columns.Where(column => !column.Is_Computed && !column.Is_RowVersion).ToArray());
                 var sw = Stopwatch.StartNew();
                 try {
                     bulkCopy.WriteToServer(objectReader);
@@ -158,7 +158,7 @@ namespace ProgressOnderwijsUtils
                 typeof(T).ToCSharpFriendlyTypeName(),
                 dataColumns,
                 "table " + tableName,
-                FieldMappingMode.IgnoreExtraDestinationFields);
+                FieldMappingMode.RequireExactColumnMatches);
 
             FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, bulkCopy);
             return mapping;
