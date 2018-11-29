@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         /// This is the actual zero-based index within the table.
         /// </summary>
         public int Ordinal { get; internal set; }
-        
+
         public SqlXType User_Type_Id { get; set; }
         public short Max_Length { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
         public byte Precision { get; set; }
@@ -94,7 +94,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public static DbColumnMetaData[] ColumnMetaDatas(SqlCommandCreationContext conn, string qualifiedObjectName)
         {
-            if (qualifiedObjectName.StartsWith("#")) {
+            if (qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)) {
                 return BaseQuery(tempDb).Append(SQL($@"
                     and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})
                 ")).ReadMetaObjects<DbColumnMetaData>(conn).SetOrdinal();
