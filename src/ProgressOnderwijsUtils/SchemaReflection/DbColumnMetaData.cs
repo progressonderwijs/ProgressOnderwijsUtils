@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         /// <summary>
         /// This is the actual zero-based index within the table.
         /// </summary>
-        public int Ordinal { get; set; }
+        public int Ordinal { get; internal set; }
         
         public SqlXType User_Type_Id { get; set; }
         public short Max_Length { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
@@ -77,7 +77,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     DbObjectId = c.object_id
                     , ColumnName = c.name
                     , ColumnId = c.column_id
-                    , Ordinal = convert(int, row_number() over(partition by c.object_id order by c.column_id)) - 1
                     , c.user_type_id
                     , c.max_length
                     , c.precision
@@ -97,20 +96,18 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             if (qualifiedObjectName.StartsWith("#")) {
                 return BaseQuery(tempDb).Append(SQL($@"
-                        and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})
-                    order by c.column_id
-                ")).ReadMetaObjects<DbColumnMetaData>(conn);
+                    and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})
+                ")).ReadMetaObjects<DbColumnMetaData>(conn).SetOrdinal();
             } else {
                 return BaseQuery(ParameterizedSql.Empty).Append(SQL($@"
-                        and c.object_id = object_id({qualifiedObjectName})
-                    order by c.column_id
-                ")).ReadMetaObjects<DbColumnMetaData>(conn);
+                    and c.object_id = object_id({qualifiedObjectName})
+                ")).ReadMetaObjects<DbColumnMetaData>(conn).SetOrdinal();
             }
         }
 
         public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlCommandCreationContext conn)
             => BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<DbColumnMetaData>(conn)
-                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.ToArray());
+                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.ToArray().SetOrdinal());
 
         static readonly Regex isSafeForSql = new Regex("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
 
@@ -121,6 +118,17 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public static class DbColumnMetaDataExtensions
     {
+        internal static DbColumnMetaData[] SetOrdinal(this DbColumnMetaData[] columns)
+        {
+            Array.Sort(columns, CompareOnColumnId);
+            for (var ordinal = 0; ordinal < columns.Length; ++ordinal) {
+                columns[ordinal].Ordinal = ordinal;
+            }
+            return columns;
+        }
+
+        static readonly Comparison<DbColumnMetaData> CompareOnColumnId = (a, b) => a.ColumnId.CompareTo(b.ColumnId);
+
         [Pure]
         public static ParameterizedSql CreateNewTableQuery(this IReadOnlyCollection<DbColumnMetaData> columns, ParameterizedSql tableName)
         {
