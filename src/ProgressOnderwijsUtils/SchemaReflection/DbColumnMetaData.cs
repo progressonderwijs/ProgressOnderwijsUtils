@@ -118,7 +118,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public static class DbColumnMetaDataExtensions
     {
-        internal static DbColumnMetaData[] SetOrdinal(this DbColumnMetaData[] columns)
+        [NotNull]
+        internal static DbColumnMetaData[] SetOrdinal([NotNull] this DbColumnMetaData[] columns)
         {
             Array.Sort(columns, CompareOnColumnId);
             for (var ordinal = 0; ordinal < columns.Length; ++ordinal) {
