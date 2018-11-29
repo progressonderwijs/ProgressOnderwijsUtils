@@ -13,6 +13,12 @@ using System.Runtime.CompilerServices;
 
 namespace ProgressOnderwijsUtils
 {
+    public enum FieldMappingMode
+    {
+        RequireExactColumnMatches,
+        IgnoreExtraDestinationFields,
+    }
+
     public static class ParameterizedSqlObjectMapper
     {
         [MustUseReturnValue]
