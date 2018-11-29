@@ -43,8 +43,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="tableName">The name of the table to insert into.</param>
         /// <param name="columns">The schema of the table as it currently exists in the database.</param>
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns)
-                where T : IMetaObject, IPropertiesAreUsedImplicitly
-            {
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
             using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
                 bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
                 var token = sqlconn.CommandTimeoutInS == 0
@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils
             bulkCopy.DestinationTableName = tableName;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken)) {
-                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, columns);
+                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, columns.Where(column => !column.Is_Computed && !column.Is_RowVersion).ToArray());
                 var sw = Stopwatch.StartNew();
                 try {
                     bulkCopy.WriteToServer(objectReader);
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         static Exception MetaObjectBasedException<T>([NotNull] FieldMapping[] mapping, int destinationColumnIndex, SqlException ex) where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            var sourceColumnName = mapping.Where(m => m.DstIndex == destinationColumnIndex).Select(m => m.SourceColumnDefinition.Name).FirstOrDefault();
+            var sourceColumnName = mapping.Where(m => m.Dst.Index == destinationColumnIndex).Select(m => m.Src.Name).FirstOrDefault();
             var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + (sourceColumnName ?? "??unknown??");
             return new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
         }
@@ -156,9 +156,10 @@ namespace ProgressOnderwijsUtils
             var mapping = FieldMapping.VerifyAndCreate(
                 clrColumns,
                 typeof(T).ToCSharpFriendlyTypeName(),
+                false,
                 dataColumns,
                 "table " + tableName,
-                FieldMappingMode.IgnoreExtraDestinationFields);
+                false);
 
             FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, bulkCopy);
             return mapping;

@@ -1,3 +1,6 @@
+using ExpressionToCodeLib;
+using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -7,13 +10,15 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using ExpressionToCodeLib;
-using FastExpressionCompiler;
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
+    public enum FieldMappingMode
+    {
+        RequireExactColumnMatches,
+        IgnoreExtraDestinationFields,
+    }
+
     public static class ParameterizedSqlObjectMapper
     {
         [MustUseReturnValue]
