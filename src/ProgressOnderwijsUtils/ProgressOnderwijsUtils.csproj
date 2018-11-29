@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>31.0.2</Version>
-    <PackageReleaseNotes>Set the default field-mapping to exact-match for the bulk-copies.
-
-This is now possible because we can filter out the read-only db-columns.</PackageReleaseNotes>
+    <Version>31.1.0</Version>
+    <PackageReleaseNotes>Added MetaObjectBulkCopy overloads with extra column mapping parameter.
+</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
