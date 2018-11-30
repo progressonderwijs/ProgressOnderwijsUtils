@@ -13,6 +13,13 @@ using ProgressOnderwijsUtils.SchemaReflection;
 
 namespace ProgressOnderwijsUtils
 {
+    public enum BulkCopyFieldMappingMode
+    {
+        ExactMatch,
+        AllowExtraMetaObjectProperties,
+        AllowExtraDatabaseColumns,
+    }
+
     /// <summary>
     /// Contains extension methods to insert metaobjects (POCOs) into database tables using SqlBulkCopy.
     /// </summary>
@@ -29,9 +36,14 @@ namespace ProgressOnderwijsUtils
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] DatabaseDescription.Table table)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            metaObjects.BulkCopyToSqlServer(sqlconn, table.QualifiedName, table.Columns.ArraySelect(column => column.ColumnMetaData));
+            metaObjects.BulkCopyToSqlServer(sqlconn, table, BulkCopyFieldMappingMode.ExactMatch);
         }
 
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] DatabaseDescription.Table table, BulkCopyFieldMappingMode mode)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            metaObjects.BulkCopyToSqlServer(sqlconn, table.QualifiedName, table.Columns.ArraySelect(column => column.ColumnMetaData), mode);
+        }
 
         /// <summary>
         /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout, and options CheckConstraints | UseInternalTransaction.
@@ -45,12 +57,18 @@ namespace ProgressOnderwijsUtils
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
+            metaObjects.BulkCopyToSqlServer(sqlconn, tableName, columns, BulkCopyFieldMappingMode.ExactMatch);
+        }
+
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns, BulkCopyFieldMappingMode mode)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
             using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
                 bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
                 var token = sqlconn.CommandTimeoutInS == 0
                     ? CancellationToken.None
                     : new CancellationTokenSource(TimeSpan.FromSeconds(sqlconn.CommandTimeoutInS)).Token;
-                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn, tableName, columns, token); //.Wait(token);
+                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn, tableName, columns, mode, token); //.Wait(token);
             }
         }
 
@@ -65,7 +83,19 @@ namespace ProgressOnderwijsUtils
             CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, table.QualifiedName, table.Columns.ArraySelect(column => column.ColumnMetaData), cancellationToken);
+            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, table, BulkCopyFieldMappingMode.ExactMatch, cancellationToken);
+        }
+
+        public static void WriteMetaObjectsToServer<T>(
+            [NotNull] this SqlBulkCopy bulkCopy,
+            [NotNull] IEnumerable<T> metaObjects,
+            [NotNull] SqlCommandCreationContext context,
+            [NotNull] DatabaseDescription.Table table,
+            BulkCopyFieldMappingMode mode,
+            CancellationToken cancellationToken)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, table.QualifiedName, table.Columns.ArraySelect(column => column.ColumnMetaData), mode, cancellationToken);
         }
 
         /// <summary>
@@ -77,6 +107,19 @@ namespace ProgressOnderwijsUtils
             [NotNull] SqlCommandCreationContext context,
             [NotNull] string tableName,
             [NotNull] DbColumnMetaData[] columns,
+            CancellationToken cancellationToken)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, tableName, columns, BulkCopyFieldMappingMode.ExactMatch, cancellationToken);
+        }
+
+        public static void WriteMetaObjectsToServer<T>(
+            [NotNull] this SqlBulkCopy bulkCopy,
+            [NotNull] IEnumerable<T> metaObjects,
+            [NotNull] SqlCommandCreationContext context,
+            [NotNull] string tableName,
+            [NotNull] DbColumnMetaData[] columns,
+            BulkCopyFieldMappingMode mode,
             CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
@@ -93,7 +136,7 @@ namespace ProgressOnderwijsUtils
             bulkCopy.DestinationTableName = tableName;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken)) {
-                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, columns.Where(column => !column.Is_Computed && !column.Is_RowVersion).ToArray());
+                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, columns.Where(column => !column.Is_Computed && !column.Is_RowVersion).ToArray(), mode);
                 var sw = Stopwatch.StartNew();
                 try {
                     bulkCopy.WriteToServer(objectReader);
@@ -148,7 +191,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] DbColumnMetaData[] columns)
+        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] DbColumnMetaData[] columns, BulkCopyFieldMappingMode mode)
             where T : IMetaObject
         {
             var dataColumns = ColumnDefinition.GetFromTable(columns);
@@ -156,10 +199,10 @@ namespace ProgressOnderwijsUtils
             var mapping = FieldMapping.VerifyAndCreate(
                 clrColumns,
                 typeof(T).ToCSharpFriendlyTypeName(),
-                false,
+                mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
                 dataColumns,
                 "table " + tableName,
-                false);
+                mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
 
             FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, bulkCopy);
             return mapping;
