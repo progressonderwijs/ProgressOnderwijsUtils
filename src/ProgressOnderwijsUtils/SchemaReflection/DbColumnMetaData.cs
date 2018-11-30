@@ -118,6 +118,16 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public static class DbColumnMetaDataExtensions
     {
+        /// <summary>
+        /// Override the ordinal, which might come in handy when mapping an existing table to a tempdb table.
+        /// </summary>
+        [NotNull]
+        public static DbColumnMetaData SetOrdinal([NotNull] this DbColumnMetaData column, int ordinal)
+        {
+            column.Ordinal = ordinal;
+            return column;
+        }
+
         [NotNull]
         internal static DbColumnMetaData[] SetOrdinal([NotNull] this DbColumnMetaData[] columns)
         {
