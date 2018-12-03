@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => initialDependentValues.SetEqual(new[] { 111, 333 }));
 
             var db = DatabaseDescription.LoadFromSchemaTables(Context.Connection);
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, db.TableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two);
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, db.GetTableByName("dbo.T1"), false, null, null, "A", AId.One, AId.Two);
 
             var finalDependentValues = SQL($"select C from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalDependentValues.SetEqual(new[] { 333 }));
@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             ").ExecuteNonQuery(Context);
 
             var db = DatabaseDescription.LoadFromSchemaTables(Context.Connection);
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, db.TableByName("dbo.T1"), false, null, null, PksToDelete("A", 1, 2));
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, db.GetTableByName("dbo.T1"), false, null, null, PksToDelete("A", 1, 2));
             var finalValues = SQL($"select B from T1").ReadPlain<int>(Context);
 
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T1" }));
@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => initialTLeafKeys.SetEqual(new[] { 1, 2, 3, 4 }));
 
             var db = DatabaseDescription.LoadFromSchemaTables(Context.Connection);
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, db.TableByName("dbo.TRoot"), true, null, null, new RootId { Root = 1, }, new RootId { Root = 2 });
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, db.GetTableByName("dbo.TRoot"), true, null, null, new RootId { Root = 1, }, new RootId { Root = 2 });
 
             var finalT2 = SQL($"select D from T2").ReadPlain<int>(Context);
             PAssert.That(() => finalT2.SetEqual(new[] { 5 }));
@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 => onTable == "dbo.T2";
 
             var db = DatabaseDescription.LoadFromSchemaTables(Context.Connection);
-            var deletionReport = CascadedDelete.RecursivelyDelete(Context, db.TableByName("dbo.T1"), false, null, StopCascading, "A", AId.One);
+            var deletionReport = CascadedDelete.RecursivelyDelete(Context, db.GetTableByName("dbo.T1"), false, null, StopCascading, "A", AId.One);
 
             PAssert.That(() => deletionReport.Select(t => t.Table).SequenceEqual(new[] { "dbo.T3", "dbo.T1" }));
         }

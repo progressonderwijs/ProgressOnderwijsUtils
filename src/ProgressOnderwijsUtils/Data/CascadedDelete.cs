@@ -45,13 +45,12 @@ namespace ProgressOnderwijsUtils
             )
             where TId : IPropertiesAreUsedImplicitly, IMetaObject
         {
-            var tableName = "#pksTable";
-            var pksTable = ParameterizedSql.CreateDynamic($"{tableName}");
+            var pksTable = SQL($"#pksTable");
             var pkColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
             CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, pkColumnsSql, pksTable);
-            pksToDelete.BulkCopyToSqlServer(conn, tableName, initialTableAsEntered.Columns.ArraySelect(column => column.ColumnMetaData));
+            pksToDelete.BulkCopyToSqlServer(conn, pksTable.CommandText(), DbColumnMetaData.ColumnMetaDatas(conn, pksTable));
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}

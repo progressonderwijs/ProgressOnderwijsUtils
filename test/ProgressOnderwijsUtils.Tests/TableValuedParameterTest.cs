@@ -78,10 +78,10 @@ namespace ProgressOnderwijsUtils.Tests
             var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
             var metaObjects = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string> { QueryTableValue = s });
 
-            SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(Context);
+            var tableName = SQL($"#strings");
+            SQL($@"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Context);
             //manual bulk insert because our default TVP types explicitly forbid null
-            var table = DatabaseDescription.LoadTempDb(Context.Connection).TableByTempDbName(Context.Connection, "#strings");
-            metaObjects.BulkCopyToSqlServer(Context.Connection, table);
+            metaObjects.BulkCopyToSqlServer(Context.Connection, tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
 
             var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(Context);
             SQL($@"drop table #strings").ExecuteNonQuery(Context);
