@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils.Drawing
             return bitmap;
         }
 
-        /// <summary>Converts any image format to a known aspect ratio, saving as Jpeg; returns the bytes of the new 
+        /// <summary>Converts any image format to a known aspect ratio, saving as Jpeg; returns the bytes of the new
         /// jpeg file or NULL if the source image is corrupt of too large (i.e. has a dimension greater than MAX_IMAGE_DIMENSION)
         /// It does this by chosing the largest possible centered rectangle in the old image
         /// that has the same aspect ratio as the output dimensions.  This rectangle

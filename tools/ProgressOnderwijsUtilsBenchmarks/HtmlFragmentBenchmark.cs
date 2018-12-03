@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             htmlFragment.SaveHtmlFragmentToStream(ms, Encoding.UTF8);
         }
 
-        class Config : ManualConfig
+        sealed class Config : ManualConfig
         {
             public Config()
             {
