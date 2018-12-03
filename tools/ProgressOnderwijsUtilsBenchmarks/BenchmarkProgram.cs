@@ -9,7 +9,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             BenchmarkRunner.Run<HtmlFragmentBenchmark>();
             MicroOrm.MicroOrmBenchmarkProgram.RunBenchmarks();
-            return;
             //RunArrayBuilderBenchmarks();
         }
 
