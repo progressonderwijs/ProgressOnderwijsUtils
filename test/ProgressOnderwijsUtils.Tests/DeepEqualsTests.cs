@@ -7,7 +7,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class DeepEqualsTests
+    public sealed class DeepEqualsTests
     {
         [Fact]
         public void RefPair()
@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils.Tests
             //OK, members are of same type
         }
 
-        class XT
+        sealed class XT
         {
             // ReSharper disable UnusedAutoPropertyAccessor.Local
             // ReSharper disable UnaccessedField.Local
@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils.Tests
             public string XYZ { get; set; }
         }
 
-        class Recursive
+        sealed class Recursive
         {
             public int V = 3;
 
