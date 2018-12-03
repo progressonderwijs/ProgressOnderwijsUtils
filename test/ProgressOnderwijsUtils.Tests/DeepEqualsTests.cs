@@ -7,6 +7,12 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
+    // ReSharper disable SimilarAnonymousTypeNearby
+    // ReSharper disable UnusedAutoPropertyAccessor.Local
+    // ReSharper disable UnaccessedField.Local
+    // ReSharper disable NotAccessedField.Local
+#pragma warning disable 649
+#pragma warning disable 414
     public sealed class DeepEqualsTests
     {
         [Fact]
@@ -53,10 +59,6 @@ namespace ProgressOnderwijsUtils.Tests
 
         sealed class XT
         {
-            // ReSharper disable UnusedAutoPropertyAccessor.Local
-            // ReSharper disable UnaccessedField.Local
-#pragma warning disable 649
-#pragma warning disable 414
             public decimal BC;
             public string XYZ { get; set; }
         }
@@ -74,8 +76,7 @@ namespace ProgressOnderwijsUtils.Tests
             [UsedImplicitly] //equality via deep-equals
             public Recursive Next;
         }
-#pragma warning restore 649
-#pragma warning restore 414
+
         [Fact]
         public void SimpleTypes()
         {
