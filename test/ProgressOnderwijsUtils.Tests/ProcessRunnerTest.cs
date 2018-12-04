@@ -43,6 +43,27 @@ namespace ProgressOnderwijsUtils.Tests
             }
         }
 
+        [Fact(Timeout = 5000)]
+        public void CanCollectOutputAfterUsingWriteToConsoleWithPrefix()
+        {
+            void DoTest()
+            {
+                var result = new ProcessStartSettings {
+                    ExecutableName = "xcopy",
+                }.StartProcess(CancellationToken.None);
+
+                result.WriteToConsoleWithPrefix("x");
+                PAssert.That(() => result.StdOutput().Result.SequenceEqual(new[] { "0 File(s) copied" }));
+            }
+
+            try {
+                DoTest();
+            } catch {
+                //very rarely processes are flaky outside of our control; that's out of scope for this test.
+                DoTest();
+            }
+        }
+
         [Fact]
         public void CanBeCancelled()
         {
