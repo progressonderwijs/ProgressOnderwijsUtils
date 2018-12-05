@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtils
                             nextRow = unpacker(reader, out lastColumnRead);
                         } catch (Exception ex) {
                             var queryErr = QueryExecutionErrorMessage<T>(cmd);
-                            var columnErr = ColumnUnpackingErrorMessage<T>(reader, lastColumnRead);
+                            var columnErr = UnpackingErrorMessage<T>(reader, lastColumnRead);
                             throw new InvalidOperationException(queryErr + "\n\n" + columnErr, ex);
                         }
                         yield return nextRow; //cannot yield in try-catch block
@@ -149,13 +149,13 @@ namespace ProgressOnderwijsUtils
                 try {
                     return unpacker(reader, out lastColumnRead);
                 } catch (Exception ex) when (!reader.IsClosed) {
-                    throw new InvalidOperationException(ColumnUnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+                    throw new InvalidOperationException(UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
                 }
             }
         }
 
         [NotNull]
-        static string ColumnUnpackingErrorMessage<T>([NotNull] SqlDataReader reader, int lastColumnRead) where T : IMetaObject, new()
+        static string UnpackingErrorMessage<T>([NotNull] SqlDataReader reader, int lastColumnRead) where T : IMetaObject, new()
         {
             var mps = MetaObject.GetMetaProperties<T>();
             var metaObjectTypeName = typeof(T).ToCSharpFriendlyTypeName();
