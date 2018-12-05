@@ -109,42 +109,44 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
         {
-            using (var reusableCmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                SqlDataReader reader = null;
+            var cmd = q.CreateSqlCommand(qCommandCreationContext);
+            SqlDataReader reader = null;
+            var lastColumnRead = -1;
+            ParameterizedSqlExecutionException CreateHelpfulException(Exception ex)
+                => cmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects) + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+
+            try {
                 DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
                 try {
-                    reader = reusableCmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
                     unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMappingMode);
-                } catch (Exception ex) {
-                    reader?.Dispose();
-                    throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects) + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. ", ex);
+                } catch (Exception e) {
+                    throw CreateHelpfulException(e);
                 }
-                try {
-                    while (true) {
-                        bool hasNext;
-                        try {
-                            hasNext = reader.Read();
-                        } catch (Exception ex) {
-                            throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects) + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. ", ex);
-                        }
-                        if (!hasNext) {
-                            break;
-                        }
-                        T nextRow;
-                        var lastColumnRead = 0;
-                        try {
-                            nextRow = unpacker(reader, out lastColumnRead);
-                        } catch (Exception ex) {
-                            var extraDetails = reader == null || reader.IsClosed || lastColumnRead < 0
-                                ? ""
-                                : UnpackingErrorMessage<T>(reader, lastColumnRead);
-                            throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects) + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + extraDetails, ex);
-                        }
-                        yield return nextRow; //cannot yield in try-catch block
+
+                while (true) {
+                    bool isDone;
+                    try {
+                        isDone = !reader.Read();
+                    } catch (Exception e) {
+                        throw CreateHelpfulException(e);
                     }
-                } finally {
-                    reader?.Dispose();
+
+                    if (isDone) {
+                        break;
+                    }
+                    T nextRow;
+                    try {
+                        nextRow = unpacker(reader, out lastColumnRead);
+                    } catch (Exception e) {
+                        throw CreateHelpfulException(e);
+                    }
+
+                    yield return nextRow; //cannot yield in try-catch block
                 }
+            } finally {
+                reader?.Dispose();
+                cmd.Dispose();
             }
         }
 
