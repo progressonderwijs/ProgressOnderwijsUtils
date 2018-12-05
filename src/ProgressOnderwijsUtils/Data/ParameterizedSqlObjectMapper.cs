@@ -1,6 +1,3 @@
-using ExpressionToCodeLib;
-using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Collections;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,6 +7,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using ExpressionToCodeLib;
+using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -238,7 +238,6 @@ namespace ProgressOnderwijsUtils
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
             };
 
-
         [NotNull]
         static Dictionary<MethodInfo, MethodInfo> MakeMap([NotNull] params InterfaceMapping[] mappings)
             => mappings
@@ -406,7 +405,8 @@ namespace ProgressOnderwijsUtils
                 var arrayBuilderVar = Expression.Variable(arrayBuilderOfRowsType, "rowList");
                 var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
                 var addRowToBuilderExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
-                var callReader_Read = Expression.Call(dataReaderParamExpr, ReadMethod);
+                var resetLastColumnRead = Expression.Assign(lastColumnReadParamExpr, Expression.Constant(-1));
+                var callReader_Read = Expression.Block(resetLastColumnRead, Expression.Call(dataReaderParamExpr, ReadMethod));
                 var loopExitLabel = Expression.Label("loopExit");
                 var breakIfAtEndOfReaderExpr = Expression.IfThen(Expression.Not(callReader_Read), Expression.Break(loopExitLabel));
                 var loopAddRowThenReadExpr = Expression.Loop(Expression.Block(addRowToBuilderExpr, breakIfAtEndOfReaderExpr), loopExitLabel);
