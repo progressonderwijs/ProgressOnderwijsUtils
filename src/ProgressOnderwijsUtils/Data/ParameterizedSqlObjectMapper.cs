@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
     public enum FieldMappingMode
     {
         RequireExactColumnMatches,
-        IgnoreExtraDestinationFields,
+        IgnoreExtraMetaProperties,
     }
 
     public static class ParameterizedSqlObjectMapper
