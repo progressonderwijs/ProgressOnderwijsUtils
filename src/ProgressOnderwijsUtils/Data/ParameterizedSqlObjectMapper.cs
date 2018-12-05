@@ -64,13 +64,15 @@ namespace ProgressOnderwijsUtils
                 var lastColumnRead = -2;
                 try {
                     var reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    using (reader) {
+                    try {
                         var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, FieldMappingMode.RequireExactColumnMatches);
                         try {
                             return unpacker(reader, out lastColumnRead);
                         } catch (Exception ex) when (!reader.IsClosed) {
                             throw new InvalidOperationException(UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
                         }
+                    } finally {
+                        reader?.Dispose();
                     }
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments("ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
