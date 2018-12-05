@@ -120,15 +120,15 @@ namespace ProgressOnderwijsUtils
                     unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMappingMode);
                 } catch (Exception ex) {
                     reader?.Dispose();
-                    throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects)+"<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. ", ex);
+                    throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects) + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. ", ex);
                 }
-                using (reader)
+                try {
                     while (true) {
                         bool hasNext;
                         try {
                             hasNext = reader.Read();
                         } catch (Exception ex) {
-                            throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects)+"<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. ", ex);
+                            throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects) + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. ", ex);
                         }
                         if (!hasNext) {
                             break;
@@ -141,10 +141,13 @@ namespace ProgressOnderwijsUtils
                             var extraDetails = reader == null || reader.IsClosed || lastColumnRead < 0
                                 ? ""
                                 : UnpackingErrorMessage<T>(reader, lastColumnRead);
-                            throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects)+"<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + extraDetails, ex);
+                            throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects) + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + extraDetails, ex);
                         }
                         yield return nextRow; //cannot yield in try-catch block
                     }
+                } finally {
+                    reader?.Dispose();
+                }
             }
         }
 
