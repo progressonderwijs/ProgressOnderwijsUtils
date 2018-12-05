@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
@@ -114,15 +113,14 @@ namespace ProgressOnderwijsUtils
         public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
         {
             using (var reusableCmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                var cmd = reusableCmd.Command;
                 SqlDataReader reader = null;
                 DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
                 try {
-                    reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
+                    reader = reusableCmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
                     unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMappingMode);
                 } catch (Exception ex) {
                     reader?.Dispose();
-                    throw new InvalidOperationException(QueryExecutionErrorMessage<T>(cmd), ex);
+                    throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects)+"<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. ", ex);
                 }
                 using (reader)
                     while (true) {
@@ -130,7 +128,7 @@ namespace ProgressOnderwijsUtils
                         try {
                             hasNext = reader.Read();
                         } catch (Exception ex) {
-                            throw new InvalidOperationException(QueryExecutionErrorMessage<T>(cmd), ex);
+                            throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects)+"<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. ", ex);
                         }
                         if (!hasNext) {
                             break;
@@ -140,9 +138,10 @@ namespace ProgressOnderwijsUtils
                         try {
                             nextRow = unpacker(reader, out lastColumnRead);
                         } catch (Exception ex) {
-                            var queryErr = QueryExecutionErrorMessage<T>(cmd);
-                            var columnErr = UnpackingErrorMessage<T>(reader, lastColumnRead);
-                            throw new InvalidOperationException(queryErr + "\n\n" + columnErr, ex);
+                            var extraDetails = reader == null || reader.IsClosed || lastColumnRead < 0
+                                ? ""
+                                : UnpackingErrorMessage<T>(reader, lastColumnRead);
+                            throw reusableCmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects)+"<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + extraDetails, ex);
                         }
                         yield return nextRow; //cannot yield in try-catch block
                     }
@@ -174,13 +173,6 @@ namespace ProgressOnderwijsUtils
             var nullValueWarning = isValueNull ?? false ? "NULL value from " : "";
 
             return $"Cannot unpack {nullValueWarning}column {sqlColName} of type {sqlTypeName} (C#:{expectedCsTypeName}) into {metaObjectTypeName}.{mp.Name} of type {actualCsTypeName}";
-        }
-
-        [NotNull]
-        static string QueryExecutionErrorMessage<T>([NotNull] SqlCommand cmd, [CanBeNull] [CallerMemberName] string caller = null) where T : IMetaObject, new()
-        {
-            return caller + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. \n\nQUERY:\n\n"
-                + SqlCommandDebugStringifier.DebugFriendlyCommandText(cmd, SqlTracerAgumentInclusion.IncludingArgumentValues);
         }
 
         /// <summary>
