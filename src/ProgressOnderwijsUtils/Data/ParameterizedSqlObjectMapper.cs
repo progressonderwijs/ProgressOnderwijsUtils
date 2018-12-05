@@ -68,10 +68,7 @@ namespace ProgressOnderwijsUtils
                     var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, fieldMapping);
                     return unpacker(reader, out lastColumnRead);
                 } catch (Exception ex) {
-                    var extraDetails = reader == null || reader.IsClosed || lastColumnRead < 0
-                        ? ""
-                        : UnpackingErrorMessage<T>(reader, lastColumnRead);
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + extraDetails, ex);
+                    throw cmd.CreateExceptionWithTextAndArguments("ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
                 } finally {
                     reader?.Dispose();
                 }
@@ -152,8 +149,11 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static string UnpackingErrorMessage<T>([NotNull] SqlDataReader reader, int lastColumnRead) where T : IMetaObject, new()
+        static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead) where T : IMetaObject, new()
         {
+            if (reader?.IsClosed != false || lastColumnRead < 0) {
+                return "";
+            }
             var mps = MetaObject.GetMetaProperties<T>();
             var metaObjectTypeName = typeof(T).ToCSharpFriendlyTypeName();
 
