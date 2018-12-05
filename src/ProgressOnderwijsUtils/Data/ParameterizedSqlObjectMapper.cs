@@ -585,7 +585,7 @@ namespace ProgressOnderwijsUtils
                             (readerParamExpr, lastColumnReadParameter) =>
                                 Expression.MemberInit(
                                     Expression.New(type),
-                                    createColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
+                                    CreateColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
                     };
                 }
 
@@ -599,11 +599,11 @@ namespace ProgressOnderwijsUtils
                             (readerParamExpr, lastColumnReadParameter) =>
                                 Expression.MemberInit(
                                     Expression.New(type),
-                                    createColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
+                                    CreateColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
                     };
                 }
 
-                static IEnumerable<MemberAssignment> createColumnBindings(
+                static IEnumerable<MemberAssignment> CreateColumnBindings(
                     ColumnOrdering orderingP,
                     ParameterExpression readerParamExpr,
                     ParameterExpression lastColumnReadParameter)
