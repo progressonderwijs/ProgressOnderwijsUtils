@@ -66,11 +66,9 @@ namespace ProgressOnderwijsUtils
                     var reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
                     try {
                         var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, FieldMappingMode.RequireExactColumnMatches);
-                        try {
-                            return unpacker(reader, out lastColumnRead);
-                        } catch (Exception ex) when (!reader.IsClosed) {
-                            throw new InvalidOperationException(UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
-                        }
+                        return unpacker(reader, out lastColumnRead);
+                    } catch (Exception ex) when (!reader.IsClosed) {
+                        throw new InvalidOperationException(UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
                     } finally {
                         reader?.Dispose();
                     }
