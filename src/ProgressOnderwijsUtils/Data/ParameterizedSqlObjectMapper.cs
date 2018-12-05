@@ -55,25 +55,26 @@ namespace ProgressOnderwijsUtils
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The database connection</param>
+        /// <param name="fieldMapping"> </param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
+        public static T[] ReadMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
         {
             using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                var lastColumnRead = -2;
+                var lastColumnRead = -1;
+                SqlDataReader reader = null;
                 try {
-                    var reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    try {
-                        var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, FieldMappingMode.RequireExactColumnMatches);
-                        return unpacker(reader, out lastColumnRead);
-                    } catch (Exception ex) when (!reader.IsClosed) {
-                        throw new InvalidOperationException(UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
-                    } finally {
-                        reader?.Dispose();
-                    }
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
+                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+                    var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, fieldMapping);
+                    return unpacker(reader, out lastColumnRead);
+                } catch (Exception ex) {
+                    var extraDetails = reader == null || reader.IsClosed || lastColumnRead < 0
+                        ? ""
+                        : UnpackingErrorMessage<T>(reader, lastColumnRead);
+                    throw cmd.CreateExceptionWithTextAndArguments("ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + extraDetails, ex);
+                } finally {
+                    reader?.Dispose();
                 }
             }
         }
