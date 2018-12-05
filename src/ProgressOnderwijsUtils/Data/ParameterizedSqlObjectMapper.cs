@@ -60,12 +60,22 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static T[] ReadMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
         {
-            using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
+            using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
+                var lastColumnRead = -2;
                 try {
-                    return ReadMetaObjectsUnpacker<T>(cmd.Command);
+                    var reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+                    using (reader) {
+                        var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, FieldMappingMode.RequireExactColumnMatches);
+                        try {
+                            return unpacker(reader, out lastColumnRead);
+                        } catch (Exception ex) when (!reader.IsClosed) {
+                            throw new InvalidOperationException(UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+                        }
+                    }
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments("ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
                 }
+            }
         }
 
         /// <summary>
@@ -135,22 +145,6 @@ namespace ProgressOnderwijsUtils
                         }
                         yield return nextRow; //cannot yield in try-catch block
                     }
-            }
-        }
-
-        [MustUseReturnValue]
-        [NotNull]
-        public static T[] ReadMetaObjectsUnpacker<T>([NotNull] SqlCommand cmd, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
-            where T : IMetaObject, new()
-        {
-            using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
-                var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, fieldMappingMode);
-                var lastColumnRead = 0;
-                try {
-                    return unpacker(reader, out lastColumnRead);
-                } catch (Exception ex) when (!reader.IsClosed) {
-                    throw new InvalidOperationException(UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
-                }
             }
         }
 
