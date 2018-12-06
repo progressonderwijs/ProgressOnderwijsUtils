@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
@@ -27,7 +28,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadScalar<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }
         }
 
@@ -41,7 +42,7 @@ namespace ProgressOnderwijsUtils
                     }
                     return cmd.Command.ExecuteNonQuery();
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("Non-query failed", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ExecuteNonQuery) + " failed", e);
                 }
         }
 
@@ -68,12 +69,14 @@ namespace ProgressOnderwijsUtils
                     var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, fieldMapping);
                     return unpacker(reader, out lastColumnRead);
                 } catch (Exception ex) {
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
                 } finally {
                     reader?.Dispose();
                 }
             }
         }
+
+        static string CurrentMethodName<T>([CallerMemberName] string callingMethod = null) => callingMethod + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">()";
 
         /// <summary>
         /// Executes a  DataTable op basis van het huidige commando met de huidige parameters
@@ -93,7 +96,7 @@ namespace ProgressOnderwijsUtils
                     adapter.Fill(dt);
                     return dt;
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadDataTable failed", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ReadDataTable) + "() failed", e);
                 }
         }
 
@@ -113,7 +116,7 @@ namespace ProgressOnderwijsUtils
             SqlDataReader reader = null;
             var lastColumnRead = -1;
             ParameterizedSqlExecutionException CreateHelpfulException(Exception ex)
-                => cmd.CreateExceptionWithTextAndArguments(nameof(EnumerateMetaObjects) + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+                => cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
 
             try {
                 DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
@@ -196,7 +199,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return ReadPlainUnpacker<T>(cmd.Command);
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadPlain<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }
         }
 
