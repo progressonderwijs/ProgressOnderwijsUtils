@@ -8,7 +8,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class MetaObjectPropertyLoaderTest : TransactedLocalConnection
+    public sealed class MetaObjectPropertyLoaderTest : TransactedLocalConnection
     {
         static readonly BlaOk[] SampleObjects = {
             new BlaOk { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },
@@ -165,14 +165,28 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception()
+        public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception_with_helpful_message()
         {
             PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
 
             var (table, columns) = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context.Connection, table, columns);
 
-            Assert.ThrowsAny<Exception>(() => SQL($"select Id, Bla, Bla2 = cast(null as varchar) from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context));
+            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id, Bla, Bla2 = cast(null as varchar) from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context));
+            PAssert.That(() => ex.Message.Contains("Cannot unpack NULL value from column Bla2", StringComparison.OrdinalIgnoreCase));
+        }
+
+        [Fact]
+        public void Query_errors_unrelated_to_column_mapping_are_not_misleading()
+        {
+            PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
+
+            var (table, columns) = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, table, columns);
+
+            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id = (select Id from #MyTable), Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context));
+            Assert.DoesNotContain("column", ex.Message);
+            Assert.Contains("Subquery returned more than 1 value", ex.InnerException.Message);
         }
     }
 }
