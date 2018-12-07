@@ -23,6 +23,7 @@ namespace ProgressOnderwijsUtils
 
         public void Execute()
         {
+            bulkCopy.BulkCopyTimeout = context.CommandTimeoutInS;
             var sqlconn = context.Connection;
             var tableName = targetTable.TableName;
             if (metaObjects == null) {
@@ -36,7 +37,12 @@ namespace ProgressOnderwijsUtils
             }
             bulkCopy.DestinationTableName = tableName;
 
-            using (var objectReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken)) {
+            var effectiveReaderToken =
+                context.CommandTimeoutInS == 0 ? cancellationToken
+                : cancellationToken == default ? new CancellationTokenSource(TimeSpan.FromSeconds(context.CommandTimeoutInS)).Token
+                : CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(TimeSpan.FromSeconds(context.CommandTimeoutInS)).Token, cancellationToken).Token;
+
+            using (var objectReader = new MetaObjectDataReader<T>(metaObjects, effectiveReaderToken)) {
                 var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, mode, targetTable.Columns);
                 var sw = Stopwatch.StartNew();
                 try {

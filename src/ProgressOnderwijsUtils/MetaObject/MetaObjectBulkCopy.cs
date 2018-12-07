@@ -87,12 +87,9 @@ namespace ProgressOnderwijsUtils
         {
             using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
                 bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
-                var token = sqlconn.CommandTimeoutInS == 0
-                    ? CancellationToken.None
-                    : new CancellationTokenSource(TimeSpan.FromSeconds(sqlconn.CommandTimeoutInS)).Token;
                 new MetaObjectBulkInsertOperation<T> {
                     bulkCopy = bulkCopy,
-                    cancellationToken = token,
+                    cancellationToken = default,
                     context = sqlconn,
                     metaObjects = metaObjects,
                     mode = mode,
