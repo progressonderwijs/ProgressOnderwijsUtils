@@ -105,14 +105,8 @@ namespace ProgressOnderwijsUtils
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
-                bulkCopy.BulkCopyTimeout = sqlconn.CommandTimeoutInS;
-                new MetaObjectBulkInsertOperation<T> {
-                    bulkCopy = bulkCopy,
-                    cancellationToken = default,
-                    context = sqlconn,
-                    metaObjects = metaObjects,
-                    Target = BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns).WithMode(mode),
-                }.Execute(); //.Wait(token);
+                BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns).WithMode(mode)
+                    .WriteObjectsToServer(bulkCopy, metaObjects, sqlconn, default);
             }
         }
     }
