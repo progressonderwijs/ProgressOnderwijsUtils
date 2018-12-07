@@ -112,24 +112,12 @@ namespace ProgressOnderwijsUtils
             CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, table, BulkCopyFieldMappingMode.ExactMatch, cancellationToken);
-        }
-
-        public static void WriteMetaObjectsToServer<T>(
-            [NotNull] this SqlBulkCopy bulkCopy,
-            [NotNull] IEnumerable<T> metaObjects,
-            [NotNull] SqlCommandCreationContext context,
-            [NotNull] DatabaseDescription.Table table,
-            BulkCopyFieldMappingMode mode,
-            CancellationToken cancellationToken)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
-        {
             new MetaObjectBulkInsertOperation<T> {
                 bulkCopy = bulkCopy,
                 cancellationToken = cancellationToken,
                 context = context,
                 metaObjects = metaObjects,
-                mode = mode,
+                mode = BulkCopyFieldMappingMode.ExactMatch,
                 targetTable = BulkInsertTargetTable.FromDatabaseDescription(table),
             }.Execute();
         }
