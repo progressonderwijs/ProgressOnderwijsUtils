@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var bulkInsertTarget = CreateTargetTable();
             Assert.Throws<InvalidOperationException>(() => {
-                bulkInsertTarget.With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new LessColumns() });
+                bulkInsertTarget.With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new LessColumns { Id = 37, SomeColumn = 42 } });
             });
         }
 

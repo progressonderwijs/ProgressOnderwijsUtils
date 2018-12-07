@@ -59,7 +59,8 @@ namespace ProgressOnderwijsUtils
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
+        public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)] T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping = FieldMappingMode.RequireExactColumnMatches)
+            where T : IMetaObject, new()
         {
             using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
                 var lastColumnRead = -1;
@@ -76,6 +77,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        [NotNull]
         static string CurrentMethodName<T>([CallerMemberName] string callingMethod = null) => callingMethod + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">()";
 
         /// <summary>
@@ -110,7 +112,7 @@ namespace ProgressOnderwijsUtils
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         [MustUseReturnValue]
         [NotNull]
-        public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
+        public static IEnumerable<T> EnumerateMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)] T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
         {
             var cmd = q.CreateSqlCommand(qCommandCreationContext);
             SqlDataReader reader = null;
@@ -154,7 +156,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead) where T : IMetaObject, new()
+        static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
+            where T : IMetaObject, new()
         {
             if (reader?.IsClosed != false || lastColumnRead < 0) {
                 return "";

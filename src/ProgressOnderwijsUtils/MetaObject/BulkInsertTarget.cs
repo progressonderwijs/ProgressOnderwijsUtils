@@ -19,25 +19,31 @@ namespace ProgressOnderwijsUtils
         BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             => (TableName, Columns, Mode, Options) = (tableName, columnDefinition, mode, options);
 
+        [NotNull]
         public static BulkInsertTarget FromDatabaseDescription([NotNull] DatabaseDescription.Table table)
             => new BulkInsertTarget(table.QualifiedName, table.Columns.ArraySelect((col, colIdx) => ColumnDefinition.FromDbColumnMetaData(col.ColumnMetaData, colIdx)));
 
-        public static BulkInsertTarget LoadFromTable(SqlCommandCreationContext conn, ParameterizedSql tableName)
+        [NotNull]
+        public static BulkInsertTarget LoadFromTable([NotNull] SqlCommandCreationContext conn, ParameterizedSql tableName)
             => LoadFromTable(conn, tableName.CommandText());
 
-        public static BulkInsertTarget LoadFromTable(SqlCommandCreationContext conn, string tableName)
+        [NotNull]
+        public static BulkInsertTarget LoadFromTable([NotNull] SqlCommandCreationContext conn, [NotNull] string tableName)
             => FromCompleteSetOfColumns(tableName, DbColumnMetaData.ColumnMetaDatas(conn, tableName));
 
-        public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, DbColumnMetaData[] columns)
+        [NotNull]
+        public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, [NotNull] DbColumnMetaData[] columns)
             => new BulkInsertTarget(tableName, columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
 
+        [NotNull]
         public BulkInsertTarget With(BulkCopyFieldMappingMode mode)
             => new BulkInsertTarget(TableName, Columns, mode, Options);
 
+        [NotNull]
         public BulkInsertTarget With(SqlBulkCopyOptions options)
             => new BulkInsertTarget(TableName, Columns, Mode, options);
 
-        public void BulkInsert<T>(SqlCommandCreationContext sqlContext, IEnumerable<T> metaObjects, CancellationToken cancellationToken = default)
+        public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>([NotNull] SqlCommandCreationContext sqlContext, [NotNull] IEnumerable<T> metaObjects, CancellationToken cancellationToken = default)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
             => MetaObjectBulkInsertOperation.Execute(sqlContext, TableName, Columns, Mode, Options, metaObjects, cancellationToken);
     }

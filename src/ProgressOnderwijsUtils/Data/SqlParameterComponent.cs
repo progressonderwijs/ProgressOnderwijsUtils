@@ -156,7 +156,7 @@ namespace ProgressOnderwijsUtils
             ISqlComponent CreateFromPlainValues(IEnumerable enumerable);
         }
 
-        class TableValuedParameterFactory<T> : ITableValuedParameterFactory
+        sealed class TableValuedParameterFactory<T> : ITableValuedParameterFactory
         {
             readonly string sqlTableTypeName;
             //cache delegate to save some allocs and avoid risking slow paths like COMDelegate::DelegateConstruct

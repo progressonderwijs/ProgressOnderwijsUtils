@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 {
     static class MetaObjectBulkInsertOperation
     {
-        public static void Execute<T>(SqlCommandCreationContext sqlContext, string tableName, ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, IEnumerable<T> enumerable, CancellationToken cancellationToken)
+        public static void Execute<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>([NotNull] SqlCommandCreationContext sqlContext, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, [NotNull] IEnumerable<T> enumerable, CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             if (enumerable == null) {
@@ -95,7 +95,8 @@ namespace ProgressOnderwijsUtils
             return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
         }
 
-        static FieldMapping[] CreateMapping<T>(MetaObjectDataReader<T> objectReader, string tableName, ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
+        [NotNull]
+        static FieldMapping[] CreateMapping<T>([NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             var effectiveTableColumns = tableColumns.Where(c => c.ColumnAccessibility != ColumnAccessibility.Readonly && (c.ColumnAccessibility != ColumnAccessibility.AutoIncrement || options.HasFlag(SqlBulkCopyOptions.KeepIdentity)));

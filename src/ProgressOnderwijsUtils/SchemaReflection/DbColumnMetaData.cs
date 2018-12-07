@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public byte Scale { get; set; }
             public byte ColumnFlags { get; set; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
 
-            public static ParameterizedSql BaseQuery(ParameterizedSql database)
+            public static ParameterizedSql BaseQuery(bool fromTempDb)
                 => SQL($@"
                 with pks (object_id, column_id) as (
                     select i.object_id, ic.column_id
@@ -43,10 +43,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                         + 8*c.is_identity
                         + 16*iif(c.default_object_id is not null, convert(bit, 1), convert(bit, 0))
                         )
-                from {!database.IsEmpty && database + SQL($".")}sys.columns c
+                from {fromTempDb && SQL($"tempdb.")}sys.columns c
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
                 where 1=1
             ");
+
+            [NotNull]
+            public static DbColumnMetaData[] RunQuery([NotNull] SqlCommandCreationContext conn, bool fromTempDb, ParameterizedSql filter) => BaseQuery(fromTempDb).Append(filter).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
         }
 
         DbColumnMetaData(CompressedSysColumnsValue fromDb)
@@ -144,31 +147,42 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public SqlTypeInfo SqlTypeInfo()
             => new SqlTypeInfo(UserTypeId, MaxLength, Precision, Scale, IsNullable);
 
+        [NotNull]
         public string ToSqlColumnDefinition()
             => $"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}";
 
+        [NotNull]
         public DataColumn ToDataColumn()
             => new DataColumn(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
 
         static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
-        public static DbColumnMetaData[] ColumnMetaDatas(SqlCommandCreationContext conn, ParameterizedSql objectName)
+        [NotNull]
+        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlCommandCreationContext conn, ParameterizedSql objectName)
             => ColumnMetaDatas(conn, objectName.CommandText());
 
-        public static DbColumnMetaData[] ColumnMetaDatas(SqlCommandCreationContext conn, string qualifiedObjectName)
+        [NotNull]
+        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlCommandCreationContext conn, [NotNull] string qualifiedObjectName)
         {
-            var query = qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
-                ? CompressedSysColumnsValue.BaseQuery(tempDb)
-                    .Append(SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
-                : CompressedSysColumnsValue.BaseQuery(default)
-                    .Append(SQL($@"and c.object_id = object_id({qualifiedObjectName})"));
-            return query.ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
+            var dbColumnMetaDatas = qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
+                ? CompressedSysColumnsValue.RunQuery(conn, true, SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
+                : CompressedSysColumnsValue.RunQuery(conn, false, SQL($@"and c.object_id = object_id({qualifiedObjectName})"));
+            return Sort(dbColumnMetaDatas);
         }
 
-        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlCommandCreationContext conn)
-            => CompressedSysColumnsValue.BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<CompressedSysColumnsValue>(conn)
-                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Select(v => new DbColumnMetaData(v)).ToArray());
+        [NotNull]
+        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll([NotNull] SqlCommandCreationContext conn)
+            => CompressedSysColumnsValue.RunQuery(conn, false, default)
+                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => Sort(cols.ToArray()));
 
+        [NotNull]
+        static DbColumnMetaData[] Sort([NotNull] DbColumnMetaData[] toArray)
+        {
+            Array.Sort(toArray, byColumnId);
+            return toArray;
+        }
+
+        static readonly Comparison<DbColumnMetaData> byColumnId = (a, b) => ((int)a.ColumnId).CompareTo((int)b.ColumnId);
         static readonly Regex isSafeForSql = new Regex("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
 
         [Pure]
@@ -179,7 +193,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     public static class DbColumnMetaDataExtensions
     {
         [Pure]
-        public static ParameterizedSql CreateNewTableQuery(this IReadOnlyCollection<DbColumnMetaData> columns, ParameterizedSql tableName)
+        public static ParameterizedSql CreateNewTableQuery([NotNull] this IReadOnlyCollection<DbColumnMetaData> columns, ParameterizedSql tableName)
         {
             var keyColumns = columns
                 .Where(md => md.IsPrimaryKey)
@@ -190,7 +204,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var columnDefinitionSql = ParameterizedSql.CreateDynamic(columns
                 .Select(md => $"{md.ToSqlColumnDefinition()}{(keyColumns.Length == 1 && md.IsPrimaryKey ? " primary key" : "")}")
                 .JoinStrings("\r\n    , ")
-            );
+                );
             var primaryKeyDefinitionSql = keyColumns.Length > 1
                 ? SQL($"\r\n    , primary key ({ParameterizedSql.CreateDynamic(keyColumns.JoinStrings(", "))})")
                 : ParameterizedSql.Empty;
