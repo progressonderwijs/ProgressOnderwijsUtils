@@ -136,7 +136,8 @@ namespace ProgressOnderwijsUtils
             bulkCopy.DestinationTableName = tableName;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken)) {
-                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, columns.Where(column => !column.Is_Computed && !column.Is_RowVersion).ToArray(), mode);
+                var tableColumnDefinitions = ColumnDefinition.GetFromCompleteSetOfColumns(columns.Where(column => !column.Is_Computed && !column.Is_RowVersion).ToArray());
+                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, mode, tableColumnDefinitions);
                 var sw = Stopwatch.StartNew();
                 try {
                     bulkCopy.WriteToServer(objectReader);
@@ -191,10 +192,9 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] DbColumnMetaData[] columns, BulkCopyFieldMappingMode mode)
+        static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, string tableName, BulkCopyFieldMappingMode mode, [NotNull] ColumnDefinition[] tableColumns)
             where T : IMetaObject
         {
-            var tableColumns = ColumnDefinition.GetFromCompleteSetOfColumns(columns);
             var clrColumns = ColumnDefinition.GetFromReader(objectReader);
             var mapping = FieldMapping.VerifyAndCreate(
                 clrColumns,
