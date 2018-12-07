@@ -17,15 +17,15 @@ namespace ProgressOnderwijsUtils
         public SqlBulkCopy bulkCopy;
         public SqlCommandCreationContext context;
         public IEnumerable<T> metaObjects;
-        public BulkInsertTargetTable targetTable;
-        public BulkCopyFieldMappingMode mode;
+        public BulkInsertTarget Target;
+        public BulkCopyFieldMappingMode mode => Target.Mode;
         public CancellationToken cancellationToken;
 
         public void Execute()
         {
             bulkCopy.BulkCopyTimeout = context.CommandTimeoutInS;
             var sqlconn = context.Connection;
-            var tableName = targetTable.TableName;
+            var tableName = Target.TableName;
             if (metaObjects == null) {
                 throw new ArgumentNullException(nameof(metaObjects));
             }
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
                 : CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(TimeSpan.FromSeconds(context.CommandTimeoutInS)).Token, cancellationToken).Token;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects, effectiveReaderToken)) {
-                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, mode, targetTable.Columns);
+                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, mode, Target.Columns);
                 var sw = Stopwatch.StartNew();
                 try {
                     bulkCopy.WriteToServer(objectReader);

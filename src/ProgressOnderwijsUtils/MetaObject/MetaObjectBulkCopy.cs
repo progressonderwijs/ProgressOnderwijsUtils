@@ -15,13 +15,14 @@ namespace ProgressOnderwijsUtils
         AllowExtraDatabaseColumns,
     }
 
-    public struct BulkInsertTargetTable
+    public struct BulkInsertTarget
     {
         public string TableName;
         public ColumnDefinition[] Columns;
+        public BulkCopyFieldMappingMode Mode;
 
-        public static BulkInsertTargetTable FromDatabaseDescription([NotNull] DatabaseDescription.Table table)
-            => new BulkInsertTargetTable {
+        public static BulkInsertTarget FromDatabaseDescription([NotNull] DatabaseDescription.Table table)
+            => new BulkInsertTarget {
                 TableName = table.QualifiedName,
                 Columns = table.Columns
                     .Select((col, colIdx) => col.Is_Computed || col.Is_RowVersion ? null : ColumnDefinition.FromSqlXType(colIdx, col.ColumnName, col.User_Type_Id))
@@ -29,8 +30,8 @@ namespace ProgressOnderwijsUtils
                     .ToArray(),
             };
 
-        public static BulkInsertTargetTable FromCompleteSetOfColumns(string tableName, DbColumnMetaData[] columns)
-            => new BulkInsertTargetTable {
+        public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, DbColumnMetaData[] columns)
+            => new BulkInsertTarget {
                 TableName = tableName,
                 Columns = InsertableColumnsFromCompleteSet(columns),
             };
@@ -40,6 +41,9 @@ namespace ProgressOnderwijsUtils
                 .Select((col, colIdx) => col.Is_Computed || col.Is_RowVersion ? null : ColumnDefinition.FromSqlXType(colIdx, col.ColumnName, col.User_Type_Id))
                 .Where(c => c != null)
                 .ToArray();
+
+        public BulkInsertTarget WithMode(BulkCopyFieldMappingMode mode)
+            => new BulkInsertTarget { TableName = TableName, Columns = Columns, Mode = mode };
     }
 
     /// <summary>
@@ -92,8 +96,7 @@ namespace ProgressOnderwijsUtils
                     cancellationToken = default,
                     context = sqlconn,
                     metaObjects = metaObjects,
-                    mode = mode,
-                    targetTable = BulkInsertTargetTable.FromCompleteSetOfColumns(tableName,columns),
+                    Target = BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns).WithMode(mode),
                 }.Execute(); //.Wait(token);
             }
         }
@@ -114,8 +117,7 @@ namespace ProgressOnderwijsUtils
                 cancellationToken = cancellationToken,
                 context = context,
                 metaObjects = metaObjects,
-                mode = BulkCopyFieldMappingMode.ExactMatch,
-                targetTable = BulkInsertTargetTable.FromDatabaseDescription(table),
+                Target = BulkInsertTarget.FromDatabaseDescription(table),
             }.Execute();
         }
 
@@ -136,8 +138,7 @@ namespace ProgressOnderwijsUtils
                 cancellationToken = cancellationToken,
                 context = context,
                 metaObjects = metaObjects,
-                mode = BulkCopyFieldMappingMode.ExactMatch,
-                targetTable = BulkInsertTargetTable.FromCompleteSetOfColumns(tableName, columns),
+                Target = BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns),
             }.Execute();
         }
     }
