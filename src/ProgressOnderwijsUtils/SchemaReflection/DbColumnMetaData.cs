@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public short Max_Length { get; set; }
             public byte Precision { get; set; }
             public byte Scale { get; set; }
-            public byte ColumnFlags { get; set; }
+            public byte ColumnFlags { get; set; } //reading large amounts of data is considerably faster when that data contains fewer columns, and this code may well be executed several times during startup, particularly in dev - so it's worth keeping this fast.
 
             public static ParameterizedSql BaseQuery(ParameterizedSql database)
                 => SQL($@"
