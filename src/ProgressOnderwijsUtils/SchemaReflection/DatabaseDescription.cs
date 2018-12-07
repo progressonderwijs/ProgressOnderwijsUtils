@@ -119,16 +119,16 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 => ColumnMetaData.ColumnName;
 
             public bool Is_Primary_Key
-                => ColumnMetaData.Is_Primary_Key;
+                => ColumnMetaData.IsPrimaryKey;
 
             public bool Is_RowVersion
-                => ColumnMetaData.Is_RowVersion;
+                => ColumnMetaData.IsRowVersion;
 
             public bool Is_Computed
-                => ColumnMetaData.Is_Computed;
+                => ColumnMetaData.IsComputed;
 
             public bool Is_Nullable
-                => ColumnMetaData.Is_Nullable;
+                => ColumnMetaData.IsNullable;
 
             public SqlXType User_Type_Id
                 => ColumnMetaData.User_Type_Id;

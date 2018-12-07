@@ -8,15 +8,41 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
 {
-    public sealed class DbColumnMetaData : IMetaObject
+    public sealed class DbColumnMetaData
     {
+        struct CompressedSysColumnsValue : IMetaObject
+        {
+            public string ColumnName { get; set; }
+            public DbObjectId DbObjectId { get; set; }
+            public ColumnIndex ColumnId { get; set; }
+            public SqlXType User_Type_Id { get; set; }
+            public short Max_Length { get; set; }
+            public byte Precision { get; set; }
+            public byte Scale { get; set; }
+            public byte ColumnFlags { get; set; }
+        }
+
+        DbColumnMetaData(CompressedSysColumnsValue fromDb)
+        {
+            ColumnId = fromDb.ColumnId;
+            ColumnName = fromDb.ColumnName;
+            DbObjectId = fromDb.DbObjectId;
+            columnFlags = new EightFlags(fromDb.ColumnFlags);
+            Max_Length = fromDb.Max_Length;
+            Precision = fromDb.Precision;
+            Scale = fromDb.Scale;
+            User_Type_Id = fromDb.User_Type_Id;
+        }
+
+        public DbColumnMetaData() { }
+
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {
             var metaData = new DbColumnMetaData {
                 ColumnName = name,
                 User_Type_Id = SqlXTypeExtensions.NetTypeToSqlXType(dataType),
-                Is_Nullable = dataType.CanBeNull(),
-                Is_Primary_Key = isKey,
+                IsNullable = dataType.CanBeNull(),
+                IsPrimaryKey = isKey,
             };
             if (dataType == typeof(string)) {
                 metaData.Max_Length = (short)(maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER);
@@ -40,18 +66,56 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public short Max_Length { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
         public byte Precision { get; set; }
         public byte Scale { get; set; }
-        public bool Is_Nullable { get; set; } = true;
-        public bool Is_Computed { get; set; }
-        public bool Is_Primary_Key { get; set; }
+        EightFlags columnFlags;
 
-        public bool Is_RowVersion
+        public bool IsNullable
+        {
+            get
+                => columnFlags[0];
+            set
+                => columnFlags[0] = value;
+        }
+
+        public bool IsComputed
+        {
+            get
+                => columnFlags[1];
+            set
+                => columnFlags[1] = value;
+        }
+
+        public bool IsPrimaryKey
+        {
+            get
+                => columnFlags[2];
+            set
+                => columnFlags[2] = value;
+        }
+
+        public bool HasAutoIncrementIdentity
+        {
+            get
+                => columnFlags[3];
+            set
+                => columnFlags[3] = value;
+        }
+
+        public bool HasDefaultValue
+        {
+            get
+                => columnFlags[4];
+            set
+                => columnFlags[4] = value;
+        }
+
+        public bool IsRowVersion
             => User_Type_Id == SqlXType.RowVersion;
 
         public override string ToString()
             => ToStringByMembers.ToStringByPublicMembers(this);
 
         public SqlTypeInfo SqlTypeInfo()
-            => new SqlTypeInfo(User_Type_Id, Max_Length, Precision, Scale, Is_Nullable);
+            => new SqlTypeInfo(User_Type_Id, Max_Length, Precision, Scale, IsNullable);
 
         public string ToSqlColumnDefinition()
             => $"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}";
@@ -76,8 +140,12 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     , c.max_length
                     , c.precision
                     , c.scale
-                    , c.is_nullable
-                    , c.is_computed
+                    , ColumnFlags = 0
+                        + 1*c.is_nullable 
+                        + 2*c.is_computed
+                        + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
+                        + 8*c.is_identity
+                        + 16*iif(c.default_object_id is not null, convert(bit, 1), convert(bit, 0))
                     , is_primary_key = iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
                 from {database}{(database.IsEmpty ? ParameterizedSql.Empty : SQL($"."))}sys.columns c
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
@@ -92,17 +160,17 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             if (qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)) {
                 return BaseQuery(tempDb).Append(SQL($@"
                     and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})
-                ")).ReadMetaObjects<DbColumnMetaData>(conn);
+                ")).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
             } else {
                 return BaseQuery(ParameterizedSql.Empty).Append(SQL($@"
                     and c.object_id = object_id({qualifiedObjectName})
-                ")).ReadMetaObjects<DbColumnMetaData>(conn);
+                ")).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
             }
         }
 
         public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlCommandCreationContext conn)
-            => BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<DbColumnMetaData>(conn)
-                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.ToArray());
+            => BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<CompressedSysColumnsValue>(conn)
+                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Select(v => new DbColumnMetaData(v)).ToArray());
 
         static readonly Regex isSafeForSql = new Regex("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
 
@@ -117,13 +185,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public static ParameterizedSql CreateNewTableQuery(this IReadOnlyCollection<DbColumnMetaData> columns, ParameterizedSql tableName)
         {
             var keyColumns = columns
-                .Where(md => md.Is_Primary_Key)
+                .Where(md => md.IsPrimaryKey)
                 .Select(md => $"{md.ColumnName}")
                 .ToArray();
             // in een contained db mag er geen named PK worden gedefinieerd voor een temp. table
             // zolang er dus geen pk's over meerdere kolommen worden gedefinieerd gaat onderstaande ook goed voor temp. tables in een contained db
             var columnDefinitionSql = ParameterizedSql.CreateDynamic(columns
-                .Select(md => $"{md.ToSqlColumnDefinition()}{(keyColumns.Length == 1 && md.Is_Primary_Key ? " primary key" : "")}")
+                .Select(md => $"{md.ToSqlColumnDefinition()}{(keyColumns.Length == 1 && md.IsPrimaryKey ? " primary key" : "")}")
                 .JoinStrings("\r\n    , ")
             );
             var primaryKeyDefinitionSql = keyColumns.Length > 1
