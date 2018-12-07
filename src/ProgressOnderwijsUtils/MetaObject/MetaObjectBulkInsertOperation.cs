@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -11,55 +12,48 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    struct MetaObjectBulkInsertOperation<T>
-        where T : IMetaObject, IPropertiesAreUsedImplicitly
+    static class MetaObjectBulkInsertOperation
     {
-        public SqlBulkCopy bulkCopy;
-        public SqlCommandCreationContext context;
-        public IEnumerable<T> metaObjects;
-        public BulkInsertTarget Target;
-        public BulkCopyFieldMappingMode mode => Target.Mode;
-        public CancellationToken cancellationToken;
-
-        public void Execute()
+        public static void Execute<T>(SqlCommandCreationContext sqlContext, string tableName, ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, IEnumerable<T> enumerable, CancellationToken cancellationToken)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            bulkCopy.BulkCopyTimeout = context.CommandTimeoutInS;
-            var sqlconn = context.Connection;
-            var tableName = Target.TableName;
-            if (metaObjects == null) {
-                throw new ArgumentNullException(nameof(metaObjects));
+            if (enumerable == null) {
+                throw new ArgumentNullException(nameof(enumerable));
             }
-            if (sqlconn == null) {
-                throw new ArgumentNullException(nameof(sqlconn));
+            if (sqlContext == null) {
+                throw new ArgumentNullException(nameof(sqlContext));
             }
-            if (sqlconn.State != ConnectionState.Open) {
-                throw new InvalidOperationException($"Cannot bulk copy into {tableName}: connection isn't open but {sqlconn.State}.");
+            if (sqlContext.Connection.State != ConnectionState.Open) {
+                throw new InvalidOperationException($"Cannot bulk copy into {tableName}: connection isn't open but {sqlContext.Connection.State}.");
             }
-            bulkCopy.DestinationTableName = tableName;
 
             var effectiveReaderToken =
-                context.CommandTimeoutInS == 0 ? cancellationToken
-                : cancellationToken == default ? new CancellationTokenSource(TimeSpan.FromSeconds(context.CommandTimeoutInS)).Token
-                : CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(TimeSpan.FromSeconds(context.CommandTimeoutInS)).Token, cancellationToken).Token;
+                sqlContext.CommandTimeoutInS == 0 ? cancellationToken
+                : cancellationToken == default ? new CancellationTokenSource(TimeSpan.FromSeconds(sqlContext.CommandTimeoutInS)).Token
+                : CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(TimeSpan.FromSeconds(sqlContext.CommandTimeoutInS)).Token, cancellationToken).Token;
+            using (var sqlBulkCopy = new SqlBulkCopy(sqlContext.Connection, options, null))
+            using (var objectReader = new MetaObjectDataReader<T>(enumerable, effectiveReaderToken)) {
+                sqlBulkCopy.BulkCopyTimeout = sqlContext.CommandTimeoutInS;
+                sqlBulkCopy.DestinationTableName = tableName;
+                var mapping = CreateMapping(objectReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options);
 
-            using (var objectReader = new MetaObjectDataReader<T>(metaObjects, effectiveReaderToken)) {
-                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, mode, Target.Columns);
+                FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
                 var sw = Stopwatch.StartNew();
                 try {
-                    bulkCopy.WriteToServer(objectReader);
+                    sqlBulkCopy.WriteToServer(objectReader);
                     //so why no async?
                     //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating metaObjects, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
                     var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
-                    throw HelpfulException(bulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException(mapping, destinationColumnIndex, ex);
+                    throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException<T>(mapping, destinationColumnIndex, ex);
                 } finally {
-                    TraceBulkInsertDuration(context.Tracer, tableName, sw, objectReader.RowsProcessed);
+                    TraceBulkInsertDuration(sqlContext.Tracer, tableName, sw, objectReader.RowsProcessed);
                 }
             }
         }
 
         [NotNull]
-        static Exception MetaObjectBasedException([NotNull] FieldMapping[] mapping, int destinationColumnIndex, SqlException ex)
+        static Exception MetaObjectBasedException<T>([NotNull] FieldMapping[] mapping, int destinationColumnIndex, SqlException ex)
         {
             var sourceColumnName = "??unknown??";
             foreach (var m in mapping) {
@@ -103,20 +97,18 @@ namespace ProgressOnderwijsUtils
             return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
         }
 
-        [NotNull]
-        static FieldMapping[] ApplyMetaObjectColumnMapping([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, string tableName, BulkCopyFieldMappingMode mode, [NotNull] ColumnDefinition[] tableColumns)
+        static FieldMapping[] CreateMapping<T>(MetaObjectDataReader<T> objectReader, string tableName, ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            var clrColumns = ColumnDefinition.GetFromReader(objectReader);
-            var mapping = FieldMapping.VerifyAndCreate(
-                clrColumns,
+            var effectiveTableColumns = tableColumns.Where(c => c.ColumnAccessibility != ColumnAccessibility.Readonly && (c.ColumnAccessibility != ColumnAccessibility.AutoIncrement || options.HasFlag(SqlBulkCopyOptions.KeepIdentity)));
+
+            return FieldMapping.VerifyAndCreate(
+                ColumnDefinition.GetFromReader(objectReader),
                 typeof(T).ToCSharpFriendlyTypeName(),
                 mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
-                tableColumns,
+                effectiveTableColumns.ToArray(),
                 "table " + tableName,
                 mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
-
-            FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, bulkCopy);
-            return mapping;
         }
     }
 }

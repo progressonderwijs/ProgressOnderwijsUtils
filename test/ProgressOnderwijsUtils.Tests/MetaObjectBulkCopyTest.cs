@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
-using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -155,6 +155,71 @@ namespace ProgressOnderwijsUtils.Tests
                 from {tableName}
             ").ReadMetaObjects<ComputedColumnExample>(Context).Single();
             PAssert.That(() => fromDb.Computed);
+        }
+
+        sealed class IncludingIdentityColumn : ValueBase<IncludingIdentityColumn>, IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            public int Id { get; set; }
+            public int AnIdentity { get; set; }
+            public string Bla { get; set; }
+        }
+
+        sealed class ExcludingIdentityColumn : ValueBase<ExcludingIdentityColumn>, IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            public int Id { get; set; }
+            public string Bla { get; set; }
+        }
+
+        [Fact]
+        public void BulkCopyIgnoresIdentityColumns()
+        {
+            var tableName = SQL($"#MyTable");
+            SQL($@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
+                    , Bla nvarchar(max) not null
+                )
+            ").ExecuteNonQuery(Context);
+
+            new[] {
+                new ExcludingIdentityColumn {
+                    Id = 11,
+                    Bla = "Something"
+                }
+            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
+
+            var fromDb = SQL($@"
+                select *
+                from {tableName}
+            ").ReadMetaObjects<IncludingIdentityColumn>(Context).Single();
+            PAssert.That(() => fromDb.AnIdentity == 1);
+        }
+
+        [Fact]
+        public void BulkCopySupportsKeepIdentity()
+        {
+            var tableName = SQL($"#MyTable");
+            SQL($@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
+                    , Bla nvarchar(max) not null
+                )
+            ").ExecuteNonQuery(Context);
+
+            new[] {
+                new IncludingIdentityColumn {
+                    Id = 11,
+                    Bla = "Something"
+                }
+            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName).With(SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.CheckConstraints));
+
+            var fromDb = SQL($@"
+                select *
+                from {tableName}
+            ").ReadMetaObjects<IncludingIdentityColumn>(Context).Single();
+            PAssert.That(() => fromDb.AnIdentity == 0);
         }
 
         [Fact]

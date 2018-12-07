@@ -15,63 +15,42 @@ namespace ProgressOnderwijsUtils
         AllowExtraDatabaseColumns,
     }
 
-    public struct BulkInsertTarget
+    public sealed class BulkInsertTarget
     {
         public string TableName;
         public ColumnDefinition[] Columns;
         public BulkCopyFieldMappingMode Mode;
+        public SqlBulkCopyOptions Options = SqlBulkCopyOptions.CheckConstraints;
+        BulkInsertTarget() { }
+
+        public BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition)
+        {
+            TableName = tableName;
+            Columns = columnDefinition;
+        }
 
         public static BulkInsertTarget FromDatabaseDescription([NotNull] DatabaseDescription.Table table)
-            => new BulkInsertTarget {
-                TableName = table.QualifiedName,
-                Columns = table.Columns
-                    .Select((col, colIdx) => col.Is_Computed || col.Is_RowVersion ? null : ColumnDefinition.FromSqlXType(colIdx, col.ColumnName, col.User_Type_Id))
-                    .Where(c => c != null)
-                    .ToArray(),
-            };
+            => new BulkInsertTarget(table.QualifiedName, table.Columns.ArraySelect((col, colIdx) => ColumnDefinition.FromDbColumnMetaData(col.ColumnMetaData, colIdx)));
 
         public static BulkInsertTarget LoadFromTable(SqlCommandCreationContext conn, ParameterizedSql tableName)
-            => FromCompleteSetOfColumns(tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(conn, tableName.CommandText()));
-
+            => LoadFromTable(conn, tableName.CommandText());
 
         public static BulkInsertTarget LoadFromTable(SqlCommandCreationContext conn, string tableName)
             => FromCompleteSetOfColumns(tableName, DbColumnMetaData.ColumnMetaDatas(conn, tableName));
 
         public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, DbColumnMetaData[] columns)
-            => new BulkInsertTarget {
-                TableName = tableName,
-                Columns = InsertableColumnsFromCompleteSet(columns),
-            };
+            => new BulkInsertTarget(tableName, columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
 
-        public static ColumnDefinition[] InsertableColumnsFromCompleteSet(DbColumnMetaData[] columns)
-            => columns
-                .Select((col, colIdx) => col.IsComputed || col.IsRowVersion ? null : ColumnDefinition.FromSqlXType(colIdx, col.ColumnName, col.UserTypeId, col.HasAutoIncrementIdentity, col.HasDefaultValue))
-                .Where(c => c != null)
-                .ToArray();
+        public BulkInsertTarget With(BulkCopyFieldMappingMode mode)
+            => new BulkInsertTarget { TableName = TableName, Columns = Columns, Mode = mode, Options = Options };
 
-        public BulkInsertTarget WithMode(BulkCopyFieldMappingMode mode)
-            => new BulkInsertTarget { TableName = TableName, Columns = Columns, Mode = mode };
+        public BulkInsertTarget With(SqlBulkCopyOptions options)
+            => new BulkInsertTarget { TableName = TableName, Columns = Columns, Mode = Mode, Options = options };
 
-        /// <summary>
-        /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
-        /// </summary>
-        public void BulkInsert<T>(SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlCommandCreationContext context, CancellationToken cancellationToken)
+        public void BulkInsert<T>(SqlCommandCreationContext sqlContext, IEnumerable<T> metaObjects, CancellationToken cancellationToken = default)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            new MetaObjectBulkInsertOperation<T> {
-                bulkCopy = bulkCopy,
-                cancellationToken = cancellationToken,
-                context = context,
-                metaObjects = metaObjects,
-                Target = this,
-            }.Execute();
-        }
-
-        public void BulkInsert<T>(SqlCommandCreationContext sqlContext, IEnumerable<T> metaObjects, SqlBulkCopyOptions sqlBulkCopyOptions = SqlBulkCopyOptions.CheckConstraints)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
-        {
-            using (var bulkCopy = new SqlBulkCopy(sqlContext.Connection, sqlBulkCopyOptions, null))
-                BulkInsert(bulkCopy, metaObjects, sqlContext, default);
+            MetaObjectBulkInsertOperation.Execute(sqlContext, TableName, Columns, Mode, Options, metaObjects, cancellationToken);
         }
     }
 
@@ -102,6 +81,6 @@ namespace ProgressOnderwijsUtils
 
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns, BulkCopyFieldMappingMode mode)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns).WithMode(mode).BulkInsert(sqlContext, metaObjects);
+            => BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns).With(mode).BulkInsert(sqlContext, metaObjects);
     }
 }
