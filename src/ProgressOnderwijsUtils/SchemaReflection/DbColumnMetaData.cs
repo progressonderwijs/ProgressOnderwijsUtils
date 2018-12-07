@@ -36,11 +36,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         /// </summary>
         public ColumnIndex ColumnId { get; set; }
 
-        /// <summary>
-        /// This is the actual zero-based index within the table.
-        /// </summary>
-        public int Ordinal { get; internal set; }
-
         public SqlXType User_Type_Id { get; set; }
         public short Max_Length { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
         public byte Precision { get; set; }
@@ -97,17 +92,17 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             if (qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)) {
                 return BaseQuery(tempDb).Append(SQL($@"
                     and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})
-                ")).ReadMetaObjects<DbColumnMetaData>(conn).SetOrdinal();
+                ")).ReadMetaObjects<DbColumnMetaData>(conn);
             } else {
                 return BaseQuery(ParameterizedSql.Empty).Append(SQL($@"
                     and c.object_id = object_id({qualifiedObjectName})
-                ")).ReadMetaObjects<DbColumnMetaData>(conn).SetOrdinal();
+                ")).ReadMetaObjects<DbColumnMetaData>(conn);
             }
         }
 
         public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlCommandCreationContext conn)
             => BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<DbColumnMetaData>(conn)
-                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.ToArray().SetOrdinal());
+                .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.ToArray());
 
         static readonly Regex isSafeForSql = new Regex("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
 
@@ -118,26 +113,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public static class DbColumnMetaDataExtensions
     {
-        /// <summary>
-        /// Override the ordinal, which might come in handy when mapping an existing table to a tempdb table.
-        /// </summary>
-        [NotNull]
-        public static DbColumnMetaData SetOrdinal([NotNull] this DbColumnMetaData column, int ordinal)
-        {
-            column.Ordinal = ordinal;
-            return column;
-        }
-
-        [NotNull]
-        internal static DbColumnMetaData[] SetOrdinal([NotNull] this DbColumnMetaData[] columns)
-        {
-            Array.Sort(columns, CompareOnColumnId);
-            for (var ordinal = 0; ordinal < columns.Length; ++ordinal) {
-                columns[ordinal].Ordinal = ordinal;
-            }
-            return columns;
-        }
-
         static readonly Comparison<DbColumnMetaData> CompareOnColumnId = (a, b) => a.ColumnId.CompareTo(b.ColumnId);
 
         [Pure]

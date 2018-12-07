@@ -194,7 +194,7 @@ namespace ProgressOnderwijsUtils
         static FieldMapping[] ApplyMetaObjectColumnMapping<T>([NotNull] SqlBulkCopy bulkCopy, [NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] DbColumnMetaData[] columns, BulkCopyFieldMappingMode mode)
             where T : IMetaObject
         {
-            var tableColumns = ColumnDefinition.GetFromTable(columns);
+            var tableColumns = ColumnDefinition.GetFromCompleteSetOfColumns(columns);
             var clrColumns = ColumnDefinition.GetFromReader(objectReader);
             var mapping = FieldMapping.VerifyAndCreate(
                 clrColumns,
