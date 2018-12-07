@@ -28,10 +28,10 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             ColumnName = fromDb.ColumnName;
             DbObjectId = fromDb.DbObjectId;
             columnFlags = new EightFlags(fromDb.ColumnFlags);
-            Max_Length = fromDb.Max_Length;
+            MaxLength = fromDb.Max_Length;
             Precision = fromDb.Precision;
             Scale = fromDb.Scale;
-            User_Type_Id = fromDb.User_Type_Id;
+            UserTypeId = fromDb.User_Type_Id;
         }
 
         public DbColumnMetaData() { }
@@ -40,12 +40,12 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             var metaData = new DbColumnMetaData {
                 ColumnName = name,
-                User_Type_Id = SqlXTypeExtensions.NetTypeToSqlXType(dataType),
+                UserTypeId = SqlXTypeExtensions.NetTypeToSqlXType(dataType),
                 IsNullable = dataType.CanBeNull(),
                 IsPrimaryKey = isKey,
             };
             if (dataType == typeof(string)) {
-                metaData.Max_Length = (short)(maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER);
+                metaData.MaxLength = (short)(maxLength * 2 ?? SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER);
             }
             if (dataType == typeof(decimal) || dataType == typeof(decimal?) || dataType == typeof(double) || dataType == typeof(double?)) {
                 metaData.Precision = 38;
@@ -62,8 +62,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         /// </summary>
         public DbColumnId ColumnId { get; set; }
 
-        public SqlXType User_Type_Id { get; set; }
-        public short Max_Length { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
+        public SqlXType UserTypeId { get; set; }
+        public short MaxLength { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
         public byte Precision { get; set; }
         public byte Scale { get; set; }
         EightFlags columnFlags;
@@ -109,19 +109,19 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         }
 
         public bool IsRowVersion
-            => User_Type_Id == SqlXType.RowVersion;
+            => UserTypeId == SqlXType.RowVersion;
 
         public override string ToString()
             => ToStringByMembers.ToStringByPublicMembers(this);
 
         public SqlTypeInfo SqlTypeInfo()
-            => new SqlTypeInfo(User_Type_Id, Max_Length, Precision, Scale, IsNullable);
+            => new SqlTypeInfo(UserTypeId, MaxLength, Precision, Scale, IsNullable);
 
         public string ToSqlColumnDefinition()
             => $"{ColumnName} {SqlTypeInfo().ToSqlTypeName()}";
 
         public DataColumn ToDataColumn()
-            => new DataColumn(ColumnName, User_Type_Id.SqlUnderlyingTypeInfo().ClrType);
+            => new DataColumn(ColumnName, UserTypeId.SqlUnderlyingTypeInfo().ClrType);
 
         static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
