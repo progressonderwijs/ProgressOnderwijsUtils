@@ -85,10 +85,6 @@ namespace ProgressOnderwijsUtils
             where T : IMetaObject, IPropertiesAreUsedImplicitly
             => BulkInsertTarget.FromDatabaseDescription(table).BulkInsert(sqlContext, metaObjects);
 
-        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] DatabaseDescription.Table table, BulkCopyFieldMappingMode mode)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => BulkInsertTarget.FromDatabaseDescription(table).WithMode(mode).BulkInsert(sqlContext, metaObjects);
-
         /// <summary>
         /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout, and options CheckConstraints | UseInternalTransaction.
         /// For more fine-grained control, create an SqlBulkCopy instance manually, and call bulkCopy.WriteMetaObjectsToServer(objs, sqlConnection, tableName)
