@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils
 
         public static ColumnDefinition[] InsertableColumnsFromCompleteSet(DbColumnMetaData[] columns)
             => columns
-                .Select((col, colIdx) => col.IsComputed || col.IsRowVersion ? null : ColumnDefinition.FromSqlXType(colIdx, col.ColumnName, col.UserTypeId))
+                .Select((col, colIdx) => col.IsComputed || col.IsRowVersion ? null : ColumnDefinition.FromSqlXType(colIdx, col.ColumnName, col.UserTypeId, col.HasAutoIncrementIdentity, col.HasDefaultValue))
                 .Where(c => c != null)
                 .ToArray();
 

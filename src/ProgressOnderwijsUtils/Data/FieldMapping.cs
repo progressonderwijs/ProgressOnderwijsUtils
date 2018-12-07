@@ -9,17 +9,17 @@ namespace ProgressOnderwijsUtils
 {
     public readonly struct FieldMapping
     {
-        public readonly IColumnDefinition Src;
-        public readonly IColumnDefinition Dst;
+        public readonly ColumnDefinition Src;
+        public readonly ColumnDefinition Dst;
 
-        FieldMapping(IColumnDefinition src, IColumnDefinition dst)
+        FieldMapping(ColumnDefinition src, ColumnDefinition dst)
         {
             Src = src;
             Dst = dst;
         }
 
         [NotNull]
-        public static FieldMapping[] Create([NotNull] IColumnDefinition[] srcColumns, [NotNull] IColumnDefinition[] dstColumns)
+        public static FieldMapping[] Create([NotNull] ColumnDefinition[] srcColumns, [NotNull] ColumnDefinition[] dstColumns)
         {
             var dstColumnsByName = dstColumns.ToDictionary(o => o.Name ?? "!!UNNAMED COLUMN!!", StringComparer.OrdinalIgnoreCase);
 
@@ -47,10 +47,10 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static FieldMapping[] VerifyAndCreate(
-            [NotNull] IColumnDefinition[] srcColumns,
+            [NotNull] ColumnDefinition[] srcColumns,
             string srcName,
             bool allowExtraSrcColumns,
-            [NotNull] IColumnDefinition[] dstColumns,
+            [NotNull] ColumnDefinition[] dstColumns,
             string dstName,
             bool allowExtraDstColumns)
         {

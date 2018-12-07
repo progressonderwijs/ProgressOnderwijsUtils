@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
             CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, pkColumnsSql, pksTable);
             var target = new BulkInsertTarget {
                 TableName = pksTable.CommandText(),
-                Columns = MetaObject.GetMetaProperties<TId>().ArraySelect((mp, index) => new ColumnDefinition(mp.DataType, mp.Name, index))
+                Columns = MetaObject.GetMetaProperties<TId>().ArraySelect((mp, index) => new ColumnDefinition(mp.DataType, mp.Name, index, false, false))
             };
             pksToDelete.BulkCopyToSqlServer(conn, target);
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"

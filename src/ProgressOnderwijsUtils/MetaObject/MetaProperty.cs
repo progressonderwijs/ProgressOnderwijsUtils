@@ -10,7 +10,7 @@ using JetBrains.Annotations;
 // ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
-    public interface IMetaProperty : IColumnDefinition
+    public interface IMetaProperty
     {
         Func<object, object> UntypedGetter { get; }
         object UnsafeSetPropertyAndReturnObject(object obj, object newValue);
@@ -20,6 +20,9 @@ namespace ProgressOnderwijsUtils
         bool CanWrite { get; }
         PropertyInfo PropertyInfo { get; }
         IReadOnlyList<object> CustomAttributes { get; }
+        Type DataType { get; }
+        string Name { get; }
+        int Index { get; }
     }
 
     public interface IReadonlyMetaProperty<in TOwner> : IMetaProperty
@@ -42,15 +45,27 @@ namespace ProgressOnderwijsUtils
             public int Index { get; }
 
             [NotNull]
-            public Type DataType => PropertyInfo.PropertyType;
+            public Type DataType
+                => PropertyInfo.PropertyType;
 
             public PropertyInfo PropertyInfo { get; }
-            public bool CanRead => getterMethod != null;
-            public bool CanWrite => setterMethod != null;
+
+            public bool CanRead
+                => getterMethod != null;
+
+            public bool CanWrite
+                => setterMethod != null;
+
             Func<TOwner, object> getter;
-            public Func<TOwner, object> Getter => getter ?? (getter = MkGetter(getterMethod, PropertyInfo.PropertyType));
+
+            public Func<TOwner, object> Getter
+                => getter ?? (getter = MkGetter(getterMethod, PropertyInfo.PropertyType));
+
             Setter<TOwner> setter;
-            public Setter<TOwner> Setter => setter ?? (setter = MkSetter(setterMethod, PropertyInfo.PropertyType));
+
+            public Setter<TOwner> Setter
+                => setter ?? (setter = MkSetter(setterMethod, PropertyInfo.PropertyType));
+
             Func<object, object> untypedGetter;
 
             [CanBeNull]
@@ -73,7 +88,8 @@ namespace ProgressOnderwijsUtils
             }
 
             [NotNull]
-            public Expression PropertyAccessExpression(Expression paramExpr) => Expression.Property(paramExpr, PropertyInfo);
+            public Expression PropertyAccessExpression(Expression paramExpr)
+                => Expression.Property(paramExpr, PropertyInfo);
 
             public Impl([NotNull] PropertyInfo pi, int implicitOrder, [NotNull] object[] attrs)
             {
@@ -91,7 +107,8 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            public override string ToString() => typeof(TOwner).ToCSharpFriendlyTypeName() + "." + Name;
+            public override string ToString()
+                => typeof(TOwner).ToCSharpFriendlyTypeName() + "." + Name;
 
             static Setter<TOwner> MkSetter([CanBeNull] MethodInfo setterMethod, Type propertyType)
             {
