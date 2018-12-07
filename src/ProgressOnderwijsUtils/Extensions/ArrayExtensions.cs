@@ -43,6 +43,9 @@ namespace ProgressOnderwijsUtils
             return output;
         }
 
+        /// <summary>
+        /// Like Enumerable.Select, but faster due to specialization for arrays.
+        /// </summary>
         [NotNull]
         [Pure]
         public static TR[] ArraySelect<T, TR>([NotNull] this IReadOnlyList<T> array, Func<T, TR> mappingFunction)
@@ -50,6 +53,34 @@ namespace ProgressOnderwijsUtils
             var output = new TR[array.Count];
             for (var i = 0; i < output.Length; ++i) {
                 output[i] = mappingFunction(array[i]);
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// Like Enumerable.Select, but faster due to specialization for arrays.
+        /// </summary>
+        [NotNull]
+        [Pure]
+        public static TR[] ArraySelect<T, TR>([NotNull] this T[] array, Func<T, int, TR> mappingFunction)
+        {
+            var output = new TR[array.Length];
+            for (var i = 0; i < array.Length; ++i) {
+                output[i] = mappingFunction(array[i], i);
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// Like Enumerable.Select, but faster due to specialization for arrays.
+        /// </summary>
+        [NotNull]
+        [Pure]
+        public static TR[] ArraySelect<T, TR>([NotNull] this IReadOnlyList<T> array, Func<T, int, TR> mappingFunction)
+        {
+            var output = new TR[array.Count];
+            for (var i = 0; i < output.Length; ++i) {
+                output[i] = mappingFunction(array[i], i);
             }
             return output;
         }
