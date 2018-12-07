@@ -44,6 +44,21 @@ namespace ProgressOnderwijsUtils
 
         public BulkInsertTarget WithMode(BulkCopyFieldMappingMode mode)
             => new BulkInsertTarget { TableName = TableName, Columns = Columns, Mode = mode };
+
+        /// <summary>
+        /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
+        /// </summary>
+        public void WriteObjectsToServer<T>(SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlCommandCreationContext context, CancellationToken cancellationToken)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            new MetaObjectBulkInsertOperation<T> {
+                bulkCopy = bulkCopy,
+                cancellationToken = cancellationToken,
+                context = context,
+                metaObjects = metaObjects,
+                Target = this,
+            }.Execute();
+        }
     }
 
     /// <summary>
@@ -99,47 +114,6 @@ namespace ProgressOnderwijsUtils
                     Target = BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns).WithMode(mode),
                 }.Execute(); //.Wait(token);
             }
-        }
-
-        /// <summary>
-        /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
-        /// </summary>
-        public static void WriteMetaObjectsToServer<T>(
-            [NotNull] this SqlBulkCopy bulkCopy,
-            [NotNull] IEnumerable<T> metaObjects,
-            [NotNull] SqlCommandCreationContext context,
-            [NotNull] DatabaseDescription.Table table,
-            CancellationToken cancellationToken)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
-        {
-            new MetaObjectBulkInsertOperation<T> {
-                bulkCopy = bulkCopy,
-                cancellationToken = cancellationToken,
-                context = context,
-                metaObjects = metaObjects,
-                Target = BulkInsertTarget.FromDatabaseDescription(table),
-            }.Execute();
-        }
-
-        /// <summary>
-        /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
-        /// </summary>
-        public static void WriteMetaObjectsToServer<T>(
-            [NotNull] this SqlBulkCopy bulkCopy,
-            [NotNull] IEnumerable<T> metaObjects,
-            [NotNull] SqlCommandCreationContext context,
-            [NotNull] string tableName,
-            [NotNull] DbColumnMetaData[] columns,
-            CancellationToken cancellationToken)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
-        {
-            new MetaObjectBulkInsertOperation<T> {
-                bulkCopy = bulkCopy,
-                cancellationToken = cancellationToken,
-                context = context,
-                metaObjects = metaObjects,
-                Target = BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns),
-            }.Execute();
         }
     }
 }
