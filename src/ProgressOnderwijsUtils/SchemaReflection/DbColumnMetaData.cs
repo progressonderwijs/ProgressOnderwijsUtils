@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             public string ColumnName { get; set; }
             public DbObjectId DbObjectId { get; set; }
-            public ColumnIndex ColumnId { get; set; }
+            public DbColumnId ColumnId { get; set; }
             public SqlXType User_Type_Id { get; set; }
             public short Max_Length { get; set; }
             public byte Precision { get; set; }
@@ -60,7 +60,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         /// <summary>
         /// This id is 1-based and may contain gaps due to dropping of columns.
         /// </summary>
-        public ColumnIndex ColumnId { get; set; }
+        public DbColumnId ColumnId { get; set; }
 
         public SqlXType User_Type_Id { get; set; }
         public short Max_Length { get; set; } = SchemaReflection.SqlTypeInfo.VARCHARMAX_MAXLENGTH_FOR_SQLSERVER;
@@ -133,8 +133,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     join sys.indexes i on ic.object_id = i.object_id and ic.index_id = i.index_id and i.is_primary_key = 1
                 )
                 select
-                    DbObjectId = c.object_id
-                    , ColumnName = c.name
+                    ColumnName = c.name
+                    , DbObjectId = c.object_id
                     , ColumnId = c.column_id
                     , c.user_type_id
                     , c.max_length

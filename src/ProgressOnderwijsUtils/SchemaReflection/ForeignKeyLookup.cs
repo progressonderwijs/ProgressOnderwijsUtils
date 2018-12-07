@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public FkReferentialAction DeleteReferentialAction, UpdateReferentialAction;
         public DbObjectId ReferencedParentTable;
         public DbObjectId ReferencingChildTable;
-        public (ColumnIndex ReferencedParentColumn, ColumnIndex ReferencingChildColumn)[] Columns;
+        public (DbColumnId ReferencedParentColumn, DbColumnId ReferencingChildColumn)[] Columns;
     }
 
     public sealed class ForeignKeyLookup
@@ -90,8 +90,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public FkReferentialAction UpdateReferentialAction { get; set; }
         public DbObjectId ReferencingChildTable { get; set; }
         public DbObjectId ReferencedParentTable { get; set; }
-        public ColumnIndex ReferencedParentColumn { get; set; }
-        public ColumnIndex ReferencingChildColumn { get; set; }
+        public DbColumnId ReferencedParentColumn { get; set; }
+        public DbColumnId ReferencingChildColumn { get; set; }
         public string Name { get; set; }
     }
 }
