@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
         public static ColumnDefinition FromSqlXType(int columnOrdinal, string columnName, SqlXType sqlXType)
             => new ColumnDefinition(sqlXType.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal);
 
-        ColumnDefinition(Type dataType, string name, int index)
+        public ColumnDefinition(Type dataType, string name, int index)
         {
             DataType = dataType;
             Name = name;

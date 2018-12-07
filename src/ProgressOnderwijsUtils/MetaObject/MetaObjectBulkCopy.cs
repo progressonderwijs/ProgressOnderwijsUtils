@@ -30,6 +30,13 @@ namespace ProgressOnderwijsUtils
                     .ToArray(),
             };
 
+        public static BulkInsertTarget LoadFromTable(SqlCommandCreationContext conn, ParameterizedSql tableName)
+            => FromCompleteSetOfColumns(tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(conn, tableName.CommandText()));
+
+
+        public static BulkInsertTarget LoadFromTable(SqlCommandCreationContext conn, string tableName)
+            => FromCompleteSetOfColumns(tableName, DbColumnMetaData.ColumnMetaDatas(conn, tableName));
+
         public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, DbColumnMetaData[] columns)
             => new BulkInsertTarget {
                 TableName = tableName,
@@ -89,15 +96,9 @@ namespace ProgressOnderwijsUtils
         /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout, and options CheckConstraints | UseInternalTransaction.
         /// For more fine-grained control, create an SqlBulkCopy instance manually, and call bulkCopy.WriteMetaObjectsToServer(objs, sqlConnection, tableName)
         /// </summary>
-        /// <typeparam name="T">The type of metaobject to be inserted</typeparam>
-        /// <param name="metaObjects">The list of entities to insert</param>
-        /// <param name="sqlContext">The Sql connection to write to</param>
-        /// <param name="tableName">The name of the table to insert into.</param>
-        /// <param name="columns">The schema of the table as it currently exists in the database.</param>
-        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns)
+        public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlCommandCreationContext sqlContext, BulkInsertTarget target)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns)
-                .BulkInsert(sqlContext, metaObjects);
+            => target.BulkInsert(sqlContext, metaObjects);
 
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns, BulkCopyFieldMappingMode mode)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
