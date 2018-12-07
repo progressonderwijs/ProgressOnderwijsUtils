@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 new XAttribute("Destination", Destination),
                 new XAttribute("ForceAuthn", ForceAuthn),
                 new XAttribute("IsPassive", "false"),
-                new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect"),
+                new XAttribute("ProtocolBinding", "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST"),
                 new XElement(SamlNamespaces.SAML_NS + "Issuer", Issuer.entity),
                 AuthnContextClassRef == null
                     ? null

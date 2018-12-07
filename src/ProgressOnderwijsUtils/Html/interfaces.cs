@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Html
         HtmlFragment AsFragment();
     }
 
-    public interface IHtmlTag : IConvertibleToFragment
+    public interface IHtmlElement : IConvertibleToFragment
     {
         string TagName { get; }
         string TagStart { get; }
@@ -20,29 +20,29 @@ namespace ProgressOnderwijsUtils.Html
         /// See HtmlTagAlterations for simple examples.  Upon using this method, the "change" parameter with receive a call to
         /// either ChangeWithContent or ChangeEmpty.
         /// </summary>
-        IHtmlTag ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) where THtmlTagAlteration : IHtmlTagAlteration;
+        IHtmlElement ApplyChange<TAlteration>(TAlteration change) where TAlteration : IHtmlElementAlteration;
     }
 
-    public interface IHtmlTagAlteration
+    public interface IHtmlElementAlteration
     {
-        TSelf ChangeEmpty<TSelf>(TSelf typed) where TSelf : struct, IHtmlTag<TSelf>;
-        TSelf ChangeWithContent<TSelf>(TSelf typed) where TSelf : struct, IHtmlTagAllowingContent<TSelf>;
+        TSelf ChangeEmpty<TSelf>(TSelf typed) where TSelf : struct, IHtmlElement<TSelf>;
+        TSelf ChangeWithContent<TSelf>(TSelf typed) where TSelf : struct, IHtmlElementAllowingContent<TSelf>;
     }
 
-    public interface IHtmlTagAllowingContent : IHtmlTag
+    public interface IHtmlElementAllowingContent : IHtmlElement
     {
-        HtmlFragment[] Contents { get; }
+        HtmlFragment Contents();
     }
 
-    public interface IHtmlTag<out TSelf> : IHtmlTag
-        where TSelf : struct, IHtmlTag<TSelf>
+    public interface IHtmlElement<out TSelf> : IHtmlElement
+        where TSelf : struct, IHtmlElement<TSelf>
     {
         TSelf WithAttributes(HtmlAttributes replacementAttributes);
     }
 
-    public interface IHtmlTagAllowingContent<out TSelf> : IHtmlTag<TSelf>, IHtmlTagAllowingContent
-        where TSelf : struct, IHtmlTagAllowingContent<TSelf>
+    public interface IHtmlElementAllowingContent<out TSelf> : IHtmlElement<TSelf>, IHtmlElementAllowingContent
+        where TSelf : struct, IHtmlElementAllowingContent<TSelf>
     {
-        TSelf WithContents(HtmlFragment[] replacementContents);
+        TSelf WithContents(HtmlFragment replacementContents);
     }
 }

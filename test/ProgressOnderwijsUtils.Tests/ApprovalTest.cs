@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils.Tests
             var filename = Path.GetFileNameWithoutExtension(filepath);
             var filedir = Path.GetDirectoryName(filepath);
             var namer = new SaneNamer {Name = filename + "." + membername, SourcePath = filedir};
-            var reporter = new DiffReporter();
+            var reporter = new ApprovalTests.Reporters.AllFailingTestsClipboardReporter();
             Approver.Verify(new FileApprover(writer, namer, true), reporter);
         }
     }

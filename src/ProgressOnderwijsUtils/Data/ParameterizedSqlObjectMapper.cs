@@ -1,5 +1,3 @@
-// ReSharper disable PossiblyMistakenUseOfParamsMethod
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -12,14 +10,15 @@ using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
-// ReSharper disable RedundantUsingDirective
-using System.Reflection.Emit;
-using System.Threading;
-
-// ReSharper restore RedundantUsingDirective
 
 namespace ProgressOnderwijsUtils
 {
+    public enum FieldMappingMode
+    {
+        RequireExactColumnMatches,
+        IgnoreExtraMetaProperties,
+    }
+
     public static class ParameterizedSqlObjectMapper
     {
         [MustUseReturnValue]
@@ -29,7 +28,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadScalar<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }
         }
 
@@ -43,7 +42,7 @@ namespace ProgressOnderwijsUtils
                     }
                     return cmd.Command.ExecuteNonQuery();
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("Non-query failed", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ExecuteNonQuery) + " failed", e);
                 }
         }
 
@@ -56,18 +55,28 @@ namespace ProgressOnderwijsUtils
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The database connection</param>
+        /// <param name="fieldMapping"> </param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext) where T : IMetaObject, new()
+        public static T[] ReadMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
         {
-            using (var cmd = q.CreateSqlCommand(qCommandCreationContext))
+            using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
+                var lastColumnRead = -1;
+                SqlDataReader reader = null;
                 try {
-                    return ReadMetaObjectsUnpacker<T>(cmd.Command);
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadMetaObjects<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
+                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+                    var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, fieldMapping);
+                    return unpacker(reader, out lastColumnRead);
+                } catch (Exception ex) {
+                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+                } finally {
+                    reader?.Dispose();
                 }
+            }
         }
+
+        static string CurrentMethodName<T>([CallerMemberName] string callingMethod = null) => callingMethod + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">()";
 
         /// <summary>
         /// Executes a  DataTable op basis van het huidige commando met de huidige parameters
@@ -87,7 +96,7 @@ namespace ProgressOnderwijsUtils
                     adapter.Fill(dt);
                     return dt;
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadDataTable failed", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ReadDataTable) + "() failed", e);
                 }
         }
 
@@ -103,61 +112,53 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static IEnumerable<T> EnumerateMetaObjects<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches) where T : IMetaObject, new()
         {
-            using (var reusableCmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                var cmd = reusableCmd.Command;
-                SqlDataReader reader = null;
+            var cmd = q.CreateSqlCommand(qCommandCreationContext);
+            SqlDataReader reader = null;
+            var lastColumnRead = -1;
+            ParameterizedSqlExecutionException CreateHelpfulException(Exception ex)
+                => cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+
+            try {
                 DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
                 try {
-                    reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
+                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
                     unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMappingMode);
-                } catch (Exception ex) {
-                    reader?.Dispose();
-                    throw new InvalidOperationException(QueryExecutionErrorMessage<T>(cmd), ex);
+                } catch (Exception e) {
+                    throw CreateHelpfulException(e);
                 }
-                using (reader)
-                    while (true) {
-                        bool hasNext;
-                        try {
-                            hasNext = reader.Read();
-                        } catch (Exception ex) {
-                            throw new InvalidOperationException(QueryExecutionErrorMessage<T>(cmd), ex);
-                        }
-                        if (!hasNext) {
-                            break;
-                        }
-                        T nextRow;
-                        var lastColumnRead = 0;
-                        try {
-                            nextRow = unpacker(reader, out lastColumnRead);
-                        } catch (Exception ex) {
-                            var queryErr = QueryExecutionErrorMessage<T>(cmd);
-                            var columnErr = ColumnUnpackingErrorMessage<T>(reader, lastColumnRead);
-                            throw new InvalidOperationException(queryErr + "\n\n" + columnErr, ex);
-                        }
-                        yield return nextRow; //cannot yield in try-catch block
+
+                while (true) {
+                    bool isDone;
+                    try {
+                        isDone = !reader.Read();
+                    } catch (Exception e) {
+                        throw CreateHelpfulException(e);
                     }
-            }
-        }
 
-        [MustUseReturnValue]
-        [NotNull]
-        public static T[] ReadMetaObjectsUnpacker<T>([NotNull] SqlCommand cmd, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
-            where T : IMetaObject, new()
-        {
-            using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
-                var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, fieldMappingMode);
-                var lastColumnRead = 0;
-                try {
-                    return unpacker(reader, out lastColumnRead);
-                } catch (Exception ex) when (!reader.IsClosed) {
-                    throw new InvalidOperationException(ColumnUnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+                    if (isDone) {
+                        break;
+                    }
+                    T nextRow;
+                    try {
+                        nextRow = unpacker(reader, out lastColumnRead);
+                    } catch (Exception e) {
+                        throw CreateHelpfulException(e);
+                    }
+
+                    yield return nextRow; //cannot yield in try-catch block
                 }
+            } finally {
+                reader?.Dispose();
+                cmd.Dispose();
             }
         }
 
         [NotNull]
-        static string ColumnUnpackingErrorMessage<T>([NotNull] SqlDataReader reader, int lastColumnRead) where T : IMetaObject, new()
+        static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead) where T : IMetaObject, new()
         {
+            if (reader?.IsClosed != false || lastColumnRead < 0) {
+                return "";
+            }
             var mps = MetaObject.GetMetaProperties<T>();
             var metaObjectTypeName = typeof(T).ToCSharpFriendlyTypeName();
 
@@ -182,13 +183,6 @@ namespace ProgressOnderwijsUtils
             return $"Cannot unpack {nullValueWarning}column {sqlColName} of type {sqlTypeName} (C#:{expectedCsTypeName}) into {metaObjectTypeName}.{mp.Name} of type {actualCsTypeName}";
         }
 
-        [NotNull]
-        static string QueryExecutionErrorMessage<T>([NotNull] SqlCommand cmd, [CanBeNull] [CallerMemberName] string caller = null) where T : IMetaObject, new()
-        {
-            return caller + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed. \n\nQUERY:\n\n"
-                + SqlCommandDebugStringifier.DebugFriendlyCommandText(cmd, SqlTracerAgumentInclusion.IncludingArgumentValues);
-        }
-
         /// <summary>
         /// Reads all records of the given query from the database, unpacking into a C# array using basic types (i.e. scalars)
         /// Type T must be int, long, string, decimal, double, bool, DateTime or byte[].
@@ -205,7 +199,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return ReadPlainUnpacker<T>(cmd.Command);
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments("ReadPlain<" + typeof(T).ToCSharpFriendlyTypeName() + ">() failed.", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }
         }
 
@@ -239,29 +233,12 @@ namespace ProgressOnderwijsUtils
                 { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
             };
 
-        //static bool SupportsType(Type type) => GetterMethodsByType.ContainsKey(type);
-        //static MethodInfo GetterForType(Type type) => GetterMethodsByType[type];
-
-        //static readonly MethodInfo IsDBNullMethod = typeof(IDataRecord).GetMethod("IsDBNull", binding);
-        //static readonly MethodInfo ReadMethod = typeof(IDataReader).GetMethod("Read", binding);
         [NotNull]
         static Dictionary<MethodInfo, MethodInfo> MakeMap([NotNull] params InterfaceMapping[] mappings)
-        {
-            return mappings.SelectMany(
-                map => map.InterfaceMethods.Zip(map.TargetMethods, Tuple.Create))
-                .ToDictionary(methodPair => methodPair.Item1, methodPair => methodPair.Item2);
-        }
+            => mappings
+                .SelectMany(map => map.InterfaceMethods.Zip(map.TargetMethods, (interfaceMethod, targetMethod) => (interfaceMethod, targetMethod)))
+                .ToDictionary(methodPair => methodPair.interfaceMethod, methodPair => methodPair.targetMethod);
 
-#if NET461
-        static readonly ModuleBuilder moduleBuilder;
-        static int counter;
-
-        static ParameterizedSqlObjectMapper()
-        {
-            var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("AutoLoadFromDb_Helper"), AssemblyBuilderAccess.Run);
-            moduleBuilder = assemblyBuilder.DefineDynamicModule("AutoLoadFromDb_HelperModule");
-        }
-#endif
         static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
         const int AsciiUpperToLowerDiff = 'a' - 'A';
@@ -331,7 +308,7 @@ namespace ProgressOnderwijsUtils
             static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
-            static bool SupportsType([NotNull] Type type)
+            static bool IsSupportedBasicType([NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
 
@@ -340,39 +317,23 @@ namespace ProgressOnderwijsUtils
                     ;
             }
 
-            static bool SupportsMetaProperty([NotNull] IMetaProperty mp)
-                => IsSimpletype(mp) || IsCreatableType(mp);
+            static bool IsSupportedType([NotNull] Type type)
+                => IsSupportedBasicType(type) || CustomLoaderForType(type) != null;
 
-            static bool IsSimpletype([NotNull] IMetaProperty mp)
+            [CanBeNull]
+            static MethodInfo CustomLoaderForType([NotNull] Type type)
             {
-                return SupportsType(mp.DataType);
-            }
-
-            static bool IsCreatableType([NotNull] IMetaProperty mp)
-            {
-                return CreateMethodOfTypeWithCreateMethod(mp.DataType, out var _);
-            }
-
-            static bool CreateMethodOfTypeWithCreateMethod([NotNull] Type type, [CanBeNull] out MethodInfo methodInfo)
-            {
-                methodInfo = null;
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var method = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public).SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
-                if (method == null) {
-                    return false;
-                }
-                if (method.ReturnType != underlyingType) {
-                    return false;
-                }
-                var parameters = method.GetParameters();
-                if (parameters.Length != 1) {
-                    return false;
-                }
-                if (SupportsType(parameters[0].ParameterType)) {
-                    methodInfo = method;
-                    return true;
-                }
-                return false;
+                var methods = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public);
+                var method = methods.SingleOrDefault(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
+                return
+                    method != null
+                        && method.ReturnType == underlyingType
+                        && method.GetParameters() is var parameters
+                        && parameters.Length == 1
+                        && IsSupportedBasicType(parameters[0].ParameterType)
+                        ? method
+                        : null;
             }
 
             static MethodInfo GetterForType([NotNull] Type underlyingType)
@@ -381,7 +342,7 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo)) {
+                } else if (CustomLoaderForType(underlyingType) is var methodInfo && methodInfo != null) {
                     return InterfaceMap[getterMethodsByType[methodInfo.GetParameters()[0].ParameterType]];
                 } else {
                     return InterfaceMap[getterMethodsByType[underlyingType]];
@@ -391,7 +352,9 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var isTypeWithCreateMethod = CreateMethodOfTypeWithCreateMethod(underlyingType, out var methodInfo);
+                var methodInfo = CustomLoaderForType(underlyingType);
+                var isTypeWithCreateMethod = methodInfo != null;
+
                 var needsCast = underlyingType != type.GetNonNullableType();
 
                 if (isTypeWithCreateMethod) {
@@ -437,7 +400,8 @@ namespace ProgressOnderwijsUtils
                 var arrayBuilderVar = Expression.Variable(arrayBuilderOfRowsType, "rowList");
                 var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
                 var addRowToBuilderExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
-                var callReader_Read = Expression.Call(dataReaderParamExpr, ReadMethod);
+                var resetLastColumnRead = Expression.Assign(lastColumnReadParamExpr, Expression.Constant(-1));
+                var callReader_Read = Expression.Block(resetLastColumnRead, Expression.Call(dataReaderParamExpr, ReadMethod));
                 var loopExitLabel = Expression.Label("loopExit");
                 var breakIfAtEndOfReaderExpr = Expression.IfThen(Expression.Not(callReader_Read), Expression.Break(loopExitLabel));
                 var loopAddRowThenReadExpr = Expression.Loop(Expression.Block(addRowToBuilderExpr, breakIfAtEndOfReaderExpr), loopExitLabel);
@@ -472,23 +436,10 @@ namespace ProgressOnderwijsUtils
             }
 
             [NotNull]
-            static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda)
+            static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda) where TDelegate : class
             {
                 try {
-#if NET461
-                    if (typeof(T).IsPublic) {
-                        var typeBuilder = moduleBuilder.DefineType(
-                            "AutoLoadFromDb_For_" + typeof(T).Name + "_" + typeof(TReader).Name + Interlocked.Increment(ref counter),
-                            TypeAttributes.Public);
-                        var methodBuilder = typeBuilder.DefineMethod("LoadRows", MethodAttributes.Public | MethodAttributes.Static);
-                        loadRowsLambda.CompileToMethod(methodBuilder); //generates faster code
-                        var newType = typeBuilder.CreateType();
-
-                        return (TDelegate)(object)Delegate.CreateDelegate(typeof(TDelegate), newType.GetMethod("LoadRows"));
-                    }
-#endif
-
-                    return loadRowsLambda.Compile(); //generates slower code but works on non-public types
+                    return loadRowsLambda.Compile(); //CompileFast<TDelegate> causes IL errors
                 } catch (Exception e) {
                     throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
                 }
@@ -547,7 +498,7 @@ namespace ProgressOnderwijsUtils
                 {
                     var writablePropCount = 0;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && SupportsMetaProperty(mp)) {
+                        if (mp.CanWrite && IsSupportedType(mp.DataType)) {
                             writablePropCount++;
                         }
                     }
@@ -559,7 +510,7 @@ namespace ProgressOnderwijsUtils
                         }
                     hasUnsupportedColumns = false;
                     foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && !SupportsMetaProperty(mp)) {
+                        if (mp.CanWrite && !IsSupportedType(mp.DataType)) {
                             hasUnsupportedColumns = true;
                             break;
                         }
@@ -600,7 +551,7 @@ namespace ProgressOnderwijsUtils
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
-                        var publicWritableProperties = metadata.Where(SupportsMetaProperty).Select(mp => mp.Name).ToArray();
+                        var publicWritableProperties = metadata.Where(mp => IsSupportedType(mp.DataType)).Select(mp => mp.Name).ToArray();
                         var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
                         var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
                         throw new InvalidOperationException(
@@ -629,7 +580,7 @@ namespace ProgressOnderwijsUtils
                             (readerParamExpr, lastColumnReadParameter) =>
                                 Expression.MemberInit(
                                     Expression.New(type),
-                                    createColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
+                                    CreateColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
                     };
                 }
 
@@ -643,11 +594,11 @@ namespace ProgressOnderwijsUtils
                             (readerParamExpr, lastColumnReadParameter) =>
                                 Expression.MemberInit(
                                     Expression.New(type),
-                                    createColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
+                                    CreateColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
                     };
                 }
 
-                static IEnumerable<MemberAssignment> createColumnBindings(
+                static IEnumerable<MemberAssignment> CreateColumnBindings(
                     ColumnOrdering orderingP,
                     ParameterExpression readerParamExpr,
                     ParameterExpression lastColumnReadParameter)
@@ -725,11 +676,11 @@ namespace ProgressOnderwijsUtils
                     }
                     var retval = constructors.Single();
 
-                    if (!retval.GetParameters().All(pi => SupportsType(pi.ParameterType))) {
+                    if (!retval.GetParameters().All(pi => IsSupportedBasicType(pi.ParameterType))) {
                         throw new ArgumentException(
                             FriendlyName + " : ILoadFromDbByConstructor's constructor must have only simple types: cannot support "
                                 + retval.GetParameters()
-                                    .Where(pi => !SupportsType(pi.ParameterType))
+                                    .Where(pi => !IsSupportedBasicType(pi.ParameterType))
                                     .Select(pi => pi.ParameterType.ToCSharpFriendlyTypeName() + " " + pi.Name)
                                     .JoinStrings(", "));
                     }
@@ -774,7 +725,7 @@ namespace ProgressOnderwijsUtils
 
                 static void VerifyTypeValidity()
                 {
-                    if (!SupportsType(type)) {
+                    if (!IsSupportedBasicType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
                                 + getterMethodsByType.Keys.Select(ObjectToCode.ToCSharpFriendlyTypeName).JoinStrings(", ") + ")!");

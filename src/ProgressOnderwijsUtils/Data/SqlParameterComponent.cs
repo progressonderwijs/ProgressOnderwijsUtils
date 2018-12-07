@@ -83,7 +83,10 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static ISqlComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection)
             where TOut : IMetaObject, new()
-            => new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
+            =>
+                set is IReadOnlyList<TIn> fixedSizeList && fixedSizeList.Count == 1
+                    ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<TOut>(projection(set)[0])
+                    : new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
 
         static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
 
@@ -156,17 +159,15 @@ namespace ProgressOnderwijsUtils
         class TableValuedParameterFactory<T> : ITableValuedParameterFactory
         {
             readonly string sqlTableTypeName;
+            //cache delegate to save some allocs and avoid risking slow paths like COMDelegate::DelegateConstruct
+            readonly Func<IEnumerable<T>, TableValuedParameterWrapper<T>[]> WrapPlainValueInMetaObject = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject;
 
             public TableValuedParameterFactory(string sqlTableTypeName)
-            {
-                this.sqlTableTypeName = sqlTableTypeName;
-            }
+                => this.sqlTableTypeName = sqlTableTypeName;
 
             [NotNull]
             public ISqlComponent CreateFromPlainValues(IEnumerable enumerable)
-            {
-                return ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject);
-            }
+                => ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, WrapPlainValueInMetaObject);
         }
 
         [CanBeNull]
@@ -203,6 +204,7 @@ namespace ProgressOnderwijsUtils
             /// Efficiently wraps an enumerable of objects in DbTableValuedParameterWrapper and materialized the sequence as array.
             /// Effectively it's like .Select(x => new DbTableValuedParameterWrapper { querytablevalue = x }).ToArray() but faster.
             /// </summary>
+            [NotNull]
             public static TableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>([NotNull] IEnumerable<T> typedEnumerable)
             {
                 if (typedEnumerable is T[] typedArray) {

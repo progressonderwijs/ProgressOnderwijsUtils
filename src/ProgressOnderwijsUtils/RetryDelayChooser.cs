@@ -16,29 +16,46 @@ namespace ProgressOnderwijsUtils
     public sealed class RetryDelayChooser
     {
         readonly ExponentialDecayEstimator errorRateEstimator;
-        readonly double halflivesPerDay;
-        readonly double scaleFactor;
+        readonly double halflivesPerSecond;
+        readonly double delayTargetInSecondsCubed;
 
+        /// <param name="constantFailureDelayTarget">The target delay to converge to during a long service outage.  The error rate half-life will be 20 times this value.</param>
         public RetryDelayChooser(TimeSpan constantFailureDelayTarget)
-        {
-            errorRateEstimator = new ExponentialDecayEstimator(TimeSpan.FromHours(12));
-            halflivesPerDay = 1.0 / errorRateEstimator.halflife.TotalDays;
+            : this(constantFailureDelayTarget, 20.0) { }
 
-            var targetConvergedDelaysPerDay = TimeSpan.FromDays(1).TotalSeconds / constantFailureDelayTarget.TotalSeconds;
-            //choose scaleFactor such that: delayConvergenceTarget.TotalSeconds == targetConvergedDelaysPerDay * targetConvergedDelaysPerDay * scaleFactor
-            scaleFactor = constantFailureDelayTarget.TotalSeconds / (targetConvergedDelaysPerDay * targetConvergedDelaysPerDay);
+        /// <param name="constantFailureDelayTarget">The target delay to converge to during a long service outage</param>
+        /// <param name="halflifeFactor">The halflife (as a factor of the constantFailureDelayTarget) of the error rate estimate.  Larger values ramp and recover more slowly; smaller values ramp and recover more quickly.</param>
+        public RetryDelayChooser(TimeSpan constantFailureDelayTarget, double halflifeFactor)
+        {
+            if (halflifeFactor < 1.0)
+                throw new Exception("For reasonably convergence, the error-rate half-life must exceed the delay target; i.e. halflifeFactor must exceed 1.0.  A reasonable value might be 10.");
+            var delaysPerHalflife = 1.0 / halflifeFactor; //so this is at *most* 1, and typically much smaller, therefore...
+            var empiracalConvergenceOverestimateRatio = 1 + 0.230 * delaysPerHalflife + 0.09761662037037 * delaysPerHalflife * delaysPerHalflife; //...this is at *most* 1.33
+
+            //The convergenceOverestimateRatio is irrelevant for long halflives, but it's a "nice" to compensate for unusually small halflives, and a compensation of 1.33 isn't too bad.
+
+            var halfLife = TimeSpan.FromSeconds(constantFailureDelayTarget.TotalSeconds * halflifeFactor);
+            errorRateEstimator = new ExponentialDecayEstimator(halfLife);
+            halflivesPerSecond = 1.0 / errorRateEstimator.halflife.TotalSeconds;
+
+            var compensatedTargetConvergedDelay = constantFailureDelayTarget.TotalSeconds / empiracalConvergenceOverestimateRatio;
+
+            delayTargetInSecondsCubed = compensatedTargetConvergedDelay * compensatedTargetConvergedDelay * compensatedTargetConvergedDelay;
         }
 
         public void RegisterErrorAt(DateTime errorMoment)
             => errorRateEstimator.AddAmount(errorMoment, 1.0);
 
         public TimeSpan RetryDelayAt(DateTime moment)
-            => ErrorsPerDayToRetryDelay(errorRateEstimator.EstimatedRateOfChangePerHalflife(moment) * halflivesPerDay);
+            => ErrorsPerSecondToRetryDelay(errorRateEstimator.EstimatedRateOfChangePerHalflife(moment) * halflivesPerSecond);
 
-        public TimeSpan RegisterErrorAndGetDelay(DateTime errorMoment) 
-            => ErrorsPerDayToRetryDelay(errorRateEstimator.AddAmount(errorMoment, 1.0).EstimatedEventCountPerHalflife * halflivesPerDay);
+        public TimeSpan RegisterErrorAndGetDelay(DateTime errorMoment)
+            => ErrorsPerSecondToRetryDelay(errorRateEstimator.AddAmount(errorMoment, 1.0).EstimatedEventCountPerHalflife * halflivesPerSecond);
 
         public TimeSpan ErrorsPerDayToRetryDelay(double approximateErrorsPerDay)
-            => TimeSpan.FromSeconds(approximateErrorsPerDay * approximateErrorsPerDay * scaleFactor);
+            => ErrorsPerSecondToRetryDelay(approximateErrorsPerDay / TimeSpan.FromDays(1).TotalSeconds);
+
+        public TimeSpan ErrorsPerSecondToRetryDelay(double approximateErrorsPerSecond)
+            => TimeSpan.FromSeconds(approximateErrorsPerSecond * approximateErrorsPerSecond * delayTargetInSecondsCubed);
     }
 }

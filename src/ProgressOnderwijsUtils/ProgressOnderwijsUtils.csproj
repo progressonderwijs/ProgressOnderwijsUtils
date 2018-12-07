@@ -1,44 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>23.1.0</Version>
-    <PackageReleaseNotes>Bump version to reduce warnings of net-standard-to-net-framework dependencies.</PackageReleaseNotes>
-    <Authors>Progress Onderwijs</Authors>
-    <Owners>Progress Onderwijs</Owners>
+    <Version>32.0.0</Version>
+    <PackageReleaseNotes>Removed InstalledFileStore</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
-    <Description>
-      Various utility methods+classes used by Progress Onderwijs.
-    </Description>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFrameworks>net471;netstandard2.0</TargetFrameworks>
-    <OutputType>library</OutputType>
-    <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
-    <DebugType>full</DebugType>
-    <DebugSymbols>True</DebugSymbols>
-    <NoWarn>CS1591</NoWarn>
-    <LangVersion>7.3</LangVersion>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="System.Buffers" Version="4.5.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
-
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
-    <PackageReference Include="ExpressionToCodeLib" version="2.7.0" />
+    <PackageReference Include="System.Reactive" Version="4.1.2" />
+    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
+    <PackageReference Include="ExpressionToCodeLib" version="3.1.0" />
     <PackageReference Include="log4net" version="2.0.8" />
-    <PackageReference Include="morelinq" version="2.10.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.5.0-rc1" Condition="$(TargetFramework)=='netstandard2.0'" />
-    <PackageReference Include="System.Memory" Version="4.5.0-rc1" />
-    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.4.2" />
+    <PackageReference Include="morelinq" version="3.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="System.Buffers" Version="4.5.0" />
+    <PackageReference Include="System.Memory" Version="4.5.1" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
-    <PackageReference Include="DotNetZip" Version="1.11.0" NoWarn="NU1701" />
+    <PackageReference Include="DotNetZip" Version="1.12.0" NoWarn="NU1701" />
     <PackageReference Include="ZlibWithDictionary" version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
   </ItemGroup>
 </Project>

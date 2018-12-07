@@ -1,18 +1,60 @@
 ﻿using System.IO;
-using System.Linq;
 using System.Text;
 using AngleSharp.Dom.Html;
 using AngleSharp.Extensions;
 using AngleSharp.Parser.Html;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Jobs;
+using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Html;
 using ProgressOnderwijsUtils.Tests;
 
 namespace ProgressOnderwijsUtilsBenchmarks
 {
+    [MemoryDiagnoser]
+    [Config(typeof(Config))]
     public class HtmlFragmentBenchmark
     {
+        static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
+
+        readonly MemoryStream ms = new MemoryStream();
+
+        [Benchmark]
+        public void SerializeLargeDocument()
+        {
+            htmlFragment.SerializeToString();
+        }
+
+        [Benchmark]
+        public void WriteToStream()
+        {
+            ms.SetLength(0);
+            htmlFragment.SaveHtmlFragmentToStream(ms, Encoding.UTF8);
+        }
+
+        sealed class Config : ManualConfig
+        {
+            public Config()
+            {
+                Add(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerForce"));
+                Add(Job.MediumRun.WithGcServer(true).WithGcForce(false).WithId("Server"));
+                Add(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("Workstation"));
+                Add(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("WorkstationForce"));
+            }
+        }
+
+        /*
+        static readonly string htmlString = Utils.F(() => {
+            var s = htmlFragment.SerializeToString();
+            //Console.WriteLine(s.Length);
+
+            return s;
+        })();
+
+        static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
+        static readonly IHtmlDocument angleSharpDocument = new HtmlParser().Parse(htmlString);
+
         [Benchmark]
         public void CreateLargeDocument()
         {
@@ -24,18 +66,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             WikiPageHtml5.MakeHtml().SerializeToString();
         }
-
-        static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
-        static readonly string htmlString = htmlFragment.SerializeToString();
-        static readonly byte[] htmlUtf8 = Encoding.UTF8.GetBytes(htmlString);
-        static readonly IHtmlDocument angleSharpDocument = new HtmlParser().Parse(htmlString);
-
-        [Benchmark]
-        public void SerializeLargeDocument()
-        {
-            htmlFragment.SerializeToString();
-        }
-
+        
         [Benchmark]
         public void SerializeLargeDocumentToCSharp()
         {
@@ -75,5 +106,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             angleSharpDocument.DocumentElement.ToHtml();
         }
+        /**/
     }
 }

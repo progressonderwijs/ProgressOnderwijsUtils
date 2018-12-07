@@ -166,7 +166,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             var violation = (CannotInsertNull)SqlErrorParser.Parse(exception.Errors[0]);
 
-            PAssert.That(() => violation.TableName.StartsWith("tempdb.dbo.#T"));
+            PAssert.That(() => violation.TableName.StartsWith("tempdb.dbo.#T", StringComparison.Ordinal));
             PAssert.That(() => violation.ColumnName == "C");
             PAssert.That(() => violation.StatementType == "INSERT");
         }

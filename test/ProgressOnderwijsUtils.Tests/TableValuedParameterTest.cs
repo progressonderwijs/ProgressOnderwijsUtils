@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Internal;
+using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -30,6 +33,19 @@ namespace ProgressOnderwijsUtils.Tests
             var q = SQL($@"select sum(x.querytablevalue) from {Enumerable.Range(1, 100)} x");
             var sum = q.ReadScalar<int>(Context);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
+        }
+
+
+        [Fact]
+        public void SingletonTvPsCanBeExecuted()
+        {
+            var q = SQL($"select sum(x.querytablevalue) from {Enumerable.Range(1, 1).ToArray()} x");
+            using (var cmd = q.CreateSqlCommand(Context)) {
+                //make sure I'm actually testing that exceptional single-value case, not the general Strucutured case.
+                PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.SqlDbType).SequenceEqual(new[] { SqlDbType.Int }));
+            }
+            var sum = q.ReadScalar<int>(Context);
+            PAssert.That(() => sum == 1);
         }
 
         [Fact]
@@ -62,9 +78,10 @@ namespace ProgressOnderwijsUtils.Tests
             var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
             var metaObjects = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string> { QueryTableValue = s });
 
-            SQL($@"create table #strings (querytablevalue nvarchar(max))").ExecuteNonQuery(Context);
+            var tableName = SQL($"#strings");
+            SQL($@"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Context);
             //manual bulk insert because our default TVP types explicitly forbid null
-            metaObjects.BulkCopyToSqlServer(Context.Connection, "#strings");
+            metaObjects.BulkCopyToSqlServer(Context.Connection, tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
 
             var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(Context);
             SQL($@"drop table #strings").ExecuteNonQuery(Context);
@@ -91,7 +108,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void Test_DbDataReaderBase_GetBytes_works_the_same_as_in_SqlDataReader()
         {
             var testen = new[] { new TestDataMetaObject { Data = testData } };
-            var reader = new MetaObjectDataReader<TestDataMetaObject>(testen);
+            var reader = new MetaObjectDataReader<TestDataMetaObject>(testen, CancellationToken.None);
             Assert_DataReader_GetBytes_works(reader);
         }
 

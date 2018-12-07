@@ -1,21 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
-    <Version>1.0.0</Version>
-    <Authors>Progress Onderwijs</Authors>
-    <Owners>Progress Onderwijs</Owners>
+    <Version>1.2.0</Version>
     <Title>ProgressOnderwijsUtils.Drawing</Title>
     <Description>Various System.Drawing-related utilities used by Progress Onderwijs.</Description>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>Split off ProgressOnderwijsUtils.Drawing as a separate package</PackageReleaseNotes>
+    <PackageReleaseNotes>Target netstandard2.0</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
-    <PackageProjectUrl>https://github.com/progressonderwijs/ProgressOnderwijsUtils</PackageProjectUrl>
-    <TargetFrameworks>net471</TargetFrameworks>
-    <OutputType>library</OutputType>
-    <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
-    <LangVersion>7.2</LangVersion>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
+    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
   </ItemGroup>
 </Project>

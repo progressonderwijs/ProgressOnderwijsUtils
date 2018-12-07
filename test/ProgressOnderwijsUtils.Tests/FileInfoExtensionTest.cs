@@ -7,8 +7,8 @@ namespace ProgressOnderwijsUtils.Tests
 {
     public sealed class FileInfoExtensionTest : IDisposable
     {
-        FileInfo sut;
-        FileInfo other;
+        readonly FileInfo sut;
+        readonly FileInfo other;
 
         public FileInfoExtensionTest()
         {

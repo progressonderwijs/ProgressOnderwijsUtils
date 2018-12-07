@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.IO;
 using System.Text;
 using JetBrains.Annotations;
@@ -10,31 +11,32 @@ namespace ProgressOnderwijsUtils.Html
         [NotNull]
         public static string SerializeToString([NotNull] this IConvertibleToFragment rootElem)
         {
-            var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
+            var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
             AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
             return fastStringBuilder.FinishBuilding();
         }
 
         [NotNull]
-        public static string ToCSharp([NotNull] this IConvertibleToFragment rootElem) => rootElem.AsFragment().ToCSharp();
+        public static string ToCSharp([NotNull] this IConvertibleToFragment rootElem)
+            => rootElem.AsFragment().ToCSharp();
 
         [NotNull]
         public static string SerializeToStringWithoutDoctype([NotNull] this IConvertibleToFragment rootElem)
         {
-            var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
+            var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
             AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
             return fastStringBuilder.FinishBuilding();
         }
 
         public static void SaveHtmlFragmentToStream(this HtmlFragment rootElem, Stream outputStream, [NotNull] Encoding contentEncoding)
         {
-            var fastStringBuilder = FastShortStringBuilder.Create(1u << 16);
+            var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
             AppendToBuilder(ref fastStringBuilder, rootElem);
             const int charsPerBuffer = 2048;
             var maxBufferSize = contentEncoding.GetMaxByteCount(charsPerBuffer);
-            var byteBuffer = PooledExponentialBufferAllocator<byte>.GetByLength((uint)maxBufferSize);
+            var byteBuffer = ArrayPool<byte>.Shared.Rent(maxBufferSize);
 
             var charCount = fastStringBuilder.CurrentLength;
             var charsWritten = 0;
@@ -44,43 +46,51 @@ namespace ProgressOnderwijsUtils.Html
                 outputStream.Write(byteBuffer, 0, bytesWritten);
                 charsWritten += charsPerBuffer;
             }
-            PooledExponentialBufferAllocator<byte>.ReturnToPool(byteBuffer);
+            ArrayPool<byte>.Shared.Return(byteBuffer);
         }
 
         static void AppendToBuilder(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment)
         {
-            if (fragment.Content is string stringContent) {
+            if (fragment.Implementation is string stringContent) {
                 AppendEscapedText(ref stringBuilder, stringContent);
-            } else if (fragment.Content is IHtmlTag htmlTag) {
+            } else if (fragment.Implementation is IHtmlElement htmlTag) {
                 stringBuilder.AppendText(htmlTag.TagStart);
                 if (htmlTag.Attributes.Count > 0) {
                     AppendAttributes(ref stringBuilder, htmlTag.Attributes);
                 }
                 stringBuilder.AppendText(">");
 
-                if (htmlTag is IHtmlTagAllowingContent htmlTagAllowingContent) {
+                if (htmlTag is IHtmlElementAllowingContent htmlTagAllowingContent) {
                     AppendTagContentAndEnd(ref stringBuilder, htmlTagAllowingContent);
                 }
-            } else if (fragment.Content is HtmlFragment[] fragments) {
+            } else if (fragment.Implementation is HtmlFragment[] fragments) {
                 foreach (var child in fragments) {
                     AppendToBuilder(ref stringBuilder, child);
                 }
             }
         }
 
-        static void AppendTagContentAndEnd(ref FastShortStringBuilder stringBuilder, [NotNull] IHtmlTagAllowingContent htmlTagAllowingContent)
+        static void AppendTagContentAndEnd(ref FastShortStringBuilder stringBuilder, [NotNull] IHtmlElementAllowingContent htmlElementAllowingContent)
         {
-            var contents = htmlTagAllowingContent.Contents ?? Array.Empty<HtmlFragment>();
-            if (htmlTagAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlTagAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
-                foreach (var childNode in contents) {
-                    AppendAsRawTextToBuilder(ref stringBuilder, childNode);
+            var contents = htmlElementAllowingContent.Contents();
+            if (htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("SCRIPT") || htmlElementAllowingContent.TagName.EqualsOrdinalCaseInsensitive("STYLE")) {
+                if (contents.Implementation is HtmlFragment[] fragments) {
+                    foreach (var childNode in fragments) {
+                        AppendAsRawTextToBuilder(ref stringBuilder, childNode);
+                    }
+                } else if (!contents.IsEmpty) {
+                    AppendAsRawTextToBuilder(ref stringBuilder, contents);
                 }
             } else {
-                foreach (var childNode in contents) {
-                    AppendToBuilder(ref stringBuilder, childNode);
+                if (contents.Implementation is HtmlFragment[] fragments) {
+                    foreach (var childNode in fragments) {
+                        AppendToBuilder(ref stringBuilder, childNode);
+                    }
+                } else if (!contents.IsEmpty) {
+                    AppendToBuilder(ref stringBuilder, contents);
                 }
             }
-            stringBuilder.AppendText(htmlTagAllowingContent.EndTag);
+            stringBuilder.AppendText(htmlElementAllowingContent.EndTag);
         }
 
         static void AppendAttributes(ref FastShortStringBuilder stringBuilder, HtmlAttributes attributes)
@@ -111,13 +121,13 @@ namespace ProgressOnderwijsUtils.Html
 
         static void AppendAsRawTextToBuilder(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment)
         {
-            if (fragment.Content is HtmlFragment[] fragments) {
+            if (fragment.Implementation is HtmlFragment[] fragments) {
                 foreach (var childNode in fragments) {
                     AppendAsRawTextToBuilder(ref stringBuilder, childNode);
                 }
-            } else if (fragment.Content is string contentString) {
+            } else if (fragment.Implementation is string contentString) {
                 stringBuilder.AppendText(contentString);
-            } else if (fragment.Content is IHtmlTag) {
+            } else if (fragment.Implementation is IHtmlElement) {
                 throw new InvalidOperationException("script and style tags cannot contain child elements");
             }
         }

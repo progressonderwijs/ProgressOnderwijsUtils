@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 email = GetAttributes(assertion, MAIL),
                 roles = GetAttributes(assertion, ROLE),
                 InResponseTo = GetInResponseTo(assertion),
-                AuthnInstant = (DateTime)authnStatement.Attribute("AuthnInstant"),
+                IssueInstant = (DateTime)assertion.Attribute("IssueInstant"),
                 AuthnContextClassRef = (string)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext").Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
             };
         }

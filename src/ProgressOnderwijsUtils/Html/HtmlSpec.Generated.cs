@@ -6,1868 +6,1868 @@ namespace ProgressOnderwijsUtils.Html
 
     public static class HtmlTagKinds
     {
-        public struct A : IHtmlTagAllowingContent<A>, IHasAttr_href, IHasAttr_target, IHasAttr_download, IHasAttr_ping, IHasAttr_rel, IHasAttr_hreflang, IHasAttr_type, IHasAttr_referrerpolicy
+        public struct A : IHtmlElementAllowingContent<A>, IHasAttr_href, IHasAttr_target, IHasAttr_download, IHasAttr_ping, IHasAttr_rel, IHasAttr_hreflang, IHasAttr_type, IHasAttr_referrerpolicy
         {
             public string TagName => "a";
-            string IHtmlTag.TagStart => "<a";
-            string IHtmlTag.EndTag => "</a>";
+            string IHtmlElement.TagStart => "<a";
+            string IHtmlElement.EndTag => "</a>";
             HtmlAttributes attrs;
-            A IHtmlTag<A>.WithAttributes(HtmlAttributes replacementAttributes) => new A { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            A IHtmlTagAllowingContent<A>.WithContents(HtmlFragment[] replacementContents) => new A { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            A IHtmlElement<A>.WithAttributes(HtmlAttributes replacementAttributes) => new A { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            A IHtmlElementAllowingContent<A>.WithContents(HtmlFragment replacementContents) => new A { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(A tag) => tag.AsFragment();
-            public static HtmlFragment operator +(A head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, A tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(A head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, A tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct ABBR : IHtmlTagAllowingContent<ABBR>
+        public struct ABBR : IHtmlElementAllowingContent<ABBR>
         {
             public string TagName => "abbr";
-            string IHtmlTag.TagStart => "<abbr";
-            string IHtmlTag.EndTag => "</abbr>";
+            string IHtmlElement.TagStart => "<abbr";
+            string IHtmlElement.EndTag => "</abbr>";
             HtmlAttributes attrs;
-            ABBR IHtmlTag<ABBR>.WithAttributes(HtmlAttributes replacementAttributes) => new ABBR { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            ABBR IHtmlTagAllowingContent<ABBR>.WithContents(HtmlFragment[] replacementContents) => new ABBR { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            ABBR IHtmlElement<ABBR>.WithAttributes(HtmlAttributes replacementAttributes) => new ABBR { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            ABBR IHtmlElementAllowingContent<ABBR>.WithContents(HtmlFragment replacementContents) => new ABBR { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(ABBR tag) => tag.AsFragment();
-            public static HtmlFragment operator +(ABBR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, ABBR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(ABBR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, ABBR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct ADDRESS : IHtmlTagAllowingContent<ADDRESS>
+        public struct ADDRESS : IHtmlElementAllowingContent<ADDRESS>
         {
             public string TagName => "address";
-            string IHtmlTag.TagStart => "<address";
-            string IHtmlTag.EndTag => "</address>";
+            string IHtmlElement.TagStart => "<address";
+            string IHtmlElement.EndTag => "</address>";
             HtmlAttributes attrs;
-            ADDRESS IHtmlTag<ADDRESS>.WithAttributes(HtmlAttributes replacementAttributes) => new ADDRESS { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            ADDRESS IHtmlTagAllowingContent<ADDRESS>.WithContents(HtmlFragment[] replacementContents) => new ADDRESS { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            ADDRESS IHtmlElement<ADDRESS>.WithAttributes(HtmlAttributes replacementAttributes) => new ADDRESS { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            ADDRESS IHtmlElementAllowingContent<ADDRESS>.WithContents(HtmlFragment replacementContents) => new ADDRESS { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(ADDRESS tag) => tag.AsFragment();
-            public static HtmlFragment operator +(ADDRESS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, ADDRESS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(ADDRESS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, ADDRESS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct AREA : IHtmlTag<AREA>, IHasAttr_alt, IHasAttr_coords, IHasAttr_shape, IHasAttr_href, IHasAttr_target, IHasAttr_download, IHasAttr_ping, IHasAttr_rel, IHasAttr_referrerpolicy
+        public struct AREA : IHtmlElement<AREA>, IHasAttr_alt, IHasAttr_coords, IHasAttr_shape, IHasAttr_href, IHasAttr_target, IHasAttr_download, IHasAttr_ping, IHasAttr_rel, IHasAttr_referrerpolicy
         {
             public string TagName => "area";
-            string IHtmlTag.TagStart => "<area";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<area";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            AREA IHtmlTag<AREA>.WithAttributes(HtmlAttributes replacementAttributes) => new AREA { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            AREA IHtmlElement<AREA>.WithAttributes(HtmlAttributes replacementAttributes) => new AREA { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(AREA tag) => tag.AsFragment();
-            public static HtmlFragment operator +(AREA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, AREA tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(AREA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, AREA tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct ARTICLE : IHtmlTagAllowingContent<ARTICLE>
+        public struct ARTICLE : IHtmlElementAllowingContent<ARTICLE>
         {
             public string TagName => "article";
-            string IHtmlTag.TagStart => "<article";
-            string IHtmlTag.EndTag => "</article>";
+            string IHtmlElement.TagStart => "<article";
+            string IHtmlElement.EndTag => "</article>";
             HtmlAttributes attrs;
-            ARTICLE IHtmlTag<ARTICLE>.WithAttributes(HtmlAttributes replacementAttributes) => new ARTICLE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            ARTICLE IHtmlTagAllowingContent<ARTICLE>.WithContents(HtmlFragment[] replacementContents) => new ARTICLE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            ARTICLE IHtmlElement<ARTICLE>.WithAttributes(HtmlAttributes replacementAttributes) => new ARTICLE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            ARTICLE IHtmlElementAllowingContent<ARTICLE>.WithContents(HtmlFragment replacementContents) => new ARTICLE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(ARTICLE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(ARTICLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, ARTICLE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(ARTICLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, ARTICLE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct ASIDE : IHtmlTagAllowingContent<ASIDE>
+        public struct ASIDE : IHtmlElementAllowingContent<ASIDE>
         {
             public string TagName => "aside";
-            string IHtmlTag.TagStart => "<aside";
-            string IHtmlTag.EndTag => "</aside>";
+            string IHtmlElement.TagStart => "<aside";
+            string IHtmlElement.EndTag => "</aside>";
             HtmlAttributes attrs;
-            ASIDE IHtmlTag<ASIDE>.WithAttributes(HtmlAttributes replacementAttributes) => new ASIDE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            ASIDE IHtmlTagAllowingContent<ASIDE>.WithContents(HtmlFragment[] replacementContents) => new ASIDE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            ASIDE IHtmlElement<ASIDE>.WithAttributes(HtmlAttributes replacementAttributes) => new ASIDE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            ASIDE IHtmlElementAllowingContent<ASIDE>.WithContents(HtmlFragment replacementContents) => new ASIDE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(ASIDE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(ASIDE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, ASIDE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(ASIDE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, ASIDE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct AUDIO : IHtmlTagAllowingContent<AUDIO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls
+        public struct AUDIO : IHtmlElementAllowingContent<AUDIO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls
         {
             public string TagName => "audio";
-            string IHtmlTag.TagStart => "<audio";
-            string IHtmlTag.EndTag => "</audio>";
+            string IHtmlElement.TagStart => "<audio";
+            string IHtmlElement.EndTag => "</audio>";
             HtmlAttributes attrs;
-            AUDIO IHtmlTag<AUDIO>.WithAttributes(HtmlAttributes replacementAttributes) => new AUDIO { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            AUDIO IHtmlTagAllowingContent<AUDIO>.WithContents(HtmlFragment[] replacementContents) => new AUDIO { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            AUDIO IHtmlElement<AUDIO>.WithAttributes(HtmlAttributes replacementAttributes) => new AUDIO { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            AUDIO IHtmlElementAllowingContent<AUDIO>.WithContents(HtmlFragment replacementContents) => new AUDIO { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(AUDIO tag) => tag.AsFragment();
-            public static HtmlFragment operator +(AUDIO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, AUDIO tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(AUDIO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, AUDIO tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct B : IHtmlTagAllowingContent<B>
+        public struct B : IHtmlElementAllowingContent<B>
         {
             public string TagName => "b";
-            string IHtmlTag.TagStart => "<b";
-            string IHtmlTag.EndTag => "</b>";
+            string IHtmlElement.TagStart => "<b";
+            string IHtmlElement.EndTag => "</b>";
             HtmlAttributes attrs;
-            B IHtmlTag<B>.WithAttributes(HtmlAttributes replacementAttributes) => new B { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            B IHtmlTagAllowingContent<B>.WithContents(HtmlFragment[] replacementContents) => new B { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            B IHtmlElement<B>.WithAttributes(HtmlAttributes replacementAttributes) => new B { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            B IHtmlElementAllowingContent<B>.WithContents(HtmlFragment replacementContents) => new B { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(B tag) => tag.AsFragment();
-            public static HtmlFragment operator +(B head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, B tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(B head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, B tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct BASE : IHtmlTag<BASE>, IHasAttr_href, IHasAttr_target
+        public struct BASE : IHtmlElement<BASE>, IHasAttr_href, IHasAttr_target
         {
             public string TagName => "base";
-            string IHtmlTag.TagStart => "<base";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<base";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            BASE IHtmlTag<BASE>.WithAttributes(HtmlAttributes replacementAttributes) => new BASE { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            BASE IHtmlElement<BASE>.WithAttributes(HtmlAttributes replacementAttributes) => new BASE { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BASE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(BASE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, BASE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(BASE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, BASE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct BDI : IHtmlTagAllowingContent<BDI>
+        public struct BDI : IHtmlElementAllowingContent<BDI>
         {
             public string TagName => "bdi";
-            string IHtmlTag.TagStart => "<bdi";
-            string IHtmlTag.EndTag => "</bdi>";
+            string IHtmlElement.TagStart => "<bdi";
+            string IHtmlElement.EndTag => "</bdi>";
             HtmlAttributes attrs;
-            BDI IHtmlTag<BDI>.WithAttributes(HtmlAttributes replacementAttributes) => new BDI { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            BDI IHtmlTagAllowingContent<BDI>.WithContents(HtmlFragment[] replacementContents) => new BDI { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            BDI IHtmlElement<BDI>.WithAttributes(HtmlAttributes replacementAttributes) => new BDI { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            BDI IHtmlElementAllowingContent<BDI>.WithContents(HtmlFragment replacementContents) => new BDI { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BDI tag) => tag.AsFragment();
-            public static HtmlFragment operator +(BDI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, BDI tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(BDI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, BDI tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct BDO : IHtmlTagAllowingContent<BDO>
+        public struct BDO : IHtmlElementAllowingContent<BDO>
         {
             public string TagName => "bdo";
-            string IHtmlTag.TagStart => "<bdo";
-            string IHtmlTag.EndTag => "</bdo>";
+            string IHtmlElement.TagStart => "<bdo";
+            string IHtmlElement.EndTag => "</bdo>";
             HtmlAttributes attrs;
-            BDO IHtmlTag<BDO>.WithAttributes(HtmlAttributes replacementAttributes) => new BDO { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            BDO IHtmlTagAllowingContent<BDO>.WithContents(HtmlFragment[] replacementContents) => new BDO { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            BDO IHtmlElement<BDO>.WithAttributes(HtmlAttributes replacementAttributes) => new BDO { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            BDO IHtmlElementAllowingContent<BDO>.WithContents(HtmlFragment replacementContents) => new BDO { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BDO tag) => tag.AsFragment();
-            public static HtmlFragment operator +(BDO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, BDO tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(BDO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, BDO tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct BLOCKQUOTE : IHtmlTagAllowingContent<BLOCKQUOTE>, IHasAttr_cite
+        public struct BLOCKQUOTE : IHtmlElementAllowingContent<BLOCKQUOTE>, IHasAttr_cite
         {
             public string TagName => "blockquote";
-            string IHtmlTag.TagStart => "<blockquote";
-            string IHtmlTag.EndTag => "</blockquote>";
+            string IHtmlElement.TagStart => "<blockquote";
+            string IHtmlElement.EndTag => "</blockquote>";
             HtmlAttributes attrs;
-            BLOCKQUOTE IHtmlTag<BLOCKQUOTE>.WithAttributes(HtmlAttributes replacementAttributes) => new BLOCKQUOTE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            BLOCKQUOTE IHtmlTagAllowingContent<BLOCKQUOTE>.WithContents(HtmlFragment[] replacementContents) => new BLOCKQUOTE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            BLOCKQUOTE IHtmlElement<BLOCKQUOTE>.WithAttributes(HtmlAttributes replacementAttributes) => new BLOCKQUOTE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            BLOCKQUOTE IHtmlElementAllowingContent<BLOCKQUOTE>.WithContents(HtmlFragment replacementContents) => new BLOCKQUOTE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BLOCKQUOTE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(BLOCKQUOTE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, BLOCKQUOTE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(BLOCKQUOTE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, BLOCKQUOTE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct BODY : IHtmlTagAllowingContent<BODY>, IHasAttr_onafterprint, IHasAttr_onbeforeprint, IHasAttr_onbeforeunload, IHasAttr_onhashchange, IHasAttr_onlanguagechange, IHasAttr_onmessage, IHasAttr_onmessageerror, IHasAttr_onoffline, IHasAttr_ononline, IHasAttr_onpagehide, IHasAttr_onpageshow, IHasAttr_onpopstate, IHasAttr_onrejectionhandled, IHasAttr_onstorage, IHasAttr_onunhandledrejection, IHasAttr_onunload
+        public struct BODY : IHtmlElementAllowingContent<BODY>, IHasAttr_onafterprint, IHasAttr_onbeforeprint, IHasAttr_onbeforeunload, IHasAttr_onhashchange, IHasAttr_onlanguagechange, IHasAttr_onmessage, IHasAttr_onmessageerror, IHasAttr_onoffline, IHasAttr_ononline, IHasAttr_onpagehide, IHasAttr_onpageshow, IHasAttr_onpopstate, IHasAttr_onrejectionhandled, IHasAttr_onstorage, IHasAttr_onunhandledrejection, IHasAttr_onunload
         {
             public string TagName => "body";
-            string IHtmlTag.TagStart => "<body";
-            string IHtmlTag.EndTag => "</body>";
+            string IHtmlElement.TagStart => "<body";
+            string IHtmlElement.EndTag => "</body>";
             HtmlAttributes attrs;
-            BODY IHtmlTag<BODY>.WithAttributes(HtmlAttributes replacementAttributes) => new BODY { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            BODY IHtmlTagAllowingContent<BODY>.WithContents(HtmlFragment[] replacementContents) => new BODY { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            BODY IHtmlElement<BODY>.WithAttributes(HtmlAttributes replacementAttributes) => new BODY { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            BODY IHtmlElementAllowingContent<BODY>.WithContents(HtmlFragment replacementContents) => new BODY { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BODY tag) => tag.AsFragment();
-            public static HtmlFragment operator +(BODY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, BODY tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(BODY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, BODY tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct BR : IHtmlTag<BR>
+        public struct BR : IHtmlElement<BR>
         {
             public string TagName => "br";
-            string IHtmlTag.TagStart => "<br";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<br";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            BR IHtmlTag<BR>.WithAttributes(HtmlAttributes replacementAttributes) => new BR { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            BR IHtmlElement<BR>.WithAttributes(HtmlAttributes replacementAttributes) => new BR { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BR tag) => tag.AsFragment();
-            public static HtmlFragment operator +(BR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, BR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(BR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, BR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct BUTTON : IHtmlTagAllowingContent<BUTTON>, IHasAttr_autofocus, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_name, IHasAttr_type, IHasAttr_value
+        public struct BUTTON : IHtmlElementAllowingContent<BUTTON>, IHasAttr_autofocus, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_name, IHasAttr_type, IHasAttr_value
         {
             public string TagName => "button";
-            string IHtmlTag.TagStart => "<button";
-            string IHtmlTag.EndTag => "</button>";
+            string IHtmlElement.TagStart => "<button";
+            string IHtmlElement.EndTag => "</button>";
             HtmlAttributes attrs;
-            BUTTON IHtmlTag<BUTTON>.WithAttributes(HtmlAttributes replacementAttributes) => new BUTTON { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            BUTTON IHtmlTagAllowingContent<BUTTON>.WithContents(HtmlFragment[] replacementContents) => new BUTTON { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            BUTTON IHtmlElement<BUTTON>.WithAttributes(HtmlAttributes replacementAttributes) => new BUTTON { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            BUTTON IHtmlElementAllowingContent<BUTTON>.WithContents(HtmlFragment replacementContents) => new BUTTON { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(BUTTON tag) => tag.AsFragment();
-            public static HtmlFragment operator +(BUTTON head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, BUTTON tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(BUTTON head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, BUTTON tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct CANVAS : IHtmlTagAllowingContent<CANVAS>, IHasAttr_width, IHasAttr_height
+        public struct CANVAS : IHtmlElementAllowingContent<CANVAS>, IHasAttr_width, IHasAttr_height
         {
             public string TagName => "canvas";
-            string IHtmlTag.TagStart => "<canvas";
-            string IHtmlTag.EndTag => "</canvas>";
+            string IHtmlElement.TagStart => "<canvas";
+            string IHtmlElement.EndTag => "</canvas>";
             HtmlAttributes attrs;
-            CANVAS IHtmlTag<CANVAS>.WithAttributes(HtmlAttributes replacementAttributes) => new CANVAS { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            CANVAS IHtmlTagAllowingContent<CANVAS>.WithContents(HtmlFragment[] replacementContents) => new CANVAS { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            CANVAS IHtmlElement<CANVAS>.WithAttributes(HtmlAttributes replacementAttributes) => new CANVAS { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            CANVAS IHtmlElementAllowingContent<CANVAS>.WithContents(HtmlFragment replacementContents) => new CANVAS { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(CANVAS tag) => tag.AsFragment();
-            public static HtmlFragment operator +(CANVAS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, CANVAS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(CANVAS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, CANVAS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct CAPTION : IHtmlTagAllowingContent<CAPTION>
+        public struct CAPTION : IHtmlElementAllowingContent<CAPTION>
         {
             public string TagName => "caption";
-            string IHtmlTag.TagStart => "<caption";
-            string IHtmlTag.EndTag => "</caption>";
+            string IHtmlElement.TagStart => "<caption";
+            string IHtmlElement.EndTag => "</caption>";
             HtmlAttributes attrs;
-            CAPTION IHtmlTag<CAPTION>.WithAttributes(HtmlAttributes replacementAttributes) => new CAPTION { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            CAPTION IHtmlTagAllowingContent<CAPTION>.WithContents(HtmlFragment[] replacementContents) => new CAPTION { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            CAPTION IHtmlElement<CAPTION>.WithAttributes(HtmlAttributes replacementAttributes) => new CAPTION { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            CAPTION IHtmlElementAllowingContent<CAPTION>.WithContents(HtmlFragment replacementContents) => new CAPTION { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(CAPTION tag) => tag.AsFragment();
-            public static HtmlFragment operator +(CAPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, CAPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(CAPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, CAPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct CITE : IHtmlTagAllowingContent<CITE>
+        public struct CITE : IHtmlElementAllowingContent<CITE>
         {
             public string TagName => "cite";
-            string IHtmlTag.TagStart => "<cite";
-            string IHtmlTag.EndTag => "</cite>";
+            string IHtmlElement.TagStart => "<cite";
+            string IHtmlElement.EndTag => "</cite>";
             HtmlAttributes attrs;
-            CITE IHtmlTag<CITE>.WithAttributes(HtmlAttributes replacementAttributes) => new CITE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            CITE IHtmlTagAllowingContent<CITE>.WithContents(HtmlFragment[] replacementContents) => new CITE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            CITE IHtmlElement<CITE>.WithAttributes(HtmlAttributes replacementAttributes) => new CITE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            CITE IHtmlElementAllowingContent<CITE>.WithContents(HtmlFragment replacementContents) => new CITE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(CITE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(CITE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, CITE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(CITE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, CITE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct CODE : IHtmlTagAllowingContent<CODE>
+        public struct CODE : IHtmlElementAllowingContent<CODE>
         {
             public string TagName => "code";
-            string IHtmlTag.TagStart => "<code";
-            string IHtmlTag.EndTag => "</code>";
+            string IHtmlElement.TagStart => "<code";
+            string IHtmlElement.EndTag => "</code>";
             HtmlAttributes attrs;
-            CODE IHtmlTag<CODE>.WithAttributes(HtmlAttributes replacementAttributes) => new CODE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            CODE IHtmlTagAllowingContent<CODE>.WithContents(HtmlFragment[] replacementContents) => new CODE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            CODE IHtmlElement<CODE>.WithAttributes(HtmlAttributes replacementAttributes) => new CODE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            CODE IHtmlElementAllowingContent<CODE>.WithContents(HtmlFragment replacementContents) => new CODE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(CODE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(CODE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, CODE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(CODE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, CODE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct COL : IHtmlTag<COL>, IHasAttr_span
+        public struct COL : IHtmlElement<COL>, IHasAttr_span
         {
             public string TagName => "col";
-            string IHtmlTag.TagStart => "<col";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<col";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            COL IHtmlTag<COL>.WithAttributes(HtmlAttributes replacementAttributes) => new COL { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            COL IHtmlElement<COL>.WithAttributes(HtmlAttributes replacementAttributes) => new COL { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(COL tag) => tag.AsFragment();
-            public static HtmlFragment operator +(COL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, COL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(COL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, COL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct COLGROUP : IHtmlTagAllowingContent<COLGROUP>, IHasAttr_span
+        public struct COLGROUP : IHtmlElementAllowingContent<COLGROUP>, IHasAttr_span
         {
             public string TagName => "colgroup";
-            string IHtmlTag.TagStart => "<colgroup";
-            string IHtmlTag.EndTag => "</colgroup>";
+            string IHtmlElement.TagStart => "<colgroup";
+            string IHtmlElement.EndTag => "</colgroup>";
             HtmlAttributes attrs;
-            COLGROUP IHtmlTag<COLGROUP>.WithAttributes(HtmlAttributes replacementAttributes) => new COLGROUP { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            COLGROUP IHtmlTagAllowingContent<COLGROUP>.WithContents(HtmlFragment[] replacementContents) => new COLGROUP { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            COLGROUP IHtmlElement<COLGROUP>.WithAttributes(HtmlAttributes replacementAttributes) => new COLGROUP { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            COLGROUP IHtmlElementAllowingContent<COLGROUP>.WithContents(HtmlFragment replacementContents) => new COLGROUP { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(COLGROUP tag) => tag.AsFragment();
-            public static HtmlFragment operator +(COLGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, COLGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(COLGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, COLGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DATA : IHtmlTagAllowingContent<DATA>, IHasAttr_value
+        public struct DATA : IHtmlElementAllowingContent<DATA>, IHasAttr_value
         {
             public string TagName => "data";
-            string IHtmlTag.TagStart => "<data";
-            string IHtmlTag.EndTag => "</data>";
+            string IHtmlElement.TagStart => "<data";
+            string IHtmlElement.EndTag => "</data>";
             HtmlAttributes attrs;
-            DATA IHtmlTag<DATA>.WithAttributes(HtmlAttributes replacementAttributes) => new DATA { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DATA IHtmlTagAllowingContent<DATA>.WithContents(HtmlFragment[] replacementContents) => new DATA { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DATA IHtmlElement<DATA>.WithAttributes(HtmlAttributes replacementAttributes) => new DATA { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DATA IHtmlElementAllowingContent<DATA>.WithContents(HtmlFragment replacementContents) => new DATA { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DATA tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DATA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DATA tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DATA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DATA tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DATALIST : IHtmlTagAllowingContent<DATALIST>
+        public struct DATALIST : IHtmlElementAllowingContent<DATALIST>
         {
             public string TagName => "datalist";
-            string IHtmlTag.TagStart => "<datalist";
-            string IHtmlTag.EndTag => "</datalist>";
+            string IHtmlElement.TagStart => "<datalist";
+            string IHtmlElement.EndTag => "</datalist>";
             HtmlAttributes attrs;
-            DATALIST IHtmlTag<DATALIST>.WithAttributes(HtmlAttributes replacementAttributes) => new DATALIST { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DATALIST IHtmlTagAllowingContent<DATALIST>.WithContents(HtmlFragment[] replacementContents) => new DATALIST { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DATALIST IHtmlElement<DATALIST>.WithAttributes(HtmlAttributes replacementAttributes) => new DATALIST { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DATALIST IHtmlElementAllowingContent<DATALIST>.WithContents(HtmlFragment replacementContents) => new DATALIST { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DATALIST tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DATALIST head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DATALIST tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DATALIST head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DATALIST tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DD : IHtmlTagAllowingContent<DD>
+        public struct DD : IHtmlElementAllowingContent<DD>
         {
             public string TagName => "dd";
-            string IHtmlTag.TagStart => "<dd";
-            string IHtmlTag.EndTag => "</dd>";
+            string IHtmlElement.TagStart => "<dd";
+            string IHtmlElement.EndTag => "</dd>";
             HtmlAttributes attrs;
-            DD IHtmlTag<DD>.WithAttributes(HtmlAttributes replacementAttributes) => new DD { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DD IHtmlTagAllowingContent<DD>.WithContents(HtmlFragment[] replacementContents) => new DD { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DD IHtmlElement<DD>.WithAttributes(HtmlAttributes replacementAttributes) => new DD { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DD IHtmlElementAllowingContent<DD>.WithContents(HtmlFragment replacementContents) => new DD { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DD tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DEL : IHtmlTagAllowingContent<DEL>, IHasAttr_cite, IHasAttr_datetime
+        public struct DEL : IHtmlElementAllowingContent<DEL>, IHasAttr_cite, IHasAttr_datetime
         {
             public string TagName => "del";
-            string IHtmlTag.TagStart => "<del";
-            string IHtmlTag.EndTag => "</del>";
+            string IHtmlElement.TagStart => "<del";
+            string IHtmlElement.EndTag => "</del>";
             HtmlAttributes attrs;
-            DEL IHtmlTag<DEL>.WithAttributes(HtmlAttributes replacementAttributes) => new DEL { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DEL IHtmlTagAllowingContent<DEL>.WithContents(HtmlFragment[] replacementContents) => new DEL { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DEL IHtmlElement<DEL>.WithAttributes(HtmlAttributes replacementAttributes) => new DEL { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DEL IHtmlElementAllowingContent<DEL>.WithContents(HtmlFragment replacementContents) => new DEL { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DEL tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DEL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DEL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DEL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DEL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DETAILS : IHtmlTagAllowingContent<DETAILS>, IHasAttr_open
+        public struct DETAILS : IHtmlElementAllowingContent<DETAILS>, IHasAttr_open
         {
             public string TagName => "details";
-            string IHtmlTag.TagStart => "<details";
-            string IHtmlTag.EndTag => "</details>";
+            string IHtmlElement.TagStart => "<details";
+            string IHtmlElement.EndTag => "</details>";
             HtmlAttributes attrs;
-            DETAILS IHtmlTag<DETAILS>.WithAttributes(HtmlAttributes replacementAttributes) => new DETAILS { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DETAILS IHtmlTagAllowingContent<DETAILS>.WithContents(HtmlFragment[] replacementContents) => new DETAILS { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DETAILS IHtmlElement<DETAILS>.WithAttributes(HtmlAttributes replacementAttributes) => new DETAILS { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DETAILS IHtmlElementAllowingContent<DETAILS>.WithContents(HtmlFragment replacementContents) => new DETAILS { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DETAILS tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DETAILS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DETAILS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DETAILS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DETAILS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DFN : IHtmlTagAllowingContent<DFN>
+        public struct DFN : IHtmlElementAllowingContent<DFN>
         {
             public string TagName => "dfn";
-            string IHtmlTag.TagStart => "<dfn";
-            string IHtmlTag.EndTag => "</dfn>";
+            string IHtmlElement.TagStart => "<dfn";
+            string IHtmlElement.EndTag => "</dfn>";
             HtmlAttributes attrs;
-            DFN IHtmlTag<DFN>.WithAttributes(HtmlAttributes replacementAttributes) => new DFN { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DFN IHtmlTagAllowingContent<DFN>.WithContents(HtmlFragment[] replacementContents) => new DFN { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DFN IHtmlElement<DFN>.WithAttributes(HtmlAttributes replacementAttributes) => new DFN { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DFN IHtmlElementAllowingContent<DFN>.WithContents(HtmlFragment replacementContents) => new DFN { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DFN tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DFN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DFN tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DFN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DFN tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DIALOG : IHtmlTagAllowingContent<DIALOG>, IHasAttr_open
+        public struct DIALOG : IHtmlElementAllowingContent<DIALOG>, IHasAttr_open
         {
             public string TagName => "dialog";
-            string IHtmlTag.TagStart => "<dialog";
-            string IHtmlTag.EndTag => "</dialog>";
+            string IHtmlElement.TagStart => "<dialog";
+            string IHtmlElement.EndTag => "</dialog>";
             HtmlAttributes attrs;
-            DIALOG IHtmlTag<DIALOG>.WithAttributes(HtmlAttributes replacementAttributes) => new DIALOG { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DIALOG IHtmlTagAllowingContent<DIALOG>.WithContents(HtmlFragment[] replacementContents) => new DIALOG { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DIALOG IHtmlElement<DIALOG>.WithAttributes(HtmlAttributes replacementAttributes) => new DIALOG { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DIALOG IHtmlElementAllowingContent<DIALOG>.WithContents(HtmlFragment replacementContents) => new DIALOG { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DIALOG tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DIALOG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DIALOG tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DIALOG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DIALOG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DIV : IHtmlTagAllowingContent<DIV>
+        public struct DIV : IHtmlElementAllowingContent<DIV>
         {
             public string TagName => "div";
-            string IHtmlTag.TagStart => "<div";
-            string IHtmlTag.EndTag => "</div>";
+            string IHtmlElement.TagStart => "<div";
+            string IHtmlElement.EndTag => "</div>";
             HtmlAttributes attrs;
-            DIV IHtmlTag<DIV>.WithAttributes(HtmlAttributes replacementAttributes) => new DIV { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DIV IHtmlTagAllowingContent<DIV>.WithContents(HtmlFragment[] replacementContents) => new DIV { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DIV IHtmlElement<DIV>.WithAttributes(HtmlAttributes replacementAttributes) => new DIV { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DIV IHtmlElementAllowingContent<DIV>.WithContents(HtmlFragment replacementContents) => new DIV { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DIV tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DIV head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DIV tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DIV head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DIV tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DL : IHtmlTagAllowingContent<DL>
+        public struct DL : IHtmlElementAllowingContent<DL>
         {
             public string TagName => "dl";
-            string IHtmlTag.TagStart => "<dl";
-            string IHtmlTag.EndTag => "</dl>";
+            string IHtmlElement.TagStart => "<dl";
+            string IHtmlElement.EndTag => "</dl>";
             HtmlAttributes attrs;
-            DL IHtmlTag<DL>.WithAttributes(HtmlAttributes replacementAttributes) => new DL { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DL IHtmlTagAllowingContent<DL>.WithContents(HtmlFragment[] replacementContents) => new DL { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DL IHtmlElement<DL>.WithAttributes(HtmlAttributes replacementAttributes) => new DL { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DL IHtmlElementAllowingContent<DL>.WithContents(HtmlFragment replacementContents) => new DL { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DL tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct DT : IHtmlTagAllowingContent<DT>
+        public struct DT : IHtmlElementAllowingContent<DT>
         {
             public string TagName => "dt";
-            string IHtmlTag.TagStart => "<dt";
-            string IHtmlTag.EndTag => "</dt>";
+            string IHtmlElement.TagStart => "<dt";
+            string IHtmlElement.EndTag => "</dt>";
             HtmlAttributes attrs;
-            DT IHtmlTag<DT>.WithAttributes(HtmlAttributes replacementAttributes) => new DT { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            DT IHtmlTagAllowingContent<DT>.WithContents(HtmlFragment[] replacementContents) => new DT { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            DT IHtmlElement<DT>.WithAttributes(HtmlAttributes replacementAttributes) => new DT { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            DT IHtmlElementAllowingContent<DT>.WithContents(HtmlFragment replacementContents) => new DT { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(DT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(DT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, DT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(DT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, DT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct EM : IHtmlTagAllowingContent<EM>
+        public struct EM : IHtmlElementAllowingContent<EM>
         {
             public string TagName => "em";
-            string IHtmlTag.TagStart => "<em";
-            string IHtmlTag.EndTag => "</em>";
+            string IHtmlElement.TagStart => "<em";
+            string IHtmlElement.EndTag => "</em>";
             HtmlAttributes attrs;
-            EM IHtmlTag<EM>.WithAttributes(HtmlAttributes replacementAttributes) => new EM { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            EM IHtmlTagAllowingContent<EM>.WithContents(HtmlFragment[] replacementContents) => new EM { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            EM IHtmlElement<EM>.WithAttributes(HtmlAttributes replacementAttributes) => new EM { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            EM IHtmlElementAllowingContent<EM>.WithContents(HtmlFragment replacementContents) => new EM { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(EM tag) => tag.AsFragment();
-            public static HtmlFragment operator +(EM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, EM tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(EM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, EM tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct EMBED : IHtmlTag<EMBED>, IHasAttr_src, IHasAttr_type, IHasAttr_width, IHasAttr_height
+        public struct EMBED : IHtmlElement<EMBED>, IHasAttr_src, IHasAttr_type, IHasAttr_width, IHasAttr_height
         {
             public string TagName => "embed";
-            string IHtmlTag.TagStart => "<embed";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<embed";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            EMBED IHtmlTag<EMBED>.WithAttributes(HtmlAttributes replacementAttributes) => new EMBED { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            EMBED IHtmlElement<EMBED>.WithAttributes(HtmlAttributes replacementAttributes) => new EMBED { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(EMBED tag) => tag.AsFragment();
-            public static HtmlFragment operator +(EMBED head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, EMBED tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(EMBED head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, EMBED tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct FIELDSET : IHtmlTagAllowingContent<FIELDSET>, IHasAttr_disabled, IHasAttr_form, IHasAttr_name
+        public struct FIELDSET : IHtmlElementAllowingContent<FIELDSET>, IHasAttr_disabled, IHasAttr_form, IHasAttr_name
         {
             public string TagName => "fieldset";
-            string IHtmlTag.TagStart => "<fieldset";
-            string IHtmlTag.EndTag => "</fieldset>";
+            string IHtmlElement.TagStart => "<fieldset";
+            string IHtmlElement.EndTag => "</fieldset>";
             HtmlAttributes attrs;
-            FIELDSET IHtmlTag<FIELDSET>.WithAttributes(HtmlAttributes replacementAttributes) => new FIELDSET { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            FIELDSET IHtmlTagAllowingContent<FIELDSET>.WithContents(HtmlFragment[] replacementContents) => new FIELDSET { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            FIELDSET IHtmlElement<FIELDSET>.WithAttributes(HtmlAttributes replacementAttributes) => new FIELDSET { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            FIELDSET IHtmlElementAllowingContent<FIELDSET>.WithContents(HtmlFragment replacementContents) => new FIELDSET { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FIELDSET tag) => tag.AsFragment();
-            public static HtmlFragment operator +(FIELDSET head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, FIELDSET tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(FIELDSET head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, FIELDSET tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct FIGCAPTION : IHtmlTagAllowingContent<FIGCAPTION>
+        public struct FIGCAPTION : IHtmlElementAllowingContent<FIGCAPTION>
         {
             public string TagName => "figcaption";
-            string IHtmlTag.TagStart => "<figcaption";
-            string IHtmlTag.EndTag => "</figcaption>";
+            string IHtmlElement.TagStart => "<figcaption";
+            string IHtmlElement.EndTag => "</figcaption>";
             HtmlAttributes attrs;
-            FIGCAPTION IHtmlTag<FIGCAPTION>.WithAttributes(HtmlAttributes replacementAttributes) => new FIGCAPTION { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            FIGCAPTION IHtmlTagAllowingContent<FIGCAPTION>.WithContents(HtmlFragment[] replacementContents) => new FIGCAPTION { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            FIGCAPTION IHtmlElement<FIGCAPTION>.WithAttributes(HtmlAttributes replacementAttributes) => new FIGCAPTION { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            FIGCAPTION IHtmlElementAllowingContent<FIGCAPTION>.WithContents(HtmlFragment replacementContents) => new FIGCAPTION { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FIGCAPTION tag) => tag.AsFragment();
-            public static HtmlFragment operator +(FIGCAPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, FIGCAPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(FIGCAPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, FIGCAPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct FIGURE : IHtmlTagAllowingContent<FIGURE>
+        public struct FIGURE : IHtmlElementAllowingContent<FIGURE>
         {
             public string TagName => "figure";
-            string IHtmlTag.TagStart => "<figure";
-            string IHtmlTag.EndTag => "</figure>";
+            string IHtmlElement.TagStart => "<figure";
+            string IHtmlElement.EndTag => "</figure>";
             HtmlAttributes attrs;
-            FIGURE IHtmlTag<FIGURE>.WithAttributes(HtmlAttributes replacementAttributes) => new FIGURE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            FIGURE IHtmlTagAllowingContent<FIGURE>.WithContents(HtmlFragment[] replacementContents) => new FIGURE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            FIGURE IHtmlElement<FIGURE>.WithAttributes(HtmlAttributes replacementAttributes) => new FIGURE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            FIGURE IHtmlElementAllowingContent<FIGURE>.WithContents(HtmlFragment replacementContents) => new FIGURE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FIGURE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(FIGURE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, FIGURE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(FIGURE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, FIGURE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct FOOTER : IHtmlTagAllowingContent<FOOTER>
+        public struct FOOTER : IHtmlElementAllowingContent<FOOTER>
         {
             public string TagName => "footer";
-            string IHtmlTag.TagStart => "<footer";
-            string IHtmlTag.EndTag => "</footer>";
+            string IHtmlElement.TagStart => "<footer";
+            string IHtmlElement.EndTag => "</footer>";
             HtmlAttributes attrs;
-            FOOTER IHtmlTag<FOOTER>.WithAttributes(HtmlAttributes replacementAttributes) => new FOOTER { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            FOOTER IHtmlTagAllowingContent<FOOTER>.WithContents(HtmlFragment[] replacementContents) => new FOOTER { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            FOOTER IHtmlElement<FOOTER>.WithAttributes(HtmlAttributes replacementAttributes) => new FOOTER { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            FOOTER IHtmlElementAllowingContent<FOOTER>.WithContents(HtmlFragment replacementContents) => new FOOTER { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FOOTER tag) => tag.AsFragment();
-            public static HtmlFragment operator +(FOOTER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, FOOTER tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(FOOTER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, FOOTER tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct FORM : IHtmlTagAllowingContent<FORM>, IHasAttr_accept_charset, IHasAttr_action, IHasAttr_autocomplete, IHasAttr_enctype, IHasAttr_method, IHasAttr_name, IHasAttr_novalidate, IHasAttr_target
+        public struct FORM : IHtmlElementAllowingContent<FORM>, IHasAttr_accept_charset, IHasAttr_action, IHasAttr_autocomplete, IHasAttr_enctype, IHasAttr_method, IHasAttr_name, IHasAttr_novalidate, IHasAttr_target
         {
             public string TagName => "form";
-            string IHtmlTag.TagStart => "<form";
-            string IHtmlTag.EndTag => "</form>";
+            string IHtmlElement.TagStart => "<form";
+            string IHtmlElement.EndTag => "</form>";
             HtmlAttributes attrs;
-            FORM IHtmlTag<FORM>.WithAttributes(HtmlAttributes replacementAttributes) => new FORM { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            FORM IHtmlTagAllowingContent<FORM>.WithContents(HtmlFragment[] replacementContents) => new FORM { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            FORM IHtmlElement<FORM>.WithAttributes(HtmlAttributes replacementAttributes) => new FORM { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            FORM IHtmlElementAllowingContent<FORM>.WithContents(HtmlFragment replacementContents) => new FORM { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(FORM tag) => tag.AsFragment();
-            public static HtmlFragment operator +(FORM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, FORM tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(FORM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, FORM tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct H1 : IHtmlTagAllowingContent<H1>
+        public struct H1 : IHtmlElementAllowingContent<H1>
         {
             public string TagName => "h1";
-            string IHtmlTag.TagStart => "<h1";
-            string IHtmlTag.EndTag => "</h1>";
+            string IHtmlElement.TagStart => "<h1";
+            string IHtmlElement.EndTag => "</h1>";
             HtmlAttributes attrs;
-            H1 IHtmlTag<H1>.WithAttributes(HtmlAttributes replacementAttributes) => new H1 { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            H1 IHtmlTagAllowingContent<H1>.WithContents(HtmlFragment[] replacementContents) => new H1 { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            H1 IHtmlElement<H1>.WithAttributes(HtmlAttributes replacementAttributes) => new H1 { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            H1 IHtmlElementAllowingContent<H1>.WithContents(HtmlFragment replacementContents) => new H1 { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H1 tag) => tag.AsFragment();
-            public static HtmlFragment operator +(H1 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, H1 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(H1 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, H1 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct H2 : IHtmlTagAllowingContent<H2>
+        public struct H2 : IHtmlElementAllowingContent<H2>
         {
             public string TagName => "h2";
-            string IHtmlTag.TagStart => "<h2";
-            string IHtmlTag.EndTag => "</h2>";
+            string IHtmlElement.TagStart => "<h2";
+            string IHtmlElement.EndTag => "</h2>";
             HtmlAttributes attrs;
-            H2 IHtmlTag<H2>.WithAttributes(HtmlAttributes replacementAttributes) => new H2 { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            H2 IHtmlTagAllowingContent<H2>.WithContents(HtmlFragment[] replacementContents) => new H2 { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            H2 IHtmlElement<H2>.WithAttributes(HtmlAttributes replacementAttributes) => new H2 { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            H2 IHtmlElementAllowingContent<H2>.WithContents(HtmlFragment replacementContents) => new H2 { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H2 tag) => tag.AsFragment();
-            public static HtmlFragment operator +(H2 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, H2 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(H2 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, H2 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct H3 : IHtmlTagAllowingContent<H3>
+        public struct H3 : IHtmlElementAllowingContent<H3>
         {
             public string TagName => "h3";
-            string IHtmlTag.TagStart => "<h3";
-            string IHtmlTag.EndTag => "</h3>";
+            string IHtmlElement.TagStart => "<h3";
+            string IHtmlElement.EndTag => "</h3>";
             HtmlAttributes attrs;
-            H3 IHtmlTag<H3>.WithAttributes(HtmlAttributes replacementAttributes) => new H3 { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            H3 IHtmlTagAllowingContent<H3>.WithContents(HtmlFragment[] replacementContents) => new H3 { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            H3 IHtmlElement<H3>.WithAttributes(HtmlAttributes replacementAttributes) => new H3 { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            H3 IHtmlElementAllowingContent<H3>.WithContents(HtmlFragment replacementContents) => new H3 { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H3 tag) => tag.AsFragment();
-            public static HtmlFragment operator +(H3 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, H3 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(H3 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, H3 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct H4 : IHtmlTagAllowingContent<H4>
+        public struct H4 : IHtmlElementAllowingContent<H4>
         {
             public string TagName => "h4";
-            string IHtmlTag.TagStart => "<h4";
-            string IHtmlTag.EndTag => "</h4>";
+            string IHtmlElement.TagStart => "<h4";
+            string IHtmlElement.EndTag => "</h4>";
             HtmlAttributes attrs;
-            H4 IHtmlTag<H4>.WithAttributes(HtmlAttributes replacementAttributes) => new H4 { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            H4 IHtmlTagAllowingContent<H4>.WithContents(HtmlFragment[] replacementContents) => new H4 { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            H4 IHtmlElement<H4>.WithAttributes(HtmlAttributes replacementAttributes) => new H4 { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            H4 IHtmlElementAllowingContent<H4>.WithContents(HtmlFragment replacementContents) => new H4 { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H4 tag) => tag.AsFragment();
-            public static HtmlFragment operator +(H4 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, H4 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(H4 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, H4 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct H5 : IHtmlTagAllowingContent<H5>
+        public struct H5 : IHtmlElementAllowingContent<H5>
         {
             public string TagName => "h5";
-            string IHtmlTag.TagStart => "<h5";
-            string IHtmlTag.EndTag => "</h5>";
+            string IHtmlElement.TagStart => "<h5";
+            string IHtmlElement.EndTag => "</h5>";
             HtmlAttributes attrs;
-            H5 IHtmlTag<H5>.WithAttributes(HtmlAttributes replacementAttributes) => new H5 { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            H5 IHtmlTagAllowingContent<H5>.WithContents(HtmlFragment[] replacementContents) => new H5 { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            H5 IHtmlElement<H5>.WithAttributes(HtmlAttributes replacementAttributes) => new H5 { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            H5 IHtmlElementAllowingContent<H5>.WithContents(HtmlFragment replacementContents) => new H5 { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H5 tag) => tag.AsFragment();
-            public static HtmlFragment operator +(H5 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, H5 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(H5 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, H5 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct H6 : IHtmlTagAllowingContent<H6>
+        public struct H6 : IHtmlElementAllowingContent<H6>
         {
             public string TagName => "h6";
-            string IHtmlTag.TagStart => "<h6";
-            string IHtmlTag.EndTag => "</h6>";
+            string IHtmlElement.TagStart => "<h6";
+            string IHtmlElement.EndTag => "</h6>";
             HtmlAttributes attrs;
-            H6 IHtmlTag<H6>.WithAttributes(HtmlAttributes replacementAttributes) => new H6 { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            H6 IHtmlTagAllowingContent<H6>.WithContents(HtmlFragment[] replacementContents) => new H6 { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            H6 IHtmlElement<H6>.WithAttributes(HtmlAttributes replacementAttributes) => new H6 { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            H6 IHtmlElementAllowingContent<H6>.WithContents(HtmlFragment replacementContents) => new H6 { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(H6 tag) => tag.AsFragment();
-            public static HtmlFragment operator +(H6 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, H6 tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(H6 head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, H6 tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct HEAD : IHtmlTagAllowingContent<HEAD>
+        public struct HEAD : IHtmlElementAllowingContent<HEAD>
         {
             public string TagName => "head";
-            string IHtmlTag.TagStart => "<head";
-            string IHtmlTag.EndTag => "</head>";
+            string IHtmlElement.TagStart => "<head";
+            string IHtmlElement.EndTag => "</head>";
             HtmlAttributes attrs;
-            HEAD IHtmlTag<HEAD>.WithAttributes(HtmlAttributes replacementAttributes) => new HEAD { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            HEAD IHtmlTagAllowingContent<HEAD>.WithContents(HtmlFragment[] replacementContents) => new HEAD { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            HEAD IHtmlElement<HEAD>.WithAttributes(HtmlAttributes replacementAttributes) => new HEAD { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            HEAD IHtmlElementAllowingContent<HEAD>.WithContents(HtmlFragment replacementContents) => new HEAD { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(HEAD tag) => tag.AsFragment();
-            public static HtmlFragment operator +(HEAD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, HEAD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(HEAD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, HEAD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct HEADER : IHtmlTagAllowingContent<HEADER>
+        public struct HEADER : IHtmlElementAllowingContent<HEADER>
         {
             public string TagName => "header";
-            string IHtmlTag.TagStart => "<header";
-            string IHtmlTag.EndTag => "</header>";
+            string IHtmlElement.TagStart => "<header";
+            string IHtmlElement.EndTag => "</header>";
             HtmlAttributes attrs;
-            HEADER IHtmlTag<HEADER>.WithAttributes(HtmlAttributes replacementAttributes) => new HEADER { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            HEADER IHtmlTagAllowingContent<HEADER>.WithContents(HtmlFragment[] replacementContents) => new HEADER { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            HEADER IHtmlElement<HEADER>.WithAttributes(HtmlAttributes replacementAttributes) => new HEADER { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            HEADER IHtmlElementAllowingContent<HEADER>.WithContents(HtmlFragment replacementContents) => new HEADER { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(HEADER tag) => tag.AsFragment();
-            public static HtmlFragment operator +(HEADER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, HEADER tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(HEADER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, HEADER tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct HGROUP : IHtmlTagAllowingContent<HGROUP>
+        public struct HGROUP : IHtmlElementAllowingContent<HGROUP>
         {
             public string TagName => "hgroup";
-            string IHtmlTag.TagStart => "<hgroup";
-            string IHtmlTag.EndTag => "</hgroup>";
+            string IHtmlElement.TagStart => "<hgroup";
+            string IHtmlElement.EndTag => "</hgroup>";
             HtmlAttributes attrs;
-            HGROUP IHtmlTag<HGROUP>.WithAttributes(HtmlAttributes replacementAttributes) => new HGROUP { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            HGROUP IHtmlTagAllowingContent<HGROUP>.WithContents(HtmlFragment[] replacementContents) => new HGROUP { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            HGROUP IHtmlElement<HGROUP>.WithAttributes(HtmlAttributes replacementAttributes) => new HGROUP { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            HGROUP IHtmlElementAllowingContent<HGROUP>.WithContents(HtmlFragment replacementContents) => new HGROUP { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(HGROUP tag) => tag.AsFragment();
-            public static HtmlFragment operator +(HGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, HGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(HGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, HGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct HR : IHtmlTag<HR>
+        public struct HR : IHtmlElement<HR>
         {
             public string TagName => "hr";
-            string IHtmlTag.TagStart => "<hr";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<hr";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            HR IHtmlTag<HR>.WithAttributes(HtmlAttributes replacementAttributes) => new HR { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            HR IHtmlElement<HR>.WithAttributes(HtmlAttributes replacementAttributes) => new HR { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(HR tag) => tag.AsFragment();
-            public static HtmlFragment operator +(HR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, HR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(HR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, HR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct HTML : IHtmlTagAllowingContent<HTML>, IHasAttr_manifest
+        public struct HTML : IHtmlElementAllowingContent<HTML>, IHasAttr_manifest
         {
             public string TagName => "html";
-            string IHtmlTag.TagStart => "<html";
-            string IHtmlTag.EndTag => "</html>";
+            string IHtmlElement.TagStart => "<html";
+            string IHtmlElement.EndTag => "</html>";
             HtmlAttributes attrs;
-            HTML IHtmlTag<HTML>.WithAttributes(HtmlAttributes replacementAttributes) => new HTML { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            HTML IHtmlTagAllowingContent<HTML>.WithContents(HtmlFragment[] replacementContents) => new HTML { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            HTML IHtmlElement<HTML>.WithAttributes(HtmlAttributes replacementAttributes) => new HTML { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            HTML IHtmlElementAllowingContent<HTML>.WithContents(HtmlFragment replacementContents) => new HTML { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(HTML tag) => tag.AsFragment();
-            public static HtmlFragment operator +(HTML head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, HTML tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(HTML head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, HTML tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct I : IHtmlTagAllowingContent<I>
+        public struct I : IHtmlElementAllowingContent<I>
         {
             public string TagName => "i";
-            string IHtmlTag.TagStart => "<i";
-            string IHtmlTag.EndTag => "</i>";
+            string IHtmlElement.TagStart => "<i";
+            string IHtmlElement.EndTag => "</i>";
             HtmlAttributes attrs;
-            I IHtmlTag<I>.WithAttributes(HtmlAttributes replacementAttributes) => new I { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            I IHtmlTagAllowingContent<I>.WithContents(HtmlFragment[] replacementContents) => new I { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            I IHtmlElement<I>.WithAttributes(HtmlAttributes replacementAttributes) => new I { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            I IHtmlElementAllowingContent<I>.WithContents(HtmlFragment replacementContents) => new I { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(I tag) => tag.AsFragment();
-            public static HtmlFragment operator +(I head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, I tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(I head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, I tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct IFRAME : IHtmlTagAllowingContent<IFRAME>, IHasAttr_src, IHasAttr_srcdoc, IHasAttr_name, IHasAttr_sandbox, IHasAttr_allowfullscreen, IHasAttr_allowpaymentrequest, IHasAttr_allowusermedia, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy
+        public struct IFRAME : IHtmlElementAllowingContent<IFRAME>, IHasAttr_src, IHasAttr_srcdoc, IHasAttr_name, IHasAttr_sandbox, IHasAttr_allow, IHasAttr_allowfullscreen, IHasAttr_allowpaymentrequest, IHasAttr_allowusermedia, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy
         {
             public string TagName => "iframe";
-            string IHtmlTag.TagStart => "<iframe";
-            string IHtmlTag.EndTag => "</iframe>";
+            string IHtmlElement.TagStart => "<iframe";
+            string IHtmlElement.EndTag => "</iframe>";
             HtmlAttributes attrs;
-            IFRAME IHtmlTag<IFRAME>.WithAttributes(HtmlAttributes replacementAttributes) => new IFRAME { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            IFRAME IHtmlTagAllowingContent<IFRAME>.WithContents(HtmlFragment[] replacementContents) => new IFRAME { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            IFRAME IHtmlElement<IFRAME>.WithAttributes(HtmlAttributes replacementAttributes) => new IFRAME { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            IFRAME IHtmlElementAllowingContent<IFRAME>.WithContents(HtmlFragment replacementContents) => new IFRAME { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(IFRAME tag) => tag.AsFragment();
-            public static HtmlFragment operator +(IFRAME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, IFRAME tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(IFRAME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, IFRAME tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct IMG : IHtmlTag<IMG>, IHasAttr_alt, IHasAttr_src, IHasAttr_srcset, IHasAttr_crossorigin, IHasAttr_usemap, IHasAttr_ismap, IHasAttr_width, IHasAttr_height, IHasAttr_decoding, IHasAttr_referrerpolicy
+        public struct IMG : IHtmlElement<IMG>, IHasAttr_alt, IHasAttr_src, IHasAttr_srcset, IHasAttr_crossorigin, IHasAttr_usemap, IHasAttr_ismap, IHasAttr_width, IHasAttr_height, IHasAttr_decoding, IHasAttr_referrerpolicy
         {
             public string TagName => "img";
-            string IHtmlTag.TagStart => "<img";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<img";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            IMG IHtmlTag<IMG>.WithAttributes(HtmlAttributes replacementAttributes) => new IMG { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            IMG IHtmlElement<IMG>.WithAttributes(HtmlAttributes replacementAttributes) => new IMG { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(IMG tag) => tag.AsFragment();
-            public static HtmlFragment operator +(IMG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, IMG tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(IMG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, IMG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct INPUT : IHtmlTag<INPUT>, IHasAttr_accept, IHasAttr_alt, IHasAttr_autocomplete, IHasAttr_autofocus, IHasAttr_checked, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_height, IHasAttr_list, IHasAttr_max, IHasAttr_maxlength, IHasAttr_min, IHasAttr_minlength, IHasAttr_multiple, IHasAttr_name, IHasAttr_pattern, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_size, IHasAttr_src, IHasAttr_step, IHasAttr_type, IHasAttr_value, IHasAttr_width
+        public struct INPUT : IHtmlElement<INPUT>, IHasAttr_accept, IHasAttr_alt, IHasAttr_autocomplete, IHasAttr_autofocus, IHasAttr_checked, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_formaction, IHasAttr_formenctype, IHasAttr_formmethod, IHasAttr_formnovalidate, IHasAttr_formtarget, IHasAttr_height, IHasAttr_list, IHasAttr_max, IHasAttr_maxlength, IHasAttr_min, IHasAttr_minlength, IHasAttr_multiple, IHasAttr_name, IHasAttr_pattern, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_size, IHasAttr_src, IHasAttr_step, IHasAttr_type, IHasAttr_value, IHasAttr_width
         {
             public string TagName => "input";
-            string IHtmlTag.TagStart => "<input";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<input";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            INPUT IHtmlTag<INPUT>.WithAttributes(HtmlAttributes replacementAttributes) => new INPUT { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            INPUT IHtmlElement<INPUT>.WithAttributes(HtmlAttributes replacementAttributes) => new INPUT { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(INPUT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(INPUT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, INPUT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(INPUT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, INPUT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct INS : IHtmlTagAllowingContent<INS>, IHasAttr_cite, IHasAttr_datetime
+        public struct INS : IHtmlElementAllowingContent<INS>, IHasAttr_cite, IHasAttr_datetime
         {
             public string TagName => "ins";
-            string IHtmlTag.TagStart => "<ins";
-            string IHtmlTag.EndTag => "</ins>";
+            string IHtmlElement.TagStart => "<ins";
+            string IHtmlElement.EndTag => "</ins>";
             HtmlAttributes attrs;
-            INS IHtmlTag<INS>.WithAttributes(HtmlAttributes replacementAttributes) => new INS { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            INS IHtmlTagAllowingContent<INS>.WithContents(HtmlFragment[] replacementContents) => new INS { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            INS IHtmlElement<INS>.WithAttributes(HtmlAttributes replacementAttributes) => new INS { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            INS IHtmlElementAllowingContent<INS>.WithContents(HtmlFragment replacementContents) => new INS { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(INS tag) => tag.AsFragment();
-            public static HtmlFragment operator +(INS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, INS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(INS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, INS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct KBD : IHtmlTagAllowingContent<KBD>
+        public struct KBD : IHtmlElementAllowingContent<KBD>
         {
             public string TagName => "kbd";
-            string IHtmlTag.TagStart => "<kbd";
-            string IHtmlTag.EndTag => "</kbd>";
+            string IHtmlElement.TagStart => "<kbd";
+            string IHtmlElement.EndTag => "</kbd>";
             HtmlAttributes attrs;
-            KBD IHtmlTag<KBD>.WithAttributes(HtmlAttributes replacementAttributes) => new KBD { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            KBD IHtmlTagAllowingContent<KBD>.WithContents(HtmlFragment[] replacementContents) => new KBD { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            KBD IHtmlElement<KBD>.WithAttributes(HtmlAttributes replacementAttributes) => new KBD { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            KBD IHtmlElementAllowingContent<KBD>.WithContents(HtmlFragment replacementContents) => new KBD { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(KBD tag) => tag.AsFragment();
-            public static HtmlFragment operator +(KBD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, KBD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(KBD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, KBD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct LABEL : IHtmlTagAllowingContent<LABEL>, IHasAttr_for
+        public struct LABEL : IHtmlElementAllowingContent<LABEL>, IHasAttr_for
         {
             public string TagName => "label";
-            string IHtmlTag.TagStart => "<label";
-            string IHtmlTag.EndTag => "</label>";
+            string IHtmlElement.TagStart => "<label";
+            string IHtmlElement.EndTag => "</label>";
             HtmlAttributes attrs;
-            LABEL IHtmlTag<LABEL>.WithAttributes(HtmlAttributes replacementAttributes) => new LABEL { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            LABEL IHtmlTagAllowingContent<LABEL>.WithContents(HtmlFragment[] replacementContents) => new LABEL { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            LABEL IHtmlElement<LABEL>.WithAttributes(HtmlAttributes replacementAttributes) => new LABEL { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            LABEL IHtmlElementAllowingContent<LABEL>.WithContents(HtmlFragment replacementContents) => new LABEL { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(LABEL tag) => tag.AsFragment();
-            public static HtmlFragment operator +(LABEL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, LABEL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(LABEL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, LABEL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct LEGEND : IHtmlTagAllowingContent<LEGEND>
+        public struct LEGEND : IHtmlElementAllowingContent<LEGEND>
         {
             public string TagName => "legend";
-            string IHtmlTag.TagStart => "<legend";
-            string IHtmlTag.EndTag => "</legend>";
+            string IHtmlElement.TagStart => "<legend";
+            string IHtmlElement.EndTag => "</legend>";
             HtmlAttributes attrs;
-            LEGEND IHtmlTag<LEGEND>.WithAttributes(HtmlAttributes replacementAttributes) => new LEGEND { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            LEGEND IHtmlTagAllowingContent<LEGEND>.WithContents(HtmlFragment[] replacementContents) => new LEGEND { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            LEGEND IHtmlElement<LEGEND>.WithAttributes(HtmlAttributes replacementAttributes) => new LEGEND { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            LEGEND IHtmlElementAllowingContent<LEGEND>.WithContents(HtmlFragment replacementContents) => new LEGEND { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(LEGEND tag) => tag.AsFragment();
-            public static HtmlFragment operator +(LEGEND head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, LEGEND tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(LEGEND head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, LEGEND tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct LI : IHtmlTagAllowingContent<LI>, IHasAttr_value
+        public struct LI : IHtmlElementAllowingContent<LI>, IHasAttr_value
         {
             public string TagName => "li";
-            string IHtmlTag.TagStart => "<li";
-            string IHtmlTag.EndTag => "</li>";
+            string IHtmlElement.TagStart => "<li";
+            string IHtmlElement.EndTag => "</li>";
             HtmlAttributes attrs;
-            LI IHtmlTag<LI>.WithAttributes(HtmlAttributes replacementAttributes) => new LI { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            LI IHtmlTagAllowingContent<LI>.WithContents(HtmlFragment[] replacementContents) => new LI { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            LI IHtmlElement<LI>.WithAttributes(HtmlAttributes replacementAttributes) => new LI { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            LI IHtmlElementAllowingContent<LI>.WithContents(HtmlFragment replacementContents) => new LI { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(LI tag) => tag.AsFragment();
-            public static HtmlFragment operator +(LI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, LI tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(LI head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, LI tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct LINK : IHtmlTag<LINK>, IHasAttr_href, IHasAttr_crossorigin, IHasAttr_rel, IHasAttr_as, IHasAttr_media, IHasAttr_hreflang, IHasAttr_type, IHasAttr_sizes, IHasAttr_referrerpolicy, IHasAttr_integrity
+        public struct LINK : IHtmlElement<LINK>, IHasAttr_href, IHasAttr_crossorigin, IHasAttr_rel, IHasAttr_as, IHasAttr_media, IHasAttr_hreflang, IHasAttr_type, IHasAttr_sizes, IHasAttr_referrerpolicy, IHasAttr_integrity
         {
             public string TagName => "link";
-            string IHtmlTag.TagStart => "<link";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<link";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            LINK IHtmlTag<LINK>.WithAttributes(HtmlAttributes replacementAttributes) => new LINK { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            LINK IHtmlElement<LINK>.WithAttributes(HtmlAttributes replacementAttributes) => new LINK { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(LINK tag) => tag.AsFragment();
-            public static HtmlFragment operator +(LINK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, LINK tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(LINK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, LINK tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct MAIN : IHtmlTagAllowingContent<MAIN>
+        public struct MAIN : IHtmlElementAllowingContent<MAIN>
         {
             public string TagName => "main";
-            string IHtmlTag.TagStart => "<main";
-            string IHtmlTag.EndTag => "</main>";
+            string IHtmlElement.TagStart => "<main";
+            string IHtmlElement.EndTag => "</main>";
             HtmlAttributes attrs;
-            MAIN IHtmlTag<MAIN>.WithAttributes(HtmlAttributes replacementAttributes) => new MAIN { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            MAIN IHtmlTagAllowingContent<MAIN>.WithContents(HtmlFragment[] replacementContents) => new MAIN { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            MAIN IHtmlElement<MAIN>.WithAttributes(HtmlAttributes replacementAttributes) => new MAIN { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            MAIN IHtmlElementAllowingContent<MAIN>.WithContents(HtmlFragment replacementContents) => new MAIN { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(MAIN tag) => tag.AsFragment();
-            public static HtmlFragment operator +(MAIN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, MAIN tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(MAIN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, MAIN tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct MAP : IHtmlTagAllowingContent<MAP>, IHasAttr_name
+        public struct MAP : IHtmlElementAllowingContent<MAP>, IHasAttr_name
         {
             public string TagName => "map";
-            string IHtmlTag.TagStart => "<map";
-            string IHtmlTag.EndTag => "</map>";
+            string IHtmlElement.TagStart => "<map";
+            string IHtmlElement.EndTag => "</map>";
             HtmlAttributes attrs;
-            MAP IHtmlTag<MAP>.WithAttributes(HtmlAttributes replacementAttributes) => new MAP { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            MAP IHtmlTagAllowingContent<MAP>.WithContents(HtmlFragment[] replacementContents) => new MAP { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            MAP IHtmlElement<MAP>.WithAttributes(HtmlAttributes replacementAttributes) => new MAP { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            MAP IHtmlElementAllowingContent<MAP>.WithContents(HtmlFragment replacementContents) => new MAP { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(MAP tag) => tag.AsFragment();
-            public static HtmlFragment operator +(MAP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, MAP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(MAP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, MAP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct MARK : IHtmlTagAllowingContent<MARK>
+        public struct MARK : IHtmlElementAllowingContent<MARK>
         {
             public string TagName => "mark";
-            string IHtmlTag.TagStart => "<mark";
-            string IHtmlTag.EndTag => "</mark>";
+            string IHtmlElement.TagStart => "<mark";
+            string IHtmlElement.EndTag => "</mark>";
             HtmlAttributes attrs;
-            MARK IHtmlTag<MARK>.WithAttributes(HtmlAttributes replacementAttributes) => new MARK { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            MARK IHtmlTagAllowingContent<MARK>.WithContents(HtmlFragment[] replacementContents) => new MARK { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            MARK IHtmlElement<MARK>.WithAttributes(HtmlAttributes replacementAttributes) => new MARK { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            MARK IHtmlElementAllowingContent<MARK>.WithContents(HtmlFragment replacementContents) => new MARK { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(MARK tag) => tag.AsFragment();
-            public static HtmlFragment operator +(MARK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, MARK tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(MARK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, MARK tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct MENU : IHtmlTagAllowingContent<MENU>
+        public struct MENU : IHtmlElementAllowingContent<MENU>
         {
             public string TagName => "menu";
-            string IHtmlTag.TagStart => "<menu";
-            string IHtmlTag.EndTag => "</menu>";
+            string IHtmlElement.TagStart => "<menu";
+            string IHtmlElement.EndTag => "</menu>";
             HtmlAttributes attrs;
-            MENU IHtmlTag<MENU>.WithAttributes(HtmlAttributes replacementAttributes) => new MENU { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            MENU IHtmlTagAllowingContent<MENU>.WithContents(HtmlFragment[] replacementContents) => new MENU { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            MENU IHtmlElement<MENU>.WithAttributes(HtmlAttributes replacementAttributes) => new MENU { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            MENU IHtmlElementAllowingContent<MENU>.WithContents(HtmlFragment replacementContents) => new MENU { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(MENU tag) => tag.AsFragment();
-            public static HtmlFragment operator +(MENU head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, MENU tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(MENU head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, MENU tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct META : IHtmlTag<META>, IHasAttr_name, IHasAttr_http_equiv, IHasAttr_content, IHasAttr_charset
+        public struct META : IHtmlElement<META>, IHasAttr_name, IHasAttr_http_equiv, IHasAttr_content, IHasAttr_charset
         {
             public string TagName => "meta";
-            string IHtmlTag.TagStart => "<meta";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<meta";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            META IHtmlTag<META>.WithAttributes(HtmlAttributes replacementAttributes) => new META { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            META IHtmlElement<META>.WithAttributes(HtmlAttributes replacementAttributes) => new META { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(META tag) => tag.AsFragment();
-            public static HtmlFragment operator +(META head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, META tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(META head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, META tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct METER : IHtmlTagAllowingContent<METER>, IHasAttr_value, IHasAttr_min, IHasAttr_max, IHasAttr_low, IHasAttr_high, IHasAttr_optimum
+        public struct METER : IHtmlElementAllowingContent<METER>, IHasAttr_value, IHasAttr_min, IHasAttr_max, IHasAttr_low, IHasAttr_high, IHasAttr_optimum
         {
             public string TagName => "meter";
-            string IHtmlTag.TagStart => "<meter";
-            string IHtmlTag.EndTag => "</meter>";
+            string IHtmlElement.TagStart => "<meter";
+            string IHtmlElement.EndTag => "</meter>";
             HtmlAttributes attrs;
-            METER IHtmlTag<METER>.WithAttributes(HtmlAttributes replacementAttributes) => new METER { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            METER IHtmlTagAllowingContent<METER>.WithContents(HtmlFragment[] replacementContents) => new METER { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            METER IHtmlElement<METER>.WithAttributes(HtmlAttributes replacementAttributes) => new METER { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            METER IHtmlElementAllowingContent<METER>.WithContents(HtmlFragment replacementContents) => new METER { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(METER tag) => tag.AsFragment();
-            public static HtmlFragment operator +(METER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, METER tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(METER head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, METER tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct NAV : IHtmlTagAllowingContent<NAV>
+        public struct NAV : IHtmlElementAllowingContent<NAV>
         {
             public string TagName => "nav";
-            string IHtmlTag.TagStart => "<nav";
-            string IHtmlTag.EndTag => "</nav>";
+            string IHtmlElement.TagStart => "<nav";
+            string IHtmlElement.EndTag => "</nav>";
             HtmlAttributes attrs;
-            NAV IHtmlTag<NAV>.WithAttributes(HtmlAttributes replacementAttributes) => new NAV { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            NAV IHtmlTagAllowingContent<NAV>.WithContents(HtmlFragment[] replacementContents) => new NAV { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            NAV IHtmlElement<NAV>.WithAttributes(HtmlAttributes replacementAttributes) => new NAV { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            NAV IHtmlElementAllowingContent<NAV>.WithContents(HtmlFragment replacementContents) => new NAV { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(NAV tag) => tag.AsFragment();
-            public static HtmlFragment operator +(NAV head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, NAV tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(NAV head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, NAV tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct NOSCRIPT : IHtmlTagAllowingContent<NOSCRIPT>
+        public struct NOSCRIPT : IHtmlElementAllowingContent<NOSCRIPT>
         {
             public string TagName => "noscript";
-            string IHtmlTag.TagStart => "<noscript";
-            string IHtmlTag.EndTag => "</noscript>";
+            string IHtmlElement.TagStart => "<noscript";
+            string IHtmlElement.EndTag => "</noscript>";
             HtmlAttributes attrs;
-            NOSCRIPT IHtmlTag<NOSCRIPT>.WithAttributes(HtmlAttributes replacementAttributes) => new NOSCRIPT { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            NOSCRIPT IHtmlTagAllowingContent<NOSCRIPT>.WithContents(HtmlFragment[] replacementContents) => new NOSCRIPT { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            NOSCRIPT IHtmlElement<NOSCRIPT>.WithAttributes(HtmlAttributes replacementAttributes) => new NOSCRIPT { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            NOSCRIPT IHtmlElementAllowingContent<NOSCRIPT>.WithContents(HtmlFragment replacementContents) => new NOSCRIPT { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(NOSCRIPT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(NOSCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, NOSCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(NOSCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, NOSCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct OBJECT : IHtmlTagAllowingContent<OBJECT>, IHasAttr_data, IHasAttr_type, IHasAttr_typemustmatch, IHasAttr_name, IHasAttr_usemap, IHasAttr_form, IHasAttr_width, IHasAttr_height
+        public struct OBJECT : IHtmlElementAllowingContent<OBJECT>, IHasAttr_data, IHasAttr_type, IHasAttr_typemustmatch, IHasAttr_name, IHasAttr_usemap, IHasAttr_form, IHasAttr_width, IHasAttr_height
         {
             public string TagName => "object";
-            string IHtmlTag.TagStart => "<object";
-            string IHtmlTag.EndTag => "</object>";
+            string IHtmlElement.TagStart => "<object";
+            string IHtmlElement.EndTag => "</object>";
             HtmlAttributes attrs;
-            OBJECT IHtmlTag<OBJECT>.WithAttributes(HtmlAttributes replacementAttributes) => new OBJECT { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            OBJECT IHtmlTagAllowingContent<OBJECT>.WithContents(HtmlFragment[] replacementContents) => new OBJECT { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            OBJECT IHtmlElement<OBJECT>.WithAttributes(HtmlAttributes replacementAttributes) => new OBJECT { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            OBJECT IHtmlElementAllowingContent<OBJECT>.WithContents(HtmlFragment replacementContents) => new OBJECT { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OBJECT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(OBJECT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, OBJECT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(OBJECT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, OBJECT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct OL : IHtmlTagAllowingContent<OL>, IHasAttr_reversed, IHasAttr_start, IHasAttr_type
+        public struct OL : IHtmlElementAllowingContent<OL>, IHasAttr_reversed, IHasAttr_start, IHasAttr_type
         {
             public string TagName => "ol";
-            string IHtmlTag.TagStart => "<ol";
-            string IHtmlTag.EndTag => "</ol>";
+            string IHtmlElement.TagStart => "<ol";
+            string IHtmlElement.EndTag => "</ol>";
             HtmlAttributes attrs;
-            OL IHtmlTag<OL>.WithAttributes(HtmlAttributes replacementAttributes) => new OL { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            OL IHtmlTagAllowingContent<OL>.WithContents(HtmlFragment[] replacementContents) => new OL { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            OL IHtmlElement<OL>.WithAttributes(HtmlAttributes replacementAttributes) => new OL { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            OL IHtmlElementAllowingContent<OL>.WithContents(HtmlFragment replacementContents) => new OL { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OL tag) => tag.AsFragment();
-            public static HtmlFragment operator +(OL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, OL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(OL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, OL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct OPTGROUP : IHtmlTagAllowingContent<OPTGROUP>, IHasAttr_disabled, IHasAttr_label
+        public struct OPTGROUP : IHtmlElementAllowingContent<OPTGROUP>, IHasAttr_disabled, IHasAttr_label
         {
             public string TagName => "optgroup";
-            string IHtmlTag.TagStart => "<optgroup";
-            string IHtmlTag.EndTag => "</optgroup>";
+            string IHtmlElement.TagStart => "<optgroup";
+            string IHtmlElement.EndTag => "</optgroup>";
             HtmlAttributes attrs;
-            OPTGROUP IHtmlTag<OPTGROUP>.WithAttributes(HtmlAttributes replacementAttributes) => new OPTGROUP { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            OPTGROUP IHtmlTagAllowingContent<OPTGROUP>.WithContents(HtmlFragment[] replacementContents) => new OPTGROUP { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            OPTGROUP IHtmlElement<OPTGROUP>.WithAttributes(HtmlAttributes replacementAttributes) => new OPTGROUP { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            OPTGROUP IHtmlElementAllowingContent<OPTGROUP>.WithContents(HtmlFragment replacementContents) => new OPTGROUP { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OPTGROUP tag) => tag.AsFragment();
-            public static HtmlFragment operator +(OPTGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, OPTGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(OPTGROUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, OPTGROUP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct OPTION : IHtmlTagAllowingContent<OPTION>, IHasAttr_disabled, IHasAttr_label, IHasAttr_selected, IHasAttr_value
+        public struct OPTION : IHtmlElementAllowingContent<OPTION>, IHasAttr_disabled, IHasAttr_label, IHasAttr_selected, IHasAttr_value
         {
             public string TagName => "option";
-            string IHtmlTag.TagStart => "<option";
-            string IHtmlTag.EndTag => "</option>";
+            string IHtmlElement.TagStart => "<option";
+            string IHtmlElement.EndTag => "</option>";
             HtmlAttributes attrs;
-            OPTION IHtmlTag<OPTION>.WithAttributes(HtmlAttributes replacementAttributes) => new OPTION { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            OPTION IHtmlTagAllowingContent<OPTION>.WithContents(HtmlFragment[] replacementContents) => new OPTION { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            OPTION IHtmlElement<OPTION>.WithAttributes(HtmlAttributes replacementAttributes) => new OPTION { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            OPTION IHtmlElementAllowingContent<OPTION>.WithContents(HtmlFragment replacementContents) => new OPTION { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OPTION tag) => tag.AsFragment();
-            public static HtmlFragment operator +(OPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, OPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(OPTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, OPTION tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct OUTPUT : IHtmlTagAllowingContent<OUTPUT>, IHasAttr_for, IHasAttr_form, IHasAttr_name
+        public struct OUTPUT : IHtmlElementAllowingContent<OUTPUT>, IHasAttr_for, IHasAttr_form, IHasAttr_name
         {
             public string TagName => "output";
-            string IHtmlTag.TagStart => "<output";
-            string IHtmlTag.EndTag => "</output>";
+            string IHtmlElement.TagStart => "<output";
+            string IHtmlElement.EndTag => "</output>";
             HtmlAttributes attrs;
-            OUTPUT IHtmlTag<OUTPUT>.WithAttributes(HtmlAttributes replacementAttributes) => new OUTPUT { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            OUTPUT IHtmlTagAllowingContent<OUTPUT>.WithContents(HtmlFragment[] replacementContents) => new OUTPUT { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            OUTPUT IHtmlElement<OUTPUT>.WithAttributes(HtmlAttributes replacementAttributes) => new OUTPUT { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            OUTPUT IHtmlElementAllowingContent<OUTPUT>.WithContents(HtmlFragment replacementContents) => new OUTPUT { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(OUTPUT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(OUTPUT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, OUTPUT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(OUTPUT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, OUTPUT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct P : IHtmlTagAllowingContent<P>
+        public struct P : IHtmlElementAllowingContent<P>
         {
             public string TagName => "p";
-            string IHtmlTag.TagStart => "<p";
-            string IHtmlTag.EndTag => "</p>";
+            string IHtmlElement.TagStart => "<p";
+            string IHtmlElement.EndTag => "</p>";
             HtmlAttributes attrs;
-            P IHtmlTag<P>.WithAttributes(HtmlAttributes replacementAttributes) => new P { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            P IHtmlTagAllowingContent<P>.WithContents(HtmlFragment[] replacementContents) => new P { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            P IHtmlElement<P>.WithAttributes(HtmlAttributes replacementAttributes) => new P { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            P IHtmlElementAllowingContent<P>.WithContents(HtmlFragment replacementContents) => new P { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(P tag) => tag.AsFragment();
-            public static HtmlFragment operator +(P head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, P tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(P head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, P tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct PARAM : IHtmlTag<PARAM>, IHasAttr_name, IHasAttr_value
+        public struct PARAM : IHtmlElement<PARAM>, IHasAttr_name, IHasAttr_value
         {
             public string TagName => "param";
-            string IHtmlTag.TagStart => "<param";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<param";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            PARAM IHtmlTag<PARAM>.WithAttributes(HtmlAttributes replacementAttributes) => new PARAM { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            PARAM IHtmlElement<PARAM>.WithAttributes(HtmlAttributes replacementAttributes) => new PARAM { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(PARAM tag) => tag.AsFragment();
-            public static HtmlFragment operator +(PARAM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, PARAM tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(PARAM head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, PARAM tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct PICTURE : IHtmlTagAllowingContent<PICTURE>
+        public struct PICTURE : IHtmlElementAllowingContent<PICTURE>
         {
             public string TagName => "picture";
-            string IHtmlTag.TagStart => "<picture";
-            string IHtmlTag.EndTag => "</picture>";
+            string IHtmlElement.TagStart => "<picture";
+            string IHtmlElement.EndTag => "</picture>";
             HtmlAttributes attrs;
-            PICTURE IHtmlTag<PICTURE>.WithAttributes(HtmlAttributes replacementAttributes) => new PICTURE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            PICTURE IHtmlTagAllowingContent<PICTURE>.WithContents(HtmlFragment[] replacementContents) => new PICTURE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            PICTURE IHtmlElement<PICTURE>.WithAttributes(HtmlAttributes replacementAttributes) => new PICTURE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            PICTURE IHtmlElementAllowingContent<PICTURE>.WithContents(HtmlFragment replacementContents) => new PICTURE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(PICTURE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(PICTURE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, PICTURE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(PICTURE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, PICTURE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct PRE : IHtmlTagAllowingContent<PRE>
+        public struct PRE : IHtmlElementAllowingContent<PRE>
         {
             public string TagName => "pre";
-            string IHtmlTag.TagStart => "<pre";
-            string IHtmlTag.EndTag => "</pre>";
+            string IHtmlElement.TagStart => "<pre";
+            string IHtmlElement.EndTag => "</pre>";
             HtmlAttributes attrs;
-            PRE IHtmlTag<PRE>.WithAttributes(HtmlAttributes replacementAttributes) => new PRE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            PRE IHtmlTagAllowingContent<PRE>.WithContents(HtmlFragment[] replacementContents) => new PRE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            PRE IHtmlElement<PRE>.WithAttributes(HtmlAttributes replacementAttributes) => new PRE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            PRE IHtmlElementAllowingContent<PRE>.WithContents(HtmlFragment replacementContents) => new PRE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(PRE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(PRE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, PRE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(PRE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, PRE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct PROGRESS : IHtmlTagAllowingContent<PROGRESS>, IHasAttr_value, IHasAttr_max
+        public struct PROGRESS : IHtmlElementAllowingContent<PROGRESS>, IHasAttr_value, IHasAttr_max
         {
             public string TagName => "progress";
-            string IHtmlTag.TagStart => "<progress";
-            string IHtmlTag.EndTag => "</progress>";
+            string IHtmlElement.TagStart => "<progress";
+            string IHtmlElement.EndTag => "</progress>";
             HtmlAttributes attrs;
-            PROGRESS IHtmlTag<PROGRESS>.WithAttributes(HtmlAttributes replacementAttributes) => new PROGRESS { attrs = replacementAttributes, children = children };
-
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            PROGRESS IHtmlTagAllowingContent<PROGRESS>.WithContents(HtmlFragment[] replacementContents) => new PROGRESS { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            PROGRESS IHtmlElement<PROGRESS>.WithAttributes(HtmlAttributes replacementAttributes) => new PROGRESS { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            PROGRESS IHtmlElementAllowingContent<PROGRESS>.WithContents(HtmlFragment replacementContents) => new PROGRESS { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(PROGRESS tag) => tag.AsFragment();
-            public static HtmlFragment operator +(PROGRESS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, PROGRESS tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+
+            public static HtmlFragment operator +(PROGRESS head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, PROGRESS tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct Q : IHtmlTagAllowingContent<Q>, IHasAttr_cite
+        public struct Q : IHtmlElementAllowingContent<Q>, IHasAttr_cite
         {
             public string TagName => "q";
-            string IHtmlTag.TagStart => "<q";
-            string IHtmlTag.EndTag => "</q>";
+            string IHtmlElement.TagStart => "<q";
+            string IHtmlElement.EndTag => "</q>";
             HtmlAttributes attrs;
-            Q IHtmlTag<Q>.WithAttributes(HtmlAttributes replacementAttributes) => new Q { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            Q IHtmlTagAllowingContent<Q>.WithContents(HtmlFragment[] replacementContents) => new Q { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            Q IHtmlElement<Q>.WithAttributes(HtmlAttributes replacementAttributes) => new Q { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            Q IHtmlElementAllowingContent<Q>.WithContents(HtmlFragment replacementContents) => new Q { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(Q tag) => tag.AsFragment();
-            public static HtmlFragment operator +(Q head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, Q tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(Q head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, Q tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct RP : IHtmlTagAllowingContent<RP>
+        public struct RP : IHtmlElementAllowingContent<RP>
         {
             public string TagName => "rp";
-            string IHtmlTag.TagStart => "<rp";
-            string IHtmlTag.EndTag => "</rp>";
+            string IHtmlElement.TagStart => "<rp";
+            string IHtmlElement.EndTag => "</rp>";
             HtmlAttributes attrs;
-            RP IHtmlTag<RP>.WithAttributes(HtmlAttributes replacementAttributes) => new RP { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            RP IHtmlTagAllowingContent<RP>.WithContents(HtmlFragment[] replacementContents) => new RP { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            RP IHtmlElement<RP>.WithAttributes(HtmlAttributes replacementAttributes) => new RP { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            RP IHtmlElementAllowingContent<RP>.WithContents(HtmlFragment replacementContents) => new RP { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(RP tag) => tag.AsFragment();
-            public static HtmlFragment operator +(RP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, RP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(RP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, RP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct RT : IHtmlTagAllowingContent<RT>
+        public struct RT : IHtmlElementAllowingContent<RT>
         {
             public string TagName => "rt";
-            string IHtmlTag.TagStart => "<rt";
-            string IHtmlTag.EndTag => "</rt>";
+            string IHtmlElement.TagStart => "<rt";
+            string IHtmlElement.EndTag => "</rt>";
             HtmlAttributes attrs;
-            RT IHtmlTag<RT>.WithAttributes(HtmlAttributes replacementAttributes) => new RT { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            RT IHtmlTagAllowingContent<RT>.WithContents(HtmlFragment[] replacementContents) => new RT { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            RT IHtmlElement<RT>.WithAttributes(HtmlAttributes replacementAttributes) => new RT { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            RT IHtmlElementAllowingContent<RT>.WithContents(HtmlFragment replacementContents) => new RT { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(RT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(RT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, RT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(RT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, RT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct RUBY : IHtmlTagAllowingContent<RUBY>
+        public struct RUBY : IHtmlElementAllowingContent<RUBY>
         {
             public string TagName => "ruby";
-            string IHtmlTag.TagStart => "<ruby";
-            string IHtmlTag.EndTag => "</ruby>";
+            string IHtmlElement.TagStart => "<ruby";
+            string IHtmlElement.EndTag => "</ruby>";
             HtmlAttributes attrs;
-            RUBY IHtmlTag<RUBY>.WithAttributes(HtmlAttributes replacementAttributes) => new RUBY { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            RUBY IHtmlTagAllowingContent<RUBY>.WithContents(HtmlFragment[] replacementContents) => new RUBY { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            RUBY IHtmlElement<RUBY>.WithAttributes(HtmlAttributes replacementAttributes) => new RUBY { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            RUBY IHtmlElementAllowingContent<RUBY>.WithContents(HtmlFragment replacementContents) => new RUBY { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(RUBY tag) => tag.AsFragment();
-            public static HtmlFragment operator +(RUBY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, RUBY tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(RUBY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, RUBY tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct S : IHtmlTagAllowingContent<S>
+        public struct S : IHtmlElementAllowingContent<S>
         {
             public string TagName => "s";
-            string IHtmlTag.TagStart => "<s";
-            string IHtmlTag.EndTag => "</s>";
+            string IHtmlElement.TagStart => "<s";
+            string IHtmlElement.EndTag => "</s>";
             HtmlAttributes attrs;
-            S IHtmlTag<S>.WithAttributes(HtmlAttributes replacementAttributes) => new S { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            S IHtmlTagAllowingContent<S>.WithContents(HtmlFragment[] replacementContents) => new S { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            S IHtmlElement<S>.WithAttributes(HtmlAttributes replacementAttributes) => new S { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            S IHtmlElementAllowingContent<S>.WithContents(HtmlFragment replacementContents) => new S { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(S tag) => tag.AsFragment();
-            public static HtmlFragment operator +(S head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, S tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(S head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, S tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SAMP : IHtmlTagAllowingContent<SAMP>
+        public struct SAMP : IHtmlElementAllowingContent<SAMP>
         {
             public string TagName => "samp";
-            string IHtmlTag.TagStart => "<samp";
-            string IHtmlTag.EndTag => "</samp>";
+            string IHtmlElement.TagStart => "<samp";
+            string IHtmlElement.EndTag => "</samp>";
             HtmlAttributes attrs;
-            SAMP IHtmlTag<SAMP>.WithAttributes(HtmlAttributes replacementAttributes) => new SAMP { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SAMP IHtmlTagAllowingContent<SAMP>.WithContents(HtmlFragment[] replacementContents) => new SAMP { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SAMP IHtmlElement<SAMP>.WithAttributes(HtmlAttributes replacementAttributes) => new SAMP { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SAMP IHtmlElementAllowingContent<SAMP>.WithContents(HtmlFragment replacementContents) => new SAMP { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SAMP tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SAMP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SAMP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SAMP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SAMP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SCRIPT : IHtmlTagAllowingContent<SCRIPT>, IHasAttr_src, IHasAttr_type, IHasAttr_async, IHasAttr_defer, IHasAttr_crossorigin, IHasAttr_integrity
+        public struct SCRIPT : IHtmlElementAllowingContent<SCRIPT>, IHasAttr_src, IHasAttr_type, IHasAttr_async, IHasAttr_defer, IHasAttr_crossorigin, IHasAttr_integrity, IHasAttr_referrerpolicy
         {
             public string TagName => "script";
-            string IHtmlTag.TagStart => "<script";
-            string IHtmlTag.EndTag => "</script>";
+            string IHtmlElement.TagStart => "<script";
+            string IHtmlElement.EndTag => "</script>";
             HtmlAttributes attrs;
-            SCRIPT IHtmlTag<SCRIPT>.WithAttributes(HtmlAttributes replacementAttributes) => new SCRIPT { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SCRIPT IHtmlTagAllowingContent<SCRIPT>.WithContents(HtmlFragment[] replacementContents) => new SCRIPT { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SCRIPT IHtmlElement<SCRIPT>.WithAttributes(HtmlAttributes replacementAttributes) => new SCRIPT { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SCRIPT IHtmlElementAllowingContent<SCRIPT>.WithContents(HtmlFragment replacementContents) => new SCRIPT { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SCRIPT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SCRIPT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SCRIPT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SECTION : IHtmlTagAllowingContent<SECTION>
+        public struct SECTION : IHtmlElementAllowingContent<SECTION>
         {
             public string TagName => "section";
-            string IHtmlTag.TagStart => "<section";
-            string IHtmlTag.EndTag => "</section>";
+            string IHtmlElement.TagStart => "<section";
+            string IHtmlElement.EndTag => "</section>";
             HtmlAttributes attrs;
-            SECTION IHtmlTag<SECTION>.WithAttributes(HtmlAttributes replacementAttributes) => new SECTION { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SECTION IHtmlTagAllowingContent<SECTION>.WithContents(HtmlFragment[] replacementContents) => new SECTION { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SECTION IHtmlElement<SECTION>.WithAttributes(HtmlAttributes replacementAttributes) => new SECTION { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SECTION IHtmlElementAllowingContent<SECTION>.WithContents(HtmlFragment replacementContents) => new SECTION { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SECTION tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SECTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SECTION tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SECTION head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SECTION tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SELECT : IHtmlTagAllowingContent<SELECT>, IHasAttr_autocomplete, IHasAttr_autofocus, IHasAttr_disabled, IHasAttr_form, IHasAttr_multiple, IHasAttr_name, IHasAttr_required, IHasAttr_size
+        public struct SELECT : IHtmlElementAllowingContent<SELECT>, IHasAttr_autocomplete, IHasAttr_autofocus, IHasAttr_disabled, IHasAttr_form, IHasAttr_multiple, IHasAttr_name, IHasAttr_required, IHasAttr_size
         {
             public string TagName => "select";
-            string IHtmlTag.TagStart => "<select";
-            string IHtmlTag.EndTag => "</select>";
+            string IHtmlElement.TagStart => "<select";
+            string IHtmlElement.EndTag => "</select>";
             HtmlAttributes attrs;
-            SELECT IHtmlTag<SELECT>.WithAttributes(HtmlAttributes replacementAttributes) => new SELECT { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SELECT IHtmlTagAllowingContent<SELECT>.WithContents(HtmlFragment[] replacementContents) => new SELECT { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SELECT IHtmlElement<SELECT>.WithAttributes(HtmlAttributes replacementAttributes) => new SELECT { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SELECT IHtmlElementAllowingContent<SELECT>.WithContents(HtmlFragment replacementContents) => new SELECT { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SELECT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SELECT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SELECT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SELECT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SELECT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SLOT : IHtmlTagAllowingContent<SLOT>, IHasAttr_name
+        public struct SLOT : IHtmlElementAllowingContent<SLOT>, IHasAttr_name
         {
             public string TagName => "slot";
-            string IHtmlTag.TagStart => "<slot";
-            string IHtmlTag.EndTag => "</slot>";
+            string IHtmlElement.TagStart => "<slot";
+            string IHtmlElement.EndTag => "</slot>";
             HtmlAttributes attrs;
-            SLOT IHtmlTag<SLOT>.WithAttributes(HtmlAttributes replacementAttributes) => new SLOT { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SLOT IHtmlTagAllowingContent<SLOT>.WithContents(HtmlFragment[] replacementContents) => new SLOT { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SLOT IHtmlElement<SLOT>.WithAttributes(HtmlAttributes replacementAttributes) => new SLOT { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SLOT IHtmlElementAllowingContent<SLOT>.WithContents(HtmlFragment replacementContents) => new SLOT { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SLOT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SLOT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SLOT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SLOT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SLOT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SMALL : IHtmlTagAllowingContent<SMALL>
+        public struct SMALL : IHtmlElementAllowingContent<SMALL>
         {
             public string TagName => "small";
-            string IHtmlTag.TagStart => "<small";
-            string IHtmlTag.EndTag => "</small>";
+            string IHtmlElement.TagStart => "<small";
+            string IHtmlElement.EndTag => "</small>";
             HtmlAttributes attrs;
-            SMALL IHtmlTag<SMALL>.WithAttributes(HtmlAttributes replacementAttributes) => new SMALL { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SMALL IHtmlTagAllowingContent<SMALL>.WithContents(HtmlFragment[] replacementContents) => new SMALL { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SMALL IHtmlElement<SMALL>.WithAttributes(HtmlAttributes replacementAttributes) => new SMALL { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SMALL IHtmlElementAllowingContent<SMALL>.WithContents(HtmlFragment replacementContents) => new SMALL { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SMALL tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SMALL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SMALL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SMALL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SMALL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SOURCE : IHtmlTag<SOURCE>, IHasAttr_src, IHasAttr_sizes, IHasAttr_media
+        public struct SOURCE : IHtmlElement<SOURCE>, IHasAttr_src, IHasAttr_sizes, IHasAttr_media
         {
             public string TagName => "source";
-            string IHtmlTag.TagStart => "<source";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<source";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            SOURCE IHtmlTag<SOURCE>.WithAttributes(HtmlAttributes replacementAttributes) => new SOURCE { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SOURCE IHtmlElement<SOURCE>.WithAttributes(HtmlAttributes replacementAttributes) => new SOURCE { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SOURCE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SOURCE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SOURCE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SOURCE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SOURCE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SPAN : IHtmlTagAllowingContent<SPAN>
+        public struct SPAN : IHtmlElementAllowingContent<SPAN>
         {
             public string TagName => "span";
-            string IHtmlTag.TagStart => "<span";
-            string IHtmlTag.EndTag => "</span>";
+            string IHtmlElement.TagStart => "<span";
+            string IHtmlElement.EndTag => "</span>";
             HtmlAttributes attrs;
-            SPAN IHtmlTag<SPAN>.WithAttributes(HtmlAttributes replacementAttributes) => new SPAN { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SPAN IHtmlTagAllowingContent<SPAN>.WithContents(HtmlFragment[] replacementContents) => new SPAN { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SPAN IHtmlElement<SPAN>.WithAttributes(HtmlAttributes replacementAttributes) => new SPAN { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SPAN IHtmlElementAllowingContent<SPAN>.WithContents(HtmlFragment replacementContents) => new SPAN { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SPAN tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SPAN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SPAN tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SPAN head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SPAN tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct STRONG : IHtmlTagAllowingContent<STRONG>
+        public struct STRONG : IHtmlElementAllowingContent<STRONG>
         {
             public string TagName => "strong";
-            string IHtmlTag.TagStart => "<strong";
-            string IHtmlTag.EndTag => "</strong>";
+            string IHtmlElement.TagStart => "<strong";
+            string IHtmlElement.EndTag => "</strong>";
             HtmlAttributes attrs;
-            STRONG IHtmlTag<STRONG>.WithAttributes(HtmlAttributes replacementAttributes) => new STRONG { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            STRONG IHtmlTagAllowingContent<STRONG>.WithContents(HtmlFragment[] replacementContents) => new STRONG { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            STRONG IHtmlElement<STRONG>.WithAttributes(HtmlAttributes replacementAttributes) => new STRONG { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            STRONG IHtmlElementAllowingContent<STRONG>.WithContents(HtmlFragment replacementContents) => new STRONG { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(STRONG tag) => tag.AsFragment();
-            public static HtmlFragment operator +(STRONG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, STRONG tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(STRONG head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, STRONG tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct STYLE : IHtmlTagAllowingContent<STYLE>, IHasAttr_media
+        public struct STYLE : IHtmlElementAllowingContent<STYLE>, IHasAttr_media
         {
             public string TagName => "style";
-            string IHtmlTag.TagStart => "<style";
-            string IHtmlTag.EndTag => "</style>";
+            string IHtmlElement.TagStart => "<style";
+            string IHtmlElement.EndTag => "</style>";
             HtmlAttributes attrs;
-            STYLE IHtmlTag<STYLE>.WithAttributes(HtmlAttributes replacementAttributes) => new STYLE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            STYLE IHtmlTagAllowingContent<STYLE>.WithContents(HtmlFragment[] replacementContents) => new STYLE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            STYLE IHtmlElement<STYLE>.WithAttributes(HtmlAttributes replacementAttributes) => new STYLE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            STYLE IHtmlElementAllowingContent<STYLE>.WithContents(HtmlFragment replacementContents) => new STYLE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(STYLE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(STYLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, STYLE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(STYLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, STYLE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SUB : IHtmlTagAllowingContent<SUB>
+        public struct SUB : IHtmlElementAllowingContent<SUB>
         {
             public string TagName => "sub";
-            string IHtmlTag.TagStart => "<sub";
-            string IHtmlTag.EndTag => "</sub>";
+            string IHtmlElement.TagStart => "<sub";
+            string IHtmlElement.EndTag => "</sub>";
             HtmlAttributes attrs;
-            SUB IHtmlTag<SUB>.WithAttributes(HtmlAttributes replacementAttributes) => new SUB { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SUB IHtmlTagAllowingContent<SUB>.WithContents(HtmlFragment[] replacementContents) => new SUB { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SUB IHtmlElement<SUB>.WithAttributes(HtmlAttributes replacementAttributes) => new SUB { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SUB IHtmlElementAllowingContent<SUB>.WithContents(HtmlFragment replacementContents) => new SUB { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SUB tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SUB head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SUB tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SUB head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SUB tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SUMMARY : IHtmlTagAllowingContent<SUMMARY>
+        public struct SUMMARY : IHtmlElementAllowingContent<SUMMARY>
         {
             public string TagName => "summary";
-            string IHtmlTag.TagStart => "<summary";
-            string IHtmlTag.EndTag => "</summary>";
+            string IHtmlElement.TagStart => "<summary";
+            string IHtmlElement.EndTag => "</summary>";
             HtmlAttributes attrs;
-            SUMMARY IHtmlTag<SUMMARY>.WithAttributes(HtmlAttributes replacementAttributes) => new SUMMARY { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SUMMARY IHtmlTagAllowingContent<SUMMARY>.WithContents(HtmlFragment[] replacementContents) => new SUMMARY { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SUMMARY IHtmlElement<SUMMARY>.WithAttributes(HtmlAttributes replacementAttributes) => new SUMMARY { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SUMMARY IHtmlElementAllowingContent<SUMMARY>.WithContents(HtmlFragment replacementContents) => new SUMMARY { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SUMMARY tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SUMMARY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SUMMARY tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SUMMARY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SUMMARY tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct SUP : IHtmlTagAllowingContent<SUP>
+        public struct SUP : IHtmlElementAllowingContent<SUP>
         {
             public string TagName => "sup";
-            string IHtmlTag.TagStart => "<sup";
-            string IHtmlTag.EndTag => "</sup>";
+            string IHtmlElement.TagStart => "<sup";
+            string IHtmlElement.EndTag => "</sup>";
             HtmlAttributes attrs;
-            SUP IHtmlTag<SUP>.WithAttributes(HtmlAttributes replacementAttributes) => new SUP { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            SUP IHtmlTagAllowingContent<SUP>.WithContents(HtmlFragment[] replacementContents) => new SUP { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            SUP IHtmlElement<SUP>.WithAttributes(HtmlAttributes replacementAttributes) => new SUP { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            SUP IHtmlElementAllowingContent<SUP>.WithContents(HtmlFragment replacementContents) => new SUP { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(SUP tag) => tag.AsFragment();
-            public static HtmlFragment operator +(SUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, SUP tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(SUP head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, SUP tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TABLE : IHtmlTagAllowingContent<TABLE>
+        public struct TABLE : IHtmlElementAllowingContent<TABLE>
         {
             public string TagName => "table";
-            string IHtmlTag.TagStart => "<table";
-            string IHtmlTag.EndTag => "</table>";
+            string IHtmlElement.TagStart => "<table";
+            string IHtmlElement.EndTag => "</table>";
             HtmlAttributes attrs;
-            TABLE IHtmlTag<TABLE>.WithAttributes(HtmlAttributes replacementAttributes) => new TABLE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TABLE IHtmlTagAllowingContent<TABLE>.WithContents(HtmlFragment[] replacementContents) => new TABLE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TABLE IHtmlElement<TABLE>.WithAttributes(HtmlAttributes replacementAttributes) => new TABLE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TABLE IHtmlElementAllowingContent<TABLE>.WithContents(HtmlFragment replacementContents) => new TABLE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TABLE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TABLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TABLE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TABLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TABLE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TBODY : IHtmlTagAllowingContent<TBODY>
+        public struct TBODY : IHtmlElementAllowingContent<TBODY>
         {
             public string TagName => "tbody";
-            string IHtmlTag.TagStart => "<tbody";
-            string IHtmlTag.EndTag => "</tbody>";
+            string IHtmlElement.TagStart => "<tbody";
+            string IHtmlElement.EndTag => "</tbody>";
             HtmlAttributes attrs;
-            TBODY IHtmlTag<TBODY>.WithAttributes(HtmlAttributes replacementAttributes) => new TBODY { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TBODY IHtmlTagAllowingContent<TBODY>.WithContents(HtmlFragment[] replacementContents) => new TBODY { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TBODY IHtmlElement<TBODY>.WithAttributes(HtmlAttributes replacementAttributes) => new TBODY { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TBODY IHtmlElementAllowingContent<TBODY>.WithContents(HtmlFragment replacementContents) => new TBODY { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TBODY tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TBODY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TBODY tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TBODY head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TBODY tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TD : IHtmlTagAllowingContent<TD>, IHasAttr_colspan, IHasAttr_rowspan, IHasAttr_headers
+        public struct TD : IHtmlElementAllowingContent<TD>, IHasAttr_colspan, IHasAttr_rowspan, IHasAttr_headers
         {
             public string TagName => "td";
-            string IHtmlTag.TagStart => "<td";
-            string IHtmlTag.EndTag => "</td>";
+            string IHtmlElement.TagStart => "<td";
+            string IHtmlElement.EndTag => "</td>";
             HtmlAttributes attrs;
-            TD IHtmlTag<TD>.WithAttributes(HtmlAttributes replacementAttributes) => new TD { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TD IHtmlTagAllowingContent<TD>.WithContents(HtmlFragment[] replacementContents) => new TD { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TD IHtmlElement<TD>.WithAttributes(HtmlAttributes replacementAttributes) => new TD { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TD IHtmlElementAllowingContent<TD>.WithContents(HtmlFragment replacementContents) => new TD { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TD tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TEMPLATE : IHtmlTagAllowingContent<TEMPLATE>
+        public struct TEMPLATE : IHtmlElementAllowingContent<TEMPLATE>
         {
             public string TagName => "template";
-            string IHtmlTag.TagStart => "<template";
-            string IHtmlTag.EndTag => "</template>";
+            string IHtmlElement.TagStart => "<template";
+            string IHtmlElement.EndTag => "</template>";
             HtmlAttributes attrs;
-            TEMPLATE IHtmlTag<TEMPLATE>.WithAttributes(HtmlAttributes replacementAttributes) => new TEMPLATE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TEMPLATE IHtmlTagAllowingContent<TEMPLATE>.WithContents(HtmlFragment[] replacementContents) => new TEMPLATE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TEMPLATE IHtmlElement<TEMPLATE>.WithAttributes(HtmlAttributes replacementAttributes) => new TEMPLATE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TEMPLATE IHtmlElementAllowingContent<TEMPLATE>.WithContents(HtmlFragment replacementContents) => new TEMPLATE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TEMPLATE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TEMPLATE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TEMPLATE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TEMPLATE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TEMPLATE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TEXTAREA : IHtmlTagAllowingContent<TEXTAREA>, IHasAttr_autofocus, IHasAttr_cols, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_maxlength, IHasAttr_minlength, IHasAttr_name, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_rows, IHasAttr_wrap
+        public struct TEXTAREA : IHtmlElementAllowingContent<TEXTAREA>, IHasAttr_autofocus, IHasAttr_cols, IHasAttr_dirname, IHasAttr_disabled, IHasAttr_form, IHasAttr_maxlength, IHasAttr_minlength, IHasAttr_name, IHasAttr_placeholder, IHasAttr_readonly, IHasAttr_required, IHasAttr_rows, IHasAttr_wrap
         {
             public string TagName => "textarea";
-            string IHtmlTag.TagStart => "<textarea";
-            string IHtmlTag.EndTag => "</textarea>";
+            string IHtmlElement.TagStart => "<textarea";
+            string IHtmlElement.EndTag => "</textarea>";
             HtmlAttributes attrs;
-            TEXTAREA IHtmlTag<TEXTAREA>.WithAttributes(HtmlAttributes replacementAttributes) => new TEXTAREA { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TEXTAREA IHtmlTagAllowingContent<TEXTAREA>.WithContents(HtmlFragment[] replacementContents) => new TEXTAREA { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TEXTAREA IHtmlElement<TEXTAREA>.WithAttributes(HtmlAttributes replacementAttributes) => new TEXTAREA { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TEXTAREA IHtmlElementAllowingContent<TEXTAREA>.WithContents(HtmlFragment replacementContents) => new TEXTAREA { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TEXTAREA tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TEXTAREA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TEXTAREA tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TEXTAREA head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TEXTAREA tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TFOOT : IHtmlTagAllowingContent<TFOOT>
+        public struct TFOOT : IHtmlElementAllowingContent<TFOOT>
         {
             public string TagName => "tfoot";
-            string IHtmlTag.TagStart => "<tfoot";
-            string IHtmlTag.EndTag => "</tfoot>";
+            string IHtmlElement.TagStart => "<tfoot";
+            string IHtmlElement.EndTag => "</tfoot>";
             HtmlAttributes attrs;
-            TFOOT IHtmlTag<TFOOT>.WithAttributes(HtmlAttributes replacementAttributes) => new TFOOT { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TFOOT IHtmlTagAllowingContent<TFOOT>.WithContents(HtmlFragment[] replacementContents) => new TFOOT { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TFOOT IHtmlElement<TFOOT>.WithAttributes(HtmlAttributes replacementAttributes) => new TFOOT { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TFOOT IHtmlElementAllowingContent<TFOOT>.WithContents(HtmlFragment replacementContents) => new TFOOT { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TFOOT tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TFOOT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TFOOT tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TFOOT head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TFOOT tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TH : IHtmlTagAllowingContent<TH>, IHasAttr_colspan, IHasAttr_rowspan, IHasAttr_headers, IHasAttr_scope, IHasAttr_abbr
+        public struct TH : IHtmlElementAllowingContent<TH>, IHasAttr_colspan, IHasAttr_rowspan, IHasAttr_headers, IHasAttr_scope, IHasAttr_abbr
         {
             public string TagName => "th";
-            string IHtmlTag.TagStart => "<th";
-            string IHtmlTag.EndTag => "</th>";
+            string IHtmlElement.TagStart => "<th";
+            string IHtmlElement.EndTag => "</th>";
             HtmlAttributes attrs;
-            TH IHtmlTag<TH>.WithAttributes(HtmlAttributes replacementAttributes) => new TH { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TH IHtmlTagAllowingContent<TH>.WithContents(HtmlFragment[] replacementContents) => new TH { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TH IHtmlElement<TH>.WithAttributes(HtmlAttributes replacementAttributes) => new TH { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TH IHtmlElementAllowingContent<TH>.WithContents(HtmlFragment replacementContents) => new TH { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TH tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TH head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TH tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TH head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TH tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct THEAD : IHtmlTagAllowingContent<THEAD>
+        public struct THEAD : IHtmlElementAllowingContent<THEAD>
         {
             public string TagName => "thead";
-            string IHtmlTag.TagStart => "<thead";
-            string IHtmlTag.EndTag => "</thead>";
+            string IHtmlElement.TagStart => "<thead";
+            string IHtmlElement.EndTag => "</thead>";
             HtmlAttributes attrs;
-            THEAD IHtmlTag<THEAD>.WithAttributes(HtmlAttributes replacementAttributes) => new THEAD { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            THEAD IHtmlTagAllowingContent<THEAD>.WithContents(HtmlFragment[] replacementContents) => new THEAD { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            THEAD IHtmlElement<THEAD>.WithAttributes(HtmlAttributes replacementAttributes) => new THEAD { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            THEAD IHtmlElementAllowingContent<THEAD>.WithContents(HtmlFragment replacementContents) => new THEAD { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(THEAD tag) => tag.AsFragment();
-            public static HtmlFragment operator +(THEAD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, THEAD tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(THEAD head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, THEAD tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TIME : IHtmlTagAllowingContent<TIME>, IHasAttr_datetime
+        public struct TIME : IHtmlElementAllowingContent<TIME>, IHasAttr_datetime
         {
             public string TagName => "time";
-            string IHtmlTag.TagStart => "<time";
-            string IHtmlTag.EndTag => "</time>";
+            string IHtmlElement.TagStart => "<time";
+            string IHtmlElement.EndTag => "</time>";
             HtmlAttributes attrs;
-            TIME IHtmlTag<TIME>.WithAttributes(HtmlAttributes replacementAttributes) => new TIME { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TIME IHtmlTagAllowingContent<TIME>.WithContents(HtmlFragment[] replacementContents) => new TIME { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TIME IHtmlElement<TIME>.WithAttributes(HtmlAttributes replacementAttributes) => new TIME { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TIME IHtmlElementAllowingContent<TIME>.WithContents(HtmlFragment replacementContents) => new TIME { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TIME tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TIME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TIME tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TIME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TIME tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TITLE : IHtmlTagAllowingContent<TITLE>
+        public struct TITLE : IHtmlElementAllowingContent<TITLE>
         {
             public string TagName => "title";
-            string IHtmlTag.TagStart => "<title";
-            string IHtmlTag.EndTag => "</title>";
+            string IHtmlElement.TagStart => "<title";
+            string IHtmlElement.EndTag => "</title>";
             HtmlAttributes attrs;
-            TITLE IHtmlTag<TITLE>.WithAttributes(HtmlAttributes replacementAttributes) => new TITLE { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TITLE IHtmlTagAllowingContent<TITLE>.WithContents(HtmlFragment[] replacementContents) => new TITLE { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TITLE IHtmlElement<TITLE>.WithAttributes(HtmlAttributes replacementAttributes) => new TITLE { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TITLE IHtmlElementAllowingContent<TITLE>.WithContents(HtmlFragment replacementContents) => new TITLE { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TITLE tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TITLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TITLE tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TITLE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TITLE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TR : IHtmlTagAllowingContent<TR>
+        public struct TR : IHtmlElementAllowingContent<TR>
         {
             public string TagName => "tr";
-            string IHtmlTag.TagStart => "<tr";
-            string IHtmlTag.EndTag => "</tr>";
+            string IHtmlElement.TagStart => "<tr";
+            string IHtmlElement.EndTag => "</tr>";
             HtmlAttributes attrs;
-            TR IHtmlTag<TR>.WithAttributes(HtmlAttributes replacementAttributes) => new TR { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            TR IHtmlTagAllowingContent<TR>.WithContents(HtmlFragment[] replacementContents) => new TR { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TR IHtmlElement<TR>.WithAttributes(HtmlAttributes replacementAttributes) => new TR { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            TR IHtmlElementAllowingContent<TR>.WithContents(HtmlFragment replacementContents) => new TR { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TR tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct TRACK : IHtmlTag<TRACK>, IHasAttr_default, IHasAttr_kind, IHasAttr_label, IHasAttr_src, IHasAttr_srclang
+        public struct TRACK : IHtmlElement<TRACK>, IHasAttr_default, IHasAttr_kind, IHasAttr_label, IHasAttr_src, IHasAttr_srclang
         {
             public string TagName => "track";
-            string IHtmlTag.TagStart => "<track";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<track";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            TRACK IHtmlTag<TRACK>.WithAttributes(HtmlAttributes replacementAttributes) => new TRACK { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            TRACK IHtmlElement<TRACK>.WithAttributes(HtmlAttributes replacementAttributes) => new TRACK { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TRACK tag) => tag.AsFragment();
-            public static HtmlFragment operator +(TRACK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, TRACK tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(TRACK head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, TRACK tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct U : IHtmlTagAllowingContent<U>
+        public struct U : IHtmlElementAllowingContent<U>
         {
             public string TagName => "u";
-            string IHtmlTag.TagStart => "<u";
-            string IHtmlTag.EndTag => "</u>";
+            string IHtmlElement.TagStart => "<u";
+            string IHtmlElement.EndTag => "</u>";
             HtmlAttributes attrs;
-            U IHtmlTag<U>.WithAttributes(HtmlAttributes replacementAttributes) => new U { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            U IHtmlTagAllowingContent<U>.WithContents(HtmlFragment[] replacementContents) => new U { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            U IHtmlElement<U>.WithAttributes(HtmlAttributes replacementAttributes) => new U { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            U IHtmlElementAllowingContent<U>.WithContents(HtmlFragment replacementContents) => new U { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(U tag) => tag.AsFragment();
-            public static HtmlFragment operator +(U head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, U tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(U head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, U tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct UL : IHtmlTagAllowingContent<UL>
+        public struct UL : IHtmlElementAllowingContent<UL>
         {
             public string TagName => "ul";
-            string IHtmlTag.TagStart => "<ul";
-            string IHtmlTag.EndTag => "</ul>";
+            string IHtmlElement.TagStart => "<ul";
+            string IHtmlElement.EndTag => "</ul>";
             HtmlAttributes attrs;
-            UL IHtmlTag<UL>.WithAttributes(HtmlAttributes replacementAttributes) => new UL { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            UL IHtmlTagAllowingContent<UL>.WithContents(HtmlFragment[] replacementContents) => new UL { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            UL IHtmlElement<UL>.WithAttributes(HtmlAttributes replacementAttributes) => new UL { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            UL IHtmlElementAllowingContent<UL>.WithContents(HtmlFragment replacementContents) => new UL { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(UL tag) => tag.AsFragment();
-            public static HtmlFragment operator +(UL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, UL tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(UL head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, UL tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct VAR : IHtmlTagAllowingContent<VAR>
+        public struct VAR : IHtmlElementAllowingContent<VAR>
         {
             public string TagName => "var";
-            string IHtmlTag.TagStart => "<var";
-            string IHtmlTag.EndTag => "</var>";
+            string IHtmlElement.TagStart => "<var";
+            string IHtmlElement.EndTag => "</var>";
             HtmlAttributes attrs;
-            VAR IHtmlTag<VAR>.WithAttributes(HtmlAttributes replacementAttributes) => new VAR { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            VAR IHtmlTagAllowingContent<VAR>.WithContents(HtmlFragment[] replacementContents) => new VAR { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            VAR IHtmlElement<VAR>.WithAttributes(HtmlAttributes replacementAttributes) => new VAR { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            VAR IHtmlElementAllowingContent<VAR>.WithContents(HtmlFragment replacementContents) => new VAR { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(VAR tag) => tag.AsFragment();
-            public static HtmlFragment operator +(VAR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, VAR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(VAR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, VAR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct VIDEO : IHtmlTagAllowingContent<VIDEO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_poster, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_playsinline, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls, IHasAttr_width, IHasAttr_height
+        public struct VIDEO : IHtmlElementAllowingContent<VIDEO>, IHasAttr_src, IHasAttr_crossorigin, IHasAttr_poster, IHasAttr_preload, IHasAttr_autoplay, IHasAttr_playsinline, IHasAttr_loop, IHasAttr_muted, IHasAttr_controls, IHasAttr_width, IHasAttr_height
         {
             public string TagName => "video";
-            string IHtmlTag.TagStart => "<video";
-            string IHtmlTag.EndTag => "</video>";
+            string IHtmlElement.TagStart => "<video";
+            string IHtmlElement.EndTag => "</video>";
             HtmlAttributes attrs;
-            VIDEO IHtmlTag<VIDEO>.WithAttributes(HtmlAttributes replacementAttributes) => new VIDEO { attrs = replacementAttributes, children = children };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            HtmlFragment[] children;
-            VIDEO IHtmlTagAllowingContent<VIDEO>.WithContents(HtmlFragment[] replacementContents) => new VIDEO { attrs = attrs, children = replacementContents };
-            HtmlFragment[] IHtmlTagAllowingContent.Contents => children;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            VIDEO IHtmlElement<VIDEO>.WithAttributes(HtmlAttributes replacementAttributes) => new VIDEO { attrs = replacementAttributes, children = children };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            HtmlFragment children;
+            VIDEO IHtmlElementAllowingContent<VIDEO>.WithContents(HtmlFragment replacementContents) => new VIDEO { attrs = attrs, children = replacementContents };
+            HtmlFragment IHtmlElementAllowingContent.Contents() => children;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeWithContent(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(VIDEO tag) => tag.AsFragment();
-            public static HtmlFragment operator +(VIDEO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, VIDEO tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(VIDEO head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, VIDEO tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct WBR : IHtmlTag<WBR>
+        public struct WBR : IHtmlElement<WBR>
         {
             public string TagName => "wbr";
-            string IHtmlTag.TagStart => "<wbr";
-            string IHtmlTag.EndTag => "";
+            string IHtmlElement.TagStart => "<wbr";
+            string IHtmlElement.EndTag => "";
             HtmlAttributes attrs;
-            WBR IHtmlTag<WBR>.WithAttributes(HtmlAttributes replacementAttributes) => new WBR { attrs = replacementAttributes };
-            HtmlAttributes IHtmlTag.Attributes => attrs;
-            IHtmlTag IHtmlTag.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
-            [Pure] public HtmlFragment AsFragment() => HtmlFragment.HtmlElement(this);
+            WBR IHtmlElement<WBR>.WithAttributes(HtmlAttributes replacementAttributes) => new WBR { attrs = replacementAttributes };
+            HtmlAttributes IHtmlElement.Attributes => attrs;
+            IHtmlElement IHtmlElement.ApplyChange<THtmlTagAlteration>(THtmlTagAlteration change) => change.ChangeEmpty(this);
+            [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(WBR tag) => tag.AsFragment();
-            public static HtmlFragment operator +(WBR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.HtmlElement(head), tail);
-            public static HtmlFragment operator +(string head, WBR tail) => HtmlFragment.Fragment(head, HtmlFragment.HtmlElement(tail));
+            public static HtmlFragment operator +(WBR head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
+            public static HtmlFragment operator +(string head, WBR tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
     }
 
@@ -2123,7 +2123,6 @@ namespace ProgressOnderwijsUtils.Html
         ///<summary>Computer output. See: <a href="https://html.spec.whatwg.org/#the-samp-element">https://html.spec.whatwg.org/#the-samp-element</a><br /></summary>
         public static readonly HtmlTagKinds.SAMP _samp = new HtmlTagKinds.SAMP();
 
-
         ///<summary>Embedded script. See: <a href="https://html.spec.whatwg.org/#the-script-element">https://html.spec.whatwg.org/#the-script-element</a><br /></summary>
         public static readonly HtmlTagKinds.SCRIPT _script = new HtmlTagKinds.SCRIPT();
 
@@ -2141,6 +2140,7 @@ namespace ProgressOnderwijsUtils.Html
 
         ///<summary>Image source for img or media source for video or audio. See: <a href="https://html.spec.whatwg.org/#the-source-element">https://html.spec.whatwg.org/#the-source-element</a><br /></summary>
         public static readonly HtmlTagKinds.SOURCE _source = new HtmlTagKinds.SOURCE();
+
 
         ///<summary>Generic phrasing container. See: <a href="https://html.spec.whatwg.org/#the-span-element">https://html.spec.whatwg.org/#the-span-element</a><br /></summary>
         public static readonly HtmlTagKinds.SPAN _span = new HtmlTagKinds.SPAN();
@@ -2273,6 +2273,7 @@ namespace ProgressOnderwijsUtils.Html
         public interface IHasAttr_manifest { }
         public interface IHasAttr_srcdoc { }
         public interface IHasAttr_sandbox { }
+        public interface IHasAttr_allow { }
         public interface IHasAttr_allowfullscreen { }
         public interface IHasAttr_allowpaymentrequest { }
         public interface IHasAttr_allowusermedia { }
@@ -2332,412 +2333,415 @@ namespace ProgressOnderwijsUtils.Html
     public static class AttributeConstructionMethods
     {
         public static THtmlTag _accesskey<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("accesskey", attrValue);
         public static THtmlTag _autocapitalize<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("autocapitalize", attrValue);
         public static THtmlTag _class<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("class", attrValue);
         public static THtmlTag _contenteditable<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("contenteditable", attrValue);
         public static THtmlTag _dir<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("dir", attrValue);
         public static THtmlTag _draggable<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("draggable", attrValue);
         public static THtmlTag _hidden<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("hidden", attrValue);
         public static THtmlTag _id<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("id", attrValue);
         public static THtmlTag _inputmode<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("inputmode", attrValue);
         public static THtmlTag _is<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("is", attrValue);
         public static THtmlTag _itemid<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("itemid", attrValue);
         public static THtmlTag _itemprop<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("itemprop", attrValue);
         public static THtmlTag _itemref<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("itemref", attrValue);
         public static THtmlTag _itemscope<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("itemscope", attrValue);
         public static THtmlTag _itemtype<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("itemtype", attrValue);
         public static THtmlTag _lang<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("lang", attrValue);
         public static THtmlTag _nonce<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("nonce", attrValue);
         public static THtmlTag _slot<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("slot", attrValue);
         public static THtmlTag _spellcheck<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("spellcheck", attrValue);
         public static THtmlTag _style<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("style", attrValue);
         public static THtmlTag _tabindex<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("tabindex", attrValue);
         public static THtmlTag _title<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("title", attrValue);
         public static THtmlTag _translate<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("translate", attrValue);
         public static THtmlTag _href<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_href, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_href, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("href", attrValue);
         public static THtmlTag _target<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_target, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_target, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("target", attrValue);
         public static THtmlTag _download<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_download, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_download, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("download", attrValue);
         public static THtmlTag _ping<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_ping, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_ping, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("ping", attrValue);
         public static THtmlTag _rel<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_rel, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_rel, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("rel", attrValue);
         public static THtmlTag _hreflang<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_hreflang, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_hreflang, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("hreflang", attrValue);
         public static THtmlTag _type<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_type, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_type, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("type", attrValue);
         public static THtmlTag _referrerpolicy<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_referrerpolicy, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_referrerpolicy, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("referrerpolicy", attrValue);
         public static THtmlTag _alt<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_alt, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_alt, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("alt", attrValue);
         public static THtmlTag _coords<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_coords, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_coords, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("coords", attrValue);
         public static THtmlTag _shape<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_shape, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_shape, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("shape", attrValue);
         public static THtmlTag _src<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_src, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_src, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("src", attrValue);
         public static THtmlTag _crossorigin<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_crossorigin, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_crossorigin, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("crossorigin", attrValue);
         public static THtmlTag _preload<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_preload, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_preload, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("preload", attrValue);
         public static THtmlTag _autoplay<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_autoplay, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_autoplay, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("autoplay", attrValue);
         public static THtmlTag _loop<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_loop, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_loop, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("loop", attrValue);
         public static THtmlTag _muted<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_muted, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_muted, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("muted", attrValue);
         public static THtmlTag _controls<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_controls, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_controls, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("controls", attrValue);
         public static THtmlTag _cite<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_cite, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_cite, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("cite", attrValue);
         public static THtmlTag _onafterprint<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onafterprint, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onafterprint, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onafterprint", attrValue);
         public static THtmlTag _onbeforeprint<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onbeforeprint, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onbeforeprint, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onbeforeprint", attrValue);
         public static THtmlTag _onbeforeunload<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onbeforeunload, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onbeforeunload, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onbeforeunload", attrValue);
         public static THtmlTag _onhashchange<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onhashchange, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onhashchange, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onhashchange", attrValue);
         public static THtmlTag _onlanguagechange<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onlanguagechange, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onlanguagechange, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onlanguagechange", attrValue);
         public static THtmlTag _onmessage<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onmessage, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onmessage, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onmessage", attrValue);
         public static THtmlTag _onmessageerror<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onmessageerror, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onmessageerror, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onmessageerror", attrValue);
         public static THtmlTag _onoffline<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onoffline, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onoffline, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onoffline", attrValue);
         public static THtmlTag _ononline<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_ononline, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_ononline, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("ononline", attrValue);
         public static THtmlTag _onpagehide<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onpagehide, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onpagehide, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onpagehide", attrValue);
         public static THtmlTag _onpageshow<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onpageshow, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onpageshow, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onpageshow", attrValue);
         public static THtmlTag _onpopstate<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onpopstate, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onpopstate, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onpopstate", attrValue);
         public static THtmlTag _onrejectionhandled<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onrejectionhandled, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onrejectionhandled, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onrejectionhandled", attrValue);
         public static THtmlTag _onstorage<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onstorage, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onstorage, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onstorage", attrValue);
         public static THtmlTag _onunhandledrejection<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onunhandledrejection, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onunhandledrejection, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onunhandledrejection", attrValue);
         public static THtmlTag _onunload<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_onunload, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_onunload, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("onunload", attrValue);
         public static THtmlTag _autofocus<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_autofocus, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_autofocus, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("autofocus", attrValue);
         public static THtmlTag _disabled<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_disabled, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_disabled, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("disabled", attrValue);
         public static THtmlTag _form<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_form, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_form, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("form", attrValue);
         public static THtmlTag _formaction<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_formaction, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_formaction, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("formaction", attrValue);
         public static THtmlTag _formenctype<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_formenctype, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_formenctype, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("formenctype", attrValue);
         public static THtmlTag _formmethod<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_formmethod, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_formmethod, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("formmethod", attrValue);
         public static THtmlTag _formnovalidate<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_formnovalidate, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_formnovalidate, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("formnovalidate", attrValue);
         public static THtmlTag _formtarget<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_formtarget, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_formtarget, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("formtarget", attrValue);
         public static THtmlTag _name<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_name, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_name, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("name", attrValue);
         public static THtmlTag _value<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_value, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_value, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("value", attrValue);
         public static THtmlTag _width<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_width, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_width, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("width", attrValue);
         public static THtmlTag _height<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_height, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_height, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("height", attrValue);
         public static THtmlTag _span<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_span, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_span, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("span", attrValue);
         public static THtmlTag _datetime<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_datetime, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_datetime, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("datetime", attrValue);
         public static THtmlTag _open<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_open, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_open, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("open", attrValue);
         public static THtmlTag _accept_charset<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_accept_charset, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_accept_charset, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("accept-charset", attrValue);
         public static THtmlTag _action<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_action, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_action, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("action", attrValue);
         public static THtmlTag _autocomplete<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_autocomplete, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_autocomplete, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("autocomplete", attrValue);
         public static THtmlTag _enctype<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_enctype, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_enctype, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("enctype", attrValue);
         public static THtmlTag _method<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_method, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_method, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("method", attrValue);
         public static THtmlTag _novalidate<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_novalidate, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_novalidate, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("novalidate", attrValue);
         public static THtmlTag _manifest<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_manifest, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_manifest, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("manifest", attrValue);
         public static THtmlTag _srcdoc<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_srcdoc, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_srcdoc, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("srcdoc", attrValue);
         public static THtmlTag _sandbox<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_sandbox, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_sandbox, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("sandbox", attrValue);
+        public static THtmlTag _allow<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+            where THtmlTag : struct, IHasAttr_allow, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("allow", attrValue);
         public static THtmlTag _allowfullscreen<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_allowfullscreen, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_allowfullscreen, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("allowfullscreen", attrValue);
         public static THtmlTag _allowpaymentrequest<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_allowpaymentrequest, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_allowpaymentrequest, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("allowpaymentrequest", attrValue);
         public static THtmlTag _allowusermedia<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_allowusermedia, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_allowusermedia, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("allowusermedia", attrValue);
         public static THtmlTag _srcset<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_srcset, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_srcset, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("srcset", attrValue);
         public static THtmlTag _usemap<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_usemap, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_usemap, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("usemap", attrValue);
         public static THtmlTag _ismap<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_ismap, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_ismap, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("ismap", attrValue);
         public static THtmlTag _decoding<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_decoding, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_decoding, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("decoding", attrValue);
         public static THtmlTag _accept<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_accept, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_accept, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("accept", attrValue);
         public static THtmlTag _checked<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_checked, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_checked, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("checked", attrValue);
         public static THtmlTag _dirname<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_dirname, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_dirname, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("dirname", attrValue);
         public static THtmlTag _list<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_list, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_list, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("list", attrValue);
         public static THtmlTag _max<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_max, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_max, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("max", attrValue);
         public static THtmlTag _maxlength<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_maxlength, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_maxlength, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("maxlength", attrValue);
         public static THtmlTag _min<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_min, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_min, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("min", attrValue);
         public static THtmlTag _minlength<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_minlength, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_minlength, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("minlength", attrValue);
         public static THtmlTag _multiple<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_multiple, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_multiple, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("multiple", attrValue);
         public static THtmlTag _pattern<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_pattern, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_pattern, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("pattern", attrValue);
         public static THtmlTag _placeholder<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_placeholder, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_placeholder, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("placeholder", attrValue);
         public static THtmlTag _readonly<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_readonly, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_readonly, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("readonly", attrValue);
         public static THtmlTag _required<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_required, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_required, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("required", attrValue);
         public static THtmlTag _size<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_size, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_size, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("size", attrValue);
         public static THtmlTag _step<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_step, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_step, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("step", attrValue);
         public static THtmlTag _for<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_for, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_for, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("for", attrValue);
         public static THtmlTag _as<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_as, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_as, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("as", attrValue);
         public static THtmlTag _media<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_media, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_media, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("media", attrValue);
         public static THtmlTag _sizes<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_sizes, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_sizes, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("sizes", attrValue);
         public static THtmlTag _integrity<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_integrity, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_integrity, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("integrity", attrValue);
         public static THtmlTag _http_equiv<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_http_equiv, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_http_equiv, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("http-equiv", attrValue);
         public static THtmlTag _content<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_content, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_content, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("content", attrValue);
         public static THtmlTag _charset<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_charset, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_charset, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("charset", attrValue);
         public static THtmlTag _low<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_low, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_low, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("low", attrValue);
         public static THtmlTag _high<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_high, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_high, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("high", attrValue);
         public static THtmlTag _optimum<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_optimum, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_optimum, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("optimum", attrValue);
         public static THtmlTag _data<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_data, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_data, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("data", attrValue);
         public static THtmlTag _typemustmatch<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_typemustmatch, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_typemustmatch, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("typemustmatch", attrValue);
         public static THtmlTag _reversed<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_reversed, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_reversed, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("reversed", attrValue);
         public static THtmlTag _start<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_start, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_start, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("start", attrValue);
         public static THtmlTag _label<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_label, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_label, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("label", attrValue);
         public static THtmlTag _selected<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_selected, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_selected, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("selected", attrValue);
         public static THtmlTag _async<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_async, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_async, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("async", attrValue);
         public static THtmlTag _defer<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_defer, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_defer, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("defer", attrValue);
         public static THtmlTag _colspan<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_colspan, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_colspan, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("colspan", attrValue);
         public static THtmlTag _rowspan<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_rowspan, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_rowspan, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("rowspan", attrValue);
         public static THtmlTag _headers<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_headers, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_headers, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("headers", attrValue);
         public static THtmlTag _cols<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_cols, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_cols, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("cols", attrValue);
         public static THtmlTag _rows<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_rows, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_rows, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("rows", attrValue);
         public static THtmlTag _wrap<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_wrap, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_wrap, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("wrap", attrValue);
         public static THtmlTag _scope<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_scope, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_scope, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("scope", attrValue);
         public static THtmlTag _abbr<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_abbr, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_abbr, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("abbr", attrValue);
         public static THtmlTag _default<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_default, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_default, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("default", attrValue);
         public static THtmlTag _kind<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_kind, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_kind, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("kind", attrValue);
         public static THtmlTag _srclang<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_srclang, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_srclang, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("srclang", attrValue);
         public static THtmlTag _poster<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_poster, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_poster, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("poster", attrValue);
         public static THtmlTag _playsinline<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_playsinline, IHtmlTag<THtmlTag>
+            where THtmlTag : struct, IHasAttr_playsinline, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("playsinline", attrValue);
     }
 }

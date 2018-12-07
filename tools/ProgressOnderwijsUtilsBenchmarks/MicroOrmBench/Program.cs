@@ -14,14 +14,15 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 
         static void RunCurrentBenchmarks([NotNull] Benchmarker benchmarker)
         {
-            //HandrolledAdoNetExecutor.RunQuery(benchmarker);
-            //DapperExecutor.RunQuery(benchmarker);
+            ParameterizedSqlExecutor.ConstructWithoutExecuting(benchmarker);
             ParameterizedSqlExecutor.RunQuery(benchmarker);
+            //ParameterizedSqlExecutor.RunTvpQuery(benchmarker);
+            //DapperExecutor.RunQuery(benchmarker);
+            //ParameterizedSqlExecutor.RunWideQuery(benchmarker);
+            //HandrolledAdoNetExecutor.RunQuery(benchmarker);
             //HandrolledAdoNetExecutor.RunWideQuery(benchmarker);
             //DapperExecutor.RunWideQuery(benchmarker);
-            ParameterizedSqlExecutor.RunWideQuery(benchmarker);
 
-            //ParameterizedSqlExecutor.ConstructWithoutExecuting(benchmarker);
         }
     }
 }

@@ -1,5 +1,7 @@
+using System.Linq;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 {
@@ -11,6 +13,16 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
                 (ctx, rows) => ExampleObject.ParameterizedSqlForRows(rows)
                     .ReadMetaObjects<ExampleObject>(ctx)
                     .Length)
+                ;
+        }
+
+        public static void RunTvpQuery([NotNull] Benchmarker benchmarker)
+        {
+            benchmarker.BenchSqlServer("ParameterizedSql-TVP",
+                (ctx, rows) =>
+                    SQL($"select QueryTableValue from ({Enumerable.Range(0, rows).ToArray()}) x")
+                        .ReadPlain<int>(ctx)
+                        .Length)
                 ;
         }
 
@@ -26,8 +38,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         public static void ConstructWithoutExecuting([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("ParameterizedSql noexec",
-                (ctx, rows) =>
-                {
+                (ctx, rows) => {
                     ExampleObject.ParameterizedSqlForRows(rows).CreateSqlCommand(ctx).Dispose();
                     return 0;
                 });
