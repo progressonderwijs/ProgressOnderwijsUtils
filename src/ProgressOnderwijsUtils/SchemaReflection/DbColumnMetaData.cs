@@ -113,8 +113,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
     public static class DbColumnMetaDataExtensions
     {
-        static readonly Comparison<DbColumnMetaData> CompareOnColumnId = (a, b) => a.ColumnId.CompareTo(b.ColumnId);
-
         [Pure]
         public static ParameterizedSql CreateNewTableQuery(this IReadOnlyCollection<DbColumnMetaData> columns, ParameterizedSql tableName)
         {
