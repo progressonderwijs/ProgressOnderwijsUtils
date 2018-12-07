@@ -147,7 +147,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                         + 8*c.is_identity
                         + 16*iif(c.default_object_id is not null, convert(bit, 1), convert(bit, 0))
                         )
-                from {database}{(database.IsEmpty ? ParameterizedSql.Empty : SQL($"."))}sys.columns c
+                from {!database.IsEmpty && database + SQL($".")}sys.columns c
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
                 where 1=1
             ");
