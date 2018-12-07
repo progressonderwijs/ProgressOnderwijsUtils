@@ -43,8 +43,7 @@ namespace ProgressOnderwijsUtils
                     sqlBulkCopy.WriteToServer(objectReader);
                     //so why no async?
                     //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating metaObjects, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
-                } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message).HasValue) {
-                    var destinationColumnIndex = ParseDestinationColumnIndexFromMessage(ex.Message).Value;
+                } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is int destinationColumnIndex) {
                     throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException<T>(mapping, destinationColumnIndex, ex);
                 } finally {
                     TraceBulkInsertDuration(sqlContext.Tracer, tableName, sw, objectReader.RowsProcessed);
@@ -92,7 +91,6 @@ namespace ProgressOnderwijsUtils
 
         static int? ParseDestinationColumnIndexFromMessage([NotNull] string message)
         {
-            //note: sql colid is 1-based!
             var match = colidMessageRegex.Match(message);
             return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
         }
