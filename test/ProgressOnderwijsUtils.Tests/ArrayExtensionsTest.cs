@@ -1,16 +1,16 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
-    public class ArrayExtensionsTest
+    public sealed class ArrayExtensionsTest
     {
         [Fact]
-        public void AppendingNullToNullReturnsNull()
+        public void AppendingNullToNullReturnsEmpty()
         {
-            PAssert.That(() => default(int[]).AppendArrays(default(int[])) == null);
+            PAssert.That(() => default(int[]).AppendArrays(default(int[])) == Array.Empty<int>());
         }
 
         [Fact]
