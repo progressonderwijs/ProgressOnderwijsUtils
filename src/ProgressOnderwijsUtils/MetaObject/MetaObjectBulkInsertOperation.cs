@@ -17,14 +17,14 @@ namespace ProgressOnderwijsUtils
         public SqlBulkCopy bulkCopy;
         public SqlCommandCreationContext context;
         public IEnumerable<T> metaObjects;
-        public string tableName;
-        public ColumnDefinition[] tableColumnDefinitions; //var tableColumnDefinitions = ColumnDefinition.GetFromCompleteSetOfColumns(columns.Where(column => !column.Is_Computed && !column.Is_RowVersion).ToArray());
+        public BulkInsertTargetTable targetTable;
         public BulkCopyFieldMappingMode mode;
         public CancellationToken cancellationToken;
 
         public void Execute()
         {
             var sqlconn = context.Connection;
+            var tableName = targetTable.TableName;
             if (metaObjects == null) {
                 throw new ArgumentNullException(nameof(metaObjects));
             }
@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
             bulkCopy.DestinationTableName = tableName;
 
             using (var objectReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken)) {
-                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, mode, tableColumnDefinitions);
+                var mapping = ApplyMetaObjectColumnMapping(bulkCopy, objectReader, tableName, mode, targetTable.Columns);
                 var sw = Stopwatch.StartNew();
                 try {
                     bulkCopy.WriteToServer(objectReader);

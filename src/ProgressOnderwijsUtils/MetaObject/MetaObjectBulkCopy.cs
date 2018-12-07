@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
                     .ToArray(),
             };
 
-        public static BulkInsertTargetTable FromCompleteSetOfColumn(string tableName, DbColumnMetaData[] columns)
+        public static BulkInsertTargetTable FromCompleteSetOfColumns(string tableName, DbColumnMetaData[] columns)
             => new BulkInsertTargetTable {
                 TableName = tableName,
                 Columns = InsertableColumnsFromCompleteSet(columns),
@@ -90,7 +90,14 @@ namespace ProgressOnderwijsUtils
                 var token = sqlconn.CommandTimeoutInS == 0
                     ? CancellationToken.None
                     : new CancellationTokenSource(TimeSpan.FromSeconds(sqlconn.CommandTimeoutInS)).Token;
-                bulkCopy.WriteMetaObjectsToServer(metaObjects, sqlconn, tableName, columns, mode, token); //.Wait(token);
+                new MetaObjectBulkInsertOperation<T> {
+                    bulkCopy = bulkCopy,
+                    cancellationToken = token,
+                    context = sqlconn,
+                    metaObjects = metaObjects,
+                    mode = mode,
+                    targetTable = BulkInsertTargetTable.FromCompleteSetOfColumns(tableName,columns),
+                }.Execute(); //.Wait(token);
             }
         }
 
@@ -117,7 +124,14 @@ namespace ProgressOnderwijsUtils
             CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, table.QualifiedName, table.Columns.ArraySelect(column => column.ColumnMetaData), mode, cancellationToken);
+            new MetaObjectBulkInsertOperation<T> {
+                bulkCopy = bulkCopy,
+                cancellationToken = cancellationToken,
+                context = context,
+                metaObjects = metaObjects,
+                mode = mode,
+                targetTable = BulkInsertTargetTable.FromDatabaseDescription(table),
+            }.Execute();
         }
 
         /// <summary>
@@ -132,27 +146,13 @@ namespace ProgressOnderwijsUtils
             CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            bulkCopy.WriteMetaObjectsToServer(metaObjects, context, tableName, columns, BulkCopyFieldMappingMode.ExactMatch, cancellationToken);
-        }
-
-        public static void WriteMetaObjectsToServer<T>(
-            [NotNull] this SqlBulkCopy bulkCopy,
-            [NotNull] IEnumerable<T> metaObjects,
-            [NotNull] SqlCommandCreationContext context,
-            [NotNull] string tableName,
-            [NotNull] DbColumnMetaData[] columns,
-            BulkCopyFieldMappingMode mode,
-            CancellationToken cancellationToken)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
-        {
             new MetaObjectBulkInsertOperation<T> {
                 bulkCopy = bulkCopy,
                 cancellationToken = cancellationToken,
                 context = context,
                 metaObjects = metaObjects,
-                mode = mode,
-                tableColumnDefinitions = BulkInsertTargetTable.InsertableColumnsFromCompleteSet(columns),
-                tableName = tableName,
+                mode = BulkCopyFieldMappingMode.ExactMatch,
+                targetTable = BulkInsertTargetTable.FromCompleteSetOfColumns(tableName, columns),
             }.Execute();
         }
     }
