@@ -16,22 +16,31 @@ namespace ProgressOnderwijsUtils
 
     public sealed class ColumnDefinition
     {
-        public Type DataType { get; }
-        public string Name { get; }
-        public int Index { get; }
-        public ColumnAccessibility ColumnAccessibility { get; }
+        public readonly Type DataType;
+        public readonly string Name;
+        public readonly int Index;
+        public readonly ColumnAccessibility ColumnAccessibility;
+
+        public ColumnDefinition(Type dataType, string name, int index, ColumnAccessibility columnAccessibility)
+        {
+            DataType = dataType;
+            Name = name;
+            Index = index;
+            ColumnAccessibility = columnAccessibility;
+        }
 
         [NotNull]
         public static ColumnDefinition Create([NotNull] DataColumn col)
-            => new ColumnDefinition(
-                (col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType,
-                col.ColumnName,
-                col.Ordinal,
-                col.AutoIncrement ? ColumnAccessibility.AutoIncrement
+            => new ColumnDefinition(DataColumnType(col), col.ColumnName, col.Ordinal, DataColumnAccessibility(col));
+
+        static ColumnAccessibility DataColumnAccessibility(DataColumn col)
+            => col.AutoIncrement ? ColumnAccessibility.AutoIncrement
                 : col.ReadOnly ? ColumnAccessibility.Readonly
                 : col.DefaultValue != DBNull.Value ? ColumnAccessibility.NormalWithDefaultValue
-                : ColumnAccessibility.Normal
-            );
+                : ColumnAccessibility.Normal;
+
+        static Type DataColumnType(DataColumn col)
+            => (col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType;
 
         [NotNull]
         public static ColumnDefinition[] GetFromReader([NotNull] IDataRecord reader)
@@ -49,23 +58,16 @@ namespace ProgressOnderwijsUtils
         public static ColumnDefinition FromSqlXType(int columnOrdinal, string columnName, SqlXType sqlXType, ColumnAccessibility columnAccessibility)
             => new ColumnDefinition(sqlXType.SqlUnderlyingTypeInfo().ClrType, columnName, columnOrdinal, columnAccessibility);
 
-        public ColumnDefinition(Type dataType, string name, int index, ColumnAccessibility columnAccessibility)
-        {
-            DataType = dataType;
-            Name = name;
-            Index = index;
-            ColumnAccessibility = columnAccessibility;
-        }
-
         public override string ToString()
             => DataType.ToCSharpFriendlyTypeName() + " " + Name;
 
         public static ColumnDefinition FromDbColumnMetaData(DbColumnMetaData col, int colIdx)
-            => FromSqlXType(colIdx, col.ColumnName, col.UserTypeId,
-                col.HasAutoIncrementIdentity ? ColumnAccessibility.AutoIncrement
+            => FromSqlXType(colIdx, col.ColumnName, col.UserTypeId, DbColumnMetaDataAccessibility(col));
+
+        static ColumnAccessibility DbColumnMetaDataAccessibility(DbColumnMetaData col)
+            => col.HasAutoIncrementIdentity ? ColumnAccessibility.AutoIncrement
                 : col.IsComputed || col.IsRowVersion ? ColumnAccessibility.Readonly
                 : col.HasDefaultValue ? ColumnAccessibility.NormalWithDefaultValue
-                : ColumnAccessibility.Normal
-            );
+                : ColumnAccessibility.Normal;
     }
 }
