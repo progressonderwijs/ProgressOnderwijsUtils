@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Writes meta-objects to the server.  If you use this method, it must be the only "WriteToServer" method you call on this bulk-copy instance because it sets the column mapping.
         /// </summary>
-        public void WriteObjectsToServer<T>(SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlCommandCreationContext context, CancellationToken cancellationToken)
+        public void BulkInsert<T>(SqlBulkCopy bulkCopy, IEnumerable<T> metaObjects, SqlCommandCreationContext context, CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             new MetaObjectBulkInsertOperation<T> {
@@ -58,6 +58,13 @@ namespace ProgressOnderwijsUtils
                 metaObjects = metaObjects,
                 Target = this,
             }.Execute();
+        }
+
+        public void BulkInsert<T>(SqlCommandCreationContext sqlContext, IEnumerable<T> metaObjects, SqlBulkCopyOptions sqlBulkCopyOptions = SqlBulkCopyOptions.CheckConstraints)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            using (var bulkCopy = new SqlBulkCopy(sqlContext.Connection, sqlBulkCopyOptions, null))
+                BulkInsert(bulkCopy, metaObjects, sqlContext, default);
         }
     }
 
@@ -72,19 +79,15 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type of metaobject to be inserted</typeparam>
         /// <param name="metaObjects">The list of entities to insert</param>
-        /// <param name="sqlconn">The Sql connection to write to</param>
+        /// <param name="sqlContext">The Sql connection to write to</param>
         /// <param name="table">The table, including schema information, to write the entities into.</param>
-        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] DatabaseDescription.Table table)
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] DatabaseDescription.Table table)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-        {
-            metaObjects.BulkCopyToSqlServer(sqlconn, table, BulkCopyFieldMappingMode.ExactMatch);
-        }
+            => BulkInsertTarget.FromDatabaseDescription(table).BulkInsert(sqlContext, metaObjects);
 
-        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] DatabaseDescription.Table table, BulkCopyFieldMappingMode mode)
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] DatabaseDescription.Table table, BulkCopyFieldMappingMode mode)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-        {
-            metaObjects.BulkCopyToSqlServer(sqlconn, table.QualifiedName, table.Columns.ArraySelect(column => column.ColumnMetaData), mode);
-        }
+            => BulkInsertTarget.FromDatabaseDescription(table).WithMode(mode).BulkInsert(sqlContext, metaObjects);
 
         /// <summary>
         /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout, and options CheckConstraints | UseInternalTransaction.
@@ -92,22 +95,16 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type of metaobject to be inserted</typeparam>
         /// <param name="metaObjects">The list of entities to insert</param>
-        /// <param name="sqlconn">The Sql connection to write to</param>
+        /// <param name="sqlContext">The Sql connection to write to</param>
         /// <param name="tableName">The name of the table to insert into.</param>
         /// <param name="columns">The schema of the table as it currently exists in the database.</param>
-        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns)
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-        {
-            metaObjects.BulkCopyToSqlServer(sqlconn, tableName, columns, BulkCopyFieldMappingMode.ExactMatch);
-        }
+            => BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns)
+                .BulkInsert(sqlContext, metaObjects);
 
-        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlconn, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns, BulkCopyFieldMappingMode mode)
+        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns, BulkCopyFieldMappingMode mode)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-        {
-            using (var bulkCopy = new SqlBulkCopy(sqlconn.Connection, SqlBulkCopyOptions.CheckConstraints, null)) {
-                BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns).WithMode(mode)
-                    .WriteObjectsToServer(bulkCopy, metaObjects, sqlconn, default);
-            }
-        }
+            => BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns).WithMode(mode).BulkInsert(sqlContext, metaObjects);
     }
 }
