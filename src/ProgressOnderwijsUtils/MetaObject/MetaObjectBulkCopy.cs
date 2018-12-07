@@ -78,9 +78,5 @@ namespace ProgressOnderwijsUtils
         public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlCommandCreationContext sqlContext, BulkInsertTarget target)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
             => target.BulkInsert(sqlContext, metaObjects);
-
-        public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] string tableName, [NotNull] DbColumnMetaData[] columns, BulkCopyFieldMappingMode mode)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => BulkInsertTarget.FromCompleteSetOfColumns(tableName, columns).With(mode).BulkInsert(sqlContext, metaObjects);
     }
 }
