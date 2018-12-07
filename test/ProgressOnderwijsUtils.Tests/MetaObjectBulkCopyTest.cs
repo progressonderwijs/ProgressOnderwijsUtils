@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils.Tests
             public string Bla2 { get; set; }
         }
 
-        (string tableName, DbColumnMetaData[] columns) CreateTempTable()
+        BulkInsertTarget CreateTempTable()
         {
             var tableName = SQL($"#MyTable");
             SQL($@"
@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils.Tests
                 )
             ").ExecuteNonQuery(Context);
 
-            return (tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
+            return BulkInsertTarget.LoadFromTable(Context, tableName);
         }
 
         sealed class ComputedColumnExample : ValueBase<ComputedColumnExample>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -90,8 +90,9 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void BulkCopyAllowsExactMatch()
         {
-            var (table, columns) = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context.Connection, table, columns);
+            var target
+                = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, target);
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(Context);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
         }
@@ -99,29 +100,33 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void BulkCopyChecksNames()
         {
-            var (table, columns) = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(Context.Connection, table, columns));
+            var target
+                = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(Context.Connection, target));
         }
 
         [Fact]
         public void BulkCopyChecksTypes()
         {
-            var (table, columns) = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(Context.Connection, table, columns));
+            var target
+                = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(Context.Connection, target));
         }
 
         [Fact]
         public void BulkCopyChecksTypes2()
         {
-            var (table, columns) = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(Context.Connection, table, columns));
+            var target
+                = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(Context.Connection, target));
         }
 
         [Fact]
         public void BulkCopySupportsColumnReordering()
         {
-            var (table, columns) = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context.Connection, table, columns);
+            var target
+                = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Context.Connection, target);
             var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(Context);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
         }
@@ -143,7 +148,7 @@ namespace ProgressOnderwijsUtils.Tests
                     Id = 11,
                     Bla = "Something"
                 }
-            }.BulkCopyToSqlServer(Context.Connection, tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
+            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
 
             var fromDb = SQL($@"
                 select *
@@ -175,7 +180,7 @@ namespace ProgressOnderwijsUtils.Tests
                     Id = 11,
                     Bla = "Something"
                 }
-            }.BulkCopyToSqlServer(Context.Connection, tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
+            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
 
             var fromDb = SQL($@"
                 select *
@@ -187,8 +192,9 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void BulkCopyVerifiesExistanceOfDestinationColumns()
         {
-            var (table, columns) = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(Context.Connection, table, columns));
+            var target
+                = CreateTempTable();
+            Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(Context.Connection, target));
         }
     }
 }

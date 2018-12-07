@@ -140,13 +140,13 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     , c.max_length
                     , c.precision
                     , c.scale
-                    , ColumnFlags = 0
+                    , ColumnFlags = convert(tinyint, 0
                         + 1*c.is_nullable 
                         + 2*c.is_computed
                         + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
                         + 8*c.is_identity
                         + 16*iif(c.default_object_id is not null, convert(bit, 1), convert(bit, 0))
-                    , is_primary_key = iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
+                        )
                 from {database}{(database.IsEmpty ? ParameterizedSql.Empty : SQL($"."))}sys.columns c
                 left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
                 where 1=1
