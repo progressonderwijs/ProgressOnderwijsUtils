@@ -153,10 +153,17 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static Exception MetaObjectBasedException<T>([NotNull] FieldMapping[] mapping, int destinationColumnIndex, SqlException ex) where T : IMetaObject, IPropertiesAreUsedImplicitly
+        static Exception MetaObjectBasedException<T>([NotNull] FieldMapping[] mapping, int destinationColumnIndex, SqlException ex)
+            where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            var sourceColumnName = mapping.Where(m => m.Dst.Index == destinationColumnIndex).Select(m => m.Src.Name).FirstOrDefault();
-            var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + (sourceColumnName ?? "??unknown??");
+            var sourceColumnName = "??unknown??";
+            foreach (var m in mapping) {
+                if (m.Dst.Index == destinationColumnIndex) {
+                    sourceColumnName = m.Src.Name;
+                }
+            }
+
+            var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + sourceColumnName;
             return new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
         }
 
