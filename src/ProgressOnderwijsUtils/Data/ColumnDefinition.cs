@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Data;
-using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
-using static ProgressOnderwijsUtils.ColumnDefinition;
 
 namespace ProgressOnderwijsUtils
 {
