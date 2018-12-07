@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
 {
     public enum BulkCopyFieldMappingMode
     {
-        ExactMatch,
+        ExactMatch, //must be default(BulkCopyFieldMappingMode)
         AllowExtraMetaObjectProperties,
         AllowExtraDatabaseColumns,
     }
