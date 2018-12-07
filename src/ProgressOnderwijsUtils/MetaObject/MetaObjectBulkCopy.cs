@@ -60,20 +60,15 @@ namespace ProgressOnderwijsUtils
     public static class MetaObjectBulkCopy
     {
         /// <summary>
-        /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout, and options CheckConstraints | UseInternalTransaction.
-        /// For more fine-grained control, create an SqlBulkCopy instance manually, and call bulkCopy.WriteMetaObjectsToServer(objs, sqlConnection, tableName)
+        /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default) and checks constraints.
+        /// For more fine-grained control, create a BulkInsertTarget instance instead of using DatabaseDescription.Table.
         /// </summary>
-        /// <typeparam name="T">The type of metaobject to be inserted</typeparam>
-        /// <param name="metaObjects">The list of entities to insert</param>
-        /// <param name="sqlContext">The Sql connection to write to</param>
-        /// <param name="table">The table, including schema information, to write the entities into.</param>
         public static void BulkCopyToSqlServer<T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] DatabaseDescription.Table table)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
             => BulkInsertTarget.FromDatabaseDescription(table).BulkInsert(sqlContext, metaObjects);
 
         /// <summary>
-        /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default); uses a 1 hour timeout, and options CheckConstraints | UseInternalTransaction.
-        /// For more fine-grained control, create an SqlBulkCopy instance manually, and call bulkCopy.WriteMetaObjectsToServer(objs, sqlConnection, tableName)
+        /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default).
         /// </summary>
         public static void BulkCopyToSqlServer<T>(this IEnumerable<T> metaObjects, SqlCommandCreationContext sqlContext, BulkInsertTarget target)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
