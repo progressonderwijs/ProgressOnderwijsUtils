@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         AllowExtraDatabaseColumns,
     }
 
-    struct BulkInsertTargetTable
+    public struct BulkInsertTargetTable
     {
         public string TableName;
         public ColumnDefinition[] Columns;
