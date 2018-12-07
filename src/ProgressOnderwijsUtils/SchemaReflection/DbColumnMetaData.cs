@@ -20,6 +20,33 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public byte Precision { get; set; }
             public byte Scale { get; set; }
             public byte ColumnFlags { get; set; }
+
+            public static ParameterizedSql BaseQuery(ParameterizedSql database)
+                => SQL($@"
+                with pks (object_id, column_id) as (
+                    select i.object_id, ic.column_id
+                    from sys.index_columns ic 
+                    join sys.indexes i on ic.object_id = i.object_id and ic.index_id = i.index_id and i.is_primary_key = 1
+                )
+                select
+                    ColumnName = c.name
+                    , DbObjectId = c.object_id
+                    , ColumnId = c.column_id
+                    , c.user_type_id
+                    , c.max_length
+                    , c.precision
+                    , c.scale
+                    , ColumnFlags = convert(tinyint, 0
+                        + 1*c.is_nullable 
+                        + 2*c.is_computed
+                        + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
+                        + 8*c.is_identity
+                        + 16*iif(c.default_object_id is not null, convert(bit, 1), convert(bit, 0))
+                        )
+                from {!database.IsEmpty && database + SQL($".")}sys.columns c
+                left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
+                where 1=1
+            ");
         }
 
         DbColumnMetaData(CompressedSysColumnsValue fromDb)
@@ -125,51 +152,21 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
-        static ParameterizedSql BaseQuery(ParameterizedSql database)
-            => SQL($@"
-                with pks (object_id, column_id) as (
-                    select i.object_id, ic.column_id
-                    from sys.index_columns ic 
-                    join sys.indexes i on ic.object_id = i.object_id and ic.index_id = i.index_id and i.is_primary_key = 1
-                )
-                select
-                    ColumnName = c.name
-                    , DbObjectId = c.object_id
-                    , ColumnId = c.column_id
-                    , c.user_type_id
-                    , c.max_length
-                    , c.precision
-                    , c.scale
-                    , ColumnFlags = convert(tinyint, 0
-                        + 1*c.is_nullable 
-                        + 2*c.is_computed
-                        + 4*iif(pk.column_id is not null, convert(bit, 1), convert(bit, 0))
-                        + 8*c.is_identity
-                        + 16*iif(c.default_object_id is not null, convert(bit, 1), convert(bit, 0))
-                        )
-                from {!database.IsEmpty && database + SQL($".")}sys.columns c
-                left join pks pk on pk.object_id = c.object_id and pk.column_id = c.column_id
-                where 1=1
-            ");
-
         public static DbColumnMetaData[] ColumnMetaDatas(SqlCommandCreationContext conn, ParameterizedSql objectName)
             => ColumnMetaDatas(conn, objectName.CommandText());
 
         public static DbColumnMetaData[] ColumnMetaDatas(SqlCommandCreationContext conn, string qualifiedObjectName)
         {
-            if (qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)) {
-                return BaseQuery(tempDb).Append(SQL($@"
-                    and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})
-                ")).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
-            } else {
-                return BaseQuery(ParameterizedSql.Empty).Append(SQL($@"
-                    and c.object_id = object_id({qualifiedObjectName})
-                ")).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
-            }
+            var query = qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
+                ? CompressedSysColumnsValue.BaseQuery(tempDb)
+                    .Append(SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
+                : CompressedSysColumnsValue.BaseQuery(default)
+                    .Append(SQL($@"and c.object_id = object_id({qualifiedObjectName})"));
+            return query.ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
         }
 
         public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll(SqlCommandCreationContext conn)
-            => BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<CompressedSysColumnsValue>(conn)
+            => CompressedSysColumnsValue.BaseQuery(ParameterizedSql.Empty).ReadMetaObjects<CompressedSysColumnsValue>(conn)
                 .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => cols.Select(v => new DbColumnMetaData(v)).ToArray());
 
         static readonly Regex isSafeForSql = new Regex("^[a-zA-Z0-9_]+$", RegexOptions.ECMAScript | RegexOptions.Compiled);
