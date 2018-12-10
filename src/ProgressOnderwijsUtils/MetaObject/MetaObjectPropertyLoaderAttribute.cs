@@ -3,5 +3,5 @@
 // ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
-    public class MetaObjectPropertyLoaderAttribute : Attribute, IPropertiesAreUsedImplicitly { }
+    public sealed class MetaObjectPropertyLoaderAttribute : Attribute, IPropertiesAreUsedImplicitly { }
 }

@@ -9,17 +9,17 @@ namespace ProgressOnderwijsUtils
 {
     public readonly struct FieldMapping
     {
-        public readonly IColumnDefinition Src;
-        public readonly IColumnDefinition Dst;
+        public readonly ColumnDefinition Src;
+        public readonly ColumnDefinition Dst;
 
-        FieldMapping(IColumnDefinition src, IColumnDefinition dst)
+        FieldMapping(ColumnDefinition src, ColumnDefinition dst)
         {
             Src = src;
             Dst = dst;
         }
 
         [NotNull]
-        public static FieldMapping[] Create([NotNull] IColumnDefinition[] srcColumns, [NotNull] IColumnDefinition[] dstColumns)
+        public static FieldMapping[] Create([NotNull] ColumnDefinition[] srcColumns, [NotNull] ColumnDefinition[] dstColumns)
         {
             var dstColumnsByName = dstColumns.ToDictionary(o => o.Name ?? "!!UNNAMED COLUMN!!", StringComparer.OrdinalIgnoreCase);
 
@@ -47,10 +47,10 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static FieldMapping[] VerifyAndCreate(
-            [NotNull] IColumnDefinition[] srcColumns,
+            [NotNull] ColumnDefinition[] srcColumns,
             string srcName,
             bool allowExtraSrcColumns,
-            [NotNull] IColumnDefinition[] dstColumns,
+            [NotNull] ColumnDefinition[] dstColumns,
             string dstName,
             bool allowExtraDstColumns)
         {
@@ -59,24 +59,18 @@ namespace ProgressOnderwijsUtils
             var mapped = new List<FieldMapping>(mapping.Length);
 
             foreach (var entry in mapping) {
-                if (entry.Src == null && entry.Dst == null) {
-                    throw new ArgumentException();
-                } else {
-                    if (entry.Src == null && !allowExtraDstColumns) {
-                        errors.Add($"Entity '{srcName}' is missing property '{entry.Dst.Name}' to insert into table '{dstName}'.");
+                if (entry.Src != null && entry.Dst != null) {
+                    if (entry.Src.DataType.GetNonNullableUnderlyingType() == entry.Dst.DataType.GetNonNullableUnderlyingType()) {
+                        mapped.Add(entry);
+                    } else {
+                        errors.Add($"Type '{entry.Src.DataType.ToCSharpFriendlyTypeName()}' of property '{srcName}.{entry.Src.Name}' differs from type '{entry.Dst.DataType.ToCSharpFriendlyTypeName()}' of column '{dstName}.{entry.Dst.Name}'.");
                     }
-
-                    if (entry.Dst == null && !allowExtraSrcColumns) {
-                        errors.Add($"Table '{dstName}' has no column '{entry.Src.Name}' to insert from entity '{srcName}'.");
-                    }
-
-                    if (entry.Src != null && entry.Dst != null) {
-                        if (entry.Src.DataType.GetNonNullableUnderlyingType() != entry.Dst.DataType.GetNonNullableUnderlyingType()) {
-                            errors.Add($"Type '{entry.Src.DataType.ToCSharpFriendlyTypeName()}' of property '{srcName}.{entry.Src.Name}' differs from type '{entry.Dst.DataType.ToCSharpFriendlyTypeName()}' of column '{dstName}.{entry.Dst.Name}'.");
-                        } else {
-                            mapped.Add(entry);
-                        }
-                    }
+                } else if (entry.Src == null && entry.Dst == null) {
+                    errors.Add($"Empty mapping entry is invalid.");
+                } else if (entry.Src == null && !allowExtraDstColumns) {
+                    errors.Add($"Entity '{srcName}' is missing property '{entry.Dst.Name}' to insert into table '{dstName}'.");
+                } else if (entry.Dst == null && !allowExtraSrcColumns) {
+                    errors.Add($"Table '{dstName}' has no column '{entry.Src.Name}' to insert from entity '{srcName}'.");
                 }
             }
 

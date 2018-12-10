@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     public enum DbObjectId { }
 
     [DbIdEnum]
-    public enum ColumnIndex { }
+    public enum DbColumnId { }
 
     public struct DbNamedTableId : IMetaObject
     {
@@ -112,26 +112,26 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 Table = table;
             }
 
-            public ColumnIndex ColumnId
+            public DbColumnId ColumnId
                 => ColumnMetaData.ColumnId;
 
             public string ColumnName
                 => ColumnMetaData.ColumnName;
 
             public bool Is_Primary_Key
-                => ColumnMetaData.Is_Primary_Key;
+                => ColumnMetaData.IsPrimaryKey;
 
             public bool Is_RowVersion
-                => ColumnMetaData.Is_RowVersion;
+                => ColumnMetaData.IsRowVersion;
 
             public bool Is_Computed
-                => ColumnMetaData.Is_Computed;
+                => ColumnMetaData.IsComputed;
 
             public bool Is_Nullable
-                => ColumnMetaData.Is_Nullable;
+                => ColumnMetaData.IsNullable;
 
             public SqlXType User_Type_Id
-                => ColumnMetaData.User_Type_Id;
+                => ColumnMetaData.UserTypeId;
 
             public ParameterizedSql SqlColumnName()
                 => ColumnMetaData.SqlColumnName();
@@ -189,7 +189,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                             })
                     ).ToArray();
 
-            public TableColumn GetByColumnIndex(ColumnIndex columnId)
+            public TableColumn GetByColumnIndex(DbColumnId columnId)
             {
                 var guess = (int)columnId - 1;
                 if (guess >= 0 && guess < Columns.Length && Columns[guess].ColumnId == columnId) {

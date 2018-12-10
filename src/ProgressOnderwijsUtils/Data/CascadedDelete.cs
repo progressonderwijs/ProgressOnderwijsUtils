@@ -10,7 +10,6 @@ using System.Linq;
 using static ProgressOnderwijsUtils.SafeSql;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
-
 namespace ProgressOnderwijsUtils
 {
     public static class CascadedDelete
@@ -24,7 +23,7 @@ namespace ProgressOnderwijsUtils
             [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] string pkColumn,
             [NotNull] params TId[] pksToDelete
-            )
+        )
             where TId : Enum
         {
             var pkColumnSql = ParameterizedSql.CreateDynamic(pkColumn);
@@ -35,14 +34,14 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public static DeletionReport[] RecursivelyDelete<TId>(
+        public static DeletionReport[] RecursivelyDelete<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] TId>(
             [NotNull] SqlCommandCreationContext conn,
             [NotNull] DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,
             [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] params TId[] pksToDelete
-            )
+        )
             where TId : IPropertiesAreUsedImplicitly, IMetaObject
         {
             var pksTable = SQL($"#pksTable");
@@ -50,7 +49,11 @@ namespace ProgressOnderwijsUtils
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
             CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, pkColumnsSql, pksTable);
-            pksToDelete.BulkCopyToSqlServer(conn, pksTable.CommandText(), DbColumnMetaData.ColumnMetaDatas(conn, pksTable));
+            var target = new BulkInsertTarget(
+                pksTable.CommandText(),
+                MetaObject.GetMetaProperties<TId>().ArraySelect((mp, index) => new ColumnDefinition(mp.DataType, mp.Name, index, ColumnAccessibility.Normal))
+            );
+            pksToDelete.BulkCopyToSqlServer(conn, target);
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}
                 from {pksTable}
@@ -71,7 +74,7 @@ namespace ProgressOnderwijsUtils
             [CanBeNull] Action<string> logger,
             [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] DataTable pksToDelete
-            )
+        )
         {
             var pksTable = SQL($"#pksTable");
             var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
@@ -113,9 +116,10 @@ namespace ProgressOnderwijsUtils
             [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] string[] pkColumns,
             ParameterizedSql pksTVParameter
-            )
+        )
         {
-            void log(string message) => logger?.Invoke(message);
+            void log(string message)
+                => logger?.Invoke(message);
 
             bool StopCascading(ParameterizedSql tableName)
                 => stopCascading?.Invoke(tableName.CommandText()) ?? false;
@@ -189,7 +193,7 @@ namespace ProgressOnderwijsUtils
 
             log($"Recursively deleting {initialRowCountToDelete} rows (of {idsToDelete} ids) from {initialTableAsEntered.QualifiedName})");
 
-            int delBatch = 0;
+            var delBatch = 0;
 
             var deletionStack = new Stack<Action>();
             var perflog = new List<DeletionReport>();
@@ -315,9 +319,15 @@ namespace ProgressOnderwijsUtils
             public string Fk_table { get; set; }
             public string Pk_column { get; set; }
             public string Fk_column { get; set; }
-            public ParameterizedSql FkTableSql => ParameterizedSql.CreateDynamic(Fk_table);
-            public ParameterizedSql PkColumnSql => ParameterizedSql.CreateDynamic(Pk_column);
-            public ParameterizedSql FkColumnSql => ParameterizedSql.CreateDynamic(Fk_column);
+
+            public ParameterizedSql FkTableSql
+                => ParameterizedSql.CreateDynamic(Fk_table);
+
+            public ParameterizedSql PkColumnSql
+                => ParameterizedSql.CreateDynamic(Pk_column);
+
+            public ParameterizedSql FkColumnSql
+                => ParameterizedSql.CreateDynamic(Fk_column);
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]

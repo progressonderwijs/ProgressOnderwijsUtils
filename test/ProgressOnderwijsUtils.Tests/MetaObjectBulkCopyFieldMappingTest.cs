@@ -12,19 +12,6 @@ namespace ProgressOnderwijsUtils.Tests
     {
         static readonly ParameterizedSql testTableName = SQL($"MetaObjectBulkCopyFieldMappingTestTable");
 
-        (string tableName, DbColumnMetaData[] columns) CreateTestTable()
-        {
-            SQL($@"
-                create table {testTableName} (
-                    Id int not null
-                    , SomeColumn int null
-                    , OtherColumn int null
-                );
-            ").ExecuteNonQuery(Context);
-
-            return (testTableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, testTableName));
-        }
-
         struct ExactMapping : IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Id { get; set; }
@@ -55,82 +42,81 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void Exact_mapping_gives_exception_on_less_columns()
         {
-            var (table, columns) = CreateTestTable();
-
-            Assert.Throws<InvalidOperationException>(() => new[] { new LessColumns() }.BulkCopyToSqlServer(Context, table, columns, BulkCopyFieldMappingMode.ExactMatch));
+            var bulkInsertTarget = CreateTargetTable();
+            Assert.Throws<InvalidOperationException>(() => {
+                bulkInsertTarget.With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new LessColumns { Id = 37, SomeColumn = 42 } });
+            });
         }
 
         [Fact]
         public void Exact_mapping_gives_exception_on_more_columns()
         {
-            var (table, columns) = CreateTestTable();
+            Assert.Throws<InvalidOperationException>(() => {
+                CreateTargetTable().With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new MoreColumns() });
+            });
+        }
 
-            Assert.Throws<InvalidOperationException>(() => new[] { new MoreColumns() }.BulkCopyToSqlServer(Context, table, columns, BulkCopyFieldMappingMode.ExactMatch));
+        BulkInsertTarget CreateTargetTable()
+        {
+            SQL($@"
+                create table {testTableName} (
+                    Id int not null
+                    , SomeColumn int null
+                    , OtherColumn int null
+                );
+            ").ExecuteNonQuery(Context);
+
+            return BulkInsertTarget.FromCompleteSetOfColumns(testTableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context, testTableName));
         }
 
         [Fact]
         public void Exact_mapping_works_when_mapping_is_exact()
         {
-            var (table, columns) = CreateTestTable();
-
-            new[] { new ExactMapping() }.BulkCopyToSqlServer(Context, table, columns, BulkCopyFieldMappingMode.ExactMatch);
-
+            CreateTargetTable().With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new ExactMapping() });
             PAssert.That(() => ExactMapping.Load(Context).Any());
         }
 
         [Fact]
         public void AllowExtraDatabaseColumns_mapping_gives_exception_on_more_columns()
         {
-            var (table, columns) = CreateTestTable();
-
-            Assert.Throws<InvalidOperationException>(() => new[] { new MoreColumns() }.BulkCopyToSqlServer(Context, table, columns, BulkCopyFieldMappingMode.AllowExtraDatabaseColumns));
+            Assert.Throws<InvalidOperationException>(() => {
+                CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraDatabaseColumns).BulkInsert(Context, new[] { new MoreColumns() });
+            });
         }
 
         [Fact]
         public void AllowExtraDatabaseColumns_mapping_works_on_less_columns()
         {
-            var (table, columns) = CreateTestTable();
-
-            new[] { new LessColumns() }.BulkCopyToSqlServer(Context, table, columns, BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
-
+            CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraDatabaseColumns).BulkInsert(Context, new[] { new LessColumns() });
             PAssert.That(() => ExactMapping.Load(Context).Any());
         }
 
         [Fact]
         public void AllowExtraDatabaseColumns_mapping_works_when_mapping_is_exact()
         {
-            var (table, columns) = CreateTestTable();
-
-            new[] { new ExactMapping() }.BulkCopyToSqlServer(Context, table, columns, BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
-
+            CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraDatabaseColumns).BulkInsert(Context, new[] { new ExactMapping() });
             PAssert.That(() => ExactMapping.Load(Context).Any());
         }
 
         [Fact]
         public void AllowExtraMetaObjectProperties_mapping_gives_exception_on_less_columns()
         {
-            var (table, columns) = CreateTestTable();
-
-            Assert.Throws<InvalidOperationException>(() => new[] { new LessColumns() }.BulkCopyToSqlServer(Context, table, columns, BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties));
+            Assert.Throws<InvalidOperationException>(() => {
+                CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Context, new[] { new LessColumns() });
+            });
         }
 
         [Fact]
         public void AllowExtraMetaObjectProperties_mapping_works_on_more_columns()
         {
-            var (table, columns) = CreateTestTable();
-
-            new[] { new MoreColumns() }.BulkCopyToSqlServer(Context, table, columns, BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties);
-
+            CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Context, new[] { new MoreColumns() });
             PAssert.That(() => ExactMapping.Load(Context).Any());
         }
 
         [Fact]
         public void AllowExtraMetaObjectProperties_mapping_works_when_mapping_is_exact()
         {
-            var (table, columns) = CreateTestTable();
-
-            new[] { new ExactMapping() }.BulkCopyToSqlServer(Context, table, columns, BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties);
-
+            CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Context, new[] { new ExactMapping() });
             PAssert.That(() => ExactMapping.Load(Context).Any());
         }
     }
