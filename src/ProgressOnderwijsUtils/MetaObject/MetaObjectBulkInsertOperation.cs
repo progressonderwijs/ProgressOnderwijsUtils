@@ -14,7 +14,8 @@ namespace ProgressOnderwijsUtils
 {
     static class MetaObjectBulkInsertOperation
     {
-        public static void Execute<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>([NotNull] SqlCommandCreationContext sqlContext, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, [NotNull] IEnumerable<T> enumerable, CancellationToken cancellationToken)
+        public static void Execute<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
+            T>([NotNull] SqlCommandCreationContext sqlContext, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, [NotNull] IEnumerable<T> enumerable, CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             if (enumerable == null) {
@@ -101,13 +102,9 @@ namespace ProgressOnderwijsUtils
         {
             var effectiveTableColumns = tableColumns.Where(c => c.ColumnAccessibility != ColumnAccessibility.Readonly && (c.ColumnAccessibility != ColumnAccessibility.AutoIncrement || options.HasFlag(SqlBulkCopyOptions.KeepIdentity)));
 
-            return FieldMapping.VerifyAndCreate(
-                ColumnDefinition.GetFromReader(objectReader),
-                typeof(T).ToCSharpFriendlyTypeName(),
-                mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
-                effectiveTableColumns.ToArray(),
-                "table " + tableName,
-                mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
+            var unfilteredMapping = FieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), effectiveTableColumns.ToArray());
+
+            return FieldMapping.FilterAndValidate(unfilteredMapping, typeof(T).ToCSharpFriendlyTypeName(), mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties, "table " + tableName, mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
         }
     }
 }
