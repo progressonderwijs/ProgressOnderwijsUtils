@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -104,7 +105,12 @@ namespace ProgressOnderwijsUtils
 
             var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), effectiveTableColumns.ToArray());
 
-            return BulkInsertFieldMapping.FilterAndValidate(unfilteredMapping, typeof(T).ToCSharpFriendlyTypeName(), mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties, "table " + tableName, mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
+            var validatedMapping = BulkInsertFieldMapping.FilterAndValidate(unfilteredMapping, mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties, mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
+            if (validatedMapping.IsOk) {
+                return validatedMapping.AssertOk();
+            } else {
+                throw new InvalidOperationException($"Failed to map objects of type {typeof(T).ToCSharpFriendlyTypeName()} to the table {tableName}. Errors:\r\n{validatedMapping.ErrorOrNull()}");
+            }
         }
     }
 }

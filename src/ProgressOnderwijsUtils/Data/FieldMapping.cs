@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -45,8 +46,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [NotNull]
-        public static BulkInsertFieldMapping[] FilterAndValidate([NotNull] BulkInsertFieldMapping[] mapping, string srcName, bool allowExtraSrcColumns, string dstName, bool allowExtraDstColumns)
+        public static Maybe<BulkInsertFieldMapping[], string> FilterAndValidate([NotNull] BulkInsertFieldMapping[] mapping, bool allowExtraSrcColumns, bool allowExtraDstColumns)
         {
             var errors = new List<string>(mapping.Length);
             var mapped = new List<BulkInsertFieldMapping>(mapping.Length);
@@ -56,21 +56,21 @@ namespace ProgressOnderwijsUtils
                     if (entry.Src.DataType.GetNonNullableUnderlyingType() == entry.Dst.DataType.GetNonNullableUnderlyingType()) {
                         mapped.Add(entry);
                     } else {
-                        errors.Add($"Type '{entry.Src.DataType.ToCSharpFriendlyTypeName()}' of property '{srcName}.{entry.Src.Name}' differs from type '{entry.Dst.DataType.ToCSharpFriendlyTypeName()}' of column '{dstName}.{entry.Dst.Name}'.");
+                        errors.Add($"Source field {entry.Src.Name} of type {entry.Src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {entry.Dst.Name} of type {entry.Dst.DataType.ToCSharpFriendlyTypeName()}.");
                     }
                 } else if (entry.Src == null && entry.Dst == null) {
                     errors.Add($"Empty mapping entry is invalid.");
                 } else if (entry.Src == null && !allowExtraDstColumns) {
-                    errors.Add($"Entity '{srcName}' is missing property '{entry.Dst.Name}' to insert into table '{dstName}'.");
+                    errors.Add($"Target field {entry.Dst.Name} of type {entry.Src.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                 } else if (entry.Dst == null && !allowExtraSrcColumns) {
-                    errors.Add($"Table '{dstName}' has no column '{entry.Src.Name}' to insert from entity '{srcName}'.");
+                    errors.Add($"Source field {entry.Src.Name} of type {entry.Src.DataType.ToCSharpFriendlyTypeName()} does not fill any corresponding target field.");
                 }
             }
 
             if (errors.Any()) {
-                throw new InvalidOperationException(errors.JoinStrings("\n"));
+                return Maybe.Error(errors.JoinStrings("\n"));
             } else {
-                return mapped.ToArray();
+                return Maybe.Ok(mapped.ToArray());
             }
         }
     }
