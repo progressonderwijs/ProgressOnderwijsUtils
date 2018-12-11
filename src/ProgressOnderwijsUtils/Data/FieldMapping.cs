@@ -55,6 +55,12 @@ namespace ProgressOnderwijsUtils
             bool allowExtraDstColumns)
         {
             var mapping = Create(srcColumns, dstColumns);
+            return FilterAndValidate(mapping, srcName, allowExtraSrcColumns, dstName, allowExtraDstColumns);
+        }
+
+        [NotNull]
+        public static FieldMapping[] FilterAndValidate([NotNull] FieldMapping[] mapping, string srcName, bool allowExtraSrcColumns, string dstName, bool allowExtraDstColumns)
+        {
             var errors = new List<string>(mapping.Length);
             var mapped = new List<FieldMapping>(mapping.Length);
 
