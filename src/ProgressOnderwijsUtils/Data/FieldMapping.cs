@@ -7,37 +7,37 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public readonly struct FieldMapping
+    public readonly struct BulkInsertFieldMapping
     {
         public readonly ColumnDefinition Src;
         public readonly ColumnDefinition Dst;
 
-        FieldMapping(ColumnDefinition src, ColumnDefinition dst)
+        BulkInsertFieldMapping(ColumnDefinition src, ColumnDefinition dst)
         {
             Src = src;
             Dst = dst;
         }
 
         [NotNull]
-        public static FieldMapping[] Create([NotNull] ColumnDefinition[] srcColumns, [NotNull] ColumnDefinition[] dstColumns)
+        public static BulkInsertFieldMapping[] Create([NotNull] ColumnDefinition[] srcColumns, [NotNull] ColumnDefinition[] dstColumns)
         {
             var dstColumnsByName = dstColumns.ToDictionary(o => o.Name ?? "!!UNNAMED COLUMN!!", StringComparer.OrdinalIgnoreCase);
 
-            var list = new List<FieldMapping>(srcColumns.Length + dstColumns.Length);
+            var list = new List<BulkInsertFieldMapping>(srcColumns.Length + dstColumns.Length);
             foreach (var srcColumn in srcColumns) {
                 if (dstColumnsByName.TryGetValue(srcColumn.Name, out var dstColumn)) {
                     dstColumnsByName.Remove(dstColumn.Name);
-                    list.Add(new FieldMapping(srcColumn, dstColumn));
+                    list.Add(new BulkInsertFieldMapping(srcColumn, dstColumn));
                 } else {
-                    list.Add(new FieldMapping(srcColumn, null));
+                    list.Add(new BulkInsertFieldMapping(srcColumn, null));
                 }
             }
-            list.AddRange(dstColumnsByName.Values.Select(dstColumn => new FieldMapping(null, dstColumn)));
+            list.AddRange(dstColumnsByName.Values.Select(dstColumn => new BulkInsertFieldMapping(null, dstColumn)));
 
             return list.ToArray();
         }
 
-        public static void ApplyFieldMappingsToBulkCopy([NotNull] FieldMapping[] mapping, [NotNull] SqlBulkCopy bulkCopy)
+        public static void ApplyFieldMappingsToBulkCopy([NotNull] BulkInsertFieldMapping[] mapping, [NotNull] SqlBulkCopy bulkCopy)
         {
             bulkCopy.ColumnMappings.Clear();
             foreach (var mapEntry in mapping) {
@@ -46,10 +46,10 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public static FieldMapping[] FilterAndValidate([NotNull] FieldMapping[] mapping, string srcName, bool allowExtraSrcColumns, string dstName, bool allowExtraDstColumns)
+        public static BulkInsertFieldMapping[] FilterAndValidate([NotNull] BulkInsertFieldMapping[] mapping, string srcName, bool allowExtraSrcColumns, string dstName, bool allowExtraDstColumns)
         {
             var errors = new List<string>(mapping.Length);
-            var mapped = new List<FieldMapping>(mapping.Length);
+            var mapped = new List<BulkInsertFieldMapping>(mapping.Length);
 
             foreach (var entry in mapping) {
                 if (entry.Src != null && entry.Dst != null) {

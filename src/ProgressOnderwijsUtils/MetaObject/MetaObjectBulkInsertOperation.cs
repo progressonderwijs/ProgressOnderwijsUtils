@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils
                 sqlBulkCopy.DestinationTableName = tableName;
                 var mapping = CreateMapping(objectReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options);
 
-                FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
+                BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
                 var sw = Stopwatch.StartNew();
                 try {
                     sqlBulkCopy.WriteToServer(objectReader);
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static Exception MetaObjectBasedException<T>([NotNull] FieldMapping[] mapping, int destinationColumnIndex, SqlException ex)
+        static Exception MetaObjectBasedException<T>([NotNull] BulkInsertFieldMapping[] mapping, int destinationColumnIndex, SqlException ex)
         {
             var sourceColumnName = "??unknown??";
             foreach (var m in mapping) {
@@ -97,14 +97,14 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static FieldMapping[] CreateMapping<T>([NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
+        static BulkInsertFieldMapping[] CreateMapping<T>([NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             var effectiveTableColumns = tableColumns.Where(c => c.ColumnAccessibility != ColumnAccessibility.Readonly && (c.ColumnAccessibility != ColumnAccessibility.AutoIncrement || options.HasFlag(SqlBulkCopyOptions.KeepIdentity)));
 
-            var unfilteredMapping = FieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), effectiveTableColumns.ToArray());
+            var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), effectiveTableColumns.ToArray());
 
-            return FieldMapping.FilterAndValidate(unfilteredMapping, typeof(T).ToCSharpFriendlyTypeName(), mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties, "table " + tableName, mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
+            return BulkInsertFieldMapping.FilterAndValidate(unfilteredMapping, typeof(T).ToCSharpFriendlyTypeName(), mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties, "table " + tableName, mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
         }
     }
 }
