@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils
 
             var validatedMapping = BulkInsertFieldMapping.FilterAndValidate(
                 unfilteredMapping,
-                new FieldMappingSettings {
+                new FieldMappingValidation {
                     AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
                     AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
                     OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),

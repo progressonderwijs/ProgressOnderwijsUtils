@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static Maybe<BulkInsertFieldMapping[], string> FilterAndValidate([NotNull] BulkInsertFieldMapping[] mapping, FieldMappingSettings settings)
+        public static Maybe<BulkInsertFieldMapping[], string> FilterAndValidate([NotNull] BulkInsertFieldMapping[] mapping, FieldMappingValidation validation)
         {
             var errors = new List<string>(mapping.Length);
             var mapped = new List<BulkInsertFieldMapping>(mapping.Length);
@@ -57,16 +57,16 @@ namespace ProgressOnderwijsUtils
                 if (dst == null) {
                     if (src == null) {
                         errors.Add($"Empty mapping entry is invalid.");
-                    } else if (!settings.AllowExtraSourceColumns) {
+                    } else if (!validation.AllowExtraSourceColumns) {
                         errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} does not fill any corresponding target field.");
                     }
                 } else if (src == null) {
                     if (dst.ColumnAccessibility == ColumnAccessibility.Normal || dst.ColumnAccessibility == ColumnAccessibility.NormalWithDefaultValue) {
-                        if (!settings.AllowExtraTargetColumns) {
+                        if (!validation.AllowExtraTargetColumns) {
                             errors.Add($"Target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                         }
                     } else if (dst.ColumnAccessibility == ColumnAccessibility.AutoIncrement) {
-                        if (settings.OverwriteAutoIncrement) {
+                        if (validation.OverwriteAutoIncrement) {
                             errors.Add($"Target auto-increment field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()} is not filled by any corresponding source field.");
                         }
                     } else if (dst.ColumnAccessibility != ColumnAccessibility.Readonly) {
@@ -79,7 +79,7 @@ namespace ProgressOnderwijsUtils
                         errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
                     } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
                         errors.Add($"Cannot fill readonly field {dst.Name}.");
-                    } else if (dst.ColumnAccessibility != ColumnAccessibility.AutoIncrement || settings.OverwriteAutoIncrement) {
+                    } else if (dst.ColumnAccessibility != ColumnAccessibility.AutoIncrement || validation.OverwriteAutoIncrement) {
                         mapped.Add(entry);
                     }
                 }
@@ -93,7 +93,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public struct FieldMappingSettings
+    public struct FieldMappingValidation
     {
         public bool AllowExtraSourceColumns;
         public bool AllowExtraTargetColumns;
