@@ -101,11 +101,15 @@ namespace ProgressOnderwijsUtils
         static BulkInsertFieldMapping[] CreateMapping<T>([NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            var effectiveTableColumns = tableColumns.Where(c => c.ColumnAccessibility != ColumnAccessibility.Readonly && (c.ColumnAccessibility != ColumnAccessibility.AutoIncrement || options.HasFlag(SqlBulkCopyOptions.KeepIdentity)));
+            var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), tableColumns);
 
-            var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), effectiveTableColumns.ToArray());
-
-            var validatedMapping = BulkInsertFieldMapping.FilterAndValidate(unfilteredMapping, mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties, mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
+            var validatedMapping = BulkInsertFieldMapping.FilterAndValidate(
+                unfilteredMapping,
+                new FieldMappingSettings {
+                    AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
+                    AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
+                    OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
+                });
             if (validatedMapping.IsOk) {
                 return validatedMapping.AssertOk();
             } else {
