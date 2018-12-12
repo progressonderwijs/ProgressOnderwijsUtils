@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>33.0.0</Version>
-    <PackageReleaseNotes>Redesigned Bulk Insert api to avoid the need for Ordinal</PackageReleaseNotes>
+    <Version>34.0.0</Version>
+    <PackageReleaseNotes>Bulk Insert now by defaults allows properties that map to identity fields, even without KeepIdentity on</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
