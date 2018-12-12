@@ -9,12 +9,14 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
     static class MetaObjectBulkInsertOperation
     {
-        public static void Execute<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T>([NotNull] SqlCommandCreationContext sqlContext, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, [NotNull] IEnumerable<T> enumerable, CancellationToken cancellationToken)
+        public static void Execute<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
+            T>([NotNull] SqlCommandCreationContext sqlContext, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, [NotNull] IEnumerable<T> enumerable, CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             if (enumerable == null) {
@@ -37,7 +39,7 @@ namespace ProgressOnderwijsUtils
                 sqlBulkCopy.DestinationTableName = tableName;
                 var mapping = CreateMapping(objectReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options);
 
-                FieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
+                BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
                 var sw = Stopwatch.StartNew();
                 try {
                     sqlBulkCopy.WriteToServer(objectReader);
@@ -52,7 +54,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static Exception MetaObjectBasedException<T>([NotNull] FieldMapping[] mapping, int destinationColumnIndex, SqlException ex)
+        static Exception MetaObjectBasedException<T>([NotNull] BulkInsertFieldMapping[] mapping, int destinationColumnIndex, SqlException ex)
         {
             var sourceColumnName = "??unknown??";
             foreach (var m in mapping) {
@@ -96,18 +98,22 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static FieldMapping[] CreateMapping<T>([NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
+        static BulkInsertFieldMapping[] CreateMapping<T>([NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            var effectiveTableColumns = tableColumns.Where(c => c.ColumnAccessibility != ColumnAccessibility.Readonly && (c.ColumnAccessibility != ColumnAccessibility.AutoIncrement || options.HasFlag(SqlBulkCopyOptions.KeepIdentity)));
+            var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), tableColumns);
 
-            return FieldMapping.VerifyAndCreate(
-                ColumnDefinition.GetFromReader(objectReader),
-                typeof(T).ToCSharpFriendlyTypeName(),
-                mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
-                effectiveTableColumns.ToArray(),
-                "table " + tableName,
-                mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns);
+            var validatedMapping = new FieldMappingValidation {
+                AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
+                AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
+                OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
+            }.ValidateAndFilter(
+                unfilteredMapping);
+            if (validatedMapping.IsOk) {
+                return validatedMapping.AssertOk();
+            } else {
+                throw new InvalidOperationException($"Failed to map objects of type {typeof(T).ToCSharpFriendlyTypeName()} to the table {tableName}. Errors:\r\n{validatedMapping.ErrorOrNull()}");
+            }
         }
     }
 }

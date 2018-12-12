@@ -56,6 +56,7 @@ namespace ProgressOnderwijsUtils.Tests
             });
         }
 
+        [NotNull]
         BulkInsertTarget CreateTargetTable()
         {
             SQL($@"
