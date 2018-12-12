@@ -103,13 +103,12 @@ namespace ProgressOnderwijsUtils
         {
             var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), tableColumns);
 
-            var validatedMapping = BulkInsertFieldMapping.FilterAndValidate(
-                unfilteredMapping,
-                new FieldMappingValidation {
-                    AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
-                    AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
-                    OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
-                });
+            var validatedMapping = new FieldMappingValidation {
+                AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
+                AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
+                OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
+            }.ValidateAndFilter(
+                unfilteredMapping);
             if (validatedMapping.IsOk) {
                 return validatedMapping.AssertOk();
             } else {
