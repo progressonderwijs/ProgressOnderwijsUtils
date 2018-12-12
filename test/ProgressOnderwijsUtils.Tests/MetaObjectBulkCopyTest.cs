@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -66,6 +67,7 @@ namespace ProgressOnderwijsUtils.Tests
             public string Bla2 { get; set; }
         }
 
+        [NotNull]
         BulkInsertTarget CreateTempTable()
         {
             var tableName = SQL($"#MyTable");
@@ -171,7 +173,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void BulkCopyIgnoresIdentityColumns()
+        public void BulkCopyAllowsOmittingSourcePropertiesForIdentityColumns()
         {
             var tableName = SQL($"#MyTable");
             SQL($@"
@@ -185,6 +187,34 @@ namespace ProgressOnderwijsUtils.Tests
             new[] {
                 new ExcludingIdentityColumn {
                     Id = 11,
+                    Bla = "Something"
+                }
+            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
+
+            var fromDb = SQL($@"
+                select *
+                from {tableName}
+            ").ReadMetaObjects<IncludingIdentityColumn>(Context).Single();
+            PAssert.That(() => fromDb.AnIdentity == 1);
+        }
+
+
+        [Fact]
+        public void BulkCopyIgnoresPropertiesCorrespondingIdentityColumns()
+        {
+            var tableName = SQL($"#MyTable");
+            SQL($@"
+                create table {tableName} (
+                    Id int not null primary key
+                    , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
+                    , Bla nvarchar(max) not null
+                )
+            ").ExecuteNonQuery(Context);
+
+            new[] {
+                new IncludingIdentityColumn {
+                    Id = 11,
+                    AnIdentity =37,
                     Bla = "Something"
                 }
             }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
