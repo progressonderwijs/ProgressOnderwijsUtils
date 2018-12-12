@@ -198,7 +198,6 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => fromDb.AnIdentity == 1);
         }
 
-
         [Fact]
         public void BulkCopyIgnoresPropertiesCorrespondingIdentityColumns()
         {
@@ -214,7 +213,7 @@ namespace ProgressOnderwijsUtils.Tests
             new[] {
                 new IncludingIdentityColumn {
                     Id = 11,
-                    AnIdentity =37,
+                    AnIdentity = 37,
                     Bla = "Something"
                 }
             }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
