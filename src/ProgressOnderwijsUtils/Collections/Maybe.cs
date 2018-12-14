@@ -44,12 +44,16 @@ namespace ProgressOnderwijsUtils.Collections
             => okOrError = ok;
 
         /// <summary>
-        /// Consider "WhenOk",  "WhenOkTry" and "ExtractToValue": those often result in clearer code.
-        /// 
         /// Value: whether this Maybe is in the OK state.
         /// </summary>
         public bool IsOk
             => okOrError is Maybe_Ok<TOk>;
+
+        /// <summary>
+        /// Value: whether this Maybe is in the Error state.
+        /// </summary>
+        public bool IsError
+            => !IsOk;
 
         /// <summary>
         /// Extracts a value from the Maybe by calling either the ifOk function or the ifError function, depending on the state of the Maybe.
