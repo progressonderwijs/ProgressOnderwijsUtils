@@ -7,39 +7,43 @@ namespace ProgressOnderwijsUtils.Collections
 {
     public static class MaybeExtensions
     {
-        static (bool isOk, TOk whenOk, TError whenError) ExtractionHelper<TOk, TError>(this Maybe<TOk, TError> state)
-            => ((bool isOk, TOk whenOk, TError whenError))state;
-
+        [CanBeNull]
         [Pure]
         public static TError ErrorOrNull<TOk, TError>(this Maybe<TOk, TError> state)
-            => state.ExtractionHelper().whenError;
+            where TError : class
+            => state.TryGet(out _, out var whenError) ? null : whenError;
 
+        [Pure]
+        public static TError? ErrorOrNull<TOk, TError>(this Maybe<TOk, TError?> state)
+            where TError : struct
+            => state.TryGet(out _, out var whenError) ? null : whenError;
+
+        [Pure]
+        public static TError? ErrorOrNullable<TOk, TError>(this Maybe<TOk, TError> state)
+            where TError : struct
+            => state.TryGet(out _, out var whenError) ? default(TError?) : whenError;
+
+        [CanBeNull]
         [Pure]
         public static TOk ValueOrNull<TOk, TError>(this Maybe<TOk, TError> state)
             where TOk : class
-            => state.ExtractionHelper().whenOk;
+            => state.TryGet(out var whenOk, out _) ? whenOk : null;
 
         [Pure]
         public static TOk? ValueOrNull<TOk, TError>(this Maybe<TOk?, TError> state)
             where TOk : struct
-        {
-            var (isOk, okValue, _) = state.ExtractionHelper();
-            return isOk ? okValue : default(TOk?);
-        }
+            => state.TryGet(out var okValue, out _) ? okValue : null;
 
         [Pure]
         public static TOk? ValueOrNullable<TOk, TError>(this Maybe<TOk, TError> state)
             where TOk : struct
-            => state.Extract(v => v, e => default(TOk?));
+            => state.TryGet(out var okValue, out _) ? okValue : default(TOk?);
 
         public static TOk AssertOk<TOk, TError>(this Maybe<TOk, TError> state)
-        {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (!isOk) {
-                throw new Exception("Assertion that Maybe is Ok failed; error: " + error);
-            }
-            return okValue;
-        }
+            => state.TryGet(out var okValue, out var error) ? okValue : throw new Exception("Assertion that Maybe is Ok failed; error state: " + error);
+
+        public static TError AssertError<TOk, TError>(this Maybe<TOk, TError> state)
+            => state.TryGet(out var okValue, out var error) ? throw new Exception("Assertion that Maybe is Error failed; ok state: " + okValue) : error;
 
         /// <summary>
         /// Maps a possibly failed value to a new value.
@@ -48,14 +52,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [Pure]
         public static Maybe<TOkOut, TError> WhenOk<TOk, TError, TOkOut>(this Maybe<TOk, TError> state, Func<TOk, TOkOut> map)
-        {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (isOk) {
-                return Maybe.Ok(map(okValue));
-            } else {
-                return Maybe.Error(error);
-            }
-        }
+            => state.TryGet(out var okValue, out var error) ? Maybe.Ok(map(okValue)) : Maybe.Error(error).AsMaybeWithoutValue<TOkOut>();
 
         /// <summary>
         /// Maps a possibly failed value to a new value.
@@ -63,11 +60,10 @@ namespace ProgressOnderwijsUtils.Collections
         /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
         [Pure]
-        public static Maybe<Unit, TError> WhenOk<TOk, TError>(this Maybe<TOk, TError> state, Action<TOk> map)
+        public static Maybe<Unit, TError> WhenOk<TOk, TError>(this Maybe<TOk, TError> state, Action<TOk> actOnValue)
         {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (isOk) {
-                map(okValue);
+            if (state.TryGet(out var okValue, out var error)) {
+                actOnValue(okValue);
                 return Maybe.Ok(Unit.Value);
             } else {
                 return Maybe.Error(error);
@@ -79,12 +75,10 @@ namespace ProgressOnderwijsUtils.Collections
         /// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, the output is OK and is mapped
         /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
-        [UsefulToKeep("Library Function")]
         [Pure]
         public static Maybe<TOkOut, TError> WhenOk<TOkOut, TError>(this Maybe<Unit, TError> state, Func<TOkOut> map)
         {
-            var (isOk, _, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out _, out var error)) {
                 return Maybe.Ok(map());
             } else {
                 return Maybe.Error(error);
@@ -101,8 +95,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOk, TErrorResult> WhenError<TOk, TError, TErrorResult>(this Maybe<TOk, TError> state, Func<TError, TErrorResult> map)
         {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out var error)) {
                 return Maybe.Ok(okValue);
             } else {
                 return Maybe.Error(map(error));
@@ -119,8 +112,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOk, Unit> WhenError<TOk, TError>(this Maybe<TOk, TError> state, Action<TError> map)
         {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out var error)) {
                 return Maybe.Ok(okValue);
             } else {
                 map(error);
@@ -138,8 +130,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOk, TErrorResult> WhenError<TOk, TErrorResult>(this Maybe<TOk, Unit> state, Func<TErrorResult> map)
         {
-            var (isOk, okValue, _) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out _)) {
                 return Maybe.Ok(okValue);
             } else {
                 return Maybe.Error(map());
@@ -151,8 +142,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void IfOk<TOk, TError>(this Maybe<TOk, TError> state, Action<TOk> ifOk)
         {
-            var (isOk, okValue, _) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out _)) {
                 ifOk(okValue);
             }
         }
@@ -162,8 +152,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void IfOk<TError>(this Maybe<Unit, TError> state, Action ifOk)
         {
-            var (isOk, _, _) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out _, out _)) {
                 ifOk();
             }
         }
@@ -173,8 +162,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void If<TOk, TError>(this Maybe<TOk, TError> state, Action<TOk> ifOk, Action<TError> ifError)
         {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out var error)) {
                 ifOk(okValue);
             } else {
                 ifError(error);
@@ -186,8 +174,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void If<TError>(this Maybe<Unit, TError> state, Action ifOk, Action<TError> ifError)
         {
-            var (isOk, _, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out _, out var error)) {
                 ifOk();
             } else {
                 ifError(error);
@@ -199,8 +186,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void If<TOk>(this Maybe<TOk, Unit> state, Action<TOk> ifOk, Action ifError)
         {
-            var (isOk, okValue, _) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out _)) {
                 ifOk(okValue);
             } else {
                 ifError();
@@ -212,8 +198,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void If(this Maybe<Unit, Unit> state, Action ifOk, Action ifError)
         {
-            var (isOk, _, _) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out _, out _)) {
                 ifOk();
             } else {
                 ifError();
@@ -225,7 +210,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void IfError<TOk, TError>(this Maybe<TOk, TError> state, Action<TError> ifError)
         {
-            var (isOk, _, error) = state.ExtractionHelper();
+            var isOk = state.TryGet(out _, out var error);
             if (!isOk) {
                 ifError(error);
             }
@@ -236,7 +221,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void IfError<TOk>(this Maybe<TOk, Unit> state, Action ifError)
         {
-            var (isOk, _, _) = state.ExtractionHelper();
+            var isOk = state.TryGet(out _, out _);
             if (!isOk) {
                 ifError();
             }
@@ -248,7 +233,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static bool Contains<TOk, TError>(this Maybe<TOk, TError> state, TOk value)
         {
-            var (isOk, okValue, _) = state.ExtractionHelper();
+            var isOk = state.TryGet(out var okValue, out _);
             return isOk && Equals(okValue, value);
         }
 
@@ -258,7 +243,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static bool Contains<TOk, TError>(this Maybe<TOk, TError> state, Predicate<TOk> predicate)
         {
-            var (isOk, okValue, _) = state.ExtractionHelper();
+            var isOk = state.TryGet(out var okValue, out _);
             return isOk && predicate(okValue);
         }
 
@@ -268,8 +253,8 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static bool ContainsError<TOk, TError>(this Maybe<TOk, TError> state, TError value)
         {
-            var (isOk, _, errValue) = state.ExtractionHelper();
-            return !isOk && Equals(errValue, value);
+            var isOk = state.TryGet(out _, out var error);
+            return !isOk && Equals(error, value);
         }
 
         /// <summary>
@@ -278,28 +263,55 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static bool ContainsError<TOk, TError>(this Maybe<TOk, TError> state, Predicate<TError> predicate)
         {
-            var (isOk, _, errValue) = state.ExtractionHelper();
-            return !isOk && predicate(errValue);
+            var isOk = state.TryGet(out _, out var error);
+            return !isOk && predicate(error);
         }
 
         [Pure]
         public static Maybe<TOk[], TError[]> WhenAllOk<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
         {
+            var (okValues, errValues) = maybes.Partition();
+            return errValues.Any() ? (Maybe<TOk[], TError[]>)Maybe.Error(errValues) : Maybe.Ok(okValues).AsMaybeWithoutError<TError[]>();
+        }
+
+        [NotNull]
+        [Pure]
+        public static IEnumerable<TOk> WhereOk<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        {
+            foreach (var state in maybes) {
+                var isOk = state.TryGet(out var okValue, out _);
+                if (isOk) {
+                    yield return okValue;
+                }
+            }
+        }
+
+        [NotNull]
+        [Pure]
+        public static IEnumerable<TError> WhereError<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        {
+            foreach (var state in maybes) {
+                var isOk = state.TryGet(out _, out var error);
+                if (!isOk) {
+                    yield return error;
+                }
+            }
+        }
+
+        [Pure]
+        public static (TOk[] okValues, TError[] errorValues) Partition<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        {
             var okValues = new List<TOk>();
             var errValues = new List<TError>();
             foreach (var state in maybes) {
-                var (isOk, okValue, error) = state.ExtractionHelper();
+                var isOk = state.TryGet(out var okValue, out var error);
                 if (isOk) {
                     okValues.Add(okValue);
                 } else {
                     errValues.Add(error);
                 }
             }
-            if (errValues.Any()) {
-                return Maybe.Error(errValues.ToArray());
-            } else {
-                return Maybe.Ok(okValues.ToArray());
-            }
+            return (okValues: okValues.ToArray(), errorValues: errValues.ToArray());
         }
 
         /// <summary>
@@ -311,8 +323,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOut, TError> WhenOkTry<TOk, TError, TOut>(this Maybe<TOk, TError> state, Func<TOk, Maybe<TOut, TError>> map)
         {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out var error)) {
                 return map(okValue);
             } else {
                 return Maybe.Error(error);
@@ -328,8 +339,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOut, TError> WhenOkTry<TError, TOut>(this Maybe<Unit, TError> state, Func<Maybe<TOut, TError>> map)
         {
-            var (isOk, _, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out _, out var error)) {
                 return map();
             } else {
                 return Maybe.Error(error);
@@ -345,8 +355,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOk, TErrorOut> WhenErrorTry<TOk, TError, TErrorOut>(this Maybe<TOk, TError> state, Func<TError, Maybe<TOk, TErrorOut>> map)
         {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out var error)) {
                 return Maybe.Ok(okValue);
             } else {
                 return map(error);
@@ -362,8 +371,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOk, TErrorOut> WhenErrorTry<TOk, TErrorOut>(this Maybe<TOk, Unit> state, Func<Maybe<TOk, TErrorOut>> map)
         {
-            var (isOk, okValue, _) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out _)) {
                 return Maybe.Ok(okValue);
             } else {
                 return map();
@@ -377,12 +385,11 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOkResult, TError> SelectMany<TOk, TError, TOkTemp, TOkResult>(this Maybe<TOk, TError> state, Func<TOk, Maybe<TOkTemp, TError>> tempSelector, Func<TOk, TOkTemp, TOkResult> resultSelector)
         {
-            var (isOk, okValue, error) = state.ExtractionHelper();
+            var isOk = state.TryGet(out var okValue, out var error);
             if (!isOk) {
                 return Maybe.Error(error);
             }
-            var (tempOk, tempValue, tempError) = tempSelector(okValue).ExtractionHelper();
-            if (tempOk) {
+            if (tempSelector(okValue).TryGet(out var tempValue, out var tempError)) {
                 return Maybe.Ok(resultSelector(okValue, tempValue));
             } else {
                 return Maybe.Error(tempError);
@@ -397,8 +404,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOkResult, TError> SelectMany<TOk, TError, TOkResult>(this Maybe<TOk, TError> state, Func<TOk, Maybe<TOkResult, TError>> map)
         {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out var error)) {
                 return map(okValue);
             } else {
                 return Maybe.Error(error);
@@ -411,8 +417,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOkResult, TError> Select<TOk, TError, TOkResult>(this Maybe<TOk, TError> state, Func<TOk, TOkResult> map)
         {
-            var (isOk, okValue, error) = state.ExtractionHelper();
-            if (isOk) {
+            if (state.TryGet(out var okValue, out var error)) {
                 return Maybe.Ok(map(okValue));
             } else {
                 return Maybe.Error(error);

@@ -47,10 +47,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         // internal details:
         RootedTree(SList<TreePathSegment> pathSegments)
-        {
-            PathSegments = pathSegments;
-        }
-
+            => PathSegments = pathSegments;
         readonly SList<TreePathSegment> PathSegments;
 
         struct TreePathSegment
