@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using Xunit;
 
@@ -103,10 +104,11 @@ namespace ProgressOnderwijsUtils.Tests
         public void WhenOk_calls_method_iif_ok()
         {
             var notOkCalled = false;
-            var notOkExample = Maybe.ErrorWhenNotNull("asd").WhenOk(_ => {
-                notOkCalled = true;
-                return 42;
-            });
+            var notOkExample = Maybe.ErrorWhenNotNull("asd").WhenOk(
+                _ => {
+                    notOkCalled = true;
+                    return 42;
+                });
             var okExample = Maybe.Ok(3).AsMaybeWithoutError<string>().WhenOk(i => i * 14);
 
             PAssert.That(() => notOkCalled == false);
@@ -268,29 +270,33 @@ namespace ProgressOnderwijsUtils.Tests
             var okExample = Maybe.Ok().AsMaybeWithoutError<Unit>();
             var notOkExample = Maybe.Error().AsMaybeWithoutValue<Unit>();
 
-            PAssert.That(() => (
-                from a in okExample
-                let v = 1
-                from b in okExample
-                select v
+            PAssert.That(
+                () => (
+                    from a in okExample
+                    let v = 1
+                    from b in okExample
+                    select v
                 ).Contains(1));
-            PAssert.That(() => (
-                from a in okExample
-                let v = 1
-                from b in notOkExample
-                select v
+            PAssert.That(
+                () => (
+                    from a in okExample
+                    let v = 1
+                    from b in notOkExample
+                    select v
                 ).IsOk == false);
-            PAssert.That(() => (
-                from a in notOkExample
-                let v = 1
-                from b in okExample
-                select v
+            PAssert.That(
+                () => (
+                    from a in notOkExample
+                    let v = 1
+                    from b in okExample
+                    select v
                 ).IsOk == false);
-            PAssert.That(() => (
-                from a in notOkExample
-                let v = 1
-                from b in notOkExample
-                select v
+            PAssert.That(
+                () => (
+                    from a in notOkExample
+                    let v = 1
+                    from b in notOkExample
+                    select v
                 ).IsOk == false);
         }
     }
