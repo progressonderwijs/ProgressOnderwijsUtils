@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>34.0.0</Version>
-    <PackageReleaseNotes>Bulk Insert now by defaults allows properties that map to identity fields, even without KeepIdentity on</PackageReleaseNotes>
+    <Version>34.1.0</Version>
+    <PackageReleaseNotes>Extended Maybe API and added more equivalent between error and ok states</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
