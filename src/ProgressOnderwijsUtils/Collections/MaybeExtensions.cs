@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils.Collections
             => state.TryGet(out var okValue, out var error) ? okValue : throw new Exception("Assertion that Maybe is Ok failed; error state: " + error);
 
         public static TError AssertError<TOk, TError>(this Maybe<TOk, TError> state)
-            => state.TryGet(out var okValue, out var error) ? error : throw new Exception("Assertion that Maybe is Error failed; ok state: " + okValue);
+            => state.TryGet(out var okValue, out var error) ? throw new Exception("Assertion that Maybe is Error failed; ok state: " + okValue) : error;
 
         /// <summary>
         /// Maps a possibly failed value to a new value.

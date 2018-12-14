@@ -150,7 +150,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError val)
             where TError : class
-            => Either(val == null, Unit.Value, val);
+            => val == null ? Ok(Unit.Value).AsMaybeWithoutError<TError>() : Error(val);
 
         /// <summary>
         /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
@@ -158,7 +158,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError? val)
             where TError : struct
-            => Either(val == null, Unit.Value, val.Value);
+            => val == null ? Ok(Unit.Value).AsMaybeWithoutError<TError>() : Error(val.Value);
 
         /// <summary>
         /// Converts a possibly null okValue to a Maybe&lt;TOk, Unit&gt;. When the input is null; return errors, otherwise returns ok.
@@ -166,7 +166,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOk, Unit> OkWhenNotNull<TOk>([CanBeNull] TOk val)
             where TOk : class
-            => Either(val == null, val, Unit.Value);
+            => val != null ? Ok(val).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
 
         /// <summary>
         /// Converts a possibly null okValue to a Maybe&lt;TOk, Unit&gt;. When the input is null; return errors, otherwise returns ok.
@@ -174,7 +174,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOk, Unit> OkWhenNotNull<TOk>([CanBeNull] TOk? val)
             where TOk : struct
-            => Either(val == null, val.Value, Unit.Value);
+            => val != null ? Ok(val.Value).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
 
         /// <summary>
         /// Usage: Maybe.Try( () => Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
