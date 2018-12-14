@@ -71,7 +71,6 @@ namespace ProgressOnderwijsUtils.Collections
         /// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, the output is OK and is mapped
         /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
-        [UsefulToKeep("Library Function")]
         [Pure]
         public static Maybe<TOkOut, TError> WhenOk<TOkOut, TError>(this Maybe<Unit, TError> state, Func<TOkOut> map)
         {
