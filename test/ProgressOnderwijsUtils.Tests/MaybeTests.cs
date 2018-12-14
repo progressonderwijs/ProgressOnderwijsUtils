@@ -89,7 +89,11 @@ namespace ProgressOnderwijsUtils.Tests
         public void ErrorOrNull_is_null_iif_error()
         {
             PAssert.That(() => Maybe.ErrorWhenNotNull("asd").ErrorOrNull() == "asd");
-            PAssert.That(() => Maybe.Ok(3).AsMaybeWithoutError<string>().ErrorOrNull() == default(string));
+            PAssert.That(() => Maybe.Ok(3).AsMaybeWithoutError<string>().ErrorOrNull() == null);
+            PAssert.That(() => Maybe.Error(1337).AsMaybeWithoutValue<string>().ErrorOrNullable() == 1337);
+            PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<string>().ErrorOrNull() == null);
+            PAssert.That(() => Maybe.Error(1337).AsMaybeWithoutValue<int?>().ErrorOrNullable() == 1337);
+            PAssert.That(() => Maybe.Ok((int?)42).AsMaybeWithoutError<string>().ErrorOrNull() == null);
         }
 
         [Fact]
@@ -109,6 +113,7 @@ namespace ProgressOnderwijsUtils.Tests
             Assert.ThrowsAny<Exception>(() => Maybe.ErrorWhenNotNull("asd").AssertOk());
             PAssert.That(() => Maybe.Ok(3).AsMaybeWithoutError<string>().AssertOk() == 3);
         }
+
         [Fact]
         public void AssertError_crashes_iif_Ok()
         {
