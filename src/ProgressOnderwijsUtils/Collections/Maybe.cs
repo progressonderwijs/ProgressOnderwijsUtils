@@ -78,24 +78,21 @@ namespace ProgressOnderwijsUtils.Collections
 
         public bool TryGet(out TOk okValueIfOk, out TError errorValueIfError)
         {
-            Deconstruct(out var isOk, out okValueIfOk, out errorValueIfError);
-            return isOk;
+            switch (okOrError) {
+                case Maybe_Ok<TOk> okValue:
+                    (okValueIfOk, errorValueIfError) = (okValue.Value, default(TError));
+                    return true;
+                case Maybe_Error<TError> errValue:
+                    (okValueIfOk, errorValueIfError) = (default(TOk), errValue.Error);
+                    return false;
+                default:
+                    (okValueIfOk, errorValueIfError) = (default(TOk), default(TError));
+                    return false;
+            }
         }
 
         public void Deconstruct(out bool isOk, out TOk okValueIfOk, out TError errorValueIfError)
-        {
-            switch (okOrError) {
-                case Maybe_Ok<TOk> okValue:
-                    (isOk, okValueIfOk, errorValueIfError) = (true, okValue.Value, default(TError));
-                    break;
-                case Maybe_Error<TError> errValue:
-                    (isOk, okValueIfOk, errorValueIfError) = (false, default(TOk), errValue.Error);
-                    break;
-                default:
-                    (isOk, okValueIfOk, errorValueIfError) = (false, default(TOk), default(TError));
-                    break;
-            }
-        }
+            => isOk = TryGet(out okValueIfOk, out errorValueIfError);
     }
 
     public static class Maybe
