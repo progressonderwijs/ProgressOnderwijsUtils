@@ -78,7 +78,6 @@ namespace ProgressOnderwijsUtils.Collections
             return isOk;
         }
 
-
         public static explicit operator (bool isOk, TOk whenOk, TError whenError)(Maybe<TOk, TError> maybe)
         {
             var (isOk, okValueIfOk, errorValueIfError) = maybe;
@@ -142,12 +141,36 @@ namespace ProgressOnderwijsUtils.Collections
             => isOk ? Ok(whenOk).AsMaybeWithoutError<TError>() : Error(whenError);
 
         /// <summary>
-        /// Converts a error to a Maybe&lt;Unit, TError&gt;.  A null translatable represents success, any other value the error message to display.
+        /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
         /// </summary>
         [Pure]
         public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError val)
             where TError : class
             => Either(val == null, Unit.Value, val);
+
+        /// <summary>
+        /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
+        /// </summary>
+        [Pure]
+        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError? val)
+            where TError : struct
+            => Either(val == null, Unit.Value, val.Value);
+
+        /// <summary>
+        /// Converts a possibly null okValue to a Maybe&lt;TOk, Unit&gt;. When the input is null; return errors, otherwise returns ok.
+        /// </summary>
+        [Pure]
+        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>([CanBeNull] TOk val)
+            where TOk : class
+            => Either(val == null, val, Unit.Value);
+
+        /// <summary>
+        /// Converts a possibly null okValue to a Maybe&lt;TOk, Unit&gt;. When the input is null; return errors, otherwise returns ok.
+        /// </summary>
+        [Pure]
+        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>([CanBeNull] TOk? val)
+            where TOk : struct
+            => Either(val == null, val.Value, Unit.Value);
 
         /// <summary>
         /// Usage: Maybe.Try( () => Some.Thing.That(Can.Fail())).Catch&lt;SomeException&gt;()
