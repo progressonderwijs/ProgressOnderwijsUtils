@@ -285,6 +285,37 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOk[], TError[]> WhenAllOk<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
         {
+            var (okValues, errValues) = maybes.Partition();
+            return errValues.Any() ? (Maybe<TOk[], TError[]>)Maybe.Error(errValues) : Maybe.Ok(okValues).AsMaybeWithoutError<TError[]>();
+        }
+
+        [NotNull]
+        [Pure]
+        public static IEnumerable<TOk> WhereOk<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        {
+            foreach (var state in maybes) {
+                var (isOk, okValue, _) = state.ExtractionHelper();
+                if (isOk) {
+                    yield return okValue;
+                }
+            }
+        }
+
+        [NotNull]
+        [Pure]
+        public static IEnumerable<TError> WhereError<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        {
+            foreach (var state in maybes) {
+                var (isOk, _, error) = state.ExtractionHelper();
+                if (!isOk) {
+                    yield return error;
+                }
+            }
+        }
+
+        [Pure]
+        public static (TOk[] okValues, TError[] errorValues) Partition<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        {
             var okValues = new List<TOk>();
             var errValues = new List<TError>();
             foreach (var state in maybes) {
@@ -295,11 +326,7 @@ namespace ProgressOnderwijsUtils.Collections
                     errValues.Add(error);
                 }
             }
-            if (errValues.Any()) {
-                return Maybe.Error(errValues.ToArray());
-            } else {
-                return Maybe.Ok(okValues.ToArray());
-            }
+            return (okValues: okValues.ToArray(), errorValues: errValues.ToArray());
         }
 
         /// <summary>

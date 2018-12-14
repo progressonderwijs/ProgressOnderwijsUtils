@@ -213,22 +213,52 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void WhenAllOk_is_ok_for_empty()
+        public void WhenAllOk_simple_cases_work()
         {
             PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhenAllOk().IsOk);
+            PAssert.That(() => TwoOkMaybes.WhenAllOk().Contains(ok => ok.SequenceEqual(new[] { 1, 2 })));
+            PAssert.That(() => ThreeMixedMaybes.WhenAllOk().ContainsError(ok => ok.SequenceEqual(new[] { 1, 2 })));
         }
 
         [Fact]
-        public void WhenAllOk_is_ok_for_multiple_maybes()
+        public void WhereOk_simple_cases_work()
         {
-            PAssert.That(() => new[] { Maybe.Ok(1).AsMaybeWithoutError<Unit>(), Maybe.Ok(2) }.WhenAllOk().Contains(ok => ok.SequenceEqual(new[] { 1, 2 })));
+            PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhereOk().None());
+            PAssert.That(() => TwoOkMaybes.WhereOk().SequenceEqual(new[] { 1, 2 }));
+            PAssert.That(() => ThreeMixedMaybes.WhereOk().SequenceEqual(new[] { Unit.Value }));
         }
 
         [Fact]
-        public void WhenAllOk_collects_multiple_errors()
+        public void WhereError_simple_cases_work()
         {
-            PAssert.That(() => new[] { Maybe.Error(1).AsMaybeWithoutValue<Unit>(), Maybe.Ok(), Maybe.Error(2) }.WhenAllOk().ContainsError(ok => ok.SequenceEqual(new[] { 1, 2 })));
+            PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhereError().None());
+            PAssert.That(() => TwoOkMaybes.WhereError().None());
+            PAssert.That(() => ThreeMixedMaybes.WhereError().SequenceEqual(new[] { 1, 2, }));
         }
+
+        [Fact]
+        public void Partition_simple_cases_work()
+        {
+            var emptyPartitioned = Array.Empty<Maybe<Unit, Unit>>().Partition();
+            PAssert.That(() => emptyPartitioned.errorValues.None() && emptyPartitioned.okValues.None());
+            PAssert.That(() => emptyPartitioned.okValues.None());
+
+            var twoOkPartitioned = TwoOkMaybes.Partition();
+            PAssert.That(() => twoOkPartitioned.okValues.SequenceEqual(new[] { 1, 2 }));
+            PAssert.That(() => twoOkPartitioned.errorValues.None());
+
+            var threeMixedPartitioned = ThreeMixedMaybes.Partition();
+            PAssert.That(() => threeMixedPartitioned.okValues.SequenceEqual(new[] { Unit.Value }));
+            PAssert.That(() => threeMixedPartitioned.errorValues.SequenceEqual(new[] { 1, 2, }));
+        }
+
+        [NotNull]
+        static Maybe<Unit, int>[] ThreeMixedMaybes
+            => new[] { Maybe.Error(1).AsMaybeWithoutValue<Unit>(), Maybe.Ok(), Maybe.Error(2) };
+
+        [NotNull]
+        static Maybe<int, Unit>[] TwoOkMaybes
+            => new[] { Maybe.Ok(1).AsMaybeWithoutError<Unit>(), Maybe.Ok(2) };
 
         [Fact]
         public void WhenOkTry_is_ok_iif_both_input_and_delegate_are_ok()
