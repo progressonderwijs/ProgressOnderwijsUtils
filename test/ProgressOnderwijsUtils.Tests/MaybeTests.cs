@@ -59,7 +59,8 @@ namespace ProgressOnderwijsUtils.Tests
         {
             PAssert.That(() => Maybe.Try(() => int.Parse("42")).Catch<Exception>().Contains(42));
             PAssert.That(() => Maybe.Try(() => int.Parse("42e")).Catch<Exception>().ContainsError(e => e is FormatException));
-            PAssert.That(() => Maybe.Try(() => Console.WriteLine(int.Parse("42e"))).Catch<Exception>().ContainsError(e => e is FormatException));
+            Action<int> ignoreValue = _ => { };
+            PAssert.That(() => Maybe.Try(() => ignoreValue(int.Parse("42e"))).Catch<Exception>().ContainsError(e => e is FormatException));
         }
 
         [Fact]
