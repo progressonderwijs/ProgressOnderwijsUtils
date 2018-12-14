@@ -23,6 +23,7 @@ namespace ProgressOnderwijsUtils.Collections
             where TError : struct
             => state.TryGet(out _, out var whenError) ? default(TError?) : whenError;
 
+        [CanBeNull]
         [Pure]
         public static TOk ValueOrNull<TOk, TError>(this Maybe<TOk, TError> state)
             where TOk : class
@@ -206,7 +207,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void IfError<TOk, TError>(this Maybe<TOk, TError> state, Action<TError> ifError)
         {
-            var isOk = state.TryGet(out var okValue, out var error);
+            var isOk = state.TryGet(out _, out var error);
             if (!isOk) {
                 ifError(error);
             }
@@ -217,7 +218,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void IfError<TOk>(this Maybe<TOk, Unit> state, Action ifError)
         {
-            var isOk = state.TryGet(out var okValue, out var error);
+            var isOk = state.TryGet(out _, out _);
             if (!isOk) {
                 ifError();
             }
@@ -229,7 +230,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static bool Contains<TOk, TError>(this Maybe<TOk, TError> state, TOk value)
         {
-            var isOk = state.TryGet(out var okValue, out var error);
+            var isOk = state.TryGet(out var okValue, out _);
             return isOk && Equals(okValue, value);
         }
 
@@ -239,7 +240,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static bool Contains<TOk, TError>(this Maybe<TOk, TError> state, Predicate<TOk> predicate)
         {
-            var isOk = state.TryGet(out var okValue, out var error);
+            var isOk = state.TryGet(out var okValue, out _);
             return isOk && predicate(okValue);
         }
 
@@ -249,7 +250,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static bool ContainsError<TOk, TError>(this Maybe<TOk, TError> state, TError value)
         {
-            var isOk = state.TryGet(out var okValue, out var error);
+            var isOk = state.TryGet(out _, out var error);
             return !isOk && Equals(error, value);
         }
 
@@ -259,7 +260,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static bool ContainsError<TOk, TError>(this Maybe<TOk, TError> state, Predicate<TError> predicate)
         {
-            var isOk = state.TryGet(out var okValue, out var error);
+            var isOk = state.TryGet(out _, out var error);
             return !isOk && predicate(error);
         }
 
@@ -275,7 +276,7 @@ namespace ProgressOnderwijsUtils.Collections
         public static IEnumerable<TOk> WhereOk<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             foreach (var state in maybes) {
-                var isOk = state.TryGet(out var okValue, out var error);
+                var isOk = state.TryGet(out var okValue, out _);
                 if (isOk) {
                     yield return okValue;
                 }
@@ -287,7 +288,7 @@ namespace ProgressOnderwijsUtils.Collections
         public static IEnumerable<TError> WhereError<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             foreach (var state in maybes) {
-                var isOk = state.TryGet(out var okValue, out var error);
+                var isOk = state.TryGet(out _, out var error);
                 if (!isOk) {
                     yield return error;
                 }
