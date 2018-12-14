@@ -113,21 +113,35 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void WhenOk_calls_method_iif_ok()
         {
-            var notOkCalled = false;
+            var notOk_whenOk_called = false;
             var notOkExample = Maybe.ErrorWhenNotNull("asd").WhenOk(
                 _ => {
-                    notOkCalled = true;
+                    notOk_whenOk_called = true;
                     return 42;
                 });
-            var okExample = Maybe.Ok(3).AsMaybeWithoutError<string>().WhenOk(i => i * 14);
+            PAssert.That(() => notOk_whenOk_called == false);
 
-            PAssert.That(() => notOkCalled == false);
+            var okExample = Maybe.Ok(3).AsMaybeWithoutError<string>().WhenOk(i => i * 14);
             PAssert.That(() => okExample.Contains(42));
             PAssert.That(() => notOkExample.ContainsError("asd"));
 
             Action<int> action = _ => { };
             PAssert.That(() => okExample.WhenOk(action).Contains(Unit.Value));
             PAssert.That(() => notOkExample.WhenOk(action).Contains(Unit.Value) == false);
+        }
+
+        [Fact]
+        public void WhenOk_for_Unit_calls_method_iif_ok()
+        {
+            var notOkExample = Maybe.ErrorWhenNotNull("asd");
+
+            var okExample = Maybe.OkWhenNotNull((int?)3).WhenError(() => "asd").WhenOk(_ => { });
+
+            PAssert.That(() => okExample.Contains(Unit.Value));
+            PAssert.That(() => notOkExample.ContainsError("asd"));
+
+            PAssert.That(() => okExample.WhenOk(() => DayOfWeek.Friday).Contains(DayOfWeek.Friday));
+            PAssert.That(() => notOkExample.WhenOk(() => DayOfWeek.Friday).Contains(DayOfWeek.Friday) == false);
         }
 
         [Fact]
