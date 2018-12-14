@@ -62,10 +62,10 @@ namespace ProgressOnderwijsUtils.Collections
         /// using the provided function.  The function is eagerly evaluated, i.e. not like Enumerable.Select, but like Enumerable.ToArray.
         /// </summary>
         [Pure]
-        public static Maybe<Unit, TError> WhenOk<TOk, TError>(this Maybe<TOk, TError> state, Action<TOk> map)
+        public static Maybe<Unit, TError> WhenOk<TOk, TError>(this Maybe<TOk, TError> state, Action<TOk> actOnValue)
         {
             if (state.TryGet(out var okValue, out var error)) {
-                map(okValue);
+                actOnValue(okValue);
                 return Maybe.Ok(Unit.Value);
             } else {
                 return Maybe.Error(error);
