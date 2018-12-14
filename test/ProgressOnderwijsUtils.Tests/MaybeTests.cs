@@ -109,6 +109,12 @@ namespace ProgressOnderwijsUtils.Tests
             Assert.ThrowsAny<Exception>(() => Maybe.ErrorWhenNotNull("asd").AssertOk());
             PAssert.That(() => Maybe.Ok(3).AsMaybeWithoutError<string>().AssertOk() == 3);
         }
+        [Fact]
+        public void AssertError_crashes_iif_Ok()
+        {
+            Assert.ThrowsAny<Exception>(() => Maybe.OkWhenNotNull("asd").AssertError());
+            PAssert.That(() => Maybe.Error(3).AsMaybeWithoutValue<string>().AssertError() == 3);
+        }
 
         [Fact]
         public void WhenOk_calls_method_iif_ok()

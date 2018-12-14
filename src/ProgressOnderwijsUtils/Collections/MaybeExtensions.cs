@@ -42,6 +42,9 @@ namespace ProgressOnderwijsUtils.Collections
         public static TOk AssertOk<TOk, TError>(this Maybe<TOk, TError> state)
             => state.TryGet(out var okValue, out var error) ? okValue : throw new Exception("Assertion that Maybe is Ok failed; error state: " + error);
 
+        public static TError AssertError<TOk, TError>(this Maybe<TOk, TError> state)
+            => state.TryGet(out var okValue, out var error) ? error : throw new Exception("Assertion that Maybe is Error failed; ok state: " + okValue);
+
         /// <summary>
         /// Maps a possibly failed value to a new value.
         /// When the input state is failed, the output state is also failed (with the same message).  If the input is OK, the output is OK and is mapped
