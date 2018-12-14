@@ -7,7 +7,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class MaybeTests
+    public sealed class MaybeTests
     {
         [Fact]
         public void OkContainsTheValuePassedIn()
