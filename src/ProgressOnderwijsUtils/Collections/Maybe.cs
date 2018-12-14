@@ -82,12 +82,6 @@ namespace ProgressOnderwijsUtils.Collections
             return isOk;
         }
 
-        public static explicit operator (bool isOk, TOk whenOk, TError whenError)(Maybe<TOk, TError> maybe)
-        {
-            var (isOk, okValueIfOk, errorValueIfError) = maybe;
-            return (isOk, okValueIfOk, errorValueIfError);
-        }
-
         public void Deconstruct(out bool isOk, out TOk okValueIfOk, out TError errorValueIfError)
         {
             switch (okOrError) {
