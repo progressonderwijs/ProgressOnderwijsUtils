@@ -3,14 +3,14 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    public class Maybe_Ok<TOk>
+    public sealed class Maybe_Ok<TOk>
     {
         public readonly TOk Value;
         public Maybe_Ok(TOk value) => Value = value;
         public Maybe<TOk, TError> AsMaybeWithoutError<TError>() => this;
     }
 
-    public class Maybe_Error<TError>
+    public sealed class Maybe_Error<TError>
     {
         public readonly TError Error;
         public Maybe_Error(TError error) => Error = error;
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.Collections
     /// A value or an error message describing why no value is present.
     /// 
     /// "Maybe" can be used to pass around possibly missing or erroneous values that aren't exceptional (e.g. that should not cause a crash).
-    /// See the utility functions  "WhenOk", "WhenOkTry" and "ExtractToValue" for ways to handily combine values of type Maybe. 
+    /// See the utility functions  "WhenOk", "WhenOkTry" and "ExtractToValue" for ways to handily combine values of type Maybe.
     /// 
     /// "Maybe" is immutable and hence thread safe (assuming the wrapped value is thread safe).
     /// </summary>
