@@ -70,10 +70,19 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void ErrorWhenNotNull_is_ok_for_nonnull()
+        public void ErrorWhenNotNull_is_error_for_nonnull()
         {
-            PAssert.That(() => Maybe.ErrorWhenNotNull("asd").IsOk == false);
+            PAssert.That(() => Maybe.ErrorWhenNotNull("asd").IsError);
             PAssert.That(() => Maybe.ErrorWhenNotNull(default(object)).IsOk);
+            PAssert.That(() => Maybe.ErrorWhenNotNull(default(int?)).IsOk);
+        }
+
+        [Fact]
+        public void OkWhenNotNull_is_ok_for_nonnull()
+        {
+            PAssert.That(() => Maybe.OkWhenNotNull("asd").IsOk);
+            PAssert.That(() => Maybe.OkWhenNotNull(default(object)).IsError);
+            PAssert.That(() => Maybe.OkWhenNotNull(default(int?)).IsError);
         }
 
         [Fact]
