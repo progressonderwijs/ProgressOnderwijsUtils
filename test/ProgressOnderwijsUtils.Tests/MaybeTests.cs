@@ -291,14 +291,14 @@ namespace ProgressOnderwijsUtils.Tests
             var notOkExample = Maybe.Error().AsMaybeWithoutValue<Unit>();
 
             PAssert.That(() => okExample.WhenOkTry(_ => okExample).IsOk);
-            PAssert.That(() => okExample.WhenOkTry(_ => notOkExample).IsOk == false);
-            PAssert.That(() => notOkExample.WhenOkTry(_ => okExample).IsOk == false);
-            PAssert.That(() => notOkExample.WhenOkTry(_ => notOkExample).IsOk == false);
+            PAssert.That(() => okExample.WhenOkTry(_ => notOkExample).IsError);
+            PAssert.That(() => notOkExample.WhenOkTry(_ => okExample).IsError);
+            PAssert.That(() => notOkExample.WhenOkTry(_ => notOkExample).IsError);
 
             PAssert.That(() => okExample.WhenOkTry(() => okExample).IsOk);
-            PAssert.That(() => okExample.WhenOkTry(() => notOkExample).IsOk == false);
-            PAssert.That(() => notOkExample.WhenOkTry(() => okExample).IsOk == false);
-            PAssert.That(() => notOkExample.WhenOkTry(() => notOkExample).IsOk == false);
+            PAssert.That(() => okExample.WhenOkTry(() => notOkExample).IsError);
+            PAssert.That(() => notOkExample.WhenOkTry(() => okExample).IsError);
+            PAssert.That(() => notOkExample.WhenOkTry(() => notOkExample).IsError);
         }
 
         [Fact]
@@ -310,12 +310,12 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => okExample.WhenErrorTry(_ => okExample).IsOk);
             PAssert.That(() => okExample.WhenErrorTry(_ => notOkExample).IsOk);
             PAssert.That(() => notOkExample.WhenErrorTry(_ => okExample).IsOk);
-            PAssert.That(() => notOkExample.WhenErrorTry(_ => notOkExample).IsOk == false);
+            PAssert.That(() => notOkExample.WhenErrorTry(_ => notOkExample).IsError);
 
             PAssert.That(() => okExample.WhenErrorTry(() => okExample).IsOk);
             PAssert.That(() => okExample.WhenErrorTry(() => notOkExample).IsOk);
             PAssert.That(() => notOkExample.WhenErrorTry(() => okExample).IsOk);
-            PAssert.That(() => notOkExample.WhenErrorTry(() => notOkExample).IsOk == false);
+            PAssert.That(() => notOkExample.WhenErrorTry(() => notOkExample).IsError);
         }
 
         [Fact]
@@ -337,14 +337,14 @@ namespace ProgressOnderwijsUtils.Tests
                     let v = 1
                     from b in notOkExample
                     select v
-                ).IsOk == false);
+                ).IsError);
             PAssert.That(
                 () => (
                     from a in notOkExample
                     let v = 1
                     from b in okExample
                     select v
-                ).IsOk == false);
+                ).IsError);
             PAssert.That(
                 () => (
                     from a in notOkExample
