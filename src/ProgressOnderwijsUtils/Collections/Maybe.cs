@@ -72,15 +72,31 @@ namespace ProgressOnderwijsUtils.Collections
         public static implicit operator Maybe<TOk, TError>(Maybe_Ok<TOk> err)
             => new Maybe<TOk, TError>(err);
 
+        public bool TryGet(out TOk okValueIfOk, out TError errorValueIfError)
+        {
+            Deconstruct(out var isOk, out okValueIfOk, out errorValueIfError);
+            return isOk;
+        }
+
+
         public static explicit operator (bool isOk, TOk whenOk, TError whenError)(Maybe<TOk, TError> maybe)
         {
-            switch (maybe.okOrError) {
+            var (isOk, okValueIfOk, errorValueIfError) = maybe;
+            return (isOk, okValueIfOk, errorValueIfError);
+        }
+
+        public void Deconstruct(out bool isOk, out TOk okValueIfOk, out TError errorValueIfError)
+        {
+            switch (okOrError) {
                 case Maybe_Ok<TOk> okValue:
-                    return (true, okValue.Value,default(TError));
+                    (isOk, okValueIfOk, errorValueIfError) = (true, okValue.Value, default(TError));
+                    break;
                 case Maybe_Error<TError> errValue:
-                    return (false,default(TOk),errValue.Error);
+                    (isOk, okValueIfOk, errorValueIfError) = (false, default(TOk), errValue.Error);
+                    break;
                 default:
-                    return (false, default(TOk), default(TError));
+                    (isOk, okValueIfOk, errorValueIfError) = (false, default(TOk), default(TError));
+                    break;
             }
         }
     }
