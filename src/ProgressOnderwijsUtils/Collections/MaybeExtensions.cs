@@ -48,13 +48,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [Pure]
         public static Maybe<TOkOut, TError> WhenOk<TOk, TError, TOkOut>(this Maybe<TOk, TError> state, Func<TOk, TOkOut> map)
-        {
-            if (state.TryGet(out var okValue, out var error)) {
-                return Maybe.Ok(map(okValue));
-            } else {
-                return Maybe.Error(error);
-            }
-        }
+            => state.TryGet(out var okValue, out var error) ? Maybe.Ok(map(okValue)) : Maybe.Error(error).AsMaybeWithoutValue<TOkOut>();
 
         /// <summary>
         /// Maps a possibly failed value to a new value.
