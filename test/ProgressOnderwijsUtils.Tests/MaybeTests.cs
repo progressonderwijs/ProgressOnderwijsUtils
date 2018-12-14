@@ -248,6 +248,20 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void Deconstruct_deconstructs_Ok()
+        {
+            var (ok, okVal, errVal) = Maybe.Either(true, 13, "13");
+            PAssert.That(() => ok && okVal == 13 && errVal == null);
+        }
+
+        [Fact]
+        public void Deconstruct_deconstructs_errors()
+        {
+            var (ok, okVal, errVal) = Maybe.Either(false, 13, "13");
+            PAssert.That(() => !ok && okVal == 0 && errVal == "13");
+        }
+
+        [Fact]
         public void WhenAllOk_simple_cases_work()
         {
             PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhenAllOk().IsOk);
