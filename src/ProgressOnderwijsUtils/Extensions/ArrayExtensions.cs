@@ -43,6 +43,9 @@ namespace ProgressOnderwijsUtils
             return output;
         }
 
+        /// <summary>
+        /// Like Enumerable.Select, but faster due to specialization for arrays.
+        /// </summary>
         [NotNull]
         [Pure]
         public static TR[] ArraySelect<T, TR>([NotNull] this IReadOnlyList<T> array, Func<T, TR> mappingFunction)
@@ -54,12 +57,44 @@ namespace ProgressOnderwijsUtils
             return output;
         }
 
-        public static T[] AppendArrays<T>([CanBeNull] this T[] beginning, T[] end)
+        /// <summary>
+        /// Like Enumerable.Select, but faster due to specialization for arrays.
+        /// </summary>
+        [NotNull]
+        [Pure]
+        public static TR[] ArraySelect<T, TR>([NotNull] this T[] array, Func<T, int, TR> mappingFunction)
         {
-            if (beginning == null) {
+            var output = new TR[array.Length];
+            for (var i = 0; i < array.Length; ++i) {
+                output[i] = mappingFunction(array[i], i);
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// Like Enumerable.Select, but faster due to specialization for arrays.
+        /// </summary>
+        [NotNull]
+        [Pure]
+        public static TR[] ArraySelect<T, TR>([NotNull] this IReadOnlyList<T> array, Func<T, int, TR> mappingFunction)
+        {
+            var output = new TR[array.Count];
+            for (var i = 0; i < output.Length; ++i) {
+                output[i] = mappingFunction(array[i], i);
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// Concatenates two arrays.  Null arrays are interpreted as the empty array. The returned array may be the same as one of the parameters.
+        /// </summary>
+        [NotNull]
+        public static T[] AppendArrays<T>([CanBeNull] this T[] beginning, [CanBeNull] T[] end)
+        {
+            if (end == null || end.Length == 0) {
+                return beginning ?? Array.Empty<T>();
+            } else if (beginning == null || beginning.Length == 0) {
                 return end;
-            } else if (end == null) {
-                return beginning;
             }
             var newChildNodes = new T[beginning.Length + end.Length];
             Array.Copy(beginning, 0, newChildNodes, 0, beginning.Length);

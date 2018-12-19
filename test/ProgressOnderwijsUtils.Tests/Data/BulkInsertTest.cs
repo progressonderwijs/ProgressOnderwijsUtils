@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class BulkInsertTest : TransactedLocalConnection
     {
-        (string tableName, DbColumnMetaData[] columns) CreateTable()
+        BulkInsertTarget CreateTable()
         {
             var tableName = SQL($"#test");
             SQL($@"
@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 )
             ").ExecuteNonQuery(Context);
 
-            return (tableName.CommandText(), DbColumnMetaData.ColumnMetaDatas(Context.Connection, tableName));
+            return BulkInsertTarget.LoadFromTable(Context, tableName.CommandText());
         }
 
         sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -68,16 +68,16 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void BulkCopysWithConcurrentQueriesCrash()
         {
-            var (table, columns) = CreateTable();
+            var target = CreateTable();
             var evilEnumerable = SampleData.Where(o => SQL($"select 1").ReadScalar<int>(Context) == 1);
-            Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Context, table, columns));
+            Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Context, target));
         }
 
         [Fact]
         public void BulkInsertAndReadRoundTrips()
         {
-            var (table, columns) = CreateTable();
-            SampleData.BulkCopyToSqlServer(Context, table, columns);
+            var target = CreateTable();
+            SampleData.BulkCopyToSqlServer(Context, target);
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Context);
             var missingInDb = SampleData.Except(fromDb);
             var extraInDb = fromDb.Except(SampleData);
@@ -89,8 +89,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void EmptyBulkInsertAndReadRoundTrips()
         {
-            var (table, columns) = CreateTable();
-            SampleData.Take(0).BulkCopyToSqlServer(Context, table, columns);
+            var target = CreateTable();
+            SampleData.Take(0).BulkCopyToSqlServer(Context, target);
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Context);
             PAssert.That(() => fromDb.None());
         }

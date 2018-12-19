@@ -8,7 +8,7 @@ using ValueUtils;
 
 namespace ProgressOnderwijsUtils
 {
-    /// <summary> 
+    /// <summary>
     /// Helper base class to automatically implement Equals, GetHashCode, ToString()
     /// uses all public+private fields of the object for comparisons
     /// uses public fields and properties for ToString()
@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     /// <typeparam name="T">The derived type; must be sealed</typeparam>
     [Serializable]
-    public abstract class ValueBase<T> : IEquatable<T>
+    public abstract class ValueBase<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)] T> : IEquatable<T>
         where T : ValueBase<T>
     {
         protected ValueBase()
@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public bool Equals(T other) => other != null && FieldwiseEquality<T>.Instance((T)this, other);
-        public override bool Equals(object obj) => obj is T && Equals((T)obj);
+        public override bool Equals(object obj) => obj is T typed && Equals(typed);
         public override int GetHashCode() => FieldwiseHasher<T>.Instance((T)this);
 
         [NotNull]
@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         static MemberExpression MemberAccessExpression(Expression expr, [NotNull] MemberInfo mi)
         {
-            return mi is FieldInfo ? Expression.Field(expr, (FieldInfo)mi) : Expression.Property(expr, (PropertyInfo)mi);
+            return mi is FieldInfo info ? Expression.Field(expr, info) : Expression.Property(expr, (PropertyInfo)mi);
         }
 
         [UsedImplicitly]
@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
 
             var type = typeof(T);
             var refEqMethod = ((Func<object, object, bool>)ReferenceEquals).Method;
-            var toStringMethod = typeof(ToStringByMembers<T>).GetMethod("ToString", BindingFlags.Static | BindingFlags.NonPublic);
+            var toStringMethod = typeof(ToStringByMembers<T>).GetMethod("ToString", BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException("missing ToString?");
 
             var parA = Expression.Parameter(type, "a");
             var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -126,8 +126,7 @@ namespace ProgressOnderwijsUtils
         static string FriendlyMemberName([NotNull] MemberInfo fi)
         {
             bool isPublic;
-            if (fi is FieldInfo) {
-                var fieldinfo = (FieldInfo)fi;
+            if (fi is FieldInfo fieldinfo) {
                 isPublic = fieldinfo.Attributes.HasFlag(FieldAttributes.Public);
             } else {
                 var propertyinfo = (PropertyInfo)fi;

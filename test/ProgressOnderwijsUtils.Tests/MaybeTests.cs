@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class MaybeTests
+    public sealed class MaybeTests
     {
         [Fact]
         public void OkContainsTheValuePassedIn()
@@ -58,7 +59,8 @@ namespace ProgressOnderwijsUtils.Tests
         {
             PAssert.That(() => Maybe.Try(() => int.Parse("42")).Catch<Exception>().Contains(42));
             PAssert.That(() => Maybe.Try(() => int.Parse("42e")).Catch<Exception>().ContainsError(e => e is FormatException));
-            PAssert.That(() => Maybe.Try(() => Console.WriteLine(int.Parse("42e"))).Catch<Exception>().ContainsError(e => e is FormatException));
+            Action<int> ignoreValue = _ => { };
+            PAssert.That(() => Maybe.Try(() => ignoreValue(int.Parse("42e"))).Catch<Exception>().ContainsError(e => e is FormatException));
         }
 
         [Fact]
@@ -68,17 +70,30 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void ErrorWhenNotNull_is_ok_for_nonnull()
+        public void ErrorWhenNotNull_is_error_for_nonnull()
         {
-            PAssert.That(() => Maybe.ErrorWhenNotNull("asd").IsOk == false);
+            PAssert.That(() => Maybe.ErrorWhenNotNull("asd").IsError);
             PAssert.That(() => Maybe.ErrorWhenNotNull(default(object)).IsOk);
+            PAssert.That(() => Maybe.ErrorWhenNotNull(default(int?)).IsOk);
+        }
+
+        [Fact]
+        public void OkWhenNotNull_is_ok_for_nonnull()
+        {
+            PAssert.That(() => Maybe.OkWhenNotNull("asd").IsOk);
+            PAssert.That(() => Maybe.OkWhenNotNull(default(object)).IsError);
+            PAssert.That(() => Maybe.OkWhenNotNull(default(int?)).IsError);
         }
 
         [Fact]
         public void ErrorOrNull_is_null_iif_error()
         {
             PAssert.That(() => Maybe.ErrorWhenNotNull("asd").ErrorOrNull() == "asd");
-            PAssert.That(() => Maybe.Ok(3).AsMaybeWithoutError<string>().ErrorOrNull() == default(string));
+            PAssert.That(() => Maybe.Ok(3).AsMaybeWithoutError<string>().ErrorOrNull() == null);
+            PAssert.That(() => Maybe.Error(1337).AsMaybeWithoutValue<string>().ErrorOrNullable() == 1337);
+            PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<string>().ErrorOrNull() == null);
+            PAssert.That(() => Maybe.Error(1337).AsMaybeWithoutValue<int?>().ErrorOrNullable() == 1337);
+            PAssert.That(() => Maybe.Ok((int?)42).AsMaybeWithoutError<string>().ErrorOrNull() == null);
         }
 
         [Fact]
@@ -100,22 +115,44 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void AssertError_crashes_iif_Ok()
+        {
+            Assert.ThrowsAny<Exception>(() => Maybe.OkWhenNotNull("asd").AssertError());
+            PAssert.That(() => Maybe.Error(3).AsMaybeWithoutValue<string>().AssertError() == 3);
+        }
+
+        [Fact]
         public void WhenOk_calls_method_iif_ok()
         {
-            var notOkCalled = false;
-            var notOkExample = Maybe.ErrorWhenNotNull("asd").WhenOk(_ => {
-                notOkCalled = true;
-                return 42;
-            });
-            var okExample = Maybe.Ok(3).AsMaybeWithoutError<string>().WhenOk(i => i * 14);
+            var notOk_whenOk_called = false;
+            var notOkExample = Maybe.ErrorWhenNotNull("asd").WhenOk(
+                _ => {
+                    notOk_whenOk_called = true;
+                    return 42;
+                });
+            PAssert.That(() => notOk_whenOk_called == false);
 
-            PAssert.That(() => notOkCalled == false);
+            var okExample = Maybe.Ok(3).AsMaybeWithoutError<string>().WhenOk(i => i * 14);
             PAssert.That(() => okExample.Contains(42));
             PAssert.That(() => notOkExample.ContainsError("asd"));
 
             Action<int> action = _ => { };
             PAssert.That(() => okExample.WhenOk(action).Contains(Unit.Value));
             PAssert.That(() => notOkExample.WhenOk(action).Contains(Unit.Value) == false);
+        }
+
+        [Fact]
+        public void WhenOk_for_Unit_calls_method_iif_ok()
+        {
+            var notOkExample = Maybe.ErrorWhenNotNull("asd");
+
+            var okExample = Maybe.OkWhenNotNull((int?)3).WhenError(() => "asd").WhenOk(_ => { });
+
+            PAssert.That(() => okExample.Contains(Unit.Value));
+            PAssert.That(() => notOkExample.ContainsError("asd"));
+
+            PAssert.That(() => okExample.WhenOk(() => DayOfWeek.Friday).Contains(DayOfWeek.Friday));
+            PAssert.That(() => notOkExample.WhenOk(() => DayOfWeek.Friday).Contains(DayOfWeek.Friday) == false);
         }
 
         [Fact]
@@ -211,22 +248,66 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void WhenAllOk_is_ok_for_empty()
+        public void Deconstruct_deconstructs_Ok()
+        {
+            var (ok, okVal, errVal) = Maybe.Either(true, 13, "13");
+            PAssert.That(() => ok && okVal == 13 && errVal == null);
+        }
+
+        [Fact]
+        public void Deconstruct_deconstructs_errors()
+        {
+            var (ok, okVal, errVal) = Maybe.Either(false, 13, "13");
+            PAssert.That(() => !ok && okVal == 0 && errVal == "13");
+        }
+
+        [Fact]
+        public void WhenAllOk_simple_cases_work()
         {
             PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhenAllOk().IsOk);
+            PAssert.That(() => TwoOkMaybes.WhenAllOk().Contains(ok => ok.SequenceEqual(new[] { 1, 2 })));
+            PAssert.That(() => ThreeMixedMaybes.WhenAllOk().ContainsError(ok => ok.SequenceEqual(new[] { 1, 2 })));
         }
 
         [Fact]
-        public void WhenAllOk_is_ok_for_multiple_maybes()
+        public void WhereOk_simple_cases_work()
         {
-            PAssert.That(() => new[] { Maybe.Ok(1).AsMaybeWithoutError<Unit>(), Maybe.Ok(2) }.WhenAllOk().Contains(ok => ok.SequenceEqual(new[] { 1, 2 })));
+            PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhereOk().None());
+            PAssert.That(() => TwoOkMaybes.WhereOk().SequenceEqual(new[] { 1, 2 }));
+            PAssert.That(() => ThreeMixedMaybes.WhereOk().SequenceEqual(new[] { Unit.Value }));
         }
 
         [Fact]
-        public void WhenAllOk_collects_multiple_errors()
+        public void WhereError_simple_cases_work()
         {
-            PAssert.That(() => new[] { Maybe.Error(1).AsMaybeWithoutValue<Unit>(), Maybe.Ok(), Maybe.Error(2) }.WhenAllOk().ContainsError(ok => ok.SequenceEqual(new[] { 1, 2 })));
+            PAssert.That(() => Array.Empty<Maybe<Unit, Unit>>().WhereError().None());
+            PAssert.That(() => TwoOkMaybes.WhereError().None());
+            PAssert.That(() => ThreeMixedMaybes.WhereError().SequenceEqual(new[] { 1, 2, }));
         }
+
+        [Fact]
+        public void Partition_simple_cases_work()
+        {
+            var emptyPartitioned = Array.Empty<Maybe<Unit, Unit>>().Partition();
+            PAssert.That(() => emptyPartitioned.errorValues.None() && emptyPartitioned.okValues.None());
+            PAssert.That(() => emptyPartitioned.okValues.None());
+
+            var twoOkPartitioned = TwoOkMaybes.Partition();
+            PAssert.That(() => twoOkPartitioned.okValues.SequenceEqual(new[] { 1, 2 }));
+            PAssert.That(() => twoOkPartitioned.errorValues.None());
+
+            var threeMixedPartitioned = ThreeMixedMaybes.Partition();
+            PAssert.That(() => threeMixedPartitioned.okValues.SequenceEqual(new[] { Unit.Value }));
+            PAssert.That(() => threeMixedPartitioned.errorValues.SequenceEqual(new[] { 1, 2, }));
+        }
+
+        [NotNull]
+        static Maybe<Unit, int>[] ThreeMixedMaybes
+            => new[] { Maybe.Error(1).AsMaybeWithoutValue<Unit>(), Maybe.Ok(), Maybe.Error(2) };
+
+        [NotNull]
+        static Maybe<int, Unit>[] TwoOkMaybes
+            => new[] { Maybe.Ok(1).AsMaybeWithoutError<Unit>(), Maybe.Ok(2) };
 
         [Fact]
         public void WhenOkTry_is_ok_iif_both_input_and_delegate_are_ok()
@@ -235,14 +316,14 @@ namespace ProgressOnderwijsUtils.Tests
             var notOkExample = Maybe.Error().AsMaybeWithoutValue<Unit>();
 
             PAssert.That(() => okExample.WhenOkTry(_ => okExample).IsOk);
-            PAssert.That(() => okExample.WhenOkTry(_ => notOkExample).IsOk == false);
-            PAssert.That(() => notOkExample.WhenOkTry(_ => okExample).IsOk == false);
-            PAssert.That(() => notOkExample.WhenOkTry(_ => notOkExample).IsOk == false);
+            PAssert.That(() => okExample.WhenOkTry(_ => notOkExample).IsError);
+            PAssert.That(() => notOkExample.WhenOkTry(_ => okExample).IsError);
+            PAssert.That(() => notOkExample.WhenOkTry(_ => notOkExample).IsError);
 
             PAssert.That(() => okExample.WhenOkTry(() => okExample).IsOk);
-            PAssert.That(() => okExample.WhenOkTry(() => notOkExample).IsOk == false);
-            PAssert.That(() => notOkExample.WhenOkTry(() => okExample).IsOk == false);
-            PAssert.That(() => notOkExample.WhenOkTry(() => notOkExample).IsOk == false);
+            PAssert.That(() => okExample.WhenOkTry(() => notOkExample).IsError);
+            PAssert.That(() => notOkExample.WhenOkTry(() => okExample).IsError);
+            PAssert.That(() => notOkExample.WhenOkTry(() => notOkExample).IsError);
         }
 
         [Fact]
@@ -254,12 +335,12 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => okExample.WhenErrorTry(_ => okExample).IsOk);
             PAssert.That(() => okExample.WhenErrorTry(_ => notOkExample).IsOk);
             PAssert.That(() => notOkExample.WhenErrorTry(_ => okExample).IsOk);
-            PAssert.That(() => notOkExample.WhenErrorTry(_ => notOkExample).IsOk == false);
+            PAssert.That(() => notOkExample.WhenErrorTry(_ => notOkExample).IsError);
 
             PAssert.That(() => okExample.WhenErrorTry(() => okExample).IsOk);
             PAssert.That(() => okExample.WhenErrorTry(() => notOkExample).IsOk);
             PAssert.That(() => notOkExample.WhenErrorTry(() => okExample).IsOk);
-            PAssert.That(() => notOkExample.WhenErrorTry(() => notOkExample).IsOk == false);
+            PAssert.That(() => notOkExample.WhenErrorTry(() => notOkExample).IsError);
         }
 
         [Fact]
@@ -268,29 +349,33 @@ namespace ProgressOnderwijsUtils.Tests
             var okExample = Maybe.Ok().AsMaybeWithoutError<Unit>();
             var notOkExample = Maybe.Error().AsMaybeWithoutValue<Unit>();
 
-            PAssert.That(() => (
-                from a in okExample
-                let v = 1
-                from b in okExample
-                select v
+            PAssert.That(
+                () => (
+                    from a in okExample
+                    let v = 1
+                    from b in okExample
+                    select v
                 ).Contains(1));
-            PAssert.That(() => (
-                from a in okExample
-                let v = 1
-                from b in notOkExample
-                select v
-                ).IsOk == false);
-            PAssert.That(() => (
-                from a in notOkExample
-                let v = 1
-                from b in okExample
-                select v
-                ).IsOk == false);
-            PAssert.That(() => (
-                from a in notOkExample
-                let v = 1
-                from b in notOkExample
-                select v
+            PAssert.That(
+                () => (
+                    from a in okExample
+                    let v = 1
+                    from b in notOkExample
+                    select v
+                ).IsError);
+            PAssert.That(
+                () => (
+                    from a in notOkExample
+                    let v = 1
+                    from b in okExample
+                    select v
+                ).IsError);
+            PAssert.That(
+                () => (
+                    from a in notOkExample
+                    let v = 1
+                    from b in notOkExample
+                    select v
                 ).IsOk == false);
         }
     }
