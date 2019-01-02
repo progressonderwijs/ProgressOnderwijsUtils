@@ -109,7 +109,7 @@ namespace ProgressOnderwijsUtils
             token.Register(
                 () => {
                     try {
-                        if (!proc.HasExited && exitCodeCompletion.TrySetCanceled()) {
+                        if (exitCodeCompletion.TrySetCanceled() && !proc.HasExited) {
                             proc.Kill();
                         }
                     } catch (InvalidOperationException) {
