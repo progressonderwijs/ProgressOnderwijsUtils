@@ -73,10 +73,8 @@ namespace ProgressOnderwijsUtils
                 MarkOnePartClosed();
             };
 
-            Action fakeStdOutputEnd = null, fakeStdErrEnd = null;
             var stdout = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
                 observer => {
-                    fakeStdOutputEnd = observer.OnCompleted;
                     proc.OutputDataReceived += (sender, e) => {
                         if (e.Data == null) {
                             observer.OnCompleted();
@@ -89,7 +87,6 @@ namespace ProgressOnderwijsUtils
                 });
             var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
                 observer => {
-                    fakeStdErrEnd = observer.OnCompleted;
                     proc.ErrorDataReceived += (sender, e) => {
                         if (e.Data == null) {
                             observer.OnCompleted();
@@ -104,20 +101,9 @@ namespace ProgressOnderwijsUtils
             replayableMergedOutput.Connect();
             stopwatch.Start();
             proc.Start();
-            try {
-                proc.BeginErrorReadLine();
-            } catch {
-                //Beware: microsoft is utterly incompetent, so this code is in an intrinsic race condition with process exit, which you can emulate by sleeping before this try.
-                fakeStdErrEnd();
-                MarkOnePartClosed();
-            }
-            try {
-                proc.BeginOutputReadLine();
-            } catch {
-                //Beware: microsoft is utterly incompetent, so this code is in an intrinsic race condition with process exit, which you can emulate by sleeping before this try.
-                fakeStdOutputEnd();
-                MarkOnePartClosed();
-            }
+            Thread.Sleep(1_000);
+            proc.BeginErrorReadLine();
+            proc.BeginOutputReadLine();
             token.Register(
                 () => {
                     try {
