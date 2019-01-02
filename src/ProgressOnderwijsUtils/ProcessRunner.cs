@@ -101,7 +101,6 @@ namespace ProgressOnderwijsUtils
             replayableMergedOutput.Connect();
             stopwatch.Start();
             proc.Start();
-            Thread.Sleep(1_000);
             proc.BeginErrorReadLine();
             proc.BeginOutputReadLine();
             token.Register(
