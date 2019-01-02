@@ -70,28 +70,30 @@ namespace ProgressOnderwijsUtils
             };
 
             Action fakeStdOutputEnd = null, fakeStdErrEnd = null;
-            var stdout = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(observer => {
-                fakeStdOutputEnd = observer.OnCompleted;
-                proc.OutputDataReceived += (sender, e) => {
-                    if (e.Data == null) {
-                        observer.OnCompleted();
-                    } else {
-                        observer.OnNext((ProcessOutputKind.StdOutput, e.Data, stopwatch.Elapsed));
-                    }
-                };
-                return Disposable.Empty;
-            });
-            var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(observer => {
-                fakeStdErrEnd = observer.OnCompleted;
-                proc.ErrorDataReceived += (sender, e) => {
-                    if (e.Data == null) {
-                        observer.OnCompleted();
-                    } else {
-                        observer.OnNext((ProcessOutputKind.StdError, e.Data, stopwatch.Elapsed));
-                    }
-                };
-                return Disposable.Empty;
-            });
+            var stdout = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
+                observer => {
+                    fakeStdOutputEnd = observer.OnCompleted;
+                    proc.OutputDataReceived += (sender, e) => {
+                        if (e.Data == null) {
+                            observer.OnCompleted();
+                        } else {
+                            observer.OnNext((ProcessOutputKind.StdOutput, e.Data, stopwatch.Elapsed));
+                        }
+                    };
+                    return Disposable.Empty;
+                });
+            var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
+                observer => {
+                    fakeStdErrEnd = observer.OnCompleted;
+                    proc.ErrorDataReceived += (sender, e) => {
+                        if (e.Data == null) {
+                            observer.OnCompleted();
+                        } else {
+                            observer.OnNext((ProcessOutputKind.StdError, e.Data, stopwatch.Elapsed));
+                        }
+                    };
+                    return Disposable.Empty;
+                });
             var replayableMergedOutput = stdout.Merge(stderr).Replay();
             replayableMergedOutput.Connect();
             stopwatch.Start();
@@ -108,20 +110,22 @@ namespace ProgressOnderwijsUtils
                 //Beware: microsoft is utterly incompetent, so this code is in an intrinsic race condition with process exit, which you can emulate by sleeping before this try.
                 fakeStdOutputEnd();
             }
-            token.Register(() => {
-                if (Interlocked.Increment(ref completionEventsFired) == 1) {
-                    exitCodeCompletion.SetCanceled();
-                    try {
-                        if (!proc.HasExited) {
-                            proc.Kill();
+            token.Register(
+                () => {
+                    if (Interlocked.Increment(ref completionEventsFired) == 1) {
+                        exitCodeCompletion.SetCanceled();
+                        try {
+                            if (!proc.HasExited) {
+                                proc.Kill();
+                            }
+                        } catch (InvalidOperationException) {
+                            // already termined, ignore
+                        } finally {
+                            proc.Dispose();
                         }
-                    } catch (InvalidOperationException) {
-                        // already termined, ignore
-                    } finally {
-                        proc.Dispose();
                     }
-                }
-            }, false);
+                },
+                false);
             WriteStdIn(proc);
 
             return new AsyncProcessResult {
