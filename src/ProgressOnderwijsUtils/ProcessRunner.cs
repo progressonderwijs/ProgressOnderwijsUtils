@@ -54,6 +54,13 @@ namespace ProgressOnderwijsUtils
             var exitCodeCompletion = new TaskCompletionSource<int>();
             var proc = CreateProcessObj();
             var stopwatch = new Stopwatch();
+            int closedParts = 0;
+            void MarkOnePartClosed()
+            {
+                if (Interlocked.Increment(ref closedParts) == 3) {
+                    proc.Dispose();
+                }
+            }
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
 
@@ -63,6 +70,7 @@ namespace ProgressOnderwijsUtils
                 } catch (Exception ex) {
                     exitCodeCompletion.TrySetException(ex);
                 }
+                MarkOnePartClosed();
             };
 
             Action fakeStdOutputEnd = null, fakeStdErrEnd = null;
@@ -72,6 +80,7 @@ namespace ProgressOnderwijsUtils
                     proc.OutputDataReceived += (sender, e) => {
                         if (e.Data == null) {
                             observer.OnCompleted();
+                            MarkOnePartClosed();
                         } else {
                             observer.OnNext((ProcessOutputKind.StdOutput, e.Data, stopwatch.Elapsed));
                         }
@@ -84,6 +93,7 @@ namespace ProgressOnderwijsUtils
                     proc.ErrorDataReceived += (sender, e) => {
                         if (e.Data == null) {
                             observer.OnCompleted();
+                            MarkOnePartClosed();
                         } else {
                             observer.OnNext((ProcessOutputKind.StdError, e.Data, stopwatch.Elapsed));
                         }
@@ -99,12 +109,14 @@ namespace ProgressOnderwijsUtils
             } catch {
                 //Beware: microsoft is utterly incompetent, so this code is in an intrinsic race condition with process exit, which you can emulate by sleeping before this try.
                 fakeStdErrEnd();
+                MarkOnePartClosed();
             }
             try {
                 proc.BeginOutputReadLine();
             } catch {
                 //Beware: microsoft is utterly incompetent, so this code is in an intrinsic race condition with process exit, which you can emulate by sleeping before this try.
                 fakeStdOutputEnd();
+                MarkOnePartClosed();
             }
             token.Register(
                 () => {
