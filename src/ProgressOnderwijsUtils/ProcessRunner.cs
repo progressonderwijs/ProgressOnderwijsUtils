@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -47,7 +48,8 @@ namespace ProgressOnderwijsUtils
             return proc;
         }
 
-        public AsyncProcessResult StartProcess(CancellationToken token = default(CancellationToken))
+        [NotNull]
+        public AsyncProcessResult StartProcess(CancellationToken token = default)
         {
             var exitCodeCompletion = new TaskCompletionSource<int>();
             var completionEventsFired = 0;
