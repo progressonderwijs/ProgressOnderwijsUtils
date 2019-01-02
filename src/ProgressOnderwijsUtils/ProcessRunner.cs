@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,6 +9,7 @@ using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -47,79 +48,72 @@ namespace ProgressOnderwijsUtils
             return proc;
         }
 
-        public AsyncProcessResult StartProcess(CancellationToken token = default(CancellationToken))
+        [NotNull]
+        public AsyncProcessResult StartProcess(CancellationToken token = default)
         {
             var exitCodeCompletion = new TaskCompletionSource<int>();
-            var completionEventsFired = 0;
             var proc = CreateProcessObj();
             var stopwatch = new Stopwatch();
+            int closedParts = 0;
+            void MarkOnePartClosed()
+            {
+                if (Interlocked.Increment(ref closedParts) == 3) {
+                    proc.Dispose();
+                }
+            }
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
 
             proc.Exited += (sender, e) => {
-                if (Interlocked.Increment(ref completionEventsFired) == 1) {
-                    try {
-                        exitCodeCompletion.SetResult(proc.ExitCode); //because we're the first to "complete", proc.ExitCode is still safe to access here.
-                        proc.Dispose();
-                    } catch (Exception ex) {
-                        exitCodeCompletion.TrySetException(ex);
-                    }
+                try {
+                    exitCodeCompletion.TrySetResult(proc.ExitCode);
+                } catch (Exception ex) {
+                    exitCodeCompletion.TrySetException(ex);
                 }
+                MarkOnePartClosed();
             };
 
-            Action fakeStdOutputEnd = null, fakeStdErrEnd = null;
-            var stdout = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(observer => {
-                fakeStdOutputEnd = observer.OnCompleted;
-                proc.OutputDataReceived += (sender, e) => {
-                    if (e.Data == null) {
-                        observer.OnCompleted();
-                    } else {
-                        observer.OnNext((ProcessOutputKind.StdOutput, e.Data, stopwatch.Elapsed));
-                    }
-                };
-                return Disposable.Empty;
-            });
-            var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(observer => {
-                fakeStdErrEnd = observer.OnCompleted;
-                proc.ErrorDataReceived += (sender, e) => {
-                    if (e.Data == null) {
-                        observer.OnCompleted();
-                    } else {
-                        observer.OnNext((ProcessOutputKind.StdError, e.Data, stopwatch.Elapsed));
-                    }
-                };
-                return Disposable.Empty;
-            });
+            var stdout = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
+                observer => {
+                    proc.OutputDataReceived += (sender, e) => {
+                        if (e.Data == null) {
+                            observer.OnCompleted();
+                            MarkOnePartClosed();
+                        } else {
+                            observer.OnNext((ProcessOutputKind.StdOutput, e.Data, stopwatch.Elapsed));
+                        }
+                    };
+                    return Disposable.Empty;
+                });
+            var stderr = Observable.Create<(ProcessOutputKind Kind, string Content, TimeSpan Offset)>(
+                observer => {
+                    proc.ErrorDataReceived += (sender, e) => {
+                        if (e.Data == null) {
+                            observer.OnCompleted();
+                            MarkOnePartClosed();
+                        } else {
+                            observer.OnNext((ProcessOutputKind.StdError, e.Data, stopwatch.Elapsed));
+                        }
+                    };
+                    return Disposable.Empty;
+                });
             var replayableMergedOutput = stdout.Merge(stderr).Replay();
             replayableMergedOutput.Connect();
             stopwatch.Start();
             proc.Start();
-            try {
-                proc.BeginErrorReadLine();
-            } catch {
-                //Beware: microsoft is utterly incompetent, so this code is in an intrinsic race condition with process exit, which you can emulate by sleeping before this try.
-                fakeStdErrEnd();
-            }
-            try {
-                proc.BeginOutputReadLine();
-            } catch {
-                //Beware: microsoft is utterly incompetent, so this code is in an intrinsic race condition with process exit, which you can emulate by sleeping before this try.
-                fakeStdOutputEnd();
-            }
-            token.Register(() => {
-                if (Interlocked.Increment(ref completionEventsFired) == 1) {
-                    exitCodeCompletion.SetCanceled();
+            proc.BeginErrorReadLine();
+            proc.BeginOutputReadLine();
+            token.Register(
+                () => {
                     try {
-                        if (!proc.HasExited) {
+                        if (exitCodeCompletion.TrySetCanceled() && !proc.HasExited) {
                             proc.Kill();
                         }
                     } catch (InvalidOperationException) {
                         // already termined, ignore
-                    } finally {
-                        proc.Dispose();
                     }
-                }
-            }, false);
+                },
+                false);
             WriteStdIn(proc);
 
             return new AsyncProcessResult {
