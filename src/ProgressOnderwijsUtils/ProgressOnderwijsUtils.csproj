@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>34.1.0</Version>
-    <PackageReleaseNotes>Extended Maybe API and added more equivalent between error and ok states</PackageReleaseNotes>
+    <Version>34.2.0</Version>
+    <PackageReleaseNotes>Fix deadlock in ProcessRunner on .net core</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
