@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -52,20 +52,16 @@ namespace ProgressOnderwijsUtils
         public AsyncProcessResult StartProcess(CancellationToken token = default)
         {
             var exitCodeCompletion = new TaskCompletionSource<int>();
-            var completionEventsFired = 0;
             var proc = CreateProcessObj();
             var stopwatch = new Stopwatch();
             proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.RedirectStandardOutput = true;
 
             proc.Exited += (sender, e) => {
-                if (Interlocked.Increment(ref completionEventsFired) == 1) {
-                    try {
-                        exitCodeCompletion.SetResult(proc.ExitCode); //because we're the first to "complete", proc.ExitCode is still safe to access here.
-                        proc.Dispose();
-                    } catch (Exception ex) {
-                        exitCodeCompletion.TrySetException(ex);
-                    }
+                try {
+                    exitCodeCompletion.TrySetResult(proc.ExitCode);
+                } catch (Exception ex) {
+                    exitCodeCompletion.TrySetException(ex);
                 }
             };
 
@@ -112,17 +108,12 @@ namespace ProgressOnderwijsUtils
             }
             token.Register(
                 () => {
-                    if (Interlocked.Increment(ref completionEventsFired) == 1) {
-                        exitCodeCompletion.SetCanceled();
-                        try {
-                            if (!proc.HasExited) {
-                                proc.Kill();
-                            }
-                        } catch (InvalidOperationException) {
-                            // already termined, ignore
-                        } finally {
-                            proc.Dispose();
+                    try {
+                        if (!proc.HasExited && exitCodeCompletion.TrySetCanceled()) {
+                            proc.Kill();
                         }
+                    } catch (InvalidOperationException) {
+                        // already termined, ignore
                     }
                 },
                 false);
