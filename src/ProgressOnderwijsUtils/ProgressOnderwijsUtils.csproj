@@ -25,7 +25,7 @@
     <PackageReference Include="System.Memory" Version="4.5.1" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
-    <PackageReference Include="ZlibWithDictionary" version="2.3.1" />
+    <PackageReference Include="ZlibWithDictionary" version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
   </ItemGroup>
 </Project>
