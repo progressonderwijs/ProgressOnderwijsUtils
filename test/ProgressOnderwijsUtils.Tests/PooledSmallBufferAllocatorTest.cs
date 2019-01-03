@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class PooledSmallBufferAllocatorTest
+    public sealed class PooledSmallBufferAllocatorTest
     {
         [Fact]
         public void AllocatesArray()

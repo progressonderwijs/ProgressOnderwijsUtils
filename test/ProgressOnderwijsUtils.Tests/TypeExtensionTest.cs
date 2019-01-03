@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Tests
         // ReSharper disable once UnusedTypeParameter
         class Sample<T> : SampleBase { }
 
-        class SampleX<T> : Sample<T> { }
+        sealed class SampleX<T> : Sample<T> { }
 
         [Fact]
         public void TestBases()
@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils.Tests
         enum SampleEnum
         { }
 
-        class SampleClass { }
+        sealed class SampleClass { }
 
         struct SampleStruct { }
 

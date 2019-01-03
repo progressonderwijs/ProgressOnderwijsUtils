@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class EnumerableExtensionsTests
+    public sealed class EnumerableExtensionsTests
     {
 #pragma warning disable 1720
         [Fact]

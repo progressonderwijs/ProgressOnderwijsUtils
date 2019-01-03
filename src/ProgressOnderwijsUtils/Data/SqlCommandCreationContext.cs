@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public class SqlCommandCreationContext : IDisposable
+    public sealed class SqlCommandCreationContext : IDisposable
     {
         public SqlConnection Connection { get; }
         public ISqlCommandTracer Tracer { get; }

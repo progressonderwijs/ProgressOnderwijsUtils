@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class StringExtensionsTest
+    public sealed class StringExtensionsTest
     {
         [Fact]
         public void ToCamelCase_is_robuust_bij_null()

@@ -5,7 +5,7 @@ using Xunit;
 namespace ProgressOnderwijsUtils.Tests
 {
     
-    public class HashCodeTest
+    public sealed class HashCodeTest
     {
         [Fact]
         public void IsConsistent()

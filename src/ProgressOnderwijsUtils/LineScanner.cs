@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public class LineScanner
+    public sealed class LineScanner
     {
         readonly string[] lines;
         int position;

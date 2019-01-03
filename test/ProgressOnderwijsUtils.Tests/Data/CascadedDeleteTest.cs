@@ -7,7 +7,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests.Data
 {
-    public class CascadedDeleteTest : TransactedLocalConnection
+    public sealed class CascadedDeleteTest : TransactedLocalConnection
     {
         enum AId
         {

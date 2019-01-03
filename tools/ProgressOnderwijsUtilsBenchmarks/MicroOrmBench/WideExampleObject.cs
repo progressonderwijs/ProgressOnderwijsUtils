@@ -4,7 +4,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 {
-    public class WideExampleObject : IMetaObject
+    public sealed class WideExampleObject : IMetaObject
     {
         public int SalesOrderId { get; set; }
         public string AccountNumber { get; set; }

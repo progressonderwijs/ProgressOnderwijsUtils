@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils.Tests
         public string StringProperty { get; set; }
     }
 
-    class SetterTestClass : IMetaObject
+    sealed class SetterTestClass : IMetaObject
     {
         public int IntProperty { get; set; }
         public string StringProperty { get; set; }

@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtils.Tests
 {
     using static Tags;
 
-    public class HtmlTests
+    public sealed class HtmlTests
     {
         [Fact]
         public void EmptyMeansEmpty()

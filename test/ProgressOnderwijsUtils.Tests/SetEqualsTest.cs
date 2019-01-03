@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class SetEqualsTest
+    public sealed class SetEqualsTest
     {
         [Fact]
         public void SetEqualWorksOnEmpty()

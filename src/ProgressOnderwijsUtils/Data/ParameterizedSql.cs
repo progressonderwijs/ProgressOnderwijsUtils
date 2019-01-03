@@ -143,7 +143,7 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory;
     }
 
-    class StringSqlFragment : ISqlComponent
+    sealed class StringSqlFragment : ISqlComponent
     {
         readonly string rawSqlString;
 
@@ -157,7 +157,7 @@ namespace ProgressOnderwijsUtils
             => ParameterizedSqlFactory.AppendSql(ref factory, rawSqlString);
     }
 
-    class SingleParameterSqlFragment : ISqlComponent
+    sealed class SingleParameterSqlFragment : ISqlComponent
     {
         readonly object paramVal;
 
@@ -196,7 +196,7 @@ namespace ProgressOnderwijsUtils
             => factory.AppendSql(sql, 0, sql.Length);
     }
 
-    class TwoSqlFragments : ISqlComponent
+    sealed class TwoSqlFragments : ISqlComponent
     {
         readonly ISqlComponent a, b;
 
@@ -215,7 +215,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    class SeveralSqlFragments : ISqlComponent
+    sealed class SeveralSqlFragments : ISqlComponent
     {
         readonly ISqlComponent[] kids;
 
@@ -238,7 +238,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    class InterpolatedSqlFragment : ISqlComponent
+    sealed class InterpolatedSqlFragment : ISqlComponent
     {
         readonly FormattableString interpolatedQuery;
 

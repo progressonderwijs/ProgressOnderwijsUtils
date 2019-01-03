@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         T Init(int value);
     }
 
-    public class IntArrayBuilderBenchmark : ArrayBuilderBenchmark<int, IntArrayBuilderBenchmark.Factory>
+    public sealed class IntArrayBuilderBenchmark : ArrayBuilderBenchmark<int, IntArrayBuilderBenchmark.Factory>
     {
         public struct Factory : IFactory<int>
         {
@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
-    public class ByteArrayBuilderBenchmark : ArrayBuilderBenchmark<byte, ByteArrayBuilderBenchmark.Factory>
+    public sealed class ByteArrayBuilderBenchmark : ArrayBuilderBenchmark<byte, ByteArrayBuilderBenchmark.Factory>
     {
         public struct Factory : IFactory<byte>
         {
@@ -32,7 +32,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
-    public class SmallStructArrayBuilderBenchmark : ArrayBuilderBenchmark<(int,int), SmallStructArrayBuilderBenchmark.Factory>
+    public sealed class SmallStructArrayBuilderBenchmark : ArrayBuilderBenchmark<(int,int), SmallStructArrayBuilderBenchmark.Factory>
     {
         public struct Factory : IFactory<(int,int)>
         {
@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
-    public class ReferenceTypeArrayBuilderBenchmark : ArrayBuilderBenchmark<object, ReferenceTypeArrayBuilderBenchmark.Factory>
+    public sealed class ReferenceTypeArrayBuilderBenchmark : ArrayBuilderBenchmark<object, ReferenceTypeArrayBuilderBenchmark.Factory>
     {
         public struct Factory : IFactory<object>
         {
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
-    public class BigStructArrayBuilderBenchmark : ArrayBuilderBenchmark<BigStructArrayBuilderBenchmark.BigStruct, BigStructArrayBuilderBenchmark.Factory>
+    public sealed class BigStructArrayBuilderBenchmark : ArrayBuilderBenchmark<BigStructArrayBuilderBenchmark.BigStruct, BigStructArrayBuilderBenchmark.Factory>
     {
         public struct BigStruct
         {

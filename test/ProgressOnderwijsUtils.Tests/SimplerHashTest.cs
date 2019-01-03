@@ -4,7 +4,7 @@ using Xunit;
 namespace ProgressOnderwijsUtils.Tests
 {
     
-    public class SimplerHashTest
+    public sealed class SimplerHashTest
     {
         [Fact]
         public void BasicChecks()

@@ -4,7 +4,7 @@ using Xunit;
 namespace ProgressOnderwijsUtils.Tests
 {
     
-    public class LineScannerTest
+    public sealed class LineScannerTest
     {
         [Fact]
         public void ReadAndPushbackTest()

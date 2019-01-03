@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests.Data
 {
-    public class EnumerateMetaObjectsTest : TransactedLocalConnection
+    public sealed class EnumerateMetaObjectsTest : TransactedLocalConnection
     {
         static ParameterizedSql ExampleQuery => SafeSql.SQL($@"
                 select content='bla', id= 3

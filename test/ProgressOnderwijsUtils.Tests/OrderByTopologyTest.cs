@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
     }
 
-    public class OrderByTopologyTest
+    public sealed class OrderByTopologyTest
     {
         [Fact]
         

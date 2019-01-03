@@ -3,7 +3,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class BenchmarkTimerTests
+    public sealed class BenchmarkTimerTests
     {
         [Fact]
         public void ArgVerify()

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class UnitTests
+    public sealed class UnitTests
     {
         [Fact]
         public void TwoInstancesAreEqual()
