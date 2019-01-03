@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
-    public class Saml20MetaData
+    public sealed class Saml20MetaData
     {
         readonly XElement md;
 

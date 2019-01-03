@@ -14,7 +14,7 @@ using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
 {
-    class Benchmarker
+    sealed class Benchmarker
     {
         public int IterationsPerTry;
         public int Tries;

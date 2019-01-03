@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class StreamExtensionsTestClass
+    public sealed class StreamExtensionsTestClass
     {
         [Fact]
         public void ChecksEOF()

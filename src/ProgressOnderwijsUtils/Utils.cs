@@ -420,7 +420,7 @@ namespace ProgressOnderwijsUtils
         public int Compare(T x, T y) => comparer(x, y);
     }
 
-    public class EqualsEqualityComparer<T> : IEqualityComparer<T>
+    public sealed class EqualsEqualityComparer<T> : IEqualityComparer<T>
     {
         readonly Func<T, T, bool> equals;
         readonly Func<T, int> hashCode;

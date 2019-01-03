@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
             return CompareAsEnumerableOrAccessibleMembers(assumeEquals, type, object1, object2);
         }
 
-        public class ReferencePair : IEquatable<ReferencePair>
+        public sealed class ReferencePair : IEquatable<ReferencePair>
         {
             readonly object a, b;
 

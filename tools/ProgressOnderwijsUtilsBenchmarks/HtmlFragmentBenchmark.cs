@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
 {
     [MemoryDiagnoser]
     [Config(typeof(Config))]
-    public class HtmlFragmentBenchmark
+    public sealed class HtmlFragmentBenchmark
     {
         static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
 

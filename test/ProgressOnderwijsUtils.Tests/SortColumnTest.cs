@@ -3,7 +3,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class SortColumnTest
+    public sealed class SortColumnTest
     {
         [Fact]
         public void CheckEquals()

@@ -14,7 +14,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class TableValuedParameterTest : TransactedLocalConnection
+    public sealed class TableValuedParameterTest : TransactedLocalConnection
     {
         public enum SomeEnum
         { }

@@ -5,7 +5,7 @@ using Xunit;
 namespace ProgressOnderwijsUtils.Tests
 {
     
-    public class GenericExtensionsFriday
+    public sealed class GenericExtensionsFriday
     {
         [Fact]
         public void InStruct()

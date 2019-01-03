@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class ReferenceEqualityComparerTest
+    public sealed class ReferenceEqualityComparerTest
     {
         struct TestType
         {

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class NonceStoreTest
+    public sealed class NonceStoreTest
     {
         [NotNull]
         public static object[][] NonceStoreItemEqualityData()

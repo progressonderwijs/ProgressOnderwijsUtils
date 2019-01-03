@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    public class ReadOnlySet<T> : ISet<T>
+    public sealed class ReadOnlySet<T> : ISet<T>
     {
         readonly ISet<T> set;
 

@@ -174,7 +174,7 @@ namespace ProgressOnderwijsUtils
 
         delegate void StructSetterDel<TOwner, in TVal>(ref TOwner obj, TVal val);
 
-        class OutCaster<TOut> : IOutCaster
+        sealed class OutCaster<TOut> : IOutCaster
         {
             [NotNull]
             public Func<TObj, object> GetterBoxed<TObj>([NotNull] MethodInfo method)

@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class DebounceTests
+    public sealed class DebounceTests
     {
         readonly ITestOutputHelper output;
 

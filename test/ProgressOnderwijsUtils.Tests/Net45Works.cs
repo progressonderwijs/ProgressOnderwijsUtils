@@ -3,7 +3,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class Net45Works
+    public sealed class Net45Works
     {
         [Fact]
         public void UseAsyncKeywork()
