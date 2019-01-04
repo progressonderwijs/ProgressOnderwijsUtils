@@ -159,6 +159,12 @@ namespace ProgressOnderwijsUtils
                 join sys.index_columns as ic on ic.object_id = pk.parent_object_id  and ic.index_id = pk.unique_index_id
                 where 1=0
                     or pk.type = 'PK' 
+                    or pk.type='UQ' 
+                        and not exists(
+                            select * from  sys.key_constraints pk2 
+                            where pk2.parent_object_id=pk.parent_object_id 
+                            and (pk2.type ='PK' or pk2.type ='UQ' and pk2.object_id<pk.object_id)
+                        )
                 order by pk.parent_object_id, ic.column_id
             ").ReadMetaObjects<PkCol>(conn)
                 .ToLookup(
