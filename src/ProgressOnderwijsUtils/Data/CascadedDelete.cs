@@ -173,17 +173,13 @@ namespace ProgressOnderwijsUtils
                     StringComparer.OrdinalIgnoreCase
                 );
 
-            var initialPrimaryKeyColumns = pkColumnsByTable[initialTableAsEntered.QualifiedName].ToArray();
-            var initialPrimaryKeyColumnNames = initialPrimaryKeyColumns.Select(col => col.CommandText()).ToArray();
-            if (!pkColumns.SetEqual(initialPrimaryKeyColumnNames, StringComparer.OrdinalIgnoreCase)) {
-                throw new InvalidOperationException("Expected primary key columns: " + initialPrimaryKeyColumnNames.JoinStrings(", ") + "; provided columns: " + pkColumns.JoinStrings(", "));
-            }
+            var initialKeyColumns = pkColumns.Select(name=>initialTableAsEntered.Columns.Single(col=>col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
 
             var delTable = SQL($"[#del_init]");
-            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, initialPrimaryKeyColumns, delTable);
+            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, initialKeyColumns, delTable);
 
             var idsToDelete = SQL($@"
-                insert into {delTable} ({initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))})
+                insert into {delTable} ({initialKeyColumns.ConcatenateSql(SQL($", "))})
                 {pksTVParameter};
 
                 select count(*) from {delTable};
@@ -192,8 +188,8 @@ namespace ProgressOnderwijsUtils
             var initialRowCountToDelete = SQL($@"
                 delete dt
                 from {delTable} dt
-                left join {initialTableAsEntered.QualifiedNameSql} initT on {initialPrimaryKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
-                where {initialPrimaryKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
+                left join {initialTableAsEntered.QualifiedNameSql} initT on {initialKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
+                where {initialKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
                 ;
                 select count(*) from {delTable}
             ").ReadScalar<int>(conn);
