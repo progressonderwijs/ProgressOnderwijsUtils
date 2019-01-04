@@ -155,9 +155,16 @@ namespace ProgressOnderwijsUtils
                     pk_table=object_schema_name(pk.parent_object_id) + '.' + object_name(pk.parent_object_id),
                     pk_column=col_name(pk.parent_object_id, ic.column_id)
                 from sys.key_constraints pk
-                join sys.objects o_pk on pk.parent_object_id = o_pk.object_id
+                join sys.objects o_pk on pk.parent_object_id = o_pk.object_id and o_pk.type='U'
                 join sys.index_columns as ic on ic.object_id = pk.parent_object_id  and ic.index_id = pk.unique_index_id
-                where pk.type = 'PK'  and o_pk.type='U'
+                where 1=0
+                    or pk.type = 'PK' 
+                    or pk.type='UQ' 
+                        and not exists(
+                            select * from  sys.key_constraints pk2 
+                            where pk2.parent_object_id=pk.parent_object_id 
+                            and (pk2.type ='PK' or pk2.type ='UQ' and pk2.object_id<pk.object_id)
+                        )
                 order by pk.parent_object_id, ic.column_id
             ").ReadMetaObjects<PkCol>(conn)
                 .ToLookup(
@@ -166,17 +173,13 @@ namespace ProgressOnderwijsUtils
                     StringComparer.OrdinalIgnoreCase
                 );
 
-            var initialPrimaryKeyColumns = pkColumnsByTable[initialTableAsEntered.QualifiedName].ToArray();
-            var initialPrimaryKeyColumnNames = initialPrimaryKeyColumns.Select(col => col.CommandText()).ToArray();
-            if (!pkColumns.SetEqual(initialPrimaryKeyColumnNames, StringComparer.OrdinalIgnoreCase)) {
-                throw new InvalidOperationException("Expected primary key columns: " + initialPrimaryKeyColumnNames.JoinStrings(", ") + "; provided columns: " + pkColumns.JoinStrings(", "));
-            }
+            var initialKeyColumns = pkColumns.Select(name=>initialTableAsEntered.Columns.Single(col=>col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
 
             var delTable = SQL($"[#del_init]");
-            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, initialPrimaryKeyColumns, delTable);
+            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, initialKeyColumns, delTable);
 
             var idsToDelete = SQL($@"
-                insert into {delTable} ({initialPrimaryKeyColumns.ConcatenateSql(SQL($", "))})
+                insert into {delTable} ({initialKeyColumns.ConcatenateSql(SQL($", "))})
                 {pksTVParameter};
 
                 select count(*) from {delTable};
@@ -185,8 +188,8 @@ namespace ProgressOnderwijsUtils
             var initialRowCountToDelete = SQL($@"
                 delete dt
                 from {delTable} dt
-                left join {initialTableAsEntered.QualifiedNameSql} initT on {initialPrimaryKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
-                where {initialPrimaryKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
+                left join {initialTableAsEntered.QualifiedNameSql} initT on {initialKeyColumns.Select(col => SQL($"dt.{col}=initT.{col}")).ConcatenateSql(SQL($" and "))}
+                where {initialKeyColumns.Select(col => SQL($"initT.{col} is null")).ConcatenateSql(SQL($" and "))}
                 ;
                 select count(*) from {delTable}
             ").ReadScalar<int>(conn);
