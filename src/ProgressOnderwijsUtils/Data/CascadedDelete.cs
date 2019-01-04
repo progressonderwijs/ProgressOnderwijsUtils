@@ -155,11 +155,10 @@ namespace ProgressOnderwijsUtils
                     pk_table=object_schema_name(pk.parent_object_id) + '.' + object_name(pk.parent_object_id),
                     pk_column=col_name(pk.parent_object_id, ic.column_id)
                 from sys.key_constraints pk
-                join sys.objects o_pk on pk.parent_object_id = o_pk.object_id
+                join sys.objects o_pk on pk.parent_object_id = o_pk.object_id and o_pk.type='U'
                 join sys.index_columns as ic on ic.object_id = pk.parent_object_id  and ic.index_id = pk.unique_index_id
                 where 1=1
                     and pk.type = 'PK'
-                    and o_pk.type='U'
                 order by pk.parent_object_id, ic.column_id
             ").ReadMetaObjects<PkCol>(conn)
                 .ToLookup(
