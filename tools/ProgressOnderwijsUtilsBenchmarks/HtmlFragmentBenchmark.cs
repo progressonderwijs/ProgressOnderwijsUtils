@@ -14,7 +14,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
 {
     [MemoryDiagnoser]
     [Config(typeof(Config))]
-    public sealed class HtmlFragmentBenchmark
+    // ReSharper disable once ClassCanBeSealed.Global
+    public class HtmlFragmentBenchmark
     {
         static readonly HtmlFragment htmlFragment = WikiPageHtml5.MakeHtml();
         readonly MemoryStream ms = new MemoryStream();
