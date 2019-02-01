@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>34.3.0</Version>
-    <PackageReleaseNotes>Support unique constraints as keys in cascaded deletion</PackageReleaseNotes>
+    <Version>34.4.0</Version>
+    <PackageReleaseNotes>Don't consider static props metaprops (bugfix)</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
