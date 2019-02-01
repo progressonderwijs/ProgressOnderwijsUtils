@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using JetBrains.Annotations;
 
 // ReSharper disable once CheckNamespace
@@ -40,17 +41,16 @@ namespace ProgressOnderwijsUtils
         public IMetaProperty<T> GetByName(string name) => MetaProperties[indexByName[name]];
         public int Count => MetaProperties.Length;
 
+        [NotNull]
         static IMetaProperty<T>[] GetMetaPropertiesImpl()
         {
-            var index = 0;
-            var propertyInfos = typeof(T).GetProperties();
+            var propertyInfos = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
             var metaProperties = new IMetaProperty<T>[propertyInfos.Length];
-            foreach (var propertyInfo in propertyInfos) {
+            for (var index = 0; index < propertyInfos.Length; index++) {
+                var propertyInfo = propertyInfos[index];
                 var customAttributes = propertyInfo.GetCustomAttributes(true);
                 metaProperties[index] = new MetaProperty.Impl<T>(propertyInfo, index, customAttributes);
-                index++;
             }
-            Array.Resize(ref metaProperties, index);
             return metaProperties;
         }
 
