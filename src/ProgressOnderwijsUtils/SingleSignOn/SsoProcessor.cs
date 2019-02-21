@@ -8,9 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using JetBrains.Annotations;
-using log4net;
 using Microsoft.Extensions.Caching.Memory;
-using ProgressOnderwijsUtils.Log4Net;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
@@ -20,7 +18,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         const string MAIL = "urn:mace:dir:attribute-def:mail";
         const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
         const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
-        static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
         [NotNull]
         public static Uri GetRedirectUrl(AuthnRequest request)
@@ -40,15 +37,12 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         [CanBeNull]
         public static XElement Response([CanBeNull] string samlResponse)
         {
-            LOG.Debug(() => "Response");
             return samlResponse != null ? XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(samlResponse)), LoadOptions.PreserveWhitespace).Root : null;
         }
 
         [CanBeNull]
         public static XElement GetAssertion([NotNull] XElement response, X509Certificate2 certificate)
         {
-            LOG.Debug(() => $"GetAssertion(response='{response}')");
-
             var statusCodes = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").ToArray();
             if (statusCodes.Length > 1) {
                 return null;
@@ -63,14 +57,11 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 return result;
             }
 
-            LOG.Debug(() => "GetAssertion: not successfull");
             return null;
         }
 
         public static SsoAttributes GetAttributes(XElement assertion, [NotNull] X509Certificate2 certificate)
         {
-            LOG.Debug(() => $"GetAttributes(assertion='{assertion}')");
-
             Validate(assertion, certificate);
             var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
                 ?? throw new InvalidOperationException("Missing AuthnStatement element");
