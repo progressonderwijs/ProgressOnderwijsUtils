@@ -6,6 +6,7 @@ using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.SingleSignOn;
 using Xunit;
 
@@ -45,11 +46,11 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact(Skip = "for manual use")]
-        public void SsoProcessor_GetAttributes_doesnt_throw_for_valid_response()
+        public void SsoProcessor_GetAttributes_returns_ok_for_valid_response()
         {
             var validRawSamlResponse = "...";
             var certificate = new X509Certificate2(Encoding.UTF8.GetBytes(@"..."));
-            SsoProcessor.GetAttributes(validRawSamlResponse, certificate);
+            var attributes = SsoProcessor.GetAttributes(validRawSamlResponse, certificate);
             attributes.AssertOk();
         }
     }
