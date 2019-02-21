@@ -55,7 +55,19 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public static SsoAttributes GetAttributes(string rawSamlResponse, [NotNull] X509Certificate2 certificate)
         {
             var rawXml = Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse));
-            Validate(rawXml, certificate);
+            ValidateSchema(XElement.Parse(rawXml));
+
+            var doc = new XmlDocument {
+                PreserveWhitespace = true,
+            };
+            doc.LoadXml(rawXml);
+
+            var dsig = new SignedXml(doc);
+            dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
+            if (!dsig.CheckSignature(certificate.PublicKey.Key)) {
+                throw new CryptographicException("metadata not signed");
+            }
+
             var assertion = GetAssertion(XElement.Parse(rawXml));
             var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
                 ?? throw new InvalidOperationException("Missing AuthnStatement element");
@@ -131,22 +143,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                     using (var reader = XmlReader.Create(stream, settings))
                         schemaSet.Add(XmlSchema.Read(reader, null));
                 }
-            }
-        }
-
-        static void Validate([NotNull] string rawXml, [NotNull] X509Certificate2 cer)
-        {
-            ValidateSchema(XElement.Parse(rawXml));
-
-            var doc = new XmlDocument {
-                PreserveWhitespace = true,
-            };
-            doc.LoadXml(rawXml);
-
-            var dsig = new SignedXml(doc);
-            dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
-            if (!dsig.CheckSignature(cer.PublicKey.Key)) {
-                throw new CryptographicException("metadata not signed");
             }
         }
 
