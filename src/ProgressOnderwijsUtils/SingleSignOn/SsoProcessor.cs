@@ -143,13 +143,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             };
             doc.LoadXml(rawXml);
 
-            ValidateSignature(doc, cer);
-        }
-
-        static void ValidateSignature([NotNull] XmlDocument document, [NotNull] X509Certificate2 cer)
-        {
-            var dsig = new SignedXml(document);
-            dsig.LoadXml(document.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
+            var dsig = new SignedXml(doc);
+            dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
             if (!dsig.CheckSignature(cer.PublicKey.Key)) {
                 throw new CryptographicException("metadata not signed");
             }
