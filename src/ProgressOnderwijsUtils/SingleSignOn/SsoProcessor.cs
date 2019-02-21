@@ -35,12 +35,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         [CanBeNull]
-        static XElement Response([CanBeNull] string samlResponse)
-        {
-            return samlResponse != null ? XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(samlResponse)), LoadOptions.PreserveWhitespace).Root : null;
-        }
-
-        [CanBeNull]
         static XElement GetAssertion([NotNull] XElement response)
         {
             var statusCodes = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").ToArray();
@@ -60,7 +54,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
         public static SsoAttributes GetAttributes(string rawSamlResponse, [NotNull] X509Certificate2 certificate)
         {
-            var assertion = GetAssertion(Response(rawSamlResponse));
+            var assertion = GetAssertion(rawSamlResponse != null ? XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse)), LoadOptions.PreserveWhitespace).Root : null);
             Validate(Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse)), certificate);
             var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
                 ?? throw new InvalidOperationException("Missing AuthnStatement element");
