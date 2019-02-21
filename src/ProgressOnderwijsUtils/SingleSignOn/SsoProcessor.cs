@@ -8,6 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
@@ -51,11 +52,16 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return null;
         }
 
-        public static SsoAttributes GetAttributes(string rawSamlResponse, [NotNull] X509Certificate2 certificate)
+        public static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, [NotNull] X509Certificate2 certificate)
         {
             var rawXml = Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse));
             var xml = XElement.Parse(rawXml);
-            ValidateSchema(xml);
+
+            try {
+                ValidateSchema(xml);
+            } catch (XmlSchemaValidationException e) {
+                return Maybe.Error($"Response invalid: {e.Message}");
+            }
 
             var doc = new XmlDocument {
                 PreserveWhitespace = true,
@@ -65,21 +71,25 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             var dsig = new SignedXml(doc);
             dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
             if (!dsig.CheckSignature(certificate.PublicKey.Key)) {
-                throw new CryptographicException("metadata not signed");
+                return Maybe.Error("Signature invalid");
             }
 
             var assertion = GetAssertion(xml);
-            var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
-                ?? throw new InvalidOperationException("Missing AuthnStatement element");
-            return new SsoAttributes {
-                uid = GetAttribute(assertion, UID),
-                domain = GetAttribute(assertion, DOMAIN),
-                email = GetAttributes(assertion, MAIL),
-                roles = GetAttributes(assertion, ROLE),
-                InResponseTo = GetInResponseTo(assertion),
-                IssueInstant = (DateTime)assertion.Attribute("IssueInstant"),
-                AuthnContextClassRef = (string)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext").Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
-            };
+            var authnStatement = assertion?.Element(SamlNamespaces.SAML_NS + "AuthnStatement");
+            if (authnStatement == null) {
+                return Maybe.Error("Missing AuthnStatement element");
+            }
+
+            return Maybe.Ok(
+                new SsoAttributes {
+                    uid = GetAttribute(assertion, UID),
+                    domain = GetAttribute(assertion, DOMAIN),
+                    email = GetAttributes(assertion, MAIL),
+                    roles = GetAttributes(assertion, ROLE),
+                    InResponseTo = GetInResponseTo(assertion),
+                    IssueInstant = (DateTime)assertion.Attribute("IssueInstant"),
+                    AuthnContextClassRef = (string)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext").Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
+                });
         }
 
         [CanBeNull]
