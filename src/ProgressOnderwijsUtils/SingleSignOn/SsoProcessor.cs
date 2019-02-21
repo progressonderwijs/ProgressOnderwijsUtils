@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public static SsoAttributes GetAttributes(string rawSamlResponse, [NotNull] X509Certificate2 certificate)
         {
             var assertion = GetAssertion(Response(rawSamlResponse));
-            Validate(assertion, certificate);
+            Validate(Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse)), certificate);
             var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
                 ?? throw new InvalidOperationException("Missing AuthnStatement element");
             return new SsoAttributes {
@@ -177,15 +177,14 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             }
         }
 
-        static void Validate([NotNull] XElement assertion, [NotNull] X509Certificate2 cer)
+        static void Validate([NotNull] string rawXml, [NotNull] X509Certificate2 cer)
         {
-            ValidateSchema(assertion);
+            ValidateSchema(XElement.Parse(rawXml));
 
             var doc = new XmlDocument {
                 PreserveWhitespace = true,
             };
-            using (var reader = assertion.CreateReader())
-                doc.Load(reader);
+            doc.LoadXml(rawXml);
 
             ValidateSignature(doc, cer);
         }
