@@ -43,5 +43,13 @@ namespace ProgressOnderwijsUtils.Tests
             signedXml.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
             PAssert.That(() => signedXml.CheckSignature(certificate.GetRSAPublicKey()));
         }
+
+        [Fact(Skip = "for manual use")]
+        public void SsoProcessor_GetAttributes_doesnt_throw_for_valid_response()
+        {
+            var validRawSamlResponse = "...";
+            var certificate = new X509Certificate2(Encoding.UTF8.GetBytes(@"..."));
+            SsoProcessor.GetAttributes(validRawSamlResponse, certificate);
+        }
     }
 }
