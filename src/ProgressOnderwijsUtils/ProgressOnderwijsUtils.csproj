@@ -2,7 +2,7 @@
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
     <Version>35.0.0</Version>
-    <PackageReleaseNotes>Simplify SsoProcessor (remove Response and GetAssertion method, GetAttributes nog takes raw SAML response).</PackageReleaseNotes>
+    <PackageReleaseNotes>Simplify SsoProcessor (remove Response/GetAssertion/GetMetaData methods, GetAttributes now takes raw SAML response).</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

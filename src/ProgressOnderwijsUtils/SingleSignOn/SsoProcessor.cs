@@ -115,44 +115,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 select attribute.Value).ToArray();
         }
 
-        static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions {
-            SizeLimit = 10
-        });
-
-        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
-        {
-            var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
-            return memoryCache.GetOrCreate(uri, entry => {
-                var document = DownloadMetaData(uri);
-                // ReSharper disable once PossibleNullReferenceException
-                var validUntil = document.DocumentElement.GetAttribute("validUntil");
-                entry.AbsoluteExpiration = string.IsNullOrEmpty(validUntil)
-                    ? default(DateTime?)
-                    : XmlConvert.ToDateTime(validUntil, XmlDateTimeSerializationMode.RoundtripKind);
-                entry.Size = 1;
-                return ValidatedSaml20MetaData(idp, document);
-            });
-        }
-
-        [NotNull]
-        static XmlDocument DownloadMetaData([NotNull] string uri)
-        {
-            var document = new XmlDocument {
-                PreserveWhitespace = true,
-            };
-            document.Load(uri);
-            return document;
-        }
-
-        [NotNull]
-        static Saml20MetaData ValidatedSaml20MetaData(IdentityProviderConfig idp, [NotNull] XmlDocument document)
-        {
-            ValidateSignature(document, idp.certificate);
-            var xml = XElement.Parse(document.OuterXml, LoadOptions.PreserveWhitespace);
-            ValidateSchema(xml);
-            return new Saml20MetaData(xml);
-        }
-
         static readonly XmlSchemaSet schemaSet = new XmlSchemaSet { XmlResolver = null };
 
         static SsoProcessor()
