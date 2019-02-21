@@ -6,6 +6,7 @@ using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.SingleSignOn;
 using Xunit;
 
@@ -42,6 +43,15 @@ namespace ProgressOnderwijsUtils.Tests
             var signedXml = new SignedXml(doc);
             signedXml.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
             PAssert.That(() => signedXml.CheckSignature(certificate.GetRSAPublicKey()));
+        }
+
+        [Fact(Skip = "for manual use")]
+        public void SsoProcessor_GetAttributes_returns_ok_for_valid_response()
+        {
+            var validRawSamlResponse = "...";
+            var certificate = new X509Certificate2(Encoding.UTF8.GetBytes(@"..."));
+            var attributes = SsoProcessor.GetAttributes(validRawSamlResponse, certificate);
+            attributes.AssertOk();
         }
     }
 }

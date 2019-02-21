@@ -8,9 +8,7 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using JetBrains.Annotations;
-using log4net;
-using Microsoft.Extensions.Caching.Memory;
-using ProgressOnderwijsUtils.Log4Net;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
@@ -20,7 +18,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         const string MAIL = "urn:mace:dir:attribute-def:mail";
         const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
         const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
-        static readonly Lazy<ILog> LOG = LazyLog.For(typeof(SsoProcessor));
 
         [NotNull]
         public static Uri GetRedirectUrl(AuthnRequest request)
@@ -38,17 +35,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         [CanBeNull]
-        public static XElement Response([CanBeNull] string samlResponse)
+        static XElement GetAssertion([NotNull] XElement response)
         {
-            LOG.Debug(() => "Response");
-            return samlResponse != null ? XDocument.Parse(Encoding.UTF8.GetString(Convert.FromBase64String(samlResponse)), LoadOptions.PreserveWhitespace).Root : null;
-        }
-
-        [CanBeNull]
-        public static XElement GetAssertion([NotNull] XElement response, X509Certificate2 certificate)
-        {
-            LOG.Debug(() => $"GetAssertion(response='{response}')");
-
             var statusCodes = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").ToArray();
             if (statusCodes.Length > 1) {
                 return null;
@@ -58,31 +46,50 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 ?? throw new InvalidOperationException("Missing status code attribute");
 
             if (statusCodeAttribute.Value == "urn:oasis:names:tc:SAML:2.0:status:Success") {
-                var result = response.Descendants(SamlNamespaces.SAML_NS + "Assertion").Single();
-                Validate(result, certificate);
-                return result;
+                return response.Descendants(SamlNamespaces.SAML_NS + "Assertion").Single();
             }
 
-            LOG.Debug(() => "GetAssertion: not successfull");
             return null;
         }
 
-        public static SsoAttributes GetAttributes(XElement assertion, [NotNull] X509Certificate2 certificate)
+        public static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, [NotNull] X509Certificate2 certificate)
         {
-            LOG.Debug(() => $"GetAttributes(assertion='{assertion}')");
+            var rawXml = Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse));
+            var xml = XElement.Parse(rawXml);
 
-            Validate(assertion, certificate);
-            var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
-                ?? throw new InvalidOperationException("Missing AuthnStatement element");
-            return new SsoAttributes {
-                uid = GetAttribute(assertion, UID),
-                domain = GetAttribute(assertion, DOMAIN),
-                email = GetAttributes(assertion, MAIL),
-                roles = GetAttributes(assertion, ROLE),
-                InResponseTo = GetInResponseTo(assertion),
-                IssueInstant = (DateTime)assertion.Attribute("IssueInstant"),
-                AuthnContextClassRef = (string)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext").Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
+            try {
+                ValidateSchema(xml);
+            } catch (XmlSchemaValidationException e) {
+                return Maybe.Error($"Response invalid: {e.Message}");
+            }
+
+            var doc = new XmlDocument {
+                PreserveWhitespace = true,
             };
+            doc.LoadXml(rawXml);
+
+            var dsig = new SignedXml(doc);
+            dsig.LoadXml(doc.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
+            if (!dsig.CheckSignature(certificate.PublicKey.Key)) {
+                return Maybe.Error("Signature invalid");
+            }
+
+            var assertion = GetAssertion(xml);
+            var authnStatement = assertion?.Element(SamlNamespaces.SAML_NS + "AuthnStatement");
+            if (authnStatement == null) {
+                return Maybe.Error("Missing AuthnStatement element");
+            }
+
+            return Maybe.Ok(
+                new SsoAttributes {
+                    uid = GetAttribute(assertion, UID),
+                    domain = GetAttribute(assertion, DOMAIN),
+                    email = GetAttributes(assertion, MAIL),
+                    roles = GetAttributes(assertion, ROLE),
+                    InResponseTo = GetInResponseTo(assertion),
+                    IssueInstant = (DateTime)assertion.Attribute("IssueInstant"),
+                    AuthnContextClassRef = (string)authnStatement.Element(SamlNamespaces.SAML_NS + "AuthnContext").Element(SamlNamespaces.SAML_NS + "AuthnContextClassRef"),
+                });
         }
 
         [CanBeNull]
@@ -105,6 +112,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             if (result == null) {
                 throw new InvalidOperationException("Sequence contains no elements");
             }
+
             return result;
         }
 
@@ -117,7 +125,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 where attribute.Parent.Attribute("Name").Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value
-                ).SingleOrDefault();
+            ).SingleOrDefault();
         }
 
         [NotNull]
@@ -128,44 +136,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 where attribute.Parent.Attribute("Name").Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value).ToArray();
-        }
-
-        static readonly MemoryCache memoryCache = new MemoryCache(new MemoryCacheOptions {
-            SizeLimit = 10
-        });
-
-        public static Saml20MetaData GetMetaData(IdentityProviderConfig idp, ServiceProviderConfig sp)
-        {
-            var uri = $"{idp.identity}?{idp.MetaDataQueryParameter}={Uri.EscapeDataString(sp.entity)}";
-            return memoryCache.GetOrCreate(uri, entry => {
-                var document = DownloadMetaData(uri);
-                // ReSharper disable once PossibleNullReferenceException
-                var validUntil = document.DocumentElement.GetAttribute("validUntil");
-                entry.AbsoluteExpiration = string.IsNullOrEmpty(validUntil)
-                    ? default(DateTime?)
-                    : XmlConvert.ToDateTime(validUntil, XmlDateTimeSerializationMode.RoundtripKind);
-                entry.Size = 1;
-                return ValidatedSaml20MetaData(idp, document);
-            });
-        }
-
-        [NotNull]
-        static XmlDocument DownloadMetaData([NotNull] string uri)
-        {
-            var document = new XmlDocument {
-                PreserveWhitespace = true,
-            };
-            document.Load(uri);
-            return document;
-        }
-
-        [NotNull]
-        static Saml20MetaData ValidatedSaml20MetaData(IdentityProviderConfig idp, [NotNull] XmlDocument document)
-        {
-            ValidateSignature(document, idp.certificate);
-            var xml = XElement.Parse(document.OuterXml, LoadOptions.PreserveWhitespace);
-            ValidateSchema(xml);
-            return new Saml20MetaData(xml);
         }
 
         static readonly XmlSchemaSet schemaSet = new XmlSchemaSet { XmlResolver = null };
@@ -184,28 +154,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                     using (var reader = XmlReader.Create(stream, settings))
                         schemaSet.Add(XmlSchema.Read(reader, null));
                 }
-            }
-        }
-
-        static void Validate([NotNull] XElement assertion, [NotNull] X509Certificate2 cer)
-        {
-            ValidateSchema(assertion);
-
-            var doc = new XmlDocument {
-                PreserveWhitespace = true,
-            };
-            using (var reader = assertion.CreateReader())
-                doc.Load(reader);
-
-            ValidateSignature(doc, cer);
-        }
-
-        static void ValidateSignature([NotNull] XmlDocument document, [NotNull] X509Certificate2 cer)
-        {
-            var dsig = new SignedXml(document);
-            dsig.LoadXml(document.GetElementsByTagName("Signature", "http://www.w3.org/2000/09/xmldsig#").Cast<XmlElement>().Single());
-            if (!dsig.CheckSignature(cer.PublicKey.Key)) {
-                throw new CryptographicException("metadata not signed");
             }
         }
 
