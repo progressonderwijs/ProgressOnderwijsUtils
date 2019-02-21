@@ -52,9 +52,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 ?? throw new InvalidOperationException("Missing status code attribute");
 
             if (statusCodeAttribute.Value == "urn:oasis:names:tc:SAML:2.0:status:Success") {
-                var result = response.Descendants(SamlNamespaces.SAML_NS + "Assertion").Single();
-                Validate(result, certificate);
-                return result;
+                return response.Descendants(SamlNamespaces.SAML_NS + "Assertion").Single();
             }
 
             return null;
