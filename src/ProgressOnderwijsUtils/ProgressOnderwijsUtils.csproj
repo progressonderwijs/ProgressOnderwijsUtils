@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>34.5.0</Version>
-    <PackageReleaseNotes>Don't consider static props metaprops (bugfix)</PackageReleaseNotes>
+    <Version>35.0.0</Version>
+    <PackageReleaseNotes>Simplify SsoProcessor (remove Response and GetAssertion method, GetAttributes nog takes raw SAML response).</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
