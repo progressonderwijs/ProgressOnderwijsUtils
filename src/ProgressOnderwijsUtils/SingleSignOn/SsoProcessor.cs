@@ -55,8 +55,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public static SsoAttributes GetAttributes(string rawSamlResponse, [NotNull] X509Certificate2 certificate)
         {
             var rawXml = Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse));
-            var assertion = GetAssertion(XElement.Parse(rawXml));
             Validate(rawXml, certificate);
+            var assertion = GetAssertion(XElement.Parse(rawXml));
             var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
                 ?? throw new InvalidOperationException("Missing AuthnStatement element");
             return new SsoAttributes {
