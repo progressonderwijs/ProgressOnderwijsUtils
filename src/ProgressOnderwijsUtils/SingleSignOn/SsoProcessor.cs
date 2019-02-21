@@ -8,7 +8,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
@@ -55,7 +54,8 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public static SsoAttributes GetAttributes(string rawSamlResponse, [NotNull] X509Certificate2 certificate)
         {
             var rawXml = Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse));
-            ValidateSchema(XElement.Parse(rawXml));
+            var xml = XElement.Parse(rawXml);
+            ValidateSchema(xml);
 
             var doc = new XmlDocument {
                 PreserveWhitespace = true,
@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 throw new CryptographicException("metadata not signed");
             }
 
-            var assertion = GetAssertion(XElement.Parse(rawXml));
+            var assertion = GetAssertion(xml);
             var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement")
                 ?? throw new InvalidOperationException("Missing AuthnStatement element");
             return new SsoAttributes {
@@ -102,6 +102,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             if (result == null) {
                 throw new InvalidOperationException("Sequence contains no elements");
             }
+
             return result;
         }
 
@@ -114,7 +115,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 where attribute.Parent.Attribute("Name").Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value
-                ).SingleOrDefault();
+            ).SingleOrDefault();
         }
 
         [NotNull]
