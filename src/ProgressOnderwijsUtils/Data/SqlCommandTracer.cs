@@ -32,21 +32,30 @@ namespace ProgressOnderwijsUtils
     public static class SqlCommandTracer
     {
         [NotNull]
-        public static ISqlCommandTracer CreateAlwaysOnTracer(SqlTracerAgumentInclusion agumentInclusion) => new AlwaysOnTracer(agumentInclusion);
+        public static ISqlCommandTracer CreateAlwaysOnTracer(SqlTracerAgumentInclusion agumentInclusion)
+            => new AlwaysOnTracer(agumentInclusion);
 
         [NotNull]
-        public static ISqlCommandTracer CreateAlwaysOffTracer(SqlTracerAgumentInclusion agumentInclusion) => new AlwaysOffTracer(agumentInclusion);
+        public static ISqlCommandTracer CreateAlwaysOffTracer(SqlTracerAgumentInclusion agumentInclusion)
+            => new AlwaysOffTracer(agumentInclusion);
 
         [NotNull]
-        public static ISqlCommandTracer WrapTracer([NotNull] ISqlCommandTracer originalTracer) => new WrappingTracer(originalTracer);
+        public static ISqlCommandTracer WrapTracer([NotNull] ISqlCommandTracer originalTracer)
+            => new WrappingTracer(originalTracer);
 
         sealed class AlwaysOffTracer : ISqlCommandTracer
         {
-            public AlwaysOffTracer(SqlTracerAgumentInclusion agumentInclusion) => ArgumentInclusion = agumentInclusion;
-            public SqlTraceEvent[] ListAllCommands() => Array.Empty<SqlTraceEvent>();
+            public AlwaysOffTracer(SqlTracerAgumentInclusion agumentInclusion)
+                => ArgumentInclusion = agumentInclusion;
+
+            public SqlTraceEvent[] ListAllCommands()
+                => Array.Empty<SqlTraceEvent>();
+
             public void RegisterEvent(string commandText, TimeSpan duration) { }
             public SqlTracerAgumentInclusion ArgumentInclusion { get; }
-            public bool IsTracing => false;
+
+            public bool IsTracing
+                => false;
         }
 
         sealed class AlwaysOnTracer : ISqlCommandTracer
@@ -84,7 +93,9 @@ namespace ProgressOnderwijsUtils
             }
 
             public SqlTracerAgumentInclusion ArgumentInclusion { get; }
-            public bool IsTracing => true;
+
+            public bool IsTracing
+                => true;
         }
 
         sealed class WrappingTracer : ISqlCommandTracer
@@ -98,7 +109,8 @@ namespace ProgressOnderwijsUtils
                 Inner = CreateAlwaysOnTracer(original.ArgumentInclusion);
             }
 
-            public SqlTraceEvent[] ListAllCommands() => Inner.ListAllCommands();
+            public SqlTraceEvent[] ListAllCommands()
+                => Inner.ListAllCommands();
 
             public void RegisterEvent(string commandText, TimeSpan duration)
             {
@@ -106,8 +118,11 @@ namespace ProgressOnderwijsUtils
                 Original.RegisterEvent(commandText, duration);
             }
 
-            public SqlTracerAgumentInclusion ArgumentInclusion => Original.ArgumentInclusion;
-            public bool IsTracing => true;
+            public SqlTracerAgumentInclusion ArgumentInclusion
+                => Original.ArgumentInclusion;
+
+            public bool IsTracing
+                => true;
         }
 
         [CanBeNull]

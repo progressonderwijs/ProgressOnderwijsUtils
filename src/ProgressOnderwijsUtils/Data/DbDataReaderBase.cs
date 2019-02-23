@@ -38,7 +38,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public override string GetDataTypeName(int ordinal) => (GetFieldType(ordinal) ?? throw new Exception("column " + ordinal + " untyped")).ToString();
+        public override string GetDataTypeName(int ordinal)
+            => (GetFieldType(ordinal) ?? throw new Exception("column " + ordinal + " untyped")).ToString();
 
         bool hasRows, afterFirstRowPeek;
         protected abstract bool ReadImpl();
@@ -76,8 +77,11 @@ namespace ProgressOnderwijsUtils
             isClosed = true;
         }
 
-        public override bool IsClosed => isClosed;
-        public override int Depth => 0;
+        public override bool IsClosed
+            => isClosed;
+
+        public override int Depth
+            => 0;
 
         public override System.Collections.IEnumerator GetEnumerator()
         {
@@ -86,18 +90,41 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public override bool GetBoolean(int ordinal) => GetFieldValue<bool>(ordinal);
-        public override byte GetByte(int ordinal) => GetFieldValue<byte>(ordinal);
-        public override char GetChar(int ordinal) => GetFieldValue<char>(ordinal);
-        public override DateTime GetDateTime(int ordinal) => GetFieldValue<DateTime>(ordinal);
-        public override decimal GetDecimal(int ordinal) => GetFieldValue<decimal>(ordinal);
-        public override double GetDouble(int ordinal) => GetFieldValue<double>(ordinal);
-        public override float GetFloat(int ordinal) => GetFieldValue<float>(ordinal);
-        public override Guid GetGuid(int ordinal) => GetFieldValue<Guid>(ordinal);
-        public override short GetInt16(int ordinal) => GetFieldValue<short>(ordinal);
-        public override int GetInt32(int ordinal) => GetFieldValue<int>(ordinal);
-        public override long GetInt64(int ordinal) => GetFieldValue<long>(ordinal);
-        public override string GetString(int ordinal) => GetFieldValue<string>(ordinal);
+        public override bool GetBoolean(int ordinal)
+            => GetFieldValue<bool>(ordinal);
+
+        public override byte GetByte(int ordinal)
+            => GetFieldValue<byte>(ordinal);
+
+        public override char GetChar(int ordinal)
+            => GetFieldValue<char>(ordinal);
+
+        public override DateTime GetDateTime(int ordinal)
+            => GetFieldValue<DateTime>(ordinal);
+
+        public override decimal GetDecimal(int ordinal)
+            => GetFieldValue<decimal>(ordinal);
+
+        public override double GetDouble(int ordinal)
+            => GetFieldValue<double>(ordinal);
+
+        public override float GetFloat(int ordinal)
+            => GetFieldValue<float>(ordinal);
+
+        public override Guid GetGuid(int ordinal)
+            => GetFieldValue<Guid>(ordinal);
+
+        public override short GetInt16(int ordinal)
+            => GetFieldValue<short>(ordinal);
+
+        public override int GetInt32(int ordinal)
+            => GetFieldValue<int>(ordinal);
+
+        public override long GetInt64(int ordinal)
+            => GetFieldValue<long>(ordinal);
+
+        public override string GetString(int ordinal)
+            => GetFieldValue<string>(ordinal);
 
         public override int GetValues(object[] values)
         {
@@ -108,10 +135,19 @@ namespace ProgressOnderwijsUtils
             return fieldsTodo;
         }
 
-        public override bool IsDBNull(int ordinal) => GetValue(ordinal) is DBNull;
-        public override bool NextResult() => false;
-        public override int RecordsAffected => -1;
-        public override object this[string name] => GetValue(GetOrdinal(name));
-        public override object this[int ordinal] => GetValue(ordinal);
+        public override bool IsDBNull(int ordinal)
+            => GetValue(ordinal) is DBNull;
+
+        public override bool NextResult()
+            => false;
+
+        public override int RecordsAffected
+            => -1;
+
+        public override object this[string name]
+            => GetValue(GetOrdinal(name));
+
+        public override object this[int ordinal]
+            => GetValue(ordinal);
     }
 }

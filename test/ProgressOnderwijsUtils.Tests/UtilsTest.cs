@@ -15,20 +15,18 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var cmp = StringComparer.Ordinal;
             var samplePoints = MoreEnumerable
-                .Generate((double) long.MinValue, sample => sample + (1.0 + Math.Abs(sample) / 1000.0))
+                .Generate((double)long.MinValue, sample => sample + (1.0 + Math.Abs(sample) / 1000.0))
                 .TakeWhile(sample => sample < long.MaxValue)
-                .Select(d => (long) d)
-                .Concat(new[] {long.MinValue, long.MaxValue - 1, -1, 0, 1});
+                .Select(d => (long)d)
+                .Concat(new[] { long.MinValue, long.MaxValue - 1, -1, 0, 1 });
 
-            foreach (var i in samplePoints)
-            {
+            foreach (var i in samplePoints) {
                 var j = i + 1;
                 var a = Utils.ToSortableShortString(i);
                 var b = Utils.ToSortableShortString(j);
-                if (cmp.Compare(a, b) >= 0)
-                {
+                if (cmp.Compare(a, b) >= 0) {
                     throw new Exception("numbers " + i + " and " + j + " produce out-of-order strings: " + a + " and " +
-                                        b);
+                        b);
                 }
             }
         }
@@ -36,8 +34,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ToSortableString_ConcatenatedStringsMaintainOrder()
         {
-            var samplePoints = new long[]
-            {
+            var samplePoints = new long[] {
                 -10000,
                 -1000,
                 -100,
@@ -58,16 +55,14 @@ namespace ProgressOnderwijsUtils.Tests
             var combos = (
                 from a in samplePoints
                 from b in samplePoints
-                select new[] {a, b}
+                select new[] { a, b }
             ).Concat(
                 from a in samplePoints
-                select new[] {a}
+                select new[] { a }
             );
 
-            foreach (var combo1 in combos)
-            {
-                foreach (var combo2 in combos)
-                {
+            foreach (var combo1 in combos) {
+                foreach (var combo2 in combos) {
                     var str1 = combo1.Select(Utils.ToSortableShortString).JoinStrings();
                     var str2 = combo2.Select(Utils.ToSortableShortString).JoinStrings();
 
@@ -77,8 +72,7 @@ namespace ProgressOnderwijsUtils.Tests
                             combo1.Cast<long?>()
                                 .ZipLongest(combo2.Cast<long?>(), Comparer<long?>.Default.Compare)
                                 .FirstOrDefault(x => x != 0));
-                    if (strComparison != seqComparison)
-                    {
+                    if (strComparison != seqComparison) {
                         throw new Exception(
                             $"Comparisons don't match: {ObjectToCode.ComplexObjectToPseudoCode(combo1)} compared to {ObjectToCode.ComplexObjectToPseudoCode(combo2)} is {seqComparison} but after short string conversion {ObjectToCode.ComplexObjectToPseudoCode(str1)}.CompareTo({ObjectToCode.ComplexObjectToPseudoCode(str2)}) is {strComparison}");
                     }
@@ -105,7 +99,6 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => one == "2");
             PAssert.That(() => other == "1");
         }
-
 
         [Fact]
         public void MaandSpanTest()
@@ -145,13 +138,10 @@ namespace ProgressOnderwijsUtils.Tests
         public void TimeoutDetectionAbortsWithInconclusiveAfterTimeout()
         {
             using (var localdb = new TransactedLocalConnection()) {
-                var ex = Assert.ThrowsAny<Exception>(() => {
-                    SafeSql.SQL($"WAITFOR DELAY '00:00:02'").ExecuteNonQuery(localdb.Context.OverrideTimeout(1));
-                });
+                var ex = Assert.ThrowsAny<Exception>(() => { SafeSql.SQL($"WAITFOR DELAY '00:00:02'").ExecuteNonQuery(localdb.Context.OverrideTimeout(1)); });
                 PAssert.That(() => Utils.IsRetriableConnectionFailure(ex));
             }
         }
-
 
         [Fact]
         public void DateMaxTest()
@@ -203,20 +193,20 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void SimpleTransitiveClosureWorks()
         {
-            var nodes = new[] {2, 3,};
+            var nodes = new[] { 2, 3, };
 
-            PAssert.That(() => Utils.TransitiveClosure(nodes, num => new[] {num * 2 % 6}).SetEquals(new[] {2, 4, 0, 3}));
+            PAssert.That(() => Utils.TransitiveClosure(nodes, num => new[] { num * 2 % 6 }).SetEquals(new[] { 2, 4, 0, 3 }));
         }
 
         [Fact]
         public void MultiTransitiveClosureWorks()
         {
-            var nodes = new[] {2, 3,};
+            var nodes = new[] { 2, 3, };
 
             PAssert.That(
                 () =>
                     Utils.TransitiveClosure(nodes, nums => nums.Select(num => num * 2 % 6))
-                        .SetEquals(new[] {2, 4, 0, 3}));
+                        .SetEquals(new[] { 2, 4, 0, 3 }));
         }
     }
 }

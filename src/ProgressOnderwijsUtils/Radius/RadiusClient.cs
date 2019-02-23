@@ -153,10 +153,11 @@ namespace ProgressOnderwijsUtils.Radius
                     .Concat(sharedSecret)
                     .ToArray();
 
-            using (var md5 = new MD5CryptoServiceProvider())
+            using (var md5 = new MD5CryptoServiceProvider()) {
                 if (!md5.ComputeHash(verificationStream).SequenceEqual(receivedMd5)) {
                     return RadiusAuthResults.ServiceErrorBadResponseAuthenticator;
                 }
+            }
 
             //ok, we've checked that the packet is basically OK and has a valid response authenticator...
 

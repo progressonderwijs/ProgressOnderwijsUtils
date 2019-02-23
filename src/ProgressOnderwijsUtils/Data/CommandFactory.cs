@@ -18,7 +18,9 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     interface ICommandFactory
     {
-        string RegisterParameterAndGetName<T>(T o) where T : IQueryParameter;
+        string RegisterParameterAndGetName<T>(T o)
+            where T : IQueryParameter;
+
         void AppendSql(string sql, int startIndex, int length);
     }
 
@@ -69,13 +71,12 @@ namespace ProgressOnderwijsUtils
         Dictionary<object, string> lookup;
 
         public static CommandFactory Create()
-            =>
-                new CommandFactory {
-                    queryText = FastShortStringBuilder.Create(),
-                    paramObjs = sqlParamsArgsPool.Rent(16),
-                    paramCount = 0,
-                    lookup = GetLookup()
-                };
+            => new CommandFactory {
+                queryText = FastShortStringBuilder.Create(),
+                paramObjs = sqlParamsArgsPool.Rent(16),
+                paramCount = 0,
+                lookup = GetLookup()
+            };
 
         public ReusableCommand FinishBuilding([NotNull] SqlCommandCreationContext conn)
         {
@@ -154,7 +155,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public void AppendSql([NotNull] string sql, int startIndex, int length) => queryText.AppendText(sql, startIndex, length);
+        public void AppendSql([NotNull] string sql, int startIndex, int length)
+            => queryText.AppendText(sql, startIndex, length);
     }
 
     /// <summary>
@@ -164,13 +166,21 @@ namespace ProgressOnderwijsUtils
     {
         public char[] CurrentCharacterBuffer;
         public int CurrentLength;
-        public static FastShortStringBuilder Create() => new FastShortStringBuilder { CurrentCharacterBuffer = Allocate(4096) };
 
-        static char[] Allocate(int length) => ArrayPool<char>.Shared.Rent(length);
-        void Free() => ArrayPool<char>.Shared.Return(CurrentCharacterBuffer);
+        public static FastShortStringBuilder Create()
+            => new FastShortStringBuilder { CurrentCharacterBuffer = Allocate(4096) };
 
-        public static FastShortStringBuilder Create(int length) => new FastShortStringBuilder { CurrentCharacterBuffer = Allocate(length) };
-        public void AppendText([NotNull] string text) => AppendText(text, 0, text.Length);
+        static char[] Allocate(int length)
+            => ArrayPool<char>.Shared.Rent(length);
+
+        void Free()
+            => ArrayPool<char>.Shared.Return(CurrentCharacterBuffer);
+
+        public static FastShortStringBuilder Create(int length)
+            => new FastShortStringBuilder { CurrentCharacterBuffer = Allocate(length) };
+
+        public void AppendText([NotNull] string text)
+            => AppendText(text, 0, text.Length);
 
         public void AppendText([NotNull] string text, int startIndex, int length)
         {
@@ -206,9 +216,12 @@ namespace ProgressOnderwijsUtils
         FastShortStringBuilder debugText;
 
         [NotNull]
-        public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter => SqlCommandDebugStringifier.InsecureSqlDebugString(o.EquatableValue, true);
+        public string RegisterParameterAndGetName<T>([NotNull] T o)
+            where T : IQueryParameter
+            => SqlCommandDebugStringifier.InsecureSqlDebugString(o.EquatableValue, true);
 
-        public void AppendSql([NotNull] string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
+        public void AppendSql([NotNull] string sql, int startIndex, int length)
+            => debugText.AppendText(sql, startIndex, length);
 
         [NotNull]
         public static string DebugTextFor([CanBeNull] ISqlComponent impl)
@@ -226,13 +239,15 @@ namespace ProgressOnderwijsUtils
         ArrayBuilder<object> paramValues;
 
         [NotNull]
-        public string RegisterParameterAndGetName<T>([NotNull] T o) where T : IQueryParameter
+        public string RegisterParameterAndGetName<T>([NotNull] T o)
+            where T : IQueryParameter
         {
             paramValues.Add(o.EquatableValue);
             return CommandFactory.IndexToParameterName(argOffset++);
         }
 
-        public void AppendSql([NotNull] string sql, int startIndex, int length) => debugText.AppendText(sql, startIndex, length);
+        public void AppendSql([NotNull] string sql, int startIndex, int length)
+            => debugText.AppendText(sql, startIndex, length);
 
         public static ParameterizedSqlEquatableKey EqualityKey([CanBeNull] ISqlComponent impl)
         {
@@ -258,7 +273,10 @@ namespace ProgressOnderwijsUtils
         public bool Equals(ParameterizedSqlEquatableKey other)
             => SqlTextKey == other.SqlTextKey && StructuralComparisons.StructuralEqualityComparer.Equals(Params, other.Params);
 
-        public override bool Equals(object obj) => obj is ParameterizedSqlEquatableKey && Equals((ParameterizedSqlEquatableKey)obj);
-        public override int GetHashCode() => (SqlTextKey?.GetHashCode() ?? 0) + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params);
+        public override bool Equals(object obj)
+            => obj is ParameterizedSqlEquatableKey && Equals((ParameterizedSqlEquatableKey)obj);
+
+        public override int GetHashCode()
+            => (SqlTextKey?.GetHashCode() ?? 0) + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params);
     }
 }

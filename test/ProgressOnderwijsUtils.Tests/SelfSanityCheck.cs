@@ -13,8 +13,8 @@ namespace ProgressOnderwijsUtils.Tests
             var problems =
                 from type in typeof(SelfSanityCheck).Assembly.GetTypes()
                 from method in
-                type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public |
-                                BindingFlags.NonPublic)
+                    type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public |
+                        BindingFlags.NonPublic)
                 where method.GetCustomAttributes<FactAttribute>().Any()
                 where !type.IsPublic || !method.IsPublic
                 select type.Name + "." + method.Name;

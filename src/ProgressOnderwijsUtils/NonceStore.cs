@@ -15,9 +15,15 @@ namespace ProgressOnderwijsUtils
 
         public DateTime Timestamp { get; }
         public long Nonce { get; }
-        public bool Equals(TimestampedNonce other) => other.Timestamp == Timestamp && other.Nonce == Nonce;
-        public override bool Equals(object obj) => (obj as TimestampedNonce?)?.Equals(this) ?? false;
-        public override int GetHashCode() => Timestamp.GetHashCode() * 397 ^ Nonce.GetHashCode();
+
+        public bool Equals(TimestampedNonce other)
+            => other.Timestamp == Timestamp && other.Nonce == Nonce;
+
+        public override bool Equals(object obj)
+            => (obj as TimestampedNonce?)?.Equals(this) ?? false;
+
+        public override int GetHashCode()
+            => Timestamp.GetHashCode() * 397 ^ Nonce.GetHashCode();
     }
 
     public sealed class NonceStore
@@ -37,9 +43,14 @@ namespace ProgressOnderwijsUtils
             seenNonces = new ConcurrentDictionary<TimestampedNonce, byte>();
         }
 
-        public long Generate() => Interlocked.Increment(ref nextNonce);
-        public bool IsFreshAndPreviouslyUnusedNonce(TimestampedNonce item, DateTime utcNow) => IsFresh(item, utcNow) && PreviouslyUnused(item, utcNow);
-        bool IsFresh(TimestampedNonce item, DateTime utcNow) => (utcNow - item.Timestamp).Duration() <= window;
+        public long Generate()
+            => Interlocked.Increment(ref nextNonce);
+
+        public bool IsFreshAndPreviouslyUnusedNonce(TimestampedNonce item, DateTime utcNow)
+            => IsFresh(item, utcNow) && PreviouslyUnused(item, utcNow);
+
+        bool IsFresh(TimestampedNonce item, DateTime utcNow)
+            => (utcNow - item.Timestamp).Duration() <= window;
 
         bool PreviouslyUnused(TimestampedNonce freshItem, DateTime utcNow)
         {

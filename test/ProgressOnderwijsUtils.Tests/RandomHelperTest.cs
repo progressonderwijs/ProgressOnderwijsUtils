@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void CheckString()
         {
             for (var i = 0; i < 50; i++) {
-                var len = (int) RandomHelper.Secure.GetUInt32(300);
+                var len = (int)RandomHelper.Secure.GetUInt32(300);
                 var str = RandomHelper.Secure.GetStringOfLatinLower(len);
                 var StR = RandomHelper.Secure.GetStringOfLatinUpperOrLower(len);
                 PAssert.That(() => str.Length == len);

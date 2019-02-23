@@ -9,9 +9,9 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ExhaustivelyTestIntArraysOfSmallSize()
         {
-            for (int size = 0; size < 100; size++) {
+            for (var size = 0; size < 100; size++) {
                 var builder = new ArrayBuilder<int>();
-                for (int i = 0; i < size; i++) {
+                for (var i = 0; i < size; i++) {
                     builder.Add(i);
                 }
                 Assert.Equal(Enumerable.Range(0, size), builder.ToArray());
@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void TestLargeIntArrays(int size)
         {
             var builder = new ArrayBuilder<int>();
-            for (int i = 0; i < size; i++) {
+            for (var i = 0; i < size; i++) {
                 builder.Add(i);
             }
             Assert.Equal(Enumerable.Range(0, size), builder.ToArray());
@@ -39,9 +39,9 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ExhaustivelyTestStringArraysOfSmallSize()
         {
-            for (int size = 0; size < 100; size++) {
+            for (var size = 0; size < 100; size++) {
                 var builder = new ArrayBuilder<string>();
-                for (int i = 0; i < size; i++) {
+                for (var i = 0; i < size; i++) {
                     builder.Add(i.ToString());
                 }
                 Assert.Equal(Enumerable.Range(0, size).Select(n => n.ToString()), builder.ToArray());

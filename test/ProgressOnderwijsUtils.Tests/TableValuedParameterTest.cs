@@ -16,8 +16,7 @@ namespace ProgressOnderwijsUtils.Tests
 {
     public sealed class TableValuedParameterTest : TransactedLocalConnection
     {
-        public enum SomeEnum
-        { }
+        public enum SomeEnum { }
 
         [Fact]
         public void DatabaseCanProcessTableValuedParameters()
@@ -34,7 +33,6 @@ namespace ProgressOnderwijsUtils.Tests
             var sum = q.ReadScalar<int>(Context);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
-
 
         [Fact]
         public void SingletonTvPsCanBeExecuted()
@@ -126,8 +124,9 @@ namespace ProgressOnderwijsUtils.Tests
             ").ExecuteNonQuery(Context);
 
             using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Context))
-            using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default))
+            using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default)) {
                 Assert_DataReader_GetBytes_works(reader);
+            }
         }
 
         static void Assert_DataReader_GetBytes_works([NotNull] DbDataReader reader)

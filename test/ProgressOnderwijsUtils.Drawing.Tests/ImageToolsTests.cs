@@ -60,8 +60,9 @@ namespace ProgressOnderwijsUtils.Drawing.Tests
         [Fact]
         public void CannotResizeToZero()
         {
-            using (var resImage = GetRainbow())
+            using (var resImage = GetRainbow()) {
                 Assert.Throws<ArgumentException>(() => ImageTools.Resize(resImage, 100, 0));
+            }
         }
 
         [Fact]

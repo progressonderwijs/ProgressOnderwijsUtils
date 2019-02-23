@@ -128,7 +128,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         {
             if (!connCmdCache.TryGetValue(ctx, out var cmdCache)) {
                 cmdCache = connCmdCache.GetOrAdd(ctx, conn => {
-                    conn.Disposed += (o, e) => connCmdCache.TryRemove(conn, out var _);
+                    conn.Disposed += (o, e) => connCmdCache.TryRemove(conn, out _);
                     return new Dictionary<string, SQLiteCommand>();
                 });
             }
@@ -172,7 +172,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
             sqliteCmd.Parameters[3].Value = ExampleObject.someInt64Value;
 
             var list = new List<ExampleObject>();
-            using (var reader = sqliteCmd.ExecuteReader(CommandBehavior.SequentialAccess))
+            using (var reader = sqliteCmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 while (reader.Read()) {
                     list.Add(new ExampleObject {
                         A = reader.IsDBNull(0) ? default(int?) : reader.GetInt32(0),
@@ -183,6 +183,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
                         Arg = reader.GetInt64(5),
                     });
                 }
+            }
             //cmd.Connection = null;
             sqliteCmd.Parameters[0].Value = null;
             sqliteCmd.Parameters[1].Value = null;
@@ -243,15 +244,18 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static int? ToNullableInt(this SqlInt32 num) => num.IsNull ? default(int?) : num.Value;
+        static int? ToNullableInt(this SqlInt32 num)
+            => num.IsNull ? default(int?) : num.Value;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static bool? ToNullableBool(this SqlBoolean num) => num.IsNull ? default(bool?) : num.Value;
+        static bool? ToNullableBool(this SqlBoolean num)
+            => num.IsNull ? default(bool?) : num.Value;
 
         [CanBeNull]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         // ReSharper disable once UnusedMember.Local
-        static string ToNullableString(this SqlString str) => str.IsNull ? default(string) : str.Value;
+        static string ToNullableString(this SqlString str)
+            => str.IsNull ? default(string) : str.Value;
 
         public static void RunWideQuery([NotNull] Benchmarker benchmarker)
         {

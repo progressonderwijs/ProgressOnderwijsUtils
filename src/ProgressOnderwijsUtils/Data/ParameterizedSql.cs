@@ -36,31 +36,40 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// The empty sql string.
         /// </summary>
-        public static ParameterizedSql Empty => default;
+        public static ParameterizedSql Empty
+            => default;
 
         public static readonly ParameterizedSql TruthyEmpty = new ParameterizedSql(new StringSqlFragment(""));
-        public bool IsEmpty => impl == TruthyEmpty.impl || this == Empty;
-        public static implicit operator ParameterizedSql(bool present) => present ? TruthyEmpty : Empty;
+
+        public bool IsEmpty
+            => impl == TruthyEmpty.impl || this == Empty;
+
+        public static implicit operator ParameterizedSql(bool present)
+            => present ? TruthyEmpty : Empty;
 
         /// <summary>
         /// Returns the provided sql only when the condition is true; empty otherwise.
         /// </summary>
-        public static ParameterizedSql operator &(ParameterizedSql a, ParameterizedSql b) => a.impl != null ? b : a;
+        public static ParameterizedSql operator &(ParameterizedSql a, ParameterizedSql b)
+            => a.impl != null ? b : a;
 
         /// <summary>
         /// Returns the provided sql only when the condition is true; empty otherwise.
         /// </summary>
-        public static ParameterizedSql operator |(ParameterizedSql a, ParameterizedSql b) => a.impl != null ? a : b;
+        public static ParameterizedSql operator |(ParameterizedSql a, ParameterizedSql b)
+            => a.impl != null ? a : b;
 
         /// <summary>
         /// Whether this sql fragment is not Empty (i.e. is non-empty or is TruthyEmpty)
         /// </summary>
-        public static bool operator true(ParameterizedSql a) => a.impl != null;
+        public static bool operator true(ParameterizedSql a)
+            => a.impl != null;
 
         /// <summary>
         /// Whether this sql fragment is Empty (i.e. contains no content as is not TruthyEmpty)
         /// </summary>
-        public static bool operator false(ParameterizedSql a) => a.impl == null;
+        public static bool operator false(ParameterizedSql a)
+            => a.impl == null;
 
         /// <summary>
         /// Concatenates two sql fragments.
@@ -90,19 +99,24 @@ namespace ProgressOnderwijsUtils
                 || a.impl != TruthyEmpty.impl && b.impl != TruthyEmpty.impl && EqualityKeyCommandFactory.EqualityKey(a.impl).Equals(EqualityKeyCommandFactory.EqualityKey(b.impl));
 
         [Pure]
-        public bool Equals(ParameterizedSql other) => this == other;
+        public bool Equals(ParameterizedSql other)
+            => this == other;
 
         [Pure]
-        public static bool operator !=(ParameterizedSql a, ParameterizedSql b) => !(a == b);
+        public static bool operator !=(ParameterizedSql a, ParameterizedSql b)
+            => !(a == b);
 
         [Pure]
-        public override int GetHashCode() => EqualityKeyCommandFactory.EqualityKey(impl).GetHashCode();
+        public override int GetHashCode()
+            => EqualityKeyCommandFactory.EqualityKey(impl).GetHashCode();
 
         //ToString is constructed to be invalid sql, so that accidental string-concat doesn't result in something that looks reasonable to execute.
-        public override string ToString() => "*/Pseudo-sql (with parameter values inlined!):/*\r\n" + DebugText();
+        public override string ToString()
+            => "*/Pseudo-sql (with parameter values inlined!):/*\r\n" + DebugText();
 
         [NotNull]
-        public string DebugText() => DebugCommandFactory.DebugTextFor(impl);
+        public string DebugText()
+            => DebugCommandFactory.DebugTextFor(impl);
 
         [NotNull]
         [Pure]
@@ -113,10 +127,12 @@ namespace ProgressOnderwijsUtils
             return factory.FinishBuilding_CommandTextOnly();
         }
 
-        public static ParameterizedSql Param(object paramVal) => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
+        public static ParameterizedSql Param(object paramVal)
+            => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]
-        public static ParameterizedSql TableParamDynamic([NotNull] Array o) => SqlParameterComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
+        public static ParameterizedSql TableParamDynamic([NotNull] Array o)
+            => SqlParameterComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
 
         /// <summary>
         /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
@@ -129,12 +145,16 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
             where T : IMetaObject, new()
-            => (objects.Length == 1 ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<T>(objects[0])
-                : new QueryTableValuedParameterComponent<T, T>(typeName, objects, arr => (T[])arr)
+            => (objects.Length == 1
+                    ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<T>(objects[0])
+                    : new QueryTableValuedParameterComponent<T, T>(typeName, objects, arr => (T[])arr)
                 ).BuildableToQuery();
 
-        public static IReadOnlyDictionary<Type, string> BuiltInTabledValueTypes => SqlParameterComponent.CustomTableType.SqlTableTypeNameByDotnetType;
-        public static ParameterizedSql TableValuedTypeDefinitionScripts => SqlParameterComponent.CustomTableType.DefinitionScripts;
+        public static IReadOnlyDictionary<Type, string> BuiltInTabledValueTypes
+            => SqlParameterComponent.CustomTableType.SqlTableTypeNameByDotnetType;
+
+        public static ParameterizedSql TableValuedTypeDefinitionScripts
+            => SqlParameterComponent.CustomTableType.DefinitionScripts;
     }
 
     interface ISqlComponent
@@ -180,16 +200,17 @@ namespace ProgressOnderwijsUtils
     public static class SafeSql
     {
         [Pure]
-        public static ParameterizedSql SQL([NotNull] FormattableString interpolatedQuery) => ParameterizedSqlFactory.InterpolationToQuery(interpolatedQuery);
+        public static ParameterizedSql SQL([NotNull] FormattableString interpolatedQuery)
+            => ParameterizedSqlFactory.InterpolationToQuery(interpolatedQuery);
     }
 
     static class ParameterizedSqlFactory
     {
-        public static ParameterizedSql BuildableToQuery(this ISqlComponent q) => new ParameterizedSql(q);
+        public static ParameterizedSql BuildableToQuery(this ISqlComponent q)
+            => new ParameterizedSql(q);
 
-        public static ParameterizedSql InterpolationToQuery([NotNull] FormattableString interpolatedQuery) =>
-            interpolatedQuery.Format == "" ? ParameterizedSql.Empty :
-                new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
+        public static ParameterizedSql InterpolationToQuery([NotNull] FormattableString interpolatedQuery)
+            => interpolatedQuery.Format == "" ? ParameterizedSql.Empty : new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
         public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, [NotNull] string sql)
             where TCommandFactory : struct, ICommandFactory
@@ -280,7 +301,9 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentDictionary<string, ParamRefSubString[]> parsedFormatStrings
             = new ConcurrentDictionary<string, ParamRefSubString[]>(new ReferenceEqualityComparer<string>());
 
-        static ParamRefSubString[] GetFormatStringParamRefs([NotNull] string formatstring) => parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString_Delegate);
+        static ParamRefSubString[] GetFormatStringParamRefs([NotNull] string formatstring)
+            => parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString_Delegate);
+
         static readonly Func<string, ParamRefSubString[]> ParseFormatString_Delegate = ParseFormatString;
 
         static ParamRefSubString[] ParseFormatString([NotNull] string formatstring)
@@ -329,7 +352,10 @@ namespace ProgressOnderwijsUtils
         struct ParamRefSubString
         {
             public int StartIndex, EndIndex, ReferencedParameterIndex;
-            public bool WasNotFound() => ReferencedParameterIndex < 0;
+
+            public bool WasNotFound()
+                => ReferencedParameterIndex < 0;
+
             public static readonly ParamRefSubString NotFound = new ParamRefSubString { ReferencedParameterIndex = -1 };
         }
     }

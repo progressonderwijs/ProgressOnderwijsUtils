@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Tests
     {
         public static HtmlFragment MakeHtml()
         {
-            return 
+            return
                 _html._class("client-nojs")
                     ._lang("en")
                     ._dir("ltr")
@@ -20,15 +20,15 @@ namespace ProgressOnderwijsUtils.Tests
                             "\n",
                             _title.Content(
                                 "HTML5 - Wikipedia"
-                                ),
+                            ),
                             "\n",
                             _script.Content(
                                 @"document.documentElement.className = document.documentElement.className.replace( /(^|\s)client-nojs(\s|$)/, ""$1client-js$2"" );"
-                                ),
+                            ),
                             "\n",
                             _script.Content(
                                 "(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"HTML5\",\"wgTitle\":\"HTML5\",\"wgCurRevisionId\":776934189,\"wgRevisionId\":776934189,\"wgArticleId\":7966125,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[\"Pages using ISBN magic links\",\"All articles with failed verification\",\"Articles with failed verification from January 2011\",\"Use dmy dates from June 2011\",\"HTML5\",\"HTML\",\"2014 software\",\"Emerging standards\",\"Markup languages\",\"World Wide Web Consortium standards\",\"XML-based standards\"],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"HTML5\",\"wgRelevantArticleId\":7966125,\"wgRequestId\":\"WP2gVArAEE8AAG0jg58AAABA\",\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgFlaggedRevsParams\":{\"tags\":{}},\"wgStableRevisionId\":null,\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"preview\":false,\"publish\":false},\"wgBetaFeaturesFeatures\":[],\"wgMediaViewerOnClick\":true,\"wgMediaViewerEnabledByDefault\":true,\"wgPopupsShouldSendModuleToUser\":false,\"wgPopupsConflictsWithNavPopupGadget\":false,\"wgVisualEditor\":{\"pageLanguageCode\":\"en\",\"pageLanguageDir\":\"ltr\",\"usePageImages\":true,\"usePageDescriptions\":true},\"wgPreferredVariant\":\"en\",\"wgMFDisplayWikibaseDescriptions\":{\"search\":true,\"nearby\":true,\"watchlist\":true,\"tagline\":false},\"wgRelatedArticles\":null,\"wgRelatedArticlesUseCirrusSearch\":true,\"wgRelatedArticlesOnlyUseCirrusSearch\":false,\"wgULSCurrentAutonym\":\"English\",\"wgNoticeProject\":\"wikipedia\",\"wgCentralNoticeCookiesToDelete\":[],\"wgCentralNoticeCategoriesUsingLegacy\":[\"Fundraising\",\"fundraising\"],\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\",\"wgWikibaseItemId\":\"Q2053\",\"wgCentralAuthMobileDomain\":false,\"wgVisualEditorToolbarScrollOffset\":0,\"wgEditSubmitButtonLabelPublish\":false});mw.loader.state({\"ext.globalCssJs.user.styles\":\"ready\",\"ext.globalCssJs.site.styles\":\"ready\",\"site.styles\":\"ready\",\"noscript\":\"ready\",\"user.styles\":\"ready\",\"user\":\"ready\",\"user.options\":\"loading\",\"user.tokens\":\"loading\",\"ext.cite.styles\":\"ready\",\"wikibase.client.init\":\"ready\",\"ext.visualEditor.desktopArticleTarget.noscript\":\"ready\",\"ext.uls.interlanguage\":\"ready\",\"ext.wikimediaBadges\":\"ready\",\"mediawiki.legacy.shared\":\"ready\",\"mediawiki.legacy.commonPrint\":\"ready\",\"mediawiki.sectionAnchor\":\"ready\",\"mediawiki.skinning.interface\":\"ready\",\"skins.vector.styles\":\"ready\",\"ext.globalCssJs.user\":\"ready\",\"ext.globalCssJs.site\":\"ready\"});mw.loader.implement(\"user.options@0j3lz3q\",function($,jQuery,require,module){mw.user.options.set({\"variant\":\"en\"});});mw.loader.implement(\"user.tokens@1dqfd7l\",function ( $, jQuery, require, module ) {\nmw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":\"+\\\\\",\"watchToken\":\"+\\\\\",\"csrfToken\":\"+\\\\\"});/*@nomin*/;\n\n});mw.loader.load([\"ext.cite.a11y\",\"mediawiki.toc\",\"mediawiki.action.view.postEdit\",\"site\",\"mediawiki.page.startup\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.legacy.wikibits\",\"mediawiki.searchSuggest\",\"ext.gadget.teahouse\",\"ext.gadget.ReferenceTooltips\",\"ext.gadget.watchlist-notice\",\"ext.gadget.DRN-wizard\",\"ext.gadget.charinsert\",\"ext.gadget.refToolbar\",\"ext.gadget.extra-toolbar-buttons\",\"ext.gadget.switcher\",\"ext.gadget.featured-articles-links\",\"ext.centralauth.centralautologin\",\"mmv.head\",\"mmv.bootstrap.autostart\",\"ext.visualEditor.desktopArticleTarget.init\",\"ext.visualEditor.targetLoader\",\"ext.eventLogging.subscriber\",\"ext.wikimediaEvents\",\"ext.navigationTiming\",\"ext.uls.eventlogger\",\"ext.uls.init\",\"ext.uls.interface\",\"ext.quicksurveys.init\",\"ext.centralNotice.geoIP\",\"ext.centralNotice.startUp\",\"skins.vector.js\"]);});"
-                                ),
+                            ),
                             "\n",
                             _link._rel("stylesheet")
                                 ._href("/w/load.php?debug=false&lang=en&modules=ext.cite.styles%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediaBadges%7Cmediawiki.legacy.commonPrint%2Cshared%7Cmediawiki.sectionAnchor%7Cmediawiki.skinning.interface%7Cskins.vector.styles%7Cwikibase.client.init&only=styles&skin=vector"),
@@ -90,7 +90,7 @@ namespace ProgressOnderwijsUtils.Tests
                             _link._rel("dns-prefetch")
                                 ._href("//meta.wikimedia.org"),
                             "\n"
-                            ),
+                        ),
                         "\n",
                         _body._class("mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject page-HTML5 rootpage-HTML5 skin-vector action-view")
                             .Content(
@@ -166,7 +166,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "\n",
                                                                         _small.Content(
                                                                             "(HyperText Markup Language)"
-                                                                            )
+                                                                        )
                                                                     ),
                                                                 "\n",
                                                                 _tbody.Content(
@@ -188,7 +188,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -206,10 +206,10 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             .Content(
                                                                                 _code.Content(
                                                                                     ".html"
-                                                                                    )
+                                                                                )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -227,10 +227,10 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             .Content(
                                                                                 _code.Content(
                                                                                     "text/html"
-                                                                                    )
+                                                                                )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -249,7 +249,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "TEXT"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -276,7 +276,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -313,7 +313,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -328,7 +328,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "XHTML5 (XML-serialized HTML5)"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -352,7 +352,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -375,9 +375,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "Yes"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n"
-                                                                    )
+                                                                )
                                                             ),
                                                         "\n",
                                                         _table._class("infobox")
@@ -391,7 +391,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "\n",
                                                                         _small.Content(
                                                                             "(XML-serialized HTML5)"
-                                                                            )
+                                                                        )
                                                                     ),
                                                                 "\n",
                                                                 _tbody.Content(
@@ -411,10 +411,10 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             .Content(
                                                                                 _code.Content(
                                                                                     ".xhtml, .html"
-                                                                                    )
+                                                                                )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -432,10 +432,10 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             .Content(
                                                                                 _code.Content(
                                                                                     "application/xml, application/xhtml+xml"
-                                                                                    )
+                                                                                )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -460,7 +460,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -479,7 +479,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -499,7 +499,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 ", HTML5"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -522,9 +522,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "Yes"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n"
-                                                                    )
+                                                                )
                                                             ),
                                                         "\n",
                                                         _table._class("vertical-navbox nowraplinks")
@@ -543,7 +543,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     )
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -559,7 +559,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "HTML"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Dynamic_HTML")
@@ -567,7 +567,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Dynamic HTML"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._class("mw-selflink selflink")
@@ -583,7 +583,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "audio"
                                                                                                     )
-                                                                                                ),
+                                                                                            ),
                                                                                             "\n",
                                                                                             _li.Content(
                                                                                                 _a._href("/wiki/Canvas_element")
@@ -591,7 +591,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "canvas"
                                                                                                     )
-                                                                                                ),
+                                                                                            ),
                                                                                             "\n",
                                                                                             _li.Content(
                                                                                                 _a._href("/wiki/HTML5_video")
@@ -599,11 +599,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "video"
                                                                                                     )
-                                                                                                ),
-                                                                                            "\n"
                                                                                             ),
-                                                                                        "\n"
+                                                                                            "\n"
                                                                                         ),
+                                                                                        "\n"
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/XHTML")
@@ -620,7 +620,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "Basic"
                                                                                                     )
-                                                                                                ),
+                                                                                            ),
                                                                                             "\n",
                                                                                             _li.Content(
                                                                                                 _a._href("/wiki/XHTML_Mobile_Profile")
@@ -628,7 +628,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "Mobile Profile"
                                                                                                     )
-                                                                                                ),
+                                                                                            ),
                                                                                             "\n",
                                                                                             _li.Content(
                                                                                                 _a._href("/wiki/C-HTML")
@@ -636,11 +636,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "C-HTML"
                                                                                                     )
-                                                                                                ),
-                                                                                            "\n"
                                                                                             ),
-                                                                                        "\n"
+                                                                                            "\n"
                                                                                         ),
+                                                                                        "\n"
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/HTML_element")
@@ -657,11 +657,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "span and div"
                                                                                                     )
-                                                                                                ),
-                                                                                            "\n"
                                                                                             ),
-                                                                                        "\n"
+                                                                                            "\n"
                                                                                         ),
+                                                                                        "\n"
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/HTML_attribute")
@@ -669,7 +669,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "HTML attribute"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Framing_(World_Wide_Web)")
@@ -677,7 +677,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "HTML frame"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/HTML_editor")
@@ -685,7 +685,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "HTML editor"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Character_encodings_in_HTML")
@@ -702,11 +702,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "Unicode"
                                                                                                     )
-                                                                                                ),
-                                                                                            "\n"
                                                                                             ),
-                                                                                        "\n"
+                                                                                            "\n"
                                                                                         ),
+                                                                                        "\n"
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Language_code")
@@ -714,7 +714,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Language code"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Document_Object_Model")
@@ -722,7 +722,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Document Object Model"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Browser_Object_Model")
@@ -730,7 +730,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Browser Object Model"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Style_sheet_(web_development)")
@@ -747,11 +747,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "CSS"
                                                                                                     )
-                                                                                                ),
-                                                                                            "\n"
                                                                                             ),
-                                                                                        "\n"
+                                                                                            "\n"
                                                                                         ),
+                                                                                        "\n"
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Font_family_(HTML)")
@@ -759,7 +759,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Font family"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Web_colors")
@@ -767,7 +767,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Web colors"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/HTML_scripting")
@@ -775,7 +775,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "HTML scripting"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/JavaScript")
@@ -792,7 +792,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "WebGL"
                                                                                                     )
-                                                                                                ),
+                                                                                            ),
                                                                                             "\n",
                                                                                             _li.Content(
                                                                                                 _a._href("/wiki/WebCL")
@@ -800,11 +800,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "WebCL"
                                                                                                     )
-                                                                                                ),
-                                                                                            "\n"
                                                                                             ),
-                                                                                        "\n"
+                                                                                            "\n"
                                                                                         ),
+                                                                                        "\n"
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/World_Wide_Web_Consortium")
@@ -821,11 +821,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "Validator"
                                                                                                     )
-                                                                                                ),
-                                                                                            "\n"
                                                                                             ),
-                                                                                        "\n"
+                                                                                            "\n"
                                                                                         ),
+                                                                                        "\n"
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/WHATWG")
@@ -833,7 +833,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "WHATWG"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Quirks_mode")
@@ -841,7 +841,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Quirks mode"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Web_storage")
@@ -849,7 +849,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Web storage"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Web_browser_engine")
@@ -857,13 +857,13 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Web browser (layout) engine"
                                                                                             )
-                                                                                        ),
-                                                                                    "\n"
                                                                                     ),
+                                                                                    "\n"
+                                                                                ),
                                                                                 "\n"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -872,7 +872,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "Comparisons"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -888,7 +888,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Document markup languages"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Comparison_of_web_browsers")
@@ -896,7 +896,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Web browsers"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Comparison_of_layout_engines_(HTML)")
@@ -904,7 +904,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "HTML"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Comparison_of_layout_engines_(non-standard_HTML)")
@@ -912,7 +912,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Non-standard HTML"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Comparison_of_layout_engines_(HTML5)")
@@ -929,7 +929,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "canvas"
                                                                                                     )
-                                                                                                ),
+                                                                                            ),
                                                                                             "\n",
                                                                                             _li.Content(
                                                                                                 _a._href("/wiki/Comparison_of_layout_engines_(HTML5_media)")
@@ -937,11 +937,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "media"
                                                                                                     )
-                                                                                                ),
-                                                                                            "\n"
                                                                                             ),
-                                                                                        "\n"
+                                                                                            "\n"
                                                                                         ),
+                                                                                        "\n"
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._href("/wiki/Comparison_of_layout_engines_(XHTML)")
@@ -958,17 +958,17 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     .Content(
                                                                                                         "1.1"
                                                                                                     )
-                                                                                                ),
-                                                                                            "\n"
                                                                                             ),
-                                                                                        "\n"
+                                                                                            "\n"
                                                                                         ),
-                                                                                    "\n"
+                                                                                        "\n"
                                                                                     ),
+                                                                                    "\n"
+                                                                                ),
                                                                                 "\n"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -1016,21 +1016,21 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                         )
                                                                                                 ),
                                                                                             "\n"
-                                                                                            ),
+                                                                                        ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n"
-                                                                    )
+                                                                )
                                                             ),
                                                         "\n",
                                                         _p.Content(
                                                             _b.Content(
                                                                 "HTML5"
-                                                                ),
+                                                            ),
                                                             _sup._id("cite_ref-name_4-0")
                                                                 ._class("reference")
                                                                 .Content(
@@ -1058,7 +1058,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     "HTML"
                                                                 ),
                                                             " standard."
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "It was published in October 2014 by the ",
@@ -1124,7 +1124,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[5]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "HTML5 includes detailed processing models to encourage more interoperable implementations; it extends, improves and rationalizes the markup available for documents, and introduces markup and ",
@@ -1156,7 +1156,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     "a candidate for cross-platform mobile applications"
                                                                 ),
                                                             ", because it includes features designed with low-powered devices in mind."
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "Many new ",
@@ -1184,7 +1184,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "<video>"
                                                                     )
-                                                                ),
+                                                            ),
                                                             ", ",
                                                             _code.Content(
                                                                 _a._href("/wiki/HTML5_Audio")
@@ -1192,7 +1192,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "<audio>"
                                                                     )
-                                                                ),
+                                                            ),
                                                             " and ",
                                                             _code.Content(
                                                                 _a._href("/wiki/Canvas_element")
@@ -1200,7 +1200,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "<canvas>"
                                                                     )
-                                                                ),
+                                                            ),
                                                             " ",
                                                             _a._href("/wiki/HTML_element")
                                                                 ._title("HTML element")
@@ -1229,39 +1229,39 @@ namespace ProgressOnderwijsUtils.Tests
                                                             " content of documents, new page structure elements such as ",
                                                             _code.Content(
                                                                 "<main>"
-                                                                ),
+                                                            ),
                                                             ", ",
                                                             _code.Content(
                                                                 "<section>"
-                                                                ),
+                                                            ),
                                                             ", ",
                                                             _a._href("/wiki/Article_element_(HTML5)")
                                                                 ._title("Article element (HTML5)")
                                                                 .Content(
                                                                     _code.Content(
                                                                         "<article>"
-                                                                        )
+                                                                    )
                                                                 ),
                                                             ", ",
                                                             _code.Content(
                                                                 "<header>"
-                                                                ),
+                                                            ),
                                                             ", ",
                                                             _code.Content(
                                                                 "<footer>"
-                                                                ),
+                                                            ),
                                                             ", ",
                                                             _code.Content(
                                                                 "<aside>"
-                                                                ),
+                                                            ),
                                                             ", ",
                                                             _code.Content(
                                                                 "<nav>"
-                                                                ),
+                                                            ),
                                                             " and ",
                                                             _code.Content(
                                                                 "<figure>"
-                                                                ),
+                                                            ),
                                                             ", are added. New ",
                                                             _a._href("/wiki/HTML_attribute")
                                                                 ._title("HTML attribute")
@@ -1271,17 +1271,17 @@ namespace ProgressOnderwijsUtils.Tests
                                                             " are introduced, some elements and attributes have been removed, and others such as ",
                                                             _code.Content(
                                                                 "<a>"
-                                                                ),
+                                                            ),
                                                             ", ",
                                                             _code.Content(
                                                                 "<cite>"
-                                                                ),
+                                                            ),
                                                             " and ",
                                                             _code.Content(
                                                                 "<menu>"
-                                                                ),
-                                                            " have been changed, redefined or standardized."
                                                             ),
+                                                            " have been changed, redefined or standardized."
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "The APIs and ",
@@ -1308,7 +1308,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[7]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p,
                                                         "\n",
@@ -1322,7 +1322,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "\n",
                                                                         _h2.Content(
                                                                             "Contents"
-                                                                            ),
+                                                                        ),
                                                                         "\n"
                                                                     ),
                                                                 "\n",
@@ -1393,7 +1393,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             )
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n"
                                                                         ),
                                                                     "\n",
@@ -1526,7 +1526,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             )
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n"
                                                                         ),
                                                                     "\n",
@@ -1626,7 +1626,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 )
                                                                         ),
                                                                     "\n"
-                                                                    ),
+                                                                ),
                                                                 "\n"
                                                             ),
                                                         "\n",
@@ -1654,7 +1654,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "The ",
@@ -1704,7 +1704,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[9]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "The ",
@@ -1765,7 +1765,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         )
                                                                 ),
                                                             " The HTML5 specification was adopted as the starting point of the work of the new HTML working group of the W3C in 2007."
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             _a._href("/wiki/WHATWG")
@@ -1782,7 +1782,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[15]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h3.Content(
                                                             _span._class("mw-headline")
@@ -1806,7 +1806,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "While some features of HTML5 are often compared to ",
@@ -1919,7 +1919,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[22]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h3.Content(
                                                             _span._class("mw-headline")
@@ -1943,7 +1943,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "On 14 February 2011, the W3C extended the charter of its HTML Working Group with clear milestones for HTML5. In May 2011, the working group advanced HTML5 to \"Last Call\", an invitation to communities inside and outside W3C to confirm the technical soundness of the specification. The W3C developed a comprehensive test suite to achieve broad interoperability for the full specification by 2014, which was the target date for recommendation.",
@@ -1964,7 +1964,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[24]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "In July 2012, WHATWG and W3C decided on a degree of separation. W3C will continue the HTML5 specification work, focusing on a single definitive standard, which is considered as a \"snapshot\" by WHATWG. The WHATWG organization will continue its work with HTML5 as a \"Living Standard\". The concept of a living standard is that it is never complete and is always being updated and improved. New features can be added but functionality will not be removed.",
@@ -1976,7 +1976,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[25]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "In December 2012, W3C designated HTML5 as a Candidate Recommendation.",
@@ -2012,7 +2012,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[28]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "On 16 September 2014, W3C moved HTML5 to Proposed Recommendation.",
@@ -2024,7 +2024,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[29]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "On 28 October 2014, HTML5 was released as a stable W3C Recommendation,",
@@ -2045,7 +2045,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[2]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "On 1 November 2016, HTML5.1 was released as a stable W3C Recommendation.",
@@ -2057,7 +2057,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[31]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h3.Content(
                                                             _span._class("mw-headline")
@@ -2081,11 +2081,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "The combined timelines for HTML 5.0, HTML 5.1 and HTML 5.2:"
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _table._class("wikitable")
                                                             .Content(
@@ -2097,75 +2097,75 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "\n",
                                                                         _th.Content(
                                                                             "2012"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _th.Content(
                                                                             "2013"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _th.Content(
                                                                             "2014"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _th.Content(
                                                                             "2015"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _th.Content(
                                                                             "2016"
-                                                                            ),
-                                                                        "\n"
                                                                         ),
+                                                                        "\n"
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _td.Content(
                                                                             "HTML 5.0"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td.Content(
                                                                             "Candidate Rec"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td.Content(
                                                                             "Call for Review"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td.Content(
                                                                             "Recommendation"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td,
                                                                         "\n",
                                                                         _td,
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
                                                                         _td.Content(
                                                                             "HTML 5.1"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td.Content(
                                                                             "1st Working Draft"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td,
                                                                         "\n",
                                                                         _td.Content(
                                                                             "Last Call"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td.Content(
                                                                             "Candidate Rec"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td.Content(
                                                                             "Recommendation"
-                                                                            ),
-                                                                        "\n"
                                                                         ),
+                                                                        "\n"
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -2179,7 +2179,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             "[32]"
                                                                                         )
                                                                                 )
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td,
                                                                         "\n",
@@ -2189,13 +2189,13 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "\n",
                                                                         _td.Content(
                                                                             "1st Working Draft"
-                                                                            ),
+                                                                        ),
                                                                         "\n",
                                                                         _td,
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n"
-                                                                    )
+                                                                )
                                                             ),
                                                         "\n",
                                                         _h2.Content(
@@ -2220,17 +2220,17 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "The W3C proposed a greater reliance on modularity as a key part of the plan to make faster progress, meaning identifying specific features, either proposed or already existing in the spec, and advancing them as separate specifications. Some technologies that were originally defined in HTML5 itself are now defined in separate specifications:"
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _ul.Content(
                                                             "\n",
                                                             _li.Content(
                                                                 "HTML Working Group – HTML Canvas 2D Context;"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "Web Apps Working Group – ",
@@ -2280,11 +2280,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             )
                                                                     ),
                                                                 " (this was not part of HTML5 though); Note that the Web Applications Working Group was closed in October 2015 and its deliverables transferred to the Web Platform Working Group (WPWG)."
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "IETF HyBi Working Group – WebSocket Protocol;"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "WebRTC Working Group – ",
@@ -2294,7 +2294,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "WebRTC"
                                                                     ),
                                                                 ";"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "Web Media Text Tracks Community Group – ",
@@ -2304,9 +2304,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "WebVTT"
                                                                     ),
                                                                 "."
-                                                                ),
-                                                            "\n"
                                                             ),
+                                                            "\n"
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "After the standardization of the HTML5 specification in October 2014,",
@@ -2346,7 +2346,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     "Polyglot Markup"
                                                                 ),
                                                             " have also been standardized as modules. Some W3C specifications that were originally separate specifications have been adapted as HTML5 extensions or features, such as SVG. Some features that might have slowed down the standardization of HTML5 will be standardized as upcoming specifications, instead. HTML 5.1 is expected to be finalized in 2016, and it is currently on the standardization track at the W3C."
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h2.Content(
                                                             _span._class("mw-headline")
@@ -2370,7 +2370,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h3.Content(
                                                             _span._class("mw-headline")
@@ -2394,7 +2394,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "HTML5 introduces ",
@@ -2510,7 +2510,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     "DOM scripting"
                                                                 ),
                                                             " (e.g., JavaScript) in Web behavior."
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "The HTML5 syntax is no longer based on ",
@@ -2564,7 +2564,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                             " Since 5 January 2009, HTML5 also includes ",
                                                             _i.Content(
                                                                 "Web Forms 2.0"
-                                                                ),
+                                                            ),
                                                             ", a previously separate ",
                                                             _a._href("/wiki/WHATWG")
                                                                 ._title("WHATWG")
@@ -2588,7 +2588,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[44]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h3.Content(
                                                             _span._class("mw-headline")
@@ -2612,7 +2612,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _div._class("thumb tright")
                                                             .Content(
@@ -2694,9 +2694,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "de facto"
                                                                     )
-                                                                ),
-                                                            " features documented. There are also new APIs, such as:"
                                                             ),
+                                                            " features documented. There are also new APIs, such as:"
+                                                        ),
                                                         "\n",
                                                         _ul.Content(
                                                             "\n",
@@ -2715,7 +2715,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[47]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "Timed Media Playback;",
@@ -2727,7 +2727,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[48]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "Offline;",
@@ -2739,7 +2739,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[49]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "Editable content;",
@@ -2751,7 +2751,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[50]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/Drag-and-drop")
@@ -2769,7 +2769,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[51]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "History;",
@@ -2781,7 +2781,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[52]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/MIME_type")
@@ -2807,7 +2807,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[54]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/Microdata_(HTML)")
@@ -2824,7 +2824,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[55]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/Web_Messaging")
@@ -2841,7 +2841,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[56]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/Web_Storage")
@@ -2866,9 +2866,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[57]"
                                                                             )
                                                                     )
-                                                                ),
-                                                            "\n"
                                                             ),
+                                                            "\n"
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "Not all of the above technologies are included in the W3C HTML5 specification, though they are in the WHATWG HTML specification.",
@@ -2881,7 +2881,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         )
                                                                 ),
                                                             " Some related technologies, which are not part of either the W3C HTML5 or the WHATWG HTML specification, are as follows. The W3C publishes specifications for these separately:"
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _ul.Content(
                                                             "\n",
@@ -2892,7 +2892,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "Geolocation"
                                                                     ),
                                                                 ";"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/Web_SQL_Database")
@@ -2909,7 +2909,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[59]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/IndexedDB")
@@ -2927,7 +2927,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[60]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/HTML5_File_API")
@@ -2952,7 +2952,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[62]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "Directories and System – an API intended to satisfy client-side-storage use cases not well served by databases;",
@@ -2964,7 +2964,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[63]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "File Writer – an API for writing to files from web applications;",
@@ -2976,7 +2976,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[64]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/HTML5_Audio#Web_Audio_API_and_MediaStream_Processing_API")
@@ -2993,7 +2993,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             )
                                                                     ),
                                                                 " – a high-level JavaScript API for processing and synthesizing audio in web applications;"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "ClassList.",
@@ -3005,7 +3005,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[66]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/w/index.php?title=Web_Cryptography&action=edit&redlink=1")
@@ -3022,7 +3022,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[67]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/WebRTC")
@@ -3038,9 +3038,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[68]"
                                                                             )
                                                                     )
-                                                                ),
-                                                            "\n"
                                                             ),
+                                                            "\n"
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "HTML5 cannot provide animation within web pages. Additional JavaScript or ",
@@ -3072,7 +3072,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                         "not in citation given"
                                                                                     )
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     "]"
                                                                 ),
                                                             ", and within SVG elements through ",
@@ -3082,7 +3082,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     "SMIL"
                                                                 ),
                                                             ", although browser support of the latter remains uneven as of 2011."
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h3.Content(
                                                             _span._class("mw-headline")
@@ -3106,7 +3106,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "XML documents must be served with an XML ",
@@ -3119,11 +3119,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                             " (often called \"MIME type\") such as ",
                                                             _code.Content(
                                                                 "application/xhtml+xml"
-                                                                ),
+                                                            ),
                                                             " or ",
                                                             _code.Content(
                                                                 "application/xml"
-                                                                ),
+                                                            ),
                                                             ",",
                                                             _sup._id("cite_ref-71")
                                                                 ._class("reference")
@@ -3148,7 +3148,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[71]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h3.Content(
                                                             _span._class("mw-headline")
@@ -3172,7 +3172,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "HTML5 is designed so that old browsers ",
@@ -3227,7 +3227,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[72]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h3.Content(
                                                             _span._class("mw-headline")
@@ -3251,7 +3251,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "According to a report released on 30 September 2011, 34 of the world's top 100 Web sites were using HTML5 – the adoption led by ",
@@ -3283,7 +3283,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "Fortune 500"
                                                                     )
-                                                                ),
+                                                            ),
                                                             " U.S. companies implemented HTML5 on their corporate websites.",
                                                             _sup._id("cite_ref-75")
                                                                 ._class("reference")
@@ -3293,7 +3293,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[74]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "Since 2014, HTML5 is at least ",
@@ -3303,7 +3303,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     "partially supported by most popular layout engines"
                                                                 ),
                                                             "."
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h3.Content(
                                                             _span._class("mw-headline")
@@ -3327,24 +3327,24 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "The following is a cursory list of differences and some specific examples."
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _ul.Content(
                                                             "\n",
                                                             _li.Content(
                                                                 "New parsing rules: oriented towards flexible parsing and compatibility; not based on SGML"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "Ability to use inline SVG and MathML in ",
                                                                 _code.Content(
                                                                     "text/html"
-                                                                    )
-                                                                ),
+                                                                )
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "New ",
@@ -3356,91 +3356,91 @@ namespace ProgressOnderwijsUtils.Tests
                                                                 ": ",
                                                                 _code.Content(
                                                                     "article"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "aside"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "audio"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "bdi"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "canvas"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "command"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "data"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "datalist"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "details"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "embed"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "figcaption"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "figure"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "footer"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "header"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "keygen"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "mark"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "meter"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "nav"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "output"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "progress"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "rp"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "rt"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     _a._href("/wiki/Ruby_(annotation_markup)")
@@ -3449,70 +3449,70 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         .Content(
                                                                             "ruby"
                                                                         )
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "section"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "source"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "summary"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "time"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "track"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "video"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "wbr"
-                                                                    )
-                                                                ),
+                                                                )
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "New types of form controls: ",
                                                                 _code.Content(
                                                                     "dates and times"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "email"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "url"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "search"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "number"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "range"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "tel"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "color"
-                                                                    ),
+                                                                ),
                                                                 _sup._id("cite_ref-76")
                                                                     ._class("reference")
                                                                     .Content(
@@ -3521,7 +3521,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "[75]"
                                                                             )
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "New ",
@@ -3533,108 +3533,108 @@ namespace ProgressOnderwijsUtils.Tests
                                                                 ": ",
                                                                 _code.Content(
                                                                     "charset"
-                                                                    ),
+                                                                ),
                                                                 " (on ",
                                                                 _code.Content(
                                                                     "meta"
-                                                                    ),
+                                                                ),
                                                                 "), ",
                                                                 _code.Content(
                                                                     "async"
-                                                                    ),
+                                                                ),
                                                                 " (on ",
                                                                 _code.Content(
                                                                     "script"
-                                                                    ),
-                                                                ")"
                                                                 ),
+                                                                ")"
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "Global attributes (that can be applied for every element): ",
                                                                 _code.Content(
                                                                     "id"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "tabindex"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "hidden"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "data-*"
-                                                                    ),
-                                                                " (custom data attributes)"
                                                                 ),
+                                                                " (custom data attributes)"
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 "Deprecated elements will be dropped altogether: ",
                                                                 _code.Content(
                                                                     "acronym"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "applet"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "basefont"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "big"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "center"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "dir"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "font"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "frame"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _a._href("/wiki/Framing_(World_Wide_Web)")
                                                                     ._title("Framing (World Wide Web)")
                                                                     .Content(
                                                                         _code.Content(
                                                                             "frameset"
-                                                                            )
+                                                                        )
                                                                     ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "isindex"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "noframes"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "strike"
-                                                                    ),
+                                                                ),
                                                                 ", ",
                                                                 _code.Content(
                                                                     "tt"
-                                                                    )
-                                                                ),
-                                                            "\n"
+                                                                )
                                                             ),
+                                                            "\n"
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "dev.w3.org provides the latest ",
                                                             _i.Content(
                                                                 "Editors Draft"
-                                                                ),
+                                                            ),
                                                             " of \"HTML5 differences from HTML 4\",",
                                                             _sup._id("cite_ref-77")
                                                                 ._class("reference")
@@ -3645,7 +3645,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         )
                                                                 ),
                                                             " which provides a complete outline of additions, removals and changes between HTML5 and HTML 4."
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h2.Content(
                                                             _span._class("mw-headline")
@@ -3669,7 +3669,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _div._class("thumb tright")
                                                             .Content(
@@ -3716,7 +3716,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[77]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "When initially presenting it to the public, the W3C announced the HTML5 logo as a \"general-purpose visual identity for a broad set of open web technologies, including HTML5, ",
@@ -3767,7 +3767,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[77]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h2.Content(
                                                             _span._class("mw-headline")
@@ -3791,7 +3791,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "Industry players including the ",
@@ -3949,7 +3949,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[90]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "Manu Sporny, a member of the ",
@@ -3977,7 +3977,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[92]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _p.Content(
                                                             "The initial enablers for DRM in HTML5 were Google",
@@ -4090,7 +4090,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "[99]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _h2.Content(
                                                             _span._class("mw-headline")
@@ -4114,7 +4114,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _div.Attribute("role", "navigation")
                                                             .Attribute("aria-label", "Portals")
@@ -4191,7 +4191,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "Cache manifest in HTML5"
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/Comparison_of_layout_engines_(HTML5)")
@@ -4199,7 +4199,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "Comparison of layout engines (HTML5)"
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/HTML5_in_mobile_devices")
@@ -4207,7 +4207,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "HTML5 in mobile devices"
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/Polyglot_HTML5")
@@ -4216,7 +4216,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "Polyglot HTML5"
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/Ian_Hickson")
@@ -4225,7 +4225,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "Ian Hickson"
                                                                     ),
                                                                 ", editor of HTML5 specs"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._href("/wiki/David_Hyatt")
@@ -4235,9 +4235,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "David Hyatt"
                                                                     ),
                                                                 ", editor of HTML5 specs"
-                                                                ),
-                                                            "\n"
                                                             ),
+                                                            "\n"
+                                                        ),
                                                         "\n",
                                                         _h2.Content(
                                                             _span._class("mw-headline")
@@ -4261,7 +4261,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _div._class("reflist")
                                                             ._style("list-style-type: lower-alpha;")
@@ -4279,7 +4279,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -4322,7 +4322,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _div._class("reflist columns references-column-width")
                                                             ._style("-moz-column-width: 30em; -webkit-column-width: 30em; column-width: 30em; list-style-type: decimal;")
@@ -4340,7 +4340,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -4383,9 +4383,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "a"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-finalars_2-1")
@@ -4394,9 +4394,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "b"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-finalars_2-2")
@@ -4405,9 +4405,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "c"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             )
                                                                                     ),
                                                                                 " ",
@@ -4452,7 +4452,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -4487,7 +4487,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -4503,7 +4503,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "W3C Blog"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 ". 28 October 2014",
                                                                                                 _span._class("reference-accessdate")
                                                                                                     .Content(
@@ -4536,7 +4536,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -4552,7 +4552,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "Working Draft"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 ". ",
                                                                                                 _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                                     ._title("World Wide Web Consortium")
@@ -4590,7 +4590,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             "APIs"
                                                                                                         ),
                                                                                                     " for both HTML and XHTML. HTML5 will replace these documents."
-                                                                                                    )
+                                                                                                )
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML5+Differences+from+HTML4&rft.date=2011-04-05&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2F2011%2FWD-html5-diff-20110405%2F&rft.jtitle=Working+Draft&rft.pages=Introduction&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
                                                                                             ._class("Z3988")
@@ -4614,9 +4614,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "a"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-HTML5diffHTML4_7-1")
@@ -4625,9 +4625,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "b"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-HTML5diffHTML4_7-2")
@@ -4636,9 +4636,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "c"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             )
                                                                                     ),
                                                                                 " ",
@@ -4690,7 +4690,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -4706,7 +4706,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "HTML5"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 ". 16 November 2010",
                                                                                                 _span._class("reference-accessdate")
                                                                                                     .Content(
@@ -4739,7 +4739,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -4791,9 +4791,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "a"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-:1_10-1")
@@ -4802,9 +4802,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "b"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             )
                                                                                     ),
                                                                                 " ",
@@ -4855,7 +4855,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -4905,7 +4905,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -4955,7 +4955,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5005,7 +5005,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5050,7 +5050,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5095,7 +5095,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5145,7 +5145,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5161,7 +5161,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "Fox News"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 ". 29 April 2010."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=FOX+News%3A+No+Flash+on+the+iPhone%3F+Apple%27s+Steve+Jobs+Finally+Explains+Why&rft.date=2010-04-29&rft.genre=article&rft_id=http%3A%2F%2Fwww.foxnews.com%2Fscitech%2F2010%2F04%2F29%2Fflash-iphone-apples-steve-jobs-finally-explains%2F&rft.jtitle=Fox+News&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -5184,7 +5184,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5200,7 +5200,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "Time"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 ". 29 April 2010."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=TIME%3A+Steve+Jobs%3A+%98Flash+is+No+Longer+Necessary%99+and+Other+Musings&rft.date=2010-04-29&rft.genre=article&rft_id=http%3A%2F%2Ftechland.time.com%2F2010%2F04%2F29%2Fsteve-jobs-flash-is-no-longer-necessary-and-other-musings%2F&rft.jtitle=Time&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -5223,7 +5223,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5264,7 +5264,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5299,7 +5299,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5348,7 +5348,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5392,7 +5392,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5437,7 +5437,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5488,7 +5488,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5533,7 +5533,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5578,7 +5578,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5622,7 +5622,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5638,7 +5638,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "FAQ"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 ". WHAT Working Group",
                                                                                                 _span._class("reference-accessdate")
                                                                                                     .Content(
@@ -5671,7 +5671,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5721,7 +5721,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5765,7 +5765,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5810,7 +5810,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5826,7 +5826,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "www.w3.org"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 _span._class("reference-accessdate")
                                                                                                     .Content(
                                                                                                         ". Retrieved ",
@@ -5858,7 +5858,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5908,7 +5908,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5931,7 +5931,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -5975,7 +5975,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6020,7 +6020,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6044,7 +6044,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6068,7 +6068,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6092,7 +6092,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6136,7 +6136,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6160,7 +6160,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6184,7 +6184,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6201,7 +6201,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "instantshift.com"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 _span._class("reference-accessdate")
                                                                                                     .Content(
                                                                                                         ". Retrieved ",
@@ -6233,7 +6233,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6278,7 +6278,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6294,7 +6294,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "whatwg.org"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.whatwg.org%2Fspecs%2Fweb-apps%2Fcurrent-work%2Fmultipage%2Fforms.html&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -6317,7 +6317,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6340,7 +6340,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6370,7 +6370,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6401,7 +6401,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6417,7 +6417,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "whatwg.org"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Fembedded-content.html%23media-elements&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -6440,7 +6440,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6470,7 +6470,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6486,7 +6486,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "whatwg.org"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Finteraction.html%23editing-2&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -6509,7 +6509,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6525,7 +6525,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "whatwg.org"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Finteraction.html%23dnd&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -6548,7 +6548,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6564,7 +6564,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "w3.org"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML+elements%2C+HTML5&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2FTR%2Fhtml-markup%2Felements.html%23elements&rft.jtitle=w3.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -6587,7 +6587,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6603,7 +6603,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "whatwg.org"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Fembedded-content.html%23mime-types&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -6626,7 +6626,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6642,7 +6642,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "whatwg.org"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Fwebappapis.html%23custom-handlers&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -6665,7 +6665,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6681,7 +6681,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "whatwg.org"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "."
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.atitle=HTML&rft.genre=unknown&rft_id=https%3A%2F%2Fhtml.spec.whatwg.org%2Fmultipage%2Fmicrodata.html%23microdata&rft.jtitle=whatwg.org&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Ajournal")
@@ -6704,7 +6704,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6734,7 +6734,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6764,7 +6764,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6809,7 +6809,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6839,7 +6839,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6869,7 +6869,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6913,7 +6913,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6943,7 +6943,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -6973,7 +6973,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7003,7 +7003,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7047,7 +7047,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7083,7 +7083,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7107,7 +7107,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7131,7 +7131,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7175,7 +7175,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7226,7 +7226,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7274,9 +7274,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "a"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-whatfaq_73-1")
@@ -7285,9 +7285,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "b"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             )
                                                                                     ),
                                                                                 " ",
@@ -7304,7 +7304,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "WHATWG"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 _span._class("reference-accessdate")
                                                                                                     .Content(
                                                                                                         ". Retrieved ",
@@ -7336,7 +7336,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7381,7 +7381,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7406,7 +7406,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7456,7 +7456,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7472,7 +7472,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "FAQ"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 ". ",
                                                                                                 _a._href("/wiki/World_Wide_Web_Consortium")
                                                                                                     ._title("World Wide Web Consortium")
@@ -7513,9 +7513,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "a"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-logo-faq_78-1")
@@ -7524,9 +7524,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "b"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             )
                                                                                     ),
                                                                                 " ",
@@ -7558,7 +7558,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _q.Content(
                                                                                                     "Is this W3C's \"official\" logo for HTML5? Yes, as of 1 April 2011."
-                                                                                                    )
+                                                                                                )
                                                                                             ),
                                                                                         _span._title("ctx_ver=Z39.88-2004&rfr_id=info%3Asid%2Fen.wikipedia.org%3AHTML5&rft.btitle=W3C+HTML5+Logo+FAQ&rft.genre=unknown&rft_id=http%3A%2F%2Fwww.w3.org%2Fhtml%2Flogo%2Ffaq.html&rft.pub=World+Wide+Web+Consortium&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Abook")
                                                                                             ._class("Z3988")
@@ -7582,9 +7582,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "a"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-waspopenletter_79-1")
@@ -7593,9 +7593,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "b"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             )
                                                                                     ),
                                                                                 " ",
@@ -7647,7 +7647,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7692,7 +7692,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7716,7 +7716,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7752,7 +7752,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7788,7 +7788,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7829,7 +7829,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7875,7 +7875,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7919,7 +7919,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7943,7 +7943,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -7988,7 +7988,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -8032,7 +8032,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -8078,9 +8078,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "a"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-lowering-your-standards_91-1")
@@ -8089,9 +8089,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "b"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             )
                                                                                     ),
                                                                                 " ",
@@ -8142,7 +8142,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -8159,7 +8159,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 ". ",
                                                                                                 _i.Content(
                                                                                                     "The Beautiful, Tormented Machine"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 ". Manu Sporny. Archived from ",
                                                                                                 _a._rel("nofollow")
                                                                                                     ._class("external text")
@@ -8198,7 +8198,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -8219,7 +8219,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                         .Content(
                                                                                                             "Webmonkey"
                                                                                                         )
-                                                                                                    ),
+                                                                                                ),
                                                                                                 ". Condé Nast. Archived from ",
                                                                                                 _a._rel("nofollow")
                                                                                                     ._class("external text")
@@ -8258,7 +8258,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -8293,7 +8293,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -8328,7 +8328,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -8354,9 +8354,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "a"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-gal_97-1")
@@ -8365,9 +8365,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "b"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             )
                                                                                     ),
                                                                                 " ",
@@ -8415,9 +8415,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "a"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             ),
                                                                                         " ",
                                                                                         _a._href("#cite_ref-baker_98-1")
@@ -8426,9 +8426,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     _i.Content(
                                                                                                         _b.Content(
                                                                                                             "b"
-                                                                                                            )
                                                                                                         )
                                                                                                     )
+                                                                                                )
                                                                                             )
                                                                                     ),
                                                                                 " ",
@@ -8474,7 +8474,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -8519,7 +8519,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                 .Content(
                                                                                                     "^"
                                                                                                 )
-                                                                                            )
+                                                                                        )
                                                                                     ),
                                                                                 " ",
                                                                                 _span._class("reference-text")
@@ -8580,7 +8580,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "]"
                                                                         )
                                                                 )
-                                                            ),
+                                                        ),
                                                         "\n",
                                                         _table.Attribute("role", "presentation")
                                                             ._class("mbox-small plainlinks sistersitebox")
@@ -8617,14 +8617,14 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "HTML5"
                                                                                             )
-                                                                                        )
-                                                                                    ),
+                                                                                    )
+                                                                                ),
                                                                                 "."
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n"
-                                                                    )
+                                                                )
                                                             ),
                                                         "\n",
                                                         _table._class("vertical-navbox nowraplinks infobox")
@@ -8647,12 +8647,12 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 "\n",
                                                                                 _b.Content(
                                                                                     "HTML5"
-                                                                                    ),
+                                                                                ),
                                                                                 "\n",
                                                                                 _hr
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n",
                                                                     _tr.Content(
                                                                         "\n",
@@ -8668,7 +8668,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Resources in your library"
                                                                                             )
-                                                                                        ),
+                                                                                    ),
                                                                                     "\n",
                                                                                     _li.Content(
                                                                                         _a._class("external text")
@@ -8676,15 +8676,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                             .Content(
                                                                                                 "Resources in other libraries"
                                                                                             )
-                                                                                        ),
-                                                                                    "\n"
                                                                                     ),
+                                                                                    "\n"
+                                                                                ),
                                                                                 "\n"
                                                                             ),
                                                                         "\n"
-                                                                        ),
+                                                                    ),
                                                                     "\n"
-                                                                    )
+                                                                )
                                                             ),
                                                         "\n",
                                                         _ul.Content(
@@ -8697,7 +8697,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "HTML Working Group"
                                                                     ),
                                                                 ", HTML5 publications, specifications, and notes"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._rel("nofollow")
@@ -8712,7 +8712,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         "Google"
                                                                     )
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._rel("nofollow")
@@ -8722,7 +8722,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "Mozilla Demo Studio"
                                                                     ),
                                                                 ", Demos of HTML5 implementations"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._rel("nofollow")
@@ -8732,7 +8732,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "HTML5 Frontend Comparison"
                                                                     ),
                                                                 ", Sheet showing HTML5 vs. other main frontend techniques"
-                                                                ),
+                                                            ),
                                                             "\n",
                                                             _li.Content(
                                                                 _a._rel("nofollow")
@@ -8742,9 +8742,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "HTML.next"
                                                                     ),
                                                                 ", Feature requests for future versions of HTML"
-                                                                ),
-                                                            "\n"
                                                             ),
+                                                            "\n"
+                                                        ),
                                                         "\n",
                                                         _div.Attribute("role", "navigation")
                                                             ._class("navbox")
@@ -8808,7 +8808,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                 )
                                                                                                         ),
                                                                                                     "\n"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "\n"
                                                                                             ),
                                                                                         "\n",
@@ -8824,7 +8824,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -8856,7 +8856,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Adobe Flash"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Apache_Flex")
@@ -8864,7 +8864,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Apache Flex"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Apache_Pivot")
@@ -8872,7 +8872,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Apache Pivot"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Cappuccino_(application_development_framework)")
@@ -8880,7 +8880,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Cappuccino"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Curl_(programming_language)")
@@ -8888,7 +8888,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Curl"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Google_Web_Toolkit")
@@ -8896,14 +8896,14 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Google Web Toolkit"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._class("mw-selflink selflink")
                                                                                                             .Content(
                                                                                                                 "HTML5"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/JavaFX")
@@ -8911,7 +8911,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "JavaFX"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/JVx_(Framework)")
@@ -8919,7 +8919,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "JVx"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Lively_Kernel")
@@ -8927,7 +8927,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Lively Kernel"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Moonlight_(runtime)")
@@ -8935,7 +8935,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Moonlight"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Microsoft_Silverlight")
@@ -8943,7 +8943,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Silverlight"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/OpenLaszlo")
@@ -8951,7 +8951,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "OpenLaszlo"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Qt_Quick")
@@ -8959,7 +8959,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Qt Quick"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/SproutCore")
@@ -8967,7 +8967,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "SproutCore"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/XULRunner")
@@ -8975,7 +8975,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "XULRunner"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Meteor_(web_framework)")
@@ -8983,15 +8983,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Meteor"
                                                                                                             )
-                                                                                                        ),
-                                                                                                    "\n"
                                                                                                     ),
+                                                                                                    "\n"
+                                                                                                ),
                                                                                                 "\n"
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -9028,7 +9028,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Adobe AIR"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Curl_(programming_language)")
@@ -9036,7 +9036,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Curl"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Fluid_(web_browser)")
@@ -9044,7 +9044,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Fluid"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Gollum_browser")
@@ -9052,7 +9052,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Gollum"
                                                                                                             )
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Google_Chrome")
@@ -9069,11 +9069,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                     .Content(
                                                                                                                         "Gears"
                                                                                                                     )
-                                                                                                                ),
-                                                                                                            "\n"
                                                                                                             ),
-                                                                                                        "\n"
+                                                                                                            "\n"
                                                                                                         ),
+                                                                                                        "\n"
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _li.Content(
                                                                                                         _a._href("/wiki/Mozilla_Prism")
@@ -9081,15 +9081,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Mozilla Prism"
                                                                                                             )
-                                                                                                        ),
-                                                                                                    "\n"
                                                                                                     ),
+                                                                                                    "\n"
+                                                                                                ),
                                                                                                 "\n"
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -9124,8 +9124,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "Category"
                                                                                                             )
-                                                                                                        )
-                                                                                                    ),
+                                                                                                    )
+                                                                                                ),
                                                                                                 "\n",
                                                                                                 _li.Content(
                                                                                                     _b.Content(
@@ -9143,18 +9143,18 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                             .Content(
                                                                                                                 "List of frameworks"
                                                                                                             )
-                                                                                                        )
-                                                                                                    ),
-                                                                                                "\n"
+                                                                                                    )
                                                                                                 ),
-                                                                                            "\n"
+                                                                                                "\n"
                                                                                             ),
+                                                                                            "\n"
+                                                                                        ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n"
-                                                                            )
+                                                                        )
                                                                     ),
                                                                 "\n"
                                                             ),
@@ -9221,7 +9221,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                 )
                                                                                                         ),
                                                                                                     "\n"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "\n"
                                                                                             ),
                                                                                         "\n",
@@ -9237,7 +9237,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -9294,7 +9294,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "ARIA"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Canonical_XML")
@@ -9302,7 +9302,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Canonical XML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Compound_Document_Format")
@@ -9310,7 +9310,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "CDF"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Cascading_Style_Sheets")
@@ -9318,7 +9318,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "CSS"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Document_Object_Model")
@@ -9326,7 +9326,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "DOM"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/W3C_Geolocation_API")
@@ -9334,7 +9334,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Geolocation API"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/HTML")
@@ -9348,7 +9348,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                         "HTML5"
                                                                                                                                     ),
                                                                                                                                 ")"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Internationalization_Tag_Set")
@@ -9356,7 +9356,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "ITS"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/JSON-LD")
@@ -9364,7 +9364,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "JSON-LD"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/MathML")
@@ -9372,7 +9372,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "MathML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Web_Ontology_Language")
@@ -9380,7 +9380,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "OWL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/P3P")
@@ -9388,7 +9388,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "P3P"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Pronunciation_Lexicon_Specification")
@@ -9396,7 +9396,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "PLS"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Resource_Description_Framework")
@@ -9404,7 +9404,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "RDF"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/RDF_Schema")
@@ -9412,7 +9412,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "RDF Schema"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Semantic_Interpretation_for_Speech_Recognition")
@@ -9420,7 +9420,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SISR"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Simple_Knowledge_Organization_System")
@@ -9428,7 +9428,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SKOS"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Synchronized_Multimedia_Integration_Language")
@@ -9436,7 +9436,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SMIL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/SOAP")
@@ -9444,7 +9444,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SOAP"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Speech_Recognition_Grammar_Specification")
@@ -9452,7 +9452,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SRGS"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Subresource_Integrity")
@@ -9460,7 +9460,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SRI"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Speech_Synthesis_Markup_Language")
@@ -9468,7 +9468,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SSML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Scalable_Vector_Graphics")
@@ -9476,7 +9476,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SVG"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/SCXML")
@@ -9484,7 +9484,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SCXML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/SPARQL")
@@ -9492,7 +9492,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SPARQL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Timed_text")
@@ -9500,7 +9500,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Timed text"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/VoiceXML")
@@ -9508,7 +9508,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "VoiceXML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Web_storage")
@@ -9516,7 +9516,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Web storage"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Web_Services_Description_Language")
@@ -9524,7 +9524,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "WSDL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XForms")
@@ -9532,7 +9532,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XForms"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XHTML")
@@ -9540,7 +9540,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XHTML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XHTML%2BRDFa")
@@ -9548,7 +9548,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XHTML+RDFa"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XInclude")
@@ -9556,7 +9556,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XInclude"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XLink")
@@ -9564,7 +9564,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XLink"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML")
@@ -9572,7 +9572,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML_Base")
@@ -9580,7 +9580,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XML Base"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML_Encryption")
@@ -9588,7 +9588,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XML Encryption"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML_Events")
@@ -9596,7 +9596,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XML Events"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML_Information_Set")
@@ -9604,7 +9604,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XML Information Set"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML_namespace")
@@ -9612,7 +9612,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XML namespace"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML_Schema_(W3C)")
@@ -9620,7 +9620,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XML Schema"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML_Signature")
@@ -9628,7 +9628,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XML Signature"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML-binary_Optimized_Packaging")
@@ -9636,7 +9636,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XOP"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XPath")
@@ -9644,7 +9644,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XPath"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XPath_2.0")
@@ -9652,7 +9652,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XPath 2.0"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XPointer")
@@ -9660,7 +9660,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XPointer"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XProc")
@@ -9668,7 +9668,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XProc"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XQuery")
@@ -9676,7 +9676,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XQuery"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XSL")
@@ -9684,7 +9684,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XSL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XSL_Formatting_Objects")
@@ -9692,7 +9692,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XSL-FO"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XSLT")
@@ -9707,15 +9707,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                         "elements"
                                                                                                                                     ),
                                                                                                                                 ")"
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -9747,7 +9747,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XAdES"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XHTML%2BSMIL")
@@ -9755,7 +9755,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XHTML+SMIL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Extensible_User_Interface_Protocol")
@@ -9763,15 +9763,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XUP"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -9803,7 +9803,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "CCXML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/CURIE")
@@ -9811,7 +9811,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "CURIE"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Encrypted_Media_Extensions")
@@ -9819,7 +9819,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "EME"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/InkML")
@@ -9827,7 +9827,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "InkML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Media_Source_Extensions")
@@ -9835,7 +9835,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "MSE"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Rule_Interchange_Format")
@@ -9843,7 +9843,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "RIF"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/SMIL_Timesheets")
@@ -9851,7 +9851,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SMIL Timesheets"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/SXBL")
@@ -9859,7 +9859,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "sXBL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Web_Integration_Compound_Document")
@@ -9867,7 +9867,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "WICD"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Extensible_Forms_Description_Language")
@@ -9875,7 +9875,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XFDL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XFrames")
@@ -9883,7 +9883,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XFrames"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XBL")
@@ -9891,7 +9891,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XBL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XMLHttpRequest")
@@ -9899,15 +9899,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XMLHttpRequest"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -9939,15 +9939,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Web Content Accessibility Guidelines"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -9979,7 +9979,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Multimodal Interaction Activity (MMI)"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/W3C_Markup_Validation_Service")
@@ -9987,7 +9987,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Markup Validation Service"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Web_Accessibility_Initiative")
@@ -9995,7 +9995,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Web Accessibility Initiative"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/WebPlatform")
@@ -10003,15 +10003,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "WebPlatform"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -10043,7 +10043,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "C-HTML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Handheld_Device_Markup_Language")
@@ -10051,7 +10051,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "HDML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/JavaScript_Style_Sheets")
@@ -10059,7 +10059,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "JSSS"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Precision_Graphics_Markup_Language")
@@ -10067,7 +10067,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "PGML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Vector_Markup_Language")
@@ -10075,7 +10075,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "VML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XHTML%2BMathML%2BSVG")
@@ -10083,22 +10083,22 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XHTML+MathML+SVG"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n"
-                                                                                                    )
+                                                                                                )
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -10145,7 +10145,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Advisory Committee (AC)"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/World_Wide_Web_Foundation")
@@ -10153,15 +10153,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "World Wide Web Foundation"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -10194,7 +10194,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Advisory Board (AB)"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/w/index.php?title=Technical_Architecture_Group&action=edit&redlink=1")
@@ -10203,15 +10203,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Technical Architecture Group (TAG)"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -10243,7 +10243,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "CSS"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/HTML_Working_Group")
@@ -10251,7 +10251,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "HTML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/w/index.php?title=Geolocation_Working_Group&action=edit&redlink=1")
@@ -10260,7 +10260,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Geolocation"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/w/index.php?title=Social_Web_Working_Group&action=edit&redlink=1")
@@ -10269,7 +10269,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Social Web"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/SVG_Working_Group")
@@ -10277,7 +10277,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SVG"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/WHATWG")
@@ -10285,7 +10285,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Web Hypertext Application Technology (WHATWG)"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/w/index.php?title=Web_Platform_Working_Group&action=edit&redlink=1")
@@ -10294,15 +10294,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Web Platform"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -10334,7 +10334,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Device Description (DDWG)"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/w/index.php?title=WebOnt&action=edit&redlink=1")
@@ -10343,22 +10343,22 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "WebOnt (Semantic Web Activity)"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n"
-                                                                                                    )
+                                                                                                )
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -10404,7 +10404,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "CERN httpd"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Libwww")
@@ -10412,15 +10412,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Libwww"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -10460,7 +10460,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                 "(1990–)"
                                                                                                                                             )
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Arena_(web_browser)")
@@ -10472,7 +10472,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                 "(1993–98)"
                                                                                                                                             )
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Agora_(web_browser)")
@@ -10484,7 +10484,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                 "(1994–97)"
                                                                                                                                             )
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Argo_(web_browser)")
@@ -10496,7 +10496,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                 "(1994–97)"
                                                                                                                                             )
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Amaya_(web_editor)")
@@ -10508,22 +10508,22 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                 "(browser/editor, 1996–2012)"
                                                                                                                                             )
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n"
-                                                                                                    )
+                                                                                                )
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -10565,7 +10565,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                     .Content(
                                                                                                                         "Steering Committee (IW3C2)"
                                                                                                                     )
-                                                                                                                ),
+                                                                                                            ),
                                                                                                             "\n",
                                                                                                             _li.Content(
                                                                                                                 _a._href("/wiki/First_International_Conference_on_the_World-Wide_Web")
@@ -10573,21 +10573,21 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                     .Content(
                                                                                                                         "First conference (\"WWW1\", 1994)"
                                                                                                                     )
-                                                                                                                ),
-                                                                                                            "\n"
                                                                                                             ),
-                                                                                                        "\n"
+                                                                                                            "\n"
                                                                                                         ),
-                                                                                                    "\n"
+                                                                                                        "\n"
                                                                                                     ),
+                                                                                                    "\n"
+                                                                                                ),
                                                                                                 "\n"
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n"
-                                                                            )
+                                                                        )
                                                                     ),
                                                                 "\n"
                                                             ),
@@ -10654,7 +10654,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                 )
                                                                                                         ),
                                                                                                     "\n"
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "\n"
                                                                                             ),
                                                                                         "\n",
@@ -10670,7 +10670,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -10704,11 +10704,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                 .Content(
                                                                                                                     "lightweight"
                                                                                                                 )
-                                                                                                            ),
-                                                                                                        "\n"
                                                                                                         ),
-                                                                                                    "\n"
+                                                                                                        "\n"
                                                                                                     ),
+                                                                                                    "\n"
+                                                                                                ),
                                                                                                 "\n",
                                                                                                 _li.Content(
                                                                                                     _a._href("/wiki/History_of_the_web_browser")
@@ -10716,7 +10716,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                         .Content(
                                                                                                             "History"
                                                                                                         )
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "\n",
                                                                                                 _li.Content(
                                                                                                     _a._href("/wiki/List_of_web_browsers")
@@ -10733,11 +10733,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                 .Content(
                                                                                                                     "for Unix"
                                                                                                                 )
-                                                                                                            ),
-                                                                                                        "\n"
                                                                                                         ),
-                                                                                                    "\n"
+                                                                                                        "\n"
                                                                                                     ),
+                                                                                                    "\n"
+                                                                                                ),
                                                                                                 "\n",
                                                                                                 _li.Content(
                                                                                                     _a._href("/wiki/Timeline_of_web_browsers")
@@ -10745,7 +10745,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                         .Content(
                                                                                                             "Timeline"
                                                                                                         )
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "\n",
                                                                                                 _li.Content(
                                                                                                     _a._href("/wiki/Usage_share_of_web_browsers")
@@ -10753,15 +10753,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                         .Content(
                                                                                                             "Usage share"
                                                                                                         )
-                                                                                                    ),
-                                                                                                "\n"
                                                                                                 ),
-                                                                                            "\n"
+                                                                                                "\n"
                                                                                             ),
+                                                                                            "\n"
+                                                                                        ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -10809,7 +10809,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Ad filtering"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Augmented_browsing")
@@ -10817,7 +10817,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Augmented browsing"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Bookmark_(World_Wide_Web)")
@@ -10834,7 +10834,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                             .Content(
                                                                                                                                                 "Bookmarklet"
                                                                                                                                             )
-                                                                                                                                        ),
+                                                                                                                                    ),
                                                                                                                                     "\n",
                                                                                                                                     _li.Content(
                                                                                                                                         _a._href("/wiki/Features_of_Firefox#Live_bookmarks")
@@ -10842,7 +10842,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                             .Content(
                                                                                                                                                 "Live bookmark"
                                                                                                                                             )
-                                                                                                                                        ),
+                                                                                                                                    ),
                                                                                                                                     "\n",
                                                                                                                                     _li.Content(
                                                                                                                                         _a._href("/wiki/Smart_Bookmarks")
@@ -10850,11 +10850,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                             .Content(
                                                                                                                                                 "Smart Bookmarks"
                                                                                                                                             )
-                                                                                                                                        ),
-                                                                                                                                    "\n"
                                                                                                                                     ),
-                                                                                                                                "\n"
+                                                                                                                                    "\n"
                                                                                                                                 ),
+                                                                                                                                "\n"
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Browser_extension")
@@ -10862,7 +10862,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Browser extension"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Browser_security")
@@ -10870,7 +10870,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Browser security"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Browser_synchronizer")
@@ -10887,11 +10887,11 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                             .Content(
                                                                                                                                                 "comparison"
                                                                                                                                             )
-                                                                                                                                        ),
-                                                                                                                                    "\n"
                                                                                                                                     ),
-                                                                                                                                "\n"
+                                                                                                                                    "\n"
                                                                                                                                 ),
+                                                                                                                                "\n"
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/HTTP_cookie")
@@ -10899,7 +10899,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Cookies"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Download_manager")
@@ -10907,7 +10907,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Download manager"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Favicon")
@@ -10915,7 +10915,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Favicon"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Incremental_search")
@@ -10923,7 +10923,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Incremental search"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Plug-in_(computing)")
@@ -10931,7 +10931,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Plug-in"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Privacy_mode")
@@ -10939,7 +10939,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Privacy mode"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Tab_(GUI)")
@@ -10947,7 +10947,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Tabs"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Universal_Edit_Button")
@@ -10955,15 +10955,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Universal Edit Button"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -10996,7 +10996,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Acid tests"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Cascading_Style_Sheets")
@@ -11004,7 +11004,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Cascading Style Sheets"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/HTML")
@@ -11012,14 +11012,14 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "HTML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._class("mw-selflink selflink")
                                                                                                                                     .Content(
                                                                                                                                         "HTML5"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/JavaScript")
@@ -11027,7 +11027,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "JavaScript"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/MathML")
@@ -11035,7 +11035,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "MathML"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Online_Certificate_Status_Protocol")
@@ -11043,7 +11043,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "OCSP"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Scalable_Vector_Graphics")
@@ -11051,7 +11051,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SVG"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/WebGL")
@@ -11059,7 +11059,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "WebGL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XHTML")
@@ -11067,15 +11067,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XHTML"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -11108,7 +11108,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "BrowserChoice.eu"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Revocation_list")
@@ -11117,7 +11117,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "CRL"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Hypertext_Transfer_Protocol")
@@ -11125,7 +11125,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "HTTP"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/HTTPS")
@@ -11133,7 +11133,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "HTTPS"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/ILoo")
@@ -11141,7 +11141,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "iLoo"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Internet_suite")
@@ -11149,7 +11149,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Internet suite"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Man-in-the-browser")
@@ -11157,7 +11157,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Man-in-the-browser"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Mobile_Web")
@@ -11165,7 +11165,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Mobile Web"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Offline_reader")
@@ -11173,7 +11173,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Offline reader"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Proxy_auto-config")
@@ -11181,7 +11181,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "PAC"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Pwn2Own")
@@ -11189,7 +11189,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Pwn2Own"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Rich_Internet_application")
@@ -11197,7 +11197,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Rich Internet application"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Site-specific_browser")
@@ -11205,7 +11205,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Site-specific browser"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/SPDY")
@@ -11213,7 +11213,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SPDY"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Transport_Layer_Security")
@@ -11221,7 +11221,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "SSL/TLS"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/WebSocket")
@@ -11229,7 +11229,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "WebSocket"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Graphical_control_element")
@@ -11238,7 +11238,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "Widget"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/World_Wide_Web")
@@ -11246,7 +11246,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "World Wide Web"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/Web_Proxy_Autodiscovery_Protocol")
@@ -11255,7 +11255,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "WPAD"
                                                                                                                                     )
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _li.Content(
                                                                                                                                 _a._href("/wiki/XML")
@@ -11263,22 +11263,22 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                     .Content(
                                                                                                                                         "XML"
                                                                                                                                     )
-                                                                                                                                ),
-                                                                                                                            "\n"
                                                                                                                             ),
+                                                                                                                            "\n"
+                                                                                                                        ),
                                                                                                                         "\n"
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n"
-                                                                                                    )
+                                                                                                )
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -11321,7 +11321,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -11383,7 +11383,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Brave"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Google_Chrome")
@@ -11391,7 +11391,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Chrome"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Comodo_Dragon")
@@ -11399,7 +11399,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Dragon"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Opera_(web_browser)")
@@ -11407,7 +11407,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Opera"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Sleipnir_(web_browser)")
@@ -11415,7 +11415,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Sleipnir"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/SlimBrowser")
@@ -11423,7 +11423,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Slimjet"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/SRWare_Iron")
@@ -11431,7 +11431,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "SRWare Iron"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/UC_Browser")
@@ -11439,7 +11439,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "UC Browser"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Vivaldi_(web_browser)")
@@ -11447,7 +11447,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Vivaldi"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Yandex_Browser")
@@ -11455,7 +11455,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Yandex Browser"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Sputnik_(search_engine)")
@@ -11463,7 +11463,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Sputnik"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/SafeZone")
@@ -11471,19 +11471,19 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "SafeZone"
                                                                                                                                                                     )
-                                                                                                                                                                ),
-                                                                                                                                                            "\n"
                                                                                                                                                             ),
-                                                                                                                                                        "\n"
+                                                                                                                                                            "\n"
                                                                                                                                                         ),
-                                                                                                                                                    "\n"
+                                                                                                                                                        "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -11522,8 +11522,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "AT&T Pogo"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Avant_Browser")
@@ -11531,7 +11531,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Avant"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11540,8 +11540,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Camino"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Firefox")
@@ -11558,7 +11558,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Conkeror"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/GNU_IceCat")
@@ -11566,7 +11566,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "GNU IceCat"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Comodo_IceDragon")
@@ -11574,7 +11574,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "IceDragon"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _i.Content(
@@ -11583,8 +11583,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                         .Content(
                                                                                                                                                                             "Swiftfox"
                                                                                                                                                                         )
-                                                                                                                                                                    )
-                                                                                                                                                                ),
+                                                                                                                                                                )
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _i.Content(
@@ -11593,8 +11593,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                         .Content(
                                                                                                                                                                             "Swiftweasel"
                                                                                                                                                                         )
-                                                                                                                                                                    )
-                                                                                                                                                                ),
+                                                                                                                                                                )
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/TenFourFox")
@@ -11602,7 +11602,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "TenFourFox"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Timberwolf_(web_browser)")
@@ -11610,7 +11610,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Timberwolf"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Tor_(anonymity_network)#Tor_Browser")
@@ -11618,7 +11618,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Tor Browser"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Waterfox")
@@ -11626,7 +11626,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Waterfox"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _i.Content(
@@ -11635,12 +11635,12 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                         .Content(
                                                                                                                                                                             "xB Browser"
                                                                                                                                                                         )
-                                                                                                                                                                    )
-                                                                                                                                                                ),
-                                                                                                                                                            "\n"
+                                                                                                                                                                )
                                                                                                                                                             ),
-                                                                                                                                                        "\n"
+                                                                                                                                                            "\n"
                                                                                                                                                         ),
+                                                                                                                                                        "\n"
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11649,8 +11649,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Galeon"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11659,8 +11659,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Ghostzilla"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/K-Meleon")
@@ -11668,7 +11668,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "K-Meleon"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11677,8 +11677,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Kazehakase"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Kirix_Strata")
@@ -11686,7 +11686,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Kirix Strata"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11695,8 +11695,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Lotus Symphony"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Lunascape")
@@ -11704,7 +11704,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Lunascape"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11713,7 +11713,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Mozilla"
                                                                                                                                                                 )
-                                                                                                                                                            ),
+                                                                                                                                                        ),
                                                                                                                                                         "\n",
                                                                                                                                                         _ul.Content(
                                                                                                                                                             "\n",
@@ -11724,8 +11724,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                         .Content(
                                                                                                                                                                             "Beonex Communicator"
                                                                                                                                                                         )
-                                                                                                                                                                    )
-                                                                                                                                                                ),
+                                                                                                                                                                )
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Classilla")
@@ -11733,7 +11733,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Classilla"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _i.Content(
@@ -11742,8 +11742,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                         .Content(
                                                                                                                                                                             "Netscape"
                                                                                                                                                                         )
-                                                                                                                                                                    )
-                                                                                                                                                                ),
+                                                                                                                                                                )
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/SeaMonkey")
@@ -11751,19 +11751,19 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "SeaMonkey"
                                                                                                                                                                     )
-                                                                                                                                                                ),
-                                                                                                                                                            "\n"
                                                                                                                                                             ),
-                                                                                                                                                        "\n"
+                                                                                                                                                            "\n"
                                                                                                                                                         ),
-                                                                                                                                                    "\n"
+                                                                                                                                                        "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -11802,8 +11802,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "AOL Explorer"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Avant_Browser")
@@ -11811,7 +11811,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Avant"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11820,8 +11820,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Deepnet Explorer"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/GreenBrowser")
@@ -11829,7 +11829,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "GreenBrowser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11838,8 +11838,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Internet Explorer"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Lunascape")
@@ -11847,7 +11847,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Lunascape"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Maxthon")
@@ -11855,7 +11855,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Maxthon"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11864,8 +11864,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "MediaBrowser"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/MenuBox")
@@ -11873,7 +11873,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "MenuBox"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11882,8 +11882,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "NeoPlanet"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11892,8 +11892,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "NetCaptor"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/SlimBrowser")
@@ -11901,7 +11901,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "SlimBrowser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/SpaceTime_(software)#SpaceTime_Browser")
@@ -11909,9 +11909,9 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 _i.Content(
                                                                                                                                                                     "SpaceTime"
-                                                                                                                                                                    )
+                                                                                                                                                                )
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -11920,8 +11920,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "UltraBrowser"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/WebbIE")
@@ -11929,7 +11929,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "WebbIE"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/ZAC_Browser")
@@ -11937,15 +11937,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "ZAC Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -11984,8 +11984,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Arora"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Avant_Browser")
@@ -11993,7 +11993,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Avant"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Dooble")
@@ -12001,7 +12001,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Dooble"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Epic_(web_browser)")
@@ -12009,7 +12009,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Epic"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12018,8 +12018,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Flock"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Fluid_(web_browser)")
@@ -12027,7 +12027,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Fluid"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/ICab")
@@ -12035,7 +12035,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "iCab"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Konqueror")
@@ -12043,7 +12043,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Konqueror"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Lunascape")
@@ -12051,7 +12051,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Lunascape"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Maxthon")
@@ -12059,7 +12059,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Maxthon"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Midori_(web_browser)")
@@ -12067,7 +12067,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Midori"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/OmniWeb")
@@ -12075,7 +12075,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "OmniWeb"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12084,8 +12084,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Origyn Web Browser"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Otter_Browser")
@@ -12093,7 +12093,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Otter Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/QtWeb")
@@ -12101,7 +12101,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "QtWeb"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/QupZilla")
@@ -12109,7 +12109,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "QupZilla"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Rekonq")
@@ -12117,7 +12117,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "rekonq"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Safari_(web_browser)")
@@ -12125,7 +12125,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Safari"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12134,8 +12134,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Shiira"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/SlimBrowser")
@@ -12143,7 +12143,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "SlimBoat"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Surf_(web_browser)")
@@ -12151,7 +12151,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "surf"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Torch_(browser)")
@@ -12159,7 +12159,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Torch"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Uzbl")
@@ -12167,7 +12167,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Uzbl"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/GNOME_Web")
@@ -12175,7 +12175,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Web"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/WebPositive")
@@ -12183,7 +12183,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "WebPositive"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Xombrero")
@@ -12191,15 +12191,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "xombrero"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -12237,7 +12237,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "ELinks"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12247,8 +12247,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Emacs/W3"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12257,8 +12257,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Line Mode Browser"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Links_(web_browser)")
@@ -12266,7 +12266,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Links"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Lynx_(web_browser)")
@@ -12274,7 +12274,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Lynx"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/W3m")
@@ -12282,15 +12282,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "w3m"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -12323,7 +12323,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "abaco"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12332,8 +12332,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Amaya"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12342,8 +12342,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Arachne"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12352,8 +12352,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Arena"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Charon_(web_browser)")
@@ -12361,7 +12361,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Charon"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Dillo")
@@ -12369,7 +12369,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Dillo"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Eww_(web_browser)")
@@ -12377,7 +12377,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "eww"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Gazelle_(web_browser)")
@@ -12385,7 +12385,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Gazelle"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12394,8 +12394,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "HotJava"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12404,8 +12404,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "IBM Home Page Reader"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12414,8 +12414,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "IBrowse"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/KidZui")
@@ -12423,7 +12423,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "KidZui"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Microsoft_Edge")
@@ -12431,7 +12431,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Microsoft Edge"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12440,8 +12440,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Mosaic"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12451,8 +12451,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Mothra"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12461,8 +12461,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "NetPositive"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/NetSurf")
@@ -12470,7 +12470,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "NetSurf"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Pale_Moon_(web_browser)")
@@ -12478,29 +12478,29 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Pale Moon"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n"
-                                                                                                                            )
+                                                                                                                        )
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n"
-                                                                                                    )
+                                                                                                )
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -12543,7 +12543,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -12597,7 +12597,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Android Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Chromium_(web_browser)")
@@ -12614,7 +12614,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Brave"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Google_Chrome")
@@ -12622,7 +12622,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Chrome"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Opera_Mobile")
@@ -12630,7 +12630,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Opera Mobile"
                                                                                                                                                                     )
-                                                                                                                                                                ),
+                                                                                                                                                            ),
                                                                                                                                                             "\n",
                                                                                                                                                             _li.Content(
                                                                                                                                                                 _a._href("/wiki/Amazon_Silk")
@@ -12638,19 +12638,19 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                     .Content(
                                                                                                                                                                         "Silk"
                                                                                                                                                                     )
-                                                                                                                                                                ),
-                                                                                                                                                            "\n"
                                                                                                                                                             ),
-                                                                                                                                                        "\n"
+                                                                                                                                                            "\n"
                                                                                                                                                         ),
-                                                                                                                                                    "\n"
+                                                                                                                                                        "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -12688,7 +12688,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Firefox for Android"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12697,8 +12697,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "MicroB"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12707,16 +12707,16 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Minimo"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
+                                                                                                                                                        )
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -12754,15 +12754,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Opera Mini"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -12800,15 +12800,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Maxthon"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -12846,7 +12846,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "BOLT"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Dolphin_Browser")
@@ -12854,7 +12854,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Dolphin Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Firefox_for_iOS")
@@ -12862,7 +12862,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Firefox for iOS"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Maxthon")
@@ -12870,7 +12870,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Maxthon"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Mercury_Browser")
@@ -12878,7 +12878,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Mercury Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Nokia_Browser_for_Symbian")
@@ -12886,7 +12886,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Nokia Browser for Symbian"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Rockmelt")
@@ -12894,7 +12894,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Rockmelt"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Safari_(web_browser)")
@@ -12902,7 +12902,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Safari"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Steel_(web_browser)")
@@ -12910,15 +12910,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Steel"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -12951,7 +12951,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Blazer"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/CM_Browser")
@@ -12960,7 +12960,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "CM Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12969,8 +12969,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Deepfish"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/IbisBrowser")
@@ -12978,7 +12978,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "ibisBrowser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12987,8 +12987,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Internet Explorer Mobile"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -12997,8 +12997,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Iris Browser"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Konqueror#Konqueror_Embedded")
@@ -13006,7 +13006,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Konqueror Embedded"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Microsoft_Edge")
@@ -13014,7 +13014,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Microsoft Edge"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/NetFront")
@@ -13022,7 +13022,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "NetFront"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -13031,8 +13031,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Nokia Xpress"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -13041,8 +13041,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Skweezer"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -13051,8 +13051,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Skyfire"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _i.Content(
@@ -13061,8 +13061,8 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "Teashark"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
+                                                                                                                                                        )
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/ThunderHawk")
@@ -13070,7 +13070,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "ThunderHawk"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/UC_Browser")
@@ -13078,7 +13078,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "UC Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Vision_Mobile_Browser")
@@ -13086,7 +13086,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Vision"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/WinWAP")
@@ -13094,33 +13094,33 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "WinWAP"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         "Smooz"
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n"
-                                                                                                                            )
+                                                                                                                        )
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n"
-                                                                                                    )
+                                                                                                )
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -13169,7 +13169,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n",
                                                                                                     _tr._style("height:2px")
                                                                                                         .Content(
@@ -13221,15 +13221,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Kylo"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -13267,15 +13267,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Internet Channel"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -13313,7 +13313,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Google TV"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Internet_Browser_(Nintendo_3DS)")
@@ -13321,7 +13321,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Nintendo 3DS Internet Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Nintendo_DS_%26_DSi_Browser")
@@ -13329,7 +13329,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Nintendo DS & DSi Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/NetFront")
@@ -13337,7 +13337,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "NetFront"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Steam_(software)#User_interface")
@@ -13345,7 +13345,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Steam Overlay"
                                                                                                                                                             )
-                                                                                                                                                        ),
+                                                                                                                                                    ),
                                                                                                                                                     "\n",
                                                                                                                                                     _li.Content(
                                                                                                                                                         _a._href("/wiki/Nintendo_Network#Wii_U_2")
@@ -13353,15 +13353,15 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                             .Content(
                                                                                                                                                                 "Wii U Internet Browser"
                                                                                                                                                             )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n",
                                                                                                                             _tr._style("height:2px")
                                                                                                                                 .Content(
@@ -13395,30 +13395,30 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                                                                                 .Content(
                                                                                                                                                                     "MSN TV"
                                                                                                                                                                 )
-                                                                                                                                                            )
-                                                                                                                                                        ),
-                                                                                                                                                    "\n"
+                                                                                                                                                        )
                                                                                                                                                     ),
+                                                                                                                                                    "\n"
+                                                                                                                                                ),
                                                                                                                                                 "\n"
                                                                                                                                             ),
                                                                                                                                         "\n"
                                                                                                                                     ),
                                                                                                                                 "\n"
-                                                                                                                                ),
+                                                                                                                            ),
                                                                                                                             "\n"
-                                                                                                                            )
+                                                                                                                        )
                                                                                                                     ),
                                                                                                                 "\n"
                                                                                                             ),
                                                                                                         "\n"
-                                                                                                        ),
+                                                                                                    ),
                                                                                                     "\n"
-                                                                                                    )
+                                                                                                )
                                                                                             ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n",
                                                                             _tr._style("height:2px")
                                                                                 .Content(
@@ -13441,10 +13441,10 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                     "Software no longer in development shown in ",
                                                                                                     _i.Content(
                                                                                                         "italics"
-                                                                                                        )
-                                                                                                    ),
-                                                                                                "\n"
+                                                                                                    )
                                                                                                 ),
+                                                                                                "\n"
+                                                                                            ),
                                                                                             "\n",
                                                                                             _ul.Content(
                                                                                                 "\n",
@@ -13463,7 +13463,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                         .Content(
                                                                                                             "Category"
                                                                                                         )
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "\n",
                                                                                                 _li.Content(
                                                                                                     _img._alt("Commons page")
@@ -13481,7 +13481,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                         .Content(
                                                                                                             "Commons"
                                                                                                         )
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "\n",
                                                                                                 _li.Content(
                                                                                                     _a._href("/wiki/File:Crystal_Clear_app_linneighborhood.svg")
@@ -13502,7 +13502,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                         .Content(
                                                                                                             "Internet portal"
                                                                                                         )
-                                                                                                    ),
+                                                                                                ),
                                                                                                 "\n",
                                                                                                 _li.Content(
                                                                                                     _a._href("/wiki/File:Crystal_Clear_device_cdrom_unmount.png")
@@ -13523,17 +13523,17 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                                         .Content(
                                                                                                             "Software portal"
                                                                                                         )
-                                                                                                    ),
-                                                                                                "\n"
                                                                                                 ),
-                                                                                            "\n"
+                                                                                                "\n"
                                                                                             ),
+                                                                                            "\n"
+                                                                                        ),
                                                                                         "\n"
                                                                                     ),
                                                                                 "\n"
-                                                                                ),
+                                                                            ),
                                                                             "\n"
-                                                                            )
+                                                                        )
                                                                     ),
                                                                 "\n"
                                                             ),
@@ -13548,7 +13548,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                 ._width("1")
                                                                 ._height("1")
                                                                 ._style("border: none; position: absolute;")
-                                                            )
+                                                        )
                                                     ),
                                                 "\t\t\t\t\t",
                                                 _div._class("printfooter")
@@ -13582,50 +13582,50 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             .Content(
                                                                                 "HTML5"
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     _li.Content(
                                                                         _a._href("/wiki/Category:HTML")
                                                                             ._title("Category:HTML")
                                                                             .Content(
                                                                                 "HTML"
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     _li.Content(
                                                                         _a._href("/wiki/Category:2014_software")
                                                                             ._title("Category:2014 software")
                                                                             .Content(
                                                                                 "2014 software"
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     _li.Content(
                                                                         _a._href("/wiki/Category:Emerging_standards")
                                                                             ._title("Category:Emerging standards")
                                                                             .Content(
                                                                                 "Emerging standards"
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     _li.Content(
                                                                         _a._href("/wiki/Category:Markup_languages")
                                                                             ._title("Category:Markup languages")
                                                                             .Content(
                                                                                 "Markup languages"
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     _li.Content(
                                                                         _a._href("/wiki/Category:World_Wide_Web_Consortium_standards")
                                                                             ._title("Category:World Wide Web Consortium standards")
                                                                             .Content(
                                                                                 "World Wide Web Consortium standards"
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     _li.Content(
                                                                         _a._href("/wiki/Category:XML-based_standards")
                                                                             ._title("Category:XML-based standards")
                                                                             .Content(
                                                                                 "XML-based standards"
                                                                             )
-                                                                        )
                                                                     )
+                                                                )
                                                             ),
                                                         _div._id("mw-hidden-catlinks")
                                                             ._class("mw-hidden-catlinks mw-hidden-cats-hidden")
@@ -13638,29 +13638,29 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             .Content(
                                                                                 "Pages using ISBN magic links"
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     _li.Content(
                                                                         _a._href("/wiki/Category:All_articles_with_failed_verification")
                                                                             ._title("Category:All articles with failed verification")
                                                                             .Content(
                                                                                 "All articles with failed verification"
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     _li.Content(
                                                                         _a._href("/wiki/Category:Articles_with_failed_verification_from_January_2011")
                                                                             ._title("Category:Articles with failed verification from January 2011")
                                                                             .Content(
                                                                                 "Articles with failed verification from January 2011"
                                                                             )
-                                                                        ),
+                                                                    ),
                                                                     _li.Content(
                                                                         _a._href("/wiki/Category:Use_dmy_dates_from_June_2011")
                                                                             ._title("Category:Use dmy dates from June 2011")
                                                                             .Content(
                                                                                 "Use dmy dates from June 2011"
                                                                             )
-                                                                        )
                                                                     )
+                                                                )
                                                             )
                                                     ),
                                                 "\t\t\t\t",
@@ -13675,7 +13675,7 @@ namespace ProgressOnderwijsUtils.Tests
                                         "\n\t\t\t",
                                         _h2.Content(
                                             "Navigation menu"
-                                            ),
+                                        ),
                                         "\n\n\t\t\t",
                                         _div._id("mw-head")
                                             .Content(
@@ -13733,7 +13733,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         )
                                                                 ),
                                                             "\t\t\t\t\t\t"
-                                                            ),
+                                                        ),
                                                         "\n\t\t\t\t\t"
                                                     ),
                                                 "\n\t\t\t\t\t\t\t\t\t",
@@ -13763,7 +13763,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     .Content(
                                                                                         "Article"
                                                                                     )
-                                                                                )
+                                                                            )
                                                                         ),
                                                                     "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
                                                                     _li._id("ca-talk")
@@ -13776,10 +13776,10 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     .Content(
                                                                                         "Talk"
                                                                                     )
-                                                                                )
+                                                                            )
                                                                         ),
                                                                     "\n\t\t\t\t\t\t\t\t\t\t\t\t\t"
-                                                                    ),
+                                                                ),
                                                                 "\n\t\t\t\t\t"
                                                             ),
                                                         "\n\t\t\t\t\t\t\t\t\t\t",
@@ -13794,7 +13794,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "\n\t\t\t\t\t\t\t",
                                                                         _span.Content(
                                                                             "Variants"
-                                                                            ),
+                                                                        ),
                                                                         _a._href("#"),
                                                                         "\n\t\t\t\t\t\t"
                                                                     ),
@@ -13804,7 +13804,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "\n\t\t\t\t\t\t\t",
                                                                         _ul.Content(
                                                                             "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"
-                                                                            ),
+                                                                        ),
                                                                         "\n\t\t\t\t\t\t"
                                                                     ),
                                                                 "\n\t\t\t\t\t"
@@ -13836,7 +13836,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     .Content(
                                                                                         "Read"
                                                                                     )
-                                                                                )
+                                                                            )
                                                                         ),
                                                                     "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
                                                                     _li._id("ca-edit")
@@ -13848,7 +13848,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     .Content(
                                                                                         "Edit"
                                                                                     )
-                                                                                )
+                                                                            )
                                                                         ),
                                                                     "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
                                                                     _li._id("ca-history")
@@ -13861,10 +13861,10 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                     .Content(
                                                                                         "View history"
                                                                                     )
-                                                                                )
+                                                                            )
                                                                         ),
                                                                     "\n\t\t\t\t\t\t\t\t\t\t\t\t\t"
-                                                                    ),
+                                                                ),
                                                                 "\n\t\t\t\t\t"
                                                             ),
                                                         "\n\t\t\t\t\t\t\t\t\t\t",
@@ -13878,7 +13878,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                     .Content(
                                                                         _span.Content(
                                                                             "More"
-                                                                            ),
+                                                                        ),
                                                                         _a._href("#")
                                                                     ),
                                                                 "\n\n\t\t\t\t\t\t",
@@ -13887,7 +13887,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                         "\n\t\t\t\t\t\t\t",
                                                                         _ul.Content(
                                                                             "\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t"
-                                                                            ),
+                                                                        ),
                                                                         "\n\t\t\t\t\t\t"
                                                                     ),
                                                                 "\n\t\t\t\t\t"
@@ -13904,7 +13904,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                             "Search"
                                                                         ),
                                                                     "\n\t\t\t\t\t\t"
-                                                                    ),
+                                                                ),
                                                                 "\n\n\t\t\t\t\t\t",
                                                                 _form._action("/w/index.php")
                                                                     ._id("searchform")
@@ -14031,7 +14031,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 )
                                                                         ),
                                                                     "\t\t\t\t\t"
-                                                                    ),
+                                                                ),
                                                                 "\n\t\t\t\t\t\t\t"
                                                             ),
                                                         "\n\t\t"
@@ -14095,7 +14095,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 )
                                                                         ),
                                                                     "\t\t\t\t\t"
-                                                                    ),
+                                                                ),
                                                                 "\n\t\t\t\t\t\t\t"
                                                             ),
                                                         "\n\t\t"
@@ -14188,7 +14188,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 )
                                                                         ),
                                                                     "\t\t\t\t\t"
-                                                                    ),
+                                                                ),
                                                                 "\n\t\t\t\t\t\t\t"
                                                             ),
                                                         "\n\t\t"
@@ -14234,7 +14234,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 )
                                                                         ),
                                                                     "\t\t\t\t\t"
-                                                                    ),
+                                                                ),
                                                                 "\n\t\t\t\t\t\t\t"
                                                             ),
                                                         "\n\t\t"
@@ -14281,7 +14281,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 )
                                                                         ),
                                                                     "\t\t\t\t\t"
-                                                                    ),
+                                                                ),
                                                                 "\n\t\t\t\t\t\t\t"
                                                             ),
                                                         "\n\t\t"
@@ -14832,7 +14832,7 @@ namespace ProgressOnderwijsUtils.Tests
                                                                                 )
                                                                         ),
                                                                     "\t\t\t\t\t"
-                                                                    ),
+                                                                ),
                                                                 "\n\t\t\t\t",
                                                                 _div._class("after-portlet after-portlet-lang")
                                                                     .Content(
@@ -15004,10 +15004,10 @@ namespace ProgressOnderwijsUtils.Tests
                                 "\n\t\t",
                                 _script.Content(
                                     "(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({\"wgPageParseReport\":{\"limitreport\":{\"cputime\":\"0.760\",\"walltime\":\"0.861\",\"ppvisitednodes\":{\"value\":5573,\"limit\":1000000},\"ppgeneratednodes\":{\"value\":0,\"limit\":1500000},\"postexpandincludesize\":{\"value\":261422,\"limit\":2097152},\"templateargumentsize\":{\"value\":14486,\"limit\":2097152},\"expansiondepth\":{\"value\":17,\"limit\":40},\"expensivefunctioncount\":{\"value\":2,\"limit\":500},\"entityaccesscount\":{\"value\":1,\"limit\":400},\"timingprofile\":[\"100.00%  712.469      1 -total\",\" 55.27%  393.770      2 Template:Reflist\",\" 42.45%  302.428     73 Template:Cite_web\",\" 11.70%   83.367      2 Template:Infobox_file_format\",\" 10.19%   72.587      2 Template:Infobox\",\"  6.66%   47.473      1 Template:Web_browsers\",\"  6.30%   44.853      1 Template:Navbox_with_collapsible_groups\",\"  6.19%   44.125      9 Template:Navbox\",\"  4.77%   33.964      1 Template:Failed_verification\",\"  4.13%   29.390      1 Template:Fix\"]},\"scribunto\":{\"limitreport-timeusage\":{\"value\":\"0.379\",\"limit\":\"10.000\"},\"limitreport-memusage\":{\"value\":5513819,\"limit\":52428800}},\"cachereport\":{\"origin\":\"mw2209\",\"timestamp\":\"20170424064955\",\"ttl\":2592000,\"transientcontent\":false}}});});"
-                                    ),
+                                ),
                                 _script.Content(
                                     "(window.RLQ=window.RLQ||[]).push(function(){mw.config.set({\"wgBackendResponseTime\":125,\"wgHostname\":\"mw2106\"});});"
-                                    ),
+                                ),
                                 "\n\t\n\n"
                             )
                     );

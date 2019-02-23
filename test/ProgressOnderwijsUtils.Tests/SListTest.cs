@@ -8,7 +8,6 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class SListTest
     {
         [Fact]

@@ -5,7 +5,6 @@ using ProgressOnderwijsUtils.WebSupport;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class CompressedUtf8StringTest
     {
         [Fact]

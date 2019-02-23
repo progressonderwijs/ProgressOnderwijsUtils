@@ -18,6 +18,7 @@ namespace ProgressOnderwijsUtils.Collections
 #pragma warning disable 169
         //InitSize total:
         T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15;
+
         //31 - InitSize2Pow total:
         T[] a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11;
 #pragma warning restore 169
@@ -60,7 +61,7 @@ namespace ProgressOnderwijsUtils.Collections
                     return Array.Empty<T>();
                 }
                 var retval = new T[idx];
-                for (int j = 0; j < retval.Length; j++) {
+                for (var j = 0; j < retval.Length; j++) {
                     retval[j] = Unsafe.Add(ref v00, j);
                 }
                 return retval;

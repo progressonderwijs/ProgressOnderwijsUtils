@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         {
             benchmarker.BenchSQLite("Dapper (sqlite)", (ctx, rows) =>
                 ctx.Query<ExampleObject>(ExampleObject.RawSqliteQueryString, new { Arg = ExampleObject.someInt64Value, Top = rows, Num2 = 2, Hehe = "hehe" }).Count()
-                );
+            );
 
             benchmarker.BenchSqlServer("Dapper", (ctx, rows) =>
                 ctx.Connection.Query<ExampleObject>(ExampleObject.RawQueryString, new { Arg = ExampleObject.someInt64Value, Top = rows, Num2 = 2, Hehe = "hehe" }).Count()

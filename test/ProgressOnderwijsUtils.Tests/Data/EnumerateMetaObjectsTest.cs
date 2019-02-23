@@ -6,7 +6,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class EnumerateMetaObjectsTest : TransactedLocalConnection
     {
-        static ParameterizedSql ExampleQuery => SafeSql.SQL($@"
+        static ParameterizedSql ExampleQuery
+            => SafeSql.SQL($@"
                 select content='bla', id= 3
                 union all
                 select content='hmm', id= 37
@@ -19,7 +20,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public int Id { get; set; }
             public string Content { get; set; }
             public static int HackyHackyCounter;
-            public ExampleRow() => HackyHackyCounter++;
+
+            public ExampleRow()
+                => HackyHackyCounter++;
         }
 
         public EnumerateMetaObjectsTest()
@@ -61,19 +64,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
             Assert.Equal(new ExampleRow { Id = 37, Content = "hmm" }, value);
         }
 
-
         [Fact]
         public void ConcurrentReadersCrash()
         {
             var enumerable = ExampleQuery.EnumerateMetaObjects<ExampleRow>(Context);
             using (var enumerator = enumerable.GetEnumerator())
-            using(var enumerator2 = enumerable.GetEnumerator())
-            {
+            using (var enumerator2 = enumerable.GetEnumerator()) {
                 enumerator.MoveNext();
                 Assert.ThrowsAny<Exception>(() => enumerator2.MoveNext());
             }
         }
-
-
     }
 }

@@ -67,7 +67,10 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public int StepsDone => Volatile.Read(ref stepsDone);
-        int PercentProgress(int newProgressVal) => 100 * newProgressVal / TotalSteps;
+        public int StepsDone
+            => Volatile.Read(ref stepsDone);
+
+        int PercentProgress(int newProgressVal)
+            => 100 * newProgressVal / TotalSteps;
     }
 }

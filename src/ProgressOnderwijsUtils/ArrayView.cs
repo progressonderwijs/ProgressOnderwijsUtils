@@ -16,7 +16,8 @@ namespace ProgressOnderwijsUtils
             this.map = map;
         }
 
-        public int Count => source.Count;
+        public int Count
+            => source.Count;
 
         public IEnumerator<TOut> GetEnumerator()
         {
@@ -25,7 +26,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator()
+            => GetEnumerator();
     }
 
     public sealed class ArrayView_MappedByElement<T, TOut> : IReadOnlyList<TOut>
@@ -46,9 +48,14 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public TOut this[int index] => map(source[index]);
-        public int Count => source.Count;
+        IEnumerator IEnumerable.GetEnumerator()
+            => GetEnumerator();
+
+        public TOut this[int index]
+            => map(source[index]);
+
+        public int Count
+            => source.Count;
     }
 
     public sealed class ArrayView_MappedWithIndex<T, TOut> : IReadOnlyList<TOut>
@@ -70,9 +77,14 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public TOut this[int index] => map(source[index], index);
-        public int Count => source.Count;
+        IEnumerator IEnumerable.GetEnumerator()
+            => GetEnumerator();
+
+        public TOut this[int index]
+            => map(source[index], index);
+
+        public int Count
+            => source.Count;
     }
 
     public static class CollectionViewExtensions

@@ -3,7 +3,6 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class LineScannerTest
     {
         [Fact]

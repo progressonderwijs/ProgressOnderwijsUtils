@@ -64,8 +64,9 @@ namespace ProgressOnderwijsUtils
         public static byte[] ToUtf8([NotNull] XDocument doc)
         {
             var sb = new StringBuilder();
-            using (var xw = XmlWriter.Create(sb, xmlWriterSettings))
+            using (var xw = XmlWriter.Create(sb, xmlWriterSettings)) {
                 doc.Save(xw);
+            }
 
             return Encoding.UTF8.GetBytes(sb.ToString());
         }

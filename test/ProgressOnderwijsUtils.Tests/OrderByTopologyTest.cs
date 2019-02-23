@@ -10,8 +10,10 @@ namespace ProgressOnderwijsUtils.Tests
     {
         public readonly string Name;
         readonly IReadOnlyList<string> Dependencies;
+
         [NotNull]
-        public IEnumerable<DagNode> Children(Dictionary<string, DagNode> lookup) => Dependencies.Select(name => lookup.GetOrDefault(name, new DagNode(name)));
+        public IEnumerable<DagNode> Children(Dictionary<string, DagNode> lookup)
+            => Dependencies.Select(name => lookup.GetOrDefault(name, new DagNode(name)));
 
         public DagNode(string name, params string[] dependencies)
         {
@@ -23,7 +25,6 @@ namespace ProgressOnderwijsUtils.Tests
     public sealed class OrderByTopologyTest
     {
         [Fact]
-        
         public void NodesWithoutDependenciesAreNotSorted()
         {
             var example = new[] { "a", "b", "d", "c" };

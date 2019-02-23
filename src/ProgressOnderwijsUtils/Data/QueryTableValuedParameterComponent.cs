@@ -20,7 +20,8 @@ namespace ProgressOnderwijsUtils
         int cachedLength = -1;
 
         [NotNull]
-        public object EquatableValue => Tuple.Create(values, DbTypeName);
+        public object EquatableValue
+            => Tuple.Create(values, DbTypeName);
 
         internal QueryTableValuedParameterComponent(string dbTypeName, IEnumerable<TIn> values, Func<IEnumerable<TIn>, TOut[]> projection)
         {
@@ -40,7 +41,7 @@ namespace ProgressOnderwijsUtils
             if (cachedLength >= 0) {
                 var roundedUpToNearestPowerOfFourOrZeroOrMinusOne = cachedLength == 0 ? 0
                     : cachedLength > 1 << 20 ? -1
-                        : 1 << (Utils.LogBase2RoundedUp((uint)cachedLength) + 1 >> 1 << 1);
+                    : 1 << (Utils.LogBase2RoundedUp((uint)cachedLength) + 1 >> 1 << 1);
                 if (roundedUpToNearestPowerOfFourOrZeroOrMinusOne >= 0) {
                     if (cachedLength > roundedUpToNearestPowerOfFourOrZeroOrMinusOne) {
                         throw new Exception("Internal error: " + cachedLength + " > " + roundedUpToNearestPowerOfFourOrZeroOrMinusOne);
@@ -80,7 +81,7 @@ namespace ProgressOnderwijsUtils
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
         {
-            bool isFirst = true;
+            var isFirst = true;
             ParameterizedSqlFactory.AppendSql(ref factory, "(select ");
             foreach (var metaProp in MetaObject.GetMetaProperties<TOut>()) {
                 if (metaProp.CanRead) {

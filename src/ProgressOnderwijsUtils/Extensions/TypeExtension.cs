@@ -13,14 +13,16 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [Pure]
         [CanBeNull]
-        public static Type IfNullableGetNonNullableType([NotNull] this Type type) => type.IsNullableValueType() ? type.GetGenericArguments()[0] : null;
+        public static Type IfNullableGetNonNullableType([NotNull] this Type type)
+            => type.IsNullableValueType() ? type.GetGenericArguments()[0] : null;
 
         /// <summary>
         /// If type is Nullable&lt;T&gt;, returns typeof(T).  For non-Nullable&lt;&gt; types, returns the type itself - this might also be a reference type, so the resulting type may still permit the value null.
         /// </summary>
         [Pure]
         [NotNull]
-        public static Type GetNonNullableType([NotNull] this Type type) => type.IsNullableValueType() ? type.GetGenericArguments()[0] : type;
+        public static Type GetNonNullableType([NotNull] this Type type)
+            => type.IsNullableValueType() ? type.GetGenericArguments()[0] : type;
 
         /// <summary>
         /// For enums, nullable types and nullable enums, return non-nullable underlying type;
@@ -59,17 +61,20 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static bool CanBeNull([NotNull] this Type type) => !type.IsValueType || IsNullableValueType(type);
+        public static bool CanBeNull([NotNull] this Type type)
+            => !type.IsValueType || IsNullableValueType(type);
 
         [Pure]
-        public static bool IsNullableValueType([NotNull] this Type type) => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        public static bool IsNullableValueType([NotNull] this Type type)
+            => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
 
         /// <summary>
         /// If type is non-Nullable value type T, returns typeof(Nullable&lt;T&gt;).  For Nullable&lt;&gt; or reference types, returns null;
         /// </summary>
         [CanBeNull]
         [Pure]
-        public static Type MakeNullableType([NotNull] this Type type) => type.CanBeNull() ? null : typeof(Nullable<>).MakeGenericType(type);
+        public static Type MakeNullableType([NotNull] this Type type)
+            => type.CanBeNull() ? null : typeof(Nullable<>).MakeGenericType(type);
 
         [ItemNotNull]
         [Pure]
@@ -97,10 +102,12 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static string FriendlyName(this Type type) => type.ToCSharpFriendlyTypeName();
+        public static string FriendlyName(this Type type)
+            => type.ToCSharpFriendlyTypeName();
 
         [Pure]
-        public static T Attr<T>([NotNull] this MemberInfo mi) where T : Attribute
+        public static T Attr<T>([NotNull] this MemberInfo mi)
+            where T : Attribute
         {
             var customAttributes = mi.GetCustomAttributes(typeof(T), true);
             if (customAttributes.Length == 0) {

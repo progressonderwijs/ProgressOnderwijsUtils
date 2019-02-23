@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils
             } else {
                 var literalSqlRepresentation =
                     GetBooleanStringRepresentationOrNull(o as bool?)
-                        ?? GetEnumStringRepresentationOrNull(o as Enum);
+                    ?? GetEnumStringRepresentationOrNull(o as Enum);
 
                 if (literalSqlRepresentation != null) {
                     factory.AppendSql(literalSqlRepresentation, 0, literalSqlRepresentation.Length);
@@ -83,10 +83,9 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static ISqlComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection)
             where TOut : IMetaObject, new()
-            =>
-                set is IReadOnlyList<TIn> fixedSizeList && fixedSizeList.Count == 1
-                    ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<TOut>(projection(set)[0])
-                    : new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
+            => set is IReadOnlyList<TIn> fixedSizeList && fixedSizeList.Count == 1
+                ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<TOut>(projection(set)[0])
+                : new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
 
         static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
 
@@ -159,6 +158,7 @@ namespace ProgressOnderwijsUtils
         sealed class TableValuedParameterFactory<T> : ITableValuedParameterFactory
         {
             readonly string sqlTableTypeName;
+
             //cache delegate to save some allocs and avoid risking slow paths like COMDelegate::DelegateConstruct
             readonly Func<IEnumerable<T>, TableValuedParameterWrapper<T>[]> WrapPlainValueInMetaObject = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject;
 
@@ -194,8 +194,11 @@ namespace ProgressOnderwijsUtils
             [Key]
             public T QueryTableValue { get; set; }
 
-            public override string ToString() => QueryTableValue == null ? "NULL" : QueryTableValue.ToString();
-            public object ProjectionForDebuggingOrNull() => QueryTableValue;
+            public override string ToString()
+                => QueryTableValue == null ? "NULL" : QueryTableValue.ToString();
+
+            public object ProjectionForDebuggingOrNull()
+                => QueryTableValue;
         }
 
         public static class TableValuedParameterWrapperHelper
