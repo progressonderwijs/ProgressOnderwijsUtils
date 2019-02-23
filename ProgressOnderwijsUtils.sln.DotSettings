@@ -786,52 +786,52 @@ Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction
 	<s:Boolean x:Key="/Default/Environment/UnitTesting/DisabledProviders/=NUnit3x/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/IconThemeSelection/@EntryValue">Color</s:String>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/PsiSymbolIcon/PsiSymbolIconThemeSelection/@EntryValue">SymbolsVs11Color</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/@KeyIndexDefined">True</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/Properties/=ExactType/@EntryIndexedValue">False</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/Properties/=ExpressionType/@EntryIndexedValue">Delegate</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/Type/@EntryValue">ExpressionPlaceholder</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=seq/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue">False</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=seq/Properties/=ExpressionType/@EntryIndexedValue">System.Collections.Generic.IEnumerable&lt;&gt;</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=seq/Type/@EntryValue">ExpressionPlaceholder</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/FormatAfterReplace/@EntryValue">False</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/IsReplacePattern/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/LanguageName/@EntryValue">CSHARP</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/ReplacePattern/@EntryValue">$seq$.FirstOrNull($lambda$)</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/SearchPattern/@EntryValue">$seq$.FirstOrDefault($lambda$)</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/Severity/@EntryValue">WARNING</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/ShortenReferences/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/SuppressionKey/@EntryValue">AvoidFirstOrDefault</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/@KeyIndexDefined">True</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue">False</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/Properties/=ExpressionType/@EntryIndexedValue">System.Collections.Generic.IEnumerable&lt;&gt;</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/Type/@EntryValue">ExpressionPlaceholder</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/FormatAfterReplace/@EntryValue">False</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/IsReplacePattern/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/LanguageName/@EntryValue">CSHARP</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/ReplacePattern/@EntryValue">$seq$.SingleOrNull()</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/SearchPattern/@EntryValue">$seq$.SingleOrDefault()</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/Severity/@EntryValue">WARNING</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/ShortenReferences/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/SuppressionKey/@EntryValue">AvoidSingleOrDefault</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/@KeyIndexDefined">True</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/CustomPatternPlaceholder/=seq/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue">False</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/CustomPatternPlaceholder/=seq/Properties/=ExpressionType/@EntryIndexedValue">System.Collections.Generic.IEnumerable&lt;&gt;</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/CustomPatternPlaceholder/=seq/Type/@EntryValue">ExpressionPlaceholder</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/FormatAfterReplace/@EntryValue">False</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/IsReplacePattern/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/LanguageName/@EntryValue">CSHARP</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/ReplacePattern/@EntryValue">$seq$.FirstOrNull()</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/SearchPattern/@EntryValue">$seq$.FirstOrDefault()</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/Severity/@EntryValue">WARNING</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/ShortenReferences/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/SuppressionKey/@EntryValue">AvoidFirstOrDefault</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/@KeyIndexDefined">False</s:Boolean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/@KeyIndexDefined">False</s:Boolean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/@KeyIndexDefined">False</s:Boolean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/CustomPatternPlaceholder/=maybe/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/CustomPatternPlaceholder/=maybe/Properties/=ExactType/@EntryIndexedValue">False</s:String>
@@ -855,24 +855,24 @@ Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=904A7B51DF569840A39B5AB2033EC285/MatchCatchClauseWithoutExceptionFilter/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=904A7B51DF569840A39B5AB2033EC285/SearchPattern/@EntryValue"></s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=904A7B51DF569840A39B5AB2033EC285/Severity/@EntryValue">ERROR</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/@KeyIndexDefined">True</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=lambda/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=lambda/Properties/=ExactType/@EntryIndexedValue">False</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=lambda/Properties/=ExpressionType/@EntryIndexedValue">Delegate</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=lambda/Type/@EntryValue">ExpressionPlaceholder</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=seq/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue">False</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=seq/Properties/=ExpressionType/@EntryIndexedValue">System.Collections.Generic.IEnumerable&lt;&gt;</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=seq/Type/@EntryValue">ExpressionPlaceholder</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/FormatAfterReplace/@EntryValue">False</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/IsReplacePattern/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/LanguageName/@EntryValue">CSHARP</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/ReplacePattern/@EntryValue">$seq$.SingleOrNull($lambda$)</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/SearchPattern/@EntryValue">$seq$.SingleOrDefault($lambda$)</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/Severity/@EntryValue">WARNING</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/ShortenReferences/@EntryValue">False</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/SuppressionKey/@EntryValue">AvoidSingleOrDefault</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/@KeyIndexDefined">False</s:Boolean>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
