@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public override bool Equals(object obj)
-            => obj is ColumnSort && Equals((ColumnSort)obj);
+            => obj is ColumnSort columnSort && Equals(columnSort);
 
         [Pure]
         public override int GetHashCode()
@@ -69,6 +69,6 @@ namespace ProgressOnderwijsUtils
         public static bool operator !=(ColumnSort a, ColumnSort b)
         {
             return !a.Equals(b);
-        } //!ReferenceEquals(a, b) && (null == (object)a || 
+        } //!ReferenceEquals(a, b) && (null == (object)a ||
     }
 }

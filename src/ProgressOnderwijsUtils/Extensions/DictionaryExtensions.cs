@@ -78,8 +78,7 @@ namespace ProgressOnderwijsUtils
             TValue? defaultValue)
             where TValue : struct
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultValue;
+            return dict.TryGetValue(key, out var result) ? result : defaultValue;
         }
 
         /// <summary>
@@ -130,7 +129,7 @@ namespace ProgressOnderwijsUtils
         }
 
         /// <summary>
-        /// Retrieves a value from a dictionary or adds a new value if the key does not yet exist. 
+        /// Retrieves a value from a dictionary or adds a new value if the key does not yet exist.
         /// </summary>
         /// <param name="dict">The dictionary possibly containing the key</param>
         /// <param name="key">The key whose value to get.</param>
@@ -141,8 +140,7 @@ namespace ProgressOnderwijsUtils
             [NotNull] TKey key,
             Func<TKey, TValue> factory)
         {
-            TValue val;
-            if (dict.TryGetValue(key, out val)) {
+            if (dict.TryGetValue(key, out var val)) {
                 return val;
             }
             val = factory(key);

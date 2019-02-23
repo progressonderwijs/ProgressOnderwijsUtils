@@ -274,7 +274,7 @@ namespace ProgressOnderwijsUtils
             => SqlTextKey == other.SqlTextKey && StructuralComparisons.StructuralEqualityComparer.Equals(Params, other.Params);
 
         public override bool Equals(object obj)
-            => obj is ParameterizedSqlEquatableKey && Equals((ParameterizedSqlEquatableKey)obj);
+            => obj is ParameterizedSqlEquatableKey parameterizedSqlEquatableKey && Equals(parameterizedSqlEquatableKey);
 
         public override int GetHashCode()
             => (SqlTextKey?.GetHashCode() ?? 0) + 237 * StructuralComparisons.StructuralEqualityComparer.GetHashCode(Params);

@@ -133,14 +133,13 @@ namespace ProgressOnderwijsUtils.Tests
         {
             PAssert.That(() => reader.Read());
 
-            long nofRead;
             var buffer = new byte[10];
 
             // TODO: willen we dit ook zo ondersteunen?
             //nofRead = reader.GetBytes(0, 0, null, 0, 1);
             //PAssert.That(() => nofRead == 100);
 
-            nofRead = reader.GetBytes(0, 0, buffer, 0, 1);
+            var nofRead = reader.GetBytes(0, 0, buffer, 0, 1);
             PAssert.That(() => buffer[0] == 0);
             PAssert.That(() => nofRead == 1);
 

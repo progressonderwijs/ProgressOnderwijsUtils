@@ -106,7 +106,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         static Expression UnwrapCast(Expression bodyExpr)
         {
-            return bodyExpr is UnaryExpression && bodyExpr.NodeType == ExpressionType.Convert ? ((UnaryExpression)bodyExpr).Operand : bodyExpr;
+            return bodyExpr is UnaryExpression unaryExpression && unaryExpression.NodeType == ExpressionType.Convert ? unaryExpression.Operand : bodyExpr;
         }
 
         [Pure]

@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
-            => BuildRecursively(root, id => kidLookup.GetOrDefaultR(id));
+            => BuildRecursively(root, kidLookup.GetOrDefaultR);
 
         [NotNull]
         [Pure]

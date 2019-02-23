@@ -69,9 +69,10 @@ namespace ProgressOnderwijsUtils.Radius
             var requestIdentifier = secureRandom.NextByte();
             var requestAuthenticator = secureRandom.NextBytes(16);
 
-            var radiusAttributes = new List<RadiusAttribute>(extraAttributes);
-            radiusAttributes.Add(new RadiusAttribute(RadiusAttributeType.UserName, username));
-            radiusAttributes.Add(new RadiusAttribute(RadiusAttributeType.UserPassword, HashPapPassword(password, sharedSecret, requestAuthenticator)));
+            var radiusAttributes = new List<RadiusAttribute>(extraAttributes) {
+                new RadiusAttribute(RadiusAttributeType.UserName, username),
+                new RadiusAttribute(RadiusAttributeType.UserPassword, HashPapPassword(password, sharedSecret, requestAuthenticator))
+            };
             if (radiusAttributes.Count != radiusAttributes.Select(attr => attr.AttributeType).Distinct().Count()) {
                 throw new ArgumentException("extraAttributes may not contain duplicate attributes or a UserName or UserPassword attribute");
             }
@@ -177,7 +178,7 @@ namespace ProgressOnderwijsUtils.Radius
         public static byte[] HashPapPassword([NotNull] byte[] password, [NotNull] byte[] sharedSecret, [NotNull] byte[] requestAuthenticator)
         {
             using (var md5 = new MD5CryptoServiceProvider()) {
-                //Hashed password in generated in 16-byte chunks; for each 16-bytes an "unguessable" pad is generated which 
+                //Hashed password in generated in 16-byte chunks; for each 16-bytes an "unguessable" pad is generated which
                 //is XOR-ed with the password.
                 //then, for the next 16-bytes, a new pad is generated, and so on.
 

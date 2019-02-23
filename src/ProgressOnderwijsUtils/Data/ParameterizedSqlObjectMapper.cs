@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -315,8 +315,10 @@ namespace ProgressOnderwijsUtils
                 typeof(TReader).GetInterfaceMap(typeof(IDataRecord)),
                 typeof(TReader).GetInterfaceMap(typeof(IDataReader)));
 
+            // ReSharper disable AssignNullToNotNullAttribute
             static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod("IsDBNull", binding)];
             static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
+            // ReSharper restore AssignNullToNotNullAttribute
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
             static bool IsSupportedBasicType([NotNull] Type type)
@@ -405,6 +407,7 @@ namespace ProgressOnderwijsUtils
             static TRowArrayReader<T> CreateLoadRowsMethod<T>([NotNull] Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
             {
                 //read this method bottom-to-top, because expression trees need to be constructed inside-out.
+                // ReSharper disable AssignNullToNotNullAttribute
                 var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
                 var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
                 var arrayBuilderOfRowsType = typeof(ArrayBuilder<T>);
@@ -430,6 +433,7 @@ namespace ProgressOnderwijsUtils
                 var loadRowsMethodBody = Expression.Block(typeof(T[]), new[] { rowVar, arrayBuilderVar, }, returnEmptyArrayOrRunRestOfCode);
                 var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
                 var loadRowsLambda = Expression.Lambda<TRowArrayReader<T>>(loadRowsMethodBody, "LoadRows", loadRowsParamExprs);
+                // ReSharper restore AssignNullToNotNullAttribute
 
                 return ConvertLambdaExpressionIntoDelegate<T, TRowArrayReader<T>>(loadRowsLambda);
             }
@@ -495,7 +499,7 @@ namespace ProgressOnderwijsUtils
                         => (int)(uint)((cachedHash >> 32) + cachedHash);
 
                     public override bool Equals(object obj)
-                        => obj is ColumnOrdering && Equals((ColumnOrdering)obj);
+                        => obj is ColumnOrdering columnOrdering && Equals(columnOrdering);
                 }
 
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowArrayReaderWithCols<T>> LoadRows;

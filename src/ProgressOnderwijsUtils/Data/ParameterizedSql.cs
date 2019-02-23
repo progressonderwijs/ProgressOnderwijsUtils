@@ -91,7 +91,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public override bool Equals(object obj)
-            => obj is ParameterizedSql && (ParameterizedSql)obj == this;
+            => obj is ParameterizedSql parameterizedSql && parameterizedSql == this;
 
         [Pure]
         public static bool operator ==(ParameterizedSql a, ParameterizedSql b)
@@ -288,8 +288,8 @@ namespace ProgressOnderwijsUtils
             foreach (var paramRefMatch in formatStringTokenization) {
                 factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos);
                 var argument = interpolatedQuery.GetArgument(paramRefMatch.ReferencedParameterIndex);
-                if (argument is ParameterizedSql) {
-                    ((ParameterizedSql)argument).AppendTo(ref factory);
+                if (argument is ParameterizedSql parameterizedSql) {
+                    parameterizedSql.AppendTo(ref factory);
                 } else {
                     SqlParameterComponent.AppendParamTo(ref factory, argument);
                 }

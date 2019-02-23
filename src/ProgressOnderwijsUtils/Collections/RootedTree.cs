@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         public override bool Equals(object obj)
-            => obj is RootedTree<T> && Equals((RootedTree<T>)obj);
+            => obj is RootedTree<T> rootedTree && Equals(rootedTree);
 
         // internal details:
         RootedTree(SList<TreePathSegment> pathSegments)

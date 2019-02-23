@@ -47,7 +47,6 @@ namespace ProgressOnderwijsUtils
         /// Nullability is unaltered; Non-enum types are unaltered.
         /// </summary>
         [Pure]
-        [NotNull]
         public static Type GetUnderlyingType([NotNull] this Type type)
         {
             var maybeNonNullable = type.IfNullableGetNonNullableType();

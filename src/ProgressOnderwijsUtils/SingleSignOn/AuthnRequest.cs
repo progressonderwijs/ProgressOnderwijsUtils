@@ -65,7 +65,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 SamlNamespaces.SAMLP_NS + "AuthnRequest",
                 new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
                 new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
-                new XAttribute("ID", XmlConvert.EncodeLocalName(ID)),
+                new XAttribute("ID", XmlConvert.EncodeLocalName(ID) ?? throw new InvalidOperationException("ID must not be null")),
                 new XAttribute("Version", "2.0"),
                 new XAttribute("IssueInstant", DateTime.UtcNow),
                 new XAttribute("Destination", Destination),

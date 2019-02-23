@@ -228,7 +228,7 @@ namespace ProgressOnderwijsUtils
         /// Volgordebehoudende transformatie van getal naar string, dus:
         /// 
         /// a kleiner dan b
-        ///    is equivalent aan  
+        ///    is equivalent aan
         /// ToSortableShortString(a) kleiner dan ToShortableShortString(b)
         /// 
         /// Deze eigenschap geldt wanneer je m verifieert in C#, JS, SQL (, etc?)
@@ -282,7 +282,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// This is almost equivalent to num.ToString("f"+precision), but around 10 times faster.
         /// 
-        /// Differences: 
+        /// Differences:
         ///   - rounding differences may exist for doubles like 1.005 which are not precisely representable.
         ///   - numbers over (2^64 - 2^10)/(2^precision) are slow.
         /// </summary>

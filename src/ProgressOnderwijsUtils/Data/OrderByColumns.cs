@@ -6,10 +6,10 @@ using JetBrains.Annotations;
 namespace ProgressOnderwijsUtils
 {
     /// <summary>
-    /// Representeerd de volgorde van sorteren op kolommen.  
+    /// Representeerd de volgorde van sorteren op kolommen.
     /// 
-    /// Deze datastructuur is READONLY!  Als je functies als "Append" "ToggleSortDirection" uitvoerd wordt 
-    /// een NIEUWE ColumnSortOrder gereturned. 
+    /// Deze datastructuur is READONLY!  Als je functies als "Append" "ToggleSortDirection" uitvoerd wordt
+    /// een NIEUWE ColumnSortOrder gereturned.
     /// 
     /// ColumnSortOrder is een struct; zijn default waarde representeerd "geen sorteering".
     /// </summary>
@@ -199,7 +199,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override bool Equals(object obj)
         {
-            return obj is OrderByColumns && Equals((OrderByColumns)obj);
+            return obj is OrderByColumns orderByColumns && Equals(orderByColumns);
         }
 
         [Pure]

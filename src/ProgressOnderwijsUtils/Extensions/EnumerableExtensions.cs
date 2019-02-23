@@ -184,8 +184,7 @@ namespace ProgressOnderwijsUtils
             var groups = new Dictionary<TKey, List<TElem>>();
             foreach (var elem in list) {
                 var key = keyLookup(elem);
-                List<TElem> group;
-                if (!groups.TryGetValue(key, out group)) {
+                if (!groups.TryGetValue(key, out var group)) {
                     groups.Add(key, group = new List<TElem>());
                 }
                 group.Add(elem);

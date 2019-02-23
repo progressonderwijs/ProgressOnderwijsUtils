@@ -20,14 +20,16 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(1) == 0);
             PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(3) == 2);
             PAssert.That(() => new[] { 1, 2, 3, 1, 2, 3 }.IndexOf(3) == 2);
-            Assert.Throws<ArgumentNullException>(() => ignore = default(int[]).IndexOf(2));
             PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x => x == 2) == 1);
             PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x => x % 7 == 0) == -1);
             PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x => x < 3) == 0);
             PAssert.That(() => new[] { 1, 2, 3 }.IndexOf(x => x % 2 == 1 && x > 1) == 2);
             PAssert.That(() => new[] { 1, 2, 3, 1, 2, 3 }.IndexOf(x => x % 2 == 1 && x > 1) == 2);
+            // ReSharper disable AssignNullToNotNullAttribute
+            Assert.Throws<ArgumentNullException>(() => ignore = default(int[]).IndexOf(2));
             Assert.Throws<ArgumentNullException>(() => ignore = default(int[]).IndexOf(x => x == 2));
             Assert.Throws<ArgumentNullException>(() => ignore = default(int[]).IndexOf(null));
+            // ReSharper restore AssignNullToNotNullAttribute
         }
 
         [Fact]

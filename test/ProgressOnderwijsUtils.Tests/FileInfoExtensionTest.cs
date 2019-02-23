@@ -29,6 +29,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void SameContentsNull()
         {
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
+            // ReSharper disable once AssignNullToNotNullAttribute
             Assert.ThrowsAny<ArgumentNullException>(() => { sut.SameContents(null); });
         }
 

@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         [Pure]
         public override bool Equals(object obj)
-            => obj is SList<T> && Equals((SList<T>)obj);
+            => obj is SList<T> other && Equals(other);
 
         [Pure]
         public override int GetHashCode()
@@ -190,20 +190,20 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> Create<T>([NotNull] IEnumerable<T> list)
+        public static SList<T> Create<T>([NotNull] IEnumerable<T> enumerable)
         {
-            if (list is IList<T>) {
-                return Create((IList<T>)list); //use IList interface for reverse iterability
+            if (enumerable is IList<T> list) {
+                return Create(list); //use IList interface for reverse iterability
             } else {
-                return Create(list.ToArray()); //can't help but iterate forwards, so at least stick to it with the fastest possible path.
+                return Create(enumerable.ToArray()); //can't help but iterate forwards, so at least stick to it with the fastest possible path.
             }
         }
 
         [Pure]
         public static SList<T> Create<T>([NotNull] IList<T> list)
         {
-            if (list is T[]) {
-                return Create((T[])list);
+            if (list is T[] array) {
+                return Create(array);
             }
             var retval = default(SList<T>);
             for (var i = list.Count - 1; i >= 0; i--) {

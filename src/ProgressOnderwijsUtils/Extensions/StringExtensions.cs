@@ -70,9 +70,9 @@ namespace ProgressOnderwijsUtils
             => replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
 
         /// <summary>
-        /// Zet string met alleen hoofdletters om 
+        /// Zet string met alleen hoofdletters om
         /// naar Camel Case. Bv ADIS ABEBA -> Adis Abeba,
-        /// of JAN-BENJAMIN -> Jan-Benjamin, 
+        /// of JAN-BENJAMIN -> Jan-Benjamin,
         /// 'S-GRAVENHAGE -> 's-Gravenhage
         /// </summary>
         [Pure]
@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils
                 return s;
             }
 
-            // reguliere conversie 
+            // reguliere conversie
             // (patroon A t/m Z gevolgd door 1 of meer wordcharacters, A t/m Z blijft staan, rest lowercase)
             var upc1 = Regex.Replace(
                 s,
