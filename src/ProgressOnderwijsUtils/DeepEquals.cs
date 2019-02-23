@@ -33,8 +33,8 @@ namespace ProgressOnderwijsUtils
             if (type.IsPrimitive || type.IsEnum) {
                 return object1.Equals(object2);
             }
-            if (object1 is IDictionary && object2 is IDictionary) {
-                return CompareDictionaries(assumeEquals, (IDictionary)object1, (IDictionary)object2);
+            if (object1 is IDictionary dict1 && object2 is IDictionary dict2) {
+                return CompareDictionaries(assumeEquals, dict1, dict2);
             }
 
             if (type == object2.GetType()) {
@@ -96,8 +96,8 @@ namespace ProgressOnderwijsUtils
 
         static bool CompareAsEnumerableOrAccessibleMembers(HashSet<ReferencePair> assumeEqual, Type type, object o1_nonnull, [NotNull] object o2_nonnull)
         {
-            if (o1_nonnull is IEnumerable && o2_nonnull is IEnumerable) {
-                return CompareEnumerables(assumeEqual, (IEnumerable)o1_nonnull, (IEnumerable)o2_nonnull);
+            if (o1_nonnull is IEnumerable ilist1 && o2_nonnull is IEnumerable ilist2) {
+                return CompareEnumerables(assumeEqual, ilist1, ilist2);
             } else if (o2_nonnull.GetType() != type) {
                 return false;
             }
