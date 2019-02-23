@@ -38,8 +38,7 @@ namespace ProgressOnderwijsUtils
             [NotNull] TKey key,
             TValue defaultValue)
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultValue;
+            return dict.TryGetValue(key, out var result) ? result : defaultValue;
         }
 
         public static TValue GetOrDefault<TKey, TValue>(
@@ -47,8 +46,7 @@ namespace ProgressOnderwijsUtils
             [NotNull] TKey key,
             TValue defaultValue)
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultValue;
+            return dict.TryGetValue(key, out var result) ? result : defaultValue;
         }
 
         /// <summary>
@@ -98,8 +96,7 @@ namespace ProgressOnderwijsUtils
             TValue? defaultValue)
             where TValue : struct
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultValue;
+            return dict.TryGetValue(key, out var result) ? result : defaultValue;
         }
 
         /// <summary>
@@ -114,8 +111,7 @@ namespace ProgressOnderwijsUtils
             [NotNull] TKey key,
             Func<TValue> defaultFactory)
         {
-            TValue result;
-            return dict.TryGetValue(key, out result) ? result : defaultFactory();
+            return dict.TryGetValue(key, out var result) ? result : defaultFactory();
         }
 
         /// <summary>
