@@ -70,7 +70,6 @@ namespace ProgressOnderwijsUtils
                 ArgumentInclusion = agumentInclusion;
             }
 
-            [NotNull]
             public SqlTraceEvent[] ListAllCommands()
             {
                 lock (allqueries) {
