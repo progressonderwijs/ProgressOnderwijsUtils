@@ -12,7 +12,8 @@ namespace ProgressOnderwijsUtils
         /// <param name="strings">string sequence</param>
         /// <returns>a string</returns>
         [NotNull]
-        public static string JoinStrings([NotNull] this IEnumerable<string> strings) => JoinStrings(strings, "");
+        public static string JoinStrings([NotNull] this IEnumerable<string> strings)
+            => JoinStrings(strings, "");
 
         //don't use optional params to allow usage in expression trees
         /// <summary>
@@ -26,7 +27,9 @@ namespace ProgressOnderwijsUtils
             => string.Join(separator, strings);
 
         [NotNull]
-        public static string JoinStringsLimitLength([NotNull] this IReadOnlyCollection<string> strings, string separator,
+        public static string JoinStringsLimitLength(
+            [NotNull] this IReadOnlyCollection<string> strings,
+            string separator,
             int maxCount)
         {
             return string.Join(separator, strings.Take(maxCount)) + (strings.Count > maxCount ? separator + "..." : "");

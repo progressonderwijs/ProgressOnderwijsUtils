@@ -20,8 +20,9 @@ namespace ProgressOnderwijsUtils.WebSupport
         public string StringData
         {
             get {
-                using (var gzipStream = new GZipStream(new MemoryStream(GzippedUtf8String), CompressionMode.Decompress, false))
+                using (var gzipStream = new GZipStream(new MemoryStream(GzippedUtf8String), CompressionMode.Decompress, false)) {
                     return Encoding.UTF8.GetString(ReadFully(gzipStream));
+                }
             }
         }
 
@@ -37,8 +38,9 @@ namespace ProgressOnderwijsUtils.WebSupport
         {
             using (var compressedData = new MemoryStream()) {
                 var encodedData = Encoding.UTF8.GetBytes(stringData);
-                using (var gzipStream = new GZipStream(compressedData, CompressionMode.Compress))
+                using (var gzipStream = new GZipStream(compressedData, CompressionMode.Compress)) {
                     gzipStream.Write(encodedData, 0, encodedData.Length);
+                }
 
                 GzippedUtf8String = compressedData.ToArray();
             }

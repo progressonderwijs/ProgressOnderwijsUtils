@@ -72,6 +72,7 @@ namespace ProgressOnderwijsUtils.Tests
     </EntityDescriptor>
 </EntitiesDescriptor>
 ";
+
         const string INVALID_NESTED = @"
 <EntitiesDescriptor xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xsi:schemaLocation=""urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd"" Name=""http://www.uocgmarket.nl"" ID=""_12bae828-bc3d-4cd7-a935-2b640b9fb927"" validUntil=""2012-12-14T19:35:13.665039Z"" xmlns=""urn:oasis:names:tc:SAML:2.0:metadata"">
     <Signature xmlns=""http://www.w3.org/2000/09/xmldsig#"">

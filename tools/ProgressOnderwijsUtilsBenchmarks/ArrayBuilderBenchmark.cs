@@ -20,7 +20,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
     {
         public struct Factory : IFactory<int>
         {
-            public int Init(int value) => value;
+            public int Init(int value)
+                => value;
         }
     }
 
@@ -28,15 +29,17 @@ namespace ProgressOnderwijsUtilsBenchmarks
     {
         public struct Factory : IFactory<byte>
         {
-            public byte Init(int value) => (byte)value;
+            public byte Init(int value)
+                => (byte)value;
         }
     }
 
-    public sealed class SmallStructArrayBuilderBenchmark : ArrayBuilderBenchmark<(int,int), SmallStructArrayBuilderBenchmark.Factory>
+    public sealed class SmallStructArrayBuilderBenchmark : ArrayBuilderBenchmark<(int, int), SmallStructArrayBuilderBenchmark.Factory>
     {
-        public struct Factory : IFactory<(int,int)>
+        public struct Factory : IFactory<(int, int)>
         {
-            public (int,int) Init(int value) => (value,value);
+            public (int, int) Init(int value)
+                => (value, value);
         }
     }
 
@@ -45,7 +48,9 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public struct Factory : IFactory<object>
         {
             static readonly object[] Values = { "test", null, Tuple.Create(1, 2, 3), "lala", new List<int>(), new object(), new object(), new object(), };
-            public object Init(int value) => Values[value & 7];
+
+            public object Init(int value)
+                => Values[value & 7];
         }
     }
 
@@ -60,18 +65,19 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         public struct Factory : IFactory<BigStruct>
         {
-            public BigStruct Init(int value) => new BigStruct {
-                A = value,
-                B = value,
-                C = value,
-                D = value,
-                X = "X",
-                Y = "Y",
-                E = value,
-                F = value,
-                G = value,
-                H = value,
-            };
+            public BigStruct Init(int value)
+                => new BigStruct {
+                    A = value,
+                    B = value,
+                    C = value,
+                    D = value,
+                    X = "X",
+                    Y = "Y",
+                    E = value,
+                    F = value,
+                    G = value,
+                    H = value,
+                };
         }
     }
 
@@ -104,7 +110,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new List<T>();
-                    for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
                     GC.KeepAlive(builder.ToArray());
@@ -118,7 +124,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = ArrayBuilder_WithArraySegments<T>.Create();
-                    for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
                     GC.KeepAlive(builder.ToArray());
@@ -132,7 +138,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline63ValuesAndSegments<T>();
-                    for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
                     GC.KeepAlive(builder.ToArray());
@@ -146,7 +152,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline16ValuesAndSegments<T>();
-                    for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
                     GC.KeepAlive(builder.ToArray());
@@ -160,7 +166,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder<T>();
-                    for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
                     GC.KeepAlive(builder.ToArray());
@@ -174,7 +180,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
             Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline32ValuesAndSegments<T>();
-                    for (int i = 0; i < size; i++) {
+                    for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
                     }
                     GC.KeepAlive(builder.ToArray());
@@ -190,7 +196,9 @@ namespace ProgressOnderwijsUtilsBenchmarks
         int idx, sI;
         T[] current;
         T[][] segments;
-        public static ArrayBuilder_WithArraySegments<T> Create() => new ArrayBuilder_WithArraySegments<T> { current = new T[InitSize] };
+
+        public static ArrayBuilder_WithArraySegments<T> Create()
+            => new ArrayBuilder_WithArraySegments<T> { current = new T[InitSize] };
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(T item)
@@ -238,6 +246,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
 #pragma warning disable 169
         //InitSize total:
         T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46, v47, v48, v49, v50, v51, v52, v53, v54, v55, v56, v57, v58, v59, v60, v61, v62;
+
         //31 - InitSize2Pow total:
         T[] a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24;
 #pragma warning restore 169
@@ -270,7 +279,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     return Array.Empty<T>();
                 }
                 var retval = new T[idx];
-                for (int j = 0; j < retval.Length; j++) {
+                for (var j = 0; j < retval.Length; j++) {
                     retval[j] = Unsafe.Add(ref v00, j);
                 }
                 return retval;
@@ -301,6 +310,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
 #pragma warning disable 169
         //InitSize total:
         T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15;
+
         //31 - InitSize2Pow total:
         T[] a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26;
 #pragma warning restore 169
@@ -333,7 +343,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     return Array.Empty<T>();
                 }
                 var retval = new T[idx];
-                for (int j = 0; j < retval.Length; j++) {
+                for (var j = 0; j < retval.Length; j++) {
                     retval[j] = Unsafe.Add(ref v00, j);
                 }
                 return retval;
@@ -394,7 +404,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     return Array.Empty<T>();
                 }
                 var retval = new T[idx];
-                for (int j = 0; j < retval.Length; j++) {
+                for (var j = 0; j < retval.Length; j++) {
                     retval[j] = Unsafe.Add(ref v00, j);
                 }
                 return retval;

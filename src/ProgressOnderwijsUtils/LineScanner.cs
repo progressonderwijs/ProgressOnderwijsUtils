@@ -14,7 +14,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [CanBeNull]
-        public string GetLine() => position != lines.Length ? lines[position++] : null;
+        public string GetLine()
+            => position != lines.Length ? lines[position++] : null;
 
         public void PushBack()
         {
@@ -23,6 +24,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public bool Eof() => position == lines.Length;
+        public bool Eof()
+            => position == lines.Length;
     }
 }

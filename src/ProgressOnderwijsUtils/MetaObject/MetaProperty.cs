@@ -121,15 +121,15 @@ namespace ProgressOnderwijsUtils
                     return GetCaster(propertyType).SetterChecked<TOwner>(setterMethod);
                 }
 
-                //faster code, slower startup:				
+                //faster code, slower startup:
                 //var valParamExpr = Expression.Parameter(typeof(object), "newValue");
                 //var typedParamExpr = Expression.Parameter(typeof(TOwner), "propertyOwner");
                 //var typedPropExpr = Expression.Property(typedParamExpr, pi);
 
                 //return Expression.Lambda<Action<TOwner, object>>(
-                //		Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)),
-                //		typedParamExpr, valParamExpr
-                //		).Compile();
+                //  Expression.Assign(typedPropExpr, Expression.Convert(valParamExpr, pi.PropertyType)),
+                //  typedParamExpr, valParamExpr
+                //  ).Compile();
             }
 
             static Func<TOwner, object> MkGetter([CanBeNull] MethodInfo getterMethod, Type propertyType)

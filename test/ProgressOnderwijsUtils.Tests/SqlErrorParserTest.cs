@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils.Tests
                 ?? throw new Exception("Expected an inner SqlException");
 
             var exceptionError = exception.Errors[0] ?? throw new Exception("an sql error should have an error!");
-            
+
             var violation = SqlErrorParser.Parse(exceptionError) as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
 
             PAssert.That(() => violation.ConstraintType == "UNIQUE KEY");

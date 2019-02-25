@@ -64,8 +64,9 @@ namespace ProgressOnderwijsUtils
         public static byte[] ToUtf8([NotNull] XDocument doc)
         {
             var sb = new StringBuilder();
-            using (var xw = XmlWriter.Create(sb, xmlWriterSettings))
+            using (var xw = XmlWriter.Create(sb, xmlWriterSettings)) {
                 doc.Save(xw);
+            }
 
             return Encoding.UTF8.GetBytes(sb.ToString());
         }
@@ -80,7 +81,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="doc">The document to compress.</param>
         /// <param name="dictionary">
-        /// The dictionary to use during compression.  
+        /// The dictionary to use during compression.
         /// A good dictionary shared as many substrings that are as long as possible with the input data (e.g. document with the same schema).
         /// A null dictionary is permitted, which means "compress without dictionary".
         /// </param>
@@ -95,7 +96,7 @@ namespace ProgressOnderwijsUtils
         }
 
         /// <summary>
-        /// Loads an XDocument that was saved with 'SaveUsingDeflateWithDictionary'.  You must provide the same dictionary used during compression. 
+        /// Loads an XDocument that was saved with 'SaveUsingDeflateWithDictionary'.  You must provide the same dictionary used during compression.
         /// </summary>
         [NotNull]
         public static XDocument FromCompressedUtf8(byte[] compressedBytes, byte[] dictionary)

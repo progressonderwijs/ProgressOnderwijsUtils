@@ -16,8 +16,7 @@ namespace ProgressOnderwijsUtils.Tests
 {
     public sealed class TableValuedParameterTest : TransactedLocalConnection
     {
-        public enum SomeEnum
-        { }
+        public enum SomeEnum { }
 
         [Fact]
         public void DatabaseCanProcessTableValuedParameters()
@@ -34,7 +33,6 @@ namespace ProgressOnderwijsUtils.Tests
             var sum = q.ReadScalar<int>(Context);
             PAssert.That(() => sum == (100 * 100 + 100) / 2);
         }
-
 
         [Fact]
         public void SingletonTvPsCanBeExecuted()
@@ -126,22 +124,22 @@ namespace ProgressOnderwijsUtils.Tests
             ").ExecuteNonQuery(Context);
 
             using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Context))
-            using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default))
+            using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default)) {
                 Assert_DataReader_GetBytes_works(reader);
+            }
         }
 
         static void Assert_DataReader_GetBytes_works([NotNull] DbDataReader reader)
         {
             PAssert.That(() => reader.Read());
 
-            long nofRead;
             var buffer = new byte[10];
 
             // TODO: willen we dit ook zo ondersteunen?
             //nofRead = reader.GetBytes(0, 0, null, 0, 1);
             //PAssert.That(() => nofRead == 100);
 
-            nofRead = reader.GetBytes(0, 0, buffer, 0, 1);
+            var nofRead = reader.GetBytes(0, 0, buffer, 0, 1);
             PAssert.That(() => buffer[0] == 0);
             PAssert.That(() => nofRead == 1);
 

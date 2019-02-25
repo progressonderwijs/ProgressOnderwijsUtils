@@ -41,10 +41,12 @@ namespace ProgressOnderwijsUtils
 
     public static class DisposableExtensions
     {
-        public static T Using<TDisposable, T>(this TDisposable disposable, [NotNull] Func<TDisposable, T> func) where TDisposable : IDisposable
+        public static T Using<TDisposable, T>(this TDisposable disposable, [NotNull] Func<TDisposable, T> func)
+            where TDisposable : IDisposable
         {
-            using (disposable)
+            using (disposable) {
                 return func(disposable);
+            }
         }
     }
 
@@ -202,6 +204,7 @@ namespace ProgressOnderwijsUtils
             return v;
         } //purely for delegate type inference
         // ReSharper restore UnusedMember.Global
+
         [CanBeNull]
         public static string GetSqlExceptionDetailsString([NotNull] Exception exception)
         {
@@ -210,7 +213,8 @@ namespace ProgressOnderwijsUtils
         }
 
         // vergelijk datums zonder milliseconden.
-        public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2) => d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond);
+        public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2)
+            => d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond);
 
         /// <summary>
         /// Geeft het verschil in maanden tussen twee datums
@@ -224,7 +228,7 @@ namespace ProgressOnderwijsUtils
         /// Volgordebehoudende transformatie van getal naar string, dus:
         /// 
         /// a kleiner dan b
-        ///    is equivalent aan  
+        ///    is equivalent aan
         /// ToSortableShortString(a) kleiner dan ToShortableShortString(b)
         /// 
         /// Deze eigenschap geldt wanneer je m verifieert in C#, JS, SQL (, etc?)
@@ -272,12 +276,13 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static char MapToBase36Char(int digit) => (char)((digit < 10 ? '0' : 'a' - 10) + digit);
+        static char MapToBase36Char(int digit)
+            => (char)((digit < 10 ? '0' : 'a' - 10) + digit);
 
         /// <summary>
         /// This is almost equivalent to num.ToString("f"+precision), but around 10 times faster.
         /// 
-        /// Differences: 
+        /// Differences:
         ///   - rounding differences may exist for doubles like 1.005 which are not precisely representable.
         ///   - numbers over (2^64 - 2^10)/(2^precision) are slow.
         /// </summary>
@@ -417,7 +422,8 @@ namespace ProgressOnderwijsUtils
             this.comparer = comparer;
         }
 
-        public int Compare(T x, T y) => comparer(x, y);
+        public int Compare(T x, T y)
+            => comparer(x, y);
     }
 
     public sealed class EqualsEqualityComparer<T> : IEqualityComparer<T>
@@ -431,7 +437,10 @@ namespace ProgressOnderwijsUtils
             this.hashCode = hashCode;
         }
 
-        public bool Equals(T x, T y) => equals(x, y);
-        public int GetHashCode(T obj) => hashCode == null ? obj.GetHashCode() : hashCode(obj);
+        public bool Equals(T x, T y)
+            => equals(x, y);
+
+        public int GetHashCode(T obj)
+            => hashCode == null ? obj.GetHashCode() : hashCode(obj);
     }
 }

@@ -17,41 +17,51 @@ namespace ProgressOnderwijsUtils.Collections
     {
         [NotNull]
         [Pure]
-        public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children) => new Tree<T>(value, children);
+        public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children)
+            => new Tree<T>(value, children);
 
         [NotNull]
         [Pure]
-        public static Tree<T> Node<T>(T value, Tree<T> a) => new Tree<T>(value, new[] { a, });
+        public static Tree<T> Node<T>(T value, Tree<T> a)
+            => new Tree<T>(value, new[] { a, });
 
         [NotNull]
         [Pure]
-        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b) => new Tree<T>(value, new[] { a, b });
+        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b)
+            => new Tree<T>(value, new[] { a, b });
 
         [NotNull]
         [Pure]
         [CodeThatsOnlyUsedForTests]
-        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c) => new Tree<T>(value, new[] { a, b, c });
+        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c)
+            => new Tree<T>(value, new[] { a, b, c });
 
         // ReSharper disable MethodOverloadWithOptionalParameter
         [NotNull]
         [Pure]
-        public static Tree<T> Node<T>(T value, params Tree<T>[] kids) => new Tree<T>(value, kids);
+        public static Tree<T> Node<T>(T value, params Tree<T>[] kids)
+            => new Tree<T>(value, kids);
 
         // ReSharper restore MethodOverloadWithOptionalParameter
+
         [NotNull]
         [Pure]
-        public static Tree<T> Node<T>(T value) => new Tree<T>(value, null);
+        public static Tree<T> Node<T>(T value)
+            => new Tree<T>(value, null);
 
         [Pure]
-        public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup) => CachedTreeBuilder<T>.Resolve(root, kidLookup);
+        public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup)
+            => CachedTreeBuilder<T>.Resolve(root, kidLookup);
 
         [Pure]
-        public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup) => BuildRecursively(root, id => kidLookup.GetOrDefaultR(id));
+        public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
+            => BuildRecursively(root, kidLookup.GetOrDefaultR);
 
         [NotNull]
         [Pure]
         [CodeThatsOnlyUsedForTests]
-        public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer) => new Tree<T>.Comparer(valueComparer);
+        public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
+            => new Tree<T>.Comparer(valueComparer);
 
         /// <summary>
         /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
@@ -92,8 +102,11 @@ namespace ProgressOnderwijsUtils.Collections
         [NotNull]
         readonly Tree<T>[] kidArray;
 
-        public T NodeValue => nodeValue;
-        public IReadOnlyList<Tree<T>> Children => kidArray;
+        public T NodeValue
+            => nodeValue;
+
+        public IReadOnlyList<Tree<T>> Children
+            => kidArray;
 
         /// <summary>
         /// Creates a Tree with specified child nodes.  The child node enumeration is materialized using ToArray() before usage.
@@ -157,8 +170,8 @@ namespace ProgressOnderwijsUtils.Collections
                 //workaround resharper issue: object comparison is by reference, and faster than ReferenceEquals
                 return (object)pair.A == (object)pair.B ||
                     (object)pair.A != null && (object)pair.B != null
-                        && pair.A.Children.Count == pair.B.Children.Count
-                        && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
+                    && pair.A.Children.Count == pair.B.Children.Count
+                    && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
                 // ReSharper restore RedundantCast
             }
 
@@ -179,16 +192,20 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public override bool Equals(object obj) => DefaultComparer.Equals(this, obj as Tree<T>);
+        public override bool Equals(object obj)
+            => DefaultComparer.Equals(this, obj as Tree<T>);
 
         [Pure]
-        public bool Equals(Tree<T> other) => DefaultComparer.Equals(this, other);
+        public bool Equals(Tree<T> other)
+            => DefaultComparer.Equals(this, other);
 
         [Pure]
-        public override int GetHashCode() => DefaultComparer.GetHashCode(this);
+        public override int GetHashCode()
+            => DefaultComparer.GetHashCode(this);
 
         [Pure]
-        public override string ToString() => "TREE:\n" + ToString("");
+        public override string ToString()
+            => "TREE:\n" + ToString("");
 
         [NotNull]
         [Pure]
@@ -201,7 +218,7 @@ namespace ProgressOnderwijsUtils.Collections
                 + (Children.Count == 0
                     ? "."
                     : ":\n" + Children.Select(t => t.ToString(indent + "    ")).JoinStrings("\n")
-                    );
+                );
         }
 
         [Pure]

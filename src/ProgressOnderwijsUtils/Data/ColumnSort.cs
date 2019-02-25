@@ -14,13 +14,19 @@ namespace ProgressOnderwijsUtils
     {
         readonly string column;
         readonly SortDirection direction;
-        public string ColumnName => column;
-        public SortDirection SortDirection => direction;
+
+        public string ColumnName
+            => column;
+
+        public SortDirection SortDirection
+            => direction;
 
         [NotNull]
-        public string SqlSortString() => column + " " + direction;
+        public string SqlSortString()
+            => column + " " + direction;
 
-        public override string ToString() => "[" + column + " " + direction + "]";
+        public override string ToString()
+            => "[" + column + " " + direction + "]";
 
         public ColumnSort(string column, SortDirection direction)
         {
@@ -29,10 +35,12 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public ColumnSort WithReverseDirection() => new ColumnSort(column, FlipDirection(direction));
+        public ColumnSort WithReverseDirection()
+            => new ColumnSort(column, FlipDirection(direction));
 
         [Pure]
-        public ColumnSort WithDifferentName(string newColumn) => new ColumnSort(newColumn, direction);
+        public ColumnSort WithDifferentName(string newColumn)
+            => new ColumnSort(newColumn, direction);
 
         [Pure]
         static SortDirection FlipDirection(SortDirection dir)
@@ -40,15 +48,16 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public bool Equals(ColumnSort other)
-            =>
-                string.Equals(ColumnName, other.ColumnName, StringComparison.OrdinalIgnoreCase) &&
-                    SortDirection == other.SortDirection;
+            => string.Equals(ColumnName, other.ColumnName, StringComparison.OrdinalIgnoreCase) &&
+                SortDirection == other.SortDirection;
 
         [Pure]
-        public override bool Equals(object obj) => obj is ColumnSort && Equals((ColumnSort)obj);
+        public override bool Equals(object obj)
+            => obj is ColumnSort columnSort && Equals(columnSort);
 
         [Pure]
-        public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int)direction;
+        public override int GetHashCode()
+            => StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int)direction;
 
         [Pure]
         public static bool operator ==(ColumnSort a, ColumnSort b)
@@ -60,6 +69,6 @@ namespace ProgressOnderwijsUtils
         public static bool operator !=(ColumnSort a, ColumnSort b)
         {
             return !a.Equals(b);
-        } //!ReferenceEquals(a, b) && (null == (object)a || 
+        } //!ReferenceEquals(a, b) && (null == (object)a ||
     }
 }

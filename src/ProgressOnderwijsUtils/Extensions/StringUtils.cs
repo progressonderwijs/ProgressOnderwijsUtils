@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
                         .Normalize(NormalizationForm.FormD)
                         .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
                         .ToArray()
-                    ).Normalize(NormalizationForm.FormC);
+                ).Normalize(NormalizationForm.FormC);
         }
 
         const RegexOptions CommonOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace;
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils
                 PrettyPrintValues.capLetter.Replace(
                     rawString,
                     m => (m.Index == 0 ? "" : " ") + (IsUpperAscii(m.Value) ? m.Value : DecapitalizeAscii(m.Value))
-                    );
+                );
             return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
         }
 
@@ -95,17 +95,19 @@ namespace ProgressOnderwijsUtils
                 PrettyPrintValues.capLetter.Replace(
                     rawString,
                     m => m.Index == 0 ? m.Value : " " + (IsUpperAscii(m.Value) ? m.Value : DecapitalizeAscii(m.Value))
-                    );
+                );
             return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
         }
 
         [NotNull]
         [Pure]
-        public static string VervangRingelS([NotNull] string str, bool upper) => str.Replace("ß", upper ? "SS" : "ss");
+        public static string VervangRingelS([NotNull] string str, bool upper)
+            => str.Replace("ß", upper ? "SS" : "ss");
 
         [NotNull]
         [Pure]
-        public static string SepaTekenset([NotNull] string s) => SepaStripperRegexes.sepaStripper.Replace(s, "");
+        public static string SepaTekenset([NotNull] string s)
+            => SepaStripperRegexes.sepaStripper.Replace(s, "");
 
         [CanBeNull]
         [Pure]
@@ -123,10 +125,12 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         [Pure]
-        public static string Capitalize([NotNull] string name) => name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
+        public static string Capitalize([NotNull] string name)
+            => name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
 
         [Pure]
-        public static int LevenshteinDistance([NotNull] string s, [NotNull] string t) => LevenshteinDistance(s, t, 1);
+        public static int LevenshteinDistance([NotNull] string s, [NotNull] string t)
+            => LevenshteinDistance(s, t, 1);
 
         [Pure]
         public static int LevenshteinDistance([NotNull] string s, [NotNull] string t, int substitutionCost)
@@ -158,7 +162,8 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         [CodeThatsOnlyUsedForTests]
-        public static double LevenshteinDistanceScaled([NotNull] string s, [NotNull] string t) => LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length));
+        public static double LevenshteinDistanceScaled([NotNull] string s, [NotNull] string t)
+            => LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length));
 
         [NotNull]
         [Pure]
@@ -208,20 +213,21 @@ namespace ProgressOnderwijsUtils
                 inp,
                 (current, t) =>
                     Regex.Replace(current, t, t.Length > 0 ? Capitalize(t.ToLowerInvariant()) : t)
-                );
+            );
         }
 
         [Pure]
-        static bool isVowel(char c) => c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
+        static bool isVowel(char c)
+            => c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 
         [NotNull]
         [Pure]
         public static string Depluralize([NotNull] string pluralstring)
         {
-            if (pluralstring.EndsWith("s")) {
+            if (pluralstring.EndsWith("s", StringComparison.Ordinal)) {
                 return pluralstring.Remove(pluralstring.Length - 1);
             }
-            if (pluralstring.EndsWith("en")) {
+            if (pluralstring.EndsWith("en", StringComparison.Ordinal)) {
                 if (pluralstring.Length >= 4 && isVowel(pluralstring[pluralstring.Length - 4]) && (pluralstring.Length < 5 || !isVowel(pluralstring[pluralstring.Length - 5]))) {
                     return pluralstring.Remove(pluralstring.Length - 3) + pluralstring.Substring(pluralstring.Length - 4, 2).ToLowerInvariant();
                 } else if (pluralstring.Length >= 4 && pluralstring[pluralstring.Length - 4] == pluralstring[pluralstring.Length - 3]) {
@@ -236,8 +242,7 @@ namespace ProgressOnderwijsUtils
 
         public static int? TryParseInt32(this string input)
         {
-            int output;
-            if (int.TryParse(input, out output)) {
+            if (int.TryParse(input, out var output)) {
                 return output;
             } else {
                 return null;
@@ -246,8 +251,7 @@ namespace ProgressOnderwijsUtils
 
         public static long? TryParseInt64(this string input)
         {
-            long output;
-            if (long.TryParse(input, out output)) {
+            if (long.TryParse(input, out var output)) {
                 return output;
             } else {
                 return null;

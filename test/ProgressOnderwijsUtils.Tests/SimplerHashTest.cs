@@ -3,7 +3,6 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class SimplerHashTest
     {
         [Fact]
@@ -13,7 +12,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(
                 () =>
                     SimplerHash.MD5ComputeHash(strA) != strA && SimplerHash.MD5VerifyHash(strA, SimplerHash.MD5ComputeHash(strA))
-                        && !SimplerHash.MD5VerifyHash(strA.Substring(1), SimplerHash.MD5ComputeHash(strA)));
+                    && !SimplerHash.MD5VerifyHash(strA.Substring(1), SimplerHash.MD5ComputeHash(strA)));
         }
     }
 }

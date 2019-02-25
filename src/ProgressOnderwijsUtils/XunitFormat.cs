@@ -6,8 +6,11 @@ namespace ProgressOnderwijsUtils
 {
     public static class XunitFormat
     {
-        public static XunitResultReport LoadFromXmlReport(string xUnitXmlReportUri) => LoadFromXmlReport(XmlReader.Create(xUnitXmlReportUri));
-        public static XunitResultReport LoadFromXmlReport(XmlReader reader) => reader.Using(XmlSerializerHelper<XunitResultReport>.Deserialize);
+        public static XunitResultReport LoadFromXmlReport(string xUnitXmlReportUri)
+            => LoadFromXmlReport(XmlReader.Create(xUnitXmlReportUri));
+
+        public static XunitResultReport LoadFromXmlReport(XmlReader reader)
+            => reader.Using(XmlSerializerHelper<XunitResultReport>.Deserialize);
 
         /// <summary>
         /// xUnit escapes most content; replacing e.g. newlines with \n. This function unescapes that.
@@ -15,15 +18,13 @@ namespace ProgressOnderwijsUtils
         public static string xUnitUnescapeString(string message)
         {
             //see https://github.com/xunit/xunit/blame/master/src/xunit.runner.utility/Sinks/DelegatingSinks/DelegatingXmlCreationSink.cs#L249
-            int nextSlash = message.IndexOf('\\');
-            if (nextSlash < 0 || message.Length == nextSlash + 1)
-            {
+            var nextSlash = message.IndexOf('\\');
+            if (nextSlash < 0 || message.Length == nextSlash + 1) {
                 return message;
             }
             var output = new StringBuilder();
-            int doneUpto = 0;
-            while (true)
-            {
+            var doneUpto = 0;
+            while (true) {
                 output.Append(message, doneUpto, nextSlash - doneUpto);
                 var nextChar = message[nextSlash + 1];
                 output.Append(
@@ -36,8 +37,7 @@ namespace ProgressOnderwijsUtils
                 );
                 doneUpto = nextSlash + 2;
                 nextSlash = message.IndexOf('\\', doneUpto);
-                if (nextSlash < 0 || message.Length == nextSlash + 1)
-                {
+                if (nextSlash < 0 || message.Length == nextSlash + 1) {
                     output.Append(message, doneUpto, message.Length - doneUpto);
                     return output.ToString();
                 }

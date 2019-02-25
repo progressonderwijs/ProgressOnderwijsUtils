@@ -11,7 +11,10 @@ namespace ProgressOnderwijsUtils.Html
         public string TagName { get; private set; }
         public bool IsSelfClosing { get; private set; }
         public string FieldName { get; private set; }
-        public bool IsPredefined => FieldName != null;
+
+        public bool IsPredefined
+            => FieldName != null;
+
         public IHtmlElement EmptyValue { get; private set; }
         public IReadOnlyDictionary<string, string> AttributeMethodsByName { get; private set; }
 
@@ -41,7 +44,7 @@ namespace ProgressOnderwijsUtils.Html
                     return typeArgument.GetGenericParameterConstraints()
                         .All(constraint =>
                             constraint.IsAssignableFrom(tagType)
-                                || constraint == typeof(IHtmlElement<>).MakeGenericType(typeArgument) && typeof(IHtmlElement<>).MakeGenericType(tagType).IsAssignableFrom(tagType));
+                            || constraint == typeof(IHtmlElement<>).MakeGenericType(typeArgument) && typeof(IHtmlElement<>).MakeGenericType(tagType).IsAssignableFrom(tagType));
                 })
                 .ToDictionary(
                     method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })).Attributes.Last().Name,
@@ -50,15 +53,14 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public static TagDescription LookupTag([NotNull] string tagName)
-            =>
-                ByTagName.TryGetValue(tagName, out var desc)
-                    ? desc
-                    : new TagDescription {
-                        TagName = tagName,
-                        FieldName = null,
-                        IsSelfClosing = false,
-                        AttributeMethodsByName = DefaultAttributes,
-                    };
+            => ByTagName.TryGetValue(tagName, out var desc)
+                ? desc
+                : new TagDescription {
+                    TagName = tagName,
+                    FieldName = null,
+                    IsSelfClosing = false,
+                    AttributeMethodsByName = DefaultAttributes,
+                };
 
         static readonly IReadOnlyDictionary<string, string> DefaultAttributes = AttributeLookup(typeof(CustomHtmlElement), new CustomHtmlElement("unknown", null, null));
     }

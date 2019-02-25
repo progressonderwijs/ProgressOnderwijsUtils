@@ -16,7 +16,8 @@ namespace ProgressOnderwijsUtils.Html
             Value = value;
         }
 
-        public override string ToString() => Name + "=" + Value;
+        public override string ToString()
+            => Name + "=" + Value;
     }
 
     public struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
@@ -30,8 +31,11 @@ namespace ProgressOnderwijsUtils.Html
             this.count = count;
         }
 
-        public int Count => count;
-        public HtmlAttribute this[int i] => attributes[i];
+        public int Count
+            => count;
+
+        public HtmlAttribute this[int i]
+            => attributes[i];
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public HtmlAttributes Add(string name, string val)
@@ -44,7 +48,7 @@ namespace ProgressOnderwijsUtils.Html
                 } else {
                     var oldArray = array;
                     array = new HtmlAttribute[count + 4 + (count >> 2) & ~1 | 2];
-                    for (int i = 0; i < count; i++) {
+                    for (var i = 0; i < count; i++) {
                         array[i] = oldArray[i];
                     }
                 }
@@ -56,9 +60,14 @@ namespace ProgressOnderwijsUtils.Html
             return new HtmlAttributes(array, count + 1);
         }
 
-        IEnumerator<HtmlAttribute> IEnumerable<HtmlAttribute>.GetEnumerator() => new Enumerator(this);
-        IEnumerator IEnumerable.GetEnumerator() => new Enumerator(this);
-        public Enumerator GetEnumerator() => new Enumerator(this);
+        IEnumerator<HtmlAttribute> IEnumerable<HtmlAttribute>.GetEnumerator()
+            => new Enumerator(this);
+
+        IEnumerator IEnumerable.GetEnumerator()
+            => new Enumerator(this);
+
+        public Enumerator GetEnumerator()
+            => new Enumerator(this);
 
         public struct Enumerator : IEnumerator<HtmlAttribute>
         {
@@ -73,18 +82,29 @@ namespace ProgressOnderwijsUtils.Html
                 pos = -1;
             }
 
-            public HtmlAttribute Current => attributes[pos];
+            public HtmlAttribute Current
+                => attributes[pos];
 
             [NotNull]
-            object IEnumerator.Current => attributes[pos];
+            object IEnumerator.Current
+                => attributes[pos];
 
             public void Dispose() { }
-            public bool MoveNext() => ++pos < count;
-            public void Reset() => pos = 0;
+
+            public bool MoveNext()
+                => ++pos < count;
+
+            public void Reset()
+                => pos = 0;
         }
 
-        public static HtmlAttributes Empty => default(HtmlAttributes);
-        public static HtmlAttributes FromArray([NotNull] HtmlAttribute[] arr) => new HtmlAttributes(arr, arr.Length);
-        public override string ToString() => string.Join("; ", this);
+        public static HtmlAttributes Empty
+            => default(HtmlAttributes);
+
+        public static HtmlAttributes FromArray([NotNull] HtmlAttribute[] arr)
+            => new HtmlAttributes(arr, arr.Length);
+
+        public override string ToString()
+            => string.Join("; ", this);
     }
 }

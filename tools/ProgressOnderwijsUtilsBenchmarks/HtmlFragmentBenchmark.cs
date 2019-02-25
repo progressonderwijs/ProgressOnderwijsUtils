@@ -78,15 +78,17 @@ namespace ProgressOnderwijsUtilsBenchmarks
         public void JustConvertToUtf8()
         {
             using (var stream = new MemoryStream())
-            using (var writer = new StreamWriter(stream, Encoding.UTF8))
+            using (var writer = new StreamWriter(stream, Encoding.UTF8)) {
                 writer.Write(htmlString);
+            }
         }
 
         [Benchmark]
         public void JustSerializeToUtf8LargeDocument()
         {
-            using (var stream = new MemoryStream())
+            using (var stream = new MemoryStream()) {
                 htmlFragment.SaveHtmlFragmentToStream(stream, Encoding.UTF8);
+            }
         }
 
         [Benchmark]
@@ -98,8 +100,9 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void AngleSharpParseFromUtf8()
         {
-            using (var stream = new MemoryStream(htmlUtf8))
+            using (var stream = new MemoryStream(htmlUtf8)) {
                 new HtmlParser().ParseDocument(stream);
+            }
         }
 
         [Benchmark]

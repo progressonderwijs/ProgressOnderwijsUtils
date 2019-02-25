@@ -6,10 +6,10 @@ using JetBrains.Annotations;
 namespace ProgressOnderwijsUtils
 {
     /// <summary>
-    /// Representeerd de volgorde van sorteren op kolommen.  
+    /// Representeerd de volgorde van sorteren op kolommen.
     /// 
-    /// Deze datastructuur is READONLY!  Als je functies als "Append" "ToggleSortDirection" uitvoerd wordt 
-    /// een NIEUWE ColumnSortOrder gereturned. 
+    /// Deze datastructuur is READONLY!  Als je functies als "Append" "ToggleSortDirection" uitvoerd wordt
+    /// een NIEUWE ColumnSortOrder gereturned.
     /// 
     /// ColumnSortOrder is een struct; zijn default waarde representeerd "geen sorteering".
     /// </summary>
@@ -17,7 +17,10 @@ namespace ProgressOnderwijsUtils
     public struct OrderByColumns : IEquatable<OrderByColumns>
     {
         static readonly ColumnSort[] EmptyOrder = { };
-        static bool streq(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+
+        static bool streq(string a, string b)
+            => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+
         readonly ColumnSort[] sortColumns;
 
         [System.Diagnostics.Contracts.Pure]
@@ -32,8 +35,11 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        ColumnSort[] DirectAcessColumns => sortColumns ?? EmptyOrder;
-        public static OrderByColumns Empty => default(OrderByColumns);
+        ColumnSort[] DirectAcessColumns
+            => sortColumns ?? EmptyOrder;
+
+        public static OrderByColumns Empty
+            => default(OrderByColumns);
 
         public OrderByColumns([NotNull] IEnumerable<ColumnSort> order)
         {
@@ -84,7 +90,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [System.Diagnostics.Contracts.Pure]
-        public int ColumnCount => sortColumns == null ? 0 : sortColumns.Length;
+        public int ColumnCount
+            => sortColumns == null ? 0 : sortColumns.Length;
 
         [Pure]
         public OrderByColumns ToggleSortDirection(string kolomnaam)
@@ -192,7 +199,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override bool Equals(object obj)
         {
-            return obj is OrderByColumns && Equals((OrderByColumns)obj);
+            return obj is OrderByColumns orderByColumns && Equals(orderByColumns);
         }
 
         [Pure]
@@ -201,7 +208,8 @@ namespace ProgressOnderwijsUtils
             return (int)DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Aggregate(12345L, (a, b) => a + b);
         }
 
-        public override string ToString() => "{" + DirectAcessColumns.Select(col => col.ToString()).JoinStrings(", ") + "}";
+        public override string ToString()
+            => "{" + DirectAcessColumns.Select(col => col.ToString()).JoinStrings(", ") + "}";
 
         [Pure]
         public OrderByColumns AssumeThenBy(OrderByColumns BaseSortOrder)

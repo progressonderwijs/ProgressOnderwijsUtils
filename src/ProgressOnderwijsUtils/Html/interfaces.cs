@@ -19,13 +19,17 @@ namespace ProgressOnderwijsUtils.Html
         /// See HtmlTagAlterations for simple examples.  Upon using this method, the "change" parameter with receive a call to
         /// either ChangeWithContent or ChangeEmpty.
         /// </summary>
-        IHtmlElement ApplyChange<TAlteration>(TAlteration change) where TAlteration : IHtmlElementAlteration;
+        IHtmlElement ApplyChange<TAlteration>(TAlteration change)
+            where TAlteration : IHtmlElementAlteration;
     }
 
     public interface IHtmlElementAlteration
     {
-        TSelf ChangeEmpty<TSelf>(TSelf typed) where TSelf : struct, IHtmlElement<TSelf>;
-        TSelf ChangeWithContent<TSelf>(TSelf typed) where TSelf : struct, IHtmlElementAllowingContent<TSelf>;
+        TSelf ChangeEmpty<TSelf>(TSelf typed)
+            where TSelf : struct, IHtmlElement<TSelf>;
+
+        TSelf ChangeWithContent<TSelf>(TSelf typed)
+            where TSelf : struct, IHtmlElementAllowingContent<TSelf>;
     }
 
     public interface IHtmlElementAllowingContent : IHtmlElement

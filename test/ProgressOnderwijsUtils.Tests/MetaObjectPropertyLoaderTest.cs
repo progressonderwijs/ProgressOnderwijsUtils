@@ -36,7 +36,8 @@ namespace ProgressOnderwijsUtils.Tests
 
             [NotNull]
             [MetaObjectPropertyLoader]
-            public static CustomBla MethodWithIrrelevantName(string value) => new CustomBla(value);
+            public static CustomBla MethodWithIrrelevantName(string value)
+                => new CustomBla(value);
         }
 
         public struct CustomBlaStruct
@@ -49,7 +50,8 @@ namespace ProgressOnderwijsUtils.Tests
             public string AsString { get; }
 
             [MetaObjectPropertyLoader]
-            public static CustomBlaStruct MethodWithIrrelevantName(string value) => new CustomBlaStruct(value);
+            public static CustomBlaStruct MethodWithIrrelevantName(string value)
+                => new CustomBlaStruct(value);
         }
 
         public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IPropertiesAreUsedImplicitly

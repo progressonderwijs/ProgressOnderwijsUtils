@@ -26,8 +26,8 @@ namespace ProgressOnderwijsUtils.Tests
                     Tree.Node(3,
                         Tree.Node(4),
                         Tree.Node(5)
-                        )
-                    ).RootHere();
+                    )
+                ).RootHere();
 
             var toReplace = tree
                 .PreorderTraversal()
@@ -44,8 +44,8 @@ namespace ProgressOnderwijsUtils.Tests
                     Tree.Node(42,
                         Tree.Node(4),
                         Tree.Node(5)
-                        )
-                    ).RootHere()));
+                    )
+                ).RootHere()));
         }
     }
 }

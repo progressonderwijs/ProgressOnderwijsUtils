@@ -8,7 +8,8 @@ namespace ProgressOnderwijsUtils.Collections
     /// </summary>
     public struct Unit
     {
-        public static Unit Value => default(Unit);
+        public static Unit Value
+            => default(Unit);
 
         public static Unit SideEffect([NotNull] Action action)
         {
@@ -16,6 +17,7 @@ namespace ProgressOnderwijsUtils.Collections
             return Value;
         }
 
-        public T Return<T>(T val) => val;
+        public T Return<T>(T val)
+            => val;
     }
 }

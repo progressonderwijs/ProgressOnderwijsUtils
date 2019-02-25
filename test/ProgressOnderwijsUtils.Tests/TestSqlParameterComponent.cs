@@ -9,6 +9,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ValidatesArgumentsOK()
         {
+            // ReSharper disable once AssignNullToNotNullAttribute
             Assert.Throws<ArgumentNullException>(() => ParameterizedSql.CreateDynamic(null));
 
             PAssert.That(() => ParameterizedSql.CreateDynamic("bla" + 0).GetHashCode() == ParameterizedSql.CreateDynamic("bla0").GetHashCode());

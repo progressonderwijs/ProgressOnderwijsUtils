@@ -49,7 +49,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             ");
 
             [NotNull]
-            public static DbColumnMetaData[] RunQuery([NotNull] SqlCommandCreationContext conn, bool fromTempDb, ParameterizedSql filter) => BaseQuery(fromTempDb).Append(filter).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
+            public static DbColumnMetaData[] RunQuery([NotNull] SqlCommandCreationContext conn, bool fromTempDb, ParameterizedSql filter)
+                => BaseQuery(fromTempDb).Append(filter).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
         }
 
         DbColumnMetaData(CompressedSysColumnsValue fromDb)
@@ -204,7 +205,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             var columnDefinitionSql = ParameterizedSql.CreateDynamic(columns
                 .Select(md => $"{md.ToSqlColumnDefinition()}{(keyColumns.Length == 1 && md.IsPrimaryKey ? " primary key" : "")}")
                 .JoinStrings("\r\n    , ")
-                );
+            );
             var primaryKeyDefinitionSql = keyColumns.Length > 1
                 ? SQL($"\r\n    , primary key ({ParameterizedSql.CreateDynamic(keyColumns.JoinStrings(", "))})")
                 : ParameterizedSql.Empty;

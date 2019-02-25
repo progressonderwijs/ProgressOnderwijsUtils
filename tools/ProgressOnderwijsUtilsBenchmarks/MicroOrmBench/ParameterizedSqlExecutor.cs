@@ -10,28 +10,28 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         public static void RunQuery([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("ParameterizedSql",
-                (ctx, rows) => ExampleObject.ParameterizedSqlForRows(rows)
-                    .ReadMetaObjects<ExampleObject>(ctx)
-                    .Length)
+                    (ctx, rows) => ExampleObject.ParameterizedSqlForRows(rows)
+                        .ReadMetaObjects<ExampleObject>(ctx)
+                        .Length)
                 ;
         }
 
         public static void RunTvpQuery([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("ParameterizedSql-TVP",
-                (ctx, rows) =>
-                    SQL($"select QueryTableValue from ({Enumerable.Range(0, rows).ToArray()}) x")
-                        .ReadPlain<int>(ctx)
-                        .Length)
+                    (ctx, rows) =>
+                        SQL($"select QueryTableValue from ({Enumerable.Range(0, rows).ToArray()}) x")
+                            .ReadPlain<int>(ctx)
+                            .Length)
                 ;
         }
 
         public static void RunWideQuery([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("ParameterizedSql (26-col)",
-                (ctx, rows) => WideExampleObject.ParameterizedSqlForRows(rows)
-                    .ReadMetaObjects<WideExampleObject>(ctx)
-                    .Length)
+                    (ctx, rows) => WideExampleObject.ParameterizedSqlForRows(rows)
+                        .ReadMetaObjects<WideExampleObject>(ctx)
+                        .Length)
                 ;
         }
 

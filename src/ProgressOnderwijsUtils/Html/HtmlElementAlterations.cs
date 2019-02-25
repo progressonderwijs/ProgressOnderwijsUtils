@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils.Html
         public static IHtmlElement ReplaceAttributes([NotNull] IHtmlElement element, [NotNull] IEnumerable<HtmlAttribute> attributes)
             => element.ApplyChange(new AttributeAlteration(attributes.ToHtmlAttributes()));
 
-        public static IHtmlElementAllowingContent ReplaceContents([NotNull] this  IHtmlElementAllowingContent element, HtmlFragment children)
+        public static IHtmlElementAllowingContent ReplaceContents([NotNull] this IHtmlElementAllowingContent element, HtmlFragment children)
             => (IHtmlElementAllowingContent)element.ApplyChange(new ContentAlteration(children));
 
         public static IHtmlElement ReplaceAttributesAndContents([NotNull] IHtmlElement element, [NotNull] IEnumerable<HtmlAttribute> attributes, HtmlFragment children)
