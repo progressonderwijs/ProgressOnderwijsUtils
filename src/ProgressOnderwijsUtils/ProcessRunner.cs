@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
             var exitCodeCompletion = new TaskCompletionSource<int>();
             var proc = CreateProcessObj();
             var stopwatch = new Stopwatch();
-            int closedParts = 0;
+            var closedParts = 0;
             void MarkOnePartClosed()
             {
                 if (Interlocked.Increment(ref closedParts) == 3) {

@@ -6,7 +6,9 @@ namespace ProgressOnderwijsUtils.Collections
     {
         public static readonly ArrayOrderingComparer<T> Default = new ArrayOrderingComparer<T>(Comparer<T>.Default);
         readonly IComparer<T> underlying;
-        public ArrayOrderingComparer(IComparer<T> underlying) => this.underlying = underlying;
+
+        public ArrayOrderingComparer(IComparer<T> underlying)
+            => this.underlying = underlying;
 
         public int Compare(T[] x, T[] y)
         {
@@ -17,7 +19,7 @@ namespace ProgressOnderwijsUtils.Collections
             } else if (y == null) {
                 return 1; //x nonnull
             }
-            int i = 0;
+            var i = 0;
             while (i < x.Length && i < y.Length) {
                 var cmp = underlying.Compare(x[i], y[i]);
                 if (cmp != 0) {

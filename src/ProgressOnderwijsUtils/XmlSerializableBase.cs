@@ -10,21 +10,25 @@ namespace ProgressOnderwijsUtils
 {
     public static class XmlSerializerHelper
     {
-        public static T Deserialize<T>([NotNull] string xml) => XmlSerializerHelper<T>.Deserialize(xml);
-        public static T Deserialize<T>([NotNull] XDocument xml) => XmlSerializerHelper<T>.Deserialize(xml);
+        public static T Deserialize<T>([NotNull] string xml)
+            => XmlSerializerHelper<T>.Deserialize(xml);
+
+        public static T Deserialize<T>([NotNull] XDocument xml)
+            => XmlSerializerHelper<T>.Deserialize(xml);
 
         [NotNull]
         public static string SerializeToString([NotNull] object o)
         {
             using (var writer = new StringWriter()) {
-                using (var xw = XmlWriter.Create(writer))
+                using (var xw = XmlWriter.Create(writer)) {
                     ((IXmlSerializeHelper)
-                        typeof(XmlSerializerHelper<>)
-                            .MakeGenericType(o.GetType())
-                            .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
-                            .Single()
-                            .Invoke(null)
+                            typeof(XmlSerializerHelper<>)
+                                .MakeGenericType(o.GetType())
+                                .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+                                .Single()
+                                .Invoke(null)
                         ).SerializeToInst(xw, o);
+                }
                 return writer.ToString();
             }
         }
@@ -33,14 +37,15 @@ namespace ProgressOnderwijsUtils
         public static XDocument SerializeToXDocument([NotNull] object o)
         {
             var doc = new XDocument();
-            using (var xw = doc.CreateWriter())
+            using (var xw = doc.CreateWriter()) {
                 ((IXmlSerializeHelper)
-                    typeof(XmlSerializerHelper<>)
-                        .MakeGenericType(o.GetType())
-                        .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
-                        .Single()
-                        .Invoke(null)
+                        typeof(XmlSerializerHelper<>)
+                            .MakeGenericType(o.GetType())
+                            .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+                            .Single()
+                            .Invoke(null)
                     ).SerializeToInst(xw, o);
+            }
 
             return doc;
         }
@@ -57,16 +62,19 @@ namespace ProgressOnderwijsUtils
 
         public static T Deserialize([NotNull] XDocument from)
         {
-            using (var reader = from.CreateReader())
+            using (var reader = from.CreateReader()) {
                 return Deserialize(reader);
+            }
         }
 
-        public static T Deserialize([NotNull] XmlReader from) => (T)serializer.Deserialize(from);
+        public static T Deserialize([NotNull] XmlReader from)
+            => (T)serializer.Deserialize(from);
 
         public static T Deserialize([NotNull] string from)
         {
-            using (var reader = new StringReader(from))
+            using (var reader = new StringReader(from)) {
                 return (T)serializer.Deserialize(reader);
+            }
         }
 
         [NotNull]

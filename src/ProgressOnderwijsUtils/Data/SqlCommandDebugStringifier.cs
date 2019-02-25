@@ -67,20 +67,20 @@ namespace ProgressOnderwijsUtils
         {
             if (p is DBNull || p == null) {
                 return "NULL";
-            } else if (p is DateTime) {
-                return "'" + ((DateTime)p).ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'", CultureInfo.InvariantCulture) + "'";
-            } else if (p is string) {
-                return "'" + ((string)p).Replace("'", "''") + "'";
-            } else if (p is long) {
-                return ((long)p).ToStringInvariant();
-            } else if (p is int) {
-                return ((int)p).ToStringInvariant();
-            } else if (p is bool) {
-                return (bool)p ? "1" : "0";
+            } else if (p is DateTime dateTime) {
+                return "'" + dateTime.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'", CultureInfo.InvariantCulture) + "'";
+            } else if (p is string s) {
+                return "'" + s.Replace("'", "''") + "'";
+            } else if (p is long l) {
+                return l.ToStringInvariant();
+            } else if (p is int i) {
+                return i.ToStringInvariant();
+            } else if (p is bool b) {
+                return b ? "1" : "0";
             } else if (p is Enum) {
                 return ((IConvertible)p).ToInt64(null).ToStringInvariant() + (includeReadableEnumValue ? "/*" + ObjectToCode.PlainObjectToCode(p) + "*/" : "");
-            } else if (p is IFormattable) {
-                return ((IFormattable)p).ToString(null, CultureInfo.InvariantCulture);
+            } else if (p is IFormattable formattable) {
+                return formattable.ToString(null, CultureInfo.InvariantCulture);
             } else {
                 try {
                     return "{!" + p + "!}";

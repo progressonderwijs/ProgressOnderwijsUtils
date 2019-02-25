@@ -10,7 +10,6 @@ namespace ProgressOnderwijsUtils.Tests
     public sealed class TreeTest
     {
         [Fact]
-        
         public void TreeStoresInfo()
         {
             var tree = Tree.Node("abc", Tree.Node("def"), Tree.Node("xyz"));
@@ -22,7 +21,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void TreeWithManyLeaves()
         {
             var tree = Tree.Node(100, Tree.Node(1), Tree.Node(2), Tree.Node(3), Tree.Node(4));
@@ -31,7 +29,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void SaneDefaultComparer()
         {
             var leaf2 = Tree.Node(2);
@@ -51,7 +48,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void CustomizableComparerWorks()
         {
             var tree1 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
@@ -68,7 +64,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void SaneDefaultHashCodes()
         {
             var leaf2 = Tree.Node(2);
@@ -88,7 +83,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void CustomizableGetHashCodeWorks()
         {
             var comparer = Tree.EqualityComparer(StringComparer.OrdinalIgnoreCase);
@@ -107,7 +101,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void PreorderTraversalNormalCase()
         {
             var e = Tree.Node("e");
@@ -125,7 +118,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void BuildWorks()
         {
             var dict = new Dictionary<string, IReadOnlyList<string>> {
@@ -154,7 +146,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => root_a_b.NodeValue == "b" && root_b.NodeValue == "b", "Test should select 'b' branches correctly");
         }
 
-        [Fact(Skip ="This causes OOM post-xUnit conversion; still needs to be investigated")]
+        [Fact(Skip = "This causes OOM post-xUnit conversion; still needs to be investigated")]
         public void BuildDetectsCycles()
         {
             // ReSharper disable once NotAccessedVariable
@@ -163,47 +155,42 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void TreeSelectSingleNode()
         {
             AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(1u),
                 Tree.Node(1L)
-                );
+            );
         }
 
         [Fact]
-        
         public void TreeSelectOneChild()
         {
             AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(1u, Tree.Node(2u)),
                 Tree.Node(1L, Tree.Node(2L))
-                );
+            );
         }
 
         [Fact]
-        
         public void TreeSelectTwoChildren()
         {
             AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(1u, Tree.Node(2u), Tree.Node(3u)),
                 Tree.Node(1L, Tree.Node(2L), Tree.Node(3L))
-                );
+            );
         }
 
         [Fact]
-        
         public void TreeSelectTwoChildrenWithChild()
         {
             AssertTreeSelectMapsInputAsExpected(
                 Tree.Node(1u, Tree.Node(2u, Tree.Node(4u)), Tree.Node(3u, Tree.Node(5u))),
                 Tree.Node(1L, Tree.Node(2L, Tree.Node(4L)), Tree.Node(3L, Tree.Node(5L)))
-                );
+            );
         }
 
         [Fact]
-        
         public void ComplexTreeSelectTwoChildrenWithChild()
         {
             AssertTreeSelectMapsInputAsExpected(
@@ -239,11 +226,10 @@ namespace ProgressOnderwijsUtils.Tests
                             5L,
                             Tree.Node(
                                 8L))))
-                );
+            );
         }
 
         [Fact]
-        
         public void TreeSelectVisitsInReversePreorderTraversal()
         {
             //Tree.Select calls the mapping function for each tree node, but that might have side effects.
@@ -260,7 +246,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void CanWorkWithDeepTreesWithoutStackoverflow()
         {
             var input = Tree.BuildRecursively(0u, i => i < 100000 ? new[] { i + 1 } : new uint[0]);
@@ -272,21 +257,18 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void SingleNodeHasHeight1()
         {
             PAssert.That(() => Tree.Node(0).Height() == 1);
         }
 
         [Fact]
-        
         public void RightLeaningTreeComputesHeight4()
         {
             PAssert.That(() => Tree.Node(1u, Tree.Node(6u), Tree.Node(2u, Tree.Node(4u), Tree.Node(7u)), Tree.Node(3u, Tree.Node(5u, Tree.Node(8u)))).Height() == 4);
         }
 
         [Fact]
-        
         public void MessyTreeComputesHeight4()
         {
             PAssert.That(() => Tree.Node(1u, Tree.Node(6u), Tree.Node(3u, Tree.Node(5u, Tree.Node(8u))), Tree.Node(2u, Tree.Node(4u), Tree.Node(7u))).Height() == 4);
@@ -299,7 +281,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        
         public void BuildRecursivelyDoesntDetectCycleWhenDifferentParentsHaveIdenticalLeafChildren()
         {
             var tree = Tree.Node(
@@ -308,8 +289,8 @@ namespace ProgressOnderwijsUtils.Tests
                 Tree.Node(
                     2,
                     Tree.Node(3)
-                    )
-                );
+                )
+            );
 
             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
             Tree.BuildRecursively(tree, t => t.Children);

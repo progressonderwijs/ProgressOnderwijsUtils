@@ -25,13 +25,13 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var delayChooser = new RetryDelayChooser(TimeSpan.FromMinutes(10));
             var moment = new DateTime(1999, 1, 1).ToUniversalTime(); //arbitrary
-            for (var i =0; i< 1000;i++) {
+            for (var i = 0; i < 1000; i++) {
                 delayChooser.RegisterErrorAt(moment);
                 moment = moment.AddMinutes(30);
             }
             var delay = delayChooser.RetryDelayAt(moment);
             //so now we've had 30 errors a day for a few days
-            PAssert.That(() => Utils.FuzzyEquals(delay.TotalMinutes,0.96605));
+            PAssert.That(() => Utils.FuzzyEquals(delay.TotalMinutes, 0.96605));
         }
 
         [Fact]
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils.Tests
             var delayChooser = new RetryDelayChooser(constantFailureDelayTarget);
             var startMoment = new DateTime(2040, 4, 4).ToUniversalTime(); //arbitrary
             delayChooser.RegisterErrorAt(startMoment);
-            PAssert.That(() => Utils.FuzzyEquals(delayChooser.RetryDelayAt(startMoment).TotalMinutes * 6_000/7.0, constantFailureDelayTarget.TotalMinutes));
+            PAssert.That(() => Utils.FuzzyEquals(delayChooser.RetryDelayAt(startMoment).TotalMinutes * 6_000 / 7.0, constantFailureDelayTarget.TotalMinutes));
         }
 
         [Fact]

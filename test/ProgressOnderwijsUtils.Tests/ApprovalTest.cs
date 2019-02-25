@@ -21,8 +21,8 @@ namespace ProgressOnderwijsUtils.Tests
             var writer = WriterFactory.CreateTextWriter(text);
             var filename = Path.GetFileNameWithoutExtension(filepath);
             var filedir = Path.GetDirectoryName(filepath);
-            var namer = new SaneNamer {Name = filename + "." + membername, SourcePath = filedir};
-            var reporter = new ApprovalTests.Reporters.AllFailingTestsClipboardReporter();
+            var namer = new SaneNamer { Name = filename + "." + membername, SourcePath = filedir };
+            var reporter = new AllFailingTestsClipboardReporter();
             Approver.Verify(new FileApprover(writer, namer, true), reporter);
         }
     }

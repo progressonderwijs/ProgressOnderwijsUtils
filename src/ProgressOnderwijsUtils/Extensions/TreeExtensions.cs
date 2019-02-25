@@ -14,7 +14,8 @@ namespace ProgressOnderwijsUtils
 
         [ItemNotNull]
         [Pure]
-        public static IEnumerable<T> PreorderTraversal<T>([NotNull] this T tree) where T : IRecursiveStructure<T>
+        public static IEnumerable<T> PreorderTraversal<T>([NotNull] this T tree)
+            where T : IRecursiveStructure<T>
         {
             yield return tree;
 

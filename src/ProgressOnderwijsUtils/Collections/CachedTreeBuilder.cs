@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils.Collections
             while (needsKids.Count > 0) {
                 var nodeBuilderThatWantsKids = needsKids.Pop();
                 var kids = kidLookup(nodeBuilderThatWantsKids.value);
-                if (kids != null) { //allow null to represent absence of kids 
+                if (kids != null) { //allow null to represent absence of kids
                     var tempKidBuilders = new List<TreeNodeBuilder>();
                     foreach (var kid in kids) {
                         var builderForKid = new TreeNodeBuilder { value = kid, };

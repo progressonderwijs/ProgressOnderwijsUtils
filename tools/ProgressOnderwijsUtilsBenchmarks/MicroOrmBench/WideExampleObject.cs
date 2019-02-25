@@ -65,8 +65,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
                 cross join(select TerritoryId = 37 union all select null ) a25
                 cross join(select TotalDue = cast(1.1 as decimal(18,2)) union all select cast(1.1 as decimal(18,2))) a26
             ";
+
         static readonly string formatString = formattableQueryString.Format;
         public static readonly string RawQueryString = string.Format(formatString, "@Top");
-        public static ParameterizedSql ParameterizedSqlForRows(int rows) => SafeSql.SQL(FormattableStringFactory.Create(formatString, rows));
+
+        public static ParameterizedSql ParameterizedSqlForRows(int rows)
+            => SafeSql.SQL(FormattableStringFactory.Create(formatString, rows));
     }
 }

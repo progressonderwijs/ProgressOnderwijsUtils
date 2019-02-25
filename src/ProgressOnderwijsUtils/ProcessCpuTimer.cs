@@ -19,11 +19,14 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Includes time on other threads; this may lead to over-reporting in concurrency situations such as a production webserver.
         /// </summary>
-        public TimeSpan CpuTime() => currentProcess.TotalProcessorTime - start;
+        public TimeSpan CpuTime()
+            => currentProcess.TotalProcessorTime - start;
 
-        public TimeSpan WallClockTime() => wallclock.Elapsed;
+        public TimeSpan WallClockTime()
+            => wallclock.Elapsed;
 
         [NotNull]
-        public static ProcessCpuTimer StartNew() => new ProcessCpuTimer();
+        public static ProcessCpuTimer StartNew()
+            => new ProcessCpuTimer();
     }
 }

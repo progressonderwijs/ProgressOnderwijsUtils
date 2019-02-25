@@ -17,7 +17,10 @@ namespace ProgressOnderwijsUtils
     {
         readonly IMetaProperty<T>[] MetaProperties;
         readonly IReadOnlyDictionary<string, int> indexByName;
-        public IReadOnlyDictionary<string, int> IndexByName => indexByName;
+
+        public IReadOnlyDictionary<string, int> IndexByName
+            => indexByName;
+
         public static readonly MetaInfo<T> Instance = new MetaInfo<T>();
 
         MetaInfo()
@@ -38,8 +41,11 @@ namespace ProgressOnderwijsUtils
             indexByName = dictionary;
         }
 
-        public IMetaProperty<T> GetByName(string name) => MetaProperties[indexByName[name]];
-        public int Count => MetaProperties.Length;
+        public IMetaProperty<T> GetByName(string name)
+            => MetaProperties[indexByName[name]];
+
+        public int Count
+            => MetaProperties.Length;
 
         [NotNull]
         static IMetaProperty<T>[] GetMetaPropertiesImpl()
@@ -62,7 +68,7 @@ namespace ProgressOnderwijsUtils
             if (retval == null) {
                 throw new ArgumentException(
                     "To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-                        "The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
+                    "The argument lambda refers to a property " + memberInfo.Name + " that is not a MetaProperty");
             }
             return retval;
         }
@@ -74,7 +80,10 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        public IMetaProperty<T> this[int index] => MetaProperties[index];
+        IEnumerator IEnumerable.GetEnumerator()
+            => GetEnumerator();
+
+        public IMetaProperty<T> this[int index]
+            => MetaProperties[index];
     }
 }

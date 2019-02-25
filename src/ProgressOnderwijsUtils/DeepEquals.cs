@@ -10,7 +10,8 @@ namespace ProgressOnderwijsUtils
 {
     public static class DeepEquals
     {
-        public static bool AreEqual(object object1, object object2) => Compare(new HashSet<ReferencePair>(), object1, object2);
+        public static bool AreEqual(object object1, object object2)
+            => Compare(new HashSet<ReferencePair>(), object1, object2);
 
         static bool Compare(HashSet<ReferencePair> assumeEquals, object object1, object object2)
         {
@@ -32,8 +33,8 @@ namespace ProgressOnderwijsUtils
             if (type.IsPrimitive || type.IsEnum) {
                 return object1.Equals(object2);
             }
-            if (object1 is IDictionary && object2 is IDictionary) {
-                return CompareDictionaries(assumeEquals, (IDictionary)object1, (IDictionary)object2);
+            if (object1 is IDictionary dict1 && object2 is IDictionary dict2) {
+                return CompareDictionaries(assumeEquals, dict1, dict2);
             }
 
             if (type == object2.GetType()) {
@@ -56,9 +57,14 @@ namespace ProgressOnderwijsUtils
                 b = o2;
             }
 
-            public override bool Equals(object obj) => Equals(obj as ReferencePair);
-            public bool Equals(ReferencePair other) => other != null && ReferenceEquals(a, other.a) && ReferenceEquals(b, other.b);
-            public override int GetHashCode() => RuntimeHelpers.GetHashCode(a) + 137 * RuntimeHelpers.GetHashCode(b);
+            public override bool Equals(object obj)
+                => Equals(obj as ReferencePair);
+
+            public bool Equals(ReferencePair other)
+                => other != null && ReferenceEquals(a, other.a) && ReferenceEquals(b, other.b);
+
+            public override int GetHashCode()
+                => RuntimeHelpers.GetHashCode(a) + 137 * RuntimeHelpers.GetHashCode(b);
 
             public static bool operator ==([CanBeNull] ReferencePair a, [CanBeNull] ReferencePair b)
             {
@@ -90,8 +96,8 @@ namespace ProgressOnderwijsUtils
 
         static bool CompareAsEnumerableOrAccessibleMembers(HashSet<ReferencePair> assumeEqual, Type type, object o1_nonnull, [NotNull] object o2_nonnull)
         {
-            if (o1_nonnull is IEnumerable && o2_nonnull is IEnumerable) {
-                return CompareEnumerables(assumeEqual, (IEnumerable)o1_nonnull, (IEnumerable)o2_nonnull);
+            if (o1_nonnull is IEnumerable ilist1 && o2_nonnull is IEnumerable ilist2) {
+                return CompareEnumerables(assumeEqual, ilist1, ilist2);
             } else if (o2_nonnull.GetType() != type) {
                 return false;
             }
@@ -116,7 +122,8 @@ namespace ProgressOnderwijsUtils
                 : type.GetMethod("Equals", BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.ExactBinding, null, new[] { type }, null);
         }
 
-        static bool CompareWithBuiltinEquals([NotNull] MethodInfo builtinEquals, object o1_nonnull, object o2) => (bool)builtinEquals.Invoke(o1_nonnull, new[] { o2 });
+        static bool CompareWithBuiltinEquals([NotNull] MethodInfo builtinEquals, object o1_nonnull, object o2)
+            => (bool)builtinEquals.Invoke(o1_nonnull, new[] { o2 });
 
         static bool CompareDictionaries(HashSet<ReferencePair> assumeEqual, [NotNull] IDictionary iDict1, [NotNull] IDictionary iDict2)
         {

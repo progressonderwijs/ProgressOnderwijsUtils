@@ -7,7 +7,6 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    
     public sealed class TypeExtensionTest
     {
         [Fact]
@@ -21,7 +20,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => !typeof(int).CanBeNull());
 
             PAssert.That(() => !typeof(DayOfWeek).CanBeNull());
-            PAssert.That(() => !typeof(KeyValuePair<int?,string>).CanBeNull());
+            PAssert.That(() => !typeof(KeyValuePair<int?, string>).CanBeNull());
 
             PAssert.That(() => typeof(Enum).CanBeNull()); //WTF???? maar goed, dit is dan ook wel een heel gek type.
         }
@@ -48,8 +47,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => typeof(SampleX<string>).BaseTypes().SequenceEqual(new[] { typeof(Sample<string>), typeof(SampleBase), typeof(ArrayList), typeof(object) }));
         }
 
-        enum SampleEnum
-        { }
+        enum SampleEnum { }
 
         sealed class SampleClass { }
 

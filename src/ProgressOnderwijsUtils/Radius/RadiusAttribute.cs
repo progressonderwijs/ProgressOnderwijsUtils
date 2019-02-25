@@ -27,10 +27,12 @@ namespace ProgressOnderwijsUtils.Radius
         LoginIPHost = 14,
         LoginService = 15,
         LoginTCPPort = 16,
+
         //unassigned_17 = 17,
         ReplyMessage = 18,
         CallbackNumber = 19,
         CallbackId = 20,
+
         //unassigned_21 = 21,
         FramedRoute = 22,
         FramedIPXNetwork = 23,
@@ -50,6 +52,7 @@ namespace ProgressOnderwijsUtils.Radius
         FramedAppleTalkLink = 37,
         FramedAppleTalkNetwork = 38,
         FramedAppleTalkZone = 39,
+
         //40-59:reserved for accounting.
         CHAPChallenge = 60,
         NASPortType = 61,
@@ -65,9 +68,11 @@ namespace ProgressOnderwijsUtils.Radius
         public byte[] AttributeValue { get; set; }
 
         [NotNull]
-        public byte[] Paket => new[] { (byte)(int)AttributeType, (byte)(AttributeValue.Length + 2) }.Concat(AttributeValue).ToArray();
+        public byte[] Paket
+            => new[] { (byte)(int)AttributeType, (byte)(AttributeValue.Length + 2) }.Concat(AttributeValue).ToArray();
 
-        public int Length => AttributeValue.Length + 2;
+        public int Length
+            => AttributeValue.Length + 2;
 
         public RadiusAttribute(RadiusAttributeType Type, byte[] attributeValue)
         {
@@ -79,6 +84,7 @@ namespace ProgressOnderwijsUtils.Radius
         }
 
         [NotNull]
-        public static RadiusAttribute NASIPAddress([NotNull] IPAddress addr) => new RadiusAttribute(RadiusAttributeType.NASIPAddress, addr.GetAddressBytes());
+        public static RadiusAttribute NASIPAddress([NotNull] IPAddress addr)
+            => new RadiusAttribute(RadiusAttributeType.NASIPAddress, addr.GetAddressBytes());
     }
 }

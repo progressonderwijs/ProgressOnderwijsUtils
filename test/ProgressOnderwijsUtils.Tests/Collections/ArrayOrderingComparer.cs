@@ -6,7 +6,8 @@ namespace ProgressOnderwijsUtils.Tests.Collections
 {
     public sealed class ArrayOrderingComparerTest
     {
-        static int Compare(int[] a, int[] b) => ArrayOrderingComparer<int>.Default.Compare(a, b);
+        static int Compare(int[] a, int[] b)
+            => ArrayOrderingComparer<int>.Default.Compare(a, b);
 
         static void AssertLessThan(int[] a, int[] b)
         {

@@ -101,8 +101,9 @@ namespace ProgressOnderwijsUtils.Html
                     retval.Add(joiner);
                     // ReSharper disable once PossibleNullReferenceException
                     var nextFragment = enumerator.Current.AsFragment();
-                    if(!nextFragment.IsEmpty)
+                    if (!nextFragment.IsEmpty) {
                         retval.Add(nextFragment);
+                    }
                 }
                 return HtmlFragment.Fragment(retval.ToArray());
             }

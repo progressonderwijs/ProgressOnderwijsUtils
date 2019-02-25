@@ -17,7 +17,8 @@ namespace ProgressOnderwijsUtils.Log4Net
             public static readonly Lazy<ILog> Log = For(typeof(T));
         }
 
-        public static Lazy<ILog> For<T>() => LoggerCache<T>.Log;
+        public static Lazy<ILog> For<T>()
+            => LoggerCache<T>.Log;
 
         public static Lazy<ILog> For([NotNull] Type type)
         {
@@ -28,7 +29,7 @@ namespace ProgressOnderwijsUtils.Log4Net
                         () =>
                             LogManager.GetLogger(CurrentAssembly, _type),
                         LazyThreadSafetyMode.PublicationOnly)
-                );
+            );
         }
     }
 }
