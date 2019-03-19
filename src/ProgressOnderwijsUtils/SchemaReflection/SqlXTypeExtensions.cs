@@ -32,6 +32,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         NVarChar = 231,
         NChar = 239,
         Xml = 241,
+        SysName = 256,
         // ReSharper restore UnusedMember.Global
     }
 
@@ -75,6 +76,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             (typeof(string), SqlXType.NChar),
             (typeof(string), SqlXType.VarChar),
             (typeof(string), SqlXType.Xml),
+            (typeof(string), SqlXType.SysName),
             (typeof(char), SqlXType.NChar),
             (typeof(TimeSpan), SqlXType.Time),
         };
