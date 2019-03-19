@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>35.2.0</Version>
+    <Version>35.3.0</Version>
     <PackageReleaseNotes>Support sysname in DatabaseDescription</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
-    <Description>Various utility methods+classes used by Progress Onderwijs.</Description>
+    <Description>Fix bug in HasDefaultValue</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
