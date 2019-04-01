@@ -20,12 +20,11 @@ namespace ProgressOnderwijsUtils.Tests
                     )
                 ").ExecuteNonQuery(Context);
             SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Context);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Context)).InnerException
-                ?? throw new Exception("Expected an inner SqlException");
 
-            var exceptionError = exception.Errors[0] ?? throw new Exception("an sql error should have an error!");
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Context));
 
-            var violation = SqlErrorParser.Parse(exceptionError) as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
+            var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
+            var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
 
             PAssert.That(() => violation.ConstraintType == "UNIQUE KEY");
             PAssert.That(() => violation.ConstraintName == "uc_T_C");
@@ -44,9 +43,11 @@ namespace ProgressOnderwijsUtils.Tests
                     create unique index ix_T on #T (C)
                 ").ExecuteNonQuery(Context);
             SQL($"insert #T (C) values ('A')").ExecuteNonQuery(Context);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A')").ExecuteNonQuery(Context)).InnerException;
 
-            var violation = (DuplicateKeyUniqueIndex)SqlErrorParser.Parse(exception.Errors[0]);
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A')").ExecuteNonQuery(Context));
+
+            var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
+            var violation = exceptionError.Parse() as DuplicateKeyUniqueIndex? ?? throw new Exception("expected DuplicateKeyUniqueIndex");
 
             PAssert.That(() => violation.IndexName == "ix_T");
             PAssert.That(() => violation.ObjectName == "dbo.#T");
@@ -62,9 +63,10 @@ namespace ProgressOnderwijsUtils.Tests
                     )
                 ").ExecuteNonQuery(Context);
             SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Context);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Context)).InnerException;
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Context));
 
-            var violation = (KeyConstraintViolation)SqlErrorParser.Parse(exception.Errors[0]);
+            var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
+            var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
 
             PAssert.That(() => violation.ConstraintType == "PRIMARY KEY");
             PAssert.That(() => violation.ConstraintName == "pk_T");
@@ -84,9 +86,10 @@ namespace ProgressOnderwijsUtils.Tests
                     )
                 ").ExecuteNonQuery(Context);
             SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Context);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Context)).InnerException;
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Context));
 
-            var violation = (KeyConstraintViolation)SqlErrorParser.Parse(exception.Errors[0]);
+            var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
+            var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
 
             PAssert.That(() => violation.ConstraintType == "UNIQUE KEY");
             PAssert.That(() => violation.ConstraintName == "uc_T_C1_C2");
@@ -98,18 +101,22 @@ namespace ProgressOnderwijsUtils.Tests
         public void Parse_returns_GenericConstraintViolation_when_check_constraint_is_violated_using_insert()
         {
             SQL($@"
-                    create table #T (
+                    create table T1 (
                         Id int identity primary key,
                         C int not null constraint ck_T_C check (C <> 1)
                     )
                 ").ExecuteNonQuery(Context);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values (1)").ExecuteNonQuery(Context)).InnerException;
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T1 (C) values (1)").ExecuteNonQuery(Context));
 
-            var violation = (GenericConstraintViolation)SqlErrorParser.Parse(exception.Errors[0]);
+            var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
+            var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new Exception("expected GenericConstraintViolation");
 
             PAssert.That(() => violation.StatementType == "INSERT");
             PAssert.That(() => violation.ConstraintType == "CHECK");
             PAssert.That(() => violation.ConstraintName == "ck_T_C");
+            PAssert.That(() => violation.ColumnName == "C");
+            PAssert.That(() => violation.TableName == "dbo.T1");
+            PAssert.That(() => violation.DatabaseName == "master");
         }
 
         [Fact]
@@ -122,13 +129,17 @@ namespace ProgressOnderwijsUtils.Tests
                     )
                 ").ExecuteNonQuery(Context);
             SQL($"insert #T (C) values (2)").ExecuteNonQuery(Context);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"update #T set C = 1").ExecuteNonQuery(Context)).InnerException;
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"update #T set C = 1").ExecuteNonQuery(Context));
 
-            var violation = (GenericConstraintViolation)SqlErrorParser.Parse(exception.Errors[0]);
+            var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
+            var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new Exception("expected GenericConstraintViolation");
 
             PAssert.That(() => violation.StatementType == "UPDATE");
             PAssert.That(() => violation.ConstraintType == "CHECK");
             PAssert.That(() => violation.ConstraintName == "ck_T_C");
+            PAssert.That(() => violation.ColumnName == "C");
+            //tablename: nothing useful!
+            PAssert.That(() => violation.DatabaseName == "tempdb");
         }
 
         [Fact]
@@ -144,13 +155,18 @@ namespace ProgressOnderwijsUtils.Tests
                         C int not null constraint fk_T2_T1 references T1
                     )
                 ").ExecuteNonQuery(Context);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T2 (C) values (1)").ExecuteNonQuery(Context)).InnerException;
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T2 (C) values (1)").ExecuteNonQuery(Context));
 
-            var violation = (GenericConstraintViolation)SqlErrorParser.Parse(exception.Errors[0]);
+            var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
+            var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new Exception("expected GenericConstraintViolation");
 
             PAssert.That(() => violation.StatementType == "INSERT");
             PAssert.That(() => violation.ConstraintType == "FOREIGN KEY");
             PAssert.That(() => violation.ConstraintName == "fk_T2_T1");
+            PAssert.That(() => violation.ColumnName == "Id");
+            PAssert.That(() => violation.TableName == "dbo.T1");
+            PAssert.That(() => violation.DatabaseName == "master");
+
         }
 
         [Fact]
@@ -162,9 +178,10 @@ namespace ProgressOnderwijsUtils.Tests
                         C int not null
                     )
                 ").ExecuteNonQuery(Context);
-            var exception = (SqlException)Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values (null)").ExecuteNonQuery(Context)).InnerException;
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values (null)").ExecuteNonQuery(Context));
 
-            var violation = (CannotInsertNull)SqlErrorParser.Parse(exception.Errors[0]);
+            var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
+            var violation = exceptionError.Parse() as CannotInsertNull? ?? throw new Exception("expected CannotInsertNull");
 
             PAssert.That(() => violation.TableName.StartsWith("tempdb.dbo.#T", StringComparison.Ordinal));
             PAssert.That(() => violation.ColumnName == "C");

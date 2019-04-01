@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>35.3.0</Version>
-    <PackageReleaseNotes>Support sysname in DatabaseDescription</PackageReleaseNotes>
+    <Version>35.4.0</Version>
+    <PackageReleaseNotes>Extend sql-error parsing api with helpers to find the sql error, and more parseable info from constraint violations (when available).</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
-    <Description>Fix bug in HasDefaultValue</Description>
+    <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <TargetFrameworks>netstandard2.0</TargetFrameworks>
   </PropertyGroup>
