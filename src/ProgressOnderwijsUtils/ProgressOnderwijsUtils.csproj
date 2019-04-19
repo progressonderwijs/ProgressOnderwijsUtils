@@ -13,7 +13,7 @@
     <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
     <EmbeddedResource Include="SingleSignOn\*.xsd" />
     <EmbeddedResource Include="SingleSignOn\*.xsd.intellisensehack" />
-    <PackageReference Include="System.Reactive" Version="4.1.2" />
+    <PackageReference Include="System.Reactive" Version="4.1.5" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.1" />
     <PackageReference Include="ExpressionToCodeLib" version="3.2.0" />
     <PackageReference Include="log4net" version="2.0.8" />
@@ -21,6 +21,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.6.0" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
     <PackageReference Include="ZlibWithDictionary" version="2.3.3" />
