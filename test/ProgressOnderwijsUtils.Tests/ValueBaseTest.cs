@@ -19,16 +19,13 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void ToString_ReturnsCleanLookingOutput()
-        {
-            ApprovalTest.Verify(
-                new ExampleValue {
-                    NullableField = null,
-                    AnEnum = ConsoleKey.BrowserBack,
-                    MyString = "Hello World!",
-                    Nested = new ExampleValue { AnEnum = ConsoleKey.BrowserRefresh },
-                    SomeValueType = default(DateTime),
-                    MyInt = 42,
-                }.ToString());
-        }
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(new ExampleValue {
+                NullableField = null,
+                AnEnum = ConsoleKey.BrowserBack,
+                MyString = "Hello World!",
+                Nested = new ExampleValue { AnEnum = ConsoleKey.BrowserRefresh },
+                SomeValueType = default(DateTime),
+                MyInt = 42,
+            }.ToString());
     }
 }
