@@ -1,42 +1,40 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Drawing.Tests
 {
     static class Helper
     {
-        public static double Distance(this Color a, Color b)
+        public static double Distance(this Rgba32 a, Rgba32 b)
             => (Math.Abs(a.G - b.G) * 0.5 + Math.Abs(a.R - b.R) * 0.35 + Math.Abs(a.B - b.B) * 0.15) / 255.0;
     }
 
     public sealed class ImageToolsTests
     {
         [NotNull]
-        static Bitmap GetRainbow()
-        {
-            return (Bitmap)Image.FromStream(
+        static Image<Rgba32> GetRainbow()
+            => Image.Load(
                 typeof(ImageToolsTests).Assembly.GetManifestResourceStream(typeof(ImageToolsTests), "rainbow.jpg")
                 ?? throw new Exception("rainbow.jpg is not embedded")
             );
-        }
 
-        static void AssertImagesSimilar([NotNull] Bitmap img1, Bitmap img2)
+        static void AssertImagesSimilar([NotNull] Image<Rgba32> img1, Image<Rgba32> img2)
         {
-            PAssert.That(() => img1.Size == img2.Size);
+            PAssert.That(() => img1.Size() == img2.Size());
 
             var pixelsDiffs =
                 from y in Enumerable.Range(0, img1.Height)
                 from x in Enumerable.Range(0, img1.Width)
-                let err = img1.GetPixel(x, y).Distance(img2.GetPixel(x, y))
+                let err = img1[x, y].Distance(img2[x, y])
                 select new { x, y, err };
 
-            var bitness = 8 * IntPtr.Size;
-            var accuracy = bitness == 32 ? 0.1 : 0.025; //for some odd reason, the 32-bit clr has much lower image scaling accuracy...
+            var accuracy = 0.025;
 
             var badPixels = pixelsDiffs.Where(diff => diff.err > accuracy);
             PAssert.That(() => !badPixels.Any());
@@ -53,7 +51,7 @@ namespace ProgressOnderwijsUtils.Drawing.Tests
                 AssertImagesSimilar(down_H_W, down_W_H);
 
                 //als het test-plaatje geen contrast heeft, dan is deze hele test zinloos: verifieer dat het test plaatje contrast heeft:
-                PAssert.That(() => down_W_H.GetPixel(25, 25) != down_W_H.GetPixel(20, 20));
+                PAssert.That(() => down_W_H[25, 25] != down_W_H[20, 20]);
             }
         }
 
@@ -71,13 +69,13 @@ namespace ProgressOnderwijsUtils.Drawing.Tests
             using (var resImage = GetRainbow())
             using (var ms = new MemoryStream()) {
                 ImageTools.SaveImageAsJpeg(resImage, ms, 100);
-                using (var loadedImage = (Bitmap)ImageTools.ToImage(ms.ToArray())) {
+                using (var loadedImage = ImageTools.ToImage(ms.ToArray())) {
                     PAssert.That(() => loadedImage.Width == resImage.Width && loadedImage.Height == resImage.Height);
                     PAssert.That(
                         () =>
                             !(from y in Enumerable.Range(0, loadedImage.Height)
                                 from x in Enumerable.Range(0, loadedImage.Width)
-                                select new { x, y }).Where(p => loadedImage.GetPixel(p.x, p.y).Distance(resImage.GetPixel(p.x, p.y)) > 0.05).Any());
+                                select new { x, y }).Where(p => loadedImage[p.x, p.y].Distance(resImage[p.x, p.y]) > 0.05).Any());
                 }
             }
         }
@@ -96,7 +94,7 @@ namespace ProgressOnderwijsUtils.Drawing.Tests
                 AssertImagesSimilar(down_H_W, down_W_H);
 
                 //als het test-plaatje geen contrast heeft, dan is deze hele test zinloos: verifieer dat het test plaatje contrast heeft:
-                PAssert.That(() => down_W_H.GetPixel(45, 25) != down_W_H.GetPixel(10, 30));
+                PAssert.That(() => down_W_H[45, 25] != down_W_H[10, 30]);
             }
         }
     }
