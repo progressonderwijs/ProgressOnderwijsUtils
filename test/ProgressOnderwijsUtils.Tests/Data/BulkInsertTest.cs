@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.Serialization;
 using ExpressionToCodeLib;
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -19,6 +21,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     , SomeString nvarchar(max)
                     , LotsOfMoney decimal(19, 5)
                     , VagueNumber float not null
+                    , CustomBla nvarchar(max)
                 )
             ").ExecuteNonQuery(Context);
 
@@ -32,6 +35,74 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public string SomeString { get; set; }
             public decimal? LotsOfMoney { get; set; }
             public double VagueNumber { get; set; }
+            public CustomBlaStruct CustomBla { get; set; }
+        }
+
+        [Serializable]
+        [MetaObjectPropertyConvertible]
+        public struct CustomBlaStruct : IConvertible
+        {
+            CustomBlaStruct(string value)
+            {
+                CustomBlaString = value;
+            }
+
+            public string CustomBlaString { get; }
+
+            [MetaObjectPropertyLoader]
+            public static CustomBlaStruct MethodWithIrrelevantName(string value)
+                => new CustomBlaStruct(value);
+
+            public TypeCode GetTypeCode()
+                => TypeCode.Decimal;
+
+            public bool ToBoolean(IFormatProvider provider)
+                => throw new NotImplementedException("ToBoolean");
+
+            public byte ToByte(IFormatProvider provider)
+                => throw new NotImplementedException("ToByte");
+
+            public char ToChar(IFormatProvider provider)
+                => throw new NotImplementedException("ToChar");
+
+            public DateTime ToDateTime(IFormatProvider provider)
+                => throw new NotImplementedException("ToDateTime");
+
+            public decimal ToDecimal(IFormatProvider provider)
+                => throw new NotImplementedException("ToDecimal");
+
+            public double ToDouble(IFormatProvider provider)
+                => throw new NotImplementedException("ToDouble");
+
+            public short ToInt16(IFormatProvider provider)
+                => throw new NotImplementedException("ToInt16");
+
+            public int ToInt32(IFormatProvider provider)
+                => throw new NotImplementedException("ToInt32");
+
+            public long ToInt64(IFormatProvider provider)
+                => throw new NotImplementedException("ToInt64");
+
+            public sbyte ToSByte(IFormatProvider provider)
+                => throw new NotImplementedException("ToSByte");
+
+            public float ToSingle(IFormatProvider provider)
+                => throw new NotImplementedException("ToSingle");
+
+            public string ToString(IFormatProvider provider)
+                => CustomBlaString;
+
+            public object ToType(Type conversionType, IFormatProvider provider)
+                => throw new NotImplementedException();
+
+            public ushort ToUInt16(IFormatProvider provider)
+                => throw new NotImplementedException();
+
+            public uint ToUInt32(IFormatProvider provider)
+                => throw new NotImplementedException();
+
+            public ulong ToUInt64(IFormatProvider provider)
+                => throw new NotImplementedException();
         }
 
         static readonly SampleRow[] SampleData = {
@@ -40,28 +111,32 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 AnEnum = DayOfWeek.Saturday,
                 LotsOfMoney = -12.34m,
                 VagueNumber = 123.456,
-                SomeString = "sdf"
+                SomeString = "sdf",
+                CustomBla = CustomBlaStruct.MethodWithIrrelevantName("aap"),
             },
             new SampleRow {
                 ADateTime = new DateTime(2013, 8, 7),
                 AnEnum = DayOfWeek.Monday,
                 LotsOfMoney = null,
                 //VagueNumer = double.NaN,
-                SomeString = null
+                SomeString = null,
+                CustomBla = CustomBlaStruct.MethodWithIrrelevantName("aap"),
             },
             new SampleRow {
                 ADateTime = null,
                 AnEnum = (DayOfWeek)12345,
                 LotsOfMoney = 6543,
                 VagueNumber = 1 / 3.0,
-                SomeString = "Hello world!"
+                SomeString = "Hello world!",
+                CustomBla = CustomBlaStruct.MethodWithIrrelevantName("aap"),
             },
             new SampleRow {
                 ADateTime = DateTime.MaxValue,
                 AnEnum = DayOfWeek.Friday,
                 LotsOfMoney = 1000_000_000.00m,
                 VagueNumber = Math.E,
-                SomeString = "annual income"
+                SomeString = "annual income",
+                CustomBla = CustomBlaStruct.MethodWithIrrelevantName("aap"),
             }
         };
 

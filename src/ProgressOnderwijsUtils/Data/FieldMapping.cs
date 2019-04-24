@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.Serialization;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
@@ -82,8 +84,9 @@ namespace ProgressOnderwijsUtils
                 } else {
                     //src & dst not null
 
-                    if (src.DataType.GetNonNullableUnderlyingType() != dst.DataType.GetNonNullableUnderlyingType()) {
-                        errors.Add($"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.");
+                    var typesMatchError = TypesMatchError(src, dst);
+                    if (typesMatchError != null) {
+                        errors.Add(typesMatchError);
                     } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
                         errors.Add($"Cannot fill readonly field {dst.Name}.");
                     } else if (dst.ColumnAccessibility != ColumnAccessibility.AutoIncrement || OverwriteAutoIncrement) {
@@ -96,6 +99,26 @@ namespace ProgressOnderwijsUtils
                 return Maybe.Error(errors.JoinStrings("\n"));
             } else {
                 return Maybe.Ok(mapped.ToArray());
+            }
+        }
+
+        static string TypesMatchError(ColumnDefinition src, ColumnDefinition dst)
+        {
+            if (src.DataType.Attr<MetaObjectPropertyConvertibleAttribute>() != null) {
+                if (typeof(IConvertible).IsAssignableFrom(src.DataType)) {
+                    var instance = Activator.CreateInstance(src.DataType);
+                    var sourceTypeCode = ((IConvertible)instance).GetTypeCode();
+                    var destinationTypeCode = Type.GetTypeCode(dst.DataType);
+                    return sourceTypeCode == destinationTypeCode
+                        ? null
+                        : $"Source field {src.Name} of TypeCode {sourceTypeCode} is not convertible to target field {dst.Name} of TypeCode {destinationTypeCode}.";
+                } else {
+                    return $"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has the {nameof(MetaObjectPropertyConvertibleAttribute)} but does not implement {nameof(IConvertible)}.";
+                }
+            } else if (src.DataType.GetNonNullableUnderlyingType() == dst.DataType.GetNonNullableUnderlyingType()) {
+                return null;
+            } else {
+                return $"Source field {src.Name} of type {src.DataType.ToCSharpFriendlyTypeName()} has a type mismatch with target field {dst.Name} of type {dst.DataType.ToCSharpFriendlyTypeName()}.";
             }
         }
     }
