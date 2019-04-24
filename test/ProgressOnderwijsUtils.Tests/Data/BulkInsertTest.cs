@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 => new CustomBlaStruct(value);
 
             public TypeCode GetTypeCode()
-                => TypeCode.Decimal;
+                => TypeCode.String;
 
             public bool ToBoolean(IFormatProvider provider)
                 => throw new NotImplementedException("ToBoolean");
