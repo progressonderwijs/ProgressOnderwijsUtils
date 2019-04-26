@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -21,7 +23,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     , SomeString nvarchar(max)
                     , LotsOfMoney decimal(19, 5)
                     , VagueNumber float not null
-                    , CustomBla nvarchar(max)
+                    , CustomBla nvarchar(max) not null
+                    , CustomBlaThanCanBeNull nvarchar(max) null
                 )
             ").ExecuteNonQuery(Context);
 
@@ -36,73 +39,25 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public decimal? LotsOfMoney { get; set; }
             public double VagueNumber { get; set; }
             public CustomBlaStruct CustomBla { get; set; }
+            public CustomBlaStruct? CustomBlaThanCanBeNull { get; set; }
         }
 
-        [Serializable]
-        [MetaObjectPropertyConvertible]
-        public struct CustomBlaStruct : IConvertible
+        public struct CustomBlaStruct : IMetaObjectPropertyConvertible<CustomBlaStruct, string, CustomBlaStruct.CustomBlaStructConverter>
         {
-            CustomBlaStruct(string value)
+            public struct CustomBlaStructConverter : IConverterSource<CustomBlaStruct, string>
             {
-                CustomBlaString = value;
+                public ValueConverter<CustomBlaStruct, string> GetValueConverter()
+                    => this.DefineConverter(v => v.CustomBlaString, v => new CustomBlaStruct(v));
             }
+
+            CustomBlaStruct(string value)
+                => CustomBlaString = value;
 
             public string CustomBlaString { get; }
 
             [MetaObjectPropertyLoader]
             public static CustomBlaStruct MethodWithIrrelevantName(string value)
                 => new CustomBlaStruct(value);
-
-            public TypeCode GetTypeCode()
-                => TypeCode.String;
-
-            public bool ToBoolean(IFormatProvider provider)
-                => throw new NotImplementedException("ToBoolean");
-
-            public byte ToByte(IFormatProvider provider)
-                => throw new NotImplementedException("ToByte");
-
-            public char ToChar(IFormatProvider provider)
-                => throw new NotImplementedException("ToChar");
-
-            public DateTime ToDateTime(IFormatProvider provider)
-                => throw new NotImplementedException("ToDateTime");
-
-            public decimal ToDecimal(IFormatProvider provider)
-                => throw new NotImplementedException("ToDecimal");
-
-            public double ToDouble(IFormatProvider provider)
-                => throw new NotImplementedException("ToDouble");
-
-            public short ToInt16(IFormatProvider provider)
-                => throw new NotImplementedException("ToInt16");
-
-            public int ToInt32(IFormatProvider provider)
-                => throw new NotImplementedException("ToInt32");
-
-            public long ToInt64(IFormatProvider provider)
-                => throw new NotImplementedException("ToInt64");
-
-            public sbyte ToSByte(IFormatProvider provider)
-                => throw new NotImplementedException("ToSByte");
-
-            public float ToSingle(IFormatProvider provider)
-                => throw new NotImplementedException("ToSingle");
-
-            public string ToString(IFormatProvider provider)
-                => CustomBlaString;
-
-            public object ToType(Type conversionType, IFormatProvider provider)
-                => throw new NotImplementedException();
-
-            public ushort ToUInt16(IFormatProvider provider)
-                => throw new NotImplementedException();
-
-            public uint ToUInt32(IFormatProvider provider)
-                => throw new NotImplementedException();
-
-            public ulong ToUInt64(IFormatProvider provider)
-                => throw new NotImplementedException();
         }
 
         static readonly SampleRow[] SampleData = {
@@ -137,6 +92,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 VagueNumber = Math.E,
                 SomeString = "annual income",
                 CustomBla = CustomBlaStruct.MethodWithIrrelevantName("aap"),
+                CustomBlaThanCanBeNull = CustomBlaStruct.MethodWithIrrelevantName("noot"),
             }
         };
 
@@ -169,5 +125,16 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Context);
             PAssert.That(() => fromDb.None());
         }
+    }
+
+    static class IConverterSourceExtensions
+    {
+        public static ValueConverter<TModel, TProvider> DefineConverter<TModel, TProvider>(
+            // ReSharper disable once UnusedParameter.Global
+            this IConverterSource<TModel, TProvider> _,
+            Expression<Func<TModel, TProvider>> convertToProviderExpression,
+            Expression<Func<TProvider, TModel>> convertFromProviderExpression
+        )
+            => new ValueConverter<TModel, TProvider>(convertToProviderExpression, convertFromProviderExpression);
     }
 }
