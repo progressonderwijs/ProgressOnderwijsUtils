@@ -15,8 +15,12 @@ namespace ProgressOnderwijsUtils
         public static void AppendScalarParameter<TCommandFactory>(ref TCommandFactory factory, [CanBeNull] object o)
             where TCommandFactory : struct, ICommandFactory
         {
-            var param = new QueryScalarParameterComponent { EquatableValue = o ?? DBNull.Value };
-            ParameterizedSqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
+            if (o == null || o == DBNull.Value) { 
+                ParameterizedSqlFactory.AppendSql(ref factory, "NULL");
+            } else {
+                var param = new QueryScalarParameterComponent { EquatableValue = o };
+                ParameterizedSqlFactory.AppendSql(ref factory, factory.RegisterParameterAndGetName(param));
+            }
         }
     }
 }

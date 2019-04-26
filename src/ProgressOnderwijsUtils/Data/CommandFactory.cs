@@ -89,6 +89,8 @@ namespace ProgressOnderwijsUtils
                 if (paramObjs[i].TypeName != null) {
                     cmdParams[i].SqlDbType = SqlDbType.Structured;
                     cmdParams[i].TypeName = paramObjs[i].TypeName;
+                } else if (paramObjs[i].Value is DateTime) {
+                    cmdParams[i].SqlDbType = SqlDbType.DateTime2;
                 } else {
                     cmdParams[i].ResetSqlDbType();
                 }
