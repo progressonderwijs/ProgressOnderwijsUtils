@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading;
 using ExpressionToCodeLib;
-using FastExpressionCompiler;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ProgressOnderwijsUtils
 {
@@ -96,21 +93,6 @@ namespace ProgressOnderwijsUtils
             return getter(current);
         }
 
-        static ValueConverter CreateValueConverter<TModel, TProvider, [UsedImplicitly] TConverterSource>()
-            where TConverterSource : struct, IConverterSource<TModel, TProvider>
-            where TModel : struct, IMetaObjectPropertyConvertible<TModel, TProvider, TConverterSource>
-            => new TConverterSource().GetValueConverter();
-
-        static readonly MethodInfo CreateValueConverter_OpenGenericMethod = ((Func<ValueConverter>)CreateValueConverter<UnusedTypeTemplate1, int, UnusedTypeTemplate2>).Method.GetGenericMethodDefinition();
-
-        struct UnusedTypeTemplate1 : IMetaObjectPropertyConvertible<UnusedTypeTemplate1, int, UnusedTypeTemplate2> { }
-
-        struct UnusedTypeTemplate2 : IConverterSource<UnusedTypeTemplate1, int>
-        {
-            public ValueConverter<UnusedTypeTemplate1, int> GetValueConverter()
-                => throw new NotImplementedException();
-        }
-
         struct ColumnInfo
         {
             public readonly string Name;
@@ -140,16 +122,10 @@ namespace ProgressOnderwijsUtils
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
                 if (converterDefinition != null) {
-                    var modelType = converterDefinition.GenericTypeArguments[0];
-                    var dbType = converterDefinition.GenericTypeArguments[1];
-                    var converterType = converterDefinition.GenericTypeArguments[2];
-                    var converter = ((Func<ValueConverter>)CreateValueConverter_OpenGenericMethod.MakeGenericMethod(modelType, dbType, converterType).CreateDelegate(typeof(Func<ValueConverter>)))();
-                    var compiledConverter = converter.ConvertToProviderExpression.CompileFast();
-
-                    // Fix hieronder
-                    ColumnType = dbType;
-                    var propertyValueAsNoNullable = Expression.Convert(propertyValue, modelType);
-                    var columnValueAsNonNullable = Expression.Invoke(Expression.Constant(compiledConverter), propertyValueAsNoNullable);
+                    var propertyConverter = new MetaObjectPropertyConverter(converterDefinition);
+                    ColumnType = propertyConverter.DbType;
+                    var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelType);
+                    var columnValueAsNonNullable = Expression.Invoke(Expression.Constant(propertyConverter.CompiledConverter), propertyValueAsNoNullable);
                     var columnBoxedAsObject = Expression.Convert(columnValueAsNonNullable, typeof(object));
                     Expression columnBoxedAsColumnType;
                     if (isNonNullable) {
@@ -161,7 +137,7 @@ namespace ProgressOnderwijsUtils
                         WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), metaObjectParameter).Compile();
                     }
 
-                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), dbType), columnValueAsNonNullable, metaObjectParameter).Compile();
+                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.DbType), columnValueAsNonNullable, metaObjectParameter).Compile();
                     GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, metaObjectParameter).Compile();
                 } else {
                     ColumnType = nonNullableUnderlyingType;
