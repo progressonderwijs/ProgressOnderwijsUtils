@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils.Html {
             } else if (input.Implementation is string textContent) {
                 var limitedLength = 0;
                 while (limitedLength < textContent.Length) {
-                    var charlen = HtmlFragment.TextContent(textContent.Substring(limitedLength, 1)).SerializeToStringWithoutDoctype().Length;
+                    var charlen = HtmlFragment.TextContent(textContent.Substring(limitedLength, 1)).ToStringWithoutDoctype().Length;
                     if (charlen > length) {
                         break;
                     }
@@ -34,14 +34,14 @@ namespace ProgressOnderwijsUtils.Html {
                 }
                 return (HtmlFragment.TextContent(textContent.Substring(0, limitedLength)), length);
             } else if (input.Implementation is IHtmlElementAllowingContent tag) {
-                var emptyTagLength = tag.ReplaceContents(HtmlFragment.Empty).SerializeToStringWithoutDoctype().Length;
+                var emptyTagLength = tag.ReplaceContents(HtmlFragment.Empty).ToStringWithoutDoctype().Length;
                 if (emptyTagLength <= length) {
                     length -= emptyTagLength;
                     var (limitedContent, remainingLenth) = LimitLengthWithStats(tag.Contents(), length);
                     return (tag.ReplaceContents(limitedContent).AsFragment(), remainingLenth);
                 }
             } else if (input.Implementation is IHtmlElement emptyTag) {
-                var emptyTagLength = emptyTag.SerializeToStringWithoutDoctype().Length;
+                var emptyTagLength = emptyTag.ToStringWithoutDoctype().Length;
                 if (emptyTagLength <= length) {
                     return (input, length - emptyTagLength);
                 }

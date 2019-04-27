@@ -16,11 +16,11 @@ namespace ProgressOnderwijsUtils.Tests
         public void TextLimitWorks()
         {
             var sampleParsed = HtmlFragment.Parse(sample);
-            var tidiedSample = sampleParsed.SerializeToStringWithoutDoctype();
+            var tidiedSample = sampleParsed.ToStringWithoutDoctype();
             PAssert.That(() => StringUtils.LevenshteinDistanceScaled(sample, tidiedSample) < 0.05);
             var lastLength = tidiedSample.Length + 15; //15 chars fudge-factor due to xhtml vs. html serialization differences. not ideal.
             for (var i = tidiedSample.Length + 14; i >= 0; i--) {
-                var limitedVer = sampleParsed.LimitLength(i).SerializeToStringWithoutDoctype();
+                var limitedVer = sampleParsed.LimitLength(i).ToStringWithoutDoctype();
                 PAssert.That(() => limitedVer.Length <= i);
                 if (limitedVer.Length < i) { // if more than "needed" trimmed then:
                     PAssert.That(() => lastLength == i + 1 || lastLength == limitedVer.Length);
@@ -33,8 +33,8 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void LimitIsIgnoredIfNull()
         {
-            var limitedVer = HtmlFragment.Parse(sample).LimitLength(null).SerializeToStringWithoutDoctype();
-            var tidiedSample = HtmlFragment.Parse(sample).SerializeToStringWithoutDoctype();
+            var limitedVer = HtmlFragment.Parse(sample).LimitLength(null).ToStringWithoutDoctype();
+            var tidiedSample = HtmlFragment.Parse(sample).ToStringWithoutDoctype();
             PAssert.That(() => limitedVer == tidiedSample);
         }
 
@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void CleanerWorks()
         {
-            var tidiedSample = HtmlFragment.Parse(sample2).Sanitize().SerializeToStringWithoutDoctype();
+            var tidiedSample = HtmlFragment.Parse(sample2).Sanitize().ToStringWithoutDoctype();
             PAssert.That(() => !tidiedSample.Contains("lalala") && !tidiedSample.Contains("script") && !tidiedSample.Contains("innerlala"));
             PAssert.That(() => !tidiedSample.Contains("class") && !tidiedSample.Contains("style") && !tidiedSample.Contains("unknown"));
             PAssert.That(() => tidiedSample.Contains("include this") && tidiedSample.Contains("test this")
@@ -57,13 +57,13 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void FixerWorks()
         {
-            PAssert.That(() => HtmlFragment.Parse(sample3).Sanitize().SerializeToStringWithoutDoctype() == "<p>\u00A0whee</p>");
-            PAssert.That(() => HtmlFragment.Parse(sample4).Sanitize().SerializeToStringWithoutDoctype() == "<p>1 &lt; 2 &amp;&amp; 3 &gt; 0</p>");
+            PAssert.That(() => HtmlFragment.Parse(sample3).Sanitize().ToStringWithoutDoctype() == "<p>\u00A0whee</p>");
+            PAssert.That(() => HtmlFragment.Parse(sample4).Sanitize().ToStringWithoutDoctype() == "<p>1 &lt; 2 &amp;&amp; 3 &gt; 0</p>");
         }
 
         [Fact]
         public void SupportsUnicode()
-            => PAssert.That(() => HtmlFragment.Parse("ÂÅÉéé").Sanitize().SerializeToStringWithoutDoctype() == "ÂÅÉéé");
+            => PAssert.That(() => HtmlFragment.Parse("ÂÅÉéé").Sanitize().ToStringWithoutDoctype() == "ÂÅÉéé");
 
         [Fact]
         public void DontMisinterpretEncodedXml()
@@ -71,36 +71,36 @@ namespace ProgressOnderwijsUtils.Tests
             var xEl = new XElement("b", sample3);
             var xElEncoded = xEl.ToString(SaveOptions.None);
 
-            PAssert.That(() => HtmlFragment.Parse("<p>" + xElEncoded + "</p>").Sanitize().SerializeToStringWithoutDoctype() == "<p>" + xElEncoded + "</p>");
+            PAssert.That(() => HtmlFragment.Parse("<p>" + xElEncoded + "</p>").Sanitize().ToStringWithoutDoctype() == "<p>" + xElEncoded + "</p>");
         }
 
         [Fact]
         public void DecodeUnnecessaryEntities()
-            => PAssert.That(() => HtmlFragment.Parse("<p>&Acirc;&Eacute;&eacute;&amp;<br /></p>").Sanitize().SerializeToStringWithoutDoctype() == "<p>ÂÉé&amp;<br></p>");
+            => PAssert.That(() => HtmlFragment.Parse("<p>&Acirc;&Eacute;&eacute;&amp;<br /></p>").Sanitize().ToStringWithoutDoctype() == "<p>ÂÉé&amp;<br></p>");
 
         [Fact]
         public void RemovesUnknownElements()
-            => PAssert.That(() => HtmlFragment.Parse("This <p>paragraph contains <unknown>nonsense</unknown></p>.").Sanitize().SerializeToStringWithoutDoctype() == "This <p>paragraph contains nonsense</p>.");
+            => PAssert.That(() => HtmlFragment.Parse("This <p>paragraph contains <unknown>nonsense</unknown></p>.").Sanitize().ToStringWithoutDoctype() == "This <p>paragraph contains nonsense</p>.");
 
         [Fact]
         public void RemoveStyleWithDisallowedValues()
-            => PAssert.That(() => HtmlFragment.Parse(@"This is not <span style=""display: none"">invisible</span>.").Sanitize().SerializeToStringWithoutDoctype() == "This is not <span>invisible</span>.");
+            => PAssert.That(() => HtmlFragment.Parse(@"This is not <span style=""display: none"">invisible</span>.").Sanitize().ToStringWithoutDoctype() == "This is not <span>invisible</span>.");
 
         [Fact]
         public void KeepStyleWithAllowedValues()
-            => PAssert.That(() => HtmlFragment.Parse(@"<div style=""margin-left: 20px"">this style is kept</div>.").Sanitize().SerializeToStringWithoutDoctype() == @"<div style=""margin-left: 20px"">this style is kept</div>.");
+            => PAssert.That(() => HtmlFragment.Parse(@"<div style=""margin-left: 20px"">this style is kept</div>.").Sanitize().ToStringWithoutDoctype() == @"<div style=""margin-left: 20px"">this style is kept</div>.");
 
         [Fact]
         public void RemoveNonHttpHrefs()
-            => PAssert.That(() => HtmlFragment.Parse(@"This link is <a href=""javascript:alert('noxss')"">not a link</a>.").Sanitize().SerializeToStringWithoutDoctype() == "This link is not a link.");
+            => PAssert.That(() => HtmlFragment.Parse(@"This link is <a href=""javascript:alert('noxss')"">not a link</a>.").Sanitize().ToStringWithoutDoctype() == "This link is not a link.");
 
         [Fact]
         public void HttpHrefsAreAllowed()
-            => PAssert.That(() => HtmlFragment.Parse(@"This is <a href=""https://somelink.com/?saynomore=1"">a link</a>.").Sanitize().SerializeToStringWithoutDoctype() == @"This is <a href=""https://somelink.com/?saynomore=1"">a link</a>.");
+            => PAssert.That(() => HtmlFragment.Parse(@"This is <a href=""https://somelink.com/?saynomore=1"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is <a href=""https://somelink.com/?saynomore=1"">a link</a>.");
 
         [Fact]
         public void AllowsMarginStyleTags()
             => PAssert.That(
-                () => HtmlFragment.Parse(@"This <p style=""margin-left: 40px;"">is indented</p>!").Sanitize().SerializeToStringWithoutDoctype() == @"This <p style=""margin-left: 40px;"">is indented</p>!");
+                () => HtmlFragment.Parse(@"This <p style=""margin-left: 40px;"">is indented</p>!").Sanitize().ToStringWithoutDoctype() == @"This <p style=""margin-left: 40px;"">is indented</p>!");
     }
 }

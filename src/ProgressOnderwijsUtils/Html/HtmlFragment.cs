@@ -196,7 +196,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public override string ToString()
-            => "HtmlFragment: " + this.SerializeToStringWithoutDoctype();
+            => "HtmlFragment: " + this.ToStringWithoutDoctype();
 
         public static HtmlFragment Empty
             => default(HtmlFragment);

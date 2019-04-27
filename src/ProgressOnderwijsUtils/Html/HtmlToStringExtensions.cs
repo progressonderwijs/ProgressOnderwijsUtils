@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Buffers;
 using System.IO;
 using System.Text;
@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Html
     public static class HtmlToStringExtensions
     {
         [NotNull]
-        public static string SerializeToString([NotNull] this IConvertibleToFragment rootElem)
+        public static string ToStringWithDoctype([NotNull] this IConvertibleToFragment rootElem)
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
             fastStringBuilder.AppendText("<!DOCTYPE html>");
@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils.Html
             => rootElem.AsFragment().ToCSharp();
 
         [NotNull]
-        public static string SerializeToStringWithoutDoctype([NotNull] this IConvertibleToFragment rootElem)
+        public static string ToStringWithoutDoctype([NotNull] this IConvertibleToFragment rootElem)
         {
             var fastStringBuilder = FastShortStringBuilder.Create(1 << 16);
             AppendToBuilder(ref fastStringBuilder, rootElem.AsFragment());
