@@ -95,6 +95,10 @@ namespace ProgressOnderwijsUtils.Tests
             => PAssert.That(() => HtmlFragment.Parse(@"This link is <a href=""javascript:alert('noxss')"">not a link</a>.").Sanitize().ToStringWithoutDoctype() == "This link is not a link.");
 
         [Fact]
+        public void RemoveObfuscatedJsLinks()
+            => PAssert.That(() => HtmlFragment.Parse($@"This link is <a href=""java{"\r\n"}script:alert('noxss')"">not a link</a>.").Sanitize().ToStringWithoutDoctype() == "This link is not a link.");
+
+        [Fact]
         public void HttpHrefsAreAllowed()
             => PAssert.That(() => HtmlFragment.Parse(@"This is <a href=""https://somelink.com/?saynomore=1"">a link</a>.").Sanitize().ToStringWithoutDoctype() == @"This is <a href=""https://somelink.com/?saynomore=1"">a link</a>.");
 
@@ -102,5 +106,129 @@ namespace ProgressOnderwijsUtils.Tests
         public void AllowsMarginStyleTags()
             => PAssert.That(
                 () => HtmlFragment.Parse(@"This <p style=""margin-left: 40px;"">is indented</p>!").Sanitize().ToStringWithoutDoctype() == @"This <p style=""margin-left: 40px;"">is indented</p>!");
+
+        [Fact]
+        public void OwaspCaseInsensitiveXssAttackVector()
+            => PAssert.That(() => HtmlFragment.Parse(@"This link is a nice <IMG SRC=JaVaScRiPt:alert('XSS')> image.").Sanitize().ToStringWithoutDoctype() == "This link is a nice  image.");
+
+        [Fact]
+        public void Owasp_Malformed_IMG_tags()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<IMG """"""><SCRIPT>alert(""XSS"")</SCRIPT>"">").Sanitize().ToStringWithoutDoctype() == "Test element:<img>\"&gt;");
+
+        [Fact]
+        public void Owasp_On_error_alert()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<IMG SRC=/ onerror=""alert(String.fromCharCode(88,83,83))""></img>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_Decimal_HTML_character_references_without_trailing_semicolons()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<IMG SRC=&#0000106&#0000097&#0000118&#0000097&#0000115&#0000099&#0000114&#0000105&#0000112&#0000116&#0000058&#0000097&
+#0000108&#0000101&#0000114&#0000116&#0000040&#0000039&#0000088&#0000083&#0000083&#0000039&#0000041>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_Extraneous_open_brackets()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<<SCRIPT>alert(""XSS"");//<</SCRIPT>").Sanitize().ToStringWithoutDoctype() == "Test element:&lt;");
+
+        [Fact]
+        public void Owasp_Double_open_angle_brackets()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<iframe src=http://xss.rocks/scriptlet.html <").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_IMG_Dynsrc()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<IMG DYNSRC=""javascript:alert('XSS')"">").Sanitize().ToStringWithoutDoctype() == "Test element:<img>");
+
+        [Fact]
+        public void Owasp_IMG_lowsrc()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<IMG LOWSRC=""javascript:alert('XSS')"">").Sanitize().ToStringWithoutDoctype() == "Test element:<img>");
+
+        [Fact]
+        public void Owasp_INPUT_image()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<INPUT TYPE=""IMAGE"" SRC=""javascript:alert('XSS');"">").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_BODY_background()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<BODY BACKGROUND=""javascript:alert('XSS')"">").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_List_style_image()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<STYLE>li {list-style-image: url(""javascript:alert('XSS')"");}</STYLE><UL><LI>XSS</br>").Sanitize().ToStringWithoutDoctype() == "Test element:<ul><li>XSS<br></li></ul>");
+
+        [Fact]
+        public void Owasp_Svg_object_tag()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<svg/onload=alert('XSS')>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_STYLE_sheet()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<LINK REL=""stylesheet"" HREF=""javascript:alert('XSS');"">").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_Remote_style_sheet()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<LINK REL=""stylesheet"" HREF=""http://xss.rocks/xss.css"">").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_Remote_style_sheet_part_2()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<STYLE>@import'http://xss.rocks/xss.css';</STYLE>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_Remote_style_sheet_part_3()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<META HTTP-EQUIV=""Link"" Content=""<http://xss.rocks/xss.css>; REL=stylesheet"">").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_Remote_style_sheet_part_4()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<STYLE>BODY{-moz-binding:url(""http://xss.rocks/xssmoz.xml#xss"")}</STYLE>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_STYLE_tags_with_broken_up_JavaScript_for_XSS()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<STYLE>@im\port'\ja\vasc\ript:alert(""XSS"")';</STYLE>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_IMG_STYLE_with_expression()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:exp/*<A STYLE='no\xss:noxss(""*//*"");
+xss:ex/*XSS*//*/*/pression(alert(""XSS""))'>").Sanitize().ToStringWithoutDoctype() == "Test element:exp/*<a></a>");
+
+        [Fact]
+        public void Owasp_META_using_data()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<META HTTP-EQUIV=""refresh"" CONTENT=""0;url=data:text/html base64,PHNjcmlwdD5hbGVydCgnWFNTJyk8L3NjcmlwdD4K"">").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_META_with_additional_URL_parameter()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<META HTTP-EQUIV=""refresh"" CONTENT=""0; URL=http://;URL=javascript:alert('XSS');"">").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_TABLE()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<TABLE BACKGROUND=""javascript:alert('XSS')"">").Sanitize().ToStringWithoutDoctype() == "Test element:<table></table>");
+
+        [Fact]
+        public void Owasp_TD()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<TABLE><TD BACKGROUND=""javascript:alert('XSS')"">").Sanitize().ToStringWithoutDoctype() == "Test element:<table><tbody><tr><td></td></tr></tbody></table>");
+
+        [Fact]
+        public void Owasp_DIV_background_image_with_unicoded_XSS_exploit()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<DIV STYLE=""background-image:\0075\0072\006C\0028'\006a\0061\0076\0061\0073\0063\0072\0069\0070\0074\003a\0061\006c\0065\0072\0074\0028.1027\0058.1053\0053\0027\0029'\0029"">").Sanitize().ToStringWithoutDoctype() == "Test element:<div></div>");
+
+        [Fact]
+        public void Owasp_DIV_expression()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<DIV STYLE=""width: expression(alert('XSS'));"">").Sanitize().ToStringWithoutDoctype() == "Test element:<div></div>");
+
+        [Fact]
+        public void DIV_expression_using_margins_since_we_normally_allow_that()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<DIV STYLE=""margin: expression(alert('XSS'));"">").Sanitize().ToStringWithoutDoctype() == "Test element:<div></div>");
+
+        [Fact]
+        public void Owasp_DownleveHiddenBlock()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<!--[if gte IE 4]>
+ <SCRIPT>alert('XSS');</SCRIPT>
+ <![endif]-->").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_OBJECT_tag()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<OBJECT TYPE=""text/x-scriptlet"" DATA=""http://xss.rocks/scriptlet.html""></OBJECT>").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_CookieManipulation()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<META HTTP-EQUIV=""Set-Cookie"" Content=""USERID=<SCRIPT>alert('XSS')</SCRIPT>"">").Sanitize().ToStringWithoutDoctype() == "Test element:");
+
+        [Fact]
+        public void Owasp_XssUsingHtmlQuoteEncapsulation()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<SCRIPT a=`>` SRC=""httx://xss.rocks/xss.js""></SCRIPT>").Sanitize().ToStringWithoutDoctype() == "Test element:");
     }
 }
