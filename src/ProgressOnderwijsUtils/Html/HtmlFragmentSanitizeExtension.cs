@@ -180,34 +180,11 @@ namespace ProgressOnderwijsUtils.Html
             return HtmlFragment.Empty; //unsafe or empty
         }
 
-        /// <summary>This function sanitizes an html tree.
-        ///  - Any html that isn't recognized as html is considered content (e.g. a lone ampersand)
-        ///  - Any html that can't be parsed (say, an unclosed element) is stripped.
-        ///  - Any html that can be parsed but is explicitly considered "safe" list removed.
-        ///  - Html that can be parsed and is explicitly on the "safe" list is retained.
-        ///  
-        ///  Be aware that the filters may receive a mixture of upper and/or lowercase tags, depending on the source!
-        /// 
-        /// For practical purposes, there is a HashSet based version that simply filters on element name.
-        /// </summary>
-        /// <param name="sourceHtml">The xhtml to sanitize.  The root element is ignored.</param>
-        /// <returns>The parsed xhtml fragments without non-validating or unsafe tags.</returns>
+        /// <summary>This function sanitizes an html tree.  By default, it uses the filter HtmlFilters.Default, but you might consider constructing different filters for different cases. </summary>
         public static HtmlFragment Sanitize(this HtmlFragment sourceHtml)
-            => sourceHtml.Sanitize(HtmlFilters.Default);
+            => sourceHtml.Sanitize(null);
 
-        /// <summary>This function sanitizes an html tree.
-        ///  - Any html that isn't recognized as html is considered content (e.g. a lone ampersand)
-        ///  - Any html that can't be parsed (say, an unclosed element) is stripped.
-        ///  - Any html that can be parsed but is explicitly considered "safe" list removed.
-        ///  - Html that can be parsed and is explicitly on the "safe" list is retained.
-        ///  
-        ///  Be aware that the filters may receive a mixture of upper and/or lowercase tags, depending on the source!
-        /// 
-        /// For practical purposes, there is a HashSet based version that simply filters on element name.
-        /// </summary>
-        /// <param name="sourceHtml">The xhtml to sanitize.  The root element is ignored.</param>
-        /// <param name="filter">The filter to apply to elements (called for each element in the source).</param>
-        /// <returns>The parsed xhtml fragments without non-validating or unsafe tags.</returns>
+        /// <summary>This function sanitizes an html tree.  By default, it uses the filter HtmlFilters.Default, but you might consider constructing different filters for different cases. </summary>
         public static HtmlFragment Sanitize(this HtmlFragment sourceHtml, IHtmlFilter filter)
             => FilterElem(sourceHtml, filter ?? HtmlFilters.Default);
     }
