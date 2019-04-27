@@ -198,6 +198,10 @@ xss:ex/*XSS*//*/*/pression(alert(""XSS""))'>").Sanitize().ToStringWithoutDoctype
             => PAssert.That(() => HtmlFragment.Parse(@"Test element:<TABLE BACKGROUND=""javascript:alert('XSS')"">").Sanitize().ToStringWithoutDoctype() == "Test element:<table></table>");
 
         [Fact]
+        public void blockquote_cite()
+            => PAssert.That(() => HtmlFragment.Parse(@"Test element:<blockquote cite=""javascript:alert('XSS')"">lala</blockquote>").Sanitize().ToStringWithoutDoctype() == "Test element:<blockquote>lala</blockquote>");
+
+        [Fact]
         public void Owasp_TD()
             => PAssert.That(() => HtmlFragment.Parse(@"Test element:<TABLE><TD BACKGROUND=""javascript:alert('XSS')"">").Sanitize().ToStringWithoutDoctype() == "Test element:<table><tbody><tr><td></td></tr></tbody></table>");
 
