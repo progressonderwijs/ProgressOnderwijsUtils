@@ -59,7 +59,7 @@ namespace ProgressOnderwijsUtils.Tests
             ).Concat(
                 from a in samplePoints
                 select new[] { a }
-            );
+            ).ToArray();
 
             foreach (var combo1 in combos) {
                 foreach (var combo2 in combos) {
