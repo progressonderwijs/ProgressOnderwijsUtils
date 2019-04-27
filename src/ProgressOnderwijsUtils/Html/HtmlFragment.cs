@@ -242,10 +242,10 @@ namespace ProgressOnderwijsUtils.Html
         /// Use Sanitze() to clean up parsed html.
         /// </summary>
         /// <returns>The html fragment.</returns>
-        public static HtmlFragment Parse([CanBeNull] string str)
-            => Parse(str, new HtmlParserOptions());
+        public static HtmlFragment ParseFragment([CanBeNull] string str)
+            => ParseFragment(str, new HtmlParserOptions());
 
-        public static HtmlFragment Parse([CanBeNull] string str, HtmlParserOptions options)
+        public static HtmlFragment ParseFragment([CanBeNull] string str, HtmlParserOptions options)
         {
             if (string.IsNullOrEmpty(str)) {
                 return Empty;
