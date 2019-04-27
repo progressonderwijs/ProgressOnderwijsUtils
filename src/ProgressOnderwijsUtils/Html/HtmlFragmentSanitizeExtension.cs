@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils.Html
                     if (attr.Name.StartsWith("on", StringComparison.OrdinalIgnoreCase)) {
                         return TagSafety.ShouldRemoveButKeepContent;
                     }
-                    if (attr.Name.EqualsOrdinalCaseInsensitive("href")
+                    if ((attr.Name.EqualsOrdinalCaseInsensitive("href") ||attr.Name.EqualsOrdinalCaseInsensitive("src"))
                         && !attr.Value.StartsWith("http:", StringComparison.InvariantCultureIgnoreCase)
                         && !attr.Value.StartsWith("https:", StringComparison.InvariantCultureIgnoreCase)) {
                         return TagSafety.ShouldRemoveButKeepContent;
