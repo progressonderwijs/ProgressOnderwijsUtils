@@ -143,6 +143,7 @@ namespace ProgressOnderwijsUtils.Html
                 cite code col colgroup dd del dfn div dl dt em fieldset font h1 h2
                 h3 h4 h5 h6 hr i img ins legend li ol p pre q samp small span strong
                 sub sup table tbody td tfoot th thead tr tt u ul var", @"\s+"),
+            //TODO: we should allow html5 stuff too: article aside details figcaption figure footer header main mark nav section summary time bdi meter progress ruby rp rt wbr
             safeAttr = Regex.Split(@"align alt bgcolor border cellpadding cellspacing
                 color colspan dir face height href lang rowspan size
                 style title width", @"\s+");
