@@ -144,7 +144,7 @@ namespace ProgressOnderwijsUtils.Html
                 h3 h4 h5 h6 hr i img ins legend li ol p pre q samp small span strong
                 sub sup table tbody td tfoot th thead tr tt u ul var", @"\s+"),
             safeAttr = Regex.Split(@"align alt bgcolor border cellpadding cellspacing
-                char charoff cite color colspan dir face height href lang rowspan size
+                cite color colspan dir face height href lang rowspan size
                 style title width", @"\s+");
 
         //om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
