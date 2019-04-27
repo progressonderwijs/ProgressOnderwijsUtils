@@ -148,7 +148,7 @@ namespace ProgressOnderwijsUtils.Html
                 style title width", @"\s+");
 
         //om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
-        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(new SetBasedHtmlFilter(banned, safe, safeAttr), StripUnsafeStyleTagsFilter.Instance, StripElementsWithInlineJavascriptFilter.Instance);
+        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripUnsafeStyleTagsFilter.Instance, StripElementsWithInlineJavascriptFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
     }
 
     public static class HtmlFragmentSanitizeExtension
