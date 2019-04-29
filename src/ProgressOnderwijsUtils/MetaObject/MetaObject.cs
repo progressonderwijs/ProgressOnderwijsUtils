@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
             {
                 var memberInfo = GetMemberInfo(propertyExpression);
                 if (typeof(TParent).IsClass || typeof(TParent) == typeof(TMetaObject)) {
-                    var retval = MetaInfo<TMetaObject>.Instance.SingleOrDefault(mp => mp.PropertyInfo == memberInfo);
+                    var retval = MetaInfo<TMetaObject>.Instance.SingleOrNull(mp => mp.PropertyInfo == memberInfo);
                     if (retval == null) {
                         throw new ArgumentException(
                             "To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
@@ -105,9 +105,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         static Expression UnwrapCast(Expression bodyExpr)
-        {
-            return bodyExpr is UnaryExpression unaryExpression && unaryExpression.NodeType == ExpressionType.Convert ? unaryExpression.Operand : bodyExpr;
-        }
+            => bodyExpr is UnaryExpression unaryExpression && unaryExpression.NodeType == ExpressionType.Convert ? unaryExpression.Operand : bodyExpr;
 
         [Pure]
         public static IReadOnlyList<IMetaProperty> GetMetaProperties(Type t)
@@ -129,8 +127,6 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static ParameterizedSql SqlColumnName([NotNull] this IMetaProperty mp)
-        {
-            return SQL($@"[{ParameterizedSql.CreateDynamic(mp.Name)}]");
-        }
+            => SQL($@"[{ParameterizedSql.CreateDynamic(mp.Name)}]");
     }
 }

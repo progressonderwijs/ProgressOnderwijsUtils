@@ -64,7 +64,7 @@ namespace ProgressOnderwijsUtils
         public IMetaProperty<T> GetByExpression<TProp>([NotNull] Expression<Func<T, TProp>> propertyExpression)
         {
             var memberInfo = MetaObject.GetMemberInfo(propertyExpression);
-            var retval = MetaProperties.SingleOrDefault(mp => mp.PropertyInfo == memberInfo); //TODO:get by name.
+            var retval = MetaProperties.SingleOrNull(mp => mp.PropertyInfo == memberInfo); //TODO:get by name.
             if (retval == null) {
                 throw new ArgumentException(
                     "To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +

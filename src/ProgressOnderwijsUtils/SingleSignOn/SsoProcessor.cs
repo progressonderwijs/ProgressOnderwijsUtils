@@ -120,15 +120,13 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
         [CanBeNull]
         static string GetNullableAttribute([NotNull] XElement assertion, string key)
-        {
-            return (
+            => (
                 from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
                 where attribute.Parent.Attribute("Name").Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value
-            ).SingleOrDefault();
-        }
+                ).SingleOrNull();
 
         [NotNull]
         static string[] GetAttributes([NotNull] XElement assertion, string key)

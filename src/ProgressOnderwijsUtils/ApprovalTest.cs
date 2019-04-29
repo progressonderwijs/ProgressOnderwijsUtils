@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
         public void AssertUnchangedAndSave(string text)
         {
             if (UpdateIfChangedFrom(text)) {
-                throw new System.Exception("Approval changed: " + Path.GetFileName(ApprovalPath));
+                throw new Exception("Approval changed: " + Path.GetFileName(ApprovalPath));
             }
         }
 

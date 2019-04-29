@@ -1,15 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Data.SQLite;
+using System.Data.SqlTypes;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class HandrolledAdoNetExecutor
     {
