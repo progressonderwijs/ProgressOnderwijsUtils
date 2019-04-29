@@ -93,6 +93,8 @@ namespace ProgressOnderwijsUtils
             return getter(current);
         }
 
+        static readonly Dictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new Dictionary<Type, MetaObjectPropertyConverter>();
+
         struct ColumnInfo
         {
             public readonly string Name;
@@ -122,7 +124,7 @@ namespace ProgressOnderwijsUtils
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
                 if (converterDefinition != null) {
-                    var propertyConverter = new MetaObjectPropertyConverter(converterDefinition);
+                    var propertyConverter = propertyConverterCache.GetOrAdd(nonNullableUnderlyingType, new MetaObjectPropertyConverter(converterDefinition));
                     ColumnType = propertyConverter.DbType;
                     var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelType);
                     var columnValueAsNonNullable = Expression.Invoke(Expression.Constant(propertyConverter.CompiledConverter), propertyValueAsNoNullable);
