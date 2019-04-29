@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void SerializeLargeDocument()
         {
-            htmlFragment.SerializeToString();
+            htmlFragment.ToStringWithDoctype();
         }
 
         [Benchmark]
@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         //*
         static readonly string htmlString = Utils.F(
             () => {
-                var s = htmlFragment.SerializeToString();
+                var s = htmlFragment.ToStringWithDoctype();
                 //Console.WriteLine(s.Length);
 
                 return s;
@@ -65,7 +65,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void CreateAndSerializeLargeDocument()
         {
-            WikiPageHtml5.MakeHtml().SerializeToString();
+            WikiPageHtml5.MakeHtml().ToStringWithDoctype();
         }
 
         [Benchmark]

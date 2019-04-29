@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
         /// Concatenates two arrays.  Null arrays are interpreted as the empty array. The returned array may be the same as one of the parameters.
         /// </summary>
         [NotNull]
-        public static T[] AppendArrays<T>([CanBeNull] this T[] beginning, [CanBeNull] T[] end)
+        public static T[] ConcatArray<T>([CanBeNull] this T[] beginning, [CanBeNull] T[] end)
         {
             if (end == null || end.Length == 0) {
                 return beginning ?? Array.Empty<T>();

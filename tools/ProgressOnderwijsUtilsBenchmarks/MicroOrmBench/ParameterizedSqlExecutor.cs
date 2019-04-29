@@ -1,9 +1,8 @@
-using System.Linq;
+﻿using System.Linq;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
-using static ProgressOnderwijsUtils.SafeSql;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class ParameterizedSqlExecutor
     {
@@ -20,7 +19,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
         {
             benchmarker.BenchSqlServer("ParameterizedSql-TVP",
                     (ctx, rows) =>
-                        SQL($"select QueryTableValue from ({Enumerable.Range(0, rows).ToArray()}) x")
+                        SafeSql.SQL($"select QueryTableValue from ({Enumerable.Range(0, rows).ToArray()}) x")
                             .ReadPlain<int>(ctx)
                             .Length)
                 ;

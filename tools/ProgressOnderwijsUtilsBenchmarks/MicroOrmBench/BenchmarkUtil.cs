@@ -12,7 +12,7 @@ using Dapper;
 using IncrementalMeanVarianceAccumulator;
 using ProgressOnderwijsUtils;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     sealed class Benchmarker
     {

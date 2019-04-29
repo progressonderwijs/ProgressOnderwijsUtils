@@ -35,21 +35,21 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void IFrameGetsClosingTag()
         {
-            var html = _iframe.SerializeToStringWithoutDoctype();
+            var html = _iframe.ToStringWithoutDoctype();
             PAssert.That(() => html == "<iframe></iframe>");
         }
 
         [Fact]
         public void AppendingToFragmentsWorks()
         {
-            var html = _div.AsFragment().Append("test").SerializeToStringWithoutDoctype();
+            var html = _div.AsFragment().Append("test").ToStringWithoutDoctype();
             PAssert.That(() => html == "<div></div>test");
         }
 
         [Fact]
         public void AppendingThreeThingsWorks()
         {
-            var html = _div.AsFragment().Append("test", _b.Content("la")).SerializeToStringWithoutDoctype();
+            var html = _div.AsFragment().Append("test", _b.Content("la")).ToStringWithoutDoctype();
             PAssert.That(() => html == "<div></div>test<b>la</b>");
         }
 
@@ -58,8 +58,8 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var html = "1".AsFragment().Append("2").Append("3").Append("4");
             var kids = (HtmlFragment[])html.Implementation;
-            PAssert.That(() => kids.First().SerializeToStringWithoutDoctype() == "1");
-            PAssert.That(() => kids.Last().SerializeToStringWithoutDoctype() == "4");
+            PAssert.That(() => kids.First().ToStringWithoutDoctype() == "1");
+            PAssert.That(() => kids.Last().ToStringWithoutDoctype() == "4");
         }
 
         [Fact]

@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class MicroOrmBenchmarkProgram
     {

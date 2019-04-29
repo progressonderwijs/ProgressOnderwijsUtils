@@ -1,8 +1,8 @@
-using System.Linq;
+﻿using System.Linq;
 using Dapper;
 using JetBrains.Annotations;
 
-namespace ProgressOnderwijsUtilsBenchmarks.MicroOrm
+namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class DapperExecutor
     {
