@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using FastExpressionCompiler;
 using JetBrains.Annotations;
@@ -35,5 +36,12 @@ namespace ProgressOnderwijsUtils
             public ValueConverter<UnusedTypeTemplate1, int> GetValueConverter()
                 => throw new NotImplementedException();
         }
+
+        public static MetaObjectPropertyConverter GetOrNull(Type type)
+            => type
+                .GetInterfaces()
+                .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IMetaObjectPropertyConvertible<,,>))
+                .Select(i => new MetaObjectPropertyConverter(i))
+                .SingleOrNull();
     }
 }

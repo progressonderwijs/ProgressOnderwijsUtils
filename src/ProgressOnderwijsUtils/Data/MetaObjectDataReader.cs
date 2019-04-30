@@ -118,13 +118,10 @@ namespace ProgressOnderwijsUtils
                 var propertyValue = mp.PropertyAccessExpression(metaObjectParameter);
                 Name = mp.Name;
                 var nonNullableUnderlyingType = propertyType.GetNonNullableUnderlyingType();
-                var converterDefinition =
-                    nonNullableUnderlyingType.GetInterfaces().SingleOrDefault(i =>
-                        i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IMetaObjectPropertyConvertible<,,>));
+                var propertyConverter = propertyConverterCache.GetOrAdd(nonNullableUnderlyingType, MetaObjectPropertyConverter.GetOrNull);
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
-                if (converterDefinition != null) {
-                    var propertyConverter = propertyConverterCache.GetOrAdd(nonNullableUnderlyingType, new MetaObjectPropertyConverter(converterDefinition));
+                if (propertyConverter != null) {
                     ColumnType = propertyConverter.DbType;
                     var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelType);
                     var columnValueAsNonNullable = Expression.Invoke(Expression.Constant(propertyConverter.CompiledConverter), propertyValueAsNoNullable);
