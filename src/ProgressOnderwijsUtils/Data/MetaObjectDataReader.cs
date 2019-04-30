@@ -93,6 +93,8 @@ namespace ProgressOnderwijsUtils
             return getter(current);
         }
 
+        static readonly Dictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new Dictionary<Type, MetaObjectPropertyConverter>();
+
         struct ColumnInfo
         {
             public readonly string Name;
@@ -115,23 +117,50 @@ namespace ProgressOnderwijsUtils
                 var metaObjectParameter = Expression.Parameter(typeof(T));
                 var propertyValue = mp.PropertyAccessExpression(metaObjectParameter);
                 Name = mp.Name;
-                ColumnType = propertyType.GetNonNullableUnderlyingType();
-                var nonNullableGetterType = typeof(Func<,>).MakeGenericType(typeof(T), ColumnType);
-                var propertyConvertedToUnderlyingType = Expression.Convert(propertyValue, propertyType.GetUnderlyingType());
-                var propertyConvertedToColumnType = Expression.Convert(propertyValue, ColumnType);
+                var nonNullableUnderlyingType = propertyType.GetNonNullableUnderlyingType();
+                var propertyConverter = propertyConverterCache.GetOrAdd(nonNullableUnderlyingType, MetaObjectPropertyConverter.GetOrNull);
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
-                Expression columnBoxedAsColumnType;
-                if (isNonNullable) {
-                    columnBoxedAsColumnType = Expression.Convert(propertyConvertedToUnderlyingType, typeof(object));
-                    WhenNullable_IsColumnDBNull = null;
+
+                if (propertyConverter != null) {
+                    ColumnType = propertyConverter.DbType;
+                    var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelType);
+                    var columnValueAsNonNullable = Expression.Invoke(Expression.Constant(propertyConverter.CompiledConverter), propertyValueAsNoNullable);
+                    var columnBoxedAsObject = Expression.Convert(columnValueAsNonNullable, typeof(object));
+                    Expression columnBoxedAsColumnType;
+                    if (isNonNullable) {
+                        columnBoxedAsColumnType = columnBoxedAsObject;
+                        WhenNullable_IsColumnDBNull = null;
+                    } else {
+                        var propertyIsNotNull = IsExpressionNonNull(propertyValue);
+                        columnBoxedAsColumnType = Expression.Condition(propertyIsNotNull, columnBoxedAsObject, Expression.Constant(DBNull.Value, typeof(object)));
+                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), metaObjectParameter).Compile();
+                    }
+
+                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.DbType), columnValueAsNonNullable, metaObjectParameter).Compile();
+                    GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, metaObjectParameter).Compile();
                 } else {
-                    var propertyIsDefault = Expression.Equal(Expression.Default(propertyType), propertyValue);
-                    columnBoxedAsColumnType = Expression.Coalesce(propertyConvertedToUnderlyingType, Expression.Constant(DBNull.Value, typeof(object)));
-                    WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(propertyIsDefault, metaObjectParameter).Compile();
+                    ColumnType = nonNullableUnderlyingType;
+                    var propertyValueAsNoNullable = Expression.Convert(propertyValue, ColumnType);
+                    var columnValueAsNonNullable = Expression.Convert(propertyValue, propertyType.GetUnderlyingType());
+                    var columnBoxedAsObject = Expression.Convert(columnValueAsNonNullable, typeof(object));
+                    Expression columnBoxedAsColumnType;
+                    if (isNonNullable) {
+                        columnBoxedAsColumnType = columnBoxedAsObject;
+                        WhenNullable_IsColumnDBNull = null;
+                    } else {
+                        var propertyIsNotNull = IsExpressionNonNull(propertyValue);
+                        columnBoxedAsColumnType = Expression.Coalesce(columnValueAsNonNullable, Expression.Constant(DBNull.Value, typeof(object)));
+                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), metaObjectParameter).Compile();
+                    }
+                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), ColumnType), propertyValueAsNoNullable, metaObjectParameter).Compile();
+                    GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, metaObjectParameter).Compile();
                 }
-                TypedNonNullableGetter = Expression.Lambda(nonNullableGetterType, propertyConvertedToColumnType, metaObjectParameter).Compile();
-                GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, metaObjectParameter).Compile();
             }
+
+            static Expression IsExpressionNonNull(Expression propertyValue)
+                => propertyValue.Type.IsNullableValueType() ? Expression.Property(propertyValue, nameof(Nullable<int>.HasValue))
+                    : propertyValue.Type.IsValueType ? Expression.Constant(false)
+                    : (Expression)Expression.NotEqual(Expression.Default(typeof(object)), Expression.Convert(propertyValue, typeof(object)));
         }
 
         static readonly ColumnInfo[] columnInfos;
