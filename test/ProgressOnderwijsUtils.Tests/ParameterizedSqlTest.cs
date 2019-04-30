@@ -257,8 +257,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ParameterizedSqlSupportsNullParameters()
         {
-            //TODO: do we want to make these literal?
-            PAssert.That(() => SQL($"select {null}").CommandText() == "select @par0");
+            PAssert.That(() => SQL($"select {null}").CommandText() == "select NULL");
         }
 
         [Fact]
