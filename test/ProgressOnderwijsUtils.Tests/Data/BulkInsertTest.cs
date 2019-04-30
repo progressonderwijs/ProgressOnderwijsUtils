@@ -126,15 +126,4 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => fromDb.None());
         }
     }
-
-    static class IConverterSourceExtensions
-    {
-        public static ValueConverter<TModel, TProvider> DefineConverter<TModel, TProvider>(
-            // ReSharper disable once UnusedParameter.Global
-            this IConverterSource<TModel, TProvider> _,
-            Expression<Func<TModel, TProvider>> convertToProviderExpression,
-            Expression<Func<TProvider, TModel>> convertFromProviderExpression
-        )
-            => new ValueConverter<TModel, TProvider>(convertToProviderExpression, convertFromProviderExpression);
-    }
 }
