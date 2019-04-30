@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void BasicDocWorks()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(basicDoc.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(basicDoc.ToStringWithDoctype());
 
         [Fact]
         public void BasicDocWorksToCSharp()
@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithEmptyClass()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithEmptyClass.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithEmptyClass.ToStringWithDoctype());
 
         [Fact]
         public void DocWithEmptyClassToCSharp()
@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithOneClass()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOneClass.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOneClass.ToStringWithDoctype());
 
         [Fact]
         public void DocWithOneClassToCSharp()
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithTwoClasses()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithTwoClasses.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithTwoClasses.ToStringWithDoctype());
 
         [Fact]
         public void DocWithTwoClassesToCSharp()
@@ -81,7 +81,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithOddChars()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOddChars.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOddChars.ToStringWithDoctype());
 
         [Fact]
         public void DocWithOddCharsToCSharp()
@@ -99,7 +99,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithOddCharsInAttribute()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOddCharsInAttribute.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithOddCharsInAttribute.ToStringWithDoctype());
 
         [Fact]
         public void DocWithOddCharsInAttributeToCSharp()
@@ -117,7 +117,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithSelfClosingTags()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithSelfClosingTags.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithSelfClosingTags.ToStringWithDoctype());
 
         [Fact]
         public void DocWithSelfClosingTagsToCSharp()
@@ -140,7 +140,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithEscapableRawText()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithEscapableRawText.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithEscapableRawText.ToStringWithDoctype());
 
         [Fact]
         public void DocWithEscapableRawTextToCSharp()
@@ -158,7 +158,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DocWithTrulyRawText()
-            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithTrulyRawText.SerializeToString());
+            => ApprovalTest.CreateHere().AssertUnchangedAndSave(docWithTrulyRawText.ToStringWithDoctype());
 
         [Fact]
         public void DocWithTrulyRawTextToCSharp()

@@ -59,7 +59,7 @@ namespace ProgressOnderwijsUtils.Tests
             ).Concat(
                 from a in samplePoints
                 select new[] { a }
-            );
+            ).ToArray();
 
             foreach (var combo1 in combos) {
                 foreach (var combo2 in combos) {
@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils.Tests
                         Math.Sign(
                             combo1.Cast<long?>()
                                 .ZipLongest(combo2.Cast<long?>(), Comparer<long?>.Default.Compare)
-                                .FirstOrDefault(x => x != 0));
+                                .FirstOrNullable(x => x != 0) ?? 0L);
                     if (strComparison != seqComparison) {
                         throw new Exception(
                             $"Comparisons don't match: {ObjectToCode.ComplexObjectToPseudoCode(combo1)} compared to {ObjectToCode.ComplexObjectToPseudoCode(combo2)} is {seqComparison} but after short string conversion {ObjectToCode.ComplexObjectToPseudoCode(str1)}.CompareTo({ObjectToCode.ComplexObjectToPseudoCode(str2)}) is {strComparison}");
