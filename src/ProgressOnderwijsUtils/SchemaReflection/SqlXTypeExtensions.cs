@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
@@ -97,7 +98,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             throw new ArgumentOutOfRangeException(nameof(sqlXType), "Could not find a clr-type for the XType " + sqlXType);
         }
 
-        static readonly Dictionary<Type, SqlXType?> convertedTypesCache = new Dictionary<Type, SqlXType?>();
+        static readonly ConcurrentDictionary<Type, SqlXType?> convertedTypesCache = new ConcurrentDictionary<Type, SqlXType?>();
 
         /// <summary>
         /// Finds the best mapping of this clr-type to an sql XType.
