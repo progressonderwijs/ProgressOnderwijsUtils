@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
@@ -95,6 +97,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             throw new ArgumentOutOfRangeException(nameof(sqlXType), "Could not find a clr-type for the XType " + sqlXType);
         }
 
+        static readonly Dictionary<Type, SqlXType?> convertedTypesCache = new Dictionary<Type, SqlXType?>();
+
         /// <summary>
         /// Finds the best mapping of this clr-type to an sql XType.
         /// </summary>
@@ -102,12 +106,31 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public static SqlXType NetTypeToSqlXType([NotNull] Type type)
         {
             var underlyingType = type.GetNonNullableUnderlyingType();
+            var convertedType = convertedTypesCache.GetOrAdd(underlyingType, GetConvertedSqlXTypeOrNull(underlyingType));
+            if (convertedType != null) {
+                return convertedType.Value;
+            }
             foreach (var o in typeLookup) {
                 if (o.clrType == underlyingType) {
                     return o.xType;
                 }
             }
             throw new ArgumentOutOfRangeException(nameof(type), "Could not find an sql XType for the clr-type " + underlyingType.ToCSharpFriendlyTypeName() + (type == underlyingType ? "" : ", which is the underlying type of " + type.ToCSharpFriendlyTypeName()));
+        }
+
+        static SqlXType? GetConvertedSqlXTypeOrNull(Type underlyingType)
+        {
+            var converterType = underlyingType
+                .GetInterfaces()
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMetaObjectPropertyConvertible<,,>))
+                .Select(i => i.GetGenericArguments()[2])
+                .SingleOrNull();
+            if (converterType == null) {
+                return default(SqlXType?);
+            }
+            var conversionProviderType = converterType.GetInterfaces().Single(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IConverterSource<,>));
+            var coversionReturnType = conversionProviderType.GetGenericArguments()[1];
+            return NetTypeToSqlXType(coversionReturnType);
         }
     }
 }

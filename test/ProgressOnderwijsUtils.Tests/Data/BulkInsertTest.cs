@@ -125,5 +125,17 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Context);
             PAssert.That(() => fromDb.None());
         }
+
+        [Fact]
+        public void CanCreateDbColumnMetaData()
+        {
+            var metaProps = MetaInfo<SampleRow>.Instance;
+            var dbProps = metaProps.Select(property => DbColumnMetaData.Create(
+                property.Name,
+                property.DataType,
+                property.IsKey,
+                null));
+            PAssert.That(() => metaProps.Count == dbProps.Count());
+        }
     }
 }
