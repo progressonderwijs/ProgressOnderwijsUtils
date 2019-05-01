@@ -106,7 +106,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public static SqlXType NetTypeToSqlXType([NotNull] Type type)
         {
             var underlyingType = type.GetNonNullableUnderlyingType();
-            var convertedType = convertedTypesCache.GetOrAdd(underlyingType, GetConvertedSqlXTypeOrNull(underlyingType));
+            var convertedType = convertedTypesCache.GetOrAdd(underlyingType, GetConvertedSqlXTypeOrNull);
             if (convertedType != null) {
                 return convertedType.Value;
             }
