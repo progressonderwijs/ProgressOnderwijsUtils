@@ -26,7 +26,17 @@ namespace ProgressOnderwijsUtils
         {
             using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
                 try {
-                    return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
+                    var converter = MetaObjectPropertyConverter.GetOrNull(typeof(T).GetNonNullableType());
+                    if (converter == null ) {
+                        return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
+                    }
+                    {
+                        var value = cmd.Command.ExecuteScalar();
+                        if (value is DBNull && typeof(T).IsNullableValueType()) {
+                            return default;
+                        }
+                        return (T)converter.CompiledConverterFromProvider.DynamicInvoke(value);
+                    }
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }

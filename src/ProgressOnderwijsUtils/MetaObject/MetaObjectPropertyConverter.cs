@@ -12,6 +12,7 @@ namespace ProgressOnderwijsUtils
         public Type ModelType { get; }
         public Type DbType { get; }
         public Delegate CompiledConverter { get; }
+        public Delegate CompiledConverterFromProvider { get; }
 
         public MetaObjectPropertyConverter(Type converterDefinition)
         {
@@ -20,6 +21,7 @@ namespace ProgressOnderwijsUtils
             var converterType = converterDefinition.GenericTypeArguments[2];
             var converter = ((Func<ValueConverter>)CreateValueConverter_OpenGenericMethod.MakeGenericMethod(ModelType, DbType, converterType).CreateDelegate(typeof(Func<ValueConverter>)))();
             CompiledConverter = converter.ConvertToProviderExpression.CompileFast();
+            CompiledConverterFromProvider = converter.ConvertFromProviderExpression.CompileFast();
         }
 
         static ValueConverter CreateValueConverter<TModel, TProvider, [UsedImplicitly] TConverterSource>()

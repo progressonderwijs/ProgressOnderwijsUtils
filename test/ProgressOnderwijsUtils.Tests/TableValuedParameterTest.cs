@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProgressOnderwijsUtils.Internal;
 using ProgressOnderwijsUtils.SchemaReflection;
+using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -17,6 +19,45 @@ namespace ProgressOnderwijsUtils.Tests
     public sealed class TableValuedParameterTest : TransactedLocalConnection
     {
         public enum SomeEnum { }
+
+        public struct CustomBlaStruct : IMetaObjectPropertyConvertible<CustomBlaStruct, string, CustomBlaStruct.CustomBlaStructConverter>
+        {
+            public struct CustomBlaStructConverter : IConverterSource<CustomBlaStruct, string>
+            {
+                public ValueConverter<CustomBlaStruct, string> GetValueConverter()
+                    => this.DefineConverter(v => v.CustomBlaString, v => new CustomBlaStruct(v));
+            }
+
+            public CustomBlaStruct(string value)
+                => CustomBlaString = value;
+
+            public string CustomBlaString { get; }
+
+            [MetaObjectPropertyLoader]
+            public static CustomBlaStruct MethodWithIrrelevantName(string value)
+                => new CustomBlaStruct(value);
+        }
+
+        [Fact]
+        public void ConvertibleProperty()
+        {
+            var value = SQL($@"select {new CustomBlaStruct("aap")}").ReadScalar<CustomBlaStruct>(Context);
+            PAssert.That(() => value.CustomBlaString == "aap");
+        }
+
+        [Fact]
+        public void ConvertibleNullablePropertyWitValue()
+        {
+            var value = SQL($@"select {new CustomBlaStruct("aap")}").ReadScalar<CustomBlaStruct?>(Context);
+            PAssert.That(() => value.Value.CustomBlaString == "aap");
+        }
+
+        [Fact]
+        public void ConvertibleNullablePropertyWithoutValue()
+        {
+            var value = SQL($@"select {default(CustomBlaStruct?)}").ReadScalar<CustomBlaStruct?>(Context);
+            PAssert.That(() => value == null);
+        }
 
         [Fact]
         public void DatabaseCanProcessTableValuedParameters()
