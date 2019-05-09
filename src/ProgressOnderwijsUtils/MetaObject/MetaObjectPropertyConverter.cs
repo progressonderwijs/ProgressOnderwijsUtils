@@ -40,7 +40,7 @@ namespace ProgressOnderwijsUtils
                 => throw new NotImplementedException();
         }
 
-        public static MetaObjectPropertyConverter GetOrNull(Type type)
+        static MetaObjectPropertyConverter GetOrNull(Type type)
             => type
                 .GetInterfaces()
                 .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IMetaObjectPropertyConvertible<,,>))

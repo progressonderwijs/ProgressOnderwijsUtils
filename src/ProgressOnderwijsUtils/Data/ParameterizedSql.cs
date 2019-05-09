@@ -288,7 +288,7 @@ namespace ProgressOnderwijsUtils
             foreach (var paramRefMatch in formatStringTokenization) {
                 factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos);
                 var argument = interpolatedQuery.GetArgument(paramRefMatch.ReferencedParameterIndex);
-                var converter = argument == null ? null : MetaObjectPropertyConverter.GetOrNull(argument.GetType().GetNonNullableType());
+                var converter = argument == null ? null : MetaObjectPropertyConverter.DescribeTypeForOrmMapping(argument.GetType());
                 if (argument is ParameterizedSql parameterizedSql) {
                     parameterizedSql.AppendTo(ref factory);
                 } else if (converter != null) {
