@@ -40,17 +40,16 @@ namespace ProgressOnderwijsUtils
                 => throw new NotImplementedException();
         }
 
-        static MetaObjectPropertyConverter GetOrNull(Type type)
-            => type
+        static readonly ConcurrentDictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new ConcurrentDictionary<Type, MetaObjectPropertyConverter>();
+
+        static readonly Func<Type, MetaObjectPropertyConverter> cachedFactoryDelegate = type =>
+            type.GetNonNullableUnderlyingType()
                 .GetInterfaces()
                 .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IMetaObjectPropertyConvertible<,,>))
                 .Select(i => new MetaObjectPropertyConverter(i))
                 .SingleOrNull();
 
-        static readonly ConcurrentDictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new ConcurrentDictionary<Type, MetaObjectPropertyConverter>();
-        static readonly Func<Type, MetaObjectPropertyConverter> factory = type => GetOrNull(type.GetNonNullableUnderlyingType());
-
-        public static MetaObjectPropertyConverter DescribeTypeForOrmMapping(Type propertyType)
-            => propertyConverterCache.GetOrAdd(propertyType, factory);
+        public static MetaObjectPropertyConverter GetOrNull(Type propertyType)
+            => propertyConverterCache.GetOrAdd(propertyType, cachedFactoryDelegate);
     }
 }

@@ -116,7 +116,7 @@ namespace ProgressOnderwijsUtils
                 var propertyValue = mp.PropertyAccessExpression(metaObjectParameter);
                 Name = mp.Name;
                 var nonNullableUnderlyingType = propertyType.GetNonNullableUnderlyingType();
-                var propertyConverter = MetaObjectPropertyConverter.DescribeTypeForOrmMapping(propertyType);
+                var propertyConverter = MetaObjectPropertyConverter.GetOrNull(propertyType);
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
                 if (propertyConverter != null) {

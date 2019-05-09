@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils
             using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
                 try {
                     var value = cmd.Command.ExecuteScalar();
-                    var converter = MetaObjectPropertyConverter.DescribeTypeForOrmMapping(typeof(T));
+                    var converter = MetaObjectPropertyConverter.GetOrNull(typeof(T));
                     if (converter == null ) {
                         return DBNullRemover.Cast<T>(value);
                     }
