@@ -1,5 +1,6 @@
 ﻿using BenchmarkDotNet.Running;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 
 namespace ProgressOnderwijsUtilsBenchmarks
 {
@@ -7,8 +8,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
     {
         static void Main()
         {
-            BenchmarkRunner.Run<HtmlFragmentBenchmark>();
-            //MicroOrm.MicroOrmBenchmarkProgram.RunBenchmarks();
+            //BenchmarkRunner.Run<HtmlFragmentBenchmark>();
+            MicroOrmBenchmarkProgram.RunBenchmarks();
             //RunArrayBuilderBenchmarks();
         }
 
