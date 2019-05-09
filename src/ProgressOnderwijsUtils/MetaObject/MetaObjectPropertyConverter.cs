@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 using FastExpressionCompiler;
@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
                 .Select(i => new MetaObjectPropertyConverter(i))
                 .SingleOrNull();
 
-        static readonly Dictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new Dictionary<Type, MetaObjectPropertyConverter>();
+        static readonly ConcurrentDictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new ConcurrentDictionary<Type, MetaObjectPropertyConverter>();
         static readonly Func<Type, MetaObjectPropertyConverter> factory = type => GetOrNull(type.GetNonNullableUnderlyingType());
 
         public static MetaObjectPropertyConverter DescribeTypeForOrmMapping(Type propertyType)
