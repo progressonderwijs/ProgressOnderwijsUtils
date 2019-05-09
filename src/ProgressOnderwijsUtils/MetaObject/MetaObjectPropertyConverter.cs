@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FastExpressionCompiler;
@@ -45,5 +46,10 @@ namespace ProgressOnderwijsUtils
                 .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IMetaObjectPropertyConvertible<,,>))
                 .Select(i => new MetaObjectPropertyConverter(i))
                 .SingleOrNull();
+
+        static readonly Dictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new Dictionary<Type, MetaObjectPropertyConverter>();
+
+        public static MetaObjectPropertyConverter DescribeTypeForOrmMapping(Type propertyType)
+            => propertyConverterCache.GetOrAdd(propertyType.GetNonNullableUnderlyingType(), type => MetaObjectPropertyConverter.GetOrNull(type));
     }
 }

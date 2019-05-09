@@ -93,8 +93,6 @@ namespace ProgressOnderwijsUtils
             return getter(current);
         }
 
-        static readonly Dictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new Dictionary<Type, MetaObjectPropertyConverter>();
-
         struct ColumnInfo
         {
             public readonly string Name;
@@ -118,7 +116,7 @@ namespace ProgressOnderwijsUtils
                 var propertyValue = mp.PropertyAccessExpression(metaObjectParameter);
                 Name = mp.Name;
                 var nonNullableUnderlyingType = propertyType.GetNonNullableUnderlyingType();
-                var propertyConverter = propertyConverterCache.GetOrAdd(propertyType.GetNonNullableUnderlyingType(), type => MetaObjectPropertyConverter.GetOrNull(type));
+                var propertyConverter = MetaObjectPropertyConverter.DescribeTypeForOrmMapping(propertyType);
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
                 if (propertyConverter != null) {
