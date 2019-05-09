@@ -48,8 +48,9 @@ namespace ProgressOnderwijsUtils
                 .SingleOrNull();
 
         static readonly Dictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new Dictionary<Type, MetaObjectPropertyConverter>();
+        static readonly Func<Type, MetaObjectPropertyConverter> factory = type => GetOrNull(type.GetNonNullableUnderlyingType());
 
         public static MetaObjectPropertyConverter DescribeTypeForOrmMapping(Type propertyType)
-            => propertyConverterCache.GetOrAdd(propertyType.GetNonNullableUnderlyingType(), type => MetaObjectPropertyConverter.GetOrNull(type));
+            => propertyConverterCache.GetOrAdd(propertyType, factory);
     }
 }
