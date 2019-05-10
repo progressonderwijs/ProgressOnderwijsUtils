@@ -28,8 +28,7 @@ namespace ProgressOnderwijsUtils
             => e.AnyNestingLevelMatches(ex => ex is SqlException sqlE && sqlE.Number == -2);
 
         public static bool IsRetriableConnectionFailure([CanBeNull] this Exception e)
-        {
-            return e.AnyNestingLevelMatches(ex => {
+            => e.AnyNestingLevelMatches(ex => {
                 if (e is SqlException sqlE) {
                     return IsRetriableSqlException(sqlE);
                 } else if (e is DBConcurrencyException) {
@@ -40,7 +39,6 @@ namespace ProgressOnderwijsUtils
                     return false;
                 }
             });
-        }
 
         static bool IsRetriableSqlException(SqlException sqlException)
         { //sqlE.Number docs at https://msdn.microsoft.com/en-us/library/cc645611.aspx
