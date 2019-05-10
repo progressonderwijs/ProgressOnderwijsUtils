@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>39.4.0</Version>
-    <PackageReleaseNotes>More support for convertible parameters</PackageReleaseNotes>
+    <Version>39.5.0</Version>
+    <PackageReleaseNotes>Added extension method &lt;exception&gt;.AnyNestingLevelMatches(ex =&gt; ...)</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

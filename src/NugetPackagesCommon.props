@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <Authors>Progress Onderwijs</Authors>
     <Owners>Progress Onderwijs</Owners>
@@ -12,7 +12,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
 
-    <PackageProjectUrl>https://github.com/progressonderwijs/progress</PackageProjectUrl>
     <DefineConstants>TRACE;JETBRAINS_ANNOTATIONS</DefineConstants>
     <DebugType>full</DebugType>
     <DebugSymbols>True</DebugSymbols>
