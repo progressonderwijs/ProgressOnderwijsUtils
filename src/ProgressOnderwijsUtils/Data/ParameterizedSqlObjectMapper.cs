@@ -27,10 +27,9 @@ namespace ProgressOnderwijsUtils
             using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
                 try {
                     var converter = MetaObjectPropertyConverter.GetOrNull(typeof(T).GetNonNullableType());
-                    if (converter == null ) {
+                    if (converter == null) {
                         return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
-                    }
-                    else {
+                    } else {
                         var value = cmd.Command.ExecuteScalar();
                         if (value is DBNull && typeof(T).IsNullableValueType()) {
                             return default;
@@ -327,8 +326,10 @@ namespace ProgressOnderwijsUtils
 
             // ReSharper disable AssignNullToNotNullAttribute
             static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod("IsDBNull", binding)];
+
             static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
             // ReSharper restore AssignNullToNotNullAttribute
+
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
             static bool IsSupportedBasicType([NotNull] Type type)
