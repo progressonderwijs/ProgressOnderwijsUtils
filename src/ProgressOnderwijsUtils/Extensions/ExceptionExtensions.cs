@@ -7,6 +7,9 @@ namespace ProgressOnderwijsUtils
 {
     public static class ExceptionExtensions
     {
+        /// <summary>
+        /// Tests wether an exception, or any of its inner exceptions match a predicate.  For AggregateExceptions, tests wether *all* children match.
+        /// </summary>
         public static bool AnyNestingLevelMatches(this Exception exception, Func<Exception, bool> predicate)
         {
             if (predicate(exception)) {
