@@ -60,6 +60,16 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void ConvertibleNonNullablePropertyWithoutValueShouldThrow()
+        {
+            var nullStringReturningQuery = SQL($@"select cast(null as nvarchar(max))");
+
+            var unused = nullStringReturningQuery.ReadScalar<string>(Context);//assert query OK.
+
+            Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<CustomBlaStruct>(Context));
+        }
+
+        [Fact]
         public void DatabaseCanProcessTableValuedParameters()
         {
             var q = SQL($@"select sum(x.querytablevalue) from ") + ParameterizedSql.TableParamDynamic(Enumerable.Range(1, 100).ToArray()) + SQL($" x");
