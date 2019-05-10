@@ -28,17 +28,11 @@ namespace ProgressOnderwijsUtils
             => e.AnyNestingLevelMatches(ex => ex is SqlException sqlE && sqlE.Number == -2);
 
         public static bool IsRetriableConnectionFailure([CanBeNull] this Exception e)
-            => e.AnyNestingLevelMatches(ex => {
-                if (e is SqlException sqlE) {
-                    return IsRetriableSqlException(sqlE);
-                } else if (e is DBConcurrencyException) {
-                    return e.Message.StartsWith("Concurrency violation:", StringComparison.Ordinal);
-                } else if (e is DataException) {
-                    return e.Message == "The underlying provider failed on Open.";
-                } else {
-                    return false;
-                }
-            });
+            => e.AnyNestingLevelMatches(ex =>
+                e is SqlException sqlE && IsRetriableSqlException(sqlE)
+                || e is DBConcurrencyException && e.Message.StartsWith("Concurrency violation:", StringComparison.Ordinal)
+                || e is DataException && e.Message == "The underlying provider failed on Open."
+            );
 
         static bool IsRetriableSqlException(SqlException sqlException)
         { //sqlE.Number docs at https://msdn.microsoft.com/en-us/library/cc645611.aspx
