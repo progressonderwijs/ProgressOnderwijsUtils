@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Data.SqlClient;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
@@ -29,15 +31,52 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => ParameterizedSql.Param(12345).DebugText() == "12345");
             PAssert.That(() => ParameterizedSql.Param(12345.6m).DebugText() == "12345.6");
             PAssert.That(() => ParameterizedSql.Param(new object()).DebugText() == "{!System.Object!}");
-            var customConvertibleType = TrivialConvertibleValue.Create("Aap");
-            var customConvertibleParam = ParameterizedSql.Param(customConvertibleType);
-            PAssert.That(() => customConvertibleParam != ParameterizedSql.Param("Aap"));
-            PAssert.That(() => customConvertibleParam.CommandText() == ParameterizedSql.Param("Aap").CommandText());
 
-            using (var transactedLocalConnection = new TransactedLocalConnection()){
+            var asString = Wrap("Aap");
+            PAssert.That(() => asString == ParameterizedSql.Param("Aap"), "TODO: We would like this to be conceptually different parameters");
+            PAssert.That(() => asString.CommandText() == "@par0");
 
-                PAssert.That(() => customConvertibleParam.CreateSqlCommand(transactedLocalConnection.Context).Command.CommandText == "noot");
+            var asDateTime = Wrap(new DateTime(2010, 1, 1));
+            PAssert.That(() => asDateTime == ParameterizedSql.Param(new DateTime(2010, 1, 1)), "TODO: We would like this to be conceptually different parameters");
+            PAssert.That(() => asDateTime.CommandText() == "@par0");
+
+            var asNullableEnum = ParameterizedSql.Param(default(TrivialConvertibleValue<DayOfWeek>?));
+            PAssert.That(() => asNullableEnum == ParameterizedSql.Param(null));
+            PAssert.That(() => asNullableEnum.CommandText() == "NULL");
+
+            var asNullableString = ParameterizedSql.Param(default(TrivialConvertibleValue<string>?));
+            PAssert.That(() => asNullableString == ParameterizedSql.Param(null));
+            PAssert.That(() => asNullableString.CommandText() == "NULL");
+
+            var asEnum = Wrap(DayOfWeek.Friday);
+            PAssert.That(() => asEnum == ParameterizedSql.Param(DayOfWeek.Friday), "TODO: We would like this to be conceptually different parameters");
+            PAssert.That(() => asEnum.CommandText() == "5/*DayOfWeek.Friday*/");
+
+            var asBool = Wrap(false);
+            PAssert.That(() => asBool == ParameterizedSql.Param(false), "TODO: We would like this to be conceptually different parameters");
+            PAssert.That(() => asBool.CommandText() == "cast(0 as bit)");
+        }
+
+        [Fact]
+        public void DeDuplication_of_convertable_parameters()
+        {
+            PAssert.That(() => SQL($"select {3}, {3}").CommandText() == "select @par0, @par0");
+            PAssert.That(() => SQL($"select {Wrap(3)}, {Wrap(3)}").CommandText() == "select @par0, @par0");
+            PAssert.That(() => SQL($"select {3}, {Wrap(3)}").CommandText() == "select @par0, @par0", "TODO: We would like this to be conceptually different parameters");
+            PAssert.That(() => SQL($"select {3}, {TrivialConvertibleValue.Create(3)}").CommandText() == "select @par0, @par0", "TODO: We would like this to be conceptually different parameters");
+            PAssert.That(() => SQL($"select {Wrap(3)}, {TrivialConvertibleValue.Create(3)}").CommandText() == "select @par0, @par0");
+        }
+
+        [Fact]
+        public void ValidatesConvertibleArgumentsOK()
+        {
+            var asString = Wrap("Aap");
+            using (var transactedLocalConnection = new TransactedLocalConnection()) {
+                PAssert.That(() => SQL($"select {asString}").ReadScalar<string>(transactedLocalConnection.Context) == "Aap");
             }
         }
+
+        static ParameterizedSql Wrap<T>(T value)
+            => ParameterizedSql.Param(TrivialConvertibleValue.Create(value));
     }
 }
