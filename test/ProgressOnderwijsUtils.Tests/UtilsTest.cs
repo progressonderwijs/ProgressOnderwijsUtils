@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtils.Tests
                             new DataException("The underlying provider failed on Open.")),
                         new DataException("The underlying provider failed on Open.")).IsRetriableConnectionFailure());
             PAssert.That(() => !new AggregateException().IsRetriableConnectionFailure());
-            PAssert.That(() => !ExceptionExtensions.IsRetriableConnectionFailure(null));
+            PAssert.That(() => !default(Exception).IsRetriableConnectionFailure());
         }
 
         [Fact]
