@@ -115,7 +115,6 @@ namespace ProgressOnderwijsUtils
                 var metaObjectParameter = Expression.Parameter(typeof(T));
                 var propertyValue = mp.PropertyAccessExpression(metaObjectParameter);
                 Name = mp.Name;
-                var nonNullableUnderlyingType = propertyType.GetNonNullableUnderlyingType();
                 var propertyConverter = MetaObjectPropertyConverter.GetOrNull(propertyType);
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
@@ -137,7 +136,7 @@ namespace ProgressOnderwijsUtils
                     TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.DbType), columnValueAsNonNullable, metaObjectParameter).Compile();
                     GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, metaObjectParameter).Compile();
                 } else {
-                    ColumnType = nonNullableUnderlyingType;
+                    ColumnType = propertyType.GetNonNullableUnderlyingType();
                     var propertyValueAsNoNullable = Expression.Convert(propertyValue, ColumnType);
                     var columnValueAsNonNullable = Expression.Convert(propertyValue, propertyType.GetUnderlyingType());
                     var columnBoxedAsObject = Expression.Convert(columnValueAsNonNullable, typeof(object));
