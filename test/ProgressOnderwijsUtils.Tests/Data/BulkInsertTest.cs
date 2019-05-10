@@ -4,7 +4,6 @@ using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -38,26 +37,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
             public string SomeString { get; set; }
             public decimal? LotsOfMoney { get; set; }
             public double VagueNumber { get; set; }
-            public CustomBlaStruct CustomBla { get; set; }
-            public CustomBlaStruct? CustomBlaThanCanBeNull { get; set; }
-        }
-
-        public struct CustomBlaStruct : IMetaObjectPropertyConvertible<CustomBlaStruct, string, CustomBlaStruct.CustomBlaStructConverter>
-        {
-            public struct CustomBlaStructConverter : IConverterSource<CustomBlaStruct, string>
-            {
-                public ValueConverter<CustomBlaStruct, string> GetValueConverter()
-                    => this.DefineConverter(v => v.CustomBlaString, v => new CustomBlaStruct(v));
-            }
-
-            CustomBlaStruct(string value)
-                => CustomBlaString = value;
-
-            public string CustomBlaString { get; }
-
-            [MetaObjectPropertyLoader]
-            public static CustomBlaStruct MethodWithIrrelevantName(string value)
-                => new CustomBlaStruct(value);
+            public TrivialConvertibleValue<string> CustomBla { get; set; }
+            public TrivialConvertibleValue<string>? CustomBlaThanCanBeNull { get; set; }
         }
 
         static readonly SampleRow[] SampleData = {
@@ -67,7 +48,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 LotsOfMoney = -12.34m,
                 VagueNumber = 123.456,
                 SomeString = "sdf",
-                CustomBla = CustomBlaStruct.MethodWithIrrelevantName("aap"),
+                CustomBla = TrivialConvertibleValue.Create("aap"),
             },
             new SampleRow {
                 ADateTime = new DateTime(2013, 8, 7),
@@ -75,7 +56,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 LotsOfMoney = null,
                 //VagueNumer = double.NaN,
                 SomeString = null,
-                CustomBla = CustomBlaStruct.MethodWithIrrelevantName("aap"),
+                CustomBla = TrivialConvertibleValue.Create("aap"),
             },
             new SampleRow {
                 ADateTime = null,
@@ -83,7 +64,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 LotsOfMoney = 6543,
                 VagueNumber = 1 / 3.0,
                 SomeString = "Hello world!",
-                CustomBla = CustomBlaStruct.MethodWithIrrelevantName("aap"),
+                CustomBla = TrivialConvertibleValue.Create("aap"),
             },
             new SampleRow {
                 ADateTime = DateTime.MaxValue,
@@ -91,8 +72,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 LotsOfMoney = 1000_000_000.00m,
                 VagueNumber = Math.E,
                 SomeString = "annual income",
-                CustomBla = CustomBlaStruct.MethodWithIrrelevantName("aap"),
-                CustomBlaThanCanBeNull = CustomBlaStruct.MethodWithIrrelevantName("noot"),
+                CustomBla = TrivialConvertibleValue.Create("aap"),
+                CustomBlaThanCanBeNull = TrivialConvertibleValue.Create("noot"),
             }
         };
 

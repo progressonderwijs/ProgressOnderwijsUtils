@@ -1,10 +1,11 @@
 ﻿using System;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public sealed class TestSqlParameterComponent
+    public sealed class TestSqlParameterComponent : TransactedLocalConnection
     {
         [Fact]
         public void ValidatesArgumentsOK()
@@ -28,6 +29,13 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => ParameterizedSql.Param(12345).DebugText() == "12345");
             PAssert.That(() => ParameterizedSql.Param(12345.6m).DebugText() == "12345.6");
             PAssert.That(() => ParameterizedSql.Param(new object()).DebugText() == "{!System.Object!}");
+            var customCovertibleType = TrivialConvertibleValue.Create("Aap");
+            PAssert.That(() => ParameterizedSql.Param(customCovertibleType) != ParameterizedSql.Param("Aap"));
+            PAssert.That(() => ParameterizedSql.Param(customCovertibleType).CommandText() == ParameterizedSql.Param("Aap").CommandText());
+
+            using (var transactedLocalConnection = new TransactedLocalConnection()){
+                PAssert.That(() => ParameterizedSql.Param(customCovertibleType).CreateSqlCommand(transactedLocalConnection.Context).Command.CommandText != "noot");
+            }
         }
     }
 }

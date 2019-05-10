@@ -20,42 +20,24 @@ namespace ProgressOnderwijsUtils.Tests
     {
         public enum SomeEnum { }
 
-        public struct CustomBlaStruct : IMetaObjectPropertyConvertible<CustomBlaStruct, string, CustomBlaStruct.CustomBlaStructConverter>
-        {
-            public struct CustomBlaStructConverter : IConverterSource<CustomBlaStruct, string>
-            {
-                public ValueConverter<CustomBlaStruct, string> GetValueConverter()
-                    => this.DefineConverter(v => v.CustomBlaString, v => new CustomBlaStruct(v));
-            }
-
-            public CustomBlaStruct(string value)
-                => CustomBlaString = value;
-
-            public string CustomBlaString { get; }
-
-            [MetaObjectPropertyLoader]
-            public static CustomBlaStruct MethodWithIrrelevantName(string value)
-                => new CustomBlaStruct(value);
-        }
-
         [Fact]
         public void ConvertibleProperty()
         {
-            var value = SQL($@"select {new CustomBlaStruct("aap")}").ReadScalar<CustomBlaStruct>(Context);
-            PAssert.That(() => value.CustomBlaString == "aap");
+            var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialConvertibleValue<string>>(Context);
+            PAssert.That(() => value.Value == "aap");
         }
 
         [Fact]
         public void ConvertibleNullablePropertyWitValue()
         {
-            var value = SQL($@"select {new CustomBlaStruct("aap")}").ReadScalar<CustomBlaStruct?>(Context);
-            PAssert.That(() => value.Value.CustomBlaString == "aap");
+            var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialConvertibleValue<string>?>(Context);
+            PAssert.That(() => value.Value.Value == "aap");
         }
 
         [Fact]
         public void ConvertibleNullablePropertyWithoutValue()
         {
-            var value = SQL($@"select {default(CustomBlaStruct?)}").ReadScalar<CustomBlaStruct?>(Context);
+            var value = SQL($@"select {default(TrivialConvertibleValue<string>?)}").ReadScalar<TrivialConvertibleValue<string>?>(Context);
             PAssert.That(() => value == null);
         }
 
@@ -66,7 +48,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             var unused = nullStringReturningQuery.ReadScalar<string>(Context);//assert query OK.
 
-            Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<CustomBlaStruct>(Context));
+            Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<TrivialConvertibleValue<string>>(Context));
         }
 
         [Fact]
