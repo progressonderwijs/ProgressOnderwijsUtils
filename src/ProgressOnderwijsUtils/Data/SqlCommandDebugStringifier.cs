@@ -94,7 +94,7 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSqlExecutionException ExceptionWithTextAndArguments([NotNull] string message, [NotNull] SqlCommand failedCommand, [CanBeNull] Exception innerException)
         {
             var debugFriendlyCommandText = DebugFriendlyCommandText(failedCommand, SqlTracerAgumentInclusion.IncludingArgumentValues);
-            var timeoutMessage = SqlTimeoutDetection.IsTimeoutException(innerException) ? "\nCOMMAND TIMEOUT: " + failedCommand.CommandTimeout + "s" : "";
+            var timeoutMessage = innerException.IsSqlTimeoutException() ? "\nCOMMAND TIMEOUT: " + failedCommand.CommandTimeout + "s" : "";
             return new ParameterizedSqlExecutionException(message + timeoutMessage + "\n\nSqlCommandText:\n" + debugFriendlyCommandText, innerException);
         }
     }
