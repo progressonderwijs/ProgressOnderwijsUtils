@@ -292,7 +292,7 @@ namespace ProgressOnderwijsUtils
                 if (argument is ParameterizedSql parameterizedSql) {
                     parameterizedSql.AppendTo(ref factory);
                 } else if (converter != null) {
-                    SqlParameterComponent.AppendParamTo(ref factory, converter.CompiledConverter.DynamicInvoke(argument));
+                    SqlParameterComponent.AppendParamTo(ref factory, converter.ConvertToDb(argument));
                 } else {
                     SqlParameterComponent.AppendParamTo(ref factory, argument);
                 }
