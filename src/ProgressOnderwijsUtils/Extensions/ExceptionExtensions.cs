@@ -29,9 +29,7 @@ namespace ProgressOnderwijsUtils
 
         public static bool IsRetriableConnectionFailure([CanBeNull] this Exception e)
             => e.AnyNestingLevelMatches(ex => {
-                if (e == null) {
-                    return false;
-                } else if (e is SqlException sqlE) {
+                if (e is SqlException sqlE) {
                     //sqlE.Number docs at https://msdn.microsoft.com/en-us/library/cc645611.aspx
                     //see also system error codes: https://msdn.microsoft.com/en-us/library/windows/desktop/ms681382
                     const int timeoutExpired = -2;
