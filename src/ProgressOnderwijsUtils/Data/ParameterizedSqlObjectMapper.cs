@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
                     if (converter == null ) {
                         return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
                     }
-                    {
+                    else {
                         var value = cmd.Command.ExecuteScalar();
                         if (value is DBNull && typeof(T).IsNullableValueType()) {
                             return default;
