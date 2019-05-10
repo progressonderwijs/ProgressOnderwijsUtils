@@ -116,22 +116,21 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void IsDbConnFailureTest()
         {
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new Exception()));
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new DataException()));
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new ParameterizedSqlExecutionException()));
+            PAssert.That(() => !new Exception().IsRetriableConnectionFailure());
+            PAssert.That(() => !new DataException().IsRetriableConnectionFailure());
+            PAssert.That(() => !new ParameterizedSqlExecutionException().IsRetriableConnectionFailure());
             PAssert.That(
                 () =>
-                    Utils.IsRetriableConnectionFailure(new ParameterizedSqlExecutionException("bla",
-                        new DataException("The underlying provider failed on Open."))));
+                    new ParameterizedSqlExecutionException("bla",
+                        new DataException("The underlying provider failed on Open.")).IsRetriableConnectionFailure());
             PAssert.That(
                 () =>
-                    Utils.IsRetriableConnectionFailure(
-                        new AggregateException(
-                            new ParameterizedSqlExecutionException("bla",
-                                new DataException("The underlying provider failed on Open.")),
-                            new DataException("The underlying provider failed on Open."))));
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(new AggregateException()));
-            PAssert.That(() => !Utils.IsRetriableConnectionFailure(null));
+                    new AggregateException(
+                        new ParameterizedSqlExecutionException("bla",
+                            new DataException("The underlying provider failed on Open.")),
+                        new DataException("The underlying provider failed on Open.")).IsRetriableConnectionFailure());
+            PAssert.That(() => !new AggregateException().IsRetriableConnectionFailure());
+            PAssert.That(() => !ExceptionExtensions.IsRetriableConnectionFailure(null));
         }
 
         [Fact]
@@ -139,7 +138,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             using (var localdb = new TransactedLocalConnection()) {
                 var ex = Assert.ThrowsAny<Exception>(() => { SafeSql.SQL($"WAITFOR DELAY '00:00:02'").ExecuteNonQuery(localdb.Context.OverrideTimeout(1)); });
-                PAssert.That(() => Utils.IsRetriableConnectionFailure(ex));
+                PAssert.That(() => ex.IsRetriableConnectionFailure());
             }
         }
 

@@ -140,31 +140,9 @@ namespace ProgressOnderwijsUtils
             return set;
         }
 
+        [Obsolete("use extension method exception.IsRetriableConnectionFailure() instead")]
         public static bool IsRetriableConnectionFailure([CanBeNull] Exception e)
-        {
-            if (e == null) {
-                return false;
-            } else if (e is SqlException sqlE) {
-                //sqlE.Number docs at https://msdn.microsoft.com/en-us/library/cc645611.aspx
-                //see also system error codes: https://msdn.microsoft.com/en-us/library/windows/desktop/ms681382
-                const int timeoutExpired = -2;
-                const int failedToEstablishConnection = 53;
-                const int deadlockVictim = 1205;
-                return sqlE.Number == timeoutExpired
-                    || sqlE.Number == failedToEstablishConnection
-                    || sqlE.Number == deadlockVictim
-                    || e.Message.StartsWith("A transport-level error has occurred when receiving results from the server.", StringComparison.Ordinal) //number 121 and possibly others
-                    || e.Message.StartsWith("A transport-level error has occurred when sending the request to the server.", StringComparison.Ordinal); //number 121 and possibly others
-            } else if (e is DBConcurrencyException) {
-                return e.Message.StartsWith("Concurrency violation:", StringComparison.Ordinal);
-            } else if (e is DataException) {
-                return e.Message == "The underlying provider failed on Open.";
-            } else if (e is AggregateException aggEx) {
-                return aggEx.Flatten().InnerExceptions.DefaultIfEmpty().All(IsRetriableConnectionFailure);
-            } else {
-                return IsRetriableConnectionFailure(e.InnerException);
-            }
-        }
+            => e.IsRetriableConnectionFailure();
 
         // ReSharper disable UnusedMember.Global
         // Deze F's zijn voor makkelijke type inference, dus worden misschien niet altijd gebruikt
