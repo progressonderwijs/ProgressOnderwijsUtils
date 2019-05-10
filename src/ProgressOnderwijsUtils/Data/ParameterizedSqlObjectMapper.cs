@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
                     if (value is DBNull && typeof(T).IsNullableValueType()) {
                         return default;
                     }
-                    return (T)converter.CompiledConverterFromProvider.DynamicInvoke(value);
+                    return (T)converter.CompiledConverterFromDb.DynamicInvoke(value);
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }
