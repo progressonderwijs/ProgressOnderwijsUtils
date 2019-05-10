@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 using FastExpressionCompiler;
@@ -39,11 +40,16 @@ namespace ProgressOnderwijsUtils
                 => throw new NotImplementedException();
         }
 
-        public static MetaObjectPropertyConverter GetOrNull(Type type)
-            => type
+        static readonly ConcurrentDictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new ConcurrentDictionary<Type, MetaObjectPropertyConverter>();
+
+        static readonly Func<Type, MetaObjectPropertyConverter> cachedFactoryDelegate = type =>
+            type.GetNonNullableUnderlyingType()
                 .GetInterfaces()
                 .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IMetaObjectPropertyConvertible<,,>))
                 .Select(i => new MetaObjectPropertyConverter(i))
                 .SingleOrNull();
+
+        public static MetaObjectPropertyConverter GetOrNull(Type propertyType)
+            => propertyConverterCache.GetOrAdd(propertyType, cachedFactoryDelegate);
     }
 }

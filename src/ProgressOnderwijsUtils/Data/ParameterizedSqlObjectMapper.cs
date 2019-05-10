@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -26,16 +26,15 @@ namespace ProgressOnderwijsUtils
         {
             using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
                 try {
-                    var converter = MetaObjectPropertyConverter.GetOrNull(typeof(T).GetNonNullableType());
+                    var value = cmd.Command.ExecuteScalar();
+                    var converter = MetaObjectPropertyConverter.GetOrNull(typeof(T));
                     if (converter == null) {
-                        return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
-                    } else {
-                        var value = cmd.Command.ExecuteScalar();
-                        if (value is DBNull && typeof(T).IsNullableValueType()) {
-                            return default;
-                        }
-                        return (T)converter.CompiledConverterFromProvider.DynamicInvoke(value);
+                        return DBNullRemover.Cast<T>(value);
                     }
+                    if (value is DBNull && typeof(T).IsNullableValueType()) {
+                        return default;
+                    }
+                    return (T)converter.CompiledConverterFromProvider.DynamicInvoke(value);
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }
