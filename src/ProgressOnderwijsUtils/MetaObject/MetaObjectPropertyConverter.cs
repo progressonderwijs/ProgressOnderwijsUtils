@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
 using FastExpressionCompiler;
@@ -12,6 +13,7 @@ namespace ProgressOnderwijsUtils
         public Type ModelType { get; }
         public Type DbType { get; }
         public Delegate CompiledConverter { get; }
+        public Delegate CompiledConverterFromProvider { get; }
 
         public MetaObjectPropertyConverter(Type converterDefinition)
         {
@@ -20,6 +22,7 @@ namespace ProgressOnderwijsUtils
             var converterType = converterDefinition.GenericTypeArguments[2];
             var converter = ((Func<ValueConverter>)CreateValueConverter_OpenGenericMethod.MakeGenericMethod(ModelType, DbType, converterType).CreateDelegate(typeof(Func<ValueConverter>)))();
             CompiledConverter = converter.ConvertToProviderExpression.CompileFast();
+            CompiledConverterFromProvider = converter.ConvertFromProviderExpression.CompileFast();
         }
 
         static ValueConverter CreateValueConverter<TModel, TProvider, [UsedImplicitly] TConverterSource>()
@@ -37,11 +40,16 @@ namespace ProgressOnderwijsUtils
                 => throw new NotImplementedException();
         }
 
-        public static MetaObjectPropertyConverter GetOrNull(Type type)
-            => type
+        static readonly ConcurrentDictionary<Type, MetaObjectPropertyConverter> propertyConverterCache = new ConcurrentDictionary<Type, MetaObjectPropertyConverter>();
+
+        static readonly Func<Type, MetaObjectPropertyConverter> cachedFactoryDelegate = type =>
+            type.GetNonNullableUnderlyingType()
                 .GetInterfaces()
                 .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IMetaObjectPropertyConvertible<,,>))
                 .Select(i => new MetaObjectPropertyConverter(i))
                 .SingleOrNull();
+
+        public static MetaObjectPropertyConverter GetOrNull(Type propertyType)
+            => propertyConverterCache.GetOrAdd(propertyType, cachedFactoryDelegate);
     }
 }

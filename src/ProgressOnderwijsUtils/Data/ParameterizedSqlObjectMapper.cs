@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -26,7 +26,15 @@ namespace ProgressOnderwijsUtils
         {
             using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
                 try {
-                    return DBNullRemover.Cast<T>(cmd.Command.ExecuteScalar());
+                    var value = cmd.Command.ExecuteScalar();
+                    var converter = MetaObjectPropertyConverter.GetOrNull(typeof(T));
+                    if (converter == null) {
+                        return DBNullRemover.Cast<T>(value);
+                    }
+                    if (value is DBNull && typeof(T).IsNullableValueType()) {
+                        return default;
+                    }
+                    return (T)converter.CompiledConverterFromProvider.DynamicInvoke(value);
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }
@@ -317,8 +325,10 @@ namespace ProgressOnderwijsUtils
 
             // ReSharper disable AssignNullToNotNullAttribute
             static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod("IsDBNull", binding)];
+
             static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
             // ReSharper restore AssignNullToNotNullAttribute
+
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
 
             static bool IsSupportedBasicType([NotNull] Type type)
