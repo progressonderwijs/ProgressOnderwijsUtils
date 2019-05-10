@@ -29,12 +29,14 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => ParameterizedSql.Param(12345).DebugText() == "12345");
             PAssert.That(() => ParameterizedSql.Param(12345.6m).DebugText() == "12345.6");
             PAssert.That(() => ParameterizedSql.Param(new object()).DebugText() == "{!System.Object!}");
-            var customCovertibleType = TrivialConvertibleValue.Create("Aap");
-            PAssert.That(() => ParameterizedSql.Param(customCovertibleType) != ParameterizedSql.Param("Aap"));
-            PAssert.That(() => ParameterizedSql.Param(customCovertibleType).CommandText() == ParameterizedSql.Param("Aap").CommandText());
+            var customConvertibleType = TrivialConvertibleValue.Create("Aap");
+            var customConvertibleParam = ParameterizedSql.Param(customConvertibleType);
+            PAssert.That(() => customConvertibleParam != ParameterizedSql.Param("Aap"));
+            PAssert.That(() => customConvertibleParam.CommandText() == ParameterizedSql.Param("Aap").CommandText());
 
             using (var transactedLocalConnection = new TransactedLocalConnection()){
-                PAssert.That(() => ParameterizedSql.Param(customCovertibleType).CreateSqlCommand(transactedLocalConnection.Context).Command.CommandText != "noot");
+
+                PAssert.That(() => customConvertibleParam.CreateSqlCommand(transactedLocalConnection.Context).Command.CommandText == "noot");
             }
         }
     }
