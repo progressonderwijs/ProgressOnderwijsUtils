@@ -188,7 +188,7 @@ namespace ProgressOnderwijsUtils
 
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
-            => SqlParameterComponent.AppendParamTo(ref factory, paramVal);
+            => SqlParameterComponent.AppendParamOrFragment(ref factory, paramVal);
     }
 
     interface IQueryParameter
