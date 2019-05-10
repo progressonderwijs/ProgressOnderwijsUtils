@@ -192,7 +192,6 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             return list.Count;
         }
 
-        // ReSharper disable once UnusedMember.Local
         static int ExecuteQuery2([NotNull] SqlCommandCreationContext ctx, int rows)
         {
             using (var cmd = new SqlCommand()) {
@@ -260,6 +259,56 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         public static void RunWideQuery([NotNull] Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("Raw (26-col)", ExecuteWideQuery);
+            benchmarker.BenchSqlServer("Raw (26-col, SqlDbTypes)", ExecuteWideQuery2);
+        }
+
+        static int ExecuteWideQuery2([NotNull] SqlCommandCreationContext ctx, int rows)
+        {
+            using (var cmd = new SqlCommand()) {
+                cmd.CommandText = WideExampleObject.RawQueryString;
+                cmd.Connection = ctx.Connection;
+                var topP = new SqlParameter {
+                    SqlDbType = SqlDbType.Int,
+                    ParameterName = "@Top",
+                    IsNullable = false,
+                    Value = rows,
+                };
+                cmd.Parameters.Add(topP);
+                using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
+                    var list = new List<WideExampleObject>();
+                    while (reader.Read()) {
+                        list.Add(new WideExampleObject {
+                            SalesOrderId = reader.GetInt32(0),
+                            RevisionNumber = reader.GetByte(1),
+                            OrderDate = reader.GetDateTime(2),
+                            DueDate = reader.GetDateTime(3),
+                            ShipDate = reader.IsDBNull(4) ? default(DateTime?) : reader.GetDateTime(4),
+                            Status = reader.GetByte(5),
+                            OnlineOrderFlag = reader.GetBoolean(6),
+                            SalesOrderNumber = reader.GetSqlString(7).ToNullableString(),
+                            PurchaseOrderNumber = reader.GetSqlString(8).ToNullableString(),
+                            AccountNumber = reader.GetSqlString(9).ToNullableString(),
+                            CustomerId = reader.GetInt32(10),
+                            SalesPersonId = reader.GetSqlInt32(11).ToNullableInt(),
+                            TerritoryId = reader.GetSqlInt32(12).ToNullableInt(),
+                            BillToAddressId = reader.GetInt32(13),
+                            ShipToAddressId = reader.GetInt32(14),
+                            ShipMethodId = reader.GetInt32(15),
+                            CreditCardId = reader.GetSqlInt32(16).ToNullableInt(),
+                            CreditCardApprovalCode = reader.GetSqlString(17).ToNullableString(),
+                            CurrencyRateId = reader.GetSqlInt32(18).ToNullableInt(),
+                            SubTotal = reader.GetDecimal(19),
+                            TaxAmt = reader.GetDecimal(20),
+                            Freight = reader.GetDecimal(21),
+                            TotalDue = reader.GetDecimal(22),
+                            Comment = reader.GetSqlString(23).ToNullableString(),
+                            Rowguid = reader.GetGuid(24),
+                            ModifiedDate = reader.GetDateTime(25),
+                        });
+                    }
+                    return list.Count;
+                }
+            }
         }
 
         static int ExecuteWideQuery([NotNull] SqlCommandCreationContext ctx, int rows)
