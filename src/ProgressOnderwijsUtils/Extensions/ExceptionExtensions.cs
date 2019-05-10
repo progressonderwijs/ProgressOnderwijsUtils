@@ -25,14 +25,17 @@ namespace ProgressOnderwijsUtils
         }
 
         public static bool IsSqlTimeoutException([CanBeNull] this Exception e)
-            => e.AnyNestingLevelMatches(ex => ex is SqlException sqlE && sqlE.Number == -2);
+            => e.AnyNestingLevelMatches(sqlTimeoutPredicate);
 
         public static bool IsRetriableConnectionFailure([CanBeNull] this Exception e)
-            => e.AnyNestingLevelMatches(ex =>
-                e is SqlException sqlE && IsRetriableSqlException(sqlE)
-                || e is DBConcurrencyException && e.Message.StartsWith("Concurrency violation:", StringComparison.Ordinal)
-                || e is DataException && e.Message == "The underlying provider failed on Open."
-            );
+            => e.AnyNestingLevelMatches(retriableConnFailurePredicate);
+
+        static readonly Func<Exception, bool> retriableConnFailurePredicate = ex =>
+            ex is SqlException sqlE && IsRetriableSqlException(sqlE)
+            || ex is DBConcurrencyException && ex.Message.StartsWith("Concurrency violation:", StringComparison.Ordinal)
+            || ex is DataException && ex.Message == "The underlying provider failed on Open.";
+
+        static readonly Func<Exception, bool> sqlTimeoutPredicate = ex => ex is SqlException sqlE && sqlE.Number == -2;
 
         static bool IsRetriableSqlException(SqlException sqlException)
         { //sqlE.Number docs at https://msdn.microsoft.com/en-us/library/cc645611.aspx
