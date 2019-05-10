@@ -188,7 +188,7 @@ namespace ProgressOnderwijsUtils
 
         public void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
-            => SqlParameterComponent.AppendParamTo(ref factory, paramVal);
+            => SqlParameterComponent.AppendParamOrFragment(ref factory, paramVal);
     }
 
     interface IQueryParameter
@@ -288,14 +288,7 @@ namespace ProgressOnderwijsUtils
             foreach (var paramRefMatch in formatStringTokenization) {
                 factory.AppendSql(str, pos, paramRefMatch.StartIndex - pos);
                 var argument = interpolatedQuery.GetArgument(paramRefMatch.ReferencedParameterIndex);
-                var converter = argument == null ? null : MetaObjectPropertyConverter.GetOrNull(argument.GetType());
-                if (argument is ParameterizedSql parameterizedSql) {
-                    parameterizedSql.AppendTo(ref factory);
-                } else if (converter != null) {
-                    SqlParameterComponent.AppendParamTo(ref factory, converter.CompiledConverter.DynamicInvoke(argument));
-                } else {
-                    SqlParameterComponent.AppendParamTo(ref factory, argument);
-                }
+                SqlParameterComponent.AppendParamOrFragment(ref factory, argument);
                 pos = paramRefMatch.EndIndex;
             }
             factory.AppendSql(str, pos, str.Length - pos);

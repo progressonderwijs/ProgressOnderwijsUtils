@@ -184,6 +184,19 @@ namespace ProgressOnderwijsUtils
             }
             return elementType;
         }
+
+        public static void AppendParamOrFragment<TCommandFactory>(ref TCommandFactory factory, object argument)
+            where TCommandFactory : struct, ICommandFactory
+        {
+            var converter = argument == null ? null : MetaObjectPropertyConverter.GetOrNull(argument.GetType());
+            if (argument is ParameterizedSql parameterizedSql) {
+                parameterizedSql.AppendTo(ref factory);
+            } else if (converter != null) {
+                AppendParamTo(ref factory, converter.ConvertToDb(argument));
+            } else {
+                AppendParamTo(ref factory, argument);
+            }
+        }
     }
 
     namespace Internal

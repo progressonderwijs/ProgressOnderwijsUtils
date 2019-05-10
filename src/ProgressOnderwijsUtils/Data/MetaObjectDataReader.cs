@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtils
                 if (propertyConverter != null) {
                     ColumnType = propertyConverter.DbType;
                     var propertyValueAsNoNullable = Expression.Convert(propertyValue, propertyConverter.ModelType);
-                    var columnValueAsNonNullable = Expression.Invoke(Expression.Constant(propertyConverter.CompiledConverter), propertyValueAsNoNullable);
+                    var columnValueAsNonNullable = Expression.Invoke(Expression.Constant(propertyConverter.CompiledConverterToDb), propertyValueAsNoNullable);
                     var columnBoxedAsObject = Expression.Convert(columnValueAsNonNullable, typeof(object));
                     Expression columnBoxedAsColumnType;
                     if (isNonNullable) {

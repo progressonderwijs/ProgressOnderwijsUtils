@@ -3,6 +3,7 @@ using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
+using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -40,20 +41,6 @@ namespace ProgressOnderwijsUtils.Tests
                 => new CustomBla(value);
         }
 
-        public struct CustomBlaStruct
-        {
-            CustomBlaStruct(string value)
-            {
-                AsString = value;
-            }
-
-            public string AsString { get; }
-
-            [MetaObjectPropertyLoader]
-            public static CustomBlaStruct MethodWithIrrelevantName(string value)
-                => new CustomBlaStruct(value);
-        }
-
         public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public CustomBla Bla2 { get; set; }
@@ -78,14 +65,14 @@ namespace ProgressOnderwijsUtils.Tests
         {
             public int Id { get; set; }
             public string Bla { get; set; }
-            public CustomBlaStruct Bla2 { get; set; }
+            public TrivialConvertibleValue<string> Bla2 { get; set; }
         }
 
         public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IMetaObject, IPropertiesAreUsedImplicitly
         {
             public int Id { get; set; }
-            public CustomBlaStruct? Bla { get; set; }
-            public CustomBlaStruct Bla2 { get; set; }
+            public TrivialConvertibleValue<string>? Bla { get; set; }
+            public TrivialConvertibleValue<string> Bla2 { get; set; }
         }
 
         BulkInsertTarget CreateTempTable()
@@ -144,31 +131,31 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_struct()
         {
-            PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
+            PAssert.That(() => TrivialConvertibleValue<string>.MethodWithIrrelevantName("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
 
             var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context);
-            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
+            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.Value })));
         }
 
         [Fact]
         public void MetaObjectSupportsCustomObject_nullable_struct()
         {
-            PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
+            PAssert.That(() => TrivialConvertibleValue<string>.MethodWithIrrelevantName("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
 
             var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_nullable_struct_property>(Context);
-            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla.HasValue ? x.Bla.Value.AsString : default(string), Bla2 = x.Bla2.AsString })));
+            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla.HasValue ? x.Bla.Value.Value : default(string), Bla2 = x.Bla2.Value })));
         }
 
         [Fact]
         public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception_with_helpful_message()
         {
-            PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
+            PAssert.That(() => TrivialConvertibleValue<string>.MethodWithIrrelevantName("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
@@ -180,7 +167,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void Query_errors_unrelated_to_column_mapping_are_not_misleading()
         {
-            PAssert.That(() => CustomBlaStruct.MethodWithIrrelevantName("aap").AsString == "aap");
+            PAssert.That(() => TrivialConvertibleValue<string>.MethodWithIrrelevantName("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
