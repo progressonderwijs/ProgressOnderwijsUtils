@@ -2,7 +2,6 @@
 using System.Data.SqlClient;
 using System.Linq;
 using JetBrains.Annotations;
-using ProgressOnderwijsUtils.Extensions;
 
 namespace ProgressOnderwijsUtils
 {

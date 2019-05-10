@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
 using JetBrains.Annotations;
 
-namespace ProgressOnderwijsUtils.Extensions
+namespace ProgressOnderwijsUtils
 {
     public static class ExceptionExtensions
     {
