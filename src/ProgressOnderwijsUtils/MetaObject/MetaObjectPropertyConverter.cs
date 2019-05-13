@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ProgressOnderwijsUtils
 {
-    sealed class MetaObjectPropertyConverter
+    public sealed class MetaObjectPropertyConverter
     {
         public Type ModelType { get; }
         public Type DbType { get; }
