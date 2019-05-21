@@ -79,38 +79,19 @@ namespace ProgressOnderwijsUtils
                 SqlDataReader reader = null;
                 try {
                     reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    return typeof(T).IsValueType ? ReaderToArrayViaRefs<T>(fieldMapping, reader, ref lastColumnRead) : ReaderToArray<T>(fieldMapping, reader, ref lastColumnRead);
+                    var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMapping);
+                    var builder = new ArrayBuilder<T>();
+                    while (reader.Read()) {
+                        var nextRow = unpacker(reader, out lastColumnRead);
+                        builder.Add(nextRow);
+                    }
+                    return builder.ToArray();
                 } catch (Exception ex) {
                     throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
                 } finally {
                     reader?.Dispose();
                 }
             }
-        }
-
-        static T[] ReaderToArray<T>(FieldMappingMode fieldMapping, SqlDataReader reader, ref int lastColumnRead)
-            where T : IMetaObject, new()
-        {
-            var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMapping);
-            var builder = new ArrayBuilder<T>();
-            while (reader.Read()) {
-                var nextRow = unpacker(reader, out lastColumnRead);
-                builder.Add(nextRow);
-            }
-            return builder.ToArray();
-        }
-
-        static T[] ReaderToArrayViaRefs<T>(FieldMappingMode fieldMapping, SqlDataReader reader, ref int lastColumnRead)
-            where T : IMetaObject, new()
-        {
-            var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowRefUnpacker(reader, fieldMapping);
-            var builder = new ArrayBuilder<T>();
-            T nextRow;
-            while (reader.Read()) {
-                unpacker(reader, out lastColumnRead, out nextRow);
-                builder.Add(nextRow);
-            }
-            return builder.ToArray();
         }
 
         [NotNull]
@@ -336,8 +317,6 @@ namespace ProgressOnderwijsUtils
         {
             public delegate T TRowReader<out T>(TReader reader, out int lastColumnRead);
 
-            public delegate void TRowRefReader<T>(TReader reader, out int lastColumnRead, out T row);
-
             static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(
                 typeof(TReader).GetInterfaceMap(typeof(IDataRecord)),
                 typeof(TReader).GetInterfaceMap(typeof(IDataReader)));
@@ -476,9 +455,7 @@ namespace ProgressOnderwijsUtils
                 }
 
                 static readonly object constructionSync = new object();
-                static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> loadRow_by_ordering = new ConcurrentDictionary<ColumnOrdering, TRowReader<T>>();
-                static readonly object refConstructionSync = new object();
-                static readonly ConcurrentDictionary<ColumnOrdering, TRowRefReader<T>> loadRowRef_by_ordering = new ConcurrentDictionary<ColumnOrdering, TRowRefReader<T>>();
+                static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> loadRow_by_ordering;
 
                 [NotNull]
                 static Type type
@@ -513,6 +490,8 @@ namespace ProgressOnderwijsUtils
                             break;
                         }
                     }
+
+                    loadRow_by_ordering = new ConcurrentDictionary<ColumnOrdering, TRowReader<T>>();
                 }
 
                 public static TRowReader<T> DataReaderToSingleRowUnpacker([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
@@ -525,20 +504,6 @@ namespace ProgressOnderwijsUtils
                     } else {
                         lock (constructionSync) {
                             return loadRow_by_ordering.GetOrAdd(ordering, constructTRowReaderWithCols);
-                        }
-                    }
-                }
-
-                public static TRowRefReader<T> DataReaderToSingleRowRefUnpacker([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
-                {
-                    AssertColumnsCanBeMappedToObject(reader, fieldMappingMode);
-                    var ordering = ColumnOrdering.FromReader(reader);
-                    if (loadRowRef_by_ordering.TryGetValue(ordering, out var cachedRowReaderWithCols)) {
-                        PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
-                        return cachedRowReaderWithCols;
-                    } else {
-                        lock (refConstructionSync) {
-                            return loadRowRef_by_ordering.GetOrAdd(ordering, constructTRowRefReaderWithCols);
                         }
                     }
                 }
@@ -575,20 +540,6 @@ namespace ProgressOnderwijsUtils
                     var constructRowExpr = Expression.Block(typeof(T), new[] { rowVar }, statements);
                     var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
                     var loadRowsLambda = Expression.Lambda<TRowReader<T>>(constructRowExpr, "LoadRows", loadRowsParamExprs);
-                    return loadRowsLambda.Compile();
-                };
-
-                static readonly Func<ColumnOrdering, TRowRefReader<T>> constructTRowRefReaderWithCols = columnOrdering => {
-                    var cols = columnOrdering.Cols;
-                    var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                    var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                    var rowVar = Expression.Parameter(typeof(T).MakeByRefType(), "row");
-                    var statements = new List<Expression>(1 + cols.Length * 2);
-                    statements.Add(Expression.Assign(rowVar, Expression.New(typeof(T))));
-                    ReadAllFields(dataReaderParamExpr, rowVar, cols, lastColumnReadParamExpr, statements);
-                    var constructRowExpr = Expression.Block(statements);
-                    var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr, rowVar };
-                    var loadRowsLambda = Expression.Lambda<TRowRefReader<T>>(constructRowExpr, "LoadRows", loadRowsParamExprs);
                     return loadRowsLambda.Compile();
                 };
 
