@@ -640,11 +640,9 @@ namespace ProgressOnderwijsUtils
                     var cols = orderingP.Cols;
                     for (var i = 0; i < cols.Length; i++) {
                         var colName = cols[i];
-                        var metaPropertyIndexOrNull = metadata.IndexByName.GetOrDefaultR(colName, default(int?));
-                        if (metaPropertyIndexOrNull == null) {
+                        if (!metadata.IndexByName.TryGetValue(colName, out var metaPropertyIndex)) {
                             throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
                         }
-                        var metaPropertyIndex = metaPropertyIndexOrNull.Value;
                         if (isMetaPropertyIndexAlreadyUsed[metaPropertyIndex]) {
                             throw new InvalidOperationException("IDataReader has two identically named columns " + colName + "!");
                         }
