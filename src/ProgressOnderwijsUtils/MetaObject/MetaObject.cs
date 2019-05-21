@@ -123,9 +123,5 @@ namespace ProgressOnderwijsUtils
         [Pure]
         static IMetaPropCache<IMetaProperty> GetCache(Type t)
             => (IMetaPropCache<IMetaProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
-
-        [Pure]
-        public static ParameterizedSql SqlColumnName([NotNull] this IMetaProperty mp)
-            => SQL($@"[{ParameterizedSql.CreateDynamic(mp.Name)}]");
     }
 }
