@@ -583,8 +583,9 @@ namespace ProgressOnderwijsUtils
                         }
                         isMetaPropertyIndexAlreadyUsed[metaPropertyIndex] = true;
                         var member = metadata[metaPropertyIndex];
+                        var memberInfo = BackingFieldDetector.BackingFieldOfPropertyOrNull(member.PropertyInfo) ?? (MemberInfo)member.PropertyInfo;
                         yield return Expression.Bind(
-                            member.PropertyInfo,
+                            memberInfo,
                             Expression.Block(
                                 Expression.Assign(lastColumnReadParameter, Expression.Constant(i)),
                                 GetColValueExpr(readerParamExpr, i, member.DataType)
@@ -636,6 +637,46 @@ namespace ProgressOnderwijsUtils
                     }
                 }
             }
+        }
+
+        static class BackingFieldDetector
+        {
+            const string BackingFieldPrefix = "<";
+            const string BackingFieldSuffix = ">k__BackingField";
+            const BindingFlags privateInstance = BindingFlags.Instance | BindingFlags.NonPublic;
+            const BindingFlags anyInstance = privateInstance | BindingFlags.Public;
+
+            [NotNull]
+            static string BackingFieldFromAutoPropName([NotNull] string propertyName)
+                => BackingFieldPrefix + propertyName + BackingFieldSuffix;
+
+            [CanBeNull]
+            static string AutoPropNameFromBackingField([NotNull] string fieldName)
+                => fieldName.StartsWith(BackingFieldPrefix, StringComparison.Ordinal) && fieldName.EndsWith(BackingFieldSuffix, StringComparison.Ordinal)
+                    ? fieldName.Substring(BackingFieldPrefix.Length, fieldName.Length - BackingFieldPrefix.Length - BackingFieldSuffix.Length)
+                    : null;
+
+            static bool IsCompilerGenerated([CanBeNull] MemberInfo member)
+                => member != null && member.IsDefined(typeof(CompilerGeneratedAttribute), true);
+
+            static bool IsAutoProp(PropertyInfo autoProperty)
+                => IsCompilerGenerated(autoProperty.GetGetMethod(true));
+
+            [CanBeNull]
+            public static FieldInfo BackingFieldOfPropertyOrNull([NotNull] PropertyInfo propertyInfo)
+                => IsAutoProp(propertyInfo)
+                    && propertyInfo.DeclaringType.GetField(BackingFieldFromAutoPropName(propertyInfo.Name), privateInstance) is FieldInfo backingField
+                    && IsCompilerGenerated(backingField)
+                        ? backingField
+                        : null;
+
+            public static PropertyInfo AutoPropertyOfFieldOrNull(FieldInfo fieldInfo)
+                => IsCompilerGenerated(fieldInfo)
+                    && AutoPropNameFromBackingField(fieldInfo.Name) is string autoPropertyName
+                    && fieldInfo.DeclaringType.GetProperty(autoPropertyName, anyInstance) is PropertyInfo autoProperty
+                    && IsAutoProp(autoProperty)
+                        ? autoProperty
+                        : null;
         }
     }
 
