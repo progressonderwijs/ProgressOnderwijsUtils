@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Linq;
 using Xunit;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class EnumerateMetaObjectsTest : TransactedLocalConnection
     {
         static ParameterizedSql ExampleQuery
-            => SafeSql.SQL($@"
+            => SQL($@"
                 select content='bla', id= 3
                 union all
                 select content='hmm', id= 37

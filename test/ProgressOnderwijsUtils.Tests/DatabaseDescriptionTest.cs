@@ -3,6 +3,7 @@ using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
@@ -11,7 +12,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void AllDependantTables_works_recursively()
         {
-            SafeSql.SQL($@"
+            SQL($@"
                 create table dbo.ForeignKeyLookupRoot (
                     IdRoot int not null primary key
                 );
