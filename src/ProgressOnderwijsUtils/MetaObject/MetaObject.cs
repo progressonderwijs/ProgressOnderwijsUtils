@@ -75,32 +75,31 @@ namespace ProgressOnderwijsUtils
 
             var innerExpr = UnwrapCast(bodyExpr);
 
-            if (!(innerExpr is MemberExpression)) {
-                throw new ArgumentException(
-                    "To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
-                    "The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
-            }
-            var membExpr = (MemberExpression)innerExpr;
-
-            //*
-            var targetExpr = UnwrapCast(membExpr.Expression);
-
-            //expensive:
-            var paramExpr = property.Parameters[0];
-            if (targetExpr != paramExpr) {
-                throw new ArgumentException(
-                    "To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
-                    "A member is accessed, but not on the parameter " + paramExpr.Name + ": " + ExpressionToCode.ToCode(property));
-            }
-            //*/
-
-            var memberInfo = membExpr.Member;
-            if (memberInfo is PropertyInfo || memberInfo is FieldInfo) {
+            if (innerExpr is MemberExpression membExpr) {
+                var memberInfo = membExpr.Member;
+                AssertMemberMightMatchAMetaProperty(property, memberInfo, membExpr);
                 return memberInfo;
             }
+
             throw new ArgumentException(
-                "To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
-                "The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property or field");
+                "To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
+                "The passed lambda isn't a simple MemberExpression, but a " + innerExpr.NodeType + ":  " + ExpressionToCode.ToCode(property));
+        }
+
+        static void AssertMemberMightMatchAMetaProperty<TObject, TProperty>(Expression<Func<TObject, TProperty>> property, MemberInfo memberInfo, MemberExpression membExpr)
+        {
+            if (!memberInfo.DeclaringType.IsAssignableFrom(typeof(TObject))) {
+                throw new ArgumentException(
+                    "To configure a metaproperty, you must pass a lambda such as o=>o.MyPropertyName\n" +
+                    "Actual input: " + ExpressionToCode.ToCode(property) + "\n" +
+                    "(The type of " + ExpressionToCode.ToCode(membExpr.Expression) + " should be " + typeof(TObject).ToCSharpFriendlyTypeName() + " or a base type.)");
+            }
+
+            if (!(memberInfo is PropertyInfo) && !(memberInfo is FieldInfo)) {
+                throw new ArgumentException(
+                    "To configure a metaproperty, must pass a lambda such as o=>o.MyPropertyName\n" +
+                    "The argument lambda refers to a member " + membExpr.Member.Name + " that is not a property or field");
+            }
         }
 
         [Pure]
