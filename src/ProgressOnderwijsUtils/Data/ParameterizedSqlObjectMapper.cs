@@ -11,6 +11,7 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
+// ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
 {
     public enum FieldMappingMode
