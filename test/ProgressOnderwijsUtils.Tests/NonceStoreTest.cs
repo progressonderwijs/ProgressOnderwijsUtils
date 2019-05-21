@@ -9,11 +9,9 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [NotNull]
         public static object[][] NonceStoreItemEqualityData()
-        {
-            return new[] {
+            => new[] {
                 new object[] { null, null, true }, new object[] { null, new TimestampedNonce(new DateTime(2000, 1, 1), 37L), false }, new object[] { new TimestampedNonce(new DateTime(2000, 1, 1), 37L), null, false }, new object[] { new TimestampedNonce(new DateTime(2000, 1, 1), 37L), new TimestampedNonce(new DateTime(2000, 1, 1), 37L), true }, new object[] { new TimestampedNonce(new DateTime(2000, 1, 1), 37L), new TimestampedNonce(new DateTime(2000, 1, 1), 42L), false }, new object[] { new TimestampedNonce(new DateTime(2000, 1, 1), 37L), new TimestampedNonce(new DateTime(2001, 1, 1), 37L), false }, new object[] { new TimestampedNonce(new DateTime(2000, 1, 1), 42L), new TimestampedNonce(new DateTime(2000, 1, 1), 37L), false }, new object[] { new TimestampedNonce(new DateTime(2001, 1, 1), 37L), new TimestampedNonce(new DateTime(2000, 1, 1), 37L), false }
             };
-        }
 
         [Theory]
         [MemberData(nameof(NonceStoreItemEqualityData))]

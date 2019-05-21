@@ -183,9 +183,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void PrependingEmptyHasNoEffect()
-        {
-            PAssert.That(() => ParameterizedSql.Empty + SQL($"abc") == SQL($"abc"));
-        }
+            => PAssert.That(() => ParameterizedSql.Empty + SQL($"abc") == SQL($"abc"));
 
         [Fact]
         public void EmptyParameterizedSql()
@@ -238,33 +236,23 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ParameterizedSqlToStringIsClearForEnumParams()
-        {
-            PAssert.That(() => SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\r\nselect 42, 2/*DayOfWeek.Tuesday*/");
-        }
+            => PAssert.That(() => SQL($"select {42}, {DayOfWeek.Tuesday}").ToString() == "*/Pseudo-sql (with parameter values inlined!):/*\r\nselect 42, 2/*DayOfWeek.Tuesday*/");
 
         [Fact]
         public void ParameterizedSqlUsesLiteralsForValidEnumConstants()
-        {
-            PAssert.That(() => SQL($"select {(DayOfWeek)42}, {DayOfWeek.Tuesday}").CommandText() == "select @par0, 2/*DayOfWeek.Tuesday*/");
-        }
+            => PAssert.That(() => SQL($"select {(DayOfWeek)42}, {DayOfWeek.Tuesday}").CommandText() == "select @par0, 2/*DayOfWeek.Tuesday*/");
 
         [Fact]
         public void ParameterizedSqlUsesLiteralsForBooleanConstants()
-        {
-            PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
-        }
+            => PAssert.That(() => SQL($"select {true}, {false}").CommandText() == "select cast(1 as bit), cast(0 as bit)");
 
         [Fact]
         public void ParameterizedSqlSupportsNullParameters()
-        {
-            PAssert.That(() => SQL($"select {null}").CommandText() == "select NULL");
-        }
+            => PAssert.That(() => SQL($"select {null}").CommandText() == "select NULL");
 
         [Fact]
         public void ParameterizedSqlDoesNotUseLiteralsEnumsMarked_IEnumShouldBeParameterizedInSqlAttribute()
-        {
-            PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
-        }
+            => PAssert.That(() => SQL($"select {ExampleNonLiteralEnum.SomeValue}").CommandText() == "select @par0");
 
         [TestNotLiteral]
         enum ExampleNonLiteralEnum

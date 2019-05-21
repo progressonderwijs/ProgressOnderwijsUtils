@@ -63,8 +63,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         static void AssertOverlapt(DateTimeExtensions.Periode periode1, DateTimeExtensions.Periode periode2, bool uitkomst)
-        {
-            PAssert.That(() => periode1.Overlapt(periode2) == uitkomst);
-        }
+            => PAssert.That(() => periode1.Overlapt(periode2) == uitkomst);
     }
 }

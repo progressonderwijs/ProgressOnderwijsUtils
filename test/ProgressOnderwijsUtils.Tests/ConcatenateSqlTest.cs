@@ -17,15 +17,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ConcatenateWithEmptySeparatorIsStillSpaced()
-        {
-            PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql() == SQL($"een twee drie"));
-        }
+            => PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql() == SQL($"een twee drie"));
 
         [Fact]
         public void ConcatenateWithSeparatorUsesSeparatorSpaced()
-        {
-            PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql(SQL($"!")) == SQL($"een ! twee ! drie"));
-        }
+            => PAssert.That(() => new[] { SQL($"een"), SQL($"twee"), SQL($"drie") }.ConcatenateSql(SQL($"!")) == SQL($"een ! twee ! drie"));
 
         [Fact]
         public void ConcatenateIsFastEnoughForLargeSequences()
