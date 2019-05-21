@@ -20,9 +20,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             [NotNull]
             public static ExactMapping[] Load([NotNull] SqlCommandCreationContext context)
-            {
-                return SQL($@"select t.* from {testTableName} t").ReadMetaObjects<ExactMapping>(context);
-            }
+                => SQL($@"select t.* from {testTableName} t").ReadMetaObjects<ExactMapping>(context);
         }
 
         struct LessColumns : IMetaObject, IPropertiesAreUsedImplicitly
@@ -48,9 +46,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void Exact_mapping_gives_exception_on_more_columns()
-        {
-            Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new MoreColumns() }); });
-        }
+            => Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Context, new[] { new MoreColumns() }); });
 
         [NotNull]
         BulkInsertTarget CreateTargetTable()
@@ -75,9 +71,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void AllowExtraDatabaseColumns_mapping_gives_exception_on_more_columns()
-        {
-            Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraDatabaseColumns).BulkInsert(Context, new[] { new MoreColumns() }); });
-        }
+            => Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraDatabaseColumns).BulkInsert(Context, new[] { new MoreColumns() }); });
 
         [Fact]
         public void AllowExtraDatabaseColumns_mapping_works_on_less_columns()
@@ -95,9 +89,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void AllowExtraMetaObjectProperties_mapping_gives_exception_on_less_columns()
-        {
-            Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Context, new[] { new LessColumns() }); });
-        }
+            => Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Context, new[] { new LessColumns() }); });
 
         [Fact]
         public void AllowExtraMetaObjectProperties_mapping_works_on_more_columns()

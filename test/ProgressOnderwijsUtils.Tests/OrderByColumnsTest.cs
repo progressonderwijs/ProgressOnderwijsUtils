@@ -19,10 +19,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void BasicOrderingOk()
-        {
             //check that order works as exepcted:
-            PAssert.That(() => colSort.Columns.SequenceEqual(someOrder));
-        }
+            => PAssert.That(() => colSort.Columns.SequenceEqual(someOrder));
 
         [Fact]
         public void SortRankOk()
@@ -41,15 +39,11 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ColumnCountOk()
-        {
-            PAssert.That(() => colSort.ColumnCount == 3);
-        }
+            => PAssert.That(() => colSort.ColumnCount == 3);
 
         [Fact]
         public void ToStringOk()
-        {
-            PAssert.That(() => colSort.ToString() == "{[ziggy Asc], [abc Asc], [acol Desc]}");
-        }
+            => PAssert.That(() => colSort.ToString() == "{[ziggy Asc], [abc Asc], [acol Desc]}");
 
         [Fact]
         public void IsImmutable()
@@ -73,10 +67,8 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DefaultIsEmpty()
-        {
             //check that default order is the empty order:
-            PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default(OrderByColumns));
-        }
+            => PAssert.That(() => new OrderByColumns(new ColumnSort[] { }) == default(OrderByColumns));
 
         [Fact]
         public void ToggleOk()
@@ -89,21 +81,17 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void DuplicatesIgnored()
-        {
             //verify that duplicate columns are ignored:
-            PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD, ziggyD, }) == colSort);
-        }
+            => PAssert.That(() => new OrderByColumns(new[] { ziggyA, abcA, acolD, ziggyD, }) == colSort);
 
         [Fact]
         public void DoubleToggleNoOp()
-        {
             //verify that toggling all columns twice in reverse order is a no-op:
-            PAssert.That(
+            => PAssert.That(
                 () =>
                     colSort.Columns.Concat(colSort.Columns).Reverse()
                         .Aggregate(colSort, (sortorder, col) => sortorder.ToggleSortDirection(col.ColumnName))
                     == colSort);
-        }
 
         [Fact]
         public void OperatorsOk()
@@ -129,24 +117,18 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ThenByColumnsOk()
-        {
-            PAssert.That(
+            => PAssert.That(
                 () => new OrderByColumns(new[] { ziggyD, abcD }).ThenSortBy(colSort.FirstSortBy(monsterA)) == new OrderByColumns(new[] { ziggyD, abcD, monsterA, acolD }));
-        }
 
         [Fact]
         public void FirstByOk()
-        {
             //check firstby with toggle
-            PAssert.That(() => colSort.ToggleSortDirection("ziggy") == colSort.FirstSortBy(ziggyD));
-        }
+            => PAssert.That(() => colSort.ToggleSortDirection("ziggy") == colSort.FirstSortBy(ziggyD));
 
         [Fact]
         public void ComplexFromScratch()
-        {
             //check complex construction from scratch
-            PAssert.That(() => colSort == default(OrderByColumns).ToggleSortDirection("acol").FirstSortBy(abcA).ToggleSortDirection("ziggy").ToggleSortDirection("ziggy"));
-        }
+            => PAssert.That(() => colSort == default(OrderByColumns).ToggleSortDirection("acol").FirstSortBy(abcA).ToggleSortDirection("ziggy").ToggleSortDirection("ziggy"));
 
         [Fact]
         public void GetHashcodeOk()

@@ -34,26 +34,22 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void SubdividingIrregularAlternatesBlockSizes()
-        {
-            PAssert.That(() => new IntegerRange(0, 10).Subdivide(4).SequenceEqual(
+            => PAssert.That(() => new IntegerRange(0, 10).Subdivide(4).SequenceEqual(
                 new[] {
                     new IntegerRange(0, 2),
                     new IntegerRange(2, 5),
                     new IntegerRange(5, 7),
                     new IntegerRange(7, 10),
                 }));
-        }
 
         [Fact]
         public void SubdividingAvoidsIntegerOverflow()
-        {
-            PAssert.That(() => new IntegerRange(int.MinValue, int.MaxValue).Subdivide(4).SequenceEqual(
+            => PAssert.That(() => new IntegerRange(int.MinValue, int.MaxValue).Subdivide(4).SequenceEqual(
                 new[] {
                     new IntegerRange(int.MinValue, -(1 << 30) - 1),
                     new IntegerRange(-(1 << 30) - 1, -1),
                     new IntegerRange(-1, (1 << 30) - 1),
                     new IntegerRange((1 << 30) - 1, int.MaxValue),
                 }));
-        }
     }
 }

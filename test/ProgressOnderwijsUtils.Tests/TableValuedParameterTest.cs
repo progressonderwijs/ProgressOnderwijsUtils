@@ -121,12 +121,10 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void Binary_columns_can_be_used_in_tvps()
-        {
-            PAssert.That(() => SQL($@"
+            => PAssert.That(() => SQL($@"
                 select sum(datalength(hashes.QueryTableValue))
                 from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef") }} hashes
             ").ReadPlain<long>(Context).Single() == 16);
-        }
 
         public sealed class TestDataMetaObject : IMetaObject
         {

@@ -7,8 +7,6 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void ArgVerify()
-        {
-            Assert.Throws<ArgumentException>(() => BenchTimer.BestTime(() => { }, 0));
-        }
+            => Assert.Throws<ArgumentException>(() => BenchTimer.BestTime(() => { }, 0));
     }
 }

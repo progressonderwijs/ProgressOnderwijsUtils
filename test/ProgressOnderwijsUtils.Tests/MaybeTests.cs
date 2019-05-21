@@ -27,9 +27,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void Maybe_default_is_not_ok()
-        {
-            PAssert.That(() => default(Maybe<int, string>).IsOk == false);
-        }
+            => PAssert.That(() => default(Maybe<int, string>).IsOk == false);
 
         [Fact]
         public void Extract_calls_first_function_when_ok()
@@ -65,9 +63,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void Maybe_try_does_not_catch_unrelated_exceptions()
-        {
-            Assert.ThrowsAny<Exception>(() => Maybe.Try(() => "123".Substring(4, 10)).Catch<NotSupportedException>());
-        }
+            => Assert.ThrowsAny<Exception>(() => Maybe.Try(() => "123".Substring(4, 10)).Catch<NotSupportedException>());
 
         [Fact]
         public void ErrorWhenNotNull_is_error_for_nonnull()
