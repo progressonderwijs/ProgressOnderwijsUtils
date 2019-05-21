@@ -236,7 +236,7 @@ namespace ProgressOnderwijsUtils
                 var unpacker = DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.ReadValue;
                 var builder = new ArrayBuilder<T>();
                 while (reader.Read()) {
-                    var nextRow = unpacker(reader, out _);
+                    var nextRow = unpacker(reader);
                     builder.Add(nextRow);
                 }
                 return builder.ToArray();
@@ -414,29 +414,6 @@ namespace ProgressOnderwijsUtils
                 return colValueExpr;
             }
 
-            [NotNull]
-            static TRowReader<T> CreateLoadRowMethod<T>([NotNull] Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
-            {
-                var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
-                var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
-                var loadRowsLambda = Expression.Lambda<TRowReader<T>>(constructRowExpr, "LoadRows", loadRowsParamExprs);
-
-                return ConvertLambdaExpressionIntoDelegate<T, TRowReader<T>>(loadRowsLambda);
-            }
-
-            [NotNull]
-            static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda)
-                where TDelegate : class
-            {
-                try {
-                    return loadRowsLambda.Compile(); //CompileFast<TDelegate> causes IL errors
-                } catch (Exception e) {
-                    throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
-                }
-            }
-
             public static class ByMetaObjectImpl<T>
                 where T : IMetaObject, new()
             {
@@ -557,14 +534,17 @@ namespace ProgressOnderwijsUtils
                 static readonly Func<ColumnOrdering, TRowReaderWithCols<T>> Delegate_ConstructTRowReaderWithCols = ConstructTRowReaderWithCols;
 
                 static TRowReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
-                    => new TRowReaderWithCols<T> {
+                {
+                    var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
+                    var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
+                    var constructRowExpr = Expression.MemberInit(Expression.New(type), CreateColumnBindings(ordering, dataReaderParamExpr, lastColumnReadParamExpr));
+                    var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
+                    var loadRowsLambda = Expression.Lambda<TRowReader<T>>(constructRowExpr, "LoadRows", loadRowsParamExprs);
+                    return new TRowReaderWithCols<T> {
                         Cols = ordering.Cols,
-                        RowReader = CreateLoadRowMethod<T>(
-                            (readerParamExpr, lastColumnReadParameter) =>
-                                Expression.MemberInit(
-                                    Expression.New(type),
-                                    CreateColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
+                        RowReader = loadRowsLambda.Compile(),
                     };
+                }
 
                 static IEnumerable<MemberAssignment> CreateColumnBindings(
                     ColumnOrdering orderingP,
@@ -600,7 +580,7 @@ namespace ProgressOnderwijsUtils
                 static string FriendlyName
                     => type.ToCSharpFriendlyTypeName();
 
-                public static readonly TRowReader<T> ReadValue;
+                public static readonly Func<TReader, T> ReadValue;
 
                 [NotNull]
                 static Type type
@@ -609,7 +589,9 @@ namespace ProgressOnderwijsUtils
                 static PlainImpl()
                 {
                     VerifyTypeValidity();
-                    ReadValue = CreateLoadRowMethod<T>((readerParamExpr, lastReadColumnExpr) => GetColValueExpr(readerParamExpr, 0, type));
+                    var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
+                    var loadRowsLambda = Expression.Lambda<Func<TReader, T>>(GetColValueExpr(dataReaderParamExpr, 0, type), dataReaderParamExpr);
+                    ReadValue = loadRowsLambda.Compile();
                 }
 
                 static void VerifyTypeValidity()
