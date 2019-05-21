@@ -670,6 +670,7 @@ namespace ProgressOnderwijsUtils
                         ? backingField
                         : null;
 
+            [UsefulToKeep("for symmetry with BackingFieldOfPropertyOrNull")]
             public static PropertyInfo AutoPropertyOfFieldOrNull(FieldInfo fieldInfo)
                 => IsCompilerGenerated(fieldInfo)
                     && AutoPropNameFromBackingField(fieldInfo.Name) is string autoPropertyName
