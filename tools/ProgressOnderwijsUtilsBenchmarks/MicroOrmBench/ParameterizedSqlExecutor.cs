@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
@@ -19,7 +20,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         {
             benchmarker.BenchSqlServer("ParameterizedSql-TVP",
                     (ctx, rows) =>
-                        SafeSql.SQL($"select QueryTableValue from ({Enumerable.Range(0, rows).ToArray()}) x")
+                        SQL($"select QueryTableValue from ({Enumerable.Range(0, rows).ToArray()}) x")
                             .ReadPlain<int>(ctx)
                             .Length)
                 ;

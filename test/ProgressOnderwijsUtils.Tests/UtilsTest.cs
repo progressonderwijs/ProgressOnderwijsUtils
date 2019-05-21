@@ -5,6 +5,7 @@ using ExpressionToCodeLib;
 using MoreLinq;
 using Xunit;
 using System.Data;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
@@ -137,7 +138,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void TimeoutDetectionAbortsWithInconclusiveAfterTimeout()
         {
             using (var localdb = new TransactedLocalConnection()) {
-                var ex = Assert.ThrowsAny<Exception>(() => { SafeSql.SQL($"WAITFOR DELAY '00:00:02'").ExecuteNonQuery(localdb.Context.OverrideTimeout(1)); });
+                var ex = Assert.ThrowsAny<Exception>(() => { SQL($"WAITFOR DELAY '00:00:02'").ExecuteNonQuery(localdb.Context.OverrideTimeout(1)); });
                 PAssert.That(() => ex.IsRetriableConnectionFailure());
             }
         }

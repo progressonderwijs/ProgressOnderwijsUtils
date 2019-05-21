@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using ProgressOnderwijsUtils;
+using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
@@ -70,6 +71,6 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         public static readonly string RawQueryString = string.Format(formatString, "@Top");
 
         public static ParameterizedSql ParameterizedSqlForRows(int rows)
-            => SafeSql.SQL(FormattableStringFactory.Create(formatString, rows));
+            => SQL(FormattableStringFactory.Create(formatString, rows));
     }
 }
