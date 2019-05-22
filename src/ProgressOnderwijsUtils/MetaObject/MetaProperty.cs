@@ -22,6 +22,7 @@ namespace ProgressOnderwijsUtils
         IReadOnlyList<object> CustomAttributes { get; }
         Type DataType { get; }
         string Name { get; }
+        ParameterizedSql SqlColumnName { get; }
         int Index { get; }
     }
 
@@ -41,6 +42,11 @@ namespace ProgressOnderwijsUtils
         {
             public bool IsKey { get; }
             public string Name { get; }
+            ParameterizedSql sqlColumnName;
+
+            public ParameterizedSql SqlColumnName
+                => sqlColumnName ? sqlColumnName : sqlColumnName = ParameterizedSql.CreateDynamic(Name);
+
             public IReadOnlyList<object> CustomAttributes { get; }
             public int Index { get; }
 

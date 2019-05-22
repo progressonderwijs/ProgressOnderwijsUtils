@@ -11,6 +11,7 @@ using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
+// ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
 {
     public enum FieldMappingMode
@@ -78,8 +79,13 @@ namespace ProgressOnderwijsUtils
                 SqlDataReader reader = null;
                 try {
                     reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToRowArrayUnpacker(reader, fieldMapping);
-                    return unpacker(reader, out lastColumnRead);
+                    var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMapping);
+                    var builder = new ArrayBuilder<T>();
+                    while (reader.Read()) {
+                        var nextRow = unpacker(reader, out lastColumnRead);
+                        builder.Add(nextRow);
+                    }
+                    return builder.ToArray();
                 } catch (Exception ex) {
                     throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
                 } finally {
@@ -228,7 +234,13 @@ namespace ProgressOnderwijsUtils
         {
             using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
-                return DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.LoadRows(reader, out _);
+                var unpacker = DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.ReadValue;
+                var builder = new ArrayBuilder<T>();
+                while (reader.Read()) {
+                    var nextRow = unpacker(reader);
+                    builder.Add(nextRow);
+                }
+                return builder.ToArray();
             }
         }
 
@@ -303,21 +315,7 @@ namespace ProgressOnderwijsUtils
         static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
         {
-            public delegate T[] TRowArrayReader<out T>(TReader reader, out int lastColumnRead);
-
             public delegate T TRowReader<out T>(TReader reader, out int lastColumnRead);
-
-            struct TRowArrayReaderWithCols<T>
-            {
-                public string[] Cols;
-                public TRowArrayReader<T> RowArrayReader;
-            }
-
-            struct TRowReaderWithCols<T>
-            {
-                public string[] Cols;
-                public TRowReader<T> RowReader;
-            }
 
             static readonly Dictionary<MethodInfo, MethodInfo> InterfaceMap = MakeMap(
                 typeof(TReader).GetInterfaceMap(typeof(IDataRecord)),
@@ -325,8 +323,6 @@ namespace ProgressOnderwijsUtils
 
             // ReSharper disable AssignNullToNotNullAttribute
             static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod("IsDBNull", binding)];
-
-            static readonly MethodInfo ReadMethod = InterfaceMap[typeof(IDataReader).GetMethod("Read", binding)];
             // ReSharper restore AssignNullToNotNullAttribute
 
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
@@ -413,82 +409,28 @@ namespace ProgressOnderwijsUtils
                 return colValueExpr;
             }
 
-            [NotNull]
-            static TRowArrayReader<T> CreateLoadRowsMethod<T>([NotNull] Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
-            {
-                //read this method bottom-to-top, because expression trees need to be constructed inside-out.
-                // ReSharper disable AssignNullToNotNullAttribute
-                var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                var arrayBuilderOfRowsType = typeof(ArrayBuilder<T>);
-                var arrayBuilderVar = Expression.Variable(arrayBuilderOfRowsType, "rowList");
-                var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
-                var addRowToBuilderExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), constructRowExpr);
-                var resetLastColumnRead = Expression.Assign(lastColumnReadParamExpr, Expression.Constant(-1));
-                var callReader_Read = Expression.Block(resetLastColumnRead, Expression.Call(dataReaderParamExpr, ReadMethod));
-                var loopExitLabel = Expression.Label("loopExit");
-                var breakIfAtEndOfReaderExpr = Expression.IfThen(Expression.Not(callReader_Read), Expression.Break(loopExitLabel));
-                var loopAddRowThenReadExpr = Expression.Loop(Expression.Block(addRowToBuilderExpr, breakIfAtEndOfReaderExpr), loopExitLabel);
-                var finishArrayExpr = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("ToArray"));
-                var initializeArrayBuilderExpr = Expression.Assign(arrayBuilderVar, Expression.New(arrayBuilderOfRowsType));
-                var rowVar = Expression.Variable(typeof(T), "row");
-                var addRowVarToArrayBuilder = Expression.Call(arrayBuilderVar, arrayBuilderOfRowsType.GetMethod("Add", new[] { typeof(T) }), rowVar);
-                var createArrayGivenRowInVarAndReaderAtValidRow =
-                    Expression.Block(initializeArrayBuilderExpr, addRowVarToArrayBuilder, loopAddRowThenReadExpr, finishArrayExpr);
-                var singleRowArrayExpr = Expression.NewArrayInit(typeof(T), rowVar);
-                var createArrayGivenFirstRowInVar = Expression.Condition(callReader_Read, createArrayGivenRowInVarAndReaderAtValidRow, singleRowArrayExpr);
-                var createArrayGivenReaderAtValidFirstRow = Expression.Block(Expression.Assign(rowVar, constructRowExpr), createArrayGivenFirstRowInVar);
-                var callEmptyArrayMethod = Expression.Call(((Func<T[]>)Array.Empty<T>).Method);
-                var returnEmptyArrayOrRunRestOfCode = Expression.Condition(callReader_Read, createArrayGivenReaderAtValidFirstRow, callEmptyArrayMethod);
-                var loadRowsMethodBody = Expression.Block(typeof(T[]), new[] { rowVar, arrayBuilderVar, }, returnEmptyArrayOrRunRestOfCode);
-                var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
-                var loadRowsLambda = Expression.Lambda<TRowArrayReader<T>>(loadRowsMethodBody, "LoadRows", loadRowsParamExprs);
-                // ReSharper restore AssignNullToNotNullAttribute
-
-                return ConvertLambdaExpressionIntoDelegate<T, TRowArrayReader<T>>(loadRowsLambda);
-            }
-
-            [NotNull]
-            static TRowReader<T> CreateLoadRowMethod<T>([NotNull] Func<ParameterExpression, ParameterExpression, Expression> createRowObjectExpression)
-            {
-                var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
-                var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
-                var constructRowExpr = createRowObjectExpression(dataReaderParamExpr, lastColumnReadParamExpr);
-                var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
-                var loadRowsLambda = Expression.Lambda<TRowReader<T>>(constructRowExpr, "LoadRows", loadRowsParamExprs);
-
-                return ConvertLambdaExpressionIntoDelegate<T, TRowReader<T>>(loadRowsLambda);
-            }
-
-            [NotNull]
-            static TDelegate ConvertLambdaExpressionIntoDelegate<T, TDelegate>([NotNull] Expression<TDelegate> loadRowsLambda)
-                where TDelegate : class
-            {
-                try {
-                    return loadRowsLambda.Compile(); //CompileFast<TDelegate> causes IL errors
-                } catch (Exception e) {
-                    throw new InvalidOperationException("Cannot dynamically compile unpacker method for type " + typeof(T) + ", where type.IsPublic: " + typeof(T).IsPublic, e);
-                }
-            }
-
             public static class ByMetaObjectImpl<T>
                 where T : IMetaObject, new()
             {
-                struct ColumnOrdering : IEquatable<ColumnOrdering>
+                readonly struct ColumnOrdering : IEquatable<ColumnOrdering>
                 {
                     readonly ulong cachedHash;
                     public readonly string[] Cols;
 
-                    public ColumnOrdering([NotNull] TReader reader)
+                    ColumnOrdering(ulong _cachedHash, string[] _cols)
+                        => (cachedHash, Cols) = (_cachedHash, _cols);
+
+                    public static ColumnOrdering FromReader([NotNull] TReader reader)
                     {
                         var primeArr = ColHashPrimes;
-                        Cols = PooledSmallBufferAllocator<string>.GetByLength(reader.FieldCount);
-                        cachedHash = 0;
-                        for (var i = 0; i < Cols.Length; i++) {
+                        var cols = PooledSmallBufferAllocator<string>.GetByLength(reader.FieldCount);
+                        var cachedHash = 0uL;
+                        for (var i = 0; i < cols.Length; i++) {
                             var name = reader.GetName(i);
-                            Cols[i] = name;
+                            cols[i] = name;
                             cachedHash += primeArr[i] * CaseInsensitiveHash(name);
                         }
+                        return new ColumnOrdering(cachedHash, cols);
                     }
 
                     public bool Equals(ColumnOrdering other)
@@ -512,8 +454,8 @@ namespace ProgressOnderwijsUtils
                         => obj is ColumnOrdering columnOrdering && Equals(columnOrdering);
                 }
 
-                static readonly ConcurrentDictionary<ColumnOrdering, TRowArrayReaderWithCols<T>> LoadRows;
-                static readonly ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>> LoadRow;
+                static readonly object constructionSync = new object();
+                static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> loadRow_by_ordering;
 
                 [NotNull]
                 static Type type
@@ -549,34 +491,21 @@ namespace ProgressOnderwijsUtils
                         }
                     }
 
-                    LoadRows = new ConcurrentDictionary<ColumnOrdering, TRowArrayReaderWithCols<T>>();
-                    LoadRow = new ConcurrentDictionary<ColumnOrdering, TRowReaderWithCols<T>>();
-                }
-
-                public static TRowArrayReader<T> DataReaderToRowArrayUnpacker([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
-                {
-                    AssertColumnsCanBeMappedToObject(reader, fieldMappingMode);
-                    var ordering = new ColumnOrdering(reader);
-
-                    var cachedRowReaderWithCols = LoadRows.GetOrAdd(ordering, Delegate_ConstructTRowArrayReaderWithCols);
-                    if (ordering.Cols != cachedRowReaderWithCols.Cols) {
-                        //our ordering isn't in the cache, so it's string array can be returned to the pool
-                        PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
-                    }
-                    return cachedRowReaderWithCols.RowArrayReader;
+                    loadRow_by_ordering = new ConcurrentDictionary<ColumnOrdering, TRowReader<T>>();
                 }
 
                 public static TRowReader<T> DataReaderToSingleRowUnpacker([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
                 {
                     AssertColumnsCanBeMappedToObject(reader, fieldMappingMode);
-                    var ordering = new ColumnOrdering(reader);
-
-                    var cachedRowReaderWithCols = LoadRow.GetOrAdd(ordering, Delegate_ConstructTRowReaderWithCols);
-                    if (ordering.Cols != cachedRowReaderWithCols.Cols) {
-                        //our ordering isn't in the cache, so it's string array can be returned to the pool
+                    var ordering = ColumnOrdering.FromReader(reader);
+                    if (loadRow_by_ordering.TryGetValue(ordering, out var cachedRowReaderWithCols)) {
                         PooledSmallBufferAllocator<string>.ReturnToPool(ordering.Cols);
+                        return cachedRowReaderWithCols;
+                    } else {
+                        lock (constructionSync) {
+                            return loadRow_by_ordering.GetOrAdd(ordering, constructTRowReaderWithCols);
+                        }
                     }
-                    return cachedRowReaderWithCols.RowReader;
                 }
 
                 static void AssertColumnsCanBeMappedToObject([NotNull] TReader reader, FieldMappingMode fieldMappingMode)
@@ -599,45 +528,24 @@ namespace ProgressOnderwijsUtils
                     }
                 }
 
-                /// <summary>
-                /// Methodgroup-to-delegate conversion shows up on the profiles as COMDelegate::DelegateConstruct as around 4% of query exection.
-                /// See also: http://blogs.msmvps.com/jonskeet/2011/08/22/optimization-and-generics-part-2-lambda-expressions-and-reference-types/
-                /// </summary>
-                static readonly Func<ColumnOrdering, TRowArrayReaderWithCols<T>> Delegate_ConstructTRowArrayReaderWithCols = ConstructTRowArrayReaderWithCols;
+                static readonly Func<ColumnOrdering, TRowReader<T>> constructTRowReaderWithCols = columnOrdering => {
+                    var cols = columnOrdering.Cols;
+                    var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
+                    var lastColumnReadParamExpr = Expression.Parameter(typeof(int).MakeByRefType(), "lastColumnRead");
+                    var statements = new List<Expression>(2 + cols.Length * 2);
+                    var rowVar = Expression.Variable(typeof(T));
+                    statements.Add(Expression.Assign(rowVar, Expression.New(typeof(T))));
+                    ReadAllFields(dataReaderParamExpr, rowVar, cols, lastColumnReadParamExpr, statements);
+                    statements.Add(rowVar);
+                    var constructRowExpr = Expression.Block(typeof(T), new[] { rowVar }, statements);
+                    var loadRowsParamExprs = new[] { dataReaderParamExpr, lastColumnReadParamExpr };
+                    var loadRowsLambda = Expression.Lambda<TRowReader<T>>(constructRowExpr, "LoadRows", loadRowsParamExprs);
+                    return loadRowsLambda.Compile();
+                };
 
-                static TRowArrayReaderWithCols<T> ConstructTRowArrayReaderWithCols(ColumnOrdering ordering)
-                {
-                    return new TRowArrayReaderWithCols<T> {
-                        Cols = ordering.Cols,
-                        RowArrayReader = CreateLoadRowsMethod<T>(
-                            (readerParamExpr, lastColumnReadParameter) =>
-                                Expression.MemberInit(
-                                    Expression.New(type),
-                                    CreateColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
-                    };
-                }
-
-                static readonly Func<ColumnOrdering, TRowReaderWithCols<T>> Delegate_ConstructTRowReaderWithCols = ConstructTRowReaderWithCols;
-
-                static TRowReaderWithCols<T> ConstructTRowReaderWithCols(ColumnOrdering ordering)
-                {
-                    return new TRowReaderWithCols<T> {
-                        Cols = ordering.Cols,
-                        RowReader = CreateLoadRowMethod<T>(
-                            (readerParamExpr, lastColumnReadParameter) =>
-                                Expression.MemberInit(
-                                    Expression.New(type),
-                                    CreateColumnBindings(ordering, readerParamExpr, lastColumnReadParameter))),
-                    };
-                }
-
-                static IEnumerable<MemberAssignment> CreateColumnBindings(
-                    ColumnOrdering orderingP,
-                    ParameterExpression readerParamExpr,
-                    ParameterExpression lastColumnReadParameter)
+                static void ReadAllFields(ParameterExpression dataReaderParamExpr, ParameterExpression rowVar, string[] cols, ParameterExpression lastColumnReadParamExpr, List<Expression> statements)
                 {
                     var isMetaPropertyIndexAlreadyUsed = new bool[metadata.Count];
-                    var cols = orderingP.Cols;
                     for (var i = 0; i < cols.Length; i++) {
                         var colName = cols[i];
                         if (!metadata.IndexByName.TryGetValue(colName, out var metaPropertyIndex)) {
@@ -648,13 +556,9 @@ namespace ProgressOnderwijsUtils
                         }
                         isMetaPropertyIndexAlreadyUsed[metaPropertyIndex] = true;
                         var member = metadata[metaPropertyIndex];
-                        yield return Expression.Bind(
-                            member.PropertyInfo,
-                            Expression.Block(
-                                Expression.Assign(lastColumnReadParameter, Expression.Constant(i)),
-                                GetColValueExpr(readerParamExpr, i, member.DataType)
-                            )
-                        );
+                        var memberInfo = BackingFieldDetector.BackingFieldOfPropertyOrNull(member.PropertyInfo) ?? (MemberInfo)member.PropertyInfo;
+                        statements.Add(Expression.Assign(lastColumnReadParamExpr, Expression.Constant(i)));
+                        statements.Add(Expression.Assign(Expression.MakeMemberAccess(rowVar, memberInfo), GetColValueExpr(dataReaderParamExpr, i, member.DataType)));
                     }
                 }
             }
@@ -664,7 +568,7 @@ namespace ProgressOnderwijsUtils
                 static string FriendlyName
                     => type.ToCSharpFriendlyTypeName();
 
-                public static readonly TRowArrayReader<T> LoadRows;
+                public static readonly Func<TReader, T> ReadValue;
 
                 [NotNull]
                 static Type type
@@ -673,7 +577,9 @@ namespace ProgressOnderwijsUtils
                 static PlainImpl()
                 {
                     VerifyTypeValidity();
-                    LoadRows = CreateLoadRowsMethod<T>((readerParamExpr, lastReadColumnExpr) => GetColValueExpr(readerParamExpr, 0, type));
+                    var dataReaderParamExpr = Expression.Parameter(typeof(TReader), "dataReader");
+                    var loadRowsLambda = Expression.Lambda<Func<TReader, T>>(GetColValueExpr(dataReaderParamExpr, 0, type), dataReaderParamExpr);
+                    ReadValue = loadRowsLambda.Compile();
                 }
 
                 static void VerifyTypeValidity()
@@ -701,6 +607,47 @@ namespace ProgressOnderwijsUtils
                     }
                 }
             }
+        }
+
+        static class BackingFieldDetector
+        {
+            const string BackingFieldPrefix = "<";
+            const string BackingFieldSuffix = ">k__BackingField";
+            const BindingFlags privateInstance = BindingFlags.Instance | BindingFlags.NonPublic;
+            const BindingFlags anyInstance = privateInstance | BindingFlags.Public;
+
+            [NotNull]
+            static string BackingFieldFromAutoPropName([NotNull] string propertyName)
+                => BackingFieldPrefix + propertyName + BackingFieldSuffix;
+
+            [CanBeNull]
+            static string AutoPropNameFromBackingField([NotNull] string fieldName)
+                => fieldName.StartsWith(BackingFieldPrefix, StringComparison.Ordinal) && fieldName.EndsWith(BackingFieldSuffix, StringComparison.Ordinal)
+                    ? fieldName.Substring(BackingFieldPrefix.Length, fieldName.Length - BackingFieldPrefix.Length - BackingFieldSuffix.Length)
+                    : null;
+
+            static bool IsCompilerGenerated([CanBeNull] MemberInfo member)
+                => member != null && member.IsDefined(typeof(CompilerGeneratedAttribute), true);
+
+            static bool IsAutoProp(PropertyInfo autoProperty)
+                => IsCompilerGenerated(autoProperty.GetGetMethod(true));
+
+            [CanBeNull]
+            public static FieldInfo BackingFieldOfPropertyOrNull([NotNull] PropertyInfo propertyInfo)
+                => IsAutoProp(propertyInfo)
+                    && propertyInfo.DeclaringType.GetField(BackingFieldFromAutoPropName(propertyInfo.Name), privateInstance) is FieldInfo backingField
+                    && IsCompilerGenerated(backingField)
+                        ? backingField
+                        : null;
+
+            [UsefulToKeep("for symmetry with BackingFieldOfPropertyOrNull")]
+            public static PropertyInfo AutoPropertyOfFieldOrNull(FieldInfo fieldInfo)
+                => IsCompilerGenerated(fieldInfo)
+                    && AutoPropNameFromBackingField(fieldInfo.Name) is string autoPropertyName
+                    && fieldInfo.DeclaringType.GetProperty(autoPropertyName, anyInstance) is PropertyInfo autoProperty
+                    && IsAutoProp(autoProperty)
+                        ? autoProperty
+                        : null;
         }
     }
 
