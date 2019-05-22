@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static T Field<T>([NotNull] this IDictionary<string, object> dict, [NotNull] string key)
         {
-            return DBNullRemover.Cast<T>(dict[key]);
+            return FromDbValueConverter.Cast<T>(dict[key]);
         }
 
         /// <summary>
@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
         [UsefulToKeep("library method; interface is used, since method above is used")]
         public static T Field<T>([NotNull] this IReadOnlyDictionary<string, object> dict, string key)
         {
-            return DBNullRemover.Cast<T>(dict[key]);
+            return FromDbValueConverter.Cast<T>(dict[key]);
         }
 
         /// <summary>

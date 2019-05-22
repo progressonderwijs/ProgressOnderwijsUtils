@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class DBNullRemover
+    public static class FromDbValueConverter
     {
         /// <summary>
         /// This method works just like a normal C# cast, with the following changed:
@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static readonly MethodInfo extractNullableValueTypeMethod = typeof(DBNullRemover).GetMethod(nameof(ExtractNullableValueType), BindingFlags.Static | BindingFlags.NonPublic);
+        static readonly MethodInfo extractNullableValueTypeMethod = typeof(FromDbValueConverter).GetMethod(nameof(ExtractNullableValueType), BindingFlags.Static | BindingFlags.NonPublic);
 
         static TStruct? ExtractNullableValueType<TStruct>([CanBeNull] object obj)
             where TStruct : struct
