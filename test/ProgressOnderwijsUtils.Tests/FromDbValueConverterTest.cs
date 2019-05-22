@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void NullableTrivialConverterConvertsNullableRefIntoUnwrappedNull()
         {
             PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<string>?>(null) == null);
-            PAssert.That(() => !Equals(FromDbValueConverter.Cast<TrivialConvertibleValue<int?>?>(null), new TrivialConvertibleValue<string>(null)));
+            PAssert.That(() => !Equals(FromDbValueConverter.Cast<TrivialConvertibleValue<string>?>(null), new TrivialConvertibleValue<string>(null)));
         }
     }
 }
