@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils
                     if (value is DBNull && typeof(T).IsNullableValueType()) {
                         return default;
                     }
-                    return (T)converter.CompiledConverterFromDb.DynamicInvoke(value);
+                    return (T)converter.ConvertFromDb(value);
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }
