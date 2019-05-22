@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
@@ -63,7 +64,7 @@ namespace ProgressOnderwijsUtils
                 if (type.IsNullableValueType() || !type.IsValueType) {
                     return obj => obj == DBNull.Value || obj == null ? default(T) : (T)converter.ConvertFromDb(obj);
                 } else {
-                    return obj => (T)converter.ConvertFromDb(obj);
+                    return obj => obj == DBNull.Value || obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromDb(obj);
                 }
             }
         }
