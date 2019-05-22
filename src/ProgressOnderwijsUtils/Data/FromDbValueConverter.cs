@@ -43,6 +43,10 @@ namespace ProgressOnderwijsUtils
             [NotNull]
             static Func<object, T> GetExtractor([NotNull] Type type)
             {
+                var converter = MetaObjectPropertyConverter.GetOrNull(type);
+                if (converter != null) {
+                    return ExtractorFromConverter(type, converter);
+                }
                 if (!type.IsValueType) {
                     return obj => obj == DBNull.Value ? default(T) : (T)obj;
                 }
@@ -52,6 +56,15 @@ namespace ProgressOnderwijsUtils
                 }
 
                 return (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
+            }
+
+            static Func<object, T> ExtractorFromConverter(Type type, MetaObjectPropertyConverter converter)
+            {
+                if (type.IsNullableValueType() || !type.IsValueType) {
+                    return obj => obj == DBNull.Value || obj == null ? default(T) : (T)converter.ConvertFromDb(obj);
+                } else {
+                    return obj => (T)converter.ConvertFromDb(obj);
+                }
             }
         }
 
