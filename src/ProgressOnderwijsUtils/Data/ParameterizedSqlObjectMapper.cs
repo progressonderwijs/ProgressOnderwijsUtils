@@ -29,13 +29,10 @@ namespace ProgressOnderwijsUtils
                 try {
                     var value = cmd.Command.ExecuteScalar();
                     var converter = MetaObjectPropertyConverter.GetOrNull(typeof(T));
-                    if (converter == null) {
-                        return DBNullRemover.Cast<T>(value);
-                    }
-                    if (value is DBNull && typeof(T).IsNullableValueType()) {
-                        return default;
-                    }
-                    return (T)converter.ConvertFromDb(value);
+                    return converter == null ? DBNullRemover.Cast<T>(value)
+                        : !(value is DBNull) ? (T)converter.ConvertFromDb(value)
+                        : typeof(T).IsNullableValueType() ? default(T)
+                        : throw new InvalidCastException("Database-returned DBNull cannot be cast to non-nullable " + typeof(T).ToCSharpFriendlyTypeName());
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }
