@@ -101,9 +101,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Executes a  DataTable op basis van het huidige commando met de huidige parameters
         /// </summary>
-        /// <param name="sql">De uit-te-voeren query</param>
-        /// <param name="conn">De database om tegen te query-en</param>
-        /// <param name="missingSchemaAction"></param>
         [MustUseReturnValue]
         [NotNull]
         public static DataTable ReadDataTable(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
@@ -337,23 +334,7 @@ namespace ProgressOnderwijsUtils
             }
 
             static bool IsSupportedType([NotNull] Type type)
-                => IsSupportedBasicType(type) || CustomLoaderForType(type) != null;
-
-            [CanBeNull]
-            static MethodInfo CustomLoaderForType([NotNull] Type type)
-            {
-                var underlyingType = type.GetNonNullableUnderlyingType();
-                var methods = underlyingType.GetMethods(BindingFlags.Static | BindingFlags.Public);
-                var method = methods.SingleOrNull(m => m.GetCustomAttributes<MetaObjectPropertyLoaderAttribute>().Any());
-                return
-                    method != null
-                    && method.ReturnType == underlyingType
-                    && method.GetParameters() is var parameters
-                    && parameters.Length == 1
-                    && IsSupportedBasicType(parameters[0].ParameterType)
-                        ? method
-                        : null;
-            }
+                => IsSupportedBasicType(type) || MetaObjectPropertyConverter.GetOrNull(type) is MetaObjectPropertyConverter converter && IsSupportedBasicType(converter.DbType);
 
             static MethodInfo GetterForType([NotNull] Type underlyingType)
             {
@@ -361,8 +342,8 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (CustomLoaderForType(underlyingType) is var methodInfo && methodInfo != null) {
-                    return InterfaceMap[getterMethodsByType[methodInfo.GetParameters()[0].ParameterType]];
+                } else if (MetaObjectPropertyConverter.GetOrNull(underlyingType) is MetaObjectPropertyConverter converter) {
+                    return InterfaceMap[getterMethodsByType[converter.DbType]];
                 } else {
                     return InterfaceMap[getterMethodsByType[underlyingType]];
                 }
@@ -371,13 +352,12 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var methodInfo = CustomLoaderForType(underlyingType);
-                var isTypeWithCreateMethod = methodInfo != null;
+                var converter = MetaObjectPropertyConverter.GetOrNull(underlyingType);
 
                 var needsCast = underlyingType != type.GetNonNullableType();
 
-                if (isTypeWithCreateMethod) {
-                    return Expression.Call(methodInfo, callExpression);
+                if (converter != null) {
+                    return Expression.Invoke(Expression.Constant(converter.CompiledConverterFromDb), callExpression);
                 } else if (needsCast) {
                     return Expression.Convert(callExpression, type.GetNonNullableType());
                 } else {

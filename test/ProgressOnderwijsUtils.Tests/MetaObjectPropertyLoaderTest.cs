@@ -2,6 +2,7 @@
 using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProgressOnderwijsUtils.SchemaReflection;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
@@ -26,19 +27,18 @@ namespace ProgressOnderwijsUtils.Tests
             public string Bla { get; set; }
         }
 
-        public sealed class CustomBla
+        public struct CustomBla : IMetaObjectPropertyConvertible<CustomBla, string, CustomBla.Source>
         {
-            CustomBla(string value)
+            public struct Source : IConverterSource<CustomBla, string>
             {
-                AsString = value;
+                public ValueConverter<CustomBla, string> GetValueConverter()
+                    => this.DefineConverter(o => o.AsString, s => new CustomBla(s));
             }
 
-            public string AsString { get; }
+            public CustomBla(string value)
+                => AsString = value;
 
-            [NotNull]
-            [MetaObjectPropertyLoader]
-            public static CustomBla MethodWithIrrelevantName(string value)
-                => new CustomBla(value);
+            public string AsString { get; }
         }
 
         public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.Tests
             public int Id { get; set; }
             public string Bla { get; set; }
             public CustomBla Bla2 { get; set; }
-            public CustomBla Bla3 { get; }
+            public CustomBla? Bla3 { get; }
         }
 
         public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IMetaObject, IPropertiesAreUsedImplicitly
         {
-            public int Id { get; set; }
+            public TrivialConvertibleValue<int> Id { get; set; }
             public TrivialConvertibleValue<string>? Bla { get; set; }
             public TrivialConvertibleValue<string> Bla2 { get; set; }
         }
@@ -91,8 +91,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_only_one_property()
         {
-            PAssert.That(() => CustomBla.MethodWithIrrelevantName("aap").AsString == "aap");
-            PAssert.That(() => default(CustomBla) == null);
+            PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
@@ -104,8 +103,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_multiple_properties()
         {
-            PAssert.That(() => CustomBla.MethodWithIrrelevantName("aap").AsString == "aap");
-            PAssert.That(() => default(CustomBla) == null);
+            PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
@@ -117,8 +115,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_readonly()
         {
-            PAssert.That(() => CustomBla.MethodWithIrrelevantName("aap").AsString == "aap");
-            PAssert.That(() => default(CustomBla) == null);
+            PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
@@ -149,7 +146,7 @@ namespace ProgressOnderwijsUtils.Tests
             SampleObjects.BulkCopyToSqlServer(Context, target);
 
             var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_nullable_struct_property>(Context);
-            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla.HasValue ? x.Bla.Value.Value : default(string), Bla2 = x.Bla2.Value })));
+            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id.Value, Bla = x.Bla.HasValue ? x.Bla.Value.Value : default(string), Bla2 = x.Bla2.Value })));
         }
 
         [Fact]
