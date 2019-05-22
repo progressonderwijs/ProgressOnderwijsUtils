@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Reflection;
+using ExpressionToCodeLib;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class DBNullRemover
+    public static class FromDbValueConverter
     {
         /// <summary>
         /// This method works just like a normal C# cast, with the following changed:
@@ -43,6 +44,10 @@ namespace ProgressOnderwijsUtils
             [NotNull]
             static Func<object, T> GetExtractor([NotNull] Type type)
             {
+                var converter = MetaObjectPropertyConverter.GetOrNull(type);
+                if (converter != null) {
+                    return ExtractorFromConverter(type, converter);
+                }
                 if (!type.IsValueType) {
                     return obj => obj == DBNull.Value ? default(T) : (T)obj;
                 }
@@ -53,9 +58,18 @@ namespace ProgressOnderwijsUtils
 
                 return (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
             }
+
+            static Func<object, T> ExtractorFromConverter(Type type, MetaObjectPropertyConverter converter)
+            {
+                if (type.IsNullableValueType() || !type.IsValueType) {
+                    return obj => obj == DBNull.Value || obj == null ? default(T) : (T)converter.ConvertFromDb(obj);
+                } else {
+                    return obj => obj == DBNull.Value || obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromDb(obj);
+                }
+            }
         }
 
-        static readonly MethodInfo extractNullableValueTypeMethod = typeof(DBNullRemover).GetMethod(nameof(ExtractNullableValueType), BindingFlags.Static | BindingFlags.NonPublic);
+        static readonly MethodInfo extractNullableValueTypeMethod = typeof(FromDbValueConverter).GetMethod(nameof(ExtractNullableValueType), BindingFlags.Static | BindingFlags.NonPublic);
 
         static TStruct? ExtractNullableValueType<TStruct>([CanBeNull] object obj)
             where TStruct : struct

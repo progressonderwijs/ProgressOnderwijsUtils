@@ -22,7 +22,6 @@ namespace ProgressOnderwijsUtils.Tests.Data
 
         public T Value { get; }
 
-        [MetaObjectPropertyLoader]
         public static TrivialConvertibleValue<T> MethodWithIrrelevantName(T value)
             => new TrivialConvertibleValue<T>(value);
     }

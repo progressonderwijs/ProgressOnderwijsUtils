@@ -27,8 +27,8 @@ namespace ProgressOnderwijsUtils
 
             ConvertToDb = converter.ConvertToProvider;
             ConvertFromDb = converter.ConvertFromProvider;
-            CompiledConverterToDb = converter.ConvertToProviderExpression.CompileFast();
-            CompiledConverterFromDb = converter.ConvertFromProviderExpression.CompileFast();
+            CompiledConverterToDb = converter.ConvertToProviderExpression.Compile();
+            CompiledConverterFromDb = converter.ConvertFromProviderExpression.Compile();
         }
 
         static ValueConverter CreateValueConverter<TModel, TProvider, [UsedImplicitly] TConverterSource>()
