@@ -171,6 +171,37 @@ namespace ProgressOnderwijsUtils.Tests
             => PAssert.That(() => "asdf" == (string)DbValueConverter.DynamicCast(new TrivialConvertibleValue<string>("asdf"), typeof(string)));
 
         [Fact]
+        public void CanDynamicCastFromPlainValueToConvertibleType()
+        {
+            PAssert.That(() => "asdf" == ((TrivialConvertibleValue<string>)DbValueConverter.DynamicCast("asdf", typeof(TrivialConvertibleValue<string>))).Value);
+            PAssert.That(() => 42 == ((TrivialConvertibleValue<int>)DbValueConverter.DynamicCast(42, typeof(TrivialConvertibleValue<int>))).Value);
+        }
+
+        [Fact]
+        public void CanDynamicCastFromPlainValueToNullableConvertibleType()
+        {
+            PAssert.That(() => "asdf" == ((TrivialConvertibleValue<string>)DbValueConverter.DynamicCast("asdf", typeof(TrivialConvertibleValue<string>?))).Value);
+            PAssert.That(() => 42 == ((TrivialConvertibleValue<int>)DbValueConverter.DynamicCast(42, typeof(TrivialConvertibleValue<int>?))).Value);
+            PAssert.That(() => null == DbValueConverter.DynamicCast(null, typeof(TrivialConvertibleValue<string>?)));
+            PAssert.That(() => null == DbValueConverter.DynamicCast(null, typeof(TrivialConvertibleValue<int>?)));
+            PAssert.That(() => null == DbValueConverter.DynamicCast(null, typeof(TrivialConvertibleValue<int?>)));
+            PAssert.That(() => null == DbValueConverter.DynamicCast(null, typeof(TrivialConvertibleValue<int?>?)));
+        }
+
+        [Fact]
+        public void CanDynamicCastBetweenEnumsAndInts()
+        {
+            PAssert.That(() => 3 == (int)DbValueConverter.DynamicCast(DayOfWeek.Wednesday, typeof(int)));
+            PAssert.That(() => 3 == (int)DbValueConverter.DynamicCast(DayOfWeek.Wednesday, typeof(int?)));
+            PAssert.That(() => DayOfWeek.Wednesday == (DayOfWeek)DbValueConverter.DynamicCast(3, typeof(DayOfWeek)));
+            PAssert.That(() => DayOfWeek.Wednesday == (DayOfWeek)DbValueConverter.DynamicCast(3, typeof(DayOfWeek?)));
+        }
+
+        [Fact]
+        public void CanDynamicCastFromBetweenConvertiblesRegarlessOfNullability()
+            => PAssert.That(() => "asdf" == ((TrivialConvertibleValue<string>)DbValueConverter.DynamicCast(new TrivialConvertibleValue<string>("asdf"), typeof(TrivialConvertibleValue<string>?))).Value);
+
+        [Fact]
         public void CanCastFromConvertibleOfReferenceType()
             => PAssert.That(() => DbValueConverter.ToDb<string>(new TrivialConvertibleValue<string>("asdf")) == "asdf");
 
