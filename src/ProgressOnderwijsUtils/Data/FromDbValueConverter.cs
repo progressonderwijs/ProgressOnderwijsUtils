@@ -27,7 +27,6 @@ namespace ProgressOnderwijsUtils
 
         /// <summary>
         /// This method works just like a normal C# cast, with the following changed:
-        /// - it treats DBNull.Value as if it were null
         /// - it ignores explicit and implicit cast operators
         /// - it supports casting from boxed int to nullable enum.
         /// - it supports casting ToDb when the passed value is IMetaPropertyConvertible.
