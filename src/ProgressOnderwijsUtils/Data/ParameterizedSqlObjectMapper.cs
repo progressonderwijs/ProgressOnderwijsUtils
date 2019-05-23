@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     var value = cmd.Command.ExecuteScalar();
 
-                    return FromDbValueConverter.Cast<T>(value);
+                    return DbValueConverter.FromDb<T>(value);
                 } catch (Exception e) {
                     throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
                 }

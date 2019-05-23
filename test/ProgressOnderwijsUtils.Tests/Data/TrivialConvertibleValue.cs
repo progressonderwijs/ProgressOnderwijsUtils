@@ -21,8 +21,5 @@ namespace ProgressOnderwijsUtils.Tests.Data
             => Value = value;
 
         public T Value { get; }
-
-        public static TrivialConvertibleValue<T> MethodWithIrrelevantName(T value)
-            => new TrivialConvertibleValue<T>(value);
     }
 }

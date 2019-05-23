@@ -128,7 +128,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_struct()
         {
-            PAssert.That(() => TrivialConvertibleValue<string>.MethodWithIrrelevantName("aap").Value == "aap");
+            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
@@ -140,7 +140,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_nullable_struct()
         {
-            PAssert.That(() => TrivialConvertibleValue<string>.MethodWithIrrelevantName("aap").Value == "aap");
+            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
@@ -152,7 +152,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception_with_helpful_message()
         {
-            PAssert.That(() => TrivialConvertibleValue<string>.MethodWithIrrelevantName("aap").Value == "aap");
+            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
@@ -164,7 +164,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void Query_errors_unrelated_to_column_mapping_are_not_misleading()
         {
-            PAssert.That(() => TrivialConvertibleValue<string>.MethodWithIrrelevantName("aap").Value == "aap");
+            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Context, target);
