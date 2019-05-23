@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils
             static Func<object, T> ExtractorFromConverter(Type type, MetaObjectPropertyConverter converter)
             {
                 if (type.IsNullableValueType() || !type.IsValueType) {
-                    return obj => obj == DBNull.Value || obj == null ? default(T) : (T)converter.ConvertFromDb(obj);
+                    return obj => obj == DBNull.Value || obj == null ? default(T) : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromDb(obj);
                 } else {
                     return obj => obj == DBNull.Value || obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromDb(obj);
                 }
