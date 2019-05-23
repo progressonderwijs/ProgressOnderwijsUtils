@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils
                     return ForConvertible(type, converter);
                 }
                 if (!type.IsValueType) {
-                    return obj => obj == DBNull.Value ? default(T) : (T)obj;
+                    return obj => (T)obj;
                 }
                 var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
                 if (nonnullableUnderlyingType == null) {
@@ -75,9 +75,9 @@ namespace ProgressOnderwijsUtils
             static Func<object, T> ForConvertible(Type type, MetaObjectPropertyConverter converter)
             {
                 if (type.IsNullableValueType() || !type.IsValueType) {
-                    return obj => obj == DBNull.Value || obj == null ? default(T) : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromDb(obj);
+                    return obj => obj == null ? default(T) : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromDb(obj);
                 } else {
-                    return obj => obj == DBNull.Value || obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromDb(obj);
+                    return obj => obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromDb(obj);
                 }
             }
         }
@@ -104,7 +104,8 @@ namespace ProgressOnderwijsUtils
 
         static TStruct? ExtractNullableValueType<TStruct>([CanBeNull] object obj)
             where TStruct : struct
-            => obj == DBNull.Value || obj == null ? default(TStruct?) : (TStruct)obj;
+        // ReSharper disable once MergeConditionalExpression //does not work for enums!
+            => obj == null ? default(TStruct?) : (TStruct)obj;
 
         static readonly MethodInfo genericCastMethod = ((Func<object, int>)FromDb<int>).Method.GetGenericMethodDefinition();
 
