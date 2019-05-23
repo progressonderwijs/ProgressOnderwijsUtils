@@ -114,6 +114,11 @@ namespace ProgressOnderwijsUtils
         {
             if (type.IsInstanceOfType(val)) {
                 return val;
+            } else if (val == null || val == DBNull.Value) {
+                if (type.IsValueType && !type.IsNullableValueType()) {
+                    throw new InvalidCastException("Cannot cast (db)null to " + type.ToCSharpFriendlyTypeName());
+                }
+                return null;
             } else if (MetaObjectPropertyConverter.GetOrNull(type) is MetaObjectPropertyConverter targetConvertible) {
                 return targetConvertible.ConvertFromDb(val);
             } else if (MetaObjectPropertyConverter.GetOrNull(val.GetType()) is MetaObjectPropertyConverter sourceConvertible && sourceConvertible.DbType == type.GetNonNullableType()) {
