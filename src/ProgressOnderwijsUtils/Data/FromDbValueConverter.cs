@@ -14,18 +14,13 @@ namespace ProgressOnderwijsUtils
         ///  - it supports casting from boxed int to nullable enum.
         /// </summary>
         [Pure]
-        public static T FromDb<T>(object fromdatabase)
+        public static T FromDb<T>(object valueFromDb)
         {
             try {
-                return FromDbHelper<T>.Convert(fromdatabase);
+                return FromDbHelper<T>.Convert(valueFromDb == DBNull.Value ? null : valueFromDb);
             } catch (Exception e) {
-                var valStr =
-                    fromdatabase == null
-                        ? "<null>"
-                        : fromdatabase == DBNull.Value
-                            ? "<dbnull>"
-                            : fromdatabase.GetType().FullName + " value";
-                throw new InvalidCastException("Cannot cast " + valStr + " to type " + typeof(T).FullName, e);
+                var valTypeString = valueFromDb?.GetType().ToCSharpFriendlyTypeName() ?? "<null>";
+                throw new InvalidCastException("Cannot cast " + valTypeString + " to type " + typeof(T).ToCSharpFriendlyTypeName(), e);
             }
         }
 
@@ -36,18 +31,13 @@ namespace ProgressOnderwijsUtils
         ///  - it supports casting from boxed int to nullable enum.
         /// </summary>
         [Pure]
-        public static T ToDb<T>(object fromCode)
+        public static T ToDb<T>(object valueFromCode)
         {
             try {
-                return ToDbHelper<T>.Convert(fromCode);
+                return ToDbHelper<T>.Convert(valueFromCode);
             } catch (Exception e) {
-                var valStr =
-                    fromCode == null
-                        ? "<null>"
-                        : fromCode == DBNull.Value
-                            ? "<dbnull>"
-                            : fromCode.GetType().FullName + " value";
-                throw new InvalidCastException("Cannot cast " + valStr + " to type " + typeof(T).FullName, e);
+                var valTypeString = valueFromCode?.GetType().ToCSharpFriendlyTypeName() ?? "<null>";
+                throw new InvalidCastException("Cannot cast " + valTypeString + " to type " + typeof(T).ToCSharpFriendlyTypeName(), e);
             }
         }
 
