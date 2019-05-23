@@ -132,5 +132,29 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<string>?>(null) == null);
             PAssert.That(() => !Equals(FromDbValueConverter.Cast<TrivialConvertibleValue<string>?>(null), new TrivialConvertibleValue<string>(null)));
         }
+
+        [Fact]
+        public void CanCastToNullableNonConvertible()
+        {
+            PAssert.That(() => FromDbValueConverter.Cast<int?>(3) == 3);
+        }
+
+        [Fact]
+        public void CanCastToNullableConvertibleOfReferenceType()
+        {
+            PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<string>?>(new TrivialConvertibleValue<string>("asdf")).Value.Value == "asdf");
+        }
+
+        [Fact]
+        public void CanDynamicCastToNullableConvertibleOfReferenceType()
+        {
+            PAssert.That(() => new TrivialConvertibleValue<string>("asdf").Equals(FromDbValueConverter.DynamicCast(new TrivialConvertibleValue<string>("asdf"), typeof(TrivialConvertibleValue<string>?))));
+        }
+
+        [Fact]
+        public void CanCastToNullableConvertibleOfValueType()
+        {
+            PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<int>?>(new TrivialConvertibleValue<int>(-123)).Value.Value == -123);
+        }
     }
 }
