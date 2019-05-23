@@ -184,9 +184,12 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => 42 == ((TrivialConvertibleValue<int>)DbValueConverter.DynamicCast(42, typeof(TrivialConvertibleValue<int>?))).Value);
             PAssert.That(() => null == DbValueConverter.DynamicCast(null, typeof(TrivialConvertibleValue<string>?)));
             PAssert.That(() => null == DbValueConverter.DynamicCast(null, typeof(TrivialConvertibleValue<int>?)));
-            PAssert.That(() => null == DbValueConverter.DynamicCast(null, typeof(TrivialConvertibleValue<int?>)));
             PAssert.That(() => null == DbValueConverter.DynamicCast(null, typeof(TrivialConvertibleValue<int?>?)));
         }
+
+        [Fact]
+        public void CanNotCastNullToNonNullableConvertibleContainingNullable()
+            => Assert.ThrowsAny<Exception>(() => null == DbValueConverter.DynamicCast(null, typeof(TrivialConvertibleValue<int?>)));
 
         [Fact]
         public void CanDynamicCastBetweenEnumsAndInts()
@@ -196,6 +199,10 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => DayOfWeek.Wednesday == (DayOfWeek)DbValueConverter.DynamicCast(3, typeof(DayOfWeek)));
             PAssert.That(() => DayOfWeek.Wednesday == (DayOfWeek)DbValueConverter.DynamicCast(3, typeof(DayOfWeek?)));
         }
+
+        [Fact]
+        public void CanDynamicCastFromNull()
+            => PAssert.That(() => null == (int?)DbValueConverter.DynamicCast(null, typeof(int?)));
 
         [Fact]
         public void CanDynamicCastFromBetweenConvertiblesRegarlessOfNullability()
