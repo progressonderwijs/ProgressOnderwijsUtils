@@ -9,9 +9,10 @@ namespace ProgressOnderwijsUtils
     {
         /// <summary>
         /// This method works just like a normal C# cast, with the following changed:
-        ///  - it treats DBNull.Value as if it were null
-        ///  - it doesn't support custom casts, just built-in casts
-        ///  - it supports casting from boxed int to nullable enum.
+        /// - it treats DBNull.Value as if it were null
+        /// - it ignores explicit and implicit cast operators
+        /// - it supports casting from boxed int to nullable enum.
+        /// - it supports casting fromDb when the target type is IMetaPropertyConvertible
         /// </summary>
         [Pure]
         public static T FromDb<T>(object valueFromDb)
@@ -26,9 +27,10 @@ namespace ProgressOnderwijsUtils
 
         /// <summary>
         /// This method works just like a normal C# cast, with the following changed:
-        ///  - it treats DBNull.Value as if it were null
-        ///  - it doesn't support custom casts, just built-in casts
-        ///  - it supports casting from boxed int to nullable enum.
+        /// - it treats DBNull.Value as if it were null
+        /// - it ignores explicit and implicit cast operators
+        /// - it supports casting from boxed int to nullable enum.
+        /// - it supports casting ToDb when the passed value is IMetaPropertyConvertible.
         /// </summary>
         [Pure]
         public static T ToDb<T>(object valueFromCode)
