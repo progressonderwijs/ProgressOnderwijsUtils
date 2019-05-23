@@ -9,152 +9,173 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void Monday_is_equal_to_int_1()
-            => PAssert.That(() => FromDbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, 1));
+            => PAssert.That(() => DbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, 1));
 
         [Fact]
         public void Int_1_is_equal_to_Monday()
-            => PAssert.That(() => FromDbValueConverter.EqualsConvertingIntToEnum(1, DayOfWeek.Monday));
+            => PAssert.That(() => DbValueConverter.EqualsConvertingIntToEnum(1, DayOfWeek.Monday));
 
         [Fact]
         public void Monday_is_not_equal_to_int_2()
-            => PAssert.That(() => !FromDbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, 2));
+            => PAssert.That(() => !DbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, 2));
 
         [Fact]
         public void Int_2_is_not_equal_to_Monday()
-            => PAssert.That(() => !FromDbValueConverter.EqualsConvertingIntToEnum(2, DayOfWeek.Monday));
+            => PAssert.That(() => !DbValueConverter.EqualsConvertingIntToEnum(2, DayOfWeek.Monday));
 
         [Fact]
         public void Monday_is_not_equal_to_null()
-            => PAssert.That(() => !FromDbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, null));
+            => PAssert.That(() => !DbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, null));
 
         [Fact]
         public void Null_is_not_equal_to_Monday()
-            => PAssert.That(() => !FromDbValueConverter.EqualsConvertingIntToEnum(null, DayOfWeek.Monday));
+            => PAssert.That(() => !DbValueConverter.EqualsConvertingIntToEnum(null, DayOfWeek.Monday));
 
         [Fact]
         public void Int_1_is_equal_to_int_1()
-            => PAssert.That(() => FromDbValueConverter.EqualsConvertingIntToEnum(1, 1));
+            => PAssert.That(() => DbValueConverter.EqualsConvertingIntToEnum(1, 1));
 
         [Fact]
         public void Int_1_is_not_equal_to_int_2()
-            => PAssert.That(() => !FromDbValueConverter.EqualsConvertingIntToEnum(1, 2));
+            => PAssert.That(() => !DbValueConverter.EqualsConvertingIntToEnum(1, 2));
 
         [Fact]
         public void Monday_is_equal_to_Monday()
-            => PAssert.That(() => FromDbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, DayOfWeek.Monday));
+            => PAssert.That(() => DbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, DayOfWeek.Monday));
 
         [Fact]
         public void Monday_is_not_equal_to_Sunday()
-            => PAssert.That(() => !FromDbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, DayOfWeek.Sunday));
+            => PAssert.That(() => !DbValueConverter.EqualsConvertingIntToEnum(DayOfWeek.Monday, DayOfWeek.Sunday));
 
         [Fact]
         public void DbNullConvertsToNullableInt()
-            => PAssert.That(() => FromDbValueConverter.Cast<int?>(DBNull.Value).HasValue == false);
+            => PAssert.That(() => DbValueConverter.FromDb<int?>(DBNull.Value).HasValue == false);
 
         [Fact]
         public void NullConvertsToNullableInt()
-            => PAssert.That(() => FromDbValueConverter.Cast<int?>(default(string)).HasValue == false);
+            => PAssert.That(() => DbValueConverter.FromDb<int?>(default(string)).HasValue == false);
 
         [Fact]
         public void NullConvertsToString()
-            => PAssert.That(() => FromDbValueConverter.Cast<string>(default(string)) == null);
+            => PAssert.That(() => DbValueConverter.FromDb<string>(default(string)) == null);
 
         [Fact]
         public void DbNullConvertsToString()
-            => PAssert.That(() => FromDbValueConverter.Cast<string>(DBNull.Value) == null);
+            => PAssert.That(() => DbValueConverter.FromDb<string>(DBNull.Value) == null);
 
         [Fact]
         public void StringsGetPassedThrough()
-            => PAssert.That(() => FromDbValueConverter.Cast<string>("hello") == "hello");
+            => PAssert.That(() => DbValueConverter.FromDb<string>("hello") == "hello");
 
         [Fact]
         public void BytesGetPassedThrough()
-            => PAssert.That(() => FromDbValueConverter.Cast<byte>((byte)128) == 128);
+            => PAssert.That(() => DbValueConverter.FromDb<byte>((byte)128) == 128);
 
         [Fact]
         public void IntsGetPassedThrough()
-            => PAssert.That(() => FromDbValueConverter.Cast<int>(42) == 42);
+            => PAssert.That(() => DbValueConverter.FromDb<int>(42) == 42);
 
         [Fact]
         public void IntsConvertToShorts_crashes()
-            => Assert.Throws<InvalidCastException>(() => FromDbValueConverter.Cast<short>(42) == 42);
+            => Assert.Throws<InvalidCastException>(() => DbValueConverter.FromDb<short>(42) == 42);
 
         [Fact]
         public void EnumsConvertToInt()
-            => PAssert.That(() => FromDbValueConverter.Cast<int>(DayOfWeek.Tuesday) == 2);
+            => PAssert.That(() => DbValueConverter.FromDb<int>(DayOfWeek.Tuesday) == 2);
 
         [Fact]
         public void EnumsConvertToNonUnderlyingType_crashes()
-            => Assert.Throws<InvalidCastException>(() => FromDbValueConverter.Cast<short>(DayOfWeek.Tuesday) == 2);
+            => Assert.Throws<InvalidCastException>(() => DbValueConverter.FromDb<short>(DayOfWeek.Tuesday) == 2);
 
         [Fact]
         public void IntsConvertToEnum()
-            => PAssert.That(() => FromDbValueConverter.Cast<DayOfWeek>(2) == DayOfWeek.Tuesday);
+            => PAssert.That(() => DbValueConverter.FromDb<DayOfWeek>(2) == DayOfWeek.Tuesday);
 
         [Fact]
         public void NonUnderlyingIntsConvertToEnum_crashes()
-            => Assert.Throws<InvalidCastException>(() => FromDbValueConverter.Cast<DayOfWeek>((short)2) == DayOfWeek.Tuesday);
+            => Assert.Throws<InvalidCastException>(() => DbValueConverter.FromDb<DayOfWeek>((short)2) == DayOfWeek.Tuesday);
 
         [Fact]
         public void DoublesConvertToInt_crashes()
-            => Assert.Throws<InvalidCastException>(() => FromDbValueConverter.Cast<int>(3.0) == 3);
+            => Assert.Throws<InvalidCastException>(() => DbValueConverter.FromDb<int>(3.0) == 3);
 
         [Fact]
-        public void TrivialConverterPassesValueTypesThrough()
-            => PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<int>>(3).Value == 3);
+        public void TrivialConverterPassesValueTypesThrough_FromDb()
+            => PAssert.That(() => DbValueConverter.FromDb<TrivialConvertibleValue<int>>(3).Value == 3);
+
+        [Fact]
+        public void TrivialConverterPassesValueTypesThrough_ToDb()
+            => PAssert.That(() => DbValueConverter.ToDb<int>(new TrivialConvertibleValue<int>(3)) == 3);
+
+        [Fact]
+        public void NastyDoubleNullabilityToDbIsReasonable()
+        {
+            PAssert.That(() => DbValueConverter.ToDb<int>(new TrivialConvertibleValue<int?>(3)) == 3);
+            PAssert.That(() => DbValueConverter.ToDb<int?>(new TrivialConvertibleValue<int>(3)) == 3);
+            PAssert.That(() => DbValueConverter.ToDb<int?>(new TrivialConvertibleValue<int?>(3)) == 3);
+            PAssert.That(() => DbValueConverter.ToDb<int?>(default(TrivialConvertibleValue<int?>?)) == null);
+        }
+
+        [Fact]
+        public void NullableTrivialConverterConvertsNullableValueIntoUnwrappedNull_ToDb()
+            => PAssert.That(() => DbValueConverter.ToDb<int?>(default(TrivialConvertibleValue<int>?)) == null);
 
         [Fact]
         public void EnumConvertibleTypesCanNotConvertFomInt()
-            => Assert.Throws<InvalidCastException>(() => FromDbValueConverter.Cast<TrivialConvertibleValue<DayOfWeek>>(3).Value);
+            => Assert.Throws<InvalidCastException>(() => DbValueConverter.FromDb<TrivialConvertibleValue<DayOfWeek>>(3).Value);
 
         [Fact]
         public void IntConvertibleTypesCanConvertFomEnum()
-            => PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<int>>(DayOfWeek.Thursday).Value == 4, "weird, probably not a good idea, but current behavior nontheless");
+            => PAssert.That(() => DbValueConverter.FromDb<TrivialConvertibleValue<int>>(DayOfWeek.Thursday).Value == 4, "weird, probably not a good idea, but current behavior nontheless");
 
         [Fact]
         public void IntConvertibleTypesCanConvertFomShort()
-            => PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<int>>((short)37).Value == 37, "weird, probably not a good idea, but current behavior nontheless");
+            => PAssert.That(() => DbValueConverter.FromDb<TrivialConvertibleValue<int>>((short)37).Value == 37, "weird, probably not a good idea, but current behavior nontheless");
 
         [Fact]
         public void TrivialConverterPassesRefTypesThrough()
-            => PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<string>>("asdf").Value == "asdf");
+            => PAssert.That(() => DbValueConverter.FromDb<TrivialConvertibleValue<string>>("asdf").Value == "asdf");
 
         [Fact]
         public void NullableTrivialConverterConvertsNullableValueIntoUnwrappedNull()
         {
-            PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<int?>?>(null) == null);
-            PAssert.That(() => !Equals(FromDbValueConverter.Cast<TrivialConvertibleValue<int?>?>(null), new TrivialConvertibleValue<int?>(null)));
+            PAssert.That(() => DbValueConverter.FromDb<TrivialConvertibleValue<int?>?>(null) == null);
+            PAssert.That(() => !Equals(DbValueConverter.FromDb<TrivialConvertibleValue<int?>?>(null), new TrivialConvertibleValue<int?>(null)));
         }
 
         [Fact]
         public void NullableTrivialConverterConvertsNullableRefIntoUnwrappedNull()
         {
-            PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<string>?>(null) == null);
-            PAssert.That(() => !Equals(FromDbValueConverter.Cast<TrivialConvertibleValue<string>?>(null), new TrivialConvertibleValue<string>(null)));
+            PAssert.That(() => DbValueConverter.FromDb<TrivialConvertibleValue<string>?>(null) == null);
+            PAssert.That(() => !Equals(DbValueConverter.FromDb<TrivialConvertibleValue<string>?>(null), new TrivialConvertibleValue<string>(null)));
         }
 
         [Fact]
         public void CanCastToNullableNonConvertible()
-        {
-            PAssert.That(() => FromDbValueConverter.Cast<int?>(3) == 3);
-        }
+            => PAssert.That(() => DbValueConverter.FromDb<int?>(3) == 3);
+
+        [Fact]
+        public void CanCastToNullableFromConvertible()
+            => PAssert.That(() => DbValueConverter.ToDb<int?>(new TrivialConvertibleValue<int?>(3)) == 3);
 
         [Fact]
         public void CanCastToNullableConvertibleOfReferenceType()
-        {
-            PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<string>?>(new TrivialConvertibleValue<string>("asdf")).Value.Value == "asdf");
-        }
+            => PAssert.That(() => DbValueConverter.FromDb<TrivialConvertibleValue<string>?>(new TrivialConvertibleValue<string>("asdf")).Value.Value == "asdf");
 
         [Fact]
         public void CanDynamicCastToNullableConvertibleOfReferenceType()
-        {
-            PAssert.That(() => new TrivialConvertibleValue<string>("asdf").Equals(FromDbValueConverter.DynamicCast(new TrivialConvertibleValue<string>("asdf"), typeof(TrivialConvertibleValue<string>?))));
-        }
+            => PAssert.That(() => new TrivialConvertibleValue<string>("asdf").Equals(DbValueConverter.DynamicCast(new TrivialConvertibleValue<string>("asdf"), typeof(TrivialConvertibleValue<string>?))));
+
+        [Fact]
+        public void CanDynamicCastToPlainStringFromConvertibleReferenceType()
+            => PAssert.That(() => "asdf" == (string)DbValueConverter.DynamicCast(new TrivialConvertibleValue<string>("asdf"), typeof(string)));
+
+        [Fact]
+        public void CanCastFromConvertibleOfReferenceType()
+            => PAssert.That(() => DbValueConverter.ToDb<string>(new TrivialConvertibleValue<string>("asdf")) == "asdf");
 
         [Fact]
         public void CanCastToNullableConvertibleOfValueType()
-        {
-            PAssert.That(() => FromDbValueConverter.Cast<TrivialConvertibleValue<int>?>(new TrivialConvertibleValue<int>(-123)).Value.Value == -123);
-        }
+            => PAssert.That(() => DbValueConverter.FromDb<TrivialConvertibleValue<int>?>(new TrivialConvertibleValue<int>(-123)).Value.Value == -123);
     }
 }
