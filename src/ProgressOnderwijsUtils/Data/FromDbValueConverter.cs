@@ -119,10 +119,17 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static object DynamicCast(object val, Type type)
-            => type.IsInstanceOfType(val) ? val
-                : MetaObjectPropertyConverter.GetOrNull(type) is MetaObjectPropertyConverter targetConvertible ? targetConvertible.ConvertFromDb(val)
-                : MetaObjectPropertyConverter.GetOrNull(val.GetType()) is MetaObjectPropertyConverter sourceConvertible && sourceConvertible.DbType == type.GetNonNullableType() ? sourceConvertible.ConvertToDb(val)
-                : genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });
+        {
+            if (type.IsInstanceOfType(val)) {
+                return val;
+            } else if (MetaObjectPropertyConverter.GetOrNull(type) is MetaObjectPropertyConverter targetConvertible) {
+                return targetConvertible.ConvertFromDb(val);
+            } else if (MetaObjectPropertyConverter.GetOrNull(val.GetType()) is MetaObjectPropertyConverter sourceConvertible && sourceConvertible.DbType == type.GetNonNullableType()) {
+                return sourceConvertible.ConvertToDb(val);
+            } else {
+                return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });
+            }
+        }
 
         [Pure]
         public static bool EqualsConvertingIntToEnum([CanBeNull] object val1, [CanBeNull] object val2)
