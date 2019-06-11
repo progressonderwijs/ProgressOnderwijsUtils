@@ -100,7 +100,7 @@ namespace ProgressOnderwijsUtils.Tests
             var inputLines = Enumerable.Repeat(inputLine, inputLineCount);
             var result = new ProcessStartSettings {
                 ExecutableName = "findstr", Arguments = "^",
-                Stdlnput = string.Join("\r\n", inputLines),
+                Stdlnput = inputLines.JoinStrings("\r\n"),
             }.StartProcess(token);
             var collected = new List<string>();
             result.Output.Subscribe(o => { collected.Add(o.Line); });

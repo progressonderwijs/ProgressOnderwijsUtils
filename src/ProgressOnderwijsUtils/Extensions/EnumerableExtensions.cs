@@ -205,10 +205,10 @@ namespace ProgressOnderwijsUtils
             var properties = typeof(T).GetProperties();
 
             if (useHeader) {
-                csvBuilder.AppendLine(string.Join(delimiter, properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings)).ToArray()));
+                csvBuilder.AppendLine(properties.Select(p => p.Name.ToCsvValue(delimiter, useQuotesForStrings)).ToArray().JoinStrings(delimiter));
             }
             foreach (var item in items) {
-                var line = string.Join(delimiter, properties.Select(p => p.GetValue(item, null).ToCsvValue(delimiter, useQuotesForStrings)).ToArray());
+                var line = properties.Select(p => p.GetValue(item, null).ToCsvValue(delimiter, useQuotesForStrings)).ToArray().JoinStrings(delimiter);
                 csvBuilder.AppendLine(line);
             }
             return csvBuilder.ToString();

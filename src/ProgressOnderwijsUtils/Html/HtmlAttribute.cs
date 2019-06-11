@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
@@ -105,6 +106,6 @@ namespace ProgressOnderwijsUtils.Html
             => new HtmlAttributes(arr, arr.Length);
 
         public override string ToString()
-            => string.Join("; ", this);
+            => this.Select(a => a.ToString()).JoinStrings("; ");
     }
 }
