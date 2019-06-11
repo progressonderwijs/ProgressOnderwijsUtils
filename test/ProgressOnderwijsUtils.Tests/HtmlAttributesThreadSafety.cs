@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtils.Tests
                         if (attrList.Count != initLength + 2
                             || !attrList.Take(initLength).All(attr => attr.Name == "X" && attr.Value == "value")
                             || !attrList.Skip(initLength).All(attr => attr.Name == threadName && attr.Value == "value")) {
-                            errors.Enqueue($"{threadI} / attrList[{i}]: expected {initLength + 2} attrs, have {attrList.Count}; names: {string.Join(", ", attrList.Select(attr => attr.Name))}");
+                            errors.Enqueue($"{threadI} / attrList[{i}]: expected {initLength + 2} attrs, have {attrList.Count}; names: {attrList.Select(attr => attr.Name).JoinStrings(", ")}");
                         }
                     }
                 }, TaskCreationOptions.LongRunning)).ToArray();
