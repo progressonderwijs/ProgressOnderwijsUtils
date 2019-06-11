@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {
@@ -14,8 +14,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public string AuthnContextClassRef;
 
         public override string ToString()
-        {
-            return $"uid='{uid}'; domain='{domain}'; emails='{StringUtils.ToFlatDebugString(email)}'; roles='{StringUtils.ToFlatDebugString(roles)}'";
-        }
+            => $"uid='{uid}'; domain='{domain}'; emails='{StringUtils.ToFlatDebugString(email)}'; roles='{StringUtils.ToFlatDebugString(roles)}'";
     }
 }

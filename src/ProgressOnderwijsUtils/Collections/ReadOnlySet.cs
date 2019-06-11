@@ -13,19 +13,13 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         public bool Add(T item)
-        {
-            throw new NotSupportedException();
-        }
+            => throw new NotSupportedException();
 
         public void ExceptWith(IEnumerable<T> other)
-        {
-            throw new NotSupportedException();
-        }
+            => throw new NotSupportedException();
 
         public void IntersectWith(IEnumerable<T> other)
-        {
-            throw new NotSupportedException();
-        }
+            => throw new NotSupportedException();
 
         public bool IsProperSubsetOf(IEnumerable<T> other)
             => set.IsProperSubsetOf(other);
@@ -46,32 +40,22 @@ namespace ProgressOnderwijsUtils.Collections
             => set.SetEquals(other);
 
         public void SymmetricExceptWith(IEnumerable<T> other)
-        {
-            throw new NotSupportedException();
-        }
+            => throw new NotSupportedException();
 
         public void UnionWith(IEnumerable<T> other)
-        {
-            throw new NotSupportedException();
-        }
+            => throw new NotSupportedException();
 
         void ICollection<T>.Add(T item)
-        {
-            throw new NotSupportedException();
-        }
+            => throw new NotSupportedException();
 
         public void Clear()
-        {
-            throw new NotSupportedException();
-        }
+            => throw new NotSupportedException();
 
         public bool Contains(T item)
             => set.Contains(item);
 
         public void CopyTo(T[] array, int arrayIndex)
-        {
-            set.CopyTo(array, arrayIndex);
-        }
+            => set.CopyTo(array, arrayIndex);
 
         public int Count
             => set.Count;
@@ -80,9 +64,7 @@ namespace ProgressOnderwijsUtils.Collections
             => true;
 
         public bool Remove(T item)
-        {
-            throw new NotSupportedException();
-        }
+            => throw new NotSupportedException();
 
         public IEnumerator<T> GetEnumerator()
             => set.GetEnumerator();

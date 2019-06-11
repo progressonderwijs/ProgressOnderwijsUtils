@@ -75,9 +75,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         static MemberExpression MemberAccessExpression(Expression expr, [NotNull] MemberInfo mi)
-        {
-            return mi is FieldInfo info ? Expression.Field(expr, info) : Expression.Property(expr, (PropertyInfo)mi);
-        }
+            => mi is FieldInfo info ? Expression.Field(expr, info) : Expression.Property(expr, (PropertyInfo)mi);
 
         [UsedImplicitly]
         static string ToString(object o)

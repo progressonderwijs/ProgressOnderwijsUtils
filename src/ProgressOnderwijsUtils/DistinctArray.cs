@@ -105,9 +105,7 @@ namespace ProgressOnderwijsUtils
             }
 
             public void Reset()
-            {
-                idx = 0;
-            }
+                => idx = 0;
 
             public T Current
                 => items[idx];

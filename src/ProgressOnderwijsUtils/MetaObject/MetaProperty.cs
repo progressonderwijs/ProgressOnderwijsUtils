@@ -164,9 +164,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         static T MkDelegate<T>([NotNull] MethodInfo mi)
-        {
-            return (T)(object)Delegate.CreateDelegate(typeof(T), mi);
-        }
+            => (T)(object)Delegate.CreateDelegate(typeof(T), mi);
 
         interface IOutCaster
         {
@@ -215,9 +213,7 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new ConcurrentDictionary<Type, IOutCaster>();
 
         static IOutCaster GetCaster([NotNull] Type propType)
-        {
-            return CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
-        }
+            => CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
     }
 
     public delegate void Setter<T>(ref T obj, object value);

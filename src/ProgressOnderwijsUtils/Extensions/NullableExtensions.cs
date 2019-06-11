@@ -7,8 +7,6 @@ namespace ProgressOnderwijsUtils
         public static TResult? Select<TSource, TResult>(this TSource? source, Func<TSource, TResult> selector)
             where TSource : struct
             where TResult : struct
-        {
-            return source.HasValue ? selector(source.Value) : default(TResult?);
-        }
+            => source.HasValue ? selector(source.Value) : default(TResult?);
     }
 }

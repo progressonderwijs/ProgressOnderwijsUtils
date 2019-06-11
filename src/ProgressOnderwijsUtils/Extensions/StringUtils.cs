@@ -18,15 +18,12 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         [Pure]
         public static string VerwijderDiakrieten([NotNull] string input)
-        {
-            return
-                new string(
-                    input
-                        .Normalize(NormalizationForm.FormD)
-                        .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-                        .ToArray()
-                ).Normalize(NormalizationForm.FormC);
-        }
+            => new string(
+                input
+                    .Normalize(NormalizationForm.FormD)
+                    .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                    .ToArray()
+            ).Normalize(NormalizationForm.FormC);
 
         const RegexOptions CommonOptions = RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace;
 
@@ -168,14 +165,12 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         [Pure]
         public static string ToFlatDebugString<T>(IEnumerable<T> self)
-        {
-            return "[" +
+            => "[" +
                 self
                     .EmptyIfNull()
                     .Select(item => item == null ? "" : item.ToString())
                     .JoinStrings(", ")
                 + "]";
-        }
 
         /// <summary>
         /// Vervang in een [naam]string beginletters door hoofdletters,

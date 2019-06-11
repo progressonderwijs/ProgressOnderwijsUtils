@@ -81,15 +81,11 @@ namespace ProgressOnderwijsUtils.Collections
 
         [Pure]
         public static bool operator ==(SList<T> a, SList<T> b)
-        {
-            return a.Equals(b);
-        }
+            => a.Equals(b);
 
         [Pure]
         public static bool operator !=(SList<T> a, SList<T> b)
-        {
-            return !a.Equals(b);
-        }
+            => !a.Equals(b);
 
         public IEnumerable<SList<T>> NonEmptySuffixes
         {
@@ -115,9 +111,7 @@ namespace ProgressOnderwijsUtils.Collections
     {
         [Pure]
         public static SList<T> Prepend<T>(this SList<T> self, T head)
-        {
-            return new SList<T>(head, self);
-        }
+            => new SList<T>(head, self);
 
         [Pure]
         [UsefulToKeep("library method")]
@@ -152,9 +146,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         [Pure]
         public static SList<TR> SelectEager<T, TR>(this SList<T> self, Func<T, TR> map)
-        {
-            return self.SelectReverse(map).Reverse();
-        }
+            => self.SelectReverse(map).Reverse();
 
         [Pure]
         public static SList<TR> SelectReverse<T, TR>(this SList<T> self, Func<T, TR> map)

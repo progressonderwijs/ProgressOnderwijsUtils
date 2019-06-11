@@ -61,14 +61,13 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool operator ==(ColumnSort a, ColumnSort b)
-        {
-            return a.Equals(b);
-        } //ReferenceEquals(a, b) || null != (object)a &&
+            => a.Equals(b);
+        //ReferenceEquals(a, b) || null != (object)a &&
 
         [Pure]
         public static bool operator !=(ColumnSort a, ColumnSort b)
-        {
-            return !a.Equals(b);
-        } //!ReferenceEquals(a, b) && (null == (object)a ||
+            => !a.Equals(b);
+
+        //!ReferenceEquals(a, b) && (null == (object)a ||
     }
 }

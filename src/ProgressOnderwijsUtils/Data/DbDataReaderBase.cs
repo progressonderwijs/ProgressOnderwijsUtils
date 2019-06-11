@@ -33,9 +33,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public override DataTable GetSchemaTable()
-        {
-            throw new NotSupportedException();
-        }
+            => throw new NotSupportedException();
 
         [NotNull]
         public override string GetDataTypeName(int ordinal)

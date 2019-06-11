@@ -90,8 +90,6 @@ namespace ProgressOnderwijsUtils
         internal XmlSerializerHelper() { }
 
         void IXmlSerializeHelper.SerializeToInst([NotNull] XmlWriter xw, [NotNull] object val)
-        {
-            serializer.Serialize(xw, val);
-        }
+            => serializer.Serialize(xw, val);
     }
 }

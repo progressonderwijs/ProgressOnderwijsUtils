@@ -17,12 +17,10 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         // ReSharper disable PossibleNullReferenceException
         [NotNull]
         public IEnumerable<string> GetEntities()
-        {
-            return (
+            => (
                 from element in md.DescendantsAndSelf(SamlNamespaces.SAMLMD_NS + "IDPSSODescriptor")
                 select element.Parent.Attribute("entityID").Value
             ).ToSet();
-        }
 
         public string SingleSignOnService(string entity)
         {

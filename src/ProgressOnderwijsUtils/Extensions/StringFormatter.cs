@@ -8,8 +8,6 @@ namespace ProgressOnderwijsUtils
     {
         [NotNull]
         public static string FormatString(this CultureInfo culture, [NotNull] FormattableString interpolatedString)
-        {
-            return interpolatedString.ToString(culture);
-        }
+            => interpolatedString.ToString(culture);
     }
 }
