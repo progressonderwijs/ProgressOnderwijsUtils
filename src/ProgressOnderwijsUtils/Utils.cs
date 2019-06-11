@@ -17,10 +17,8 @@ namespace ProgressOnderwijsUtils
         // ReSharper disable once FunctionRecursiveOnAllPaths
         // ReSharper disable once UnusedParameter.Global
         public static string TestErrorStackOverflow(int rounds)
-        {
             //This is intended for testing error-handling in case of dramatic errors.
-            return TestErrorStackOverflow(rounds + 1);
-        }
+            => TestErrorStackOverflow(rounds + 1);
 
         public static void TestErrorOutOfMemory()
         {
@@ -34,9 +32,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public static void TestErrorNormalException()
-        {
-            throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
-        }
+            => throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
     }
 
     public static class DisposableExtensions
@@ -68,9 +64,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static Lazy<T> Lazy<T>([NotNull] Func<T> factory)
-        {
-            return new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
-        }
+            => new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
 
         public static bool ElfProef(int getal)
         {
@@ -108,9 +102,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
-        {
-            return TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
-        }
+            => TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
 
         [NotNull]
         public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
@@ -125,9 +117,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
-        {
-            return TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);
-        }
+            => TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);
 
         [NotNull]
         public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
@@ -148,39 +138,32 @@ namespace ProgressOnderwijsUtils
         // Deze F's zijn voor makkelijke type inference, dus worden misschien niet altijd gebruikt
         // maar wel goed om te houden
         public static Func<TR> F<TR>(Func<TR> v)
-        {
-            return v;
-        } //purely for delegate type inference
+            => v;
+        //purely for delegate type inference
 
         public static Func<T, TR> F<T, TR>(Func<T, TR> v)
-        {
-            return v;
-        } //purely for delegate type inference
+            => v;
+        //purely for delegate type inference
 
         public static Func<T1, T2, TR> F<T1, T2, TR>(Func<T1, T2, TR> v)
-        {
-            return v;
-        } //purely for delegate type inference
+            => v;
+        //purely for delegate type inference
 
         public static Func<T1, T2, T3, TR> F<T1, T2, T3, TR>(Func<T1, T2, T3, TR> v)
-        {
-            return v;
-        } //purely for delegate type inference
+            => v;
+        //purely for delegate type inference
 
         public static Expression<Func<TR>> E<TR>(Expression<Func<TR>> v)
-        {
-            return v;
-        } //purely for delegate type inference
+            => v;
+        //purely for delegate type inference
 
         public static Expression<Func<T, TR>> E<T, TR>(Expression<Func<T, TR>> v)
-        {
-            return v;
-        } //purely for delegate type inference
+            => v;
+        //purely for delegate type inference
 
         public static Expression<Func<T1, T2, TR>> E<T1, T2, TR>(Expression<Func<T1, T2, TR>> v)
-        {
-            return v;
-        } //purely for delegate type inference
+            => v;
+        //purely for delegate type inference
         // ReSharper restore UnusedMember.Global
 
         [CanBeNull]
@@ -198,9 +181,7 @@ namespace ProgressOnderwijsUtils
         /// Geeft het verschil in maanden tussen twee datums
         /// </summary>
         public static int MaandSpan(DateTime d1, DateTime d2)
-        {
-            return Math.Abs(d1 > d2 ? 12 * (d1.Year - d2.Year) + d1.Month - d2.Month : 12 * (d2.Year - d1.Year) + d2.Month - d1.Month);
-        }
+            => Math.Abs(d1 > d2 ? 12 * (d1.Year - d2.Year) + d1.Month - d2.Month : 12 * (d2.Year - d1.Year) + d2.Month - d1.Month);
 
         /// <summary>
         /// Volgordebehoudende transformatie van getal naar string, dus:
@@ -374,9 +355,7 @@ namespace ProgressOnderwijsUtils
         /// Postcondition: (1ul &lt;&lt; result-1) &lt; x &lt;= (1ul &lt;&lt; result)
         /// </summary>
         public static int LogBase2RoundedUp(uint x)
-        {
-            return x <= 1 ? 0 : LogBase2RoundedDown(x - 1) + 1;
-        }
+            => x <= 1 ? 0 : LogBase2RoundedDown(x - 1) + 1;
 
         public static bool IsEmailAdresGeldig(string emailAdres)
         {

@@ -11,9 +11,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static string MD5ComputeHash([NotNull] string plainText)
-        {
-            return MakeMD5(Encoding.UTF8.GetBytes(plainText));
-        }
+            => MakeMD5(Encoding.UTF8.GetBytes(plainText));
 
         [NotNull]
         static string MakeMD5([NotNull] byte[] data)

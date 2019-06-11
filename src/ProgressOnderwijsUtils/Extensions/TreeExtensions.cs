@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
@@ -8,9 +8,7 @@ namespace ProgressOnderwijsUtils
     {
         [Pure]
         public static RootedTree<T> RootHere<T>([NotNull] this Tree<T> tree)
-        {
-            return RootedTree<T>.RootTree(tree);
-        }
+            => RootedTree<T>.RootTree(tree);
 
         [ItemNotNull]
         [Pure]

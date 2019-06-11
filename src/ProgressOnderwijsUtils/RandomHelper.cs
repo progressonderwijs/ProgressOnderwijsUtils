@@ -42,14 +42,10 @@ namespace ProgressOnderwijsUtils
             => BitConverter.ToInt64(GetBytes(sizeof(long)), 0);
 
         public uint GetUInt32()
-        {
-            return BitConverter.ToUInt32(GetBytes(sizeof(uint)), 0);
-        }
+            => BitConverter.ToUInt32(GetBytes(sizeof(uint)), 0);
 
         public ulong GetUInt64()
-        {
-            return BitConverter.ToUInt64(GetBytes(sizeof(ulong)), 0);
-        }
+            => BitConverter.ToUInt64(GetBytes(sizeof(ulong)), 0);
 
         public uint GetUInt32(uint excludedBound)
         {
@@ -122,8 +118,6 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public string GetStringOfUriPrintableCharacters(int length)
-        {
-            return new string(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
-        }
+            => new string(Enumerable.Range(0, length).Select(_ => UriPrintableCharacters[GetUInt32((uint)UriPrintableCharacters.Length)]).ToArray());
     }
 }

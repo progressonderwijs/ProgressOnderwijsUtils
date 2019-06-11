@@ -165,15 +165,13 @@ namespace ProgressOnderwijsUtils.Collections
 
             [Pure]
             bool ShallowEquals(NodePair pair)
-            {
                 // ReSharper disable RedundantCast
                 //workaround resharper issue: object comparison is by reference, and faster than ReferenceEquals
-                return (object)pair.A == (object)pair.B ||
+                => (object)pair.A == (object)pair.B ||
                     (object)pair.A != null && (object)pair.B != null
                     && pair.A.Children.Count == pair.B.Children.Count
                     && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
                 // ReSharper restore RedundantCast
-            }
 
             [Pure]
             public int GetHashCode([CanBeNull] Tree<T> obj)

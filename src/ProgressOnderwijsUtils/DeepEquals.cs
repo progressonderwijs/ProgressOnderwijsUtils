@@ -67,14 +67,10 @@ namespace ProgressOnderwijsUtils
                 => RuntimeHelpers.GetHashCode(a) + 137 * RuntimeHelpers.GetHashCode(b);
 
             public static bool operator ==([CanBeNull] ReferencePair a, [CanBeNull] ReferencePair b)
-            {
-                return ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b);
-            }
+                => ReferenceEquals(a, b) || !ReferenceEquals(a, null) && a.Equals(b);
 
             public static bool operator !=([CanBeNull] ReferencePair a, [CanBeNull] ReferencePair b)
-            {
-                return !(a == b);
-            }
+                => !(a == b);
         }
 
         struct AccessibleMember
@@ -116,24 +112,18 @@ namespace ProgressOnderwijsUtils
 
         [CanBeNull]
         static MethodInfo TypeBuiltinEquals([NotNull] Type type)
-        {
-            return type.IsValueType
+            => type.IsValueType
                 ? type.GetMethod("Equals", BindingFlags.Instance | BindingFlags.Public | BindingFlags.ExactBinding, null, new[] { type }, null)
                 : type.GetMethod("Equals", BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.Public | BindingFlags.ExactBinding, null, new[] { type }, null);
-        }
 
         static bool CompareWithBuiltinEquals([NotNull] MethodInfo builtinEquals, object o1_nonnull, object o2)
             => (bool)builtinEquals.Invoke(o1_nonnull, new[] { o2 });
 
         static bool CompareDictionaries(HashSet<ReferencePair> assumeEqual, [NotNull] IDictionary iDict1, [NotNull] IDictionary iDict2)
-        {
-            return iDict1.Count == iDict2.Count
+            => iDict1.Count == iDict2.Count
                 && iDict1.Keys.Cast<object>().All(dict1key => iDict2.Contains(dict1key) && Compare(assumeEqual, iDict1[dict1key], iDict2[dict1key]));
-        }
 
         static bool CompareEnumerables(HashSet<ReferencePair> assumeEqual, [NotNull] IEnumerable ilist1, [NotNull] IEnumerable ilist2)
-        {
-            return ilist1.Cast<object>().Zip(ilist2.Cast<object>(), (el1, el2) => Compare(assumeEqual, el1, el2)).All(b => b);
-        }
+            => ilist1.Cast<object>().Zip(ilist2.Cast<object>(), (el1, el2) => Compare(assumeEqual, el1, el2)).All(b => b);
     }
 }

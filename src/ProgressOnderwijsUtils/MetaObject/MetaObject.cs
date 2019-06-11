@@ -29,9 +29,7 @@ namespace ProgressOnderwijsUtils
         [CodeThatsOnlyUsedForTests]
         public static IMetaProperty<TMetaObject> GetByExpression<TMetaObject, T>([NotNull] Expression<Func<TMetaObject, T>> propertyExpression)
             where TMetaObject : IMetaObject
-        {
-            return MetaInfo<TMetaObject>.Instance.GetByExpression(propertyExpression);
-        }
+            => MetaInfo<TMetaObject>.Instance.GetByExpression(propertyExpression);
 
         public static class GetByInheritedExpression<TMetaObject>
             where TMetaObject : IMetaObject

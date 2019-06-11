@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Data.SqlClient;
 using JetBrains.Annotations;
 
@@ -26,9 +26,7 @@ namespace ProgressOnderwijsUtils
         }
 
         public void Dispose()
-        {
-            Connection.Dispose();
-        }
+            => Connection.Dispose();
 
         [NotNull]
         public static implicit operator SqlCommandCreationContext(SqlConnection conn)

@@ -104,47 +104,33 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         static IEnumerable<ColumnSort> PrependFiltered(ColumnSort head, [NotNull] IEnumerable<ColumnSort> tail)
-        {
-            return new[] { head }.Concat(tail.Where(sc => sc.ColumnName != head.ColumnName));
-        }
+            => new[] { head }.Concat(tail.Where(sc => sc.ColumnName != head.ColumnName));
 
         [Pure]
         public OrderByColumns FirstSortBy(ColumnSort firstby)
-        {
-            return new OrderByColumns(PrependFiltered(firstby, DirectAcessColumns).ToArray());
-        }
+            => new OrderByColumns(PrependFiltered(firstby, DirectAcessColumns).ToArray());
 
         [Pure]
         public OrderByColumns ThenSortBy(ColumnSort thenby)
-        {
-            return DirectAcessColumns.Any(sc => streq(sc.ColumnName, thenby.ColumnName))
+            => DirectAcessColumns.Any(sc => streq(sc.ColumnName, thenby.ColumnName))
                 ? this
                 : new OrderByColumns(DirectAcessColumns.Append(thenby).ToArray());
-        }
 
         [Pure]
         public OrderByColumns ThenAsc(string column)
-        {
-            return ThenSortBy(new ColumnSort(column, SortDirection.Asc));
-        }
+            => ThenSortBy(new ColumnSort(column, SortDirection.Asc));
 
         [Pure]
         public OrderByColumns ThenDesc(string column)
-        {
-            return ThenSortBy(new ColumnSort(column, SortDirection.Desc));
-        }
+            => ThenSortBy(new ColumnSort(column, SortDirection.Desc));
 
         [Pure]
         public static OrderByColumns Asc(string column)
-        {
-            return new OrderByColumns(new[] { new ColumnSort(column, SortDirection.Asc) });
-        }
+            => new OrderByColumns(new[] { new ColumnSort(column, SortDirection.Asc) });
 
         [Pure]
         public static OrderByColumns Desc(string column)
-        {
-            return new OrderByColumns(new[] { new ColumnSort(column, SortDirection.Desc) });
-        }
+            => new OrderByColumns(new[] { new ColumnSort(column, SortDirection.Desc) });
 
         [Pure]
         public OrderByColumns ThenSortBy(OrderByColumns thenby)
@@ -182,31 +168,21 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public bool Equals(OrderByColumns other)
-        {
-            return DirectAcessColumns.SequenceEqual(other.DirectAcessColumns);
-        }
+            => DirectAcessColumns.SequenceEqual(other.DirectAcessColumns);
 
         public static bool operator ==(OrderByColumns a, OrderByColumns b)
-        {
-            return a.Equals(b);
-        }
+            => a.Equals(b);
 
         public static bool operator !=(OrderByColumns a, OrderByColumns b)
-        {
-            return !a.Equals(b);
-        }
+            => !a.Equals(b);
 
         [Pure]
         public override bool Equals(object obj)
-        {
-            return obj is OrderByColumns orderByColumns && Equals(orderByColumns);
-        }
+            => obj is OrderByColumns orderByColumns && Equals(orderByColumns);
 
         [Pure]
         public override int GetHashCode()
-        {
-            return (int)DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Aggregate(12345L, (a, b) => a + b);
-        }
+            => (int)DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Aggregate(12345L, (a, b) => a + b);
 
         public override string ToString()
             => "{" + DirectAcessColumns.Select(col => col.ToString()).JoinStrings(", ") + "}";

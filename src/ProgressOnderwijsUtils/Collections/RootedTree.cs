@@ -45,16 +45,12 @@ namespace ProgressOnderwijsUtils.Collections
             => PathSegments.Last().ThisSubTree.RootHere();
 
         public bool Equals(RootedTree<T> other)
-        {
             //two rooted trees are identical when their underlying trees are identical and their paths within that tree are identical.
-            return PathSegments.Last().ThisSubTree.Equals(other.PathSegments.Last().ThisSubTree)
+            => PathSegments.Last().ThisSubTree.Equals(other.PathSegments.Last().ThisSubTree)
                 && PathSegments.SelectEager(segment => segment.Index).SequenceEqual(other.PathSegments.SelectEager(segment => segment.Index));
-        }
 
         public override int GetHashCode()
-        {
-            return PathSegments.Last().ThisSubTree.GetHashCode() + EnumerableExtensions.GetSequenceHashCode(PathSegments.SelectEager(segment => segment.Index));
-        }
+            => PathSegments.Last().ThisSubTree.GetHashCode() + EnumerableExtensions.GetSequenceHashCode(PathSegments.SelectEager(segment => segment.Index));
 
         public override bool Equals(object obj)
             => obj is RootedTree<T> rootedTree && Equals(rootedTree);

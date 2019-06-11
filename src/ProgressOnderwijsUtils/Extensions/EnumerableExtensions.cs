@@ -55,73 +55,51 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static bool None<TSource>([NotNull] this IEnumerable<TSource> source)
-        {
-            return !source.Any();
-        }
+            => !source.Any();
 
         [Pure]
         public static bool None<TSource>([NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, bool> predicate)
-        {
-            return !source.Any(predicate);
-        }
+            => !source.Any(predicate);
 
         [Pure]
         public static bool None<TSource>([NotNull] this IQueryable<TSource> source)
-        {
-            return !source.Any();
-        }
+            => !source.Any();
 
         [Pure]
         public static bool None<TSource>([NotNull] this IQueryable<TSource> source, [NotNull] Expression<Func<TSource, bool>> predicate)
-        {
-            return !source.Any(predicate);
-        }
+            => !source.Any(predicate);
 
         [Pure]
         public static IEnumerable<TSource> WhereIf<TSource>(this IEnumerable<TSource> source, bool condition, Func<TSource, bool> predicate)
-        {
-            return condition ? source.Where(predicate) : source;
-        }
+            => condition ? source.Where(predicate) : source;
 
         [NotNull]
         [Pure]
         public static IReadOnlyList<T> ToReadOnly<T>([NotNull] this IEnumerable<T> list)
-        {
-            return list.ToArray();
-        }
+            => list.ToArray();
 
         [NotNull]
         [Pure]
         public static HashSet<T> ToSet<T>([NotNull] this IEnumerable<T> list)
-        {
-            return new HashSet<T>(list);
-        }
+            => new HashSet<T>(list);
 
         [NotNull]
         [Pure]
         public static HashSet<T> ToSet<T>([NotNull] this IEnumerable<T> list, IEqualityComparer<T> comparer)
-        {
-            return new HashSet<T>(list, comparer);
-        }
+            => new HashSet<T>(list, comparer);
 
         [Pure]
         public static bool SetEqual<T>([NotNull] this IEnumerable<T> list, [NotNull] IEnumerable<T> other)
-        {
-            return list.ToSet().SetEquals(other);
-        }
+            => list.ToSet().SetEquals(other);
 
         [Pure]
         public static bool SetEqual<T>([NotNull] this IEnumerable<T> list, [NotNull] IEnumerable<T> other, IEqualityComparer<T> comparer)
-        {
-            return list.ToSet(comparer).SetEquals(other);
-        }
+            => list.ToSet(comparer).SetEquals(other);
 
         [NotNull]
         [Pure]
         public static IEnumerable<T> EmptyIfNull<T>([CanBeNull] this IEnumerable<T> list)
-        {
-            return list ?? Enumerable.Empty<T>();
-        }
+            => list ?? Enumerable.Empty<T>();
 
         [Pure]
         public static int GetSequenceHashCode<T>([NotNull] IEnumerable<T> list, [CanBeNull] IEqualityComparer<T> elementComparer = null)
@@ -154,9 +132,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         [Pure]
         public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>([NotNull] this IEnumerable<T> list, [NotNull] Func<T, TKey> keySelector, Func<T, TVal> valSelector)
-        {
-            return list.ToSortedList(keySelector, valSelector, Comparer<TKey>.Default);
-        }
+            => list.ToSortedList(keySelector, valSelector, Comparer<TKey>.Default);
 
         [NotNull]
         [Pure]

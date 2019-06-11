@@ -60,8 +60,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
 
         [NotNull]
         XElement ToXml()
-        {
-            return new XElement(
+            => new XElement(
                 SamlNamespaces.SAMLP_NS + "AuthnRequest",
                 new XAttribute(XNamespace.Xmlns + "saml", SamlNamespaces.SAML_NS.NamespaceName),
                 new XAttribute(XNamespace.Xmlns + "sampl", SamlNamespaces.SAMLP_NS.NamespaceName),
@@ -80,6 +79,5 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                         new XElement(SamlNamespaces.SAML_NS + "AuthnContextClassRef", AuthnContextClassRef)
                     )
             );
-        }
     }
 }
