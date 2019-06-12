@@ -4,42 +4,6 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public sealed class SqlCommandCreationContext : IDisposable
-    {
-        readonly SqlConnection connection;
-
-        public SqlConnection GetConnection()
-            => connection;
-
-        readonly ISqlCommandTracer tracer;
-
-        public ISqlCommandTracer Tracer()
-            => tracer;
-
-        readonly int commandTimeoutInS;
-
-        public int DefaultCommandTimeout()
-            => commandTimeoutInS;
-
-        // ReSharper disable UnusedMember.Global
-        // Handige generieke functionaliteit, maar niet altijd gebruikt
-        [NotNull]
-        public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds)
-            => new SqlCommandCreationContext(GetConnection(), timeoutSeconds, Tracer());
-
-        // ReSharper restore UnusedMember.Global
-
-        public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, ISqlCommandTracer tracer)
-        {
-            connection = conn;
-            commandTimeoutInS = defaultTimeoutInS;
-            this.tracer = tracer;
-        }
-
-        public void Dispose()
-            => GetConnection().Dispose();
-    }
-
     public static class SqlConnectionExtensions
     {
         public static int DefaultCommandTimeout(this SqlConnection conn)

@@ -30,15 +30,24 @@ namespace ProgressOnderwijsUtils
         BatchTimeout BatchTimeout { get; }
     }
 
+    public interface IWithTimeout<out TSelf> : IDefinesBatchTimeout
+        where TSelf : IWithTimeout<TSelf>
+    {
+        TSelf WithTimeout(BatchTimeout timeout);
+    }
+
     public interface IExecutableBatch<out TQueryReturnValue>
     {
         TQueryReturnValue Execute([NotNull] SqlConnection conn);
     }
 
-    public readonly struct BatchNonQuery : INestableSql, IDefinesBatchTimeout, IExecutableBatch<int>
+    public readonly struct BatchNonQuery : INestableSql, IExecutableBatch<int>, IWithTimeout<BatchNonQuery>
     {
         public ParameterizedSql Sql { get; }
         public BatchTimeout BatchTimeout { get; }
+
+        public BatchNonQuery WithTimeout(BatchTimeout timeout)
+            => new BatchNonQuery(Sql, timeout);
 
         public BatchNonQuery(ParameterizedSql sql, BatchTimeout timeout)
             => (Sql, BatchTimeout) = (sql, timeout);
@@ -61,11 +70,14 @@ namespace ProgressOnderwijsUtils
     /// <summary>
     /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
     /// </summary>
-    public readonly struct BatchOfDataTable : INestableSql, IDefinesBatchTimeout, IExecutableBatch<DataTable>
+    public readonly struct BatchOfDataTable : INestableSql, IExecutableBatch<DataTable>, IWithTimeout<BatchOfDataTable>
     {
         public ParameterizedSql Sql { get; }
         public BatchTimeout BatchTimeout { get; }
         public MissingSchemaAction MissingSchemaAction { get; }
+
+        public BatchOfDataTable WithTimeout(BatchTimeout timeout)
+            => new BatchOfDataTable(Sql, timeout, MissingSchemaAction);
 
         public BatchOfDataTable(ParameterizedSql sql, BatchTimeout timeout, MissingSchemaAction missingSchemaAction)
             => (Sql, BatchTimeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
@@ -88,13 +100,16 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BatchOfScalar<T> : INestableSql, IDefinesBatchTimeout, IExecutableBatch<T>
+    public readonly struct BatchOfScalar<T> : INestableSql, IExecutableBatch<T>, IWithTimeout<BatchOfScalar<T>>
     {
         public ParameterizedSql Sql { get; }
         public BatchTimeout BatchTimeout { get; }
 
         public BatchOfScalar(ParameterizedSql sql, BatchTimeout timeout)
             => (Sql, BatchTimeout) = (sql, timeout);
+
+        public BatchOfScalar<T> WithTimeout(BatchTimeout timeout)
+            => new BatchOfScalar<T>(Sql, timeout);
 
         [MustUseReturnValue]
         public T Execute(SqlConnection conn)
@@ -111,13 +126,16 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BatchOfBuiltins<T> : INestableSql, IDefinesBatchTimeout, IExecutableBatch<T[]>
+    public readonly struct BatchOfBuiltins<T> : INestableSql, IExecutableBatch<T[]>, IWithTimeout<BatchOfBuiltins<T>>
     {
         public ParameterizedSql Sql { get; }
         public BatchTimeout BatchTimeout { get; }
 
         public BatchOfBuiltins(ParameterizedSql sql, BatchTimeout timeout)
             => (Sql, BatchTimeout) = (sql, timeout);
+
+        public BatchOfBuiltins<T> WithTimeout(BatchTimeout timeout)
+            => new BatchOfBuiltins<T>(Sql, timeout);
 
         public T[] Execute(SqlConnection conn)
         {
@@ -134,7 +152,7 @@ namespace ProgressOnderwijsUtils
     public readonly struct BatchOfObjects<
         [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
         T
-    > : INestableSql, IDefinesBatchTimeout, IExecutableBatch<T[]>
+    > : INestableSql, IExecutableBatch<T[]>, IWithTimeout<BatchOfObjects<T>>
         where T : IMetaObject, new()
     {
         public ParameterizedSql Sql { get; }
@@ -143,6 +161,15 @@ namespace ProgressOnderwijsUtils
 
         public BatchOfObjects(ParameterizedSql sql, BatchTimeout timeout, FieldMappingMode fieldMapping)
             => (Sql, BatchTimeout, FieldMapping) = (sql, timeout, fieldMapping);
+
+        public BatchOfObjects<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
+            => new BatchOfObjects<T>(Sql, BatchTimeout, fieldMapping);
+
+        public LazyBatchOfObjects<T> ToLazilyEnumeratedBatch()
+            => new LazyBatchOfObjects<T>(Sql, BatchTimeout, FieldMapping);
+
+        public BatchOfObjects<T> WithTimeout(BatchTimeout batchTimeout)
+            => new BatchOfObjects<T>(Sql, batchTimeout, FieldMapping);
 
         public T[] Execute(SqlConnection conn)
         {
@@ -165,17 +192,9 @@ namespace ProgressOnderwijsUtils
                 }
             }
         }
+    }
 
-        public BatchOfObjects<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
-            => new BatchOfObjects<T>(Sql, BatchTimeout, fieldMapping);
-
-        public LazyBatchOfObjects<T> EnumerateLazily()
-            => new LazyBatchOfObjects<T>(Sql, BatchTimeout, FieldMapping);
-
-        public BatchOfObjects<T> WithTimeout(BatchTimeout batchTimeout)
-            => new BatchOfObjects<T>(Sql, batchTimeout, FieldMapping);    }
-
-    public readonly struct LazyBatchOfObjects<T> : INestableSql, IDefinesBatchTimeout, IExecutableBatch<IEnumerable<T>>
+    public readonly struct LazyBatchOfObjects<T> : INestableSql, IExecutableBatch<IEnumerable<T>>, IWithTimeout<LazyBatchOfObjects<T>>
         where T : IMetaObject, new()
     {
         public ParameterizedSql Sql { get; }
@@ -184,6 +203,15 @@ namespace ProgressOnderwijsUtils
 
         public LazyBatchOfObjects(ParameterizedSql sql, BatchTimeout timeout, FieldMappingMode fieldMapping)
             => (Sql, BatchTimeout, FieldMapping) = (sql, timeout, fieldMapping);
+
+        public LazyBatchOfObjects<T> WithTimeout(BatchTimeout timeout)
+            => new LazyBatchOfObjects<T>(Sql, timeout, FieldMapping);
+
+        public LazyBatchOfObjects<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
+            => new LazyBatchOfObjects<T>(Sql, BatchTimeout, fieldMapping);
+
+        public BatchOfObjects<T> ToEagerlyEnumeratedBatch()
+            => new BatchOfObjects<T>(Sql, BatchTimeout, FieldMapping);
 
         public IEnumerable<T> Execute(SqlConnection conn)
         {
