@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
@@ -96,10 +95,6 @@ namespace ProgressOnderwijsUtils
             T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping)
             where T : IMetaObject, new()
             => q.OfObjects<T>().WithFieldMappingMode(fieldMapping).Execute(qCommandCreationContext.Connection);
-
-        [NotNull]
-        static string CurrentMethodName<T>([CallerMemberName] string callingMethod = null)
-            => callingMethod + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">()";
 
         /// <summary>
         /// Executes a  DataTable op basis van het huidige commando met de huidige parameters
