@@ -22,34 +22,34 @@ namespace ProgressOnderwijsUtils
     public static class ParameterizedSqlObjectMapper
     {
         public static BatchNonQuery OfNonQuery(this ParameterizedSql sql)
-            => new BatchNonQuery(sql, null);
+            => new BatchNonQuery(sql, BatchTimeout.DeferToConnectionDefault);
 
-        public static BatchNonQuery OfNonQuery(this ParameterizedSql sql, int? timeout)
+        public static BatchNonQuery OfNonQuery(this ParameterizedSql sql, BatchTimeout timeout)
             => new BatchNonQuery(sql, timeout);
 
         public static BatchOfDataTable OfDataTable(this ParameterizedSql sql, MissingSchemaAction missingSchemaAction)
-            => new BatchOfDataTable(sql, null, missingSchemaAction);
+            => new BatchOfDataTable(sql, BatchTimeout.DeferToConnectionDefault, missingSchemaAction);
 
-        public static BatchOfDataTable OfDataTable(this ParameterizedSql sql, MissingSchemaAction missingSchemaAction, int? timeout)
+        public static BatchOfDataTable OfDataTable(this ParameterizedSql sql, MissingSchemaAction missingSchemaAction, BatchTimeout timeout)
             => new BatchOfDataTable(sql, timeout, missingSchemaAction);
 
         public static BatchOfScalar<T> OfScalar<T>(this ParameterizedSql sql)
-            => new BatchOfScalar<T>(sql, null);
+            => new BatchOfScalar<T>(sql, BatchTimeout.DeferToConnectionDefault);
 
-        public static BatchOfScalar<T> OfScalar<T>(this ParameterizedSql sql, int? timeout)
+        public static BatchOfScalar<T> OfScalar<T>(this ParameterizedSql sql, BatchTimeout timeout)
             => new BatchOfScalar<T>(sql, timeout);
 
         public static BatchOfBuiltins<T> OfBuiltins<T>(this ParameterizedSql sql)
-            => new BatchOfBuiltins<T>(sql, null);
+            => new BatchOfBuiltins<T>(sql, BatchTimeout.DeferToConnectionDefault);
 
-        public static BatchOfBuiltins<T> OfBuiltins<T>(this ParameterizedSql sql, int? timeout)
+        public static BatchOfBuiltins<T> OfBuiltins<T>(this ParameterizedSql sql, BatchTimeout timeout)
             => new BatchOfBuiltins<T>(sql, timeout);
 
         public static BatchOfObjects<T> OfObjects<T>(this ParameterizedSql sql)
             where T : IMetaObject, new()
-            => new BatchOfObjects<T>(sql, null, FieldMappingMode.RequireExactColumnMatches);
+            => new BatchOfObjects<T>(sql, BatchTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
 
-        public static BatchOfObjects<T> OfObjects<T>(this ParameterizedSql sql, int? timeout)
+        public static BatchOfObjects<T> OfObjects<T>(this ParameterizedSql sql, BatchTimeout timeout)
             where T : IMetaObject, new()
             => new BatchOfObjects<T>(sql, timeout, FieldMappingMode.RequireExactColumnMatches);
 

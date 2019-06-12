@@ -138,11 +138,15 @@ namespace ProgressOnderwijsUtils.Tests
         public void TimeoutDetectionAbortsWithInconclusiveAfterTimeout()
         {
             using (var localdb = new TransactedLocalConnection()) {
-                var ex = Assert.ThrowsAny<Exception>(() => {
-                    SQL($"WAITFOR DELAY '00:00:02'").OfNonQuery(1).Execute(localdb.Connection);
-                });
+                var ex = Assert.ThrowsAny<Exception>(() => { SQL($"WAITFOR DELAY '00:00:02'").OfNonQuery(BatchTimeout.AbsoluteSeconds(1)).Execute(localdb.Connection); });
                 PAssert.That(() => ex.IsRetriableConnectionFailure());
             }
+        }
+
+        [Fact]
+        public void ClrDefaultIsSemanticDefault()
+        {
+            PAssert.That(() => Equals(default(BatchTimeout), BatchTimeout.DeferToConnectionDefault));
         }
 
         [Fact]

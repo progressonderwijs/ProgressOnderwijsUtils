@@ -30,8 +30,8 @@ namespace ProgressOnderwijsUtils
         public ReusableCommand CreateSqlCommand([NotNull] SqlCommandCreationContext conn)
             => CreateSqlCommand(conn.Connection, conn.CommandTimeoutInS, conn.Tracer);
 
-        public ReusableCommand CreateSqlCommand(SqlConnection conn, int? timeout)
-            => CreateSqlCommand(conn, conn.TimeoutWithFallback(timeout), conn.Tracer());
+        public ReusableCommand CreateSqlCommand(SqlConnection conn, BatchTimeout timeout)
+            => CreateSqlCommand(conn, timeout.TimeoutWithFallback(conn), conn.Tracer());
 
         /// <summary>
         /// Converts this parameterized sql statement into an sql command.
