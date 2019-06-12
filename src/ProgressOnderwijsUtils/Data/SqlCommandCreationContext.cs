@@ -6,27 +6,36 @@ namespace ProgressOnderwijsUtils
 {
     public sealed class SqlCommandCreationContext : IDisposable
     {
-        public SqlConnection Connection { get; }
-        public ISqlCommandTracer Tracer { get; }
-        public int CommandTimeoutInS { get; }
+        readonly SqlConnection connection;
+
+        public SqlConnection GetConnection()
+            => connection;
+        readonly ISqlCommandTracer tracer;
+
+        public ISqlCommandTracer Tracer()
+            => tracer;
+        readonly int commandTimeoutInS;
+
+        public int GetCommandTimeoutInS()
+            => commandTimeoutInS;
 
         // ReSharper disable UnusedMember.Global
         // Handige generieke functionaliteit, maar niet altijd gebruikt
         [NotNull]
         public SqlCommandCreationContext OverrideTimeout(int timeoutSeconds)
-            => new SqlCommandCreationContext(Connection, timeoutSeconds, Tracer);
+            => new SqlCommandCreationContext(GetConnection(), timeoutSeconds, Tracer());
 
         // ReSharper restore UnusedMember.Global
 
         public SqlCommandCreationContext(SqlConnection conn, int defaultTimeoutInS, ISqlCommandTracer tracer)
         {
-            Connection = conn;
-            CommandTimeoutInS = defaultTimeoutInS;
-            Tracer = tracer;
+            connection = conn;
+            commandTimeoutInS = defaultTimeoutInS;
+            this.tracer = tracer;
         }
 
         public void Dispose()
-            => Connection.Dispose();
+            => GetConnection().Dispose();
     }
 
     public interface IAttachedToTracer
