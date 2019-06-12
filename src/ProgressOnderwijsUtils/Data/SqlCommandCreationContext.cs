@@ -32,4 +32,26 @@ namespace ProgressOnderwijsUtils
         public static implicit operator SqlCommandCreationContext(SqlConnection conn)
             => new SqlCommandCreationContext(conn, 0, null);
     }
+
+    public interface IAttachedToTracer
+    {
+        ISqlCommandTracer Tracer { get; }
+    }
+
+    public interface IHasDefaultCommandTimeout
+    {
+        int DefaultCommandTimeoutInS { get; }
+    }
+
+    public sealed class SqlConnectionContext : SiteBase, IAttachedToTracer, IHasDefaultCommandTimeout
+    {
+        public SqlConnectionContext(int defaultCommandTimeoutInS, ISqlCommandTracer tracer)
+        {
+            DefaultCommandTimeoutInS = defaultCommandTimeoutInS;
+            Tracer = tracer;
+        }
+
+        public ISqlCommandTracer Tracer { get; }
+        public int DefaultCommandTimeoutInS { get; }
+    }
 }

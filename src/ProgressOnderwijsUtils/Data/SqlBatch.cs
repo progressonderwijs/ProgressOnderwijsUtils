@@ -41,16 +41,6 @@ namespace ProgressOnderwijsUtils
         TQueryReturnValue Execute([NotNull] SqlConnection conn);
     }
 
-    public interface IAttachedToTracer
-    {
-        ISqlCommandTracer Tracer { get; }
-    }
-
-    public interface IHasDefaultCommandTimeout
-    {
-        int DefaultCommandTimeoutInS { get; }
-    }
-
     public readonly struct BatchNonQuery : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<int>
     {
         public ParameterizedSql Sql { get; }
@@ -87,7 +77,7 @@ namespace ProgressOnderwijsUtils
         [MustUseReturnValue]
         public T Execute(SqlConnection conn)
         {
-            using (var cmd = Sql.CreateSqlCommand(conn,  conn.TimeoutWithFallback(Timeout), conn.Tracer())) {
+            using (var cmd = Sql.CreateSqlCommand(conn, conn.TimeoutWithFallback(Timeout), conn.Tracer())) {
                 try {
                     var value = cmd.Command.ExecuteScalar();
 
