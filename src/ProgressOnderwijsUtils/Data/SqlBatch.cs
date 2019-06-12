@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Runtime.CompilerServices;
 using System.Text;
 using ExpressionToCodeLib;
@@ -14,6 +15,15 @@ namespace ProgressOnderwijsUtils
     {
         public static string CurrentMethodName<T>()
             => typeof(T).ToCSharpFriendlyTypeName();
+
+        public static SqlCommandCreationContext AsTmpContext(this SqlConnection conn, int? timeout)
+            => new SqlCommandCreationContext(conn, conn.TimeoutWithFallback(timeout), Tracer(conn));
+
+        public static ISqlCommandTracer Tracer(this SqlConnection conn)
+            => (conn.Site as IAttachedToTracer)?.Tracer;
+
+        public static int TimeoutWithFallback(this SqlConnection conn, int? timeout)
+            => timeout ?? (conn.Site as IHasDefaultCommandTimeout)?.DefaultCommandTimeoutInS ?? 0;
     }
 
     public interface INestableSql
@@ -28,7 +38,17 @@ namespace ProgressOnderwijsUtils
 
     public interface IExecutableBatch<out TQueryReturnValue>
     {
-        TQueryReturnValue Execute([NotNull] SqlCommandCreationContext ctx);
+        TQueryReturnValue Execute([NotNull] SqlConnection conn);
+    }
+
+    public interface IAttachedToTracer
+    {
+        ISqlCommandTracer Tracer { get; }
+    }
+
+    public interface IHasDefaultCommandTimeout
+    {
+        int DefaultCommandTimeoutInS { get; }
     }
 
     public readonly struct BatchNonQuery : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<int>
@@ -39,8 +59,8 @@ namespace ProgressOnderwijsUtils
         public BatchNonQuery(ParameterizedSql sql, int? timeout)
             => (Sql, Timeout) = (sql, timeout);
 
-        public int Execute(SqlCommandCreationContext ctx)
-            => Sql.ExecuteNonQuery(Timeout == null ? ctx : ctx.OverrideTimeout(Timeout.Value));
+        public int Execute(SqlConnection conn)
+            => Sql.ExecuteNonQuery(conn.AsTmpContext(Timeout));
     }
 
     public readonly struct BatchOfDataTable : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<DataTable>
@@ -52,8 +72,8 @@ namespace ProgressOnderwijsUtils
         public BatchOfDataTable(ParameterizedSql sql, int? timeout, MissingSchemaAction missingSchemaAction)
             => (Sql, Timeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
 
-        public DataTable Execute(SqlCommandCreationContext ctx)
-            => Sql.ReadDataTable(Timeout == null ? ctx : ctx.OverrideTimeout(Timeout.Value), MissingSchemaAction);
+        public DataTable Execute(SqlConnection conn)
+            => Sql.ReadDataTable(conn.AsTmpContext(Timeout), MissingSchemaAction);
     }
 
     public readonly struct BatchOfScalar<T> : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<T>
@@ -65,9 +85,9 @@ namespace ProgressOnderwijsUtils
             => (Sql, Timeout) = (sql, timeout);
 
         [MustUseReturnValue]
-        public T Execute([NotNull] SqlCommandCreationContext ctx)
+        public T Execute(SqlConnection conn)
         {
-            using (var cmd = Sql.CreateSqlCommand(ctx.Connection, Timeout ?? ctx.CommandTimeoutInS, ctx.Tracer)) {
+            using (var cmd = Sql.CreateSqlCommand(conn,  conn.TimeoutWithFallback(Timeout), conn.Tracer())) {
                 try {
                     var value = cmd.Command.ExecuteScalar();
 
@@ -87,8 +107,8 @@ namespace ProgressOnderwijsUtils
         public BatchOfBuiltins(ParameterizedSql sql, int? timeout)
             => (Sql, Timeout) = (sql, timeout);
 
-        public T[] Execute(SqlCommandCreationContext ctx)
-            => Sql.ReadPlain<T>(Timeout == null ? ctx : ctx.OverrideTimeout(Timeout.Value));
+        public T[] Execute(SqlConnection conn)
+            => Sql.ReadPlain<T>(conn.AsTmpContext(Timeout));
     }
 
     public readonly struct BatchOfObjects<T> : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<T[]>
@@ -101,8 +121,8 @@ namespace ProgressOnderwijsUtils
         public BatchOfObjects(ParameterizedSql sql, int? timeout, FieldMappingMode fieldMapping)
             => (Sql, Timeout, FieldMapping) = (sql, timeout, fieldMapping);
 
-        public T[] Execute(SqlCommandCreationContext ctx)
-            => Sql.ReadMetaObjects<T>(Timeout == null ? ctx : ctx.OverrideTimeout(Timeout.Value), FieldMapping);
+        public T[] Execute(SqlConnection conn)
+            => Sql.ReadMetaObjects<T>(conn.AsTmpContext(Timeout), FieldMapping);
 
         public BatchOfObjects<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
             => new BatchOfObjects<T>(Sql, Timeout, fieldMapping);
@@ -121,7 +141,7 @@ namespace ProgressOnderwijsUtils
         public LazyBatchOfObjects(ParameterizedSql sql, int? timeout, FieldMappingMode fieldMapping)
             => (Sql, Timeout, FieldMapping) = (sql, timeout, fieldMapping);
 
-        public IEnumerable<T> Execute(SqlCommandCreationContext ctx)
-            => Sql.ReadMetaObjects<T>(Timeout == null ? ctx : ctx.OverrideTimeout(Timeout.Value), FieldMapping);
+        public IEnumerable<T> Execute(SqlConnection conn)
+            => Sql.ReadMetaObjects<T>(conn.AsTmpContext(Timeout), FieldMapping);
     }
 }

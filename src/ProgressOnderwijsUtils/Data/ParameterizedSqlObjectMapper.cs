@@ -56,7 +56,7 @@ namespace ProgressOnderwijsUtils
 
         [MustUseReturnValue]
         public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-            => sql.OfScalar<T>(commandCreationContext.CommandTimeoutInS).Execute(commandCreationContext);
+            => sql.OfScalar<T>(commandCreationContext.CommandTimeoutInS).Execute(commandCreationContext.Connection);
 
         /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server interaction for whitespace-only commands.</summary>
         public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
