@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -26,9 +27,8 @@ namespace ProgressOnderwijsUtils
             => timeout ?? (conn.Site as IHasDefaultCommandTimeout)?.DefaultCommandTimeoutInS ?? 0;
 
         public static ReusableCommand ReusableCommand<T>(this T batch, SqlConnection conn)
-        where T: INestableSql, IDefinesTimeoutInSeconds
+            where T : INestableSql, IDefinesTimeoutInSeconds
             => batch.Sql.CreateSqlCommand(conn, batch.Timeout);
-
     }
 
     public interface INestableSql
@@ -142,7 +142,10 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BatchOfObjects<T> : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<T[]>
+    public readonly struct BatchOfObjects<
+        [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
+        T
+    > : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<T[]>
         where T : IMetaObject, new()
     {
         public ParameterizedSql Sql { get; }
@@ -153,7 +156,26 @@ namespace ProgressOnderwijsUtils
             => (Sql, Timeout, FieldMapping) = (sql, timeout, fieldMapping);
 
         public T[] Execute(SqlConnection conn)
-            => Sql.ReadMetaObjects<T>(conn.AsTmpContext(Timeout), FieldMapping);
+        {
+            using (var cmd = this.ReusableCommand(conn)) {
+                var lastColumnRead = -1;
+                SqlDataReader reader = null;
+                try {
+                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+                    var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+                    var builder = new ArrayBuilder<T>();
+                    while (reader.Read()) {
+                        var nextRow = unpacker(reader, out lastColumnRead);
+                        builder.Add(nextRow);
+                    }
+                    return builder.ToArray();
+                } catch (Exception ex) {
+                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+                } finally {
+                    reader?.Dispose();
+                }
+            }
+        }
 
         public BatchOfObjects<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
             => new BatchOfObjects<T>(Sql, Timeout, fieldMapping);

@@ -71,33 +71,31 @@ namespace ProgressOnderwijsUtils
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
         /// <param name="qCommandCreationContext">The database connection</param>
-        /// <param name="fieldMapping"> </param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
         public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping = FieldMappingMode.RequireExactColumnMatches)
+            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext)
             where T : IMetaObject, new()
-        {
-            using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                var lastColumnRead = -1;
-                SqlDataReader reader = null;
-                try {
-                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMapping);
-                    var builder = new ArrayBuilder<T>();
-                    while (reader.Read()) {
-                        var nextRow = unpacker(reader, out lastColumnRead);
-                        builder.Add(nextRow);
-                    }
-                    return builder.ToArray();
-                } catch (Exception ex) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
-                } finally {
-                    reader?.Dispose();
-                }
-            }
-        }
+            => q.OfObjects<T>().Execute(qCommandCreationContext.Connection);
+
+        /// <summary>
+        /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
+        /// Type T must have a public parameterless constructor; both structs and classes are supported
+        /// The type T must match the queries columns by name (the order is not relevant).  Matching columns to properties/fields is case insensitive.
+        /// The number of fields+properties must be the same as the number of columns
+        /// </summary>
+        /// <typeparam name="T">The type to unpack each record into</typeparam>
+        /// <param name="q">The query to execute</param>
+        /// <param name="qCommandCreationContext">The database connection</param>
+        /// <param name="fieldMapping">Whether to allow missing or extra columns</param>
+        /// <returns>An array of strongly-typed objects; never null</returns>
+        [MustUseReturnValue]
+        [NotNull]
+        public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
+            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping)
+            where T : IMetaObject, new()
+            => q.OfObjects<T>().WithFieldMappingMode(fieldMapping).Execute(qCommandCreationContext.Connection);
 
         [NotNull]
         static string CurrentMethodName<T>([CallerMemberName] string callingMethod = null)
@@ -167,7 +165,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
+        internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
             where T : IMetaObject, new()
         {
             if (reader?.IsClosed != false || lastColumnRead < 0) {
@@ -294,7 +292,7 @@ namespace ProgressOnderwijsUtils
             return true;
         }
 
-        static class DataReaderSpecialization<TReader>
+        internal static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
         {
             public delegate T TRowReader<out T>(TReader reader, out int lastColumnRead);
