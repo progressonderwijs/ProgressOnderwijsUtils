@@ -171,7 +171,9 @@ namespace ProgressOnderwijsUtils
 
         public LazyBatchOfObjects<T> EnumerateLazily()
             => new LazyBatchOfObjects<T>(Sql, BatchTimeout, FieldMapping);
-    }
+
+        public BatchOfObjects<T> WithTimeout(BatchTimeout batchTimeout)
+            => new BatchOfObjects<T>(Sql, batchTimeout, FieldMapping);    }
 
     public readonly struct LazyBatchOfObjects<T> : INestableSql, IDefinesBatchTimeout, IExecutableBatch<IEnumerable<T>>
         where T : IMetaObject, new()

@@ -36,7 +36,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static DeletionReport[] RecursivelyDelete<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
             TId>(
-            [NotNull] SqlCommandCreationContext conn,
+            [NotNull] SqlConnection conn,
             [NotNull] DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
             [CanBeNull] Action<string> logger,

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -16,26 +16,27 @@ namespace ProgressOnderwijsUtils
     static class MetaObjectBulkInsertOperation
     {
         public static void Execute<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] SqlCommandCreationContext sqlContext, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, [NotNull] IEnumerable<T> enumerable, CancellationToken cancellationToken)
+            T>([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, [NotNull] IEnumerable<T> enumerable, BatchTimeout timeout, CancellationToken cancellationToken)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             if (enumerable == null) {
                 throw new ArgumentNullException(nameof(enumerable));
             }
-            if (sqlContext == null) {
-                throw new ArgumentNullException(nameof(sqlContext));
+            if (sqlConn == null) {
+                throw new ArgumentNullException(nameof(sqlConn));
             }
-            if (sqlContext.Connection.State != ConnectionState.Open) {
-                throw new InvalidOperationException($"Cannot bulk copy into {tableName}: connection isn't open but {sqlContext.Connection.State}.");
+            if (sqlConn.State != ConnectionState.Open) {
+                throw new InvalidOperationException($"Cannot bulk copy into {tableName}: connection isn't open but {sqlConn.State}.");
             }
 
+            var timeoutInSqlFormat = timeout.TimeoutWithFallback(sqlConn);
             var effectiveReaderToken =
-                sqlContext.CommandTimeoutInS == 0 ? cancellationToken
-                : cancellationToken == default ? new CancellationTokenSource(TimeSpan.FromSeconds(sqlContext.CommandTimeoutInS)).Token
-                : CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(TimeSpan.FromSeconds(sqlContext.CommandTimeoutInS)).Token, cancellationToken).Token;
-            using (var sqlBulkCopy = new SqlBulkCopy(sqlContext.Connection, options, null))
+                timeoutInSqlFormat == 0 ? cancellationToken
+                : cancellationToken == default ? new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSqlFormat)).Token
+                : CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(timeoutInSqlFormat).Token, cancellationToken).Token;
+            using (var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null))
             using (var objectReader = new MetaObjectDataReader<T>(enumerable, effectiveReaderToken)) {
-                sqlBulkCopy.BulkCopyTimeout = sqlContext.CommandTimeoutInS;
+                sqlBulkCopy.BulkCopyTimeout = timeoutInSqlFormat;
                 sqlBulkCopy.DestinationTableName = tableName;
                 var mapping = CreateMapping(objectReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options);
 
@@ -48,7 +49,7 @@ namespace ProgressOnderwijsUtils
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is int destinationColumnIndex) {
                     throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException<T>(mapping, destinationColumnIndex, ex);
                 } finally {
-                    TraceBulkInsertDuration(sqlContext.Tracer, tableName, sw, objectReader.RowsProcessed);
+                    TraceBulkInsertDuration(sqlConn.Tracer(), tableName, sw, objectReader.RowsProcessed);
                 }
             }
         }

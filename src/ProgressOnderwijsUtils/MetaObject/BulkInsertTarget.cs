@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading;
 using JetBrains.Annotations;
@@ -44,8 +44,8 @@ namespace ProgressOnderwijsUtils
             => new BulkInsertTarget(TableName, Columns, Mode, options);
 
         public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] SqlCommandCreationContext sqlContext, [NotNull] IEnumerable<T> metaObjects, CancellationToken cancellationToken = default)
+            T>([NotNull] SqlConnection sqlConn, [NotNull] IEnumerable<T> metaObjects, BatchTimeout timeout = default, CancellationToken cancellationToken = default)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => MetaObjectBulkInsertOperation.Execute(sqlContext, TableName, Columns, Mode, Options, metaObjects, cancellationToken);
+            => MetaObjectBulkInsertOperation.Execute(sqlConn, TableName, Columns, Mode, Options, metaObjects, timeout, cancellationToken);
     }
 }

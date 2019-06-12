@@ -77,9 +77,9 @@ namespace ProgressOnderwijsUtils.Tests
                     , bla nvarchar(max) null
                     , bla2 nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Context);
+            ").ExecuteNonQuery(Connection);
 
-            return BulkInsertTarget.LoadFromTable(Context, tableName);
+            return BulkInsertTarget.LoadFromTable(Connection, tableName);
         }
 
         sealed class ComputedColumnExample : ValueBase<ComputedColumnExample>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -94,8 +94,8 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var target
                 = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context.Connection, target);
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(Context);
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
         }
 
@@ -104,7 +104,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var target
                 = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(Context.Connection, target));
+            Assert.ThrowsAny<Exception>(() => new BlaWithMispelledColumns[0].BulkCopyToSqlServer(Connection, target));
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var target
                 = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(Context.Connection, target));
+            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns[0].BulkCopyToSqlServer(Connection, target));
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var target
                 = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(Context.Connection, target));
+            Assert.ThrowsAny<Exception>(() => new BlaWithMistypedColumns2[0].BulkCopyToSqlServer(Connection, target));
         }
 
         [Fact]
@@ -128,8 +128,8 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var target
                 = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context.Connection, target);
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(Context);
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
         }
 
@@ -143,19 +143,19 @@ namespace ProgressOnderwijsUtils.Tests
                     , Computed as convert(bit, 1) -- deliberately not placed at the end
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Context);
+            ").ExecuteNonQuery(Connection);
 
             new[] {
                 new ComputedColumnExample {
                     Id = 11,
                     Bla = "Something"
                 }
-            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
+            }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<ComputedColumnExample>(Context).Single();
+            ").ReadMetaObjects<ComputedColumnExample>(Connection).Single();
             PAssert.That(() => fromDb.Computed);
         }
 
@@ -182,19 +182,19 @@ namespace ProgressOnderwijsUtils.Tests
                     , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Context);
+            ").ExecuteNonQuery(Connection);
 
             new[] {
                 new ExcludingIdentityColumn {
                     Id = 11,
                     Bla = "Something"
                 }
-            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
+            }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<IncludingIdentityColumn>(Context).Single();
+            ").ReadMetaObjects<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 1);
         }
 
@@ -208,7 +208,7 @@ namespace ProgressOnderwijsUtils.Tests
                     , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Context);
+            ").ExecuteNonQuery(Connection);
 
             new[] {
                 new IncludingIdentityColumn {
@@ -216,12 +216,12 @@ namespace ProgressOnderwijsUtils.Tests
                     AnIdentity = 37,
                     Bla = "Something"
                 }
-            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
+            }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<IncludingIdentityColumn>(Context).Single();
+            ").ReadMetaObjects<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 1);
         }
 
@@ -235,19 +235,19 @@ namespace ProgressOnderwijsUtils.Tests
                     , AnIdentity int not null identity(1,1) -- deliberately not placed at the end or start
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Context);
+            ").ExecuteNonQuery(Connection);
 
             new[] {
                 new IncludingIdentityColumn {
                     Id = 11,
                     Bla = "Something"
                 }
-            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName).With(SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.CheckConstraints));
+            }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName).With(SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.CheckConstraints));
 
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<IncludingIdentityColumn>(Context).Single();
+            ").ReadMetaObjects<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 0);
         }
 
@@ -262,24 +262,24 @@ namespace ProgressOnderwijsUtils.Tests
                     , Computed as convert(bit, 1) -- deliberately not placed at the end
                     , Bla nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Context);
+            ").ExecuteNonQuery(Connection);
 
             SQL($@"
                 alter table {tableName}
                 drop column ToDrop;
-            ").ExecuteNonQuery(Context);
+            ").ExecuteNonQuery(Connection);
 
             new[] {
                 new ComputedColumnExample {
                     Id = 11,
                     Bla = "Something"
                 }
-            }.BulkCopyToSqlServer(Context, BulkInsertTarget.LoadFromTable(Context, tableName));
+            }.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<ComputedColumnExample>(Context).Single();
+            ").ReadMetaObjects<ComputedColumnExample>(Connection).Single();
             PAssert.That(() => fromDb.Computed);
         }
 
@@ -288,7 +288,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var target
                 = CreateTempTable();
-            Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(Context.Connection, target));
+            Assert.ThrowsAny<Exception>(() => new BlaWithExtraClrFields[0].BulkCopyToSqlServer(Connection, target));
         }
     }
 }

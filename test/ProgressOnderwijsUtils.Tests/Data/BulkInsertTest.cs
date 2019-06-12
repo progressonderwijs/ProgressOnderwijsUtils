@@ -25,9 +25,9 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     , CustomBla nvarchar(max) not null
                     , CustomBlaThanCanBeNull nvarchar(max) null
                 )
-            ").ExecuteNonQuery(Context);
+            ").ExecuteNonQuery(Connection);
 
-            return BulkInsertTarget.LoadFromTable(Context, tableName.CommandText());
+            return BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText());
         }
 
         sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -81,16 +81,16 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void BulkCopysWithConcurrentQueriesCrash()
         {
             var target = CreateTable();
-            var evilEnumerable = SampleData.Where(o => SQL($"select 1").ReadScalar<int>(Context) == 1);
-            Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Context, target));
+            var evilEnumerable = SampleData.Where(o => SQL($"select 1").ReadScalar<int>(Connection) == 1);
+            Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Connection, target));
         }
 
         [Fact]
         public void BulkInsertAndReadRoundTrips()
         {
             var target = CreateTable();
-            SampleData.BulkCopyToSqlServer(Context, target);
-            var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Context);
+            SampleData.BulkCopyToSqlServer(Connection, target);
+            var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
             var missingInDb = SampleData.Except(fromDb);
             var extraInDb = fromDb.Except(SampleData);
             PAssert.That(() => missingInDb.None());
@@ -102,8 +102,8 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public void EmptyBulkInsertAndReadRoundTrips()
         {
             var target = CreateTable();
-            SampleData.Take(0).BulkCopyToSqlServer(Context, target);
-            var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Context);
+            SampleData.Take(0).BulkCopyToSqlServer(Connection, target);
+            var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
             PAssert.That(() => fromDb.None());
         }
 

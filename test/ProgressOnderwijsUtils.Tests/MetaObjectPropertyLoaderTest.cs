@@ -84,8 +84,8 @@ namespace ProgressOnderwijsUtils.Tests
                     , bla nvarchar(max) null
                     , bla2 nvarchar(max) not null
                 )
-            ").ExecuteNonQuery(Context);
-            return BulkInsertTarget.LoadFromTable(Context, tableName);
+            ").ExecuteNonQuery(Connection);
+            return BulkInsertTarget.LoadFromTable(Connection, tableName);
         }
 
         [Fact]
@@ -94,9 +94,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
             var target = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context, target);
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk3>(Context);
+            var fromDb = SQL($"select Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk3>(Connection);
             PAssert.That(() => SampleObjects.Select(s => s.Bla2).SequenceEqual(fromDb.Select(x => x.Bla2.AsString)));
         }
 
@@ -106,9 +106,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
             var target = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context, target);
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk4>(Context);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk4>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
         }
 
@@ -118,9 +118,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
             var target = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context, target);
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk5>(Context);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk5>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
             PAssert.That(() => fromDb.All(x => x.Bla3 == null));
         }
@@ -131,9 +131,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context, target);
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context);
+            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.Value })));
         }
 
@@ -143,9 +143,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context, target);
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_nullable_struct_property>(Context);
+            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_nullable_struct_property>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id.Value, Bla = x.Bla.HasValue ? x.Bla.Value.Value : default(string), Bla2 = x.Bla2.Value })));
         }
 
@@ -155,9 +155,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context, target);
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id, Bla, Bla2 = cast(null as varchar) from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context));
+            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id, Bla, Bla2 = cast(null as varchar) from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Connection));
             PAssert.That(() => ex.Message.Contains("Cannot unpack NULL value from column Bla2", StringComparison.OrdinalIgnoreCase));
         }
 
@@ -167,9 +167,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
-            SampleObjects.BulkCopyToSqlServer(Context, target);
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id = (select Id from #MyTable), Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Context));
+            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id = (select Id from #MyTable), Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Connection));
             Assert.DoesNotContain("column", ex.Message);
             Assert.Contains("Subquery returned more than 1 value", ex.InnerException.Message);
         }
