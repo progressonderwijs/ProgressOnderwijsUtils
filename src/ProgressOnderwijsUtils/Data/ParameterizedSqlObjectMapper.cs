@@ -188,20 +188,20 @@ namespace ProgressOnderwijsUtils
 
         static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
             new Dictionary<Type, MethodInfo> {
-                { typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
-                { typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
-                { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod("GetBytes", BindingFlags.Public | BindingFlags.Static) },
-                { typeof(char), typeof(IDataRecord).GetMethod("GetChar", binding) },
-                { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod("GetChars", BindingFlags.Public | BindingFlags.Static) },
-                { typeof(DateTime), typeof(IDataRecord).GetMethod("GetDateTime", binding) },
-                { typeof(decimal), typeof(IDataRecord).GetMethod("GetDecimal", binding) },
-                { typeof(double), typeof(IDataRecord).GetMethod("GetDouble", binding) },
-                { typeof(float), typeof(IDataRecord).GetMethod("GetFloat", binding) },
-                { typeof(Guid), typeof(IDataRecord).GetMethod("GetGuid", binding) },
-                { typeof(short), typeof(IDataRecord).GetMethod("GetInt16", binding) },
-                { typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
-                { typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
-                { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
+                { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetBytes), BindingFlags.Public | BindingFlags.Static) },
+                { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetChars), BindingFlags.Public | BindingFlags.Static) },
+                { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding) },
+                { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding) },
+                { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding) },
+                { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding) },
+                { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding) },
+                { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding) },
+                { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding) },
+                { typeof(Guid), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetGuid), binding) },
+                { typeof(short), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt16), binding) },
+                { typeof(int), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt32), binding) },
+                { typeof(long), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt64), binding) },
+                { typeof(string), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetString), binding) },
             };
 
         [NotNull]
