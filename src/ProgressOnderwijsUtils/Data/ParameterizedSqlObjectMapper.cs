@@ -54,12 +54,12 @@ namespace ProgressOnderwijsUtils
             => new BatchOfObjects<T>(sql, timeout, FieldMappingMode.RequireExactColumnMatches);
 
         [MustUseReturnValue]
-        public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-            => sql.OfScalar<T>().Execute(commandCreationContext.Connection);
+        public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn)
+            => sql.OfScalar<T>().Execute(sqlConn);
 
         /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server interaction for whitespace-only commands.</summary>
-        public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-            => sql.OfNonQuery().Execute(commandCreationContext.Connection);
+        public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn)
+            => sql.OfNonQuery().Execute(sqlConn);
 
         /// <summary>
         /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
@@ -69,14 +69,14 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The database connection</param>
+        /// <param name="sqlConn">The database connection</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
         public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext)
+            T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
             where T : IMetaObject, new()
-            => q.OfObjects<T>().Execute(qCommandCreationContext.Connection);
+            => q.OfObjects<T>().Execute(sqlConn);
 
         /// <summary>
         /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
@@ -86,23 +86,23 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The database connection</param>
+        /// <param name="sqlConn">The database connection</param>
         /// <param name="fieldMapping">Whether to allow missing or extra columns</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
         public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping)
+            T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn, FieldMappingMode fieldMapping)
             where T : IMetaObject, new()
-            => q.OfObjects<T>().WithFieldMappingMode(fieldMapping).Execute(qCommandCreationContext.Connection);
+            => q.OfObjects<T>().WithFieldMappingMode(fieldMapping).Execute(sqlConn);
 
         /// <summary>
         /// Executes a  DataTable op basis van het huidige commando met de huidige parameters
         /// </summary>
         [MustUseReturnValue]
         [NotNull]
-        public static DataTable ReadDataTable(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
-            => sql.OfDataTable(missingSchemaAction).Execute(conn.Connection);
+        public static DataTable ReadDataTable(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn, MissingSchemaAction missingSchemaAction)
+            => sql.OfDataTable(missingSchemaAction).Execute(sqlConn);
 
         /// <summary>
         /// Reads all records of the given query from the database, lazily unpacking them into the yielded rows using each item's publicly writable fields and properties.
@@ -115,9 +115,9 @@ namespace ProgressOnderwijsUtils
         [MustUseReturnValue]
         [NotNull]
         public static IEnumerable<T> EnumerateMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
+            T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
             where T : IMetaObject, new()
-            => q.OfObjects<T>().WithFieldMappingMode(fieldMappingMode).EnumerateLazily().Execute(qCommandCreationContext.Connection);
+            => q.OfObjects<T>().WithFieldMappingMode(fieldMappingMode).EnumerateLazily().Execute(sqlConn);
 
         [NotNull]
         internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
@@ -156,12 +156,12 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The command creation context</param>
+        /// <param name="sqlConn">The command creation context</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadPlain<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext)
-            => q.OfBuiltins<T>().Execute(qCommandCreationContext.Connection);
+        public static T[] ReadPlain<T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
+            => q.OfBuiltins<T>().Execute(sqlConn);
 
         [MustUseReturnValue]
         [NotNull]

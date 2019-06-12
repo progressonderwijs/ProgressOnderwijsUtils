@@ -65,5 +65,8 @@ namespace ProgressOnderwijsUtils
                     throw new InvalidOperationException();
             }
         }
+
+        public static int DefaultWithFallback(SqlConnection conn)
+            => DeferToConnectionDefault.TimeoutWithFallback(conn);
     }
 }

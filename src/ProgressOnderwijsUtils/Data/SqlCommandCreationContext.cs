@@ -27,10 +27,6 @@ namespace ProgressOnderwijsUtils
 
         public void Dispose()
             => Connection.Dispose();
-
-        [NotNull]
-        public static implicit operator SqlCommandCreationContext(SqlConnection conn)
-            => new SqlCommandCreationContext(conn, 0, null);
     }
 
     public interface IAttachedToTracer

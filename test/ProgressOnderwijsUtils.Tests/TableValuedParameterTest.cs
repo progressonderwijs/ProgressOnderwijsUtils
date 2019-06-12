@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var nullStringReturningQuery = SQL($@"select cast(null as nvarchar(max))");
 
-            var unused = nullStringReturningQuery.ReadScalar<string>(Connection);//assert query OK.
+            var unused = nullStringReturningQuery.ReadScalar<string>(Connection); //assert query OK.
 
             Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<TrivialConvertibleValue<string>>(Connection));
         }
@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void SingletonTvPsCanBeExecuted()
         {
             var q = SQL($"select sum(x.querytablevalue) from {Enumerable.Range(1, 1).ToArray()} x");
-            using (var cmd = q.CreateSqlCommand(Connection)) {
+            using (var cmd = q.CreateSqlCommand(Connection, BatchTimeout.WithoutTimeout)) {
                 //make sure I'm actually testing that exceptional single-value case, not the general Strucutured case.
                 PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.SqlDbType).SequenceEqual(new[] { SqlDbType.Int }));
             }
@@ -154,7 +154,7 @@ namespace ProgressOnderwijsUtils.Tests
                 values ({testData});
             ").ExecuteNonQuery(Connection);
 
-            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Connection))
+            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Connection, BatchTimeout.DeferToConnectionDefault))
             using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default)) {
                 Assert_DataReader_GetBytes_works(reader);
             }

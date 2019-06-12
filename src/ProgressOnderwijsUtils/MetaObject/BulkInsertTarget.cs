@@ -24,11 +24,11 @@ namespace ProgressOnderwijsUtils
             => new BulkInsertTarget(table.QualifiedName, table.Columns.ArraySelect((col, colIdx) => ColumnDefinition.FromDbColumnMetaData(col.ColumnMetaData, colIdx)));
 
         [NotNull]
-        public static BulkInsertTarget LoadFromTable([NotNull] SqlCommandCreationContext conn, ParameterizedSql tableName)
+        public static BulkInsertTarget LoadFromTable([NotNull] SqlConnection conn, ParameterizedSql tableName)
             => LoadFromTable(conn, tableName.CommandText());
 
         [NotNull]
-        public static BulkInsertTarget LoadFromTable([NotNull] SqlCommandCreationContext conn, [NotNull] string tableName)
+        public static BulkInsertTarget LoadFromTable([NotNull] SqlConnection conn, [NotNull] string tableName)
             => FromCompleteSetOfColumns(tableName, DbColumnMetaData.ColumnMetaDatas(conn, tableName));
 
         [NotNull]
