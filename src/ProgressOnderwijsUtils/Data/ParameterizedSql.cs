@@ -27,22 +27,11 @@ namespace ProgressOnderwijsUtils
         /// Converts this parameterized sql statement into an sql command.
         /// The underlying SqlCommand is pooled for performance; if the provided ReusableCommand is disposed, then the SqlCommand may be reused.
         /// </summary>
-        [Obsolete]
-        public ReusableCommand CreateSqlCommand([NotNull] SqlCommandCreationContext conn)
-            => CreateSqlCommand(conn.Connection, conn.CommandTimeoutInS, conn.Tracer);
-
         public ReusableCommand CreateSqlCommand(SqlConnection conn, BatchTimeout timeout)
-            => CreateSqlCommand(conn, timeout.TimeoutWithFallback(conn), conn?.Tracer());
-
-        /// <summary>
-        /// Converts this parameterized sql statement into an sql command.
-        /// The underlying SqlCommand is pooled for performance; if the provided ReusableCommand is disposed, then the SqlCommand may be reused.
-        /// </summary>
-        public ReusableCommand CreateSqlCommand([NotNull] SqlConnection conn, int commandTimeoutInS, [CanBeNull] ISqlCommandTracer tracer)
         {
             var factory = CommandFactory.Create();
             impl?.AppendTo(ref factory);
-            return factory.FinishBuilding(conn, commandTimeoutInS, tracer);
+            return factory.FinishBuilding(conn, timeout.TimeoutWithFallback(conn), conn?.Tracer());
         }
 
         /// <summary>
