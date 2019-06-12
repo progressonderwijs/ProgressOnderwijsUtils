@@ -60,18 +60,7 @@ namespace ProgressOnderwijsUtils
 
         /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server interaction for whitespace-only commands.</summary>
         public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-        {
-            using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
-                try {
-                    if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
-                        return 0;
-                    }
-                    return cmd.Command.ExecuteNonQuery();
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ExecuteNonQuery) + " failed", e);
-                }
-            }
-        }
+            => sql.OfNonQuery().Execute(commandCreationContext.Connection);
 
         /// <summary>
         /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
@@ -120,19 +109,7 @@ namespace ProgressOnderwijsUtils
         [MustUseReturnValue]
         [NotNull]
         public static DataTable ReadDataTable(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
-        {
-            using (var cmd = sql.CreateSqlCommand(conn))
-            using (var adapter = new SqlDataAdapter(cmd.Command)) {
-                try {
-                    adapter.MissingSchemaAction = missingSchemaAction;
-                    var dt = new DataTable();
-                    adapter.Fill(dt);
-                    return dt;
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ReadDataTable) + "() failed", e);
-                }
-            }
-        }
+            => sql.OfDataTable(missingSchemaAction).Execute(conn.Connection);
 
         /// <summary>
         /// Reads all records of the given query from the database, lazily unpacking them into the yielded rows using each item's publicly writable fields and properties.
@@ -231,19 +208,11 @@ namespace ProgressOnderwijsUtils
         [MustUseReturnValue]
         [NotNull]
         public static T[] ReadPlain<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext)
-        {
-            using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                try {
-                    return ReadPlainUnpacker<T>(cmd.Command);
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
-                }
-            }
-        }
+            => q.OfBuiltins<T>().Execute(qCommandCreationContext.Connection);
 
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadPlainUnpacker<T>([NotNull] SqlCommand cmd)
+        internal static T[] ReadPlainUnpacker<T>([NotNull] SqlCommand cmd)
         {
             using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);

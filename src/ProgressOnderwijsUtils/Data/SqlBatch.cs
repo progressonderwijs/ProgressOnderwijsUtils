@@ -24,6 +24,11 @@ namespace ProgressOnderwijsUtils
 
         public static int TimeoutWithFallback(this SqlConnection conn, int? timeout)
             => timeout ?? (conn.Site as IHasDefaultCommandTimeout)?.DefaultCommandTimeoutInS ?? 0;
+
+        public static ReusableCommand ReusableCommand<T>(this T batch, SqlConnection conn)
+        where T: INestableSql, IDefinesTimeoutInSeconds
+            => batch.Sql.CreateSqlCommand(conn, batch.Timeout);
+
     }
 
     public interface INestableSql
@@ -50,9 +55,23 @@ namespace ProgressOnderwijsUtils
             => (Sql, Timeout) = (sql, timeout);
 
         public int Execute(SqlConnection conn)
-            => Sql.ExecuteNonQuery(conn.AsTmpContext(Timeout));
+        {
+            using (var cmd = this.ReusableCommand(conn)) {
+                try {
+                    if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
+                        return 0;
+                    }
+                    return cmd.Command.ExecuteNonQuery();
+                } catch (Exception e) {
+                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ParameterizedSqlObjectMapper.ExecuteNonQuery) + " failed", e);
+                }
+            }
+        }
     }
 
+    /// <summary>
+    /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
+    /// </summary>
     public readonly struct BatchOfDataTable : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<DataTable>
     {
         public ParameterizedSql Sql { get; }
@@ -62,8 +81,22 @@ namespace ProgressOnderwijsUtils
         public BatchOfDataTable(ParameterizedSql sql, int? timeout, MissingSchemaAction missingSchemaAction)
             => (Sql, Timeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
 
+        [MustUseReturnValue]
+        [NotNull]
         public DataTable Execute(SqlConnection conn)
-            => Sql.ReadDataTable(conn.AsTmpContext(Timeout), MissingSchemaAction);
+        {
+            using (var cmd = this.ReusableCommand(conn))
+            using (var adapter = new SqlDataAdapter(cmd.Command)) {
+                try {
+                    adapter.MissingSchemaAction = MissingSchemaAction;
+                    var dt = new DataTable();
+                    adapter.Fill(dt);
+                    return dt;
+                } catch (Exception e) {
+                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ParameterizedSqlObjectMapper.ReadDataTable) + "() failed", e);
+                }
+            }
+        }
     }
 
     public readonly struct BatchOfScalar<T> : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<T>
@@ -77,7 +110,7 @@ namespace ProgressOnderwijsUtils
         [MustUseReturnValue]
         public T Execute(SqlConnection conn)
         {
-            using (var cmd = Sql.CreateSqlCommand(conn, conn.TimeoutWithFallback(Timeout), conn.Tracer())) {
+            using (var cmd = this.ReusableCommand(conn)) {
                 try {
                     var value = cmd.Command.ExecuteScalar();
 
@@ -98,7 +131,15 @@ namespace ProgressOnderwijsUtils
             => (Sql, Timeout) = (sql, timeout);
 
         public T[] Execute(SqlConnection conn)
-            => Sql.ReadPlain<T>(conn.AsTmpContext(Timeout));
+        {
+            using (var cmd = this.ReusableCommand(conn)) {
+                try {
+                    return ParameterizedSqlObjectMapper.ReadPlainUnpacker<T>(cmd.Command);
+                } catch (Exception e) {
+                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
+                }
+            }
+        }
     }
 
     public readonly struct BatchOfObjects<T> : INestableSql, IDefinesTimeoutInSeconds, IExecutableBatch<T[]>

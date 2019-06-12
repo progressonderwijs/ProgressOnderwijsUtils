@@ -25,6 +25,9 @@ namespace ProgressOnderwijsUtils.Tests
             }
         }
 
+        public SqlConnection Connection
+            => Context.Connection;
+
         public void Dispose()
         {
             Transaction.Dispose();
