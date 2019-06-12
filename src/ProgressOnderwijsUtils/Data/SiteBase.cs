@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
             => throw new NotSupportedException();
 
         public virtual IContainer Container
-            => throw new NotSupportedException();
+            => null;
 
         public virtual bool DesignMode
             => throw new NotSupportedException();
