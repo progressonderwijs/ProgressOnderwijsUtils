@@ -195,6 +195,47 @@ namespace ProgressOnderwijsUtils
             => (Sql, Timeout, FieldMapping) = (sql, timeout, fieldMapping);
 
         public IEnumerable<T> Execute(SqlConnection conn)
-            => Sql.ReadMetaObjects<T>(conn.AsTmpContext(Timeout), FieldMapping);
+        {
+            //return Sql.EnumerateMetaObjects<T>(conn.AsTmpContext(Timeout), FieldMapping);
+            var cmd = this.ReusableCommand(conn);
+            SqlDataReader reader = null;
+            var lastColumnRead = -1;
+            ParameterizedSqlExecutionException CreateHelpfulException(Exception ex)
+                => cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+
+            try {
+                ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
+                try {
+                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
+                    unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+                } catch (Exception e) {
+                    throw CreateHelpfulException(e);
+                }
+
+                while (true) {
+                    bool isDone;
+                    try {
+                        isDone = !reader.Read();
+                    } catch (Exception e) {
+                        throw CreateHelpfulException(e);
+                    }
+
+                    if (isDone) {
+                        break;
+                    }
+                    T nextRow;
+                    try {
+                        nextRow = unpacker(reader, out lastColumnRead);
+                    } catch (Exception e) {
+                        throw CreateHelpfulException(e);
+                    }
+
+                    yield return nextRow; //cannot yield in try-catch block
+                }
+            } finally {
+                reader?.Dispose();
+                cmd.Dispose();
+            }
+        }
     }
 }

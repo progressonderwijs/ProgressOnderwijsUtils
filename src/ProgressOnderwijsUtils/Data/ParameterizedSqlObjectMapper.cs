@@ -122,47 +122,7 @@ namespace ProgressOnderwijsUtils
         public static IEnumerable<T> EnumerateMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
             T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
             where T : IMetaObject, new()
-        {
-            var cmd = q.CreateSqlCommand(qCommandCreationContext);
-            SqlDataReader reader = null;
-            var lastColumnRead = -1;
-            ParameterizedSqlExecutionException CreateHelpfulException(Exception ex)
-                => cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
-
-            try {
-                DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
-                try {
-                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMappingMode);
-                } catch (Exception e) {
-                    throw CreateHelpfulException(e);
-                }
-
-                while (true) {
-                    bool isDone;
-                    try {
-                        isDone = !reader.Read();
-                    } catch (Exception e) {
-                        throw CreateHelpfulException(e);
-                    }
-
-                    if (isDone) {
-                        break;
-                    }
-                    T nextRow;
-                    try {
-                        nextRow = unpacker(reader, out lastColumnRead);
-                    } catch (Exception e) {
-                        throw CreateHelpfulException(e);
-                    }
-
-                    yield return nextRow; //cannot yield in try-catch block
-                }
-            } finally {
-                reader?.Dispose();
-                cmd.Dispose();
-            }
-        }
+            => q.OfObjects<T>().WithFieldMappingMode(fieldMappingMode).EnumerateLazily().Execute(qCommandCreationContext.Connection);
 
         [NotNull]
         internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
