@@ -36,12 +36,13 @@ namespace ProgressOnderwijsUtils
         TSelf WithTimeout(BatchTimeout timeout);
     }
 
-    public interface IExecutableBatch<out TQueryReturnValue>
+    public interface IBatchWithReturnValue<out TQueryReturnValue>
     {
+        [MustUseReturnValue]
         TQueryReturnValue Execute([NotNull] SqlConnection conn);
     }
 
-    public readonly struct BatchNonQuery : INestableSql, IExecutableBatch<int>, IWithTimeout<BatchNonQuery>
+    public readonly struct BatchNonQuery : INestableSql, IWithTimeout<BatchNonQuery>
     {
         public ParameterizedSql Sql { get; }
         public BatchTimeout BatchTimeout { get; }
@@ -70,7 +71,7 @@ namespace ProgressOnderwijsUtils
     /// <summary>
     /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
     /// </summary>
-    public readonly struct BatchOfDataTable : INestableSql, IExecutableBatch<DataTable>, IWithTimeout<BatchOfDataTable>
+    public readonly struct BatchOfDataTable : INestableSql, IBatchWithReturnValue<DataTable>, IWithTimeout<BatchOfDataTable>
     {
         public ParameterizedSql Sql { get; }
         public BatchTimeout BatchTimeout { get; }
@@ -100,7 +101,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BatchOfScalar<T> : INestableSql, IExecutableBatch<T>, IWithTimeout<BatchOfScalar<T>>
+    public readonly struct BatchOfScalar<T> : INestableSql, IBatchWithReturnValue<T>, IWithTimeout<BatchOfScalar<T>>
     {
         public ParameterizedSql Sql { get; }
         public BatchTimeout BatchTimeout { get; }
@@ -126,7 +127,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BatchOfBuiltins<T> : INestableSql, IExecutableBatch<T[]>, IWithTimeout<BatchOfBuiltins<T>>
+    public readonly struct BatchOfBuiltins<T> : INestableSql, IBatchWithReturnValue<T[]>, IWithTimeout<BatchOfBuiltins<T>>
     {
         public ParameterizedSql Sql { get; }
         public BatchTimeout BatchTimeout { get; }
@@ -152,7 +153,7 @@ namespace ProgressOnderwijsUtils
     public readonly struct BatchOfObjects<
         [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
         T
-    > : INestableSql, IExecutableBatch<T[]>, IWithTimeout<BatchOfObjects<T>>
+    > : INestableSql, IBatchWithReturnValue<T[]>, IWithTimeout<BatchOfObjects<T>>
         where T : IMetaObject, new()
     {
         public ParameterizedSql Sql { get; }
@@ -194,7 +195,7 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct LazyBatchOfObjects<T> : INestableSql, IExecutableBatch<IEnumerable<T>>, IWithTimeout<LazyBatchOfObjects<T>>
+    public readonly struct LazyBatchOfObjects<T> : INestableSql, IBatchWithReturnValue<IEnumerable<T>>, IWithTimeout<LazyBatchOfObjects<T>>
         where T : IMetaObject, new()
     {
         public ParameterizedSql Sql { get; }

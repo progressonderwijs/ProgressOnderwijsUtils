@@ -16,6 +16,12 @@ namespace ProgressOnderwijsUtils
             where TSelf : IWithTimeout<TSelf>
             => batch.WithTimeout(BatchTimeout.ScaledSeconds(scaledTimeoutInS));
 
+
+        [Pure]
+        public static TSelf WithNonScaledTimeout<TSelf>(this IWithTimeout<TSelf> batch, int timeoutInAbsoluteS)
+            where TSelf : IWithTimeout<TSelf>
+            => batch.WithTimeout(BatchTimeout.AbsoluteSeconds(timeoutInAbsoluteS));
+
         [Pure]
         public static ParameterizedSql Append(this ParameterizedSql source, ParameterizedSql extra)
             => source + extra;

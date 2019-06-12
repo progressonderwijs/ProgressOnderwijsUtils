@@ -8,9 +8,6 @@ namespace ProgressOnderwijsUtils
     {
         public static int DefaultCommandTimeout(this SqlConnection conn)
             => conn.Site is IHasDefaultCommandTimeout defaultTimeout ? defaultTimeout.DefaultCommandTimeoutInS : 0;
-
-        public static SqlConnection GetConnection(this SqlConnection conn)
-            => conn;
     }
 
     public interface IAttachedToTracer
