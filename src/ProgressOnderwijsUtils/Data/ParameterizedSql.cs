@@ -15,9 +15,7 @@ namespace ProgressOnderwijsUtils
         internal readonly ISqlComponent impl;
 
         internal ParameterizedSql(ISqlComponent impl)
-        {
-            this.impl = impl;
-        }
+            => this.impl = impl;
 
         internal void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
