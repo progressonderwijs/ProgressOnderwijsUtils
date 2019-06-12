@@ -577,7 +577,7 @@ namespace ProgressOnderwijsUtils
     public static class DbLoadingHelperImpl
     {
         [NotNull]
-        [UsedImplicitly]
+        //called via reflection from DataReaderSpecialization
         public static byte[] GetBytes([NotNull] this IDataRecord row, int colIndex)
         {
             var byteCount = row.GetBytes(colIndex, 0L, null, 0, 0);
@@ -593,7 +593,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        [UsedImplicitly]
+        //called via reflection from DataReaderSpecialization
         public static char[] GetChars([NotNull] this IDataRecord row, int colIndex)
         {
             var charCount = row.GetChars(colIndex, 0L, null, 0, 0);
