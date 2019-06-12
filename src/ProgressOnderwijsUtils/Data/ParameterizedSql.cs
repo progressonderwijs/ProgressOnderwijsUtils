@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
@@ -27,10 +28,17 @@ namespace ProgressOnderwijsUtils
         /// The underlying SqlCommand is pooled for performance; if the provided ReusableCommand is disposed, then the SqlCommand may be reused.
         /// </summary>
         public ReusableCommand CreateSqlCommand([NotNull] SqlCommandCreationContext conn)
+            => CreateSqlCommand(conn.Connection, conn.CommandTimeoutInS, conn.Tracer);
+
+        /// <summary>
+        /// Converts this parameterized sql statement into an sql command.
+        /// The underlying SqlCommand is pooled for performance; if the provided ReusableCommand is disposed, then the SqlCommand may be reused.
+        /// </summary>
+        public ReusableCommand CreateSqlCommand([NotNull] SqlConnection conn, int commandTimeoutInS, [CanBeNull] ISqlCommandTracer tracer)
         {
             var factory = CommandFactory.Create();
             impl?.AppendTo(ref factory);
-            return factory.FinishBuilding(conn);
+            return factory.FinishBuilding(conn, commandTimeoutInS, tracer);
         }
 
         /// <summary>

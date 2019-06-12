@@ -79,10 +79,13 @@ namespace ProgressOnderwijsUtils
             };
 
         public ReusableCommand FinishBuilding([NotNull] SqlCommandCreationContext conn)
+            => FinishBuilding(conn.Connection, conn.CommandTimeoutInS, conn.Tracer);
+
+        public ReusableCommand FinishBuilding([NotNull] SqlConnection conn, int commandTimeoutInS, [CanBeNull] ISqlCommandTracer tracer)
         {
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);
-            command.Connection = conn.Connection;
-            command.CommandTimeout = conn.CommandTimeoutInS;
+            command.Connection = conn;
+            command.CommandTimeout = commandTimeoutInS;
             command.CommandText = queryText.FinishBuilding();
             var cmdParams = command.Parameters;
             for (var i = 0; i < paramCount; i++) {
@@ -100,7 +103,7 @@ namespace ProgressOnderwijsUtils
 
             FreeParamsAndLookup();
 
-            var timer = conn.Tracer?.StartCommandTimer(command);
+            var timer = tracer?.StartCommandTimer(command);
             return new ReusableCommand { Command = command, QueryTimer = timer };
         }
 
