@@ -10,13 +10,15 @@ namespace ProgressOnderwijsUtils
 
         public SqlConnection GetConnection()
             => connection;
+
         readonly ISqlCommandTracer tracer;
 
         public ISqlCommandTracer Tracer()
             => tracer;
+
         readonly int commandTimeoutInS;
 
-        public int GetCommandTimeoutInS()
+        public int DefaultCommandTimeout()
             => commandTimeoutInS;
 
         // ReSharper disable UnusedMember.Global
@@ -36,6 +38,15 @@ namespace ProgressOnderwijsUtils
 
         public void Dispose()
             => GetConnection().Dispose();
+    }
+
+    public static class SqlConnectionExtensions
+    {
+        public static int DefaultCommandTimeout(this SqlConnection conn)
+            => conn.Site is IHasDefaultCommandTimeout defaultTimeout ? defaultTimeout.DefaultCommandTimeoutInS : 0;
+
+        public static SqlConnection GetConnection(this SqlConnection conn)
+            => conn;
     }
 
     public interface IAttachedToTracer
@@ -60,7 +71,6 @@ namespace ProgressOnderwijsUtils
 
         public ISqlCommandTracer Tracer { get; }
         public int DefaultCommandTimeoutInS { get; }
-
         public double TimeoutScale { get; }
     }
 }

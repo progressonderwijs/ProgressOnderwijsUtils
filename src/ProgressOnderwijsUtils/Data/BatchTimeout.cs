@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
         {
             switch (Kind) {
                 case TimeoutKind.DeferToConnectionDefaultCommandTimeout:
-                    return conn.Site is IHasDefaultCommandTimeout defaultTimeout ? defaultTimeout.DefaultCommandTimeoutInS : 0;
+                    return conn.DefaultCommandTimeout();
                 case TimeoutKind.NoTimeout:
                     return 0;
                 case TimeoutKind.AbsoluteTimeout:
@@ -65,8 +65,5 @@ namespace ProgressOnderwijsUtils
                     throw new InvalidOperationException();
             }
         }
-
-        public static int DefaultWithFallback(SqlConnection conn)
-            => DeferToConnectionDefault.TimeoutWithFallback(conn);
     }
 }

@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
 
             CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, pkColumnsSql, pksTable);
             using (var bulkCopy = new SqlBulkCopy(conn)) {
-                bulkCopy.BulkCopyTimeout = BatchTimeout.DefaultWithFallback(conn);
+                bulkCopy.BulkCopyTimeout = conn.DefaultCommandTimeout();
                 bulkCopy.DestinationTableName = pksTable.CommandText();
                 bulkCopy.WriteToServer(pksToDelete);
             }
