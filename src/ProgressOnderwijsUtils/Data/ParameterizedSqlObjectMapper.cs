@@ -22,19 +22,41 @@ namespace ProgressOnderwijsUtils
 
     public static class ParameterizedSqlObjectMapper
     {
+        public static BatchNonQuery OfNonQuery(this ParameterizedSql sql)
+            => new BatchNonQuery(sql, null);
+
+        public static BatchNonQuery OfNonQuery(this ParameterizedSql sql, int? timeout)
+            => new BatchNonQuery(sql, timeout);
+
+        public static BatchOfDataTable OfDataTable(this ParameterizedSql sql, MissingSchemaAction missingSchemaAction)
+            => new BatchOfDataTable(sql, null, missingSchemaAction);
+
+        public static BatchOfDataTable OfDataTable(this ParameterizedSql sql, MissingSchemaAction missingSchemaAction, int? timeout)
+            => new BatchOfDataTable(sql, timeout, missingSchemaAction);
+
+        public static BatchOfScalar<T> OfScalar<T>(this ParameterizedSql sql)
+            => new BatchOfScalar<T>(sql, null);
+
+        public static BatchOfScalar<T> OfScalar<T>(this ParameterizedSql sql, int? timeout)
+            => new BatchOfScalar<T>(sql, timeout);
+
+        public static BatchOfBuiltins<T> OfBuiltins<T>(this ParameterizedSql sql)
+            => new BatchOfBuiltins<T>(sql, null);
+
+        public static BatchOfBuiltins<T> OfBuiltins<T>(this ParameterizedSql sql, int? timeout)
+            => new BatchOfBuiltins<T>(sql, timeout);
+
+        public static BatchOfObjects<T> OfObjects<T>(this ParameterizedSql sql)
+            where T : IMetaObject, new()
+            => new BatchOfObjects<T>(sql, null, FieldMappingMode.RequireExactColumnMatches);
+
+        public static BatchOfObjects<T> OfObjects<T>(this ParameterizedSql sql, int? timeout)
+            where T : IMetaObject, new()
+            => new BatchOfObjects<T>(sql, timeout, FieldMappingMode.RequireExactColumnMatches);
+
         [MustUseReturnValue]
         public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-        {
-            using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
-                try {
-                    var value = cmd.Command.ExecuteScalar();
-
-                    return DbValueConverter.FromDb<T>(value);
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
-                }
-            }
-        }
+            => sql.OfScalar<T>(commandCreationContext.CommandTimeoutInS).Execute(commandCreationContext);
 
         /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server interaction for whitespace-only commands.</summary>
         public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
