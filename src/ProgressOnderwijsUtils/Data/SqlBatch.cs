@@ -15,9 +15,6 @@ namespace ProgressOnderwijsUtils
         public static string CurrentMethodName<T>()
             => typeof(T).ToCSharpFriendlyTypeName();
 
-        public static ISqlCommandTracer Tracer(this SqlConnection conn)
-            => (conn.Site as IAttachedToTracer)?.Tracer;
-
         public static ReusableCommand ReusableCommand<T>(this T batch, SqlConnection conn)
             where T : INestableSql, IDefinesBatchTimeout
             => batch.Sql.CreateSqlCommand(conn, batch.BatchTimeout);
