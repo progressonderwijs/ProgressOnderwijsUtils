@@ -50,6 +50,9 @@ namespace ProgressOnderwijsUtils
         public static BatchTimeout DeferToConnectionDefault
             => new BatchTimeout(TimeoutKind.DeferToConnectionDefaultCommandTimeout, 0);
 
+        public static BatchTimeout WithoutTimeout
+            => new BatchTimeout(TimeoutKind.NoTimeout, 0);
+
         public static BatchTimeout AbsoluteSeconds(int timeoutInSeconds)
         {
             if (timeoutInSeconds > 0) {
