@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
@@ -15,12 +14,11 @@ namespace ProgressOnderwijsUtils
 {
     static class MetaObjectBulkInsertOperation
     {
-        public static void Execute<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, [NotNull] IEnumerable<T> enumerable, BatchTimeout timeout, CancellationToken cancellationToken)
+        public static void Execute<T>([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, BatchTimeout timeout, MetaObjectDataReader<T> dbDataReader)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
-            if (enumerable == null) {
-                throw new ArgumentNullException(nameof(enumerable));
+            if (dbDataReader == null) {
+                throw new ArgumentNullException(nameof(dbDataReader));
             }
             if (sqlConn == null) {
                 throw new ArgumentNullException(nameof(sqlConn));
@@ -29,22 +27,21 @@ namespace ProgressOnderwijsUtils
                 throw new InvalidOperationException($"Cannot bulk copy into {tableName}: connection isn't open but {sqlConn.State}.");
             }
 
-            using (var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null))
-            using (var objectReader = new MetaObjectDataReader<T>(enumerable, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
+            using (var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null)) {
                 sqlBulkCopy.BulkCopyTimeout = timeout.TimeoutWithFallback(sqlConn);
                 sqlBulkCopy.DestinationTableName = tableName;
-                var mapping = CreateMapping(objectReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options);
+                var mapping = CreateMapping(dbDataReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options, typeof(T).ToCSharpFriendlyTypeName());
 
                 BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
                 var sw = Stopwatch.StartNew();
                 try {
-                    sqlBulkCopy.WriteToServer(objectReader);
+                    sqlBulkCopy.WriteToServer(dbDataReader);
                     //so why no async?
                     //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating metaObjects, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is int destinationColumnIndex) {
                     throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException(mapping, destinationColumnIndex, ex, typeof(T).ToCSharpFriendlyTypeName());
                 } finally {
-                    TraceBulkInsertDuration(sqlConn.Tracer(), tableName, sw, objectReader.RowsProcessed);
+                    TraceBulkInsertDuration(sqlConn.Tracer(), tableName, sw, dbDataReader.RowsProcessed);
                 }
             }
         }
@@ -93,8 +90,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static BulkInsertFieldMapping[] CreateMapping<T>([NotNull] MetaObjectDataReader<T> objectReader, string tableName, [NotNull] ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        static BulkInsertFieldMapping[] CreateMapping([NotNull] DbDataReader objectReader, string tableName, [NotNull] ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options, string sourceName)
         {
             var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), tableColumns);
 
@@ -107,7 +103,7 @@ namespace ProgressOnderwijsUtils
             if (validatedMapping.IsOk) {
                 return validatedMapping.AssertOk();
             } else {
-                throw new InvalidOperationException($"Failed to map objects of type {typeof(T).ToCSharpFriendlyTypeName()} to the table {tableName}. Errors:\r\n{validatedMapping.ErrorOrNull()}");
+                throw new InvalidOperationException($"Failed to map source {sourceName} to the table {tableName}. Errors:\r\n{validatedMapping.ErrorOrNull()}");
             }
         }
     }

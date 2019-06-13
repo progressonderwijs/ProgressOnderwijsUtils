@@ -46,6 +46,10 @@ namespace ProgressOnderwijsUtils
         public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
             T>([NotNull] SqlConnection sqlConn, [NotNull] IEnumerable<T> metaObjects, BatchTimeout timeout = default, CancellationToken cancellationToken = default)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => MetaObjectBulkInsertOperation.Execute(sqlConn, TableName, Columns, Mode, Options, metaObjects, timeout, cancellationToken);
+        {
+            using (var metaObjectDataReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
+                MetaObjectBulkInsertOperation.Execute(sqlConn, TableName, Columns, Mode, Options, timeout, metaObjectDataReader);
+            }
+        }
     }
 }
