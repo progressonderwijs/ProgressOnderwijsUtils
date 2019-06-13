@@ -368,6 +368,11 @@ namespace ProgressOnderwijsUtils
                 return false;
             }
         }
+
+        public static CancellationToken CreateLinkedTokenWith(this CancellationToken a, CancellationToken b)
+            => b == CancellationToken.None ? a
+                : a == CancellationToken.None ? b
+                : CancellationTokenSource.CreateLinkedTokenSource(b, a).Token;
     }
 
     public class ComparisonComparer<T> : IComparer<T>
