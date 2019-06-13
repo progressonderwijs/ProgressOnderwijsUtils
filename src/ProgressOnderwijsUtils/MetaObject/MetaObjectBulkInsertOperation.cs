@@ -29,12 +29,8 @@ namespace ProgressOnderwijsUtils
                 throw new InvalidOperationException($"Cannot bulk copy into {tableName}: connection isn't open but {sqlConn.State}.");
             }
 
-            var cancellationFromTimeout = timeout.ToCancellationToken(sqlConn);
-
-            var effectiveReaderToken = cancellationToken.CreateLinkedTokenWith(cancellationFromTimeout);
-
             using (var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null))
-            using (var objectReader = new MetaObjectDataReader<T>(enumerable, effectiveReaderToken)) {
+            using (var objectReader = new MetaObjectDataReader<T>(enumerable, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
                 sqlBulkCopy.BulkCopyTimeout = timeout.TimeoutWithFallback(sqlConn);
                 sqlBulkCopy.DestinationTableName = tableName;
                 var mapping = CreateMapping(objectReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options);
