@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
@@ -14,8 +13,7 @@ namespace ProgressOnderwijsUtils
 {
     static class MetaObjectBulkInsertOperation
     {
-        public static void Execute<T>([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, BatchTimeout timeout, MetaObjectDataReader<T> dbDataReader, string sourceNameForTracing)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
+        public static void Execute([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, BatchTimeout timeout, DbDataReader dbDataReader, string sourceNameForTracing)
         {
             if (dbDataReader == null) {
                 throw new ArgumentNullException(nameof(dbDataReader));
