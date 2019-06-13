@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
 {
     static class MetaObjectBulkInsertOperation
     {
-        public static void Execute<T>([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, BatchTimeout timeout, MetaObjectDataReader<T> dbDataReader)
+        public static void Execute<T>([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, BatchTimeout timeout, MetaObjectDataReader<T> dbDataReader, string sourceNameForTracing)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             if (dbDataReader == null) {
@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
             using (var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null)) {
                 sqlBulkCopy.BulkCopyTimeout = timeout.TimeoutWithFallback(sqlConn);
                 sqlBulkCopy.DestinationTableName = tableName;
-                var mapping = CreateMapping(dbDataReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options, typeof(T).ToCSharpFriendlyTypeName());
+                var mapping = CreateMapping(dbDataReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options, sourceNameForTracing);
 
                 BulkInsertFieldMapping.ApplyFieldMappingsToBulkCopy(mapping, sqlBulkCopy);
                 var sw = Stopwatch.StartNew();
@@ -39,9 +39,9 @@ namespace ProgressOnderwijsUtils
                     //so why no async?
                     //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating metaObjects, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is int destinationColumnIndex) {
-                    throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, typeof(T).ToCSharpFriendlyTypeName());
+                    throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
                 } finally {
-                    TraceBulkInsertDuration(sqlConn.Tracer(), tableName, sw, dbDataReader.RowsProcessed);
+                    TraceBulkInsertDuration(sqlConn.Tracer(), tableName, sw, sqlBulkCopy, sourceNameForTracing);
                 }
             }
         }
@@ -74,10 +74,23 @@ namespace ProgressOnderwijsUtils
             return column == null || length == null ? null : new Exception($"Column: {column} contains data with a length greater than: {length}", ex);
         }
 
-        static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, string tableName, Stopwatch sw, int rowsInserted)
+        static FieldInfo rowsCopiedField;
+
+        public static int GetRowsCopied(SqlBulkCopy bulkCopy)
+        {
+            //Why oh why isn't this public... https://stackoverflow.com/a/4474394/42921
+            if (rowsCopiedField == null) {
+                rowsCopiedField = typeof(SqlBulkCopy).GetField("_rowsCopied", BindingFlags.NonPublic | BindingFlags.GetField | BindingFlags.Instance);
+            }
+
+            return (int)rowsCopiedField.GetValue(bulkCopy);
+        }
+
+        static void TraceBulkInsertDuration([CanBeNull] ISqlCommandTracer tracerOrNull, string destinationTableName, Stopwatch sw, SqlBulkCopy sqlBulkCopy, string sourceNameForTracing)
         {
             if (tracerOrNull?.IsTracing ?? false) {
-                tracerOrNull.RegisterEvent($"Bulk inserted {rowsInserted} rows into {tableName}.", sw.Elapsed);
+                var rowsInserted = GetRowsCopied(sqlBulkCopy);
+                tracerOrNull.RegisterEvent($"Bulk inserted {rowsInserted} rows from {sourceNameForTracing} into table {destinationTableName}.", sw.Elapsed);
             }
         }
 

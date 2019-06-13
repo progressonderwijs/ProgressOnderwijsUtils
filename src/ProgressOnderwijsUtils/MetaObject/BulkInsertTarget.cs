@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading;
+using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
 
@@ -48,7 +49,7 @@ namespace ProgressOnderwijsUtils
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             using (var metaObjectDataReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
-                MetaObjectBulkInsertOperation.Execute(sqlConn, TableName, Columns, Mode, Options, timeout, metaObjectDataReader);
+                MetaObjectBulkInsertOperation.Execute(sqlConn, TableName, Columns, Mode, Options, timeout, metaObjectDataReader, typeof(T).ToCSharpFriendlyTypeName());
             }
         }
     }
