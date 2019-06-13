@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Threading;
 using ExpressionToCodeLib;
@@ -50,6 +51,13 @@ namespace ProgressOnderwijsUtils
         {
             using (var metaObjectDataReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
                 MetaObjectBulkInsertOperation.Execute(sqlConn, TableName, Columns, Mode, Options, timeout, metaObjectDataReader, metaObjects.GetType().ToCSharpFriendlyTypeName());
+            }
+        }
+
+        public void BulkInsert([NotNull] SqlConnection sqlConn, [NotNull] DataTable dataTable, BatchTimeout timeout = default)
+        {
+            using (var metaObjectDataReader = dataTable.CreateDataReader()) {
+                MetaObjectBulkInsertOperation.Execute(sqlConn, TableName, Columns, Mode, Options, timeout, metaObjectDataReader, $"DataTable({dataTable.TableName})");
             }
         }
     }
