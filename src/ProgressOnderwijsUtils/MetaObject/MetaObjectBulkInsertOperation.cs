@@ -30,9 +30,11 @@ namespace ProgressOnderwijsUtils
             }
 
             var timeoutInSqlFormat = timeout.TimeoutWithFallback(sqlConn);
+            var cancellationFromTimeout = timeoutInSqlFormat == 0 ? CancellationToken.None : new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSqlFormat)).Token;
+
             var effectiveReaderToken =
-                timeoutInSqlFormat == 0 ? cancellationToken
-                : cancellationToken == default ? new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSqlFormat)).Token
+                cancellationFromTimeout == CancellationToken.None ? cancellationToken
+                : cancellationToken == CancellationToken.None ? cancellationFromTimeout
                 : CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(timeoutInSqlFormat).Token, cancellationToken).Token;
 
             using (var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null))
