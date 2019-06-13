@@ -34,9 +34,10 @@ namespace ProgressOnderwijsUtils
                 timeoutInSqlFormat == 0 ? cancellationToken
                 : cancellationToken == default ? new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSqlFormat)).Token
                 : CancellationTokenSource.CreateLinkedTokenSource(new CancellationTokenSource(timeoutInSqlFormat).Token, cancellationToken).Token;
+
             using (var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null))
             using (var objectReader = new MetaObjectDataReader<T>(enumerable, effectiveReaderToken)) {
-                sqlBulkCopy.BulkCopyTimeout = timeoutInSqlFormat;
+                sqlBulkCopy.BulkCopyTimeout = timeout.TimeoutWithFallback(sqlConn);
                 sqlBulkCopy.DestinationTableName = tableName;
                 var mapping = CreateMapping(objectReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options);
 
@@ -47,7 +48,7 @@ namespace ProgressOnderwijsUtils
                     //so why no async?
                     //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating metaObjects, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is int destinationColumnIndex) {
-                    throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException<T>(mapping, destinationColumnIndex, ex);
+                    throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException(mapping, destinationColumnIndex, ex, typeof(T).ToCSharpFriendlyTypeName());
                 } finally {
                     TraceBulkInsertDuration(sqlConn.Tracer(), tableName, sw, objectReader.RowsProcessed);
                 }
@@ -55,7 +56,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static Exception MetaObjectBasedException<T>([NotNull] BulkInsertFieldMapping[] mapping, int destinationColumnIndex, SqlException ex)
+        static Exception MetaObjectBasedException([NotNull] BulkInsertFieldMapping[] mapping, int destinationColumnIndex, SqlException ex, string sourceName)
         {
             var sourceColumnName = "??unknown??";
             foreach (var m in mapping) {
@@ -64,8 +65,7 @@ namespace ProgressOnderwijsUtils
                 }
             }
 
-            var metaPropName = typeof(T).ToCSharpFriendlyTypeName() + "." + sourceColumnName;
-            return new Exception($"Received an invalid column length from the bcp client for metaobject property ${metaPropName}.", ex);
+            return new Exception($"Received an invalid column length from the bcp client for source field {sourceColumnName} of source {sourceName}.", ex);
         }
 
         [CanBeNull]
