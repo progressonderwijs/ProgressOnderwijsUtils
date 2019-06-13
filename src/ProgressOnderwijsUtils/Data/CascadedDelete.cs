@@ -49,7 +49,9 @@ namespace ProgressOnderwijsUtils
             var pkColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, pkColumnsSql, pksTable);
+            var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
+            pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
+
             var target = new BulkInsertTarget(
                 pksTable.CommandText(),
                 MetaObject.GetMetaProperties<TId>().ArraySelect((mp, index) => new ColumnDefinition(mp.DataType, mp.Name, index, ColumnAccessibility.Normal))
@@ -81,12 +83,9 @@ namespace ProgressOnderwijsUtils
             var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
-            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, pkColumnsSql, pksTable);
-            using (var bulkCopy = new SqlBulkCopy(conn)) {
-                bulkCopy.BulkCopyTimeout = conn.DefaultCommandTimeout();
-                bulkCopy.DestinationTableName = pksTable.CommandText();
-                bulkCopy.WriteToServer(pksToDelete);
-            }
+            var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
+            pkColumnsMetaData.CreateNewTableQuery(pksTable).ExecuteNonQuery(conn);
+            BulkInsertTarget.FromCompleteSetOfColumns(pksTable.CommandText(), pkColumnsMetaData).BulkInsert(conn, pksToDelete);
 
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
                 select {pkColumnsSql.ConcatenateSql(SQL($", "))}
@@ -176,8 +175,10 @@ namespace ProgressOnderwijsUtils
 
             var initialKeyColumns = pkColumns.Select(name => initialTableAsEntered.Columns.Single(col => col.ColumnName.EqualsOrdinalCaseInsensitive(name)).SqlColumnName()).ToArray();
 
-            var delTable = SQL($"[#del_init]");
-            CloneTableSchemaWithoutIdentityProperties(conn, initialTableAsEntered.QualifiedNameSql, initialKeyColumns, delTable);
+            var delTable = SQL($"#del_init");
+
+            var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
+            pkColumnsMetaData.CreateNewTableQuery(delTable).ExecuteNonQuery(conn);
 
             var idsToDelete = SQL($@"
                 insert into {delTable} ({initialKeyColumns.ConcatenateSql(SQL($", "))})
@@ -346,23 +347,6 @@ namespace ProgressOnderwijsUtils
             public string ParentTable;
             public ParameterizedSql DependantTable;
             public FkCol[] Columns;
-        }
-
-        static void CloneTableSchemaWithoutIdentityProperties([NotNull] SqlConnection conn, ParameterizedSql fromTable, [NotNull] ParameterizedSql[] columnsToClone, ParameterizedSql newTable)
-        {
-            var columns = columnsToClone.ConcatenateSql(SQL($", "));
-            SQL($@"
-                select {columns} 
-                into {newTable}
-                from {fromTable}
-                where 1=0
-
-                union all -- union all is a nasty hack to enforce that the identity property is not propagated to the temp table
-
-                select {columns} 
-                from {fromTable}
-                where 1=0
-            ").ExecuteNonQuery(conn);
         }
     }
 }
