@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils
                     //so why no async?
                     //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating metaObjects, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is int destinationColumnIndex) {
-                    throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? MetaObjectBasedException(mapping, destinationColumnIndex, ex, typeof(T).ToCSharpFriendlyTypeName());
+                    throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, typeof(T).ToCSharpFriendlyTypeName());
                 } finally {
                     TraceBulkInsertDuration(sqlConn.Tracer(), tableName, sw, dbDataReader.RowsProcessed);
                 }
@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static Exception MetaObjectBasedException([NotNull] BulkInsertFieldMapping[] mapping, int destinationColumnIndex, SqlException ex, string sourceName)
+        static Exception GenericBcpColumnLengthErrorWithFieldNames([NotNull] BulkInsertFieldMapping[] mapping, int destinationColumnIndex, SqlException ex, string sourceName)
         {
             var sourceColumnName = "??unknown??";
             foreach (var m in mapping) {
