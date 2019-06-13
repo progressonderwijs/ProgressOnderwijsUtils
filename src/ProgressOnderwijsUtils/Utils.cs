@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
@@ -375,7 +374,7 @@ namespace ProgressOnderwijsUtils
                 : CancellationTokenSource.CreateLinkedTokenSource(b, a).Token;
     }
 
-    public class ComparisonComparer<T> : IComparer<T>
+    public sealed class ComparisonComparer<T> : IComparer<T>
     {
         readonly Comparison<T> comparer;
 
