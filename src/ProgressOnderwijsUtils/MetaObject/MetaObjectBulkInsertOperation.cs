@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
                 throw new InvalidOperationException($"Cannot bulk copy into {tableName}: connection isn't open but {sqlConn.State}.");
             }
 
-            var cancellationFromTimeout = ToCancellationToken(sqlConn, timeout);
+            var cancellationFromTimeout = timeout.ToCancellationToken(sqlConn);
 
             var effectiveReaderToken =
                 cancellationFromTimeout == CancellationToken.None ? cancellationToken
@@ -54,13 +54,6 @@ namespace ProgressOnderwijsUtils
                     TraceBulkInsertDuration(sqlConn.Tracer(), tableName, sw, objectReader.RowsProcessed);
                 }
             }
-        }
-
-        public static CancellationToken ToCancellationToken(SqlConnection sqlConn, BatchTimeout timeout)
-        {
-            var timeoutInSqlFormat = timeout.TimeoutWithFallback(sqlConn);
-            var cancellationFromTimeout = timeoutInSqlFormat == 0 ? CancellationToken.None : new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSqlFormat)).Token;
-            return cancellationFromTimeout;
         }
 
         [NotNull]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
+using System.Threading;
 
 namespace ProgressOnderwijsUtils
 {
@@ -64,6 +65,12 @@ namespace ProgressOnderwijsUtils
                 default:
                     throw new InvalidOperationException();
             }
+        }
+
+        public CancellationToken ToCancellationToken(SqlConnection sqlConn)
+        {
+            var timeoutInSqlFormat = TimeoutWithFallback(sqlConn);
+            return timeoutInSqlFormat == 0 ? CancellationToken.None : new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSqlFormat)).Token;
         }
     }
 }
