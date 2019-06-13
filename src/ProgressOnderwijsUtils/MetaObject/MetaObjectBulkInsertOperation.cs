@@ -31,10 +31,7 @@ namespace ProgressOnderwijsUtils
 
             var cancellationFromTimeout = timeout.ToCancellationToken(sqlConn);
 
-            var effectiveReaderToken =
-                cancellationFromTimeout == CancellationToken.None ? cancellationToken
-                : cancellationToken == CancellationToken.None ? cancellationFromTimeout
-                : CancellationTokenSource.CreateLinkedTokenSource(cancellationFromTimeout, cancellationToken).Token;
+            var effectiveReaderToken = Link(cancellationToken, cancellationFromTimeout);
 
             using (var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null))
             using (var objectReader = new MetaObjectDataReader<T>(enumerable, effectiveReaderToken)) {
@@ -55,6 +52,11 @@ namespace ProgressOnderwijsUtils
                 }
             }
         }
+
+        static CancellationToken Link(CancellationToken cancellationToken, CancellationToken cancellationFromTimeout)
+            => cancellationFromTimeout == CancellationToken.None ? cancellationToken
+                : cancellationToken == CancellationToken.None ? cancellationFromTimeout
+                : CancellationTokenSource.CreateLinkedTokenSource(cancellationFromTimeout, cancellationToken).Token;
 
         [NotNull]
         static Exception MetaObjectBasedException([NotNull] BulkInsertFieldMapping[] mapping, int destinationColumnIndex, SqlException ex, string sourceName)
