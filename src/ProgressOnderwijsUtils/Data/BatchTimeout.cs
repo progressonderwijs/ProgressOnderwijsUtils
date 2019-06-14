@@ -2,10 +2,11 @@
 using System.Data.SqlClient;
 using System.Threading;
 using JetBrains.Annotations;
+using ValueUtils;
 
 namespace ProgressOnderwijsUtils
 {
-    public struct BatchTimeout
+    public struct BatchTimeout : IEquatable<BatchTimeout>
     {
         readonly ushort backingTimeout;
         public readonly TimeoutKind Kind;
@@ -76,5 +77,23 @@ namespace ProgressOnderwijsUtils
             var timeoutInSqlFormat = TimeoutWithFallback(sqlConn);
             return timeoutInSqlFormat == 0 ? CancellationToken.None : new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSqlFormat)).Token;
         }
+
+        public override string ToString()
+            => $"{Kind}:{backingTimeout}";
+
+        public bool Equals(BatchTimeout other)
+            => this == other;
+
+        public override bool Equals(object obj)
+            => obj is BatchTimeout other && this == other;
+
+        public static bool operator ==(BatchTimeout a, BatchTimeout b)
+            => FieldwiseEquality.AreEqual(a, b);
+
+        public static bool operator !=(BatchTimeout a, BatchTimeout b)
+            => !(a == b);
+
+        public override int GetHashCode()
+            => FieldwiseHasher.Hash(this);
     }
 }
