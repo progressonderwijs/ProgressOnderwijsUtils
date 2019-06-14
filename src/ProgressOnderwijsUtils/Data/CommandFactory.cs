@@ -80,12 +80,9 @@ namespace ProgressOnderwijsUtils
 
         public ReusableCommand FinishBuilding([NotNull] SqlConnection conn, CommandTimeout timeout)
         {
-            var commandTimeoutInS = timeout.ComputeAbsoluteTimeout(conn);
-            var tracer = conn.Tracer();
-
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);
             command.Connection = conn;
-            command.CommandTimeout = commandTimeoutInS;
+            command.CommandTimeout = timeout.ComputeAbsoluteTimeout(conn);
             command.CommandText = queryText.FinishBuilding();
             var cmdParams = command.Parameters;
             for (var i = 0; i < paramCount; i++) {
@@ -103,7 +100,7 @@ namespace ProgressOnderwijsUtils
 
             FreeParamsAndLookup();
 
-            var timer = tracer?.StartCommandTimer(command);
+            var timer = conn.Tracer()?.StartCommandTimer(command);
             return new ReusableCommand { Command = command, QueryTimer = timer };
         }
 
