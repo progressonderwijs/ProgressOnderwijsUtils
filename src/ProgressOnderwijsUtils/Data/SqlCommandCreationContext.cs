@@ -11,12 +11,12 @@ namespace ProgressOnderwijsUtils
 
     public interface IHasDefaultCommandTimeout
     {
-        BatchTimeoutDefaults TimeoutDefaults { get; }
+        CommandTimeoutDefaults TimeoutDefaults { get; }
     }
 
     public sealed class SqlConnectionContext : SiteBase, IAttachedToTracer, IHasDefaultCommandTimeout
     {
-        public SqlConnectionContext(ISqlCommandTracer tracer,  BatchTimeoutDefaults timeoutDefaults)
+        public SqlConnectionContext(ISqlCommandTracer tracer,  CommandTimeoutDefaults timeoutDefaults)
         {
             Tracer = tracer;
             TimeoutDefaults = timeoutDefaults;
@@ -24,6 +24,6 @@ namespace ProgressOnderwijsUtils
 
         public ISqlCommandTracer Tracer { get; }
 
-        public BatchTimeoutDefaults TimeoutDefaults { get; set; }
+        public CommandTimeoutDefaults TimeoutDefaults { get; set; }
     }
 }

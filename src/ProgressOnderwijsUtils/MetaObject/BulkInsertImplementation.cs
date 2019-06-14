@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
 {
     static class BulkInsertImplementation
     {
-        public static void Execute([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, BatchTimeout timeout, DbDataReader dbDataReader, string sourceNameForTracing)
+        public static void Execute([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, CommandTimeout timeout, DbDataReader dbDataReader, string sourceNameForTracing)
         {
             if (dbDataReader == null) {
                 throw new ArgumentNullException(nameof(dbDataReader));

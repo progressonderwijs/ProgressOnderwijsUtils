@@ -5,25 +5,25 @@ using ValueUtils;
 
 namespace ProgressOnderwijsUtils
 {
-    public readonly struct BatchTimeoutDefaults
+    public readonly struct CommandTimeoutDefaults
     {
         public readonly int AbsoluteDefaultBatchTimeout;
         public readonly double TimeoutScalingFactor;
 
-        public BatchTimeoutDefaults(int absoluteDefaultBatchTimeout, double timeoutScalingFactor)
+        public CommandTimeoutDefaults(int absoluteDefaultBatchTimeout, double timeoutScalingFactor)
             => (AbsoluteDefaultBatchTimeout, TimeoutScalingFactor) = (absoluteDefaultBatchTimeout, timeoutScalingFactor);
 
-        public static BatchTimeoutDefaults NoScalingNoTimeout
+        public static CommandTimeoutDefaults NoScalingNoTimeout
             => ScaledBy(1.0);
 
-        public static BatchTimeoutDefaults ScaledBy(double timeoutScalingFactor)
-            => new BatchTimeoutDefaults(0, timeoutScalingFactor);
+        public static CommandTimeoutDefaults ScaledBy(double timeoutScalingFactor)
+            => new CommandTimeoutDefaults(0, timeoutScalingFactor);
 
-        public BatchTimeoutDefaults Resolve(BatchTimeout batchTimeout)
-            => new BatchTimeoutDefaults(batchTimeout.TimeoutWithFallback(this), TimeoutScalingFactor);
+        public CommandTimeoutDefaults Resolve(CommandTimeout commandTimeout)
+            => new CommandTimeoutDefaults(commandTimeout.TimeoutWithFallback(this), TimeoutScalingFactor);
     }
 
-    public struct BatchTimeout : IEquatable<BatchTimeout>
+    public struct CommandTimeout : IEquatable<CommandTimeout>
     {
         readonly ushort backingTimeout;
         public readonly TimeoutKind Kind;
@@ -36,44 +36,44 @@ namespace ProgressOnderwijsUtils
             NoTimeout,
         }
 
-        BatchTimeout(TimeoutKind kind, int backingTimeout)
+        CommandTimeout(TimeoutKind kind, int backingTimeout)
         {
             Kind = kind;
             this.backingTimeout = checked((ushort)backingTimeout);
         }
 
-        public static BatchTimeout DeferToConnectionDefault
-            => new BatchTimeout(TimeoutKind.DeferToConnectionDefaultCommandTimeout, 0);
+        public static CommandTimeout DeferToConnectionDefault
+            => new CommandTimeout(TimeoutKind.DeferToConnectionDefaultCommandTimeout, 0);
 
-        public static BatchTimeout WithoutTimeout
-            => new BatchTimeout(TimeoutKind.NoTimeout, 0);
+        public static CommandTimeout WithoutTimeout
+            => new CommandTimeout(TimeoutKind.NoTimeout, 0);
 
-        public static BatchTimeout AbsoluteSeconds(int timeoutInSeconds)
+        public static CommandTimeout AbsoluteSeconds(int timeoutInSeconds)
         {
             if (timeoutInSeconds > 0) {
-                return new BatchTimeout(TimeoutKind.AbsoluteTimeout, timeoutInSeconds);
+                return new CommandTimeout(TimeoutKind.AbsoluteTimeout, timeoutInSeconds);
             } else if (timeoutInSeconds == 0) { //TODO: ban.
-                return new BatchTimeout(TimeoutKind.NoTimeout, 0);
+                return new CommandTimeout(TimeoutKind.NoTimeout, 0);
             } else {
                 throw new ArgumentOutOfRangeException(nameof(timeoutInSeconds), "timeouts must be positive");
             }
         }
 
-        public static BatchTimeout ScaledSeconds(int timeoutInSeconds)
+        public static CommandTimeout ScaledSeconds(int timeoutInSeconds)
         {
             if (timeoutInSeconds > 0) {
-                return new BatchTimeout(TimeoutKind.ScaledTimeout, timeoutInSeconds);
+                return new CommandTimeout(TimeoutKind.ScaledTimeout, timeoutInSeconds);
             } else if (timeoutInSeconds == 0) { //TODO: ban.
-                return new BatchTimeout(TimeoutKind.NoTimeout, 0);
+                return new CommandTimeout(TimeoutKind.NoTimeout, 0);
             } else {
                 throw new ArgumentOutOfRangeException(nameof(timeoutInSeconds), "timeouts must be positive");
             }
         }
 
         public int TimeoutWithFallback(SqlConnection conn)
-            => TimeoutWithFallback(conn.Site is IHasDefaultCommandTimeout hasDefaults ? hasDefaults.TimeoutDefaults : BatchTimeoutDefaults.NoScalingNoTimeout);
+            => TimeoutWithFallback(conn.Site is IHasDefaultCommandTimeout hasDefaults ? hasDefaults.TimeoutDefaults : CommandTimeoutDefaults.NoScalingNoTimeout);
 
-        public int TimeoutWithFallback(BatchTimeoutDefaults defaults)
+        public int TimeoutWithFallback(CommandTimeoutDefaults defaults)
         {
             switch (Kind) {
                 case TimeoutKind.DeferToConnectionDefaultCommandTimeout:
@@ -98,16 +98,16 @@ namespace ProgressOnderwijsUtils
         public override string ToString()
             => $"{Kind}:{backingTimeout}";
 
-        public bool Equals(BatchTimeout other)
+        public bool Equals(CommandTimeout other)
             => this == other;
 
         public override bool Equals(object obj)
-            => obj is BatchTimeout other && this == other;
+            => obj is CommandTimeout other && this == other;
 
-        public static bool operator ==(BatchTimeout a, BatchTimeout b)
+        public static bool operator ==(CommandTimeout a, CommandTimeout b)
             => FieldwiseEquality.AreEqual(a, b);
 
-        public static bool operator !=(BatchTimeout a, BatchTimeout b)
+        public static bool operator !=(CommandTimeout a, CommandTimeout b)
             => !(a == b);
 
         public override int GetHashCode()

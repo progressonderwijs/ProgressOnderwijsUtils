@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         /// For more fine-grained control, create a BulkInsertTarget instance instead of using DatabaseDescription.Table.
         /// </summary>
         public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlConnection sqlConn, [NotNull] DatabaseDescription.Table table, BatchTimeout timeout)
+            T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlConnection sqlConn, [NotNull] DatabaseDescription.Table table, CommandTimeout timeout)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
             => BulkCopyToSqlServer(metaObjects, sqlConn, BulkInsertTarget.FromDatabaseDescription(table), timeout);
 
@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils
         public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
             T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlConnection sqlConn, [NotNull] DatabaseDescription.Table table)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => BulkCopyToSqlServer(metaObjects, sqlConn, table, BatchTimeout.DeferToConnectionDefault);
+            => BulkCopyToSqlServer(metaObjects, sqlConn, table, CommandTimeout.DeferToConnectionDefault);
 
         /// <summary>
         /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default).
@@ -34,13 +34,13 @@ namespace ProgressOnderwijsUtils
         public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
             T>([NotNull] this IEnumerable<T> metaObjects, SqlConnection sqlConn, [NotNull] BulkInsertTarget target)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => BulkCopyToSqlServer(metaObjects, sqlConn, target, BatchTimeout.DeferToConnectionDefault);
+            => BulkCopyToSqlServer(metaObjects, sqlConn, target, CommandTimeout.DeferToConnectionDefault);
 
         /// <summary>
         /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default).
         /// </summary>
         public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] this IEnumerable<T> metaObjects, SqlConnection sqlConn, [NotNull] BulkInsertTarget target, BatchTimeout timeout)
+            T>([NotNull] this IEnumerable<T> metaObjects, SqlConnection sqlConn, [NotNull] BulkInsertTarget target, CommandTimeout timeout)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
             => target.BulkInsert(sqlConn, metaObjects, timeout);
     }

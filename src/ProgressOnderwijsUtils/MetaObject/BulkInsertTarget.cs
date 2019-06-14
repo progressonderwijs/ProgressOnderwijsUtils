@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
             => new BulkInsertTarget(TableName, Columns, Mode, options);
 
         public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] SqlConnection sqlConn, [NotNull] IEnumerable<T> metaObjects, BatchTimeout timeout = default, CancellationToken cancellationToken = default)
+            T>([NotNull] SqlConnection sqlConn, [NotNull] IEnumerable<T> metaObjects, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
         {
             using (var dbDataReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
@@ -55,14 +55,14 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public void BulkInsert([NotNull] SqlConnection sqlConn, [NotNull] DataTable dataTable, BatchTimeout timeout = default)
+        public void BulkInsert([NotNull] SqlConnection sqlConn, [NotNull] DataTable dataTable, CommandTimeout timeout = default)
         {
             using (var dbDataReader = dataTable.CreateDataReader()) {
                 BulkInsert(sqlConn, dbDataReader, $"DataTable({dataTable.TableName})", timeout);
             }
         }
 
-        public void BulkInsert(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, BatchTimeout timeout)
+        public void BulkInsert(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, CommandTimeout timeout)
             => BulkInsertImplementation.Execute(sqlConn, TableName, Columns, Mode, Options, timeout, dbDataReader, sourceNameForTracing);
     }
 }

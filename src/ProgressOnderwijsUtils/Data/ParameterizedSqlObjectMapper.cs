@@ -21,21 +21,21 @@ namespace ProgressOnderwijsUtils
 
     public static class ParameterizedSqlObjectMapper
     {
-        public static BatchNonQuery OfNonQuery(this ParameterizedSql sql)
-            => new BatchNonQuery(sql, BatchTimeout.DeferToConnectionDefault);
+        public static NonQuerySqlCommand OfNonQuery(this ParameterizedSql sql)
+            => new NonQuerySqlCommand(sql, CommandTimeout.DeferToConnectionDefault);
 
-        public static BatchOfDataTable OfDataTable(this ParameterizedSql sql, MissingSchemaAction missingSchemaAction)
-            => new BatchOfDataTable(sql, BatchTimeout.DeferToConnectionDefault, missingSchemaAction);
+        public static DataTableSqlCommand OfDataTable(this ParameterizedSql sql, MissingSchemaAction missingSchemaAction)
+            => new DataTableSqlCommand(sql, CommandTimeout.DeferToConnectionDefault, missingSchemaAction);
 
-        public static BatchOfScalar<T> OfScalar<T>(this ParameterizedSql sql)
-            => new BatchOfScalar<T>(sql, BatchTimeout.DeferToConnectionDefault);
+        public static ScalarSqlCommand<T> OfScalar<T>(this ParameterizedSql sql)
+            => new ScalarSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
 
-        public static BatchOfBuiltins<T> OfBuiltins<T>(this ParameterizedSql sql)
-            => new BatchOfBuiltins<T>(sql, BatchTimeout.DeferToConnectionDefault);
+        public static BuiltinsSqlCommand<T> OfBuiltins<T>(this ParameterizedSql sql)
+            => new BuiltinsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
 
-        public static BatchOfObjects<T> OfObjects<T>(this ParameterizedSql sql)
+        public static ObjectsSqlCommand<T> OfObjects<T>(this ParameterizedSql sql)
             where T : IMetaObject, new()
-            => new BatchOfObjects<T>(sql, BatchTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
+            => new ObjectsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
 
         [MustUseReturnValue]
         public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn)
@@ -101,7 +101,7 @@ namespace ProgressOnderwijsUtils
         public static IEnumerable<T> EnumerateMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
             T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
             where T : IMetaObject, new()
-            => q.OfObjects<T>().WithFieldMappingMode(fieldMappingMode).ToLazilyEnumeratedBatch().Execute(sqlConn);
+            => q.OfObjects<T>().WithFieldMappingMode(fieldMappingMode).ToLazilyEnumeratedCommand().Execute(sqlConn);
 
         [NotNull]
         internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)

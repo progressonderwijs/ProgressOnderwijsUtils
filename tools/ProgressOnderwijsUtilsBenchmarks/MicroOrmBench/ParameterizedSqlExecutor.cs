@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         public static void ConstructWithoutExecuting([NotNull] Benchmarker benchmarker)
             => benchmarker.BenchSqlServer("ParameterizedSql noexec",
                 (sqlConn, rows) => {
-                    ExampleObject.ParameterizedSqlForRows(rows).CreateSqlCommand(sqlConn, BatchTimeout.WithoutTimeout).Dispose();
+                    ExampleObject.ParameterizedSqlForRows(rows).CreateSqlCommand(sqlConn, CommandTimeout.WithoutTimeout).Dispose();
                     return 0;
                 });
     }

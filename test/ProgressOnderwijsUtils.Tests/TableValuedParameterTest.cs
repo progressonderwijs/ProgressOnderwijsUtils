@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void SingletonTvPsCanBeExecuted()
         {
             var q = SQL($"select sum(x.querytablevalue) from {Enumerable.Range(1, 1).ToArray()} x");
-            using (var cmd = q.CreateSqlCommand(Connection, BatchTimeout.WithoutTimeout)) {
+            using (var cmd = q.CreateSqlCommand(Connection, CommandTimeout.WithoutTimeout)) {
                 //make sure I'm actually testing that exceptional single-value case, not the general Strucutured case.
                 PAssert.That(() => cmd.Command.Parameters.Cast<SqlParameter>().Select(p => p.SqlDbType).SequenceEqual(new[] { SqlDbType.Int }));
             }
@@ -154,7 +154,7 @@ namespace ProgressOnderwijsUtils.Tests
                 values ({testData});
             ").ExecuteNonQuery(Connection);
 
-            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Connection, BatchTimeout.DeferToConnectionDefault))
+            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Connection, CommandTimeout.DeferToConnectionDefault))
             using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default)) {
                 Assert_DataReader_GetBytes_works(reader);
             }

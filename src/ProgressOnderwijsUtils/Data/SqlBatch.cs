@@ -15,9 +15,9 @@ namespace ProgressOnderwijsUtils
         public static string CurrentMethodName<T>()
             => typeof(T).ToCSharpFriendlyTypeName();
 
-        public static ReusableCommand ReusableCommand<T>(this T batch, SqlConnection conn)
-            where T : INestableSql, IDefinesBatchTimeout
-            => batch.Sql.CreateSqlCommand(conn, batch.BatchTimeout);
+        public static ReusableCommand ReusableCommand<T>(this T dbCommand, SqlConnection conn)
+            where T : INestableSql, IDefinesCommandTimeout
+            => dbCommand.Sql.CreateSqlCommand(conn, dbCommand.CommandTimeout);
     }
 
     public interface INestableSql
@@ -25,33 +25,33 @@ namespace ProgressOnderwijsUtils
         ParameterizedSql Sql { get; }
     }
 
-    public interface IDefinesBatchTimeout
+    public interface IDefinesCommandTimeout
     {
-        BatchTimeout BatchTimeout { get; }
+        CommandTimeout CommandTimeout { get; }
     }
 
-    public interface IWithTimeout<out TSelf> : IDefinesBatchTimeout
+    public interface IWithTimeout<out TSelf> : IDefinesCommandTimeout
         where TSelf : IWithTimeout<TSelf>
     {
-        TSelf WithTimeout(BatchTimeout timeout);
+        TSelf WithTimeout(CommandTimeout timeout);
     }
 
-    public interface IBatchWithReturnValue<out TQueryReturnValue>
+    public interface ITypedSqlCommand<out TQueryReturnValue>
     {
         [MustUseReturnValue]
         TQueryReturnValue Execute([NotNull] SqlConnection conn);
     }
 
-    public readonly struct BatchNonQuery : INestableSql, IWithTimeout<BatchNonQuery>
+    public readonly struct NonQuerySqlCommand : INestableSql, IWithTimeout<NonQuerySqlCommand>
     {
         public ParameterizedSql Sql { get; }
-        public BatchTimeout BatchTimeout { get; }
+        public CommandTimeout CommandTimeout { get; }
 
-        public BatchNonQuery WithTimeout(BatchTimeout timeout)
-            => new BatchNonQuery(Sql, timeout);
+        public NonQuerySqlCommand WithTimeout(CommandTimeout timeout)
+            => new NonQuerySqlCommand(Sql, timeout);
 
-        public BatchNonQuery(ParameterizedSql sql, BatchTimeout timeout)
-            => (Sql, BatchTimeout) = (sql, timeout);
+        public NonQuerySqlCommand(ParameterizedSql sql, CommandTimeout timeout)
+            => (Sql, CommandTimeout) = (sql, timeout);
 
         public int Execute(SqlConnection conn)
         {
@@ -71,17 +71,17 @@ namespace ProgressOnderwijsUtils
     /// <summary>
     /// Executes a DataTable-returning query op basis van het huidige commando met de huidige parameters
     /// </summary>
-    public readonly struct BatchOfDataTable : INestableSql, IBatchWithReturnValue<DataTable>, IWithTimeout<BatchOfDataTable>
+    public readonly struct DataTableSqlCommand : INestableSql, ITypedSqlCommand<DataTable>, IWithTimeout<DataTableSqlCommand>
     {
         public ParameterizedSql Sql { get; }
-        public BatchTimeout BatchTimeout { get; }
+        public CommandTimeout CommandTimeout { get; }
         public MissingSchemaAction MissingSchemaAction { get; }
 
-        public BatchOfDataTable WithTimeout(BatchTimeout timeout)
-            => new BatchOfDataTable(Sql, timeout, MissingSchemaAction);
+        public DataTableSqlCommand WithTimeout(CommandTimeout timeout)
+            => new DataTableSqlCommand(Sql, timeout, MissingSchemaAction);
 
-        public BatchOfDataTable(ParameterizedSql sql, BatchTimeout timeout, MissingSchemaAction missingSchemaAction)
-            => (Sql, BatchTimeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
+        public DataTableSqlCommand(ParameterizedSql sql, CommandTimeout timeout, MissingSchemaAction missingSchemaAction)
+            => (Sql, CommandTimeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
 
         [MustUseReturnValue]
         [NotNull]
@@ -101,16 +101,16 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BatchOfScalar<T> : INestableSql, IBatchWithReturnValue<T>, IWithTimeout<BatchOfScalar<T>>
+    public readonly struct ScalarSqlCommand<T> : INestableSql, ITypedSqlCommand<T>, IWithTimeout<ScalarSqlCommand<T>>
     {
         public ParameterizedSql Sql { get; }
-        public BatchTimeout BatchTimeout { get; }
+        public CommandTimeout CommandTimeout { get; }
 
-        public BatchOfScalar(ParameterizedSql sql, BatchTimeout timeout)
-            => (Sql, BatchTimeout) = (sql, timeout);
+        public ScalarSqlCommand(ParameterizedSql sql, CommandTimeout timeout)
+            => (Sql, CommandTimeout) = (sql, timeout);
 
-        public BatchOfScalar<T> WithTimeout(BatchTimeout timeout)
-            => new BatchOfScalar<T>(Sql, timeout);
+        public ScalarSqlCommand<T> WithTimeout(CommandTimeout timeout)
+            => new ScalarSqlCommand<T>(Sql, timeout);
 
         [MustUseReturnValue]
         public T Execute(SqlConnection conn)
@@ -127,16 +127,16 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BatchOfBuiltins<T> : INestableSql, IBatchWithReturnValue<T[]>, IWithTimeout<BatchOfBuiltins<T>>
+    public readonly struct BuiltinsSqlCommand<T> : INestableSql, ITypedSqlCommand<T[]>, IWithTimeout<BuiltinsSqlCommand<T>>
     {
         public ParameterizedSql Sql { get; }
-        public BatchTimeout BatchTimeout { get; }
+        public CommandTimeout CommandTimeout { get; }
 
-        public BatchOfBuiltins(ParameterizedSql sql, BatchTimeout timeout)
-            => (Sql, BatchTimeout) = (sql, timeout);
+        public BuiltinsSqlCommand(ParameterizedSql sql, CommandTimeout timeout)
+            => (Sql, CommandTimeout) = (sql, timeout);
 
-        public BatchOfBuiltins<T> WithTimeout(BatchTimeout timeout)
-            => new BatchOfBuiltins<T>(Sql, timeout);
+        public BuiltinsSqlCommand<T> WithTimeout(CommandTimeout timeout)
+            => new BuiltinsSqlCommand<T>(Sql, timeout);
 
         public T[] Execute(SqlConnection conn)
         {
@@ -150,27 +150,27 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct BatchOfObjects<
+    public readonly struct ObjectsSqlCommand<
         [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
         T
-    > : INestableSql, IBatchWithReturnValue<T[]>, IWithTimeout<BatchOfObjects<T>>
+    > : INestableSql, ITypedSqlCommand<T[]>, IWithTimeout<ObjectsSqlCommand<T>>
         where T : IMetaObject, new()
     {
         public ParameterizedSql Sql { get; }
-        public BatchTimeout BatchTimeout { get; }
+        public CommandTimeout CommandTimeout { get; }
         public readonly FieldMappingMode FieldMapping;
 
-        public BatchOfObjects(ParameterizedSql sql, BatchTimeout timeout, FieldMappingMode fieldMapping)
-            => (Sql, BatchTimeout, FieldMapping) = (sql, timeout, fieldMapping);
+        public ObjectsSqlCommand(ParameterizedSql sql, CommandTimeout timeout, FieldMappingMode fieldMapping)
+            => (Sql, CommandTimeout, FieldMapping) = (sql, timeout, fieldMapping);
 
-        public BatchOfObjects<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
-            => new BatchOfObjects<T>(Sql, BatchTimeout, fieldMapping);
+        public ObjectsSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
+            => new ObjectsSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
 
-        public LazyBatchOfObjects<T> ToLazilyEnumeratedBatch()
-            => new LazyBatchOfObjects<T>(Sql, BatchTimeout, FieldMapping);
+        public EnumeratedObjectsSqlCommand<T> ToLazilyEnumeratedCommand()
+            => new EnumeratedObjectsSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
 
-        public BatchOfObjects<T> WithTimeout(BatchTimeout batchTimeout)
-            => new BatchOfObjects<T>(Sql, batchTimeout, FieldMapping);
+        public ObjectsSqlCommand<T> WithTimeout(CommandTimeout commandTimeout)
+            => new ObjectsSqlCommand<T>(Sql, commandTimeout, FieldMapping);
 
         public T[] Execute(SqlConnection conn)
         {
@@ -195,24 +195,24 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct LazyBatchOfObjects<T> : INestableSql, IBatchWithReturnValue<IEnumerable<T>>, IWithTimeout<LazyBatchOfObjects<T>>
+    public readonly struct EnumeratedObjectsSqlCommand<T> : INestableSql, ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
         where T : IMetaObject, new()
     {
         public ParameterizedSql Sql { get; }
-        public BatchTimeout BatchTimeout { get; }
+        public CommandTimeout CommandTimeout { get; }
         public readonly FieldMappingMode FieldMapping;
 
-        public LazyBatchOfObjects(ParameterizedSql sql, BatchTimeout timeout, FieldMappingMode fieldMapping)
-            => (Sql, BatchTimeout, FieldMapping) = (sql, timeout, fieldMapping);
+        public EnumeratedObjectsSqlCommand(ParameterizedSql sql, CommandTimeout timeout, FieldMappingMode fieldMapping)
+            => (Sql, CommandTimeout, FieldMapping) = (sql, timeout, fieldMapping);
 
-        public LazyBatchOfObjects<T> WithTimeout(BatchTimeout timeout)
-            => new LazyBatchOfObjects<T>(Sql, timeout, FieldMapping);
+        public EnumeratedObjectsSqlCommand<T> WithTimeout(CommandTimeout timeout)
+            => new EnumeratedObjectsSqlCommand<T>(Sql, timeout, FieldMapping);
 
-        public LazyBatchOfObjects<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
-            => new LazyBatchOfObjects<T>(Sql, BatchTimeout, fieldMapping);
+        public EnumeratedObjectsSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
+            => new EnumeratedObjectsSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
 
-        public BatchOfObjects<T> ToEagerlyEnumeratedBatch()
-            => new BatchOfObjects<T>(Sql, BatchTimeout, FieldMapping);
+        public ObjectsSqlCommand<T> ToEagerlyEnumeratedCommand()
+            => new ObjectsSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
 
         public IEnumerable<T> Execute(SqlConnection conn)
         {
