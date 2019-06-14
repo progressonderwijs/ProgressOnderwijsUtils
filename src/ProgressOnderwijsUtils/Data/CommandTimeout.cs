@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
             => new CommandTimeoutDefaults(0, timeoutScalingFactor);
 
         public CommandTimeoutDefaults Resolve(CommandTimeout commandTimeout)
-            => new CommandTimeoutDefaults(commandTimeout.TimeoutWithFallback(this), TimeoutScalingFactor);
+            => new CommandTimeoutDefaults(commandTimeout.ComputeAbsoluteTimeout(this), TimeoutScalingFactor);
     }
 
     public struct CommandTimeout : IEquatable<CommandTimeout>
@@ -42,12 +42,21 @@ namespace ProgressOnderwijsUtils
             this.backingTimeout = checked((ushort)backingTimeout);
         }
 
+        /// <summary>
+        /// Represents whatever timeout the connection specifies as default.
+        /// </summary>
         public static CommandTimeout DeferToConnectionDefault
             => new CommandTimeout(TimeoutKind.DeferToConnectionDefaultCommandTimeout, 0);
 
+        /// <summary>
+        /// Represents an infinite (or at least very, very long) timeout.
+        /// </summary>
         public static CommandTimeout WithoutTimeout
             => new CommandTimeout(TimeoutKind.NoTimeout, 0);
 
+        /// <summary>
+        /// Represents a finite timeout in seconds that will NOT be scaled with the connection-specific timeout scaling factor.  If you want to work with scaling factors, use ScaledSeconds.
+        /// </summary>
         public static CommandTimeout AbsoluteSeconds(int timeoutInSeconds)
         {
             if (timeoutInSeconds > 0) {
@@ -59,6 +68,9 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        /// <summary>
+        /// Represents a finite timeout in seconds that will be scaled with the connection-specific timeout scaling factor (default 1.0).
+        /// </summary>
         public static CommandTimeout ScaledSeconds(int timeoutInSeconds)
         {
             if (timeoutInSeconds > 0) {
@@ -70,10 +82,16 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public int TimeoutWithFallback(SqlConnection conn)
-            => TimeoutWithFallback(conn.Site is IHasDefaultCommandTimeout hasDefaults ? hasDefaults.TimeoutDefaults : CommandTimeoutDefaults.NoScalingNoTimeout);
+        /// <summary>
+        /// Converts this possibly scaled or default timeout into an absolute (SqlCommand.CommandTimeout compatible) timeout value (in seconds).
+        /// </summary>
+        public int ComputeAbsoluteTimeout(SqlConnection conn)
+            => ComputeAbsoluteTimeout(conn.Site is IHasDefaultCommandTimeout hasDefaults ? hasDefaults.TimeoutDefaults : CommandTimeoutDefaults.NoScalingNoTimeout);
 
-        public int TimeoutWithFallback(CommandTimeoutDefaults defaults)
+        /// <summary>
+        /// Converts this possibly scaled or default timeout into an absolute (SqlCommand.CommandTimeout compatible) timeout value (in seconds).
+        /// </summary>
+        public int ComputeAbsoluteTimeout(CommandTimeoutDefaults defaults)
         {
             switch (Kind) {
                 case TimeoutKind.DeferToConnectionDefaultCommandTimeout:
@@ -89,9 +107,12 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        /// <summary>
+        /// Converts this possibly scaled or default timeout into token cancelled after the timeout (starting now).
+        /// </summary>
         public CancellationToken ToCancellationToken(SqlConnection sqlConn)
         {
-            var timeoutInSqlFormat = TimeoutWithFallback(sqlConn);
+            var timeoutInSqlFormat = ComputeAbsoluteTimeout(sqlConn);
             return timeoutInSqlFormat == 0 ? CancellationToken.None : new CancellationTokenSource(TimeSpan.FromSeconds(timeoutInSqlFormat)).Token;
         }
 

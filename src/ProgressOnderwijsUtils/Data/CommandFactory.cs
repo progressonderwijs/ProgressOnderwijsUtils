@@ -80,7 +80,7 @@ namespace ProgressOnderwijsUtils
 
         public ReusableCommand FinishBuilding([NotNull] SqlConnection conn, CommandTimeout timeout)
         {
-            var commandTimeoutInS = timeout.TimeoutWithFallback(conn);
+            var commandTimeoutInS = timeout.ComputeAbsoluteTimeout(conn);
             var tracer = conn.Tracer();
 
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);

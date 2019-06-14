@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
             }
 
             using (var sqlBulkCopy = new SqlBulkCopy(sqlConn, options, null)) {
-                sqlBulkCopy.BulkCopyTimeout = timeout.TimeoutWithFallback(sqlConn);
+                sqlBulkCopy.BulkCopyTimeout = timeout.ComputeAbsoluteTimeout(sqlConn);
                 sqlBulkCopy.DestinationTableName = tableName;
                 var mapping = CreateMapping(dbDataReader, tableName, columnDefinitions, bulkCopyFieldMappingMode, options, sourceNameForTracing);
 
