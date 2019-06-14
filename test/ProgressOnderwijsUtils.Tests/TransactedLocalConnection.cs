@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils.Tests
             var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true";
 
             var sqlCommandTracer = SqlCommandTracer.CreateAlwaysOffTracer(SqlTracerAgumentInclusion.IncludingArgumentValues);
-            Connection = new SqlConnection(connectionString) { Site = new SqlConnectionContext(60, sqlCommandTracer, 1.0) };
+            Connection = new SqlConnection(connectionString) { Site = new SqlConnectionContext(sqlCommandTracer, new BatchTimeoutDefaults(60,  1.0)) };
             try {
                 Connection.Open();
                 ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(Connection);

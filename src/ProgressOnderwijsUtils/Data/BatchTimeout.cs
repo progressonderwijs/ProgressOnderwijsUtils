@@ -5,6 +5,24 @@ using ValueUtils;
 
 namespace ProgressOnderwijsUtils
 {
+    public readonly struct BatchTimeoutDefaults
+    {
+        public readonly int AbsoluteDefaultBatchTimeout;
+        public readonly double TimeoutScalingFactor;
+
+        public BatchTimeoutDefaults(int absoluteDefaultBatchTimeout, double timeoutScalingFactor)
+            => (AbsoluteDefaultBatchTimeout, TimeoutScalingFactor) = (absoluteDefaultBatchTimeout, timeoutScalingFactor);
+
+        public static BatchTimeoutDefaults NoScalingNoTimeout
+            => ScaledBy(1.0);
+
+        public static BatchTimeoutDefaults ScaledBy(double timeoutScalingFactor)
+            => new BatchTimeoutDefaults(0, timeoutScalingFactor);
+
+        public BatchTimeoutDefaults Resolve(BatchTimeout batchTimeout)
+            => new BatchTimeoutDefaults(batchTimeout.TimeoutWithFallback(this), TimeoutScalingFactor);
+    }
+
     public struct BatchTimeout : IEquatable<BatchTimeout>
     {
         readonly ushort backingTimeout;
@@ -53,22 +71,19 @@ namespace ProgressOnderwijsUtils
         }
 
         public int TimeoutWithFallback(SqlConnection conn)
-        {
-            var commandTimeoutDefaults = conn.Site as IHasDefaultCommandTimeout;
-            return TimeoutWithFallback(commandTimeoutDefaults?.DefaultCommandTimeoutInS ?? 0, commandTimeoutDefaults?.TimeoutScale ?? 1.0);
-        }
+            => TimeoutWithFallback(conn.Site is IHasDefaultCommandTimeout hasDefaults ? hasDefaults.TimeoutDefaults : BatchTimeoutDefaults.NoScalingNoTimeout);
 
-        public int TimeoutWithFallback(int connectionDefaultTimeout, double connectionDefaultScale)
+        public int TimeoutWithFallback(BatchTimeoutDefaults defaults)
         {
             switch (Kind) {
                 case TimeoutKind.DeferToConnectionDefaultCommandTimeout:
-                    return connectionDefaultTimeout;
+                    return defaults.AbsoluteDefaultBatchTimeout;
                 case TimeoutKind.NoTimeout:
                     return 0;
                 case TimeoutKind.AbsoluteTimeout:
                     return backingTimeout;
                 case TimeoutKind.ScaledTimeout:
-                    return Math.Max(1, (int)(0.5 + backingTimeout * connectionDefaultScale));
+                    return Math.Max(1, (int)(0.5 + backingTimeout * defaults.TimeoutScalingFactor));
                 default:
                     throw new InvalidOperationException();
             }
