@@ -7,11 +7,11 @@ namespace ProgressOnderwijsUtils
 {
     public readonly struct CommandTimeoutDefaults
     {
-        public readonly int AbsoluteDefaultBatchTimeout;
+        public readonly int AbsoluteDefaultCommandTimeout;
         public readonly double TimeoutScalingFactor;
 
-        public CommandTimeoutDefaults(int absoluteDefaultBatchTimeout, double timeoutScalingFactor)
-            => (AbsoluteDefaultBatchTimeout, TimeoutScalingFactor) = (absoluteDefaultBatchTimeout, timeoutScalingFactor);
+        public CommandTimeoutDefaults(int absoluteDefaultCommandTimeout, double timeoutScalingFactor)
+            => (AbsoluteDefaultCommandTimeout, TimeoutScalingFactor) = (absoluteDefaultCommandTimeout, timeoutScalingFactor);
 
         public static CommandTimeoutDefaults NoScalingNoTimeout
             => ScaledBy(1.0);
@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils
         {
             switch (Kind) {
                 case TimeoutKind.DeferToConnectionDefaultCommandTimeout:
-                    return defaults.AbsoluteDefaultBatchTimeout;
+                    return defaults.AbsoluteDefaultCommandTimeout;
                 case TimeoutKind.NoTimeout:
                     return 0;
                 case TimeoutKind.AbsoluteTimeout:
