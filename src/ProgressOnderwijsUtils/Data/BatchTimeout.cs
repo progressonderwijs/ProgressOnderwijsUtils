@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Threading;
-using JetBrains.Annotations;
 using ValueUtils;
 
 namespace ProgressOnderwijsUtils
@@ -54,19 +53,22 @@ namespace ProgressOnderwijsUtils
         }
 
         public int TimeoutWithFallback(SqlConnection conn)
-            => TimeoutWithFallback(conn.Site as IHasDefaultCommandTimeout);
+        {
+            var commandTimeoutDefaults = conn.Site as IHasDefaultCommandTimeout;
+            return TimeoutWithFallback(commandTimeoutDefaults?.DefaultCommandTimeoutInS ?? 0, commandTimeoutDefaults?.TimeoutScale ?? 1.0);
+        }
 
-        public int TimeoutWithFallback([CanBeNull] IHasDefaultCommandTimeout commandTimeoutDefaults)
+        public int TimeoutWithFallback(int connectionDefaultTimeout, double connectionDefaultScale)
         {
             switch (Kind) {
                 case TimeoutKind.DeferToConnectionDefaultCommandTimeout:
-                    return commandTimeoutDefaults?.DefaultCommandTimeoutInS ?? 0;
+                    return connectionDefaultTimeout;
                 case TimeoutKind.NoTimeout:
                     return 0;
                 case TimeoutKind.AbsoluteTimeout:
                     return backingTimeout;
                 case TimeoutKind.ScaledTimeout:
-                    return commandTimeoutDefaults is null ? backingTimeout : Math.Max(1, (int)(0.5 + backingTimeout * commandTimeoutDefaults.TimeoutScale));
+                    return Math.Max(1, (int)(0.5 + backingTimeout * connectionDefaultScale));
                 default:
                     throw new InvalidOperationException();
             }
