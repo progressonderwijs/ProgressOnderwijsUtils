@@ -131,6 +131,9 @@ namespace ProgressOnderwijsUtils
         public static bool operator !=(CommandTimeout a, CommandTimeout b)
             => !(a == b);
 
+        public static implicit operator CommandTimeout(int scaledSeconds)
+            => ScaledSeconds(scaledSeconds);
+
         public override int GetHashCode()
             => FieldwiseHasher.Hash(this);
     }
