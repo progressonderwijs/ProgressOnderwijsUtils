@@ -62,47 +62,6 @@ namespace ProgressOnderwijsUtils
             where T : IMetaObject, new()
             => q.OfObjects<T>().Execute(sqlConn);
 
-        /// <summary>
-        /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
-        /// Type T must have a public parameterless constructor; both structs and classes are supported
-        /// The type T must match the queries columns by name (the order is not relevant).  Matching columns to properties/fields is case insensitive.
-        /// The number of fields+properties must be the same as the number of columns
-        /// </summary>
-        /// <typeparam name="T">The type to unpack each record into</typeparam>
-        /// <param name="q">The query to execute</param>
-        /// <param name="sqlConn">The database connection</param>
-        /// <param name="fieldMapping">Whether to allow missing or extra columns</param>
-        /// <returns>An array of strongly-typed objects; never null</returns>
-        [MustUseReturnValue]
-        [NotNull]
-        public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn, FieldMappingMode fieldMapping)
-            where T : IMetaObject, new()
-            => q.OfObjects<T>().WithFieldMappingMode(fieldMapping).Execute(sqlConn);
-
-        /// <summary>
-        /// Executes a  DataTable op basis van het huidige commando met de huidige parameters
-        /// </summary>
-        [MustUseReturnValue]
-        [NotNull]
-        public static DataTable ReadDataTable(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn, MissingSchemaAction missingSchemaAction)
-            => sql.OfDataTable(missingSchemaAction).Execute(sqlConn);
-
-        /// <summary>
-        /// Reads all records of the given query from the database, lazily unpacking them into the yielded rows using each item's publicly writable fields and properties.
-        /// Type T must have a public parameterless constructor; both structs and classes are supported
-        /// The type T must match the queries columns by name (the order is not relevant).  Matching columns to properties/fields is case insensitive.
-        /// The number of fields+properties must be the same as the number of columns
-        /// Watch out: while this enumerator is open, the underlying connection remains in use.
-        /// </summary>
-        /// <typeparam name="T">The type to unpack each record into</typeparam>
-        [MustUseReturnValue]
-        [NotNull]
-        public static IEnumerable<T> EnumerateMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
-            where T : IMetaObject, new()
-            => q.OfObjects<T>().WithFieldMappingMode(fieldMappingMode).ToLazilyEnumeratedCommand().Execute(sqlConn);
-
         [NotNull]
         internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
             where T : IMetaObject, new()
