@@ -78,8 +78,11 @@ namespace ProgressOnderwijsUtils
                 lookup = GetLookup()
             };
 
-        public ReusableCommand FinishBuilding([NotNull] SqlConnection conn, int commandTimeoutInS, [CanBeNull] ISqlCommandTracer tracer)
+        public ReusableCommand FinishBuilding([NotNull] SqlConnection conn, BatchTimeout timeout)
         {
+            var commandTimeoutInS = timeout.TimeoutWithFallback(conn);
+            var tracer = conn.Tracer();
+
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);
             command.Connection = conn;
             command.CommandTimeout = commandTimeoutInS;

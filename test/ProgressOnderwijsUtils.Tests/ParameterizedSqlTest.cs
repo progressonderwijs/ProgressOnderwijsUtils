@@ -227,7 +227,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var result = SQL($@"A{0}{SQL($@"[{1}{0}]")}Z");
 
-            var cmd = result.CreateSqlCommand(null, BatchTimeout.WithoutTimeout);
+            var cmd = result.CreateSqlCommand(new SqlConnection(), BatchTimeout.WithoutTimeout);
 
             var commandText = @"A@par0[@par1@par0]Z";
             PAssert.That(() => cmd.Command.CommandText == commandText);
