@@ -55,7 +55,7 @@ namespace ProgressOnderwijsUtils
         {
             switch (Kind) {
                 case TimeoutKind.DeferToConnectionDefaultCommandTimeout:
-                    return conn.DefaultCommandTimeout();
+                    return conn.Site is IHasDefaultCommandTimeout defaultTimeout ? defaultTimeout.DefaultCommandTimeoutInS : 0;
                 case TimeoutKind.NoTimeout:
                     return 0;
                 case TimeoutKind.AbsoluteTimeout:

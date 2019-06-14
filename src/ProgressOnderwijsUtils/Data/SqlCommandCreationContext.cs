@@ -4,12 +4,6 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class SqlConnectionExtensions
-    {
-        public static int DefaultCommandTimeout(this SqlConnection conn)
-            => conn.Site is IHasDefaultCommandTimeout defaultTimeout ? defaultTimeout.DefaultCommandTimeoutInS : 0;
-    }
-
     public interface IAttachedToTracer
     {
         ISqlCommandTracer Tracer { get; }
