@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -45,8 +47,9 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments([NotNull] string message, Exception innerException)
-            => SqlCommandDebugStringifier.ExceptionWithTextAndArguments(message, Command, innerException);
+        internal ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments<TOriginCommand>(Exception innerException, TOriginCommand command, string extraMessage = null)
+            where TOriginCommand : IWithTimeout<TOriginCommand>
+            => SqlCommandDebugStringifier.ExceptionWithTextAndArguments(command.GetType().ToCSharpFriendlyTypeName() + " failed" + (extraMessage == null ? "." : ": " + extraMessage), Command, innerException);
     }
 
     /// <summary>

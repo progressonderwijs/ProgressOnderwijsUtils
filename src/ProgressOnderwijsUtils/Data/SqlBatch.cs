@@ -2,19 +2,13 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-    using static ErrorMessageHelpers;
-
     static class ErrorMessageHelpers
     {
-        public static string CurrentMethodName<T>()
-            => typeof(T).ToCSharpFriendlyTypeName();
-
         public static ReusableCommand ReusableCommand<T>(this T dbCommand, SqlConnection conn)
             where T : INestableSql, IDefinesCommandTimeout
             => dbCommand.Sql.CreateSqlCommand(conn, dbCommand.CommandTimeout);
@@ -62,7 +56,7 @@ namespace ProgressOnderwijsUtils
                     }
                     return cmd.Command.ExecuteNonQuery();
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ParameterizedSqlObjectMapper.ExecuteNonQuery) + " failed", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(e, this);
                 }
             }
         }
@@ -95,7 +89,7 @@ namespace ProgressOnderwijsUtils
                     adapter.Fill(dt);
                     return dt;
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ParameterizedSqlObjectMapper.ReadDataTable) + "() failed", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(e, this);
                 }
             }
         }
@@ -121,7 +115,7 @@ namespace ProgressOnderwijsUtils
 
                     return DbValueConverter.FromDb<T>(value);
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(e, this);
                 }
             }
         }
@@ -144,7 +138,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     return ParameterizedSqlObjectMapper.ReadPlainUnpacker<T>(cmd.Command);
                 } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
+                    throw cmd.CreateExceptionWithTextAndArguments(e, this);
                 }
             }
         }
@@ -187,7 +181,7 @@ namespace ProgressOnderwijsUtils
                     }
                     return builder.ToArray();
                 } catch (Exception ex) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+                    throw cmd.CreateExceptionWithTextAndArguments(ex, this, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
                 } finally {
                     reader?.Dispose();
                 }
@@ -220,8 +214,8 @@ namespace ProgressOnderwijsUtils
             var cmd = this.ReusableCommand(conn);
             SqlDataReader reader = null;
             var lastColumnRead = -1;
-            ParameterizedSqlExecutionException CreateHelpfulException(Exception ex)
-                => cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
+            ParameterizedSqlExecutionException CreateHelpfulException(Exception ex, EnumeratedObjectsSqlCommand<T> o)
+                => cmd.CreateExceptionWithTextAndArguments(ex, o, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
 
             try {
                 ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
@@ -229,7 +223,7 @@ namespace ProgressOnderwijsUtils
                     reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
                     unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
                 } catch (Exception e) {
-                    throw CreateHelpfulException(e);
+                    throw CreateHelpfulException(e, this);
                 }
 
                 while (true) {
@@ -237,7 +231,7 @@ namespace ProgressOnderwijsUtils
                     try {
                         isDone = !reader.Read();
                     } catch (Exception e) {
-                        throw CreateHelpfulException(e);
+                        throw CreateHelpfulException(e, this);
                     }
 
                     if (isDone) {
@@ -247,7 +241,7 @@ namespace ProgressOnderwijsUtils
                     try {
                         nextRow = unpacker(reader, out lastColumnRead);
                     } catch (Exception e) {
-                        throw CreateHelpfulException(e);
+                        throw CreateHelpfulException(e, this);
                     }
 
                     yield return nextRow; //cannot yield in try-catch block
