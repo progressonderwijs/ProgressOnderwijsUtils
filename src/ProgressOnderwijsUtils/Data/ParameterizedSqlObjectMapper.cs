@@ -24,8 +24,8 @@ namespace ProgressOnderwijsUtils
         public static NonQuerySqlCommand OfNonQuery(this ParameterizedSql sql)
             => new NonQuerySqlCommand(sql, CommandTimeout.DeferToConnectionDefault);
 
-        public static DataTableSqlCommand OfDataTable(this ParameterizedSql sql, MissingSchemaAction missingSchemaAction)
-            => new DataTableSqlCommand(sql, CommandTimeout.DeferToConnectionDefault, missingSchemaAction);
+        public static DataTableSqlCommand OfDataTable(this ParameterizedSql sql)
+            => new DataTableSqlCommand(sql, CommandTimeout.DeferToConnectionDefault, MissingSchemaAction.Add);
 
         public static ScalarSqlCommand<T> OfScalar<T>(this ParameterizedSql sql)
             => new ScalarSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);

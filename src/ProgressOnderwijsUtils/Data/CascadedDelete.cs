@@ -127,7 +127,7 @@ namespace ProgressOnderwijsUtils
             DataTable ExecuteDeletion(ParameterizedSql deletionCommand)
             {
                 if (outputAllDeletedRows) {
-                    return deletionCommand.OfDataTable(MissingSchemaAction.Add).Execute(conn);
+                    return deletionCommand.OfDataTable().Execute(conn);
                 } else {
                     deletionCommand.ExecuteNonQuery(conn);
                     return null;

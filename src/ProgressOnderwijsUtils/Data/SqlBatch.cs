@@ -74,6 +74,9 @@ namespace ProgressOnderwijsUtils
         public DataTableSqlCommand WithTimeout(CommandTimeout timeout)
             => new DataTableSqlCommand(Sql, timeout, MissingSchemaAction);
 
+        public DataTableSqlCommand WithMissingSchemaAction(MissingSchemaAction missingSchemaAction)
+            => new DataTableSqlCommand(Sql, CommandTimeout, missingSchemaAction);
+
         public DataTableSqlCommand(ParameterizedSql sql, CommandTimeout timeout, MissingSchemaAction missingSchemaAction)
             => (Sql, CommandTimeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
 
