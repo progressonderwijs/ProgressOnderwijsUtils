@@ -24,6 +24,6 @@ namespace ProgressOnderwijsUtils
 
         public ISqlCommandTracer Tracer { get; }
 
-        public BatchTimeoutDefaults TimeoutDefaults { get; }
+        public BatchTimeoutDefaults TimeoutDefaults { get; set; }
     }
 }
