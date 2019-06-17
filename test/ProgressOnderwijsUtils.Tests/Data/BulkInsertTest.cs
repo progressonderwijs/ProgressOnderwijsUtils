@@ -91,6 +91,11 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var target = CreateTable();
             SampleData.BulkCopyToSqlServer(Connection, target);
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
+            AssertCollectionIsEquivalentToSampleData(fromDb);
+        }
+
+        static void AssertCollectionIsEquivalentToSampleData(SampleRow[] fromDb)
+        {
             var missingInDb = SampleData.Except(fromDb);
             var extraInDb = fromDb.Except(SampleData);
             PAssert.That(() => missingInDb.None());
