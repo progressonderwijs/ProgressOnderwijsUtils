@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;
@@ -87,16 +88,76 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var target = CreateTable(SQL($"#test"));
             SampleData.BulkCopyToSqlServer(Connection, target);
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
-            AssertCollectionIsEquivalentToSampleData(fromDb);
+            AssertCollectionsEquivalent(SampleData, fromDb);
         }
 
-        static void AssertCollectionIsEquivalentToSampleData(SampleRow[] fromDb)
+        [Fact]
+        public void CanInsertDatatable()
         {
-            var missingInDb = SampleData.Except(fromDb);
-            var extraInDb = fromDb.Except(SampleData);
+            var target = CreateTable(SQL($"#test"));
+            var target2 = CreateTable(SQL($"#test2"));
+            target.BulkInsert(Connection, SampleData);
+
+            var dataTable = SQL($"select * from #test").OfDataTable().Execute(Connection);
+            target2.BulkInsert(Connection, dataTable);
+
+            var fromDb = SQL($"select * from #test2").ReadMetaObjects<SampleRow>(Connection);
+            AssertCollectionsEquivalent(SampleData, fromDb);
+        }
+
+        sealed class SampleRow2 : ValueBase<SampleRow2>, IMetaObject, IPropertiesAreUsedImplicitly
+        {
+            public int intNonNull { get; set; }
+            public int? intNull { get; set; }
+            public string stringNull { get; set; }
+            public string stringNonNull { get; set; }
+        }
+
+        [Fact]
+        public void CanInsertDatareader()
+        {
+            using (var conn2 = new SqlConnection(Connection.ConnectionString)) {
+                conn2.Open();
+                var query = SQL($@"
+                    select *
+                    from (
+                        values (1, null, 'test', 'test2')
+                        , (2, 1, null, 'test3')
+                    ) x(intNonNull, intNull, stringNull, stringNonNull)
+                ").OfObjects<SampleRow2>();
+                var expectedData = new[] {
+                    new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test2" },
+                    new SampleRow2 { intNonNull = 2, intNull = 1, stringNull = null, stringNonNull = "test3" },
+                };
+                AssertCollectionsEquivalent(expectedData, query.Execute(conn2)); //sanity check that we're testing consistent data
+
+                SQL($@"
+                    create table #tmp (
+                        intNonNull int not null
+                        , intNull int null
+                        , stringNull nvarchar(max) null
+                        , stringNonNull nvarchar(max) not null
+                    )
+                ").ExecuteNonQuery(Connection);
+                var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
+
+                using (var cmd = query.Sql.CreateSqlCommand(conn2, default))
+                using (var reader = cmd.Command.ExecuteReader()) {
+                    target.BulkInsert(Connection, reader, "from query");
+                }
+
+                AssertCollectionsEquivalent(expectedData, SQL($"select * from #tmp").OfObjects<SampleRow2>().Execute(Connection));
+            }
+        }
+
+        static void AssertCollectionsEquivalent<T>(T[] sampleData, T[] fromDb)
+            where T : IEquatable<T>
+        {
+            var missingInDb = sampleData.Except(fromDb);
+            var extraInDb = fromDb.Except(sampleData);
             PAssert.That(() => missingInDb.None());
             PAssert.That(() => extraInDb.None());
-            PAssert.That(() => fromDb.Length == SampleData.Length);
+            PAssert.That(() => fromDb.Length == sampleData.Length);
         }
 
         [Fact]
