@@ -108,8 +108,8 @@ namespace ProgressOnderwijsUtils
                 AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
                 AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
                 OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
-            }.ValidateAndFilter(
-                unfilteredMapping);
+            }.ValidateAndFilter(unfilteredMapping);
+
             if (validatedMapping.IsOk) {
                 return validatedMapping.AssertOk();
             } else {
