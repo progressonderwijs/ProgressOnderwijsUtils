@@ -6,10 +6,11 @@ namespace ProgressOnderwijsUtils.Tests
     public class TransactedLocalConnection : IDisposable
     {
         public readonly System.Transactions.CommittableTransaction Transaction = new System.Transactions.CommittableTransaction();
+        protected static readonly string ConnectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true";
 
         public TransactedLocalConnection()
         {
-            var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING") ?? @"Server = (localdb)\MSSQLLocalDB; Integrated Security = true";
+            var connectionString = ConnectionString;
 
             var sqlCommandTracer = SqlCommandTracer.CreateAlwaysOffTracer(SqlTracerAgumentInclusion.IncludingArgumentValues);
             Connection = new SqlConnection(connectionString) { Site = new SqlConnectionContext(sqlCommandTracer, new CommandTimeoutDefaults(60,  1.0)) };

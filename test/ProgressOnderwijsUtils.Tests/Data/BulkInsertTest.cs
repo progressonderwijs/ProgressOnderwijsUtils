@@ -116,7 +116,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CanInsertDatareader()
         {
-            using (var conn2 = new SqlConnection(Connection.ConnectionString)) {
+            using (var conn2 = new SqlConnection(ConnectionString)) {
                 conn2.Open();
                 var query = SQL($@"
                     select *
