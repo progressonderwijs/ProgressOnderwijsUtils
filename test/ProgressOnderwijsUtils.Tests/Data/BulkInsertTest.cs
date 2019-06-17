@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.Serialization;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
@@ -12,11 +9,10 @@ namespace ProgressOnderwijsUtils.Tests.Data
 {
     public sealed class BulkInsertTest : TransactedLocalConnection
     {
-        BulkInsertTarget CreateTable()
+        BulkInsertTarget CreateTable(ParameterizedSql tempTableName)
         {
-            var tableName = SQL($"#test");
             SQL($@"
-                create table {tableName} (
+                create table {tempTableName} (
                     AnEnum int not null
                     , ADateTime datetime2
                     , SomeString nvarchar(max)
@@ -27,7 +23,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                 )
             ").ExecuteNonQuery(Connection);
 
-            return BulkInsertTarget.LoadFromTable(Connection, tableName.CommandText());
+            return BulkInsertTarget.LoadFromTable(Connection, tempTableName.CommandText());
         }
 
         sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IPropertiesAreUsedImplicitly
@@ -80,7 +76,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void BulkCopysWithConcurrentQueriesCrash()
         {
-            var target = CreateTable();
+            var target = CreateTable(SQL($"#test"));
             var evilEnumerable = SampleData.Where(o => SQL($"select 1").ReadScalar<int>(Connection) == 1);
             Assert.ThrowsAny<Exception>(() => evilEnumerable.BulkCopyToSqlServer(Connection, target));
         }
@@ -88,7 +84,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void BulkInsertAndReadRoundTrips()
         {
-            var target = CreateTable();
+            var target = CreateTable(SQL($"#test"));
             SampleData.BulkCopyToSqlServer(Connection, target);
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
             AssertCollectionIsEquivalentToSampleData(fromDb);
@@ -106,7 +102,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void EmptyBulkInsertAndReadRoundTrips()
         {
-            var target = CreateTable();
+            var target = CreateTable(SQL($"#test"));
             SampleData.Take(0).BulkCopyToSqlServer(Connection, target);
             var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
             PAssert.That(() => fromDb.None());
