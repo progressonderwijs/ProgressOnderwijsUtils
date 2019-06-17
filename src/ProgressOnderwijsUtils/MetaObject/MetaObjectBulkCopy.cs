@@ -1,4 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Data.SqlClient;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
 
@@ -14,16 +15,16 @@ namespace ProgressOnderwijsUtils
         /// For more fine-grained control, create a BulkInsertTarget instance instead of using DatabaseDescription.Table.
         /// </summary>
         public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlCommandCreationContext sqlContext, [NotNull] DatabaseDescription.Table table)
+            T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlConnection sqlConn, [NotNull] DatabaseDescription.Table table, CommandTimeout timeout = default)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => BulkInsertTarget.FromDatabaseDescription(table).BulkInsert(sqlContext, metaObjects);
+            => BulkCopyToSqlServer(metaObjects, sqlConn, BulkInsertTarget.FromDatabaseDescription(table), timeout);
 
         /// <summary>
         /// Performs a bulk insert.  Maps columns based on name, not order (unlike SqlBulkCopy by default).
         /// </summary>
         public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] this IEnumerable<T> metaObjects, SqlCommandCreationContext sqlContext, [NotNull] BulkInsertTarget target)
+            T>([NotNull] this IEnumerable<T> metaObjects, SqlConnection sqlConn, [NotNull] BulkInsertTarget target, CommandTimeout timeout = default)
             where T : IMetaObject, IPropertiesAreUsedImplicitly
-            => target.BulkInsert(sqlContext, metaObjects);
+            => target.BulkInsert(sqlConn, metaObjects, timeout);
     }
 }

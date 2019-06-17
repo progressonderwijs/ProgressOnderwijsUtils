@@ -6,7 +6,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
@@ -22,34 +21,29 @@ namespace ProgressOnderwijsUtils
 
     public static class ParameterizedSqlObjectMapper
     {
-        [MustUseReturnValue]
-        public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-        {
-            using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
-                try {
-                    var value = cmd.Command.ExecuteScalar();
+        public static NonQuerySqlCommand OfNonQuery(this ParameterizedSql sql)
+            => new NonQuerySqlCommand(sql, CommandTimeout.DeferToConnectionDefault);
 
-                    return DbValueConverter.FromDb<T>(value);
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
-                }
-            }
-        }
+        public static DataTableSqlCommand OfDataTable(this ParameterizedSql sql)
+            => new DataTableSqlCommand(sql, CommandTimeout.DeferToConnectionDefault, MissingSchemaAction.Add);
+
+        public static ScalarSqlCommand<T> OfScalar<T>(this ParameterizedSql sql)
+            => new ScalarSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
+
+        public static BuiltinsSqlCommand<T> OfBuiltins<T>(this ParameterizedSql sql)
+            => new BuiltinsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
+
+        public static ObjectsSqlCommand<T> OfObjects<T>(this ParameterizedSql sql)
+            where T : IMetaObject, new()
+            => new ObjectsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
+
+        [MustUseReturnValue]
+        public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn)
+            => sql.OfScalar<T>().Execute(sqlConn);
 
         /// <summary>Executes an sql statement and returns the number of rows affected.  Returns 0 without server interaction for whitespace-only commands.</summary>
-        public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext commandCreationContext)
-        {
-            using (var cmd = sql.CreateSqlCommand(commandCreationContext)) {
-                try {
-                    if (string.IsNullOrWhiteSpace(cmd.Command.CommandText)) {
-                        return 0;
-                    }
-                    return cmd.Command.ExecuteNonQuery();
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ExecuteNonQuery) + " failed", e);
-                }
-            }
-        }
+        public static int ExecuteNonQuery(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn)
+            => sql.OfNonQuery().Execute(sqlConn);
 
         /// <summary>
         /// Reads all records of the given query from the database, unpacking into a C# array using each item's publicly writable fields and properties.
@@ -59,116 +53,17 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The database connection</param>
-        /// <param name="fieldMapping"> </param>
+        /// <param name="sqlConn">The database connection</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
         public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMapping = FieldMappingMode.RequireExactColumnMatches)
+            T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
             where T : IMetaObject, new()
-        {
-            using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                var lastColumnRead = -1;
-                SqlDataReader reader = null;
-                try {
-                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    var unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMapping);
-                    var builder = new ArrayBuilder<T>();
-                    while (reader.Read()) {
-                        var nextRow = unpacker(reader, out lastColumnRead);
-                        builder.Add(nextRow);
-                    }
-                    return builder.ToArray();
-                } catch (Exception ex) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
-                } finally {
-                    reader?.Dispose();
-                }
-            }
-        }
+            => q.OfObjects<T>().Execute(sqlConn);
 
         [NotNull]
-        static string CurrentMethodName<T>([CallerMemberName] string callingMethod = null)
-            => callingMethod + "<" + typeof(T).ToCSharpFriendlyTypeName() + ">()";
-
-        /// <summary>
-        /// Executes a  DataTable op basis van het huidige commando met de huidige parameters
-        /// </summary>
-        [MustUseReturnValue]
-        [NotNull]
-        public static DataTable ReadDataTable(this ParameterizedSql sql, [NotNull] SqlCommandCreationContext conn, MissingSchemaAction missingSchemaAction)
-        {
-            using (var cmd = sql.CreateSqlCommand(conn))
-            using (var adapter = new SqlDataAdapter(cmd.Command)) {
-                try {
-                    adapter.MissingSchemaAction = missingSchemaAction;
-                    var dt = new DataTable();
-                    adapter.Fill(dt);
-                    return dt;
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(nameof(ReadDataTable) + "() failed", e);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Reads all records of the given query from the database, lazily unpacking them into the yielded rows using each item's publicly writable fields and properties.
-        /// Type T must have a public parameterless constructor; both structs and classes are supported
-        /// The type T must match the queries columns by name (the order is not relevant).  Matching columns to properties/fields is case insensitive.
-        /// The number of fields+properties must be the same as the number of columns
-        /// Watch out: while this enumerator is open, the underlying connection remains in use.
-        /// </summary>
-        /// <typeparam name="T">The type to unpack each record into</typeparam>
-        [MustUseReturnValue]
-        [NotNull]
-        public static IEnumerable<T> EnumerateMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
-            T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext, FieldMappingMode fieldMappingMode = FieldMappingMode.RequireExactColumnMatches)
-            where T : IMetaObject, new()
-        {
-            var cmd = q.CreateSqlCommand(qCommandCreationContext);
-            SqlDataReader reader = null;
-            var lastColumnRead = -1;
-            ParameterizedSqlExecutionException CreateHelpfulException(Exception ex)
-                => cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed. " + UnpackingErrorMessage<T>(reader, lastColumnRead), ex);
-
-            try {
-                DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
-                try {
-                    reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    unpacker = DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, fieldMappingMode);
-                } catch (Exception e) {
-                    throw CreateHelpfulException(e);
-                }
-
-                while (true) {
-                    bool isDone;
-                    try {
-                        isDone = !reader.Read();
-                    } catch (Exception e) {
-                        throw CreateHelpfulException(e);
-                    }
-
-                    if (isDone) {
-                        break;
-                    }
-                    T nextRow;
-                    try {
-                        nextRow = unpacker(reader, out lastColumnRead);
-                    } catch (Exception e) {
-                        throw CreateHelpfulException(e);
-                    }
-
-                    yield return nextRow; //cannot yield in try-catch block
-                }
-            } finally {
-                reader?.Dispose();
-                cmd.Dispose();
-            }
-        }
-
-        [NotNull]
-        static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
+        internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
             where T : IMetaObject, new()
         {
             if (reader?.IsClosed != false || lastColumnRead < 0) {
@@ -204,24 +99,16 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <typeparam name="T">The type to unpack each record into</typeparam>
         /// <param name="q">The query to execute</param>
-        /// <param name="qCommandCreationContext">The command creation context</param>
+        /// <param name="sqlConn">The command creation context</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadPlain<T>(this ParameterizedSql q, [NotNull] SqlCommandCreationContext qCommandCreationContext)
-        {
-            using (var cmd = q.CreateSqlCommand(qCommandCreationContext)) {
-                try {
-                    return ReadPlainUnpacker<T>(cmd.Command);
-                } catch (Exception e) {
-                    throw cmd.CreateExceptionWithTextAndArguments(CurrentMethodName<T>() + " failed.", e);
-                }
-            }
-        }
+        public static T[] ReadPlain<T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
+            => q.OfBuiltins<T>().Execute(sqlConn);
 
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadPlainUnpacker<T>([NotNull] SqlCommand cmd)
+        internal static T[] ReadPlainUnpacker<T>([NotNull] SqlCommand cmd)
         {
             using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
                 DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
@@ -239,20 +126,20 @@ namespace ProgressOnderwijsUtils
 
         static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
             new Dictionary<Type, MethodInfo> {
-                { typeof(bool), typeof(IDataRecord).GetMethod("GetBoolean", binding) },
-                { typeof(byte), typeof(IDataRecord).GetMethod("GetByte", binding) },
-                { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod("GetBytes", BindingFlags.Public | BindingFlags.Static) },
-                { typeof(char), typeof(IDataRecord).GetMethod("GetChar", binding) },
-                { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod("GetChars", BindingFlags.Public | BindingFlags.Static) },
-                { typeof(DateTime), typeof(IDataRecord).GetMethod("GetDateTime", binding) },
-                { typeof(decimal), typeof(IDataRecord).GetMethod("GetDecimal", binding) },
-                { typeof(double), typeof(IDataRecord).GetMethod("GetDouble", binding) },
-                { typeof(float), typeof(IDataRecord).GetMethod("GetFloat", binding) },
-                { typeof(Guid), typeof(IDataRecord).GetMethod("GetGuid", binding) },
-                { typeof(short), typeof(IDataRecord).GetMethod("GetInt16", binding) },
-                { typeof(int), typeof(IDataRecord).GetMethod("GetInt32", binding) },
-                { typeof(long), typeof(IDataRecord).GetMethod("GetInt64", binding) },
-                { typeof(string), typeof(IDataRecord).GetMethod("GetString", binding) },
+                { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetBytes), BindingFlags.Public | BindingFlags.Static) },
+                { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetChars), BindingFlags.Public | BindingFlags.Static) },
+                { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding) },
+                { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding) },
+                { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding) },
+                { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding) },
+                { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding) },
+                { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding) },
+                { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding) },
+                { typeof(Guid), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetGuid), binding) },
+                { typeof(short), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt16), binding) },
+                { typeof(int), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt32), binding) },
+                { typeof(long), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt64), binding) },
+                { typeof(string), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetString), binding) },
             };
 
         [NotNull]
@@ -303,7 +190,7 @@ namespace ProgressOnderwijsUtils
             return true;
         }
 
-        static class DataReaderSpecialization<TReader>
+        internal static class DataReaderSpecialization<TReader>
             where TReader : IDataReader
         {
             public delegate T TRowReader<out T>(TReader reader, out int lastColumnRead);
@@ -581,82 +468,6 @@ namespace ProgressOnderwijsUtils
                     }
                 }
             }
-        }
-
-        static class BackingFieldDetector
-        {
-            const string BackingFieldPrefix = "<";
-            const string BackingFieldSuffix = ">k__BackingField";
-            const BindingFlags privateInstance = BindingFlags.Instance | BindingFlags.NonPublic;
-            const BindingFlags anyInstance = privateInstance | BindingFlags.Public;
-
-            [NotNull]
-            static string BackingFieldFromAutoPropName([NotNull] string propertyName)
-                => BackingFieldPrefix + propertyName + BackingFieldSuffix;
-
-            [CanBeNull]
-            static string AutoPropNameFromBackingField([NotNull] string fieldName)
-                => fieldName.StartsWith(BackingFieldPrefix, StringComparison.Ordinal) && fieldName.EndsWith(BackingFieldSuffix, StringComparison.Ordinal)
-                    ? fieldName.Substring(BackingFieldPrefix.Length, fieldName.Length - BackingFieldPrefix.Length - BackingFieldSuffix.Length)
-                    : null;
-
-            static bool IsCompilerGenerated([CanBeNull] MemberInfo member)
-                => member != null && member.IsDefined(typeof(CompilerGeneratedAttribute), true);
-
-            static bool IsAutoProp(PropertyInfo autoProperty)
-                => IsCompilerGenerated(autoProperty.GetGetMethod(true));
-
-            [CanBeNull]
-            public static FieldInfo BackingFieldOfPropertyOrNull([NotNull] PropertyInfo propertyInfo)
-                => IsAutoProp(propertyInfo)
-                    && propertyInfo.DeclaringType.GetField(BackingFieldFromAutoPropName(propertyInfo.Name), privateInstance) is FieldInfo backingField
-                    && IsCompilerGenerated(backingField)
-                        ? backingField
-                        : null;
-
-            [UsefulToKeep("for symmetry with BackingFieldOfPropertyOrNull")]
-            public static PropertyInfo AutoPropertyOfFieldOrNull(FieldInfo fieldInfo)
-                => IsCompilerGenerated(fieldInfo)
-                    && AutoPropNameFromBackingField(fieldInfo.Name) is string autoPropertyName
-                    && fieldInfo.DeclaringType.GetProperty(autoPropertyName, anyInstance) is PropertyInfo autoProperty
-                    && IsAutoProp(autoProperty)
-                        ? autoProperty
-                        : null;
-        }
-    }
-
-    public static class DbLoadingHelperImpl
-    {
-        [NotNull]
-        [UsedImplicitly]
-        public static byte[] GetBytes([NotNull] this IDataRecord row, int colIndex)
-        {
-            var byteCount = row.GetBytes(colIndex, 0L, null, 0, 0);
-            if (byteCount > int.MaxValue) {
-                throw new NotSupportedException("Array too large!");
-            }
-            var arr = new byte[byteCount];
-            long offset = 0;
-            while (offset < byteCount) {
-                offset += row.GetBytes(colIndex, offset, arr, (int)offset, (int)byteCount);
-            }
-            return arr;
-        }
-
-        [NotNull]
-        [UsedImplicitly]
-        public static char[] GetChars([NotNull] this IDataRecord row, int colIndex)
-        {
-            var charCount = row.GetChars(colIndex, 0L, null, 0, 0);
-            if (charCount > int.MaxValue) {
-                throw new NotSupportedException("Array too large!");
-            }
-            var arr = new char[charCount];
-            long offset = 0;
-            while (offset < charCount) {
-                offset += row.GetChars(colIndex, offset, arr, (int)offset, (int)charCount);
-            }
-            return arr;
         }
     }
 }

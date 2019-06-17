@@ -28,8 +28,8 @@ namespace ProgressOnderwijsUtils.Tests
                     IdLeaf int not null primary key
                     , IdLevel int not null foreign key references dbo.ForeignKeyLookupLevel(IdLevel)
                 );
-            ").ExecuteNonQuery(Context.Connection);
-            var db = DatabaseDescription.LoadFromSchemaTables(Context.Connection);
+            ").ExecuteNonQuery(Connection);
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
 
             var SomeDataWithDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c=>c.ColumnName=="SomeDataWithDefault").ColumnMetaData;
             var SomeDataWithoutDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c=>c.ColumnName=="SomeDataWithoutDefault").ColumnMetaData;

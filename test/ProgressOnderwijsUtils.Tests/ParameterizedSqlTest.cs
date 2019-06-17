@@ -218,7 +218,7 @@ namespace ProgressOnderwijsUtils.Tests
             var badQuery = SQL($@"A{{x{1}}}Z");
             Assert.ThrowsAny<Exception>(() => badQuery.DebugText());
             using (var conn = new SqlConnection()) {
-                Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn));
+                Assert.ThrowsAny<Exception>(() => badQuery.CreateSqlCommand(conn, CommandTimeout.WithoutTimeout));
             }
         }
 
@@ -227,7 +227,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var result = SQL($@"A{0}{SQL($@"[{1}{0}]")}Z");
 
-            var cmd = result.CreateSqlCommand(new SqlCommandCreationContext(null, 0, null));
+            var cmd = result.CreateSqlCommand(new SqlConnection(), CommandTimeout.WithoutTimeout);
 
             var commandText = @"A@par0[@par1@par0]Z";
             PAssert.That(() => cmd.Command.CommandText == commandText);

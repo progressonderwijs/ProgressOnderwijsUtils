@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using ExpressionToCodeLib;
 using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
@@ -45,8 +47,9 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments([NotNull] string message, Exception innerException)
-            => SqlCommandDebugStringifier.ExceptionWithTextAndArguments(message, Command, innerException);
+        internal ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments<TOriginCommand>(Exception innerException, TOriginCommand command, string extraMessage = null)
+            where TOriginCommand : IWithTimeout<TOriginCommand>
+            => SqlCommandDebugStringifier.ExceptionWithTextAndArguments(command.GetType().ToCSharpFriendlyTypeName() + " failed" + (extraMessage == null ? "." : ": " + extraMessage), Command, innerException);
     }
 
     /// <summary>
@@ -78,11 +81,11 @@ namespace ProgressOnderwijsUtils
                 lookup = GetLookup()
             };
 
-        public ReusableCommand FinishBuilding([NotNull] SqlCommandCreationContext conn)
+        public ReusableCommand FinishBuilding([NotNull] SqlConnection conn, CommandTimeout timeout)
         {
             var command = PooledSqlCommandAllocator.GetByLength(paramCount);
-            command.Connection = conn.Connection;
-            command.CommandTimeout = conn.CommandTimeoutInS;
+            command.Connection = conn;
+            command.CommandTimeout = timeout.ComputeAbsoluteTimeout(conn);
             command.CommandText = queryText.FinishBuilding();
             var cmdParams = command.Parameters;
             for (var i = 0; i < paramCount; i++) {
@@ -100,7 +103,7 @@ namespace ProgressOnderwijsUtils
 
             FreeParamsAndLookup();
 
-            var timer = conn.Tracer?.StartCommandTimer(command);
+            var timer = conn.Tracer()?.StartCommandTimer(command);
             return new ReusableCommand { Command = command, QueryTimer = timer };
         }
 

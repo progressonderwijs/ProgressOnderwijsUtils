@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
@@ -14,9 +15,7 @@ namespace ProgressOnderwijsUtils
         internal readonly ISqlComponent impl;
 
         internal ParameterizedSql(ISqlComponent impl)
-        {
-            this.impl = impl;
-        }
+            => this.impl = impl;
 
         internal void AppendTo<TCommandFactory>(ref TCommandFactory factory)
             where TCommandFactory : struct, ICommandFactory
@@ -26,11 +25,11 @@ namespace ProgressOnderwijsUtils
         /// Converts this parameterized sql statement into an sql command.
         /// The underlying SqlCommand is pooled for performance; if the provided ReusableCommand is disposed, then the SqlCommand may be reused.
         /// </summary>
-        public ReusableCommand CreateSqlCommand([NotNull] SqlCommandCreationContext conn)
+        public ReusableCommand CreateSqlCommand([NotNull] SqlConnection conn, CommandTimeout timeout)
         {
             var factory = CommandFactory.Create();
             impl?.AppendTo(ref factory);
-            return factory.FinishBuilding(conn);
+            return factory.FinishBuilding(conn, timeout);
         }
 
         /// <summary>

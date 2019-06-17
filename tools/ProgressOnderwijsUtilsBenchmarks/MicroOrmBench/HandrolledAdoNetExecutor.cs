@@ -21,11 +21,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             benchmarker.BenchSqlServer("Raw (SqlDbTypes)", ExecuteQuery2);
         }
 
-        static int ExecuteQuery([NotNull] SqlCommandCreationContext ctx, int rows)
+        static int ExecuteQuery([NotNull] SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = ExampleObject.RawQueryString;
-                cmd.Connection = ctx.Connection;
+                cmd.Connection = sqlConn;
                 var argP = new SqlParameter {
                     SqlDbType = SqlDbType.BigInt,
                     ParameterName = "@Arg",
@@ -71,12 +71,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             }
         }
 
-        static int ExecuteSqliteQuery(SQLiteConnection ctx, int rows)
+        static int ExecuteSqliteQuery(SQLiteConnection sqliteConn, int rows)
         {
-            var conn = ctx;
-            using (var cmd = conn.CreateCommand()) {
+            using (var cmd = sqliteConn.CreateCommand()) {
                 cmd.CommandText = ExampleObject.RawSqliteQueryString;
-                cmd.Connection = ctx;
+                cmd.Connection = sqliteConn;
                 var argP = new SQLiteParameter {
                     DbType = DbType.Int64,
                     ParameterName = "@Arg",
@@ -124,10 +123,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 
         static readonly ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>> connCmdCache = new ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>>();
 
-        static int ExecuteSqliteQueryCached([NotNull] SQLiteConnection ctx, int rows)
+        static int ExecuteSqliteQueryCached([NotNull] SQLiteConnection sqliteConn, int rows)
         {
-            if (!connCmdCache.TryGetValue(ctx, out var cmdCache)) {
-                cmdCache = connCmdCache.GetOrAdd(ctx, conn => {
+            if (!connCmdCache.TryGetValue(sqliteConn, out var cmdCache)) {
+                cmdCache = connCmdCache.GetOrAdd(sqliteConn, conn => {
                     conn.Disposed += (o, e) => connCmdCache.TryRemove(conn, out _);
                     return new Dictionary<string, SQLiteCommand>();
                 });
@@ -163,7 +162,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                 sqliteCmd.Parameters.Add(numP);
                 sqliteCmd.Parameters.Add(heheP);
                 sqliteCmd.Parameters.Add(argP);
-                sqliteCmd.Connection = ctx;
+                sqliteCmd.Connection = sqliteConn;
             }
 
             sqliteCmd.Parameters[0].Value = rows;
@@ -192,11 +191,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             return list.Count;
         }
 
-        static int ExecuteQuery2([NotNull] SqlCommandCreationContext ctx, int rows)
+        static int ExecuteQuery2([NotNull] SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = ExampleObject.RawQueryString;
-                cmd.Connection = ctx.Connection;
+                cmd.Connection = sqlConn;
                 var argP = new SqlParameter {
                     SqlDbType = SqlDbType.BigInt,
                     ParameterName = "@Arg",
@@ -262,11 +261,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             benchmarker.BenchSqlServer("Raw (26-col, SqlDbTypes)", ExecuteWideQuery2);
         }
 
-        static int ExecuteWideQuery2([NotNull] SqlCommandCreationContext ctx, int rows)
+        static int ExecuteWideQuery2([NotNull] SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = WideExampleObject.RawQueryString;
-                cmd.Connection = ctx.Connection;
+                cmd.Connection = sqlConn;
                 var topP = new SqlParameter {
                     SqlDbType = SqlDbType.Int,
                     ParameterName = "@Top",
@@ -311,11 +310,11 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             }
         }
 
-        static int ExecuteWideQuery([NotNull] SqlCommandCreationContext ctx, int rows)
+        static int ExecuteWideQuery([NotNull] SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = WideExampleObject.RawQueryString;
-                cmd.Connection = ctx.Connection;
+                cmd.Connection = sqlConn;
                 var topP = new SqlParameter {
                     SqlDbType = SqlDbType.Int,
                     ParameterName = "@Top",

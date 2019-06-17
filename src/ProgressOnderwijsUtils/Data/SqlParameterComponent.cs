@@ -189,8 +189,10 @@ namespace ProgressOnderwijsUtils
             where TCommandFactory : struct, ICommandFactory
         {
             var converter = argument == null ? null : MetaObjectPropertyConverter.GetOrNull(argument.GetType());
-            if (argument is ParameterizedSql parameterizedSql) {
-                parameterizedSql.AppendTo(ref factory);
+            if (argument is ParameterizedSql sql) {
+                sql.AppendTo(ref factory);
+            } else if (argument is INestableSql nestableSql) {
+                nestableSql.Sql.AppendTo(ref factory);
             } else if (converter != null) {
                 AppendParamTo(ref factory, converter.ConvertToDb(argument));
             } else {

@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var asString = Wrap("Aap");
             using (var transactedLocalConnection = new TransactedLocalConnection()) {
-                PAssert.That(() => SQL($"select {asString}").ReadScalar<string>(transactedLocalConnection.Context) == "Aap");
+                PAssert.That(() => SQL($"select {asString}").ReadScalar<string>(transactedLocalConnection.Connection) == "Aap");
             }
         }
 

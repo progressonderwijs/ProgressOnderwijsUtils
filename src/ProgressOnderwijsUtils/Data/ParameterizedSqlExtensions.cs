@@ -7,6 +7,22 @@ namespace ProgressOnderwijsUtils
     public static class ParameterizedSqlExtensions
     {
         [Pure]
+        public static TSelf WithoutTimeout<TSelf>(this IWithTimeout<TSelf> sqlCommand)
+            where TSelf : IWithTimeout<TSelf>
+            => sqlCommand.WithTimeout(CommandTimeout.WithoutTimeout);
+
+        [Pure]
+        public static TSelf WithTimeout<TSelf>(this IWithTimeout<TSelf> sqlCommand, int scaledTimeoutInS)
+            where TSelf : IWithTimeout<TSelf>
+            => sqlCommand.WithTimeout(CommandTimeout.ScaledSeconds(scaledTimeoutInS));
+
+
+        [Pure]
+        public static TSelf WithNonScaledTimeout<TSelf>(this IWithTimeout<TSelf> sqlCommand, int timeoutInAbsoluteS)
+            where TSelf : IWithTimeout<TSelf>
+            => sqlCommand.WithTimeout(CommandTimeout.AbsoluteSeconds(timeoutInAbsoluteS));
+
+        [Pure]
         public static ParameterizedSql Append(this ParameterizedSql source, ParameterizedSql extra)
             => source + extra;
 

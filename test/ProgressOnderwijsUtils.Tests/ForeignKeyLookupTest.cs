@@ -26,8 +26,8 @@ namespace ProgressOnderwijsUtils.Tests
                     IdLeaf int not null primary key
                     , IdLevel int not null foreign key references dbo.ForeignKeyLookupLevel(IdLevel)
                 );
-            ").ExecuteNonQuery(Context.Connection);
-            var db = DatabaseDescription.LoadFromSchemaTables(Context.Connection);
+            ").ExecuteNonQuery(Connection);
+            var db = DatabaseDescription.LoadFromSchemaTables(Connection);
 
             var dependencies = db.GetTableByName("dbo.ForeignKeyLookupRoot").AllDependantTables;
 

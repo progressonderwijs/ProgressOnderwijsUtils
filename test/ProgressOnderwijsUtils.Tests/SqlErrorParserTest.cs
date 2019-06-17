@@ -18,10 +18,10 @@ namespace ProgressOnderwijsUtils.Tests
                         Id int identity primary key,
                         C nchar(4) not null constraint uc_T_C unique
                     )
-                ").ExecuteNonQuery(Context);
-            SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Context);
+                ").ExecuteNonQuery(Connection);
+            SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Connection);
 
-            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Context));
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A(1)')").ExecuteNonQuery(Connection));
 
             var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
             var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
@@ -41,10 +41,10 @@ namespace ProgressOnderwijsUtils.Tests
                         C nchar(1) not null
                     )
                     create unique index ix_T on #T (C)
-                ").ExecuteNonQuery(Context);
-            SQL($"insert #T (C) values ('A')").ExecuteNonQuery(Context);
+                ").ExecuteNonQuery(Connection);
+            SQL($"insert #T (C) values ('A')").ExecuteNonQuery(Connection);
 
-            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A')").ExecuteNonQuery(Context));
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values ('A')").ExecuteNonQuery(Connection));
 
             var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
             var violation = exceptionError.Parse() as DuplicateKeyUniqueIndex? ?? throw new Exception("expected DuplicateKeyUniqueIndex");
@@ -61,9 +61,9 @@ namespace ProgressOnderwijsUtils.Tests
                     create table #T (
                         Id int constraint pk_T primary key
                     )
-                ").ExecuteNonQuery(Context);
-            SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Context);
-            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Context));
+                ").ExecuteNonQuery(Connection);
+            SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Connection);
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (Id) values (1)").ExecuteNonQuery(Connection));
 
             var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
             var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
@@ -84,9 +84,9 @@ namespace ProgressOnderwijsUtils.Tests
                         C2 nchar(1) not null,
                         constraint uc_T_C1_C2 unique (C1, C2)
                     )
-                ").ExecuteNonQuery(Context);
-            SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Context);
-            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Context));
+                ").ExecuteNonQuery(Connection);
+            SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Connection);
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C1, C2) values ('A', 'B')").ExecuteNonQuery(Connection));
 
             var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
             var violation = exceptionError.Parse() as KeyConstraintViolation? ?? throw new Exception("expected KeyConstraintViolation");
@@ -105,8 +105,8 @@ namespace ProgressOnderwijsUtils.Tests
                         Id int identity primary key,
                         C int not null constraint ck_T_C check (C <> 1)
                     )
-                ").ExecuteNonQuery(Context);
-            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T1 (C) values (1)").ExecuteNonQuery(Context));
+                ").ExecuteNonQuery(Connection);
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T1 (C) values (1)").ExecuteNonQuery(Connection));
 
             var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
             var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new Exception("expected GenericConstraintViolation");
@@ -127,9 +127,9 @@ namespace ProgressOnderwijsUtils.Tests
                         Id int identity primary key,
                         C int not null constraint ck_T_C check (C <> 1)
                     )
-                ").ExecuteNonQuery(Context);
-            SQL($"insert #T (C) values (2)").ExecuteNonQuery(Context);
-            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"update #T set C = 1").ExecuteNonQuery(Context));
+                ").ExecuteNonQuery(Connection);
+            SQL($"insert #T (C) values (2)").ExecuteNonQuery(Connection);
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"update #T set C = 1").ExecuteNonQuery(Connection));
 
             var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
             var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new Exception("expected GenericConstraintViolation");
@@ -154,8 +154,8 @@ namespace ProgressOnderwijsUtils.Tests
                         Id int identity primary key,
                         C int not null constraint fk_T2_T1 references T1
                     )
-                ").ExecuteNonQuery(Context);
-            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T2 (C) values (1)").ExecuteNonQuery(Context));
+                ").ExecuteNonQuery(Connection);
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert T2 (C) values (1)").ExecuteNonQuery(Connection));
 
             var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
             var violation = exceptionError.Parse() as GenericConstraintViolation? ?? throw new Exception("expected GenericConstraintViolation");
@@ -177,8 +177,8 @@ namespace ProgressOnderwijsUtils.Tests
                         Id int identity primary key,
                         C int not null
                     )
-                ").ExecuteNonQuery(Context);
-            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values (null)").ExecuteNonQuery(Context));
+                ").ExecuteNonQuery(Connection);
+            var exception = Assert.Throws<ParameterizedSqlExecutionException>(() => SQL($"insert #T (C) values (null)").ExecuteNonQuery(Connection));
 
             var exceptionError = exception.FirstContainedSqlErrorOrNull() ?? throw new Exception("Expected an inner SqlException with error");
             var violation = exceptionError.Parse() as CannotInsertNull? ?? throw new Exception("expected CannotInsertNull");

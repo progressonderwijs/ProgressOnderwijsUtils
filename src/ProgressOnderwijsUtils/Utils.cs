@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
@@ -130,10 +128,6 @@ namespace ProgressOnderwijsUtils
             return set;
         }
 
-        [Obsolete("use extension method exception.IsRetriableConnectionFailure() instead")]
-        public static bool IsRetriableConnectionFailure([CanBeNull] Exception e)
-            => e.IsRetriableConnectionFailure();
-
         // ReSharper disable UnusedMember.Global
         // Deze F's zijn voor makkelijke type inference, dus worden misschien niet altijd gebruikt
         // maar wel goed om te houden
@@ -165,17 +159,6 @@ namespace ProgressOnderwijsUtils
             => v;
         //purely for delegate type inference
         // ReSharper restore UnusedMember.Global
-
-        [CanBeNull]
-        public static string GetSqlExceptionDetailsString([NotNull] Exception exception)
-        {
-            var sql = exception as SqlException ?? exception.InnerException as SqlException;
-            return sql == null ? null : $"[code='{sql.ErrorCode:x}'; number='{sql.Number}'; state='{sql.State}']";
-        }
-
-        // vergelijk datums zonder milliseconden.
-        public static bool DateTimeWithoutMillisecondsIsEqual(DateTime d1, DateTime d2)
-            => d1.AddMilliseconds(-d1.Millisecond) == d2.AddMilliseconds(-d2.Millisecond);
 
         /// <summary>
         /// Geeft het verschil in maanden tussen twee datums
@@ -368,9 +351,14 @@ namespace ProgressOnderwijsUtils
                 return false;
             }
         }
+
+        public static CancellationToken CreateLinkedTokenWith(this CancellationToken a, CancellationToken b)
+            => b == CancellationToken.None ? a
+                : a == CancellationToken.None ? b
+                : CancellationTokenSource.CreateLinkedTokenSource(b, a).Token;
     }
 
-    public class ComparisonComparer<T> : IComparer<T>
+    public sealed class ComparisonComparer<T> : IComparer<T>
     {
         readonly Comparison<T> comparer;
 

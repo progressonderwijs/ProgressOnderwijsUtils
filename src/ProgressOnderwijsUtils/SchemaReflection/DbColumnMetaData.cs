@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
@@ -49,7 +50,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             ");
 
             [NotNull]
-            public static DbColumnMetaData[] RunQuery([NotNull] SqlCommandCreationContext conn, bool fromTempDb, ParameterizedSql filter)
+            public static DbColumnMetaData[] RunQuery([NotNull] SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
                 => BaseQuery(fromTempDb).Append(filter).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
         }
 
@@ -159,11 +160,11 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         static readonly ParameterizedSql tempDb = SQL($"tempdb");
 
         [NotNull]
-        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlCommandCreationContext conn, ParameterizedSql objectName)
+        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlConnection conn, ParameterizedSql objectName)
             => ColumnMetaDatas(conn, objectName.CommandText());
 
         [NotNull]
-        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlCommandCreationContext conn, [NotNull] string qualifiedObjectName)
+        public static DbColumnMetaData[] ColumnMetaDatas([NotNull] SqlConnection conn, [NotNull] string qualifiedObjectName)
         {
             var dbColumnMetaDatas = qualifiedObjectName.StartsWith("#", StringComparison.OrdinalIgnoreCase)
                 ? CompressedSysColumnsValue.RunQuery(conn, true, SQL($@"and c.object_id = object_id({$"{tempDb.CommandText()}..{qualifiedObjectName}"})"))
@@ -172,7 +173,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         }
 
         [NotNull]
-        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll([NotNull] SqlCommandCreationContext conn)
+        public static Dictionary<DbObjectId, DbColumnMetaData[]> LoadAll([NotNull] SqlConnection conn)
             => CompressedSysColumnsValue.RunQuery(conn, false, default)
                 .ToGroupedDictionary(col => col.DbObjectId, (_, cols) => Sort(cols.ToArray()));
 

@@ -31,6 +31,10 @@ namespace ProgressOnderwijsUtils
 
     public static class SqlCommandTracer
     {
+        [CanBeNull]
+        public static ISqlCommandTracer Tracer([NotNull] this SqlConnection conn)
+            => (conn.Site as IAttachedToTracer)?.Tracer;
+
         [NotNull]
         public static ISqlCommandTracer CreateAlwaysOnTracer(SqlTracerAgumentInclusion agumentInclusion)
             => new AlwaysOnTracer(agumentInclusion);
