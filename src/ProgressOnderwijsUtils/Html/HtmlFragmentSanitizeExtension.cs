@@ -50,13 +50,13 @@ namespace ProgressOnderwijsUtils.Html
                 => TagSafety.SafeToKeep;
 
             public bool AllowAttribute(HtmlAttribute attr)
-                => !attr.Name.EqualsOrdinalCaseInsensitive("style") || attr.Value.Split(';').Where(o => !o.IsNullOrWhiteSpace()).All(o => SafeStyleRegex.IsMatch(o));
+                => !attr.Name.EqualsOrdinalCaseInsensitive("style") || attr.Value.Split(new[]{';'}, StringSplitOptions.RemoveEmptyEntries).All(o => SafeStyleRegex.IsMatch(o));
 
             static readonly Regex
                 SafeStyleRegex = new Regex(@"^
-                    (\s*margin(-(left|right|top|bottom))?\s*:\s*\d+(px|em|cm|mm|)\s*;?\s*)
-                    | (\s*color\s*:\s*\w*\s*;?\s*)
-                    | (\s*font-weight\s*:\s*\w*\s*;?\s*)
+                    (\s*margin(-(left|right|top|bottom))?\s*:\s*\d+(px|em|cm|mm|)\s*)
+                    | (\s*color\s*:\s*\w+\s*)
+                    | (\s*font-weight\s*:\s*\w+\s*)
                     $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         }
 
