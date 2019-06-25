@@ -88,7 +88,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void KeepStyleWithAllowedValues()
-            => PAssert.That(() => HtmlFragment.ParseFragment(@"<div style=""margin-left: 20px"">this style is kept</div>.").Sanitize().ToStringWithoutDoctype() == @"<div style=""margin-left: 20px"">this style is kept</div>.");
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"<div style=""margin-left: 20px; color:purple; font-weight:bolder;"">this style is kept</div>.").Sanitize().ToStringWithoutDoctype() == @"<div style=""margin-left: 20px; color:purple; font-weight:bolder;"">this style is kept</div>.");
 
         [Fact]
         public void RemoveNonHttpHrefs()
