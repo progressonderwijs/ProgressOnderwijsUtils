@@ -55,8 +55,8 @@ namespace ProgressOnderwijsUtils.Html
             static readonly Regex
                 SafeStyleRegex = new Regex(@"^
                     (\s*margin(-(left|right|top|bottom))?\s*:\s*\d+(px|em|cm|mm|)\s*)
-                    | (\s*color\s*:\s*\w+\s*)
-                    | (\s*font-weight\s*:\s*\w+\s*)
+                    | (\s*color\s*:\s*[^;]+)
+                    | (\s*font-weight\s*:\s*[^;]+)
                     $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         }
 
