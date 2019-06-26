@@ -56,7 +56,7 @@ namespace ProgressOnderwijsUtils.Html
                 SafeStyleRegex = new Regex(@"^
                     (\s*margin(-(left|right|top|bottom))?\s*:\s*\d+(px|em|cm|mm|)\s*)
                     | (\s*color\s*:\s*[^;]+)
-                    | (\s*font-weight\s*:\s*(normal|bold|bolder|lighter|inherit|initial|unset|100|200|300|400|500|600|700|800|900))
+                    | (\s*font-weight\s*:\s*(normal|bold|bolder|lighter|inherit|initial|unset|[1-9]00))
                     $", RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.IgnorePatternWhitespace | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
         }
 
@@ -149,8 +149,9 @@ namespace ProgressOnderwijsUtils.Html
                 color colspan dir face height href lang rowspan size
                 style title width", @"\s+");
 
+        //TODO add style filter after removal old bad html userinput (StripUnsafeStyleTagsFilter.Instance)
         //om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
-        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripUnsafeStyleTagsFilter.Instance, StripElementsWithInlineJavascriptFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
+        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripElementsWithInlineJavascriptFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
     }
 
     public static class HtmlFragmentSanitizeExtension
