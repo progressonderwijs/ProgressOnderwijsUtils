@@ -149,9 +149,8 @@ namespace ProgressOnderwijsUtils.Html
                 color colspan dir face height href lang rowspan size
                 style title width", @"\s+");
 
-        //TODO add style filter after removal old bad html userinput (StripUnsafeStyleTagsFilter.Instance)
         //om tracer elements te vermijden zijn is img wel maar attribuut src niet toegestaan Bovendien kan src="javascript:..." dus src mag echt niet! Om geen form-problemen te hebben mogen form elementen niet.
-        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripElementsWithInlineJavascriptFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
+        public static readonly IHtmlFilter Default = new PickMostRestrictiveFilter(StripUnsafeStyleTagsFilter.Instance, StripElementsWithInlineJavascriptFilter.Instance, new SetBasedHtmlFilter(banned, safe, safeAttr));
     }
 
     public static class HtmlFragmentSanitizeExtension

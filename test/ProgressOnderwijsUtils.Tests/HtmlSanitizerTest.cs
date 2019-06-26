@@ -86,10 +86,9 @@ namespace ProgressOnderwijsUtils.Tests
         public void RemoveStyleWithDisallowedValues()
             => PAssert.That(() => HtmlFragment.ParseFragment(@"This is not <span style=""display: none"">invisible</span>.").Sanitize().ToStringWithoutDoctype() == "This is not <span>invisible</span>.");
 
-        //TODO add style filter after removal old bad html userinput (StripUnsafeStyleTagsFilter.Instance) (see also class SetBasedHtmlFilter)
-        //[Fact]
-        //public void KeepStyleWithAllowedValues()
-        //    => PAssert.That(() => HtmlFragment.ParseFragment(@"<div style=""margin-left: 20px; color:purple; font-weight:bolder;"">this style is kept</div>.").Sanitize().ToStringWithoutDoctype() == @"<div style=""margin-left: 20px; color:purple; font-weight:bolder;"">this style is kept</div>.");
+        [Fact]
+        public void KeepStyleWithAllowedValues()
+            => PAssert.That(() => HtmlFragment.ParseFragment(@"<div style=""margin-left: 20px; color:purple; font-weight:bolder;"">this style is kept</div>.").Sanitize().ToStringWithoutDoctype() == @"<div style=""margin-left: 20px; color:purple; font-weight:bolder;"">this style is kept</div>.");
 
         [Fact]
         public void RemoveNonHttpHrefs()
