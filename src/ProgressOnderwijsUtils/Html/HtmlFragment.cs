@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         public static HtmlFragment TextContent(string textContent)
-            => new HtmlFragment(textContent);
+            => new HtmlFragment(textContent != "" ? textContent : null);
 
         [Pure]
         public static HtmlFragment Element(IHtmlElement element)
