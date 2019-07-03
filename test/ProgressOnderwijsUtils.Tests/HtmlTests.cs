@@ -33,6 +33,19 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void IsEmpty_SetCorrectly_With_EmptyString()
+        {
+            PAssert.That(() => HtmlFragment.TextContent(null).IsEmpty);
+            PAssert.That(() => HtmlFragment.TextContent("").IsEmpty);
+        }
+
+        [Fact]
+        public void IsEmpty_SetCorrectly_With_WhiteSpace()
+        {
+            PAssert.That(() => HtmlFragment.TextContent(" ").IsEmpty == false);
+        }
+
+        [Fact]
         public void IFrameGetsClosingTag()
         {
             var html = _iframe.ToStringWithoutDoctype();
