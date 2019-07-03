@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public bool IsEmpty
-            => Implementation == null || Implementation is string implementation && string.IsNullOrEmpty(implementation);
+            => Implementation == null;
 
         HtmlFragment(object content)
             => Implementation = content;
