@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>43.0.1</Version>
-    <PackageReleaseNotes>HtmlFragment.IsEmpty now correctly checks on empty strings</PackageReleaseNotes>
+    <Version>43.0.2</Version>
+    <PackageReleaseNotes>Update deps</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
