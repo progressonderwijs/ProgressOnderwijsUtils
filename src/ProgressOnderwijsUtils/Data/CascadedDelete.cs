@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
             [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] params TId[] pksToDelete
         )
-            where TId : IPropertiesAreUsedImplicitly, IMetaObject
+            where TId : IReadByReflection, IMetaObject
         {
             var pksTable = SQL($"#pksTable");
             var pkColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();

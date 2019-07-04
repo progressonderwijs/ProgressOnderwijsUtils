@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             return BulkInsertTarget.LoadFromTable(Connection, tempTableName.CommandText());
         }
 
-        sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IPropertiesAreUsedImplicitly
+        sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IReadByReflection
         {
             public DayOfWeek AnEnum { get; set; }
             public DateTime? ADateTime { get; set; }
@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             AssertCollectionsEquivalent(SampleData, fromDb);
         }
 
-        sealed class SampleRow2 : ValueBase<SampleRow2>, IMetaObject, IPropertiesAreUsedImplicitly
+        sealed class SampleRow2 : ValueBase<SampleRow2>, IMetaObject, IReadByReflection
         {
             public int intNonNull { get; set; }
             public int? intNull { get; set; }

@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils.Tests
             new BlaOk { Bla2 = "", Id = 3 },
         };
 
-        public sealed class BlaOk : ValueBase<BlaOk>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk : ValueBase<BlaOk>, IMetaObject, IReadByReflection
         {
             public int Id { get; set; }
             public string Bla2 { get; set; }
@@ -41,19 +41,19 @@ namespace ProgressOnderwijsUtils.Tests
             public string AsString { get; }
         }
 
-        public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IReadByReflection
         {
             public CustomBla Bla2 { get; set; }
         }
 
-        public sealed class BlaOk4 : ValueBase<BlaOk4>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk4 : ValueBase<BlaOk4>, IMetaObject, IReadByReflection
         {
             public int Id { get; set; }
             public string Bla { get; set; }
             public CustomBla Bla2 { get; set; }
         }
 
-        public sealed class BlaOk5 : ValueBase<BlaOk5>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk5 : ValueBase<BlaOk5>, IMetaObject, IReadByReflection
         {
             public int Id { get; set; }
             public string Bla { get; set; }
@@ -61,14 +61,14 @@ namespace ProgressOnderwijsUtils.Tests
             public CustomBla? Bla3 { get; }
         }
 
-        public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IMetaObject, IReadByReflection
         {
             public int Id { get; set; }
             public string Bla { get; set; }
             public TrivialConvertibleValue<string> Bla2 { get; set; }
         }
 
-        public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IMetaObject, IReadByReflection
         {
             public TrivialConvertibleValue<int> Id { get; set; }
             public TrivialConvertibleValue<string>? Bla { get; set; }

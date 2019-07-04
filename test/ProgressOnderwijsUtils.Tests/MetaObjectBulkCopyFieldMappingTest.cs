@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils.Tests
     {
         static readonly ParameterizedSql testTableName = SQL($"MetaObjectBulkCopyFieldMappingTestTable");
 
-        struct ExactMapping : IMetaObject, IPropertiesAreUsedImplicitly
+        struct ExactMapping : IMetaObject, IReadByReflection
         {
             public int Id { get; set; }
             public int? SomeColumn { get; set; }
@@ -24,13 +24,13 @@ namespace ProgressOnderwijsUtils.Tests
                 => SQL($@"select t.* from {testTableName} t").ReadMetaObjects<ExactMapping>(context);
         }
 
-        struct LessColumns : IMetaObject, IPropertiesAreUsedImplicitly
+        struct LessColumns : IMetaObject, IReadByReflection
         {
             public int Id { get; set; }
             public int? SomeColumn { get; set; }
         }
 
-        struct MoreColumns : IMetaObject, IPropertiesAreUsedImplicitly
+        struct MoreColumns : IMetaObject, IReadByReflection
         {
             public int Id { get; set; }
             public int? SomeColumn { get; set; }

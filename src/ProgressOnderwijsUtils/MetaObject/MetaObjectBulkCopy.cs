@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
             T>([NotNull] this IEnumerable<T> metaObjects, [NotNull] SqlConnection sqlConn, [NotNull] DatabaseDescription.Table table, CommandTimeout timeout = default)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
+            where T : IMetaObject, IReadByReflection
             => BulkCopyToSqlServer(metaObjects, sqlConn, BulkInsertTarget.FromDatabaseDescription(table), timeout);
 
         /// <summary>
@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static void BulkCopyToSqlServer<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
             T>([NotNull] this IEnumerable<T> metaObjects, SqlConnection sqlConn, [NotNull] BulkInsertTarget target, CommandTimeout timeout = default)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
+            where T : IMetaObject, IReadByReflection
             => target.BulkInsert(sqlConn, metaObjects, timeout);
     }
 }
