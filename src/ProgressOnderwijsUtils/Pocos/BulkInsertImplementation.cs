@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
                 try {
                     sqlBulkCopy.WriteToServer(dbDataReader);
                     //so why no async?
-                    //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating metaObjects, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
+                    //WriteToServerAsync "supports" cancellation, but causes deadlocks when buggy code uses the connection while enumerating pocos, and that's hard to detect and very nasty on production servers, so we stick to sync instead - that throws exceptions instead, and hey, it's slightly faster too.
                 } catch (SqlException ex) when (ParseDestinationColumnIndexFromMessage(ex.Message) is int destinationColumnIndex) {
                     throw HelpfulException(sqlBulkCopy, destinationColumnIndex, ex) ?? GenericBcpColumnLengthErrorWithFieldNames(mapping, destinationColumnIndex, ex, sourceNameForTracing);
                 } finally {
@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils
             var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), tableColumns);
 
             var validatedMapping = new FieldMappingValidation {
-                AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties,
+                AllowExtraSourceColumns = mode == BulkCopyFieldMappingMode.AllowExtraPocoProperties,
                 AllowExtraTargetColumns = mode == BulkCopyFieldMappingMode.AllowExtraDatabaseColumns,
                 OverwriteAutoIncrement = options.HasFlag(SqlBulkCopyOptions.KeepIdentity),
             }.ValidateAndFilter(unfilteredMapping);

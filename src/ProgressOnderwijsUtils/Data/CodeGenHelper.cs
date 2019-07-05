@@ -28,15 +28,14 @@ namespace ProgressOnderwijsUtils
             => newLine.Replace(str, new string(' ', indentCount * 4));
 
         /// <summary>
-        ///     This method makes a "best effort" auto-generated metaobject class that can replace the current datatable.
-        ///     It's not quite as accurate as GetMetaObjectClassDef on a QueryBuilder; use that in preference.
+        ///     This method makes a "best effort" auto-generated poco class that can replace the current datatable.
         /// </summary>
         [NotNull]
-        public static string DataTableToMetaObjectClassDef([NotNull] this DataTable dt, string classNameOverride = null, [CanBeNull] Func<ColumnDefinition, string> colNameOverride = null)
+        public static string DataTableToPocoClassDef([NotNull] this DataTable dt, string classNameOverride = null, [CanBeNull] Func<ColumnDefinition, string> colNameOverride = null)
         {
             classNameOverride = classNameOverride ?? (string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName);
 
-            return ("public sealed class " + classNameOverride + " : IMetaObject "
+            return ("public sealed class " + classNameOverride + " : " + typeof(IWrittenImplicitly).ToCSharpFriendlyTypeName() + " "
                     + "{\n"
                     + Indent(
                         dt.Columns.Cast<DataColumn>().Select(

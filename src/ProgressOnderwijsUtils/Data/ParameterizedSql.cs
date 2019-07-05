@@ -134,16 +134,16 @@ namespace ProgressOnderwijsUtils
             => SqlParameterComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
 
         /// <summary>
-        /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
+        /// Adds a parameter to the query with a table-value.
         /// 
-        ///   You need to define a corresponding type in the database (see QueryComponent.ToTableParameter for details).
+        /// You need to define a corresponding user-defined-table-type in the database (see QueryComponent.ToTableParameter for details).
         /// </summary>
         /// <param name="typeName">name of the db-type e.g. IntValues</param>
-        /// <param name="objects">the list of meta-objects with shape corresponding to the DB type</param>
+        /// <param name="objects">the list of pocos with shape corresponding to the DB type</param>
         /// <returns>a composable query-component</returns>
         [Pure]
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
-            where T : IMetaObject, new()
+            where T : IReadImplicitly, new()
             => (objects.Length == 1
                     ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<T>(objects[0])
                     : new QueryTableValuedParameterComponent<T, T>(typeName, objects, arr => (T[])arr)

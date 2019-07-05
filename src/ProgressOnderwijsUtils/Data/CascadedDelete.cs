@@ -43,10 +43,10 @@ namespace ProgressOnderwijsUtils
             [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] params TId[] pksToDelete
         )
-            where TId : IPropertiesAreUsedImplicitly, IMetaObject
+            where TId : IReadImplicitly
         {
             var pksTable = SQL($"#pksTable");
-            var pkColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
+            var pkColumns = PocoUtils.GetProperties<TId>().Select(pocoProperty => pocoProperty.Name).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
             var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
 
             var target = new BulkInsertTarget(
                 pksTable.CommandText(),
-                MetaObject.GetMetaProperties<TId>().ArraySelect((mp, index) => new ColumnDefinition(mp.DataType, mp.Name, index, ColumnAccessibility.Normal))
+                PocoUtils.GetProperties<TId>().ArraySelect((pocoProperty, index) => new ColumnDefinition(pocoProperty.DataType, pocoProperty.Name, index, ColumnAccessibility.Normal))
             );
             pksToDelete.BulkCopyToSqlServer(conn, target);
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
@@ -145,7 +145,7 @@ namespace ProgressOnderwijsUtils
                 from sys.foreign_keys fk
                 join sys.foreign_key_columns fkc on fkc.constraint_object_id = fk.object_id
                 order by fk.object_id, fkc.constraint_column_id
-            ").ReadMetaObjects<FkCol>(conn)
+            ").ReadPocos<FkCol>(conn)
                 .GroupBy(row => row.Fk_id)
                 .Select(rowGroup => new ForeignKey { ParentTable = rowGroup.First().Pk_table, DependantTable = rowGroup.First().FkTableSql, Columns = rowGroup.ToArray(), })
                 .ToLookup(rowGroup => rowGroup.ParentTable, StringComparer.OrdinalIgnoreCase);
@@ -166,7 +166,7 @@ namespace ProgressOnderwijsUtils
                             and (pk2.type ='PK' or pk2.type ='UQ' and pk2.object_id<pk.object_id)
                         )
                 order by pk.parent_object_id, ic.column_id
-            ").ReadMetaObjects<PkCol>(conn)
+            ").ReadPocos<PkCol>(conn)
                 .ToLookup(
                     row => row.Pk_table,
                     row => ParameterizedSql.CreateDynamic(row.Pk_column),
@@ -317,7 +317,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
-        sealed class FkCol : IMetaObject
+        sealed class FkCol : IWrittenImplicitly
         {
             public int Fk_id { get; set; }
             public string Pk_table { get; set; }
@@ -336,7 +336,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
-        sealed class PkCol : IMetaObject
+        sealed class PkCol : IWrittenImplicitly
         {
             public string Pk_table { get; set; }
             public string Pk_column { get; set; }

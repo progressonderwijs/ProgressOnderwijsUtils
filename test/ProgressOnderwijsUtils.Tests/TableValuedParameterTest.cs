@@ -23,21 +23,21 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ConvertibleProperty()
         {
-            var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialConvertibleValue<string>>(Connection);
+            var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialValue<string>>(Connection);
             PAssert.That(() => value.Value == "aap");
         }
 
         [Fact]
         public void ConvertibleNullablePropertyWitValue()
         {
-            var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialConvertibleValue<string>?>(Connection);
+            var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialValue<string>?>(Connection);
             PAssert.That(() => value.Value.Value == "aap");
         }
 
         [Fact]
         public void ConvertibleNullablePropertyWithoutValue()
         {
-            var value = SQL($@"select {default(TrivialConvertibleValue<string>?)}").ReadScalar<TrivialConvertibleValue<string>?>(Connection);
+            var value = SQL($@"select {default(TrivialValue<string>?)}").ReadScalar<TrivialValue<string>?>(Connection);
             PAssert.That(() => value == null);
         }
 
@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             var unused = nullStringReturningQuery.ReadScalar<string>(Connection); //assert query OK.
 
-            Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<TrivialConvertibleValue<string>>(Connection));
+            Assert.ThrowsAny<Exception>(() => nullStringReturningQuery.ReadScalar<TrivialValue<string>>(Connection));
         }
 
         [Fact]
@@ -104,15 +104,15 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MetaObjectReadersCanIncludeNull()
+        public void PocoReadersCanIncludeNull()
         {
             var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
-            var metaObjects = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string> { QueryTableValue = s });
+            var pocos = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string> { QueryTableValue = s });
 
             var tableName = SQL($"#strings");
             SQL($@"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Connection);
             //manual bulk insert because our default TVP types explicitly forbid null
-            metaObjects.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
+            pocos.BulkCopyToSqlServer(Connection, BulkInsertTarget.LoadFromTable(Connection, tableName));
 
             var output = SQL($@"select x.querytablevalue from #strings x").ReadPlain<string>(Connection);
             SQL($@"drop table #strings").ExecuteNonQuery(Connection);
@@ -126,7 +126,7 @@ namespace ProgressOnderwijsUtils.Tests
                 from {new[] { Encoding.ASCII.GetBytes("0123456789"), Encoding.ASCII.GetBytes("abcdef") }} hashes
             ").ReadPlain<long>(Connection).Single() == 16);
 
-        public sealed class TestDataMetaObject : IMetaObject
+        public sealed class TestDataPoco : IReadImplicitly
         {
             public byte[] Data { get; set; }
         }
@@ -136,9 +136,10 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void Test_DbDataReaderBase_GetBytes_works_the_same_as_in_SqlDataReader()
         {
-            var testen = new[] { new TestDataMetaObject { Data = testData } };
-            var reader = new MetaObjectDataReader<TestDataMetaObject>(testen, CancellationToken.None);
-            Assert_DataReader_GetBytes_works(reader);
+            var testen = new[] { new TestDataPoco { Data = testData } };
+            using (var reader = new PocoDataReader<TestDataPoco>(testen, CancellationToken.None)) {
+                Assert_DataReader_GetBytes_works(reader);
+            }
         }
 
         [Fact]
@@ -203,28 +204,28 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void WrapSupportsEnumerableOfInt()
         {
-            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7));
+            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInSinglePropertyPoco(Enumerable.Range(7, 7));
             PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7)));
         }
 
         [Fact]
         public void WrapSupportsEnumerableOfString()
         {
-            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).Select(n => n.ToString()));
+            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInSinglePropertyPoco(Enumerable.Range(7, 7).Select(n => n.ToString()));
             PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7).Select(n => n.ToString())));
         }
 
         [Fact]
         public void WrapSupportsReadonlyListOfInt()
         {
-            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToList());
+            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInSinglePropertyPoco(Enumerable.Range(7, 7).ToList());
             PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7)));
         }
 
         [Fact]
         public void WrapSupportsArrayOfInt()
         {
-            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject(Enumerable.Range(7, 7).ToArray());
+            var internalArray = TableValuedParameterWrapperHelper.WrapPlainValueInSinglePropertyPoco(Enumerable.Range(7, 7).ToArray());
             PAssert.That(() => internalArray.Select(o => o.QueryTableValue).SequenceEqual(Enumerable.Range(7, 7)));
         }
     }

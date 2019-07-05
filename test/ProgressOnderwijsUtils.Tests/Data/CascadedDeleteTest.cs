@@ -65,7 +65,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => finalValues.SetEqual(new[] { 33 }));
         }
 
-        public struct RootId : IMetaObject, IPropertiesAreUsedImplicitly
+        public struct RootId : IWrittenImplicitly, IReadImplicitly
         {
             public int Root { get; set; }
         }

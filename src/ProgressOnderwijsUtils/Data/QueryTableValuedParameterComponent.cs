@@ -7,11 +7,11 @@ using JetBrains.Annotations;
 namespace ProgressOnderwijsUtils
 {
     sealed class QueryTableValuedParameterComponent<TIn, TOut> : IQueryParameter, ISqlComponent
-        where TOut : IMetaObject
+        where TOut : IReadImplicitly
     {
         static readonly string columnListClause =
-            MetaObject.GetMetaProperties<TOut>()
-                .Select(mp => "TVP." + mp.Name)
+            PocoUtils.GetProperties<TOut>()
+                .Select(pocoProperty => "TVP." + pocoProperty.Name)
                 .JoinStrings(", ");
 
         readonly string DbTypeName;
@@ -63,13 +63,13 @@ namespace ProgressOnderwijsUtils
             var objs = projection(values);
             cachedLength = objs.Length;
             //if you pass in something without a length, then only the first consumer gets a size;
-            paramArgs.Value = new MetaObjectDataReader<TOut>(objs, CancellationToken.None);
+            paramArgs.Value = new PocoDataReader<TOut>(objs, CancellationToken.None);
             paramArgs.TypeName = DbTypeName;
         }
     }
 
     sealed class SingletonQueryTableValuedParameterComponent<TOut> : ISqlComponent
-        where TOut : IMetaObject
+        where TOut : IReadImplicitly
     {
         readonly TOut row;
 
@@ -83,17 +83,17 @@ namespace ProgressOnderwijsUtils
         {
             var isFirst = true;
             ParameterizedSqlFactory.AppendSql(ref factory, "(select ");
-            foreach (var metaProp in MetaObject.GetMetaProperties<TOut>()) {
-                if (metaProp.CanRead) {
+            foreach (var property in PocoUtils.GetProperties<TOut>()) {
+                if (property.CanRead) {
                     if (!isFirst) {
                         ParameterizedSqlFactory.AppendSql(ref factory, ", ");
                     } else {
                         isFirst = false;
                     }
 
-                    ParameterizedSqlFactory.AppendSql(ref factory, metaProp.Name);
+                    ParameterizedSqlFactory.AppendSql(ref factory, property.Name);
                     ParameterizedSqlFactory.AppendSql(ref factory, " = ");
-                    QueryScalarParameterComponent.AppendScalarParameter(ref factory, metaProp.Getter(row));
+                    QueryScalarParameterComponent.AppendScalarParameter(ref factory, property.Getter(row));
                 }
             }
             ParameterizedSqlFactory.AppendSql(ref factory, ")");

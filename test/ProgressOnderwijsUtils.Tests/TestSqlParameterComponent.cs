@@ -40,11 +40,11 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => asDateTime == ParameterizedSql.Param(new DateTime(2010, 1, 1)), "TODO: We would like this to be conceptually different parameters");
             PAssert.That(() => asDateTime.CommandText() == "@par0");
 
-            var asNullableEnum = ParameterizedSql.Param(default(TrivialConvertibleValue<DayOfWeek>?));
+            var asNullableEnum = ParameterizedSql.Param(default(TrivialValue<DayOfWeek>?));
             PAssert.That(() => asNullableEnum == ParameterizedSql.Param(null));
             PAssert.That(() => asNullableEnum.CommandText() == "NULL");
 
-            var asNullableString = ParameterizedSql.Param(default(TrivialConvertibleValue<string>?));
+            var asNullableString = ParameterizedSql.Param(default(TrivialValue<string>?));
             PAssert.That(() => asNullableString == ParameterizedSql.Param(null));
             PAssert.That(() => asNullableString.CommandText() == "NULL");
 

@@ -8,7 +8,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public sealed class MetaObjectBulkCopyTest : TransactedLocalConnection
+    public sealed class PocoBulkCopyTest : TransactedLocalConnection
     {
         static readonly BlaOk[] SampleObjects = {
             new BlaOk { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },
@@ -18,42 +18,42 @@ namespace ProgressOnderwijsUtils.Tests
             new BlaOk { Bla2 = "", Id = 3 }
         };
 
-        public sealed class BlaOk : ValueBase<BlaOk>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk : ValueBase<BlaOk>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla2 { get; set; }
             public string Bla { get; set; }
         }
 
-        public sealed class BlaOk2 : ValueBase<BlaOk2>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk2 : ValueBase<BlaOk2>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IWrittenImplicitly, IReadImplicitly
         {
             public int Idd { get; set; }
             public string Bla { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMistypedColumns : ValueBase<BlaWithMistypedColumns>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaWithMistypedColumns : ValueBase<BlaWithMistypedColumns>, IWrittenImplicitly, IReadImplicitly
         {
             public int Bla { get; set; }
             public int Id { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMistypedColumns2 : ValueBase<BlaWithMistypedColumns2>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaWithMistypedColumns2 : ValueBase<BlaWithMistypedColumns2>, IWrittenImplicitly, IReadImplicitly
         {
             public int Bla { get; set; }
             public string Id { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithExtraClrFields : ValueBase<BlaWithExtraClrFields>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaWithExtraClrFields : ValueBase<BlaWithExtraClrFields>, IWrittenImplicitly, IReadImplicitly
         {
             public string ExtraBla { get; set; }
             public string Id { get; set; }
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils.Tests
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMissingClrFields : ValueBase<BlaWithMissingClrFields>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaWithMissingClrFields : ValueBase<BlaWithMissingClrFields>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla2 { get; set; }
@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils.Tests
             return BulkInsertTarget.LoadFromTable(Connection, tableName);
         }
 
-        sealed class ComputedColumnExample : ValueBase<ComputedColumnExample>, IMetaObject, IPropertiesAreUsedImplicitly
+        sealed class ComputedColumnExample : ValueBase<ComputedColumnExample>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public bool Computed { internal get; set; }
@@ -95,7 +95,7 @@ namespace ProgressOnderwijsUtils.Tests
             var target
                 = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(Connection);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
         }
 
@@ -129,7 +129,7 @@ namespace ProgressOnderwijsUtils.Tests
             var target
                 = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(Connection);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk2>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
         }
 
@@ -155,18 +155,18 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<ComputedColumnExample>(Connection).Single();
+            ").ReadPocos<ComputedColumnExample>(Connection).Single();
             PAssert.That(() => fromDb.Computed);
         }
 
-        sealed class IncludingIdentityColumn : ValueBase<IncludingIdentityColumn>, IMetaObject, IPropertiesAreUsedImplicitly
+        sealed class IncludingIdentityColumn : ValueBase<IncludingIdentityColumn>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public int AnIdentity { get; set; }
             public string Bla { get; set; }
         }
 
-        sealed class ExcludingIdentityColumn : ValueBase<ExcludingIdentityColumn>, IMetaObject, IPropertiesAreUsedImplicitly
+        sealed class ExcludingIdentityColumn : ValueBase<ExcludingIdentityColumn>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla { get; set; }
@@ -194,7 +194,7 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<IncludingIdentityColumn>(Connection).Single();
+            ").ReadPocos<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 1);
         }
 
@@ -221,7 +221,7 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<IncludingIdentityColumn>(Connection).Single();
+            ").ReadPocos<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 1);
         }
 
@@ -247,7 +247,7 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<IncludingIdentityColumn>(Connection).Single();
+            ").ReadPocos<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 0);
         }
 
@@ -279,7 +279,7 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<ComputedColumnExample>(Connection).Single();
+            ").ReadPocos<ComputedColumnExample>(Connection).Single();
             PAssert.That(() => fromDb.Computed);
         }
 

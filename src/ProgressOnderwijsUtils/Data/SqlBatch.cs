@@ -147,27 +147,27 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct ObjectsSqlCommand<
+    public readonly struct PocosSqlCommand<
         [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
         T
-    > : INestableSql, ITypedSqlCommand<T[]>, IWithTimeout<ObjectsSqlCommand<T>>
-        where T : IMetaObject, new()
+    > : INestableSql, ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
+        where T : IWrittenImplicitly, new()
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
         public readonly FieldMappingMode FieldMapping;
 
-        public ObjectsSqlCommand(ParameterizedSql sql, CommandTimeout timeout, FieldMappingMode fieldMapping)
+        public PocosSqlCommand(ParameterizedSql sql, CommandTimeout timeout, FieldMappingMode fieldMapping)
             => (Sql, CommandTimeout, FieldMapping) = (sql, timeout, fieldMapping);
 
-        public ObjectsSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
-            => new ObjectsSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
+        public PocosSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
+            => new PocosSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
 
         public EnumeratedObjectsSqlCommand<T> ToLazilyEnumeratedCommand()
             => new EnumeratedObjectsSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
 
-        public ObjectsSqlCommand<T> WithTimeout(CommandTimeout commandTimeout)
-            => new ObjectsSqlCommand<T>(Sql, commandTimeout, FieldMapping);
+        public PocosSqlCommand<T> WithTimeout(CommandTimeout commandTimeout)
+            => new PocosSqlCommand<T>(Sql, commandTimeout, FieldMapping);
 
         public T[] Execute(SqlConnection conn)
         {
@@ -176,7 +176,7 @@ namespace ProgressOnderwijsUtils
                 SqlDataReader reader = null;
                 try {
                     reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+                    var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
                     var builder = new ArrayBuilder<T>();
                     while (reader.Read()) {
                         var nextRow = unpacker(reader, out lastColumnRead);
@@ -193,7 +193,7 @@ namespace ProgressOnderwijsUtils
     }
 
     public readonly struct EnumeratedObjectsSqlCommand<T> : INestableSql, ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
-        where T : IMetaObject, new()
+        where T : IWrittenImplicitly, new()
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
@@ -208,12 +208,11 @@ namespace ProgressOnderwijsUtils
         public EnumeratedObjectsSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
             => new EnumeratedObjectsSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
 
-        public ObjectsSqlCommand<T> ToEagerlyEnumeratedCommand()
-            => new ObjectsSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
+        public PocosSqlCommand<T> ToEagerlyEnumeratedCommand()
+            => new PocosSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
 
         public IEnumerable<T> Execute(SqlConnection conn)
         {
-            //return Sql.EnumerateMetaObjects<T>(conn.AsTmpContext(Timeout), FieldMapping);
             var cmd = this.ReusableCommand(conn);
             SqlDataReader reader = null;
             var lastColumnRead = -1;
@@ -224,7 +223,7 @@ namespace ProgressOnderwijsUtils
                 ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
                 try {
                     reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+                    unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
                 } catch (Exception e) {
                     throw CreateHelpfulException(e, this);
                 }
