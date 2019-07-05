@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
             => PocoProperties<TPoco>.Instance.GetByExpression(propertyExpression);
 
         public static class GetByInheritedExpression<TPoco>
-            where TPoco : IWrittenImplicitly
+            where TPoco : IPoco
         {
             [UsefulToKeep("library method for getting base-class poco-property")]
             [Pure]
@@ -105,16 +105,16 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static IReadOnlyList<IPocoProperty> GetProperties(Type t)
         {
-            if (!typeof(IWrittenImplicitly).IsAssignableFrom(t)) {
-                throw new InvalidOperationException("Can't get poco-properties from type " + t + ", it's not a " + typeof(IWrittenImplicitly));
+            if (!typeof(IPoco).IsAssignableFrom(t)) {
+                throw new InvalidOperationException("Can't get poco-properties from type " + t + ", it's not a " + typeof(IPoco));
             }
-            while (t.BaseType != null && !t.BaseType.IsAbstract && typeof(IWrittenImplicitly).IsAssignableFrom(t.BaseType)) {
+            while (t.BaseType != null && !t.BaseType.IsAbstract && typeof(IPoco).IsAssignableFrom(t.BaseType)) {
                 t = t.BaseType;
             }
             return GetCache(t);
         }
 
-        static readonly MethodInfo genGetCache = Utils.F(GetProperties<IWrittenImplicitly>).Method.GetGenericMethodDefinition();
+        static readonly MethodInfo genGetCache = Utils.F(GetProperties<IPoco>).Method.GetGenericMethodDefinition();
 
         [Pure]
         static IPocoProperties<IPocoProperty> GetCache(Type t)

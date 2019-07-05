@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils
             [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] params TId[] pksToDelete
         )
-            where TId : IReadImplicitly, IWrittenImplicitly
+            where TId : IReadImplicitly
         {
             var pksTable = SQL($"#pksTable");
             var pkColumns = PocoUtils.GetProperties<TId>().Select(pocoProperty => pocoProperty.Name).ToArray();
