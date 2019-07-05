@@ -123,7 +123,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         {
             var converterType = underlyingType
                 .GetInterfaces()
-                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IMetaObjectPropertyConvertible<,,>))
+                .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IPocoConvertibleProperty<,,>))
                 .Select(i => i.GetGenericArguments()[2])
                 .SingleOrNull();
             if (converterType == null) {

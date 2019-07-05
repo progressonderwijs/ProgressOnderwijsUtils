@@ -9,11 +9,11 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public sealed class MetaObjectBulkCopyFieldMappingTest : TransactedLocalConnection
+    public sealed class PocoBulkCopyFieldMappingTest : TransactedLocalConnection
     {
-        static readonly ParameterizedSql testTableName = SQL($"MetaObjectBulkCopyFieldMappingTestTable");
+        static readonly ParameterizedSql testTableName = SQL($"BulkCopyFieldMappingTestTable");
 
-        struct ExactMapping : IMetaObject, IReadByReflection
+        struct ExactMapping : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public int? SomeColumn { get; set; }
@@ -24,13 +24,13 @@ namespace ProgressOnderwijsUtils.Tests
                 => SQL($@"select t.* from {testTableName} t").ReadMetaObjects<ExactMapping>(context);
         }
 
-        struct LessColumns : IMetaObject, IReadByReflection
+        struct LessColumns : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public int? SomeColumn { get; set; }
         }
 
-        struct MoreColumns : IMetaObject, IReadByReflection
+        struct MoreColumns : IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public int? SomeColumn { get; set; }
@@ -89,20 +89,20 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void AllowExtraMetaObjectProperties_mapping_gives_exception_on_less_columns()
-            => Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Connection, new[] { new LessColumns() }); });
+        public void AllowExtraPocoProperties_mapping_gives_exception_on_less_columns()
+            => Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraPocoProperties).BulkInsert(Connection, new[] { new LessColumns() }); });
 
         [Fact]
-        public void AllowExtraMetaObjectProperties_mapping_works_on_more_columns()
+        public void AllowExtraPocoProperties_mapping_works_on_more_columns()
         {
-            CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Connection, new[] { new MoreColumns() });
+            CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraPocoProperties).BulkInsert(Connection, new[] { new MoreColumns() });
             PAssert.That(() => ExactMapping.Load(Connection).Any());
         }
 
         [Fact]
-        public void AllowExtraMetaObjectProperties_mapping_works_when_mapping_is_exact()
+        public void AllowExtraPocoProperties_mapping_works_when_mapping_is_exact()
         {
-            CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraMetaObjectProperties).BulkInsert(Connection, new[] { new ExactMapping() });
+            CreateTargetTable().With(BulkCopyFieldMappingMode.AllowExtraPocoProperties).BulkInsert(Connection, new[] { new ExactMapping() });
             PAssert.That(() => ExactMapping.Load(Connection).Any());
         }
     }

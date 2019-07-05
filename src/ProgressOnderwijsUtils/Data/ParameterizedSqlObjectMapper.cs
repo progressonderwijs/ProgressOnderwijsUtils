@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils
             => new BuiltinsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
 
         public static ObjectsSqlCommand<T> OfObjects<T>(this ParameterizedSql sql)
-            where T : IMetaObject, new()
+            where T : IWrittenImplicitly, new()
             => new ObjectsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
 
         [MustUseReturnValue]
@@ -59,17 +59,17 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
             T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
-            where T : IMetaObject, new()
+            where T : IWrittenImplicitly, new()
             => q.OfObjects<T>().Execute(sqlConn);
 
         [NotNull]
         internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
-            where T : IMetaObject, new()
+            where T : IWrittenImplicitly, new()
         {
             if (reader?.IsClosed != false || lastColumnRead < 0) {
                 return "";
             }
-            var mps = MetaObject.GetMetaProperties<T>();
+            var mps = PocoUtils.GetProperties<T>();
             var metaObjectTypeName = typeof(T).ToCSharpFriendlyTypeName();
 
             var sqlColName = reader.GetName(lastColumnRead);
@@ -215,7 +215,7 @@ namespace ProgressOnderwijsUtils
             }
 
             static bool IsSupportedType([NotNull] Type type)
-                => IsSupportedBasicType(type) || MetaObjectPropertyConverter.GetOrNull(type) is MetaObjectPropertyConverter converter && IsSupportedBasicType(converter.DbType);
+                => IsSupportedBasicType(type) || PocoPropertyConverter.GetOrNull(type) is PocoPropertyConverter converter && IsSupportedBasicType(converter.DbType);
 
             static MethodInfo GetterForType([NotNull] Type underlyingType)
             {
@@ -223,7 +223,7 @@ namespace ProgressOnderwijsUtils
                     return getTimeSpan_SqlDataReader;
                 } else if (isSqlDataReader && underlyingType == typeof(DateTimeOffset)) {
                     return getDateTimeOffset_SqlDataReader;
-                } else if (MetaObjectPropertyConverter.GetOrNull(underlyingType) is MetaObjectPropertyConverter converter) {
+                } else if (PocoPropertyConverter.GetOrNull(underlyingType) is PocoPropertyConverter converter) {
                     return InterfaceMap[getterMethodsByType[converter.DbType]];
                 } else {
                     return InterfaceMap[getterMethodsByType[underlyingType]];
@@ -233,7 +233,7 @@ namespace ProgressOnderwijsUtils
             static Expression GetCastExpression(Expression callExpression, [NotNull] Type type)
             {
                 var underlyingType = type.GetNonNullableUnderlyingType();
-                var converter = MetaObjectPropertyConverter.GetOrNull(underlyingType);
+                var converter = PocoPropertyConverter.GetOrNull(underlyingType);
 
                 var needsCast = underlyingType != type.GetNonNullableType();
 
@@ -271,7 +271,7 @@ namespace ProgressOnderwijsUtils
             }
 
             public static class ByMetaObjectImpl<T>
-                where T : IMetaObject, new()
+                where T : IWrittenImplicitly, new()
             {
                 readonly struct ColumnOrdering : IEquatable<ColumnOrdering>
                 {
@@ -326,7 +326,7 @@ namespace ProgressOnderwijsUtils
                     => type.ToCSharpFriendlyTypeName();
 
                 static readonly uint[] ColHashPrimes;
-                static readonly MetaInfo<T> metadata = MetaInfo<T>.Instance;
+                static readonly PocoProperties<T> metadata = PocoProperties<T>.Instance;
                 static readonly bool hasUnsupportedColumns;
 
                 static ByMetaObjectImpl()

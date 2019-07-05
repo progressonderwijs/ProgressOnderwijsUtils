@@ -27,15 +27,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
             return BulkInsertTarget.LoadFromTable(Connection, tempTableName.CommandText());
         }
 
-        sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IReadByReflection
+        sealed class SampleRow : ValueBase<SampleRow>, IWrittenImplicitly, IReadImplicitly
         {
             public DayOfWeek AnEnum { get; set; }
             public DateTime? ADateTime { get; set; }
             public string SomeString { get; set; }
             public decimal? LotsOfMoney { get; set; }
             public double VagueNumber { get; set; }
-            public TrivialConvertibleValue<string> CustomBla { get; set; }
-            public TrivialConvertibleValue<string>? CustomBlaThanCanBeNull { get; set; }
+            public TrivialValue<string> CustomBla { get; set; }
+            public TrivialValue<string>? CustomBlaThanCanBeNull { get; set; }
         }
 
         static readonly SampleRow[] SampleData = {
@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             AssertCollectionsEquivalent(SampleData, fromDb);
         }
 
-        sealed class SampleRow2 : ValueBase<SampleRow2>, IMetaObject, IReadByReflection
+        sealed class SampleRow2 : ValueBase<SampleRow2>, IWrittenImplicitly, IReadImplicitly
         {
             public int intNonNull { get; set; }
             public int? intNull { get; set; }
@@ -172,7 +172,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CanCreateDbColumnMetaData()
         {
-            var metaProps = MetaInfo<SampleRow>.Instance;
+            var metaProps = PocoProperties<SampleRow>.Instance;
             var dbProps = metaProps.Select(property => DbColumnMetaData.Create(
                 property.Name,
                 property.DataType,

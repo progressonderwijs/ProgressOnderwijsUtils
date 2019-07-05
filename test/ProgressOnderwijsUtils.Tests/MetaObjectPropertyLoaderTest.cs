@@ -20,14 +20,14 @@ namespace ProgressOnderwijsUtils.Tests
             new BlaOk { Bla2 = "", Id = 3 },
         };
 
-        public sealed class BlaOk : ValueBase<BlaOk>, IMetaObject, IReadByReflection
+        public sealed class BlaOk : ValueBase<BlaOk>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla2 { get; set; }
             public string Bla { get; set; }
         }
 
-        public struct CustomBla : IMetaObjectPropertyConvertible<CustomBla, string, CustomBla.Source>
+        public struct CustomBla : IPocoConvertibleProperty<CustomBla, string, CustomBla.Source>
         {
             public struct Source : IConverterSource<CustomBla, string>
             {
@@ -41,19 +41,19 @@ namespace ProgressOnderwijsUtils.Tests
             public string AsString { get; }
         }
 
-        public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IReadByReflection
+        public sealed class BlaOk3 : ValueBase<BlaOk3>, IWrittenImplicitly, IReadImplicitly
         {
             public CustomBla Bla2 { get; set; }
         }
 
-        public sealed class BlaOk4 : ValueBase<BlaOk4>, IMetaObject, IReadByReflection
+        public sealed class BlaOk4 : ValueBase<BlaOk4>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla { get; set; }
             public CustomBla Bla2 { get; set; }
         }
 
-        public sealed class BlaOk5 : ValueBase<BlaOk5>, IMetaObject, IReadByReflection
+        public sealed class BlaOk5 : ValueBase<BlaOk5>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla { get; set; }
@@ -61,18 +61,18 @@ namespace ProgressOnderwijsUtils.Tests
             public CustomBla? Bla3 { get; }
         }
 
-        public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IMetaObject, IReadByReflection
+        public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla { get; set; }
-            public TrivialConvertibleValue<string> Bla2 { get; set; }
+            public TrivialValue<string> Bla2 { get; set; }
         }
 
-        public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IMetaObject, IReadByReflection
+        public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IWrittenImplicitly, IReadImplicitly
         {
-            public TrivialConvertibleValue<int> Id { get; set; }
-            public TrivialConvertibleValue<string>? Bla { get; set; }
-            public TrivialConvertibleValue<string> Bla2 { get; set; }
+            public TrivialValue<int> Id { get; set; }
+            public TrivialValue<string>? Bla { get; set; }
+            public TrivialValue<string> Bla2 { get; set; }
         }
 
         BulkInsertTarget CreateTempTable()
@@ -128,7 +128,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_struct()
         {
-            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
+            PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
@@ -140,7 +140,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_nullable_struct()
         {
-            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
+            PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
@@ -152,7 +152,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception_with_helpful_message()
         {
-            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
+            PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
@@ -164,7 +164,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void Query_errors_unrelated_to_column_mapping_are_not_misleading()
         {
-            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
+            PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);

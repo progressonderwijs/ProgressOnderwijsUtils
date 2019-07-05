@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static ISqlComponent ToTableValuedParameter<TIn, TOut>(string tableTypeName, IEnumerable<TIn> set, Func<IEnumerable<TIn>, TOut[]> projection)
-            where TOut : IMetaObject, new()
+            where TOut : IReadImplicitly, new()
             => set is IReadOnlyList<TIn> fixedSizeList && fixedSizeList.Count == 1
                 ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<TOut>(projection(set)[0])
                 : new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
@@ -160,14 +160,14 @@ namespace ProgressOnderwijsUtils
             readonly string sqlTableTypeName;
 
             //cache delegate to save some allocs and avoid risking slow paths like COMDelegate::DelegateConstruct
-            readonly Func<IEnumerable<T>, TableValuedParameterWrapper<T>[]> WrapPlainValueInMetaObject = TableValuedParameterWrapperHelper.WrapPlainValueInMetaObject;
+            readonly Func<IEnumerable<T>, TableValuedParameterWrapper<T>[]> WrapPlainValueInSinglePropertyPoco = TableValuedParameterWrapperHelper.WrapPlainValueInSinglePropertyPoco;
 
             public TableValuedParameterFactory(string sqlTableTypeName)
                 => this.sqlTableTypeName = sqlTableTypeName;
 
             [NotNull]
             public ISqlComponent CreateFromPlainValues(IEnumerable enumerable)
-                => ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, WrapPlainValueInMetaObject);
+                => ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, WrapPlainValueInSinglePropertyPoco);
         }
 
         [CanBeNull]
@@ -188,7 +188,7 @@ namespace ProgressOnderwijsUtils
         public static void AppendParamOrFragment<TCommandFactory>(ref TCommandFactory factory, object argument)
             where TCommandFactory : struct, ICommandFactory
         {
-            var converter = argument == null ? null : MetaObjectPropertyConverter.GetOrNull(argument.GetType());
+            var converter = argument == null ? null : PocoPropertyConverter.GetOrNull(argument.GetType());
             if (argument is ParameterizedSql sql) {
                 sql.AppendTo(ref factory);
             } else if (argument is INestableSql nestableSql) {
@@ -204,7 +204,7 @@ namespace ProgressOnderwijsUtils
     namespace Internal
     {
         //public needed for auto-mapping
-        public struct TableValuedParameterWrapper<T> : IMetaObject, IOptionalObjectProjectionForDebugging, IReadByReflection
+        public struct TableValuedParameterWrapper<T> : IWrittenImplicitly, IOptionalObjectProjectionForDebugging, IReadImplicitly
         {
             [Key]
             public T QueryTableValue { get; set; }
@@ -223,7 +223,7 @@ namespace ProgressOnderwijsUtils
             /// Effectively it's like .Select(x => new DbTableValuedParameterWrapper { querytablevalue = x }).ToArray() but faster.
             /// </summary>
             [NotNull]
-            public static TableValuedParameterWrapper<T>[] WrapPlainValueInMetaObject<T>([NotNull] IEnumerable<T> typedEnumerable)
+            public static TableValuedParameterWrapper<T>[] WrapPlainValueInSinglePropertyPoco<T>([NotNull] IEnumerable<T> typedEnumerable)
             {
                 if (typedEnumerable is T[] typedArray) {
                     var projectedArray = new TableValuedParameterWrapper<T>[typedArray.Length];

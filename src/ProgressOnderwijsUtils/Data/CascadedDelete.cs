@@ -43,10 +43,10 @@ namespace ProgressOnderwijsUtils
             [CanBeNull] Func<string, bool> stopCascading,
             [NotNull] params TId[] pksToDelete
         )
-            where TId : IReadByReflection, IMetaObject
+            where TId : IReadImplicitly, IWrittenImplicitly
         {
             var pksTable = SQL($"#pksTable");
-            var pkColumns = MetaObject.GetMetaProperties<TId>().Select(mp => mp.Name).ToArray();
+            var pkColumns = PocoUtils.GetProperties<TId>().Select(mp => mp.Name).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
             var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
 
             var target = new BulkInsertTarget(
                 pksTable.CommandText(),
-                MetaObject.GetMetaProperties<TId>().ArraySelect((mp, index) => new ColumnDefinition(mp.DataType, mp.Name, index, ColumnAccessibility.Normal))
+                PocoUtils.GetProperties<TId>().ArraySelect((mp, index) => new ColumnDefinition(mp.DataType, mp.Name, index, ColumnAccessibility.Normal))
             );
             pksToDelete.BulkCopyToSqlServer(conn, target);
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"
@@ -317,7 +317,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
-        sealed class FkCol : IMetaObject
+        sealed class FkCol : IWrittenImplicitly
         {
             public int Fk_id { get; set; }
             public string Pk_table { get; set; }
@@ -336,7 +336,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
-        sealed class PkCol : IMetaObject
+        sealed class PkCol : IWrittenImplicitly
         {
             public string Pk_table { get; set; }
             public string Pk_column { get; set; }

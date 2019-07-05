@@ -151,7 +151,7 @@ namespace ProgressOnderwijsUtils
         [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
         T
     > : INestableSql, ITypedSqlCommand<T[]>, IWithTimeout<ObjectsSqlCommand<T>>
-        where T : IMetaObject, new()
+        where T : IWrittenImplicitly, new()
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
@@ -193,7 +193,7 @@ namespace ProgressOnderwijsUtils
     }
 
     public readonly struct EnumeratedObjectsSqlCommand<T> : INestableSql, ITypedSqlCommand<IEnumerable<T>>, IWithTimeout<EnumeratedObjectsSqlCommand<T>>
-        where T : IMetaObject, new()
+        where T : IWrittenImplicitly, new()
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }

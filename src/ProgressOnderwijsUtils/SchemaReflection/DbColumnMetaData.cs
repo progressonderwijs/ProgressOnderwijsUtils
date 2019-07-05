@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 {
     public sealed class DbColumnMetaData
     {
-        struct CompressedSysColumnsValue : IMetaObject
+        struct CompressedSysColumnsValue : IWrittenImplicitly
         {
             public string ColumnName { get; set; }
             public DbObjectId DbObjectId { get; set; }

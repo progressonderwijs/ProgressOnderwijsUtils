@@ -5,7 +5,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
-    public sealed class ExampleObject : IMetaObject
+    public sealed class ExampleObject : IWrittenImplicitly
     {
         public int? A { get; set; }
         public int B { get; set; }

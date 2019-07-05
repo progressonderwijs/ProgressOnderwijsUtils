@@ -18,42 +18,42 @@ namespace ProgressOnderwijsUtils.Tests
             new BlaOk { Bla2 = "", Id = 3 }
         };
 
-        public sealed class BlaOk : ValueBase<BlaOk>, IMetaObject, IReadByReflection
+        public sealed class BlaOk : ValueBase<BlaOk>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla2 { get; set; }
             public string Bla { get; set; }
         }
 
-        public sealed class BlaOk2 : ValueBase<BlaOk2>, IMetaObject, IReadByReflection
+        public sealed class BlaOk2 : ValueBase<BlaOk2>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IMetaObject, IReadByReflection
+        public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IWrittenImplicitly, IReadImplicitly
         {
             public int Idd { get; set; }
             public string Bla { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMistypedColumns : ValueBase<BlaWithMistypedColumns>, IMetaObject, IReadByReflection
+        public sealed class BlaWithMistypedColumns : ValueBase<BlaWithMistypedColumns>, IWrittenImplicitly, IReadImplicitly
         {
             public int Bla { get; set; }
             public int Id { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMistypedColumns2 : ValueBase<BlaWithMistypedColumns2>, IMetaObject, IReadByReflection
+        public sealed class BlaWithMistypedColumns2 : ValueBase<BlaWithMistypedColumns2>, IWrittenImplicitly, IReadImplicitly
         {
             public int Bla { get; set; }
             public string Id { get; set; }
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithExtraClrFields : ValueBase<BlaWithExtraClrFields>, IMetaObject, IReadByReflection
+        public sealed class BlaWithExtraClrFields : ValueBase<BlaWithExtraClrFields>, IWrittenImplicitly, IReadImplicitly
         {
             public string ExtraBla { get; set; }
             public string Id { get; set; }
@@ -61,7 +61,7 @@ namespace ProgressOnderwijsUtils.Tests
             public string Bla2 { get; set; }
         }
 
-        public sealed class BlaWithMissingClrFields : ValueBase<BlaWithMissingClrFields>, IMetaObject, IReadByReflection
+        public sealed class BlaWithMissingClrFields : ValueBase<BlaWithMissingClrFields>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla2 { get; set; }
@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils.Tests
             return BulkInsertTarget.LoadFromTable(Connection, tableName);
         }
 
-        sealed class ComputedColumnExample : ValueBase<ComputedColumnExample>, IMetaObject, IReadByReflection
+        sealed class ComputedColumnExample : ValueBase<ComputedColumnExample>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public bool Computed { internal get; set; }
@@ -159,14 +159,14 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => fromDb.Computed);
         }
 
-        sealed class IncludingIdentityColumn : ValueBase<IncludingIdentityColumn>, IMetaObject, IReadByReflection
+        sealed class IncludingIdentityColumn : ValueBase<IncludingIdentityColumn>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public int AnIdentity { get; set; }
             public string Bla { get; set; }
         }
 
-        sealed class ExcludingIdentityColumn : ValueBase<ExcludingIdentityColumn>, IMetaObject, IReadByReflection
+        sealed class ExcludingIdentityColumn : ValueBase<ExcludingIdentityColumn>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
             public string Bla { get; set; }

@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => Utils.TransitiveClosure(new[] { table }, reachable => KeysByReferencedParentTable[reachable].Select(fk => fk.ReferencingChildTable));
     }
 
-    struct ForeignKeyColumnEntry : IMetaObject
+    struct ForeignKeyColumnEntry : IWrittenImplicitly
     {
         public DbObjectId ForeignKeyObjectId { get; set; }
         public FkReferentialAction DeleteReferentialAction { get; set; }

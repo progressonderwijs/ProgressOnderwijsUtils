@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     [DbIdEnum]
     public enum DbColumnId { }
 
-    public struct DbNamedTableId : IMetaObject
+    public struct DbNamedTableId : IWrittenImplicitly
     {
         public DbObjectId ObjectId { get; set; }
         public string QualifiedName { get; set; }
