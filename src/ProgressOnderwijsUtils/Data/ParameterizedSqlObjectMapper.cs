@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
     public enum FieldMappingMode
     {
         RequireExactColumnMatches,
-        IgnoreExtraMetaProperties,
+        IgnoreExtraPocoProperties,
     }
 
     public static class ParameterizedSqlObjectMapper
@@ -57,7 +57,7 @@ namespace ProgressOnderwijsUtils
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
         [NotNull]
-        public static T[] ReadMetaObjects<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
+        public static T[] ReadPocos<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
             T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
             where T : IWrittenImplicitly, new()
             => q.OfObjects<T>().Execute(sqlConn);
@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils
                 return "";
             }
             var mps = PocoUtils.GetProperties<T>();
-            var metaObjectTypeName = typeof(T).ToCSharpFriendlyTypeName();
+            var pocoTypeName = typeof(T).ToCSharpFriendlyTypeName();
 
             var sqlColName = reader.GetName(lastColumnRead);
             var mp = mps.GetByName(sqlColName);
@@ -90,7 +90,7 @@ namespace ProgressOnderwijsUtils
             var actualCsTypeName = mp.DataType.ToCSharpFriendlyTypeName();
             var nullValueWarning = isValueNull ?? false ? "NULL value from " : "";
 
-            return $"Cannot unpack {nullValueWarning}column {sqlColName} of type {sqlTypeName} (C#:{expectedCsTypeName}) into {metaObjectTypeName}.{mp.Name} of type {actualCsTypeName}";
+            return $"Cannot unpack {nullValueWarning}column {sqlColName} of type {sqlTypeName} (C#:{expectedCsTypeName}) into {pocoTypeName}.{mp.Name} of type {actualCsTypeName}";
         }
 
         /// <summary>
@@ -270,7 +270,7 @@ namespace ProgressOnderwijsUtils
                 return colValueExpr;
             }
 
-            public static class ByMetaObjectImpl<T>
+            public static class ByPocoImpl<T>
                 where T : IWrittenImplicitly, new()
             {
                 readonly struct ColumnOrdering : IEquatable<ColumnOrdering>
@@ -329,7 +329,7 @@ namespace ProgressOnderwijsUtils
                 static readonly PocoProperties<T> metadata = PocoProperties<T>.Instance;
                 static readonly bool hasUnsupportedColumns;
 
-                static ByMetaObjectImpl()
+                static ByPocoImpl()
                 {
                     var writablePropCount = 0;
                     foreach (var mp in metadata) { //perf:no LINQ
@@ -385,7 +385,7 @@ namespace ProgressOnderwijsUtils
                             $"{FriendlyName} properties: {publicWritableProperties.Select(n => "\n\t- " + n).JoinStrings()}\n");
                     }
                     if (ColHashPrimes.Length == 0) {
-                        throw new InvalidOperationException("MetaObject " + FriendlyName + " has no writable columns with a supported type!");
+                        throw new InvalidOperationException("Poco " + FriendlyName + " has no writable columns with a supported type!");
                     }
                 }
 
@@ -406,17 +406,17 @@ namespace ProgressOnderwijsUtils
 
                 static void ReadAllFields(ParameterExpression dataReaderParamExpr, ParameterExpression rowVar, string[] cols, ParameterExpression lastColumnReadParamExpr, List<Expression> statements)
                 {
-                    var isMetaPropertyIndexAlreadyUsed = new bool[metadata.Count];
+                    var isPocoPropertyIndexAlreadyUsed = new bool[metadata.Count];
                     for (var i = 0; i < cols.Length; i++) {
                         var colName = cols[i];
-                        if (!metadata.IndexByName.TryGetValue(colName, out var metaPropertyIndex)) {
+                        if (!metadata.IndexByName.TryGetValue(colName, out var propertyIndex)) {
                             throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
                         }
-                        if (isMetaPropertyIndexAlreadyUsed[metaPropertyIndex]) {
+                        if (isPocoPropertyIndexAlreadyUsed[propertyIndex]) {
                             throw new InvalidOperationException("IDataReader has two identically named columns " + colName + "!");
                         }
-                        isMetaPropertyIndexAlreadyUsed[metaPropertyIndex] = true;
-                        var member = metadata[metaPropertyIndex];
+                        isPocoPropertyIndexAlreadyUsed[propertyIndex] = true;
+                        var member = metadata[propertyIndex];
                         var memberInfo = BackingFieldDetector.BackingFieldOfPropertyOrNull(member.PropertyInfo) ?? (MemberInfo)member.PropertyInfo;
                         statements.Add(Expression.Assign(lastColumnReadParamExpr, Expression.Constant(i)));
                         statements.Add(Expression.Assign(Expression.MakeMemberAccess(rowVar, memberInfo), GetColValueExpr(dataReaderParamExpr, i, member.DataType)));

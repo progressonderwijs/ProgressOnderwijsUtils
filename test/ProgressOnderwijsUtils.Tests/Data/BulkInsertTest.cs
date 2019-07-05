@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target = CreateTable(SQL($"#test"));
             SampleData.BulkCopyToSqlServer(Connection, target);
-            var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
+            var fromDb = SQL($"select * from #test").ReadPocos<SampleRow>(Connection);
             AssertCollectionsEquivalent(SampleData, fromDb);
         }
 
@@ -101,7 +101,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var dataTable = SQL($"select * from #test").OfDataTable().Execute(Connection);
             target2.BulkInsert(Connection, dataTable);
 
-            var fromDb = SQL($"select * from #test2").ReadMetaObjects<SampleRow>(Connection);
+            var fromDb = SQL($"select * from #test2").ReadPocos<SampleRow>(Connection);
             AssertCollectionsEquivalent(SampleData, fromDb);
         }
 
@@ -165,7 +165,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target = CreateTable(SQL($"#test"));
             SampleData.Take(0).BulkCopyToSqlServer(Connection, target);
-            var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
+            var fromDb = SQL($"select * from #test").ReadPocos<SampleRow>(Connection);
             PAssert.That(() => fromDb.None());
         }
 

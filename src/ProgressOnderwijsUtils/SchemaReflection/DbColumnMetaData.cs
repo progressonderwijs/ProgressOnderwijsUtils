@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             [NotNull]
             public static DbColumnMetaData[] RunQuery([NotNull] SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
-                => BaseQuery(fromTempDb).Append(filter).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
+                => BaseQuery(fromTempDb).Append(filter).ReadPocos<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
         }
 
         DbColumnMetaData(CompressedSysColumnsValue fromDb)

@@ -95,7 +95,7 @@ namespace ProgressOnderwijsUtils.Tests
             var target
                 = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk>(Connection);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb));
         }
 
@@ -129,7 +129,7 @@ namespace ProgressOnderwijsUtils.Tests
             var target
                 = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk2>(Connection);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk2>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2 })));
         }
 
@@ -155,7 +155,7 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<ComputedColumnExample>(Connection).Single();
+            ").ReadPocos<ComputedColumnExample>(Connection).Single();
             PAssert.That(() => fromDb.Computed);
         }
 
@@ -194,7 +194,7 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<IncludingIdentityColumn>(Connection).Single();
+            ").ReadPocos<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 1);
         }
 
@@ -221,7 +221,7 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<IncludingIdentityColumn>(Connection).Single();
+            ").ReadPocos<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 1);
         }
 
@@ -247,7 +247,7 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<IncludingIdentityColumn>(Connection).Single();
+            ").ReadPocos<IncludingIdentityColumn>(Connection).Single();
             PAssert.That(() => fromDb.AnIdentity == 0);
         }
 
@@ -279,7 +279,7 @@ namespace ProgressOnderwijsUtils.Tests
             var fromDb = SQL($@"
                 select *
                 from {tableName}
-            ").ReadMetaObjects<ComputedColumnExample>(Connection).Single();
+            ").ReadPocos<ComputedColumnExample>(Connection).Single();
             PAssert.That(() => fromDb.Computed);
         }
 

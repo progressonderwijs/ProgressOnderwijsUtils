@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 order by 
                     fk.object_id
                     , fkc.constraint_column_id
-            ").ReadMetaObjects<ForeignKeyColumnEntry>(conn)
+            ").ReadPocos<ForeignKeyColumnEntry>(conn)
                 .GroupBy(fkCol => fkCol.ForeignKeyObjectId)
                 .Select(fk => {
                     var fkColEntry = fk.First();

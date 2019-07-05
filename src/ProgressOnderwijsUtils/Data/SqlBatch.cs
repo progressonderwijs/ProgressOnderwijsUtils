@@ -176,7 +176,7 @@ namespace ProgressOnderwijsUtils
                 SqlDataReader reader = null;
                 try {
                     reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+                    var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
                     var builder = new ArrayBuilder<T>();
                     while (reader.Read()) {
                         var nextRow = unpacker(reader, out lastColumnRead);
@@ -224,7 +224,7 @@ namespace ProgressOnderwijsUtils
                 ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.TRowReader<T> unpacker;
                 try {
                     reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
-                    unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByMetaObjectImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
+                    unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
                 } catch (Exception e) {
                     throw CreateHelpfulException(e, this);
                 }

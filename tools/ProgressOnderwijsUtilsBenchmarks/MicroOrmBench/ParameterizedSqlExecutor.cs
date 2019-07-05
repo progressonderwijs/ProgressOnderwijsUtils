@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         public static void RunQuery([NotNull] Benchmarker benchmarker)
             => benchmarker.BenchSqlServer("ParameterizedSql",
                 (sqlConn, rows) => ExampleObject.ParameterizedSqlForRows(rows)
-                    .ReadMetaObjects<ExampleObject>(sqlConn)
+                    .ReadPocos<ExampleObject>(sqlConn)
                     .Length);
 
         public static void RunTvpQuery([NotNull] Benchmarker benchmarker)
@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         public static void RunWideQuery([NotNull] Benchmarker benchmarker)
             => benchmarker.BenchSqlServer("ParameterizedSql (26-col)",
                 (sqlConn, rows) => WideExampleObject.ParameterizedSqlForRows(rows)
-                    .ReadMetaObjects<WideExampleObject>(sqlConn)
+                    .ReadPocos<WideExampleObject>(sqlConn)
                     .Length);
 
         public static void ConstructWithoutExecuting([NotNull] Benchmarker benchmarker)

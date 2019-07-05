@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             [NotNull]
             public static ExactMapping[] Load([NotNull] SqlConnection context)
-                => SQL($@"select t.* from {testTableName} t").ReadMetaObjects<ExactMapping>(context);
+                => SQL($@"select t.* from {testTableName} t").ReadPocos<ExactMapping>(context);
         }
 
         struct LessColumns : IWrittenImplicitly, IReadImplicitly

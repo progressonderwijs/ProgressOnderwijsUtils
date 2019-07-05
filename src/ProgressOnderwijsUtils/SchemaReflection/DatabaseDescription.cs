@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     ObjectId = t.object_id
                     , QualifiedName = schema_name(t.schema_id) + N'.' + object_name(t.object_id)
                 from sys.tables t
-            ").ReadMetaObjects<DbNamedTableId>(conn);
+            ").ReadPocos<DbNamedTableId>(conn);
     }
 
     public sealed class DatabaseDescription

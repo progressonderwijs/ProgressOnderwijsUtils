@@ -145,7 +145,7 @@ namespace ProgressOnderwijsUtils
                 from sys.foreign_keys fk
                 join sys.foreign_key_columns fkc on fkc.constraint_object_id = fk.object_id
                 order by fk.object_id, fkc.constraint_column_id
-            ").ReadMetaObjects<FkCol>(conn)
+            ").ReadPocos<FkCol>(conn)
                 .GroupBy(row => row.Fk_id)
                 .Select(rowGroup => new ForeignKey { ParentTable = rowGroup.First().Pk_table, DependantTable = rowGroup.First().FkTableSql, Columns = rowGroup.ToArray(), })
                 .ToLookup(rowGroup => rowGroup.ParentTable, StringComparer.OrdinalIgnoreCase);
@@ -166,7 +166,7 @@ namespace ProgressOnderwijsUtils
                             and (pk2.type ='PK' or pk2.type ='UQ' and pk2.object_id<pk.object_id)
                         )
                 order by pk.parent_object_id, ic.column_id
-            ").ReadMetaObjects<PkCol>(conn)
+            ").ReadPocos<PkCol>(conn)
                 .ToLookup(
                     row => row.Pk_table,
                     row => ParameterizedSql.CreateDynamic(row.Pk_column),
