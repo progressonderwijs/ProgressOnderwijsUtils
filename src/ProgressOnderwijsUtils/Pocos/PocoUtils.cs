@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils
             {
                 var memberInfo = GetMemberInfo(propertyExpression);
                 if (typeof(TParent).IsClass || typeof(TParent) == typeof(TPoco)) {
-                    var retval = PocoProperties<TPoco>.Instance.SingleOrNull(mp => mp.PropertyInfo == memberInfo);
+                    var retval = PocoProperties<TPoco>.Instance.SingleOrNull(pocoProperty => pocoProperty.PropertyInfo == memberInfo);
                     if (retval == null) {
                         throw new ArgumentException(
                             "To configure a poco-property, must pass a lambda such as o=>o.MyPropertyName\n" +
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
                         throw new InvalidOperationException("The poco " + typeof(TPoco) + " does not implement method " + getter.Name);
                     }
                     var mpGetter = interfacemap.TargetMethods[getterIdx];
-                    return PocoProperties<TPoco>.Instance.Single(mp => mp.PropertyInfo.GetGetMethod() == mpGetter);
+                    return PocoProperties<TPoco>.Instance.Single(pocoProperty => pocoProperty.PropertyInfo.GetGetMethod() == mpGetter);
                 } else {
                     throw new InvalidOperationException(
                         "Impossible: parent " + typeof(TParent) + " is neither the poco type " + typeof(TPoco)

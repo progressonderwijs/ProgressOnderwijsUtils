@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
     {
         static readonly string columnListClause =
             PocoUtils.GetProperties<TOut>()
-                .Select(mp => "TVP." + mp.Name)
+                .Select(pocoProperty => "TVP." + pocoProperty.Name)
                 .JoinStrings(", ");
 
         readonly string DbTypeName;

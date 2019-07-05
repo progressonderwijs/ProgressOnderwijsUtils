@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
             where TId : IReadImplicitly, IWrittenImplicitly
         {
             var pksTable = SQL($"#pksTable");
-            var pkColumns = PocoUtils.GetProperties<TId>().Select(mp => mp.Name).ToArray();
+            var pkColumns = PocoUtils.GetProperties<TId>().Select(pocoProperty => pocoProperty.Name).ToArray();
             var pkColumnsSql = pkColumns.ArraySelect(ParameterizedSql.CreateDynamic);
 
             var pkColumnsMetaData = initialTableAsEntered.Columns.Select(col => col.ColumnMetaData).Where(col => pkColumns.Contains(col.ColumnName, StringComparer.OrdinalIgnoreCase)).ToArray();
@@ -54,7 +54,7 @@ namespace ProgressOnderwijsUtils
 
             var target = new BulkInsertTarget(
                 pksTable.CommandText(),
-                PocoUtils.GetProperties<TId>().ArraySelect((mp, index) => new ColumnDefinition(mp.DataType, mp.Name, index, ColumnAccessibility.Normal))
+                PocoUtils.GetProperties<TId>().ArraySelect((pocoProperty, index) => new ColumnDefinition(pocoProperty.DataType, pocoProperty.Name, index, ColumnAccessibility.Normal))
             );
             pksToDelete.BulkCopyToSqlServer(conn, target);
             var report = RecursivelyDelete(conn, initialTableAsEntered, outputAllDeletedRows, logger, stopCascading, pkColumns, SQL($@"

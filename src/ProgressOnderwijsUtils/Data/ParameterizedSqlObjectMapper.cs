@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils
             var pocoTypeName = typeof(T).ToCSharpFriendlyTypeName();
 
             var sqlColName = reader.GetName(lastColumnRead);
-            var mp = mps.GetByName(sqlColName);
+            var pocoProperty = mps.GetByName(sqlColName);
 
             var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
             var nonNullableFieldType = reader.GetFieldType(lastColumnRead);
@@ -87,10 +87,10 @@ namespace ProgressOnderwijsUtils
             var fieldType = isValueNull ?? true ? nonNullableFieldType?.MakeNullableType() ?? nonNullableFieldType : nonNullableFieldType;
 
             var expectedCsTypeName = fieldType.ToCSharpFriendlyTypeName();
-            var actualCsTypeName = mp.DataType.ToCSharpFriendlyTypeName();
+            var actualCsTypeName = pocoProperty.DataType.ToCSharpFriendlyTypeName();
             var nullValueWarning = isValueNull ?? false ? "NULL value from " : "";
 
-            return $"Cannot unpack {nullValueWarning}column {sqlColName} of type {sqlTypeName} (C#:{expectedCsTypeName}) into {pocoTypeName}.{mp.Name} of type {actualCsTypeName}";
+            return $"Cannot unpack {nullValueWarning}column {sqlColName} of type {sqlTypeName} (C#:{expectedCsTypeName}) into {pocoTypeName}.{pocoProperty.Name} of type {actualCsTypeName}";
         }
 
         /// <summary>
@@ -326,14 +326,14 @@ namespace ProgressOnderwijsUtils
                     => type.ToCSharpFriendlyTypeName();
 
                 static readonly uint[] ColHashPrimes;
-                static readonly PocoProperties<T> metadata = PocoProperties<T>.Instance;
+                static readonly PocoProperties<T> pocoProperties = PocoProperties<T>.Instance;
                 static readonly bool hasUnsupportedColumns;
 
                 static ByPocoImpl()
                 {
                     var writablePropCount = 0;
-                    foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && IsSupportedType(mp.DataType)) {
+                    foreach (var pocoProperty in pocoProperties) { //perf:no LINQ
+                        if (pocoProperty.CanWrite && IsSupportedType(pocoProperty.DataType)) {
                             writablePropCount++;
                         }
                     }
@@ -345,8 +345,8 @@ namespace ProgressOnderwijsUtils
                         }
                     }
                     hasUnsupportedColumns = false;
-                    foreach (var mp in metadata) { //perf:no LINQ
-                        if (mp.CanWrite && !IsSupportedType(mp.DataType)) {
+                    foreach (var pocoProperty in pocoProperties) { //perf:no LINQ
+                        if (pocoProperty.CanWrite && !IsSupportedType(pocoProperty.DataType)) {
                             hasUnsupportedColumns = true;
                             break;
                         }
@@ -374,7 +374,7 @@ namespace ProgressOnderwijsUtils
                     if (reader.FieldCount > ColHashPrimes.Length
                         || (reader.FieldCount < ColHashPrimes.Length || hasUnsupportedColumns) && fieldMappingMode == FieldMappingMode.RequireExactColumnMatches) {
                         var columnNames = Enumerable.Range(0, reader.FieldCount).Select(reader.GetName).ToArray();
-                        var publicWritableProperties = metadata.Where(mp => IsSupportedType(mp.DataType)).Select(mp => mp.Name).ToArray();
+                        var publicWritableProperties = pocoProperties.Where(pocoProperty => IsSupportedType(pocoProperty.DataType)).Select(mp => mp.Name).ToArray();
                         var columnsThatCannotBeMapped = columnNames.Except(publicWritableProperties, StringComparer.OrdinalIgnoreCase);
                         var propertiesWithoutColumns = publicWritableProperties.Except(columnNames, StringComparer.OrdinalIgnoreCase);
                         throw new InvalidOperationException(
@@ -406,17 +406,17 @@ namespace ProgressOnderwijsUtils
 
                 static void ReadAllFields(ParameterExpression dataReaderParamExpr, ParameterExpression rowVar, string[] cols, ParameterExpression lastColumnReadParamExpr, List<Expression> statements)
                 {
-                    var isPocoPropertyIndexAlreadyUsed = new bool[metadata.Count];
+                    var isPocoPropertyIndexAlreadyUsed = new bool[pocoProperties.Count];
                     for (var i = 0; i < cols.Length; i++) {
                         var colName = cols[i];
-                        if (!metadata.IndexByName.TryGetValue(colName, out var propertyIndex)) {
+                        if (!pocoProperties.IndexByName.TryGetValue(colName, out var propertyIndex)) {
                             throw new ArgumentOutOfRangeException("Cannot resolve IDataReader column " + colName + " in type " + FriendlyName);
                         }
                         if (isPocoPropertyIndexAlreadyUsed[propertyIndex]) {
                             throw new InvalidOperationException("IDataReader has two identically named columns " + colName + "!");
                         }
                         isPocoPropertyIndexAlreadyUsed[propertyIndex] = true;
-                        var member = metadata[propertyIndex];
+                        var member = pocoProperties[propertyIndex];
                         var memberInfo = BackingFieldDetector.BackingFieldOfPropertyOrNull(member.PropertyInfo) ?? (MemberInfo)member.PropertyInfo;
                         statements.Add(Expression.Assign(lastColumnReadParamExpr, Expression.Constant(i)));
                         statements.Add(Expression.Assign(Expression.MakeMemberAccess(rowVar, memberInfo), GetColValueExpr(dataReaderParamExpr, i, member.DataType)));

@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void EnumeratesAsExpected()
         {
             var mps = PocoUtils.GetProperties<SimpleObject>();
-            var names = mps.Select(mp => mp.Name);
+            var names = mps.Select(pocoProperty => pocoProperty.Name);
             var expected = new[] {
                 "Property",
                 "HiddenProperty",
@@ -85,17 +85,17 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void IsReadable()
         {
-            var readable = PocoUtils.GetProperties<SimpleObject>().Where(mp => mp.CanRead);
+            var readable = PocoUtils.GetProperties<SimpleObject>().Where(pocoProperty => pocoProperty.CanRead);
             var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "MpReadonlyProperty", "ReadonlyProperty", "PrivateSetter" };
-            PAssert.That(() => readable.Select(mp => mp.Name).SequenceEqual(expected));
+            PAssert.That(() => readable.Select(pocoProperty => pocoProperty.Name).SequenceEqual(expected));
         }
 
         [Fact]
         public void IsWritable()
         {
-            var writable = PocoUtils.GetProperties<SimpleObject>().Where(mp => mp.CanWrite);
+            var writable = PocoUtils.GetProperties<SimpleObject>().Where(pocoProperty => pocoProperty.CanWrite);
             var expected = new[] { "Property", "HiddenProperty", "LabelledProperty", "MpReadonlyProperty", "WriteonlyProperty", "PrivateGetter", };
-            PAssert.That(() => writable.Select(mp => mp.Name).SequenceEqual(expected));
+            PAssert.That(() => writable.Select(pocoProperty => pocoProperty.Name).SequenceEqual(expected));
         }
 
         [Fact]
@@ -115,8 +115,8 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void CanGetByExpression()
         {
-            var mp = PocoUtils.GetByExpression((SimpleObject o) => o.Property);
-            PAssert.That(() => mp.Name == "Property" && mp.DataType == typeof(string));
+            var pocoProperty = PocoUtils.GetByExpression((SimpleObject o) => o.Property);
+            PAssert.That(() => pocoProperty.Name == "Property" && pocoProperty.DataType == typeof(string));
         }
 
         [Fact]

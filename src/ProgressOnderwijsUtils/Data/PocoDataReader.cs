@@ -109,12 +109,12 @@ namespace ProgressOnderwijsUtils
             //TypedNonNullableGetter is of type Func<T, _> such that typeof(_) == ColumnType - therefore cannot return nulls!
             public readonly Delegate TypedNonNullableGetter;
 
-            public ColumnInfo([NotNull] IReadonlyPocoProperty<T> mp)
+            public ColumnInfo([NotNull] IReadonlyPocoProperty<T> pocoProperty)
             {
-                var propertyType = mp.DataType;
+                var propertyType = pocoProperty.DataType;
                 var pocoParameter = Expression.Parameter(typeof(T));
-                var propertyValue = mp.PropertyAccessExpression(pocoParameter);
-                Name = mp.Name;
+                var propertyValue = pocoProperty.PropertyAccessExpression(pocoParameter);
+                Name = pocoProperty.Name;
                 var propertyConverter = PocoPropertyConverter.GetOrNull(propertyType);
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 

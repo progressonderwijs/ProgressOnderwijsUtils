@@ -77,8 +77,8 @@ namespace ProgressOnderwijsUtils
 
         public IEnumerator<IPocoProperty<T>> GetEnumerator()
         {
-            foreach (var mp in Properties) {
-                yield return mp;
+            foreach (var pocoProperty in Properties) {
+                yield return pocoProperty;
             }
         }
 
