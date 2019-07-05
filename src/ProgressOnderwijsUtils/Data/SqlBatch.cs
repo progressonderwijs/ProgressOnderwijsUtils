@@ -213,7 +213,6 @@ namespace ProgressOnderwijsUtils
 
         public IEnumerable<T> Execute(SqlConnection conn)
         {
-            //return Sql.EnumerateMetaObjects<T>(conn.AsTmpContext(Timeout), FieldMapping);
             var cmd = this.ReusableCommand(conn);
             SqlDataReader reader = null;
             var lastColumnRead = -1;
