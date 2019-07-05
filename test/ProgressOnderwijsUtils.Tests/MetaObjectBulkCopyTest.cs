@@ -8,7 +8,7 @@ using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public sealed class MetaObjectBulkCopyTest : TransactedLocalConnection
+    public sealed class PocoBulkCopyTest : TransactedLocalConnection
     {
         static readonly BlaOk[] SampleObjects = {
             new BlaOk { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },

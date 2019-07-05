@@ -33,9 +33,9 @@ namespace ProgressOnderwijsUtils
         public static BuiltinsSqlCommand<T> OfBuiltins<T>(this ParameterizedSql sql)
             => new BuiltinsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault);
 
-        public static ObjectsSqlCommand<T> OfObjects<T>(this ParameterizedSql sql)
+        public static PocosSqlCommand<T> OfPocos<T>(this ParameterizedSql sql)
             where T : IWrittenImplicitly, new()
-            => new ObjectsSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
+            => new PocosSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
 
         [MustUseReturnValue]
         public static T ReadScalar<T>(this ParameterizedSql sql, [NotNull] SqlConnection sqlConn)
@@ -60,7 +60,7 @@ namespace ProgressOnderwijsUtils
         public static T[] ReadPocos<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
             T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
             where T : IWrittenImplicitly, new()
-            => q.OfObjects<T>().Execute(sqlConn);
+            => q.OfPocos<T>().Execute(sqlConn);
 
         [NotNull]
         internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)

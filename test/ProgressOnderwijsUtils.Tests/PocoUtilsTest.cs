@@ -54,10 +54,10 @@ namespace ProgressOnderwijsUtils.Tests
         public string StringProperty { get; set; }
     }
 
-    public sealed class MetaObjectTest
+    public sealed class PocoUtilsTest
     {
         [Fact]
-        public void ReturnsSameMetaProperties()
+        public void ReturnsSameProperties()
         {
             var mps = PocoUtils.GetProperties<SimpleObject>();
             var mpsAlt = new SimpleObject().GetProperties();

@@ -124,7 +124,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                         values (1, null, 'test', 'test2')
                         , (2, 1, null, 'test3')
                     ) x(intNonNull, intNull, stringNull, stringNonNull)
-                ").OfObjects<SampleRow2>();
+                ").OfPocos<SampleRow2>();
                 var expectedData = new[] {
                     new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test2" },
                     new SampleRow2 { intNonNull = 2, intNull = 1, stringNull = null, stringNonNull = "test3" },
@@ -146,7 +146,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     target.BulkInsert(Connection, reader, "from query");
                 }
 
-                AssertCollectionsEquivalent(expectedData, SQL($"select * from #tmp").OfObjects<SampleRow2>().Execute(Connection));
+                AssertCollectionsEquivalent(expectedData, SQL($"select * from #tmp").OfPocos<SampleRow2>().Execute(Connection));
             }
         }
 
@@ -172,13 +172,13 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CanCreateDbColumnMetaData()
         {
-            var metaProps = PocoProperties<SampleRow>.Instance;
-            var dbProps = metaProps.Select(property => DbColumnMetaData.Create(
+            var pocoProperties = PocoProperties<SampleRow>.Instance;
+            var dbProps = pocoProperties.Select(property => DbColumnMetaData.Create(
                 property.Name,
                 property.DataType,
                 property.IsKey,
                 null));
-            PAssert.That(() => metaProps.Count == dbProps.Count());
+            PAssert.That(() => pocoProperties.Count == dbProps.Count());
         }
     }
 }

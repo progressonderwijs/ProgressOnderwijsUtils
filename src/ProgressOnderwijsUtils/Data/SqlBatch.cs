@@ -147,27 +147,27 @@ namespace ProgressOnderwijsUtils
         }
     }
 
-    public readonly struct ObjectsSqlCommand<
+    public readonly struct PocosSqlCommand<
         [MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
         T
-    > : INestableSql, ITypedSqlCommand<T[]>, IWithTimeout<ObjectsSqlCommand<T>>
+    > : INestableSql, ITypedSqlCommand<T[]>, IWithTimeout<PocosSqlCommand<T>>
         where T : IWrittenImplicitly, new()
     {
         public ParameterizedSql Sql { get; }
         public CommandTimeout CommandTimeout { get; }
         public readonly FieldMappingMode FieldMapping;
 
-        public ObjectsSqlCommand(ParameterizedSql sql, CommandTimeout timeout, FieldMappingMode fieldMapping)
+        public PocosSqlCommand(ParameterizedSql sql, CommandTimeout timeout, FieldMappingMode fieldMapping)
             => (Sql, CommandTimeout, FieldMapping) = (sql, timeout, fieldMapping);
 
-        public ObjectsSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
-            => new ObjectsSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
+        public PocosSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
+            => new PocosSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
 
         public EnumeratedObjectsSqlCommand<T> ToLazilyEnumeratedCommand()
             => new EnumeratedObjectsSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
 
-        public ObjectsSqlCommand<T> WithTimeout(CommandTimeout commandTimeout)
-            => new ObjectsSqlCommand<T>(Sql, commandTimeout, FieldMapping);
+        public PocosSqlCommand<T> WithTimeout(CommandTimeout commandTimeout)
+            => new PocosSqlCommand<T>(Sql, commandTimeout, FieldMapping);
 
         public T[] Execute(SqlConnection conn)
         {
@@ -208,8 +208,8 @@ namespace ProgressOnderwijsUtils
         public EnumeratedObjectsSqlCommand<T> WithFieldMappingMode(FieldMappingMode fieldMapping)
             => new EnumeratedObjectsSqlCommand<T>(Sql, CommandTimeout, fieldMapping);
 
-        public ObjectsSqlCommand<T> ToEagerlyEnumeratedCommand()
-            => new ObjectsSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
+        public PocosSqlCommand<T> ToEagerlyEnumeratedCommand()
+            => new PocosSqlCommand<T>(Sql, CommandTimeout, FieldMapping);
 
         public IEnumerable<T> Execute(SqlConnection conn)
         {

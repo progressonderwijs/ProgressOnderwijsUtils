@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProgressOnderwijsUtils.SchemaReflection;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public sealed class MetaObjectPropertyLoaderTest : TransactedLocalConnection
+    public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnection
     {
         static readonly BlaOk[] SampleObjects = {
             new BlaOk { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },
@@ -89,7 +87,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_only_one_property()
+        public void PocoSupportsCustomObject_only_one_property()
         {
             PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
@@ -101,7 +99,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_multiple_properties()
+        public void PocoSupportsCustomObject_multiple_properties()
         {
             PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
@@ -113,7 +111,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_readonly()
+        public void PocoSupportsCustomObject_readonly()
         {
             PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
@@ -126,7 +124,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_struct()
+        public void PocoSupportsCustomObject_struct()
         {
             PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
@@ -138,7 +136,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_nullable_struct()
+        public void PocoSupportsCustomObject_nullable_struct()
         {
             PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
@@ -150,7 +148,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception_with_helpful_message()
+        public void PocoSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception_with_helpful_message()
         {
             PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
