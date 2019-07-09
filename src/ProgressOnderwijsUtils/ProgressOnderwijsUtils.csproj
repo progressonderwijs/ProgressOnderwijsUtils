@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>44.0.0</Version>
-    <PackageReleaseNotes>Rename the concept of MetaObject to Poco, and everything related to it too</PackageReleaseNotes>
+    <Version>45.0.0</Version>
+    <PackageReleaseNotes>Trigger triggers on bulkinsert by default</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
