@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
         readonly SqlBulkCopyOptions Options;
 
         public BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition)
-            : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, SqlBulkCopyOptions.CheckConstraints) { }
+            : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers) { }
 
         BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             => (TableName, Columns, Mode, Options) = (tableName, columnDefinition, mode, options);
