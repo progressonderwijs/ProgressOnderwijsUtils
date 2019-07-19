@@ -197,6 +197,16 @@ namespace ProgressOnderwijsUtils.Collections
                 return Maybe.Error(e);
             }
         }
+
+        public Maybe<Unit, Exception> Finally(Action cleanup)
+        {
+            try {
+                Utils.TryWithCleanup(tryBody, cleanup);
+                return Maybe.Ok();
+            } catch (Exception e) {
+                return Maybe.Error(e);
+            }
+        }
     }
 
     public struct MaybeTryBody<TOk>
@@ -212,6 +222,15 @@ namespace ProgressOnderwijsUtils.Collections
             try {
                 return Maybe.Ok(tryBody());
             } catch (TError e) {
+                return Maybe.Error(e);
+            }
+        }
+
+        public Maybe<TOk, Exception> Finally(Action cleanup)
+        {
+            try {
+                return Maybe.Ok(Utils.TryWithCleanup(tryBody, cleanup));
+            } catch (Exception e) {
                 return Maybe.Error(e);
             }
         }

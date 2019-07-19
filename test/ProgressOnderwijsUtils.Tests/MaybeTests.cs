@@ -62,6 +62,39 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void Maybe_try_finally_cleansupOnce()
+        {
+            var cleanupCalled = 0;
+            var maybeWithCleanup = Maybe.Try(() => int.Parse("42e")).Finally(() => cleanupCalled++);
+            PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is FormatException));
+
+            cleanupCalled = 0;
+            maybeWithCleanup = Maybe.Try(() => int.Parse("42")).Finally(() => cleanupCalled++);
+            PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.Contains(42));
+
+            cleanupCalled = 0;
+            maybeWithCleanup = Maybe.Try(() => int.Parse("42")).Finally(() => {
+                cleanupCalled++;
+                throw new InvalidOperationException();
+            });
+            PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is InvalidOperationException));
+
+            cleanupCalled = 0;
+            maybeWithCleanup = Maybe.Try(() => int.Parse("42e")).Finally(() => {
+                cleanupCalled++;
+                throw new Exception();
+            });
+            PAssert.That(() => cleanupCalled == 1 && maybeWithCleanup.ContainsError(e => e is AggregateException));
+
+            cleanupCalled = 0;
+            var unitMaybeWithCleanup = Maybe.Try(() => throw new Exception("bla")).Finally(() => {
+                cleanupCalled++;
+                throw new Exception();
+            });
+            PAssert.That(() => cleanupCalled == 1 && unitMaybeWithCleanup.ContainsError(e => e is AggregateException));
+        }
+
+        [Fact]
         public void Maybe_try_does_not_catch_unrelated_exceptions()
             => Assert.ThrowsAny<Exception>(() => Maybe.Try(() => "123".Substring(4, 10)).Catch<NotSupportedException>());
 
