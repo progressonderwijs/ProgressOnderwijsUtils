@@ -166,6 +166,45 @@ namespace ProgressOnderwijsUtils
         public static int MaandSpan(DateTime d1, DateTime d2)
             => Math.Abs(d1 > d2 ? 12 * (d1.Year - d2.Year) + d1.Month - d2.Month : 12 * (d2.Year - d1.Year) + d2.Month - d1.Month);
 
+        public static T TryWithCleanup<T>(Func<T> computation, Action cleanup)
+        {
+            var completedOk = false;
+            try {
+                var retval = computation();
+                completedOk = true;
+                cleanup();
+                return retval;
+            } catch (Exception computationEx) when (!completedOk && Catch(cleanup) is Exception cleanupEx) {
+                //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
+                //That means a catch-rethrow should only occur when we know both fail.
+                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+            }
+        }
+
+        public static void TryWithCleanup(Action computation, Action cleanup)
+        {
+            var completedOk = false;
+            try {
+                computation();
+                completedOk = true;
+                cleanup();
+            } catch (Exception computationEx) when (!completedOk && Catch(cleanup) is Exception cleanupEx) {
+                //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
+                //That means a catch-rethrow should only occur when we know both fail.
+                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+            }
+        }
+
+        static Exception Catch(Action cleanup)
+        {
+            try {
+                cleanup();
+            } catch (Exception e) {
+                return e;
+            }
+            return null;
+        }
+
         /// <summary>
         /// Volgordebehoudende transformatie van getal naar string, dus:
         /// 
