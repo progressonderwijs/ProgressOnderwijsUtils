@@ -197,6 +197,21 @@ namespace ProgressOnderwijsUtils.Collections
                 return Maybe.Error(e);
             }
         }
+
+        /// <summary>
+        /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+        /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+        /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+        /// </summary>
+        public Maybe<Unit, Exception> Finally(Action cleanup)
+        {
+            try {
+                Utils.TryWithCleanup(tryBody, cleanup);
+                return Maybe.Ok();
+            } catch (Exception e) {
+                return Maybe.Error(e);
+            }
+        }
     }
 
     public struct MaybeTryBody<TOk>
@@ -212,6 +227,20 @@ namespace ProgressOnderwijsUtils.Collections
             try {
                 return Maybe.Ok(tryBody());
             } catch (TError e) {
+                return Maybe.Error(e);
+            }
+        }
+
+        /// <summary>
+        /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+        /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+        /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+        /// </summary>
+        public Maybe<TOk, Exception> Finally(Action cleanup)
+        {
+            try {
+                return Maybe.Ok(Utils.TryWithCleanup(tryBody, cleanup));
+            } catch (Exception e) {
                 return Maybe.Error(e);
             }
         }
