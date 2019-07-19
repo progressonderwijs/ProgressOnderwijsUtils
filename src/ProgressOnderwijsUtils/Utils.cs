@@ -166,6 +166,10 @@ namespace ProgressOnderwijsUtils
         public static int MaandSpan(DateTime d1, DateTime d2)
             => Math.Abs(d1 > d2 ? 12 * (d1.Year - d2.Year) + d1.Month - d2.Month : 12 * (d2.Year - d1.Year) + d2.Month - d1.Month);
 
+        /// <summary>
+        /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+        /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+        /// </summary>
         public static T TryWithCleanup<T>(Func<T> computation, Action cleanup)
         {
             var completedOk = false;
@@ -181,6 +185,10 @@ namespace ProgressOnderwijsUtils
             }
         }
 
+        /// <summary>
+        /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+        /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+        /// </summary>
         public static void TryWithCleanup(Action computation, Action cleanup)
         {
             var completedOk = false;

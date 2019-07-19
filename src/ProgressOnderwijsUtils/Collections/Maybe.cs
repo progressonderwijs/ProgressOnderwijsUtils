@@ -198,6 +198,11 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
+        /// <summary>
+        /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+        /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+        /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+        /// </summary>
         public Maybe<Unit, Exception> Finally(Action cleanup)
         {
             try {
@@ -226,6 +231,11 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
+        /// <summary>
+        /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+        /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+        /// Instead of throwing, this method returns exceptions in a Maybe.Error().
+        /// </summary>
         public Maybe<TOk, Exception> Finally(Action cleanup)
         {
             try {
