@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [Pure]
         [CanBeNull]
-        public static Type IfNullableGetNonNullableType([NotNull] this Type type)
+        public static Type? IfNullableGetNonNullableType([NotNull] this Type type)
             => type.IsNullableValueType() ? type.GetGenericArguments()[0] : null;
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
         /// Nullability is unaltered; Non-enum types are unaltered.
         /// </summary>
         [Pure]
-        public static Type GetUnderlyingType([NotNull] this Type type)
+        public static Type? GetUnderlyingType([NotNull] this Type type)
         {
             var maybeNonNullable = type.IfNullableGetNonNullableType();
             if (!(maybeNonNullable ?? type).IsEnum) {
@@ -72,7 +72,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [CanBeNull]
         [Pure]
-        public static Type MakeNullableType([NotNull] this Type type)
+        public static Type? MakeNullableType([NotNull] this Type type)
             => type.CanBeNull() ? null : typeof(Nullable<>).MakeGenericType(type);
 
         [ItemNotNull]
@@ -105,7 +105,7 @@ namespace ProgressOnderwijsUtils
             => type.ToCSharpFriendlyTypeName();
 
         [Pure]
-        public static T Attr<T>([NotNull] this MemberInfo mi)
+        public static T? Attr<T>([NotNull] this MemberInfo mi)
             where T : Attribute
         {
             var customAttributes = mi.GetCustomAttributes(typeof(T), true);
