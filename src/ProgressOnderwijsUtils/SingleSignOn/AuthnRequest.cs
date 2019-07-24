@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public string Destination { get; }
         public ServiceProviderConfig Issuer { get; }
         public bool ForceAuthn { get; set; }
-        public string AuthnContextClassRef { get; set; }
+        public string? AuthnContextClassRef { get; set; }
 
         public AuthnRequest(string id, string destination, ServiceProviderConfig issuer)
         {
