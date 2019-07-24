@@ -313,7 +313,7 @@ namespace ProgressOnderwijsUtils
             public string Table;
             public TimeSpan DeletionDuration;
             public int DeletedAtMostRowCount;
-            public DataTable DeletedRows;
+            public DataTable? DeletedRows;
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
