@@ -110,7 +110,7 @@ namespace ProgressOnderwijsUtils
         static readonly MethodInfo genericCastMethod = ((Func<object, int>)FromDb<int>).Method.GetGenericMethodDefinition();
 
         [Pure]
-        public static object DynamicCast(object val, Type type)
+        public static object? DynamicCast(object val, Type type)
         {
             if (type.IsInstanceOfType(val)) {
                 return val;
