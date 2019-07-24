@@ -124,7 +124,7 @@ namespace ProgressOnderwijsUtils
             bool StopCascading(ParameterizedSql tableName)
                 => stopCascading?.Invoke(tableName.CommandText()) ?? false;
 
-            DataTable ExecuteDeletion(ParameterizedSql deletionCommand)
+            DataTable? ExecuteDeletion(ParameterizedSql deletionCommand)
             {
                 if (outputAllDeletedRows) {
                     return deletionCommand.OfDataTable().Execute(conn);
