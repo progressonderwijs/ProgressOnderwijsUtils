@@ -52,10 +52,10 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         static class FromDbHelper<T>
         {
-            public static readonly Func<object, T> Convert = MakeConverter(typeof(T));
+            public static readonly Func<object?, T> Convert = MakeConverter(typeof(T));
 
             [NotNull]
-            static Func<object, T> MakeConverter([NotNull] Type type)
+            static Func<object?, T> MakeConverter([NotNull] Type type)
             {
                 var converter = PocoPropertyConverter.GetOrNull(type);
                 if (converter != null) {
@@ -69,10 +69,10 @@ namespace ProgressOnderwijsUtils
                     return obj => (T)obj;
                 }
 
-                return (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
+                return (Func<object?, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
             }
 
-            static Func<object, T> ForConvertible(Type type, PocoPropertyConverter converter)
+            static Func<object?, T> ForConvertible(Type type, PocoPropertyConverter converter)
             {
                 if (type.IsNullableValueType() || !type.IsValueType) {
                     return obj => obj == null ? default(T) : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromDb(obj);
