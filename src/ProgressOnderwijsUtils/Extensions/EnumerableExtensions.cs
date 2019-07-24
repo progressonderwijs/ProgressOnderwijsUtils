@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtils
             => list ?? Enumerable.Empty<T>();
 
         [Pure]
-        public static int GetSequenceHashCode<T>([NotNull] IEnumerable<T> list, [CanBeNull] IEqualityComparer<T> elementComparer = null)
+        public static int GetSequenceHashCode<T>([NotNull] IEnumerable<T> list, [CanBeNull] IEqualityComparer<T>? elementComparer = null)
         {
             var elemEquality = elementComparer ?? EqualityComparer<T>.Default;
             ulong hash = 3;
