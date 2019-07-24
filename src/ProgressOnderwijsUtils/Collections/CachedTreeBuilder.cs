@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Collections
         sealed class TreeNodeBuilder
         {
             public T value;
-            public TreeNodeBuilder[] tempKids;
+            public TreeNodeBuilder[]? tempKids;
             public Tree<T> finishedNode;
 
             public void GenerateOutput()
