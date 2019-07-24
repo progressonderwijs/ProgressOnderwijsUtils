@@ -169,7 +169,7 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     struct FastShortStringBuilder
     {
-        public char[] CurrentCharacterBuffer;
+        public char[]? CurrentCharacterBuffer;
         public int CurrentLength;
 
         public static FastShortStringBuilder Create()
