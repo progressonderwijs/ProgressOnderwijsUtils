@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Collections
         {
             public T value;
             public TreeNodeBuilder[]? tempKids;
-            public Tree<T> finishedNode;
+            public Tree<T>? finishedNode;
 
             public void GenerateOutput()
             {
