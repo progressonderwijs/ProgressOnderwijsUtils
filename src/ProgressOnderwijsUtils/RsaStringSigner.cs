@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils
                 + " " + input;
 
         [CanBeNull]
-        public static string VerifySignedString(X509Certificate2 certificate, [NotNull] string input)
+        public static string? VerifySignedString(X509Certificate2 certificate, [NotNull] string input)
         {
             var splitInput = input.Split(new[] { ' ' }, 2);
             if (splitInput.Length != 2) {
