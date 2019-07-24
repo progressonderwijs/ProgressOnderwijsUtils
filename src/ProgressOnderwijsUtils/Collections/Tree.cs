@@ -142,11 +142,11 @@ namespace ProgressOnderwijsUtils.Collections
 
             struct NodePair
             {
-                public Tree<T> A, B;
+                public Tree<T>? A, B;
             }
 
             [Pure]
-            public bool Equals(Tree<T> a, Tree<T> b)
+            public bool Equals(Tree<T>? a, Tree<T>? b)
             {
                 var todo = new Stack<NodePair>(16);
                 todo.Push(new NodePair { A = a, B = b });
