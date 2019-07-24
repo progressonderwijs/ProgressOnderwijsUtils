@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         /// <param name="value">The value of this node.</param>
         /// <param name="children">The children of this node, (null is allowed and means none).</param>
-        public Tree(T value, [CanBeNull] Tree<T>[] children)
+        public Tree(T value, [CanBeNull] Tree<T>[]? children)
         {
             nodeValue = value;
             kidArray = children ?? Array.Empty<Tree<T>>();
