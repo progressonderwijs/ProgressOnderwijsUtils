@@ -1,4 +1,3 @@
-﻿#nullable enable
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.SchemaReflection;

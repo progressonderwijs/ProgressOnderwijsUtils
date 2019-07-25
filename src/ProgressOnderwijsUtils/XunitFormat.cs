@@ -1,4 +1,5 @@
-﻿using System.Text;
+#nullable disable
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 

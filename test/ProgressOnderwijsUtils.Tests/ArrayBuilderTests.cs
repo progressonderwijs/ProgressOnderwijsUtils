@@ -1,4 +1,5 @@
-﻿using System.Linq;
+#nullable disable
+using System.Linq;
 using ProgressOnderwijsUtils.Collections;
 using Xunit;
 

@@ -1,4 +1,5 @@
-﻿using System;
+#nullable disable
+using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -126,7 +127,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 where attribute.Parent.Attribute("Name").Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value
-                ).SingleOrNull();
+            ).SingleOrNull();
 
         [NotNull]
         static string[] GetAttributes([NotNull] XElement assertion, string key)

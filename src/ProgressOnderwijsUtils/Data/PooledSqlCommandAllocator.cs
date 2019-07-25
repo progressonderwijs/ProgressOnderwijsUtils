@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+#nullable disable
+using System.Collections.Concurrent;
 using System.Data.SqlClient;
 using JetBrains.Annotations;
 

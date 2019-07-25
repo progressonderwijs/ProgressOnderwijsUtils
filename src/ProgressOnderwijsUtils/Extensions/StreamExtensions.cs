@@ -1,4 +1,5 @@
-﻿using System.IO;
+#nullable disable
+using System.IO;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils

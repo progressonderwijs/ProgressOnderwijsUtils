@@ -1,4 +1,5 @@
-﻿using System;
+#nullable disable
+using System;
 using System.Data.SqlClient;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Tests.Data;

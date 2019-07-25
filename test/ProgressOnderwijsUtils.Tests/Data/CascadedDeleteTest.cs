@@ -1,4 +1,3 @@
-﻿#nullable enable
 using System.Data;
 using System.Linq;
 using ExpressionToCodeLib;

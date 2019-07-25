@@ -1,4 +1,5 @@
-﻿namespace ProgressOnderwijsUtils.SchemaReflection
+#nullable disable
+namespace ProgressOnderwijsUtils.SchemaReflection
 {
     public sealed class ForeignKeyInfo : ValueBase<ForeignKeyInfo>, IWrittenImplicitly
     {

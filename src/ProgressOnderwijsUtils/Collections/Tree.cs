@@ -1,4 +1,5 @@
-﻿using System;
+#nullable disable
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -171,7 +172,7 @@ namespace ProgressOnderwijsUtils.Collections
                     (object)pair.A != null && (object)pair.B != null
                     && pair.A.Children.Count == pair.B.Children.Count
                     && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
-                // ReSharper restore RedundantCast
+            // ReSharper restore RedundantCast
 
             [Pure]
             public int GetHashCode([CanBeNull] Tree<T> obj)
