@@ -10,10 +10,10 @@ namespace ProgressOnderwijsUtils
 {
     public readonly struct BulkInsertFieldMapping
     {
-        public readonly ColumnDefinition? Src;
-        public readonly ColumnDefinition? Dst;
+        public readonly ColumnDefinition Src;
+        public readonly ColumnDefinition Dst;
 
-        BulkInsertFieldMapping(ColumnDefinition? src, ColumnDefinition? dst)
+        BulkInsertFieldMapping(ColumnDefinition src, ColumnDefinition dst)
         {
             Src = src;
             Dst = dst;

@@ -186,7 +186,7 @@ namespace ProgressOnderwijsUtils.Html
             => sourceHtml.Sanitize(null);
 
         /// <summary>This function sanitizes an html tree.  By default, it uses the filter HtmlFilters.Default, but you might consider constructing different filters for different cases. </summary>
-        public static HtmlFragment Sanitize(this HtmlFragment sourceHtml, IHtmlFilter? filter)
+        public static HtmlFragment Sanitize(this HtmlFragment sourceHtml, IHtmlFilter filter)
             => FilterElem(sourceHtml, filter ?? HtmlFilters.Default);
     }
 }

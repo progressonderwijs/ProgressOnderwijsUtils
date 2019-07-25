@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils
             };
 
         [CanBeNull]
-        static string? GetEnumStringRepresentationOrNull([CanBeNull] Enum val)
+        static string GetEnumStringRepresentationOrNull([CanBeNull] Enum val)
             => val == null
                 ? null
                 : enumStringRepresentations
@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils
                     .GetOrDefault(((IConvertible)val).ToInt64(null));
 
         [CanBeNull]
-        static string? GetBooleanStringRepresentationOrNull(bool? val)
+        static string GetBooleanStringRepresentationOrNull(bool? val)
             => val == null ? null : val.Value ? "cast(1 as bit)" : "cast(0 as bit)";
 
         public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object o)
@@ -90,7 +90,7 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
 
         [CanBeNull]
-        static ITableValuedParameterFactory? CreateTableValuedParameterFactory([NotNull] Type enumerableType)
+        static ITableValuedParameterFactory CreateTableValuedParameterFactory([NotNull] Type enumerableType)
         {
             var elementType = TryGetNonAmbiguousEnumerableElementType(enumerableType);
             if (elementType == null) {
@@ -171,9 +171,9 @@ namespace ProgressOnderwijsUtils
         }
 
         [CanBeNull]
-        static Type? TryGetNonAmbiguousEnumerableElementType([NotNull] Type enumerableType)
+        static Type TryGetNonAmbiguousEnumerableElementType([NotNull] Type enumerableType)
         {
-            Type? elementType = null;
+            Type elementType = null;
             foreach (var interfaceType in enumerableType.GetInterfaces()) {
                 if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)) {
                     if (elementType != null) {
