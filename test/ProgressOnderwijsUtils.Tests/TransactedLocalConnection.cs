@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Data.SqlClient;
 
 namespace ProgressOnderwijsUtils.Tests

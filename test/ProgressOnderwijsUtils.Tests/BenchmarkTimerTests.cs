@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests

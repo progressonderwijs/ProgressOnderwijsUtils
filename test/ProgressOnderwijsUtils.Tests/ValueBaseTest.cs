@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using JetBrains.Annotations;
 using Xunit;
 
@@ -9,9 +8,13 @@ namespace ProgressOnderwijsUtils.Tests
     public sealed class ExampleValue : ValueBase<ExampleValue>
     {
         public int MyInt;
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public string MyString { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         public DateTime SomeValueType { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public ExampleValue Nested;
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         public double? NullableField;
         public ConsoleKey? AnEnum;
     }

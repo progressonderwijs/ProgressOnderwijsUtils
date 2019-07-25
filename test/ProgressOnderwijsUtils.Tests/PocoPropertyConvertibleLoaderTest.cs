@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
@@ -22,8 +21,10 @@ namespace ProgressOnderwijsUtils.Tests
         public sealed class BlaOk : ValueBase<BlaOk>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla2 { get; set; }
-            public string Bla { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+            public string? Bla { get; set; }
         }
 
         public struct CustomBla : IPocoConvertibleProperty<CustomBla, string, CustomBla.Source>
@@ -48,14 +49,14 @@ namespace ProgressOnderwijsUtils.Tests
         public sealed class BlaOk4 : ValueBase<BlaOk4>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
-            public string Bla { get; set; }
+            public string? Bla { get; set; }
             public CustomBla Bla2 { get; set; }
         }
 
         public sealed class BlaOk5 : ValueBase<BlaOk5>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
-            public string Bla { get; set; }
+            public string? Bla { get; set; }
             public CustomBla Bla2 { get; set; }
             public CustomBla? Bla3 { get; }
         }
@@ -63,7 +64,7 @@ namespace ProgressOnderwijsUtils.Tests
         public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
-            public string Bla { get; set; }
+            public string? Bla { get; set; }
             public TrivialValue<string> Bla2 { get; set; }
         }
 

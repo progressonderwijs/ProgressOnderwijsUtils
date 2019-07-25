@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
@@ -22,50 +21,64 @@ namespace ProgressOnderwijsUtils.Tests
         public sealed class BlaOk : ValueBase<BlaOk>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla2 { get; set; }
-            public string Bla { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+            public string? Bla { get; set; }
         }
 
         public sealed class BlaOk2 : ValueBase<BlaOk2>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
-            public string Bla { get; set; }
+            public string? Bla { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla2 { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         public sealed class BlaWithMispelledColumns : ValueBase<BlaWithMispelledColumns>, IWrittenImplicitly, IReadImplicitly
         {
             public int Idd { get; set; }
-            public string Bla { get; set; }
+            public string? Bla { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla2 { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         public sealed class BlaWithMistypedColumns : ValueBase<BlaWithMistypedColumns>, IWrittenImplicitly, IReadImplicitly
         {
             public int Bla { get; set; }
             public int Id { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla2 { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         public sealed class BlaWithMistypedColumns2 : ValueBase<BlaWithMistypedColumns2>, IWrittenImplicitly, IReadImplicitly
         {
             public int Bla { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Id { get; set; }
             public string Bla2 { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         public sealed class BlaWithExtraClrFields : ValueBase<BlaWithExtraClrFields>, IWrittenImplicitly, IReadImplicitly
         {
-            public string ExtraBla { get; set; }
+            public string? ExtraBla { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Id { get; set; }
             public int Bla { get; set; }
             public string Bla2 { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         public sealed class BlaWithMissingClrFields : ValueBase<BlaWithMissingClrFields>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla2 { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         [NotNull]

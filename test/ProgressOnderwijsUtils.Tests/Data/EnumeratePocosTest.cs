@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Data.SqlClient;
 using System.Linq;
 using Xunit;
@@ -21,7 +20,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         public sealed class ExampleRow : ValueBase<ExampleRow>, IWrittenImplicitly
         {
             public int Id { get; set; }
-            public string Content { get; set; }
+            public string? Content { get; set; }
             public static int HackyHackyCounter;
 
             public ExampleRow()

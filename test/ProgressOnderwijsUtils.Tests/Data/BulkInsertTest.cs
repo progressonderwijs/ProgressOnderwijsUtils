@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
@@ -32,7 +31,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             public DayOfWeek AnEnum { get; set; }
             public DateTime? ADateTime { get; set; }
-            public string SomeString { get; set; }
+            public string? SomeString { get; set; }
             public decimal? LotsOfMoney { get; set; }
             public double VagueNumber { get; set; }
             public TrivialValue<string> CustomBla { get; set; }
@@ -110,8 +109,10 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             public int intNonNull { get; set; }
             public int? intNull { get; set; }
-            public string stringNull { get; set; }
+            public string? stringNull { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string stringNonNull { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         [Fact]
