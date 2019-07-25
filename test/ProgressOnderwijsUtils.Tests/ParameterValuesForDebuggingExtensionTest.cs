@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;

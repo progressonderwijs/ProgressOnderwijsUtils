@@ -1,5 +1,4 @@
-#nullable disable
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ProgressOnderwijsUtils.Tests.Data
 {

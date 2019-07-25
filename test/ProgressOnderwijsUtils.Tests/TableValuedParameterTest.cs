@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -32,7 +31,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void ConvertibleNullablePropertyWitValue()
         {
             var value = SQL($@"select {TrivialConvertibleValue.Create("aap")}").ReadScalar<TrivialValue<string>?>(Connection);
-            PAssert.That(() => value.Value.Value == "aap");
+            PAssert.That(() => value!.Value.Value == "aap");
         }
 
         [Fact]
@@ -108,7 +107,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void PocoReadersCanIncludeNull()
         {
             var stringsWithNull = new[] { "foo", "bar", null, "fizzbuzz" };
-            var pocos = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string> { QueryTableValue = s });
+            var pocos = stringsWithNull.ArraySelect(s => new TableValuedParameterWrapper<string?> { QueryTableValue = s });
 
             var tableName = SQL($"#strings");
             SQL($@"create table {tableName} (querytablevalue nvarchar(max))").ExecuteNonQuery(Connection);
@@ -129,7 +128,9 @@ namespace ProgressOnderwijsUtils.Tests
 
         public sealed class TestDataPoco : IReadImplicitly
         {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public byte[] Data { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         static readonly byte[] testData = Enumerable.Range(0, 100).Select(i => (byte)i).ToArray();

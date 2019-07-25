@@ -1,5 +1,4 @@
-#nullable disable
-using System.Text;
+﻿using System.Text;
 using System.Xml.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
@@ -163,7 +162,7 @@ namespace ProgressOnderwijsUtils.Tests
             AssertCompressionCompressesAndRoundTrips(docString, null);
         }
 
-        static void AssertCompressionCompressesAndRoundTrips([NotNull] string docString, byte[] dictionary)
+        static void AssertCompressionCompressesAndRoundTrips([NotNull] string docString, byte[]? dictionary)
         {
             var doc = XDocument.Parse(docString);
             var compressedBytes = XmlCompression.ToCompressedUtf8(doc, dictionary);

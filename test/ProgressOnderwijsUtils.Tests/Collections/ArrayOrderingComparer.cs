@@ -1,5 +1,4 @@
-#nullable disable
-using ExpressionToCodeLib;
+﻿using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Collections;
 using Xunit;
 
@@ -7,10 +6,10 @@ namespace ProgressOnderwijsUtils.Tests.Collections
 {
     public sealed class ArrayOrderingComparerTest
     {
-        static int Compare(int[] a, int[] b)
+        static int Compare(int[]? a, int[]? b)
             => ArrayOrderingComparer<int>.Default.Compare(a, b);
 
-        static void AssertLessThan(int[] a, int[] b)
+        static void AssertLessThan(int[]? a, int[]? b)
             => PAssert.That(() => Compare(a, b) < 0 && Compare(b, a) > 0);
 
         [Fact]

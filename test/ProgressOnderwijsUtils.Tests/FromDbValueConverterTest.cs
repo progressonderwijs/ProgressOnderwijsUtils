@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
@@ -148,7 +147,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void NullableTrivialConverterConvertsNullableRefIntoUnwrappedNull()
         {
             PAssert.That(() => DbValueConverter.FromDb<TrivialValue<string>?>(null) == null);
-            PAssert.That(() => !Equals(DbValueConverter.FromDb<TrivialValue<string>?>(null), new TrivialValue<string>(null)));
+            PAssert.That(() => !Equals(DbValueConverter.FromDb<TrivialValue<string>?>(null), new TrivialValue<string?>(null)));
         }
 
         [Fact]
@@ -161,7 +160,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void CanCastToNullableConvertibleOfReferenceType()
-            => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<string>?>(new TrivialValue<string>("asdf")).Value.Value == "asdf");
+            => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<string>?>(new TrivialValue<string>("asdf"))!.Value.Value == "asdf");
 
         [Fact]
         public void CanDynamicCastToNullableConvertibleOfReferenceType()
@@ -215,6 +214,6 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void CanCastToNullableConvertibleOfValueType()
-            => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<int>?>(new TrivialValue<int>(-123)).Value.Value == -123);
+            => PAssert.That(() => DbValueConverter.FromDb<TrivialValue<int>?>(new TrivialValue<int>(-123))!.Value.Value == -123);
     }
 }

@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
@@ -18,6 +17,7 @@ namespace ProgressOnderwijsUtils.Tests
     {
 #pragma warning disable 169
 #pragma warning disable 649
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public int Field;
         public string Property { get; set; }
         internal string IgnoredProperty { get; set; }
@@ -39,6 +39,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         public object PrivateSetter { get; private set; }
         public object PrivateGetter { set; private get; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 #pragma warning restore 169
 #pragma warning restore 649
     }
@@ -52,7 +53,7 @@ namespace ProgressOnderwijsUtils.Tests
     sealed class SetterTestClass : IWrittenImplicitly
     {
         public int IntProperty { get; set; }
-        public string StringProperty { get; set; }
+        public string? StringProperty { get; set; }
     }
 
     public sealed class PocoUtilsTest

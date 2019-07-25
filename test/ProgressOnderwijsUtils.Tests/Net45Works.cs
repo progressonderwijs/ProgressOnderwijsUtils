@@ -1,4 +1,4 @@
-#nullable disable
+﻿#nullable disable
 using System.Threading.Tasks;
 using Xunit;
 

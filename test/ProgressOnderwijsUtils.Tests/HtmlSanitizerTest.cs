@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Xml.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Html;
