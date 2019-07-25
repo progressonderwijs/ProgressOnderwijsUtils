@@ -17,6 +17,7 @@
     <DebugSymbols>True</DebugSymbols>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
+    <NullableContextOptions>enable</NullableContextOptions>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <OutputType>library</OutputType>
     <NoWarn>CS1591</NoWarn>
