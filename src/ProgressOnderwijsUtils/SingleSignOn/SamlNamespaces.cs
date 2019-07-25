@@ -1,5 +1,4 @@
-#nullable disable
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {

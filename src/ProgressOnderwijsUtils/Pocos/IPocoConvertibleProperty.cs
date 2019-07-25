@@ -1,5 +1,4 @@
-#nullable disable
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
