@@ -127,7 +127,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 where attribute.Parent.Attribute("Name").Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value
-                ).SingleOrNull();
+            ).SingleOrNull();
 
         [NotNull]
         static string[] GetAttributes([NotNull] XElement assertion, string key)

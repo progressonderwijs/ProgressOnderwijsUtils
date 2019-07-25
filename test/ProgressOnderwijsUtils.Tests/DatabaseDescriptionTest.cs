@@ -32,9 +32,8 @@ namespace ProgressOnderwijsUtils.Tests
             ").ExecuteNonQuery(Connection);
             var db = DatabaseDescription.LoadFromSchemaTables(Connection);
 
-            var SomeDataWithDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c=>c.ColumnName=="SomeDataWithDefault").ColumnMetaData;
-            var SomeDataWithoutDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c=>c.ColumnName=="SomeDataWithoutDefault").ColumnMetaData;
-
+            var SomeDataWithDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c => c.ColumnName == "SomeDataWithDefault").ColumnMetaData;
+            var SomeDataWithoutDefault_metadata = db.GetTableByName("dbo.ForeignKeyLookupLevel").Columns.Single(c => c.ColumnName == "SomeDataWithoutDefault").ColumnMetaData;
 
             PAssert.That(() => SomeDataWithDefault_metadata.HasDefaultValue);
             PAssert.That(() => !SomeDataWithoutDefault_metadata.HasDefaultValue);

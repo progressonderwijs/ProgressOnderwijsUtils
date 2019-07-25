@@ -17,7 +17,6 @@ namespace ProgressOnderwijsUtils
             where TSelf : IWithTimeout<TSelf>
             => sqlCommand.WithTimeout(CommandTimeout.ScaledSeconds(scaledTimeoutInS));
 
-
         [Pure]
         public static TSelf WithNonScaledTimeout<TSelf>(this IWithTimeout<TSelf> sqlCommand, int timeoutInAbsoluteS)
             where TSelf : IWithTimeout<TSelf>

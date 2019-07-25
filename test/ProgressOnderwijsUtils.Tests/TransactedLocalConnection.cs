@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils.Tests
             var connectionString = ConnectionString;
 
             var sqlCommandTracer = SqlCommandTracer.CreateAlwaysOffTracer(SqlTracerAgumentInclusion.IncludingArgumentValues);
-            Connection = new SqlConnection(connectionString) { Site = new SqlConnectionContext(sqlCommandTracer, new CommandTimeoutDefaults(60,  1.0)) };
+            Connection = new SqlConnection(connectionString) { Site = new SqlConnectionContext(sqlCommandTracer, new CommandTimeoutDefaults(60, 1.0)) };
             try {
                 Connection.Open();
                 ParameterizedSql.TableValuedTypeDefinitionScripts.ExecuteNonQuery(Connection);
