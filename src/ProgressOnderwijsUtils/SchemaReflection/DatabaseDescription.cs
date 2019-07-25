@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+#nullable disable
+using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;

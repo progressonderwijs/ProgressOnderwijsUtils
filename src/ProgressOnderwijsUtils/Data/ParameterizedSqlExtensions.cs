@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+#nullable disable
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
@@ -15,7 +16,6 @@ namespace ProgressOnderwijsUtils
         public static TSelf WithTimeout<TSelf>(this IWithTimeout<TSelf> sqlCommand, int scaledTimeoutInS)
             where TSelf : IWithTimeout<TSelf>
             => sqlCommand.WithTimeout(CommandTimeout.ScaledSeconds(scaledTimeoutInS));
-
 
         [Pure]
         public static TSelf WithNonScaledTimeout<TSelf>(this IWithTimeout<TSelf> sqlCommand, int timeoutInAbsoluteS)

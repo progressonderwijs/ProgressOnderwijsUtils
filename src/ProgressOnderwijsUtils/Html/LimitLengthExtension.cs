@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+#nullable disable
+using System.Collections.Generic;
 
-namespace ProgressOnderwijsUtils.Html {
-    public static class LimitLengthExtension {
+namespace ProgressOnderwijsUtils.Html
+{
+    public static class LimitLengthExtension
+    {
         /// <summary>
         /// Takes as fragment and truncates its contents such that the unindented string-representation fits in the
         /// given length

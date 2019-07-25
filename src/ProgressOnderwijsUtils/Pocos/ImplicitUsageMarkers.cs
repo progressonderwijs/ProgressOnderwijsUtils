@@ -1,4 +1,5 @@
-﻿using System;
+#nullable disable
+using System;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
@@ -26,7 +27,8 @@ namespace ProgressOnderwijsUtils
     [MeansImplicitUse]
     public sealed class UsefulToKeepAttribute : Attribute
     {
-        public UsefulToKeepAttribute([UsefulToKeep("for documentation")] string reason) {
+        public UsefulToKeepAttribute([UsefulToKeep("for documentation")] string reason)
+        {
             Reason = reason;
         }
 

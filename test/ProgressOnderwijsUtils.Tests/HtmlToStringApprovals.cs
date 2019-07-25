@@ -1,4 +1,5 @@
-﻿using ProgressOnderwijsUtils.Html;
+#nullable disable
+using ProgressOnderwijsUtils.Html;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests

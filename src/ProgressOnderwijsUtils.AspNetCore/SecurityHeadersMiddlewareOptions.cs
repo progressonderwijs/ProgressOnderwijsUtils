@@ -1,4 +1,5 @@
-﻿namespace ProgressOnderwijsUtils.AspNetCore
+#nullable disable
+namespace ProgressOnderwijsUtils.AspNetCore
 {
     public sealed class SecurityHeadersMiddlewareOptions
     {

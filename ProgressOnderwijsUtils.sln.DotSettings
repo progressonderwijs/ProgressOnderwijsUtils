@@ -1,4 +1,5 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeEditing/Intellisense/CodeCompletion/IntellisenseGloballyEnabled/IntellisenseEnabled/@EntryValue">Disabled</s:String>
     <s:String x:Key="/Default/CodeInspection/CSharpLanguageProject/LanguageLevel/@EntryValue">Latest</s:String>
 	<s:String x:Key="/Default/CodeEditing/TypingAssist/BraceInsertType/@EntryValue">DISABLED</s:String>
 	<s:Boolean x:Key="/Default/CodeEditing/TypingAssist/FormatBlockOnRBrace/@EntryValue">True</s:Boolean>
@@ -31,9 +32,12 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=A29FF655_002DCEAE_002D4CFF_002D87E2_002D0A8B1A9FCFC9_002Ff_003ARunLocalSqlBuilder_002Elinq_002Fl_003ADeveloper_0020Tools_003FDbSetup_003FRunLocalSqlBuilder_002Elinq/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=A29FF655_002DCEAE_002D4CFF_002D87E2_002D0A8B1A9FCFC9_002Ff_003ASL_002Drefentietabellen_002Dimport_002Elinq_002Fl_003ADeveloper_0020Tools_003FLinqPad_003FSL_002Drefentietabellen_002Dimport_002Elinq/@EntryIndexedValue">ExplicitlyExcluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/GeneratedFilesAndFolders/=B9503D14_002DB9A4_002D40B0_002D962B_002DAC513B676F82_002Fd_003AFilters_002Fd_003AFilterLanguage/@EntryIndexedValue">B9503D14-B9A4-40B0-962B-AC513B676F82/d:Filters/d:FilterLanguage</s:String>
+	
+	
+	<s:String x:Key="/Default/CodeInspection/GeneratedCode/GeneratedFileMasks/=GeneratedPocos_002E_002A_002Ecs/@EntryIndexedValue">GeneratedPocos.*.cs</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/AnalysisEnabled/@EntryValue">SOLUTION</s:String>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/DoNotShowVsBulb/@EntryValue">False</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/IdentifierHighlightingEnabled/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/IdentifierHighlightingEnabled/@EntryValue">False</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/Highlighting/IncludeWarningsInSwea/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=AccessRightsInText/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=AccessToDisposedClosure/@EntryIndexedValue">DO_NOT_SHOW</s:String>
@@ -83,7 +87,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CannotApplyEqualityOperatorToType/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CheckForReferenceEqualityInstead_002E1/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CheckForReferenceEqualityInstead_002E2/@EntryIndexedValue">WARNING</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CheckNamespace/@EntryIndexedValue">HINT</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CheckNamespace/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ClassCanBeSealed_002EGlobal/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ClassCanBeSealed_002ELocal/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ClassNeverInstantiated_002EGlobal/@EntryIndexedValue">WARNING</s:String>
@@ -110,6 +114,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertToAutoProperty/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertToConstant_002EGlobal/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertToConstant_002ELocal/@EntryIndexedValue">DO_NOT_SHOW</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertToNullCoalescingCompoundAssignment/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ConvertToStaticClass/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CoVariantArrayConversion/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=CSharpWarnings_003A_003ACS0078/@EntryIndexedValue">ERROR</s:String>
@@ -193,7 +198,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ImplicitlyCapturedClosure/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ImpureMethodCallOnReadonlyValueField/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=InconsistentlySynchronizedField/@EntryIndexedValue">ERROR</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=InconsistentNaming/@EntryIndexedValue">HINT</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=InconsistentNaming/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=InheritdocInvalidUsage/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=InlineOutVariableDeclaration/@EntryIndexedValue">WARNING</s:String>
@@ -208,7 +213,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=IteratorNeverReturns/@EntryIndexedValue">SUGGESTION</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=JoinDeclarationAndInitializer/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=JoinNullCheckWithUsage/@EntryIndexedValue">WARNING</s:String>
-	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=LocalizableElement/@EntryIndexedValue">SUGGESTION</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=LocalizableElement/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=LoopCanBeConvertedToQuery/@EntryIndexedValue">HINT</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=MarkupAttributeTypo/@EntryIndexedValue">DO_NOT_SHOW</s:String>
@@ -258,6 +263,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=ParameterTypeCanBeEnumerable_002ELocal/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PartialMethodParameterNameMismatch/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PatternAlwaysMatches/@EntryIndexedValue">WARNING</s:String>
+	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PatternAlwaysOfType/@EntryIndexedValue">DO_NOT_SHOW</s:String>
 	
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PolymorphicFieldLikeEventInvocation/@EntryIndexedValue">ERROR</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=PossibleInfiniteInheritance/@EntryIndexedValue">ERROR</s:String>
@@ -487,6 +493,7 @@
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=VirtualMemberNeverOverridden_002EGlobal/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=VirtualMemberNeverOverridden_002ELocal/@EntryIndexedValue">WARNING</s:String>
 	<s:String x:Key="/Default/CodeInspection/Highlighting/InspectionSeverities/=VoidMethodWithMustUseReturnValueAttribute/@EntryIndexedValue">ERROR</s:String>
+	<s:String x:Key="/Default/CodeInspection/TypeScriptInspections/Level/@EntryValue">TypeScript30</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=PNet_0020Cleanup/@EntryIndexedValue">&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;Profile name="PNet Cleanup"&gt;&lt;CSCodeStyleAttributes ArrangeTypeAccessModifier="True" ArrangeTypeMemberAccessModifier="True" SortModifiers="True" RemoveRedundantParentheses="True" AddMissingParentheses="False" ArrangeBraces="True" ArrangeAttributes="True" ArrangeArgumentsStyle="True" ArrangeCodeBodyStyle="False" ArrangeVarStyle="True" /&gt;&lt;CSEnforceVarKeywordUsageSettings&gt;True&lt;/CSEnforceVarKeywordUsageSettings&gt;&lt;CSOptimizeUsings&gt;&lt;OptimizeUsings&gt;False&lt;/OptimizeUsings&gt;&lt;EmbraceInRegion&gt;False&lt;/EmbraceInRegion&gt;&lt;RegionName&gt;&lt;/RegionName&gt;&lt;/CSOptimizeUsings&gt;&lt;CSReformatCode&gt;True&lt;/CSReformatCode&gt;&lt;AspOptimizeRegisterDirectives&gt;True&lt;/AspOptimizeRegisterDirectives&gt;&lt;HtmlReformatCode&gt;True&lt;/HtmlReformatCode&gt;&lt;FormatAttributeQuoteDescriptor&gt;True&lt;/FormatAttributeQuoteDescriptor&gt;&lt;CSArrangeQualifiers&gt;True&lt;/CSArrangeQualifiers&gt;&lt;CSFixBuiltinTypeReferences&gt;True&lt;/CSFixBuiltinTypeReferences&gt;&lt;/Profile&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=Var_0020Cleanup/@EntryIndexedValue"></s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/CodeCleanup/Profiles/=Var_0020Cleanup/@EntryIndexRemoved">True</s:Boolean>
@@ -647,6 +654,8 @@
 	<s:Boolean x:Key="/Default/CodeStyle/CSharpUsing/AddImportsToDeepestScope/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/CodeStyle/CSharpUsing/KeepImports/=MoreLinq/@EntryIndexedValue">MoreLinq</s:String>
 	<s:String x:Key="/Default/CodeStyle/CSharpUsing/KeepImports/=ProgressOnderwijsUtils/@EntryIndexedValue">ProgressOnderwijsUtils</s:String>
+	<s:String x:Key="/Default/CodeStyle/CSharpUsing/KeepImports/=static_0020ProgressOnderwijsUtils_002EHtml_002ETags/@EntryIndexedValue">static ProgressOnderwijsUtils.Html.Tags</s:String>
+	<s:String x:Key="/Default/CodeStyle/CSharpUsing/KeepImports/=static_0020ProgressOnderwijsUtils_002ESafeSql/@EntryIndexedValue">static ProgressOnderwijsUtils.SafeSql</s:String>
 	
 	<s:String x:Key="/Default/CodeStyle/CSharpUsing/KeepImports/=System/@EntryIndexedValue">System</s:String>
 	<s:String x:Key="/Default/CodeStyle/CSharpUsing/KeepImports/=System_002ECollections_002EGeneric/@EntryIndexedValue">System.Collections.Generic</s:String>
@@ -654,6 +663,7 @@
 	<s:String x:Key="/Default/CodeStyle/CSharpUsing/KeepImports/=System_002ELinq/@EntryIndexedValue">System.Linq</s:String>
 	<s:String x:Key="/Default/CodeStyle/CSharpVarKeywordUsage/ForBuiltInTypes/@EntryValue">UseVar</s:String>
 	<s:Boolean x:Key="/Default/CodeStyle/IntroduceVariableUseVar/UseVarForIntroduceVariableRefactoring/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeStyle/Naming/CSharpAutoNaming/IsNotificationDisabled/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/ExceptionName/@EntryValue"></s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=Constants/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="" Suffix="" Style="AaBb" /&gt;</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/PredefinedNamingRules/=Parameters/@EntryIndexedValue">&lt;Policy Inspect="True" Prefix="" Suffix="" Style="aaBb" /&gt;</s:String>
@@ -716,7 +726,11 @@
 	<s:Boolean x:Key="/Default/Environment/ExcludedFiles/FilesAndFoldersThirdParty/=60024706_002D4E5E_002D49B7_002D8705_002DE6EC9CB30952_002Fd_003Ainclude_002Fd_003Ackeditor/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/ExcludedFiles/FilesAndFoldersThirdParty/=60024706_002D4E5E_002D49B7_002D8705_002DE6EC9CB30952_002Fd_003Ainclude_002Fd_003Ajs/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/ExternalSources/Decompiler/DecompileMethodBodies/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/ExternalSources/Decompiler/DecompilerLegalNoticeAccepted/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/ExternalSources/FirstTimeFormShown/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/ExternalSources/NavigationMode/@EntryValue">Sources</s:String>
+	<s:Boolean x:Key="/Default/Environment/Feedback/SendActivityLogs/@EntryValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/Feedback/ShouldPrompt/@EntryValue">False</s:Boolean>
 	<s:String x:Key="/Default/Environment/Hierarchy/Browsers/Browsers/@EntryValue">C39+,FF36+,IE11+</s:String>
 	<s:String x:Key="/Default/Environment/Hierarchy/PsiConfigurationSettingsKey/LocationType/@EntryValue">TEMP_FOLDER</s:String>
 	<s:String x:Key="/Default/Environment/ManagedLanguageParameterNameHintsOptions/BlackList/@EntryValue">(begin*, end*)
@@ -750,6 +764,7 @@ System.Threading.Tasks.Task.WhenAny
 System.AggregateException.AggregateException
 Progress.Business.Import.BusinessConversie.RunConversie
 Progress.Business.Text.LiteralTranslatable.WithTooltip
+ProgressOnderwijsUtils.DisposableExtensions.Using
 ProgressOnderwijsUtils.EnumerableOfStringExtension.JoinStrings
 ProgressOnderwijsUtils.TopologicalSort.OrderByTopology
 System.String.EndsWith
@@ -760,12 +775,28 @@ Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Col
 Progress.Business.GenericLijst.DataSourceMetaDataBuilder`1.Translator
 Progress.Business.Text.TextVal.Create
 Progress.Business.SchemaReflection.GeneratedMetaObjectTable`1.ReadByColumn
+Progress.WebApp.Base.LijstContainer`2.LijstContainer
 Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction
-(**)</s:String>
+System.InvalidOperationException.InvalidOperationException</s:String>
 	<s:Boolean x:Key="/Default/Environment/ManagedLanguageParameterNameHintsOptions/ShowForConstantsAndEnumMembers/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=AutoRecoverer/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=Format/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=Roslyn_002Dswea/@EntryIndexedValue">DO_NOTHING</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=ShowAnnotations/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=SolExp_002DTrack/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=StartPage_002DIsDownloadRefreshEnabled/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=StartPage_002DOnEnvironmentStatup/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=SyncSettings/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=TextEditor_002DCodeLens/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=TextEditor_002DTrackChanges_002D2/@EntryIndexedValue">LIVE_MONITOR</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=VCS/@EntryIndexedValue">DO_NOTHING</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=VsBulb/@EntryIndexedValue">DO_NOTHING</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchBehaviour/=XAML_0020Designer/@EntryIndexedValue">LIVE_MONITOR</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=AutoRecoverer/@EntryIndexedValue">AUTO_FIX</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=Format/@EntryIndexedValue">AUTO_FIX</s:String>
 	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=SyncSettings/@EntryIndexedValue">AUTO_FIX</s:String>
+	<s:String x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=VCS/@EntryIndexedValue"></s:String>
+	<s:Boolean x:Key="/Default/Environment/PerformanceGuide/SwitchConflictResolutionMode/=VCS/@EntryIndexRemoved">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SearchAndNavigation/AutoExpandResults/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ECSharpAttributeForSingleLineMethodUpgrade/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ECSharpKeepExistingMigration/@EntryIndexedValue">True</s:Boolean>
@@ -786,52 +817,78 @@ Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction
 	<s:Boolean x:Key="/Default/Environment/UnitTesting/DisabledProviders/=NUnit3x/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/IconThemeSelection/@EntryValue">Color</s:String>
 	<s:String x:Key="/Default/Environment/UserInterface/ThemedIcon/PsiSymbolIcon/PsiSymbolIconThemeSelection/@EntryValue">SymbolsVs11Color</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/@KeyIndexDefined">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/Comment/@EntryValue">You should import static members of SafeSql</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/CustomPatternPlaceholder/=fmtString/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/CustomPatternPlaceholder/=fmtString/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/CustomPatternPlaceholder/=fmtString/Properties/=ExpressionType/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/CustomPatternPlaceholder/=fmtString/Type/@EntryValue">ExpressionPlaceholder</s:String>
 	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/IgnoreBracesInSingleStatementBlocks/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/IgnoreConditionalAccess/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/IgnoreEmptyStatements/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/IgnoreParanthesisInExpressions/@EntryValue">False</s:Boolean>
 	
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/MatchAllMembersWithoutModifiers/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/MatchAllSymbolsWithoutAttributes/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/MatchExpressionBodyAndRegularBody/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/MatchMethodParameterWithThisRefOut/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/SearchPattern/@EntryValue">SafeSql.SQL($fmtString$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/Severity/@EntryValue">WARNING</s:String>
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/@KeyIndexDefined">False</s:Boolean>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/@KeyIndexDefined">False</s:Boolean>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/SmartMatchAssociativeExpressions/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/SuppressionKey/@EntryValue">UsingStaticSql</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/TreatPostfixAndPrefixOperatorEquivalent/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/TreatReversedBinaryExpressionsEquivalent/@EntryValue">Never</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=0D1B2052D97EB8439A73CCCEFEDED01F/TypePlaceholderMatchesVoid/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/Properties/=ExpressionType/@EntryIndexedValue">Delegate</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=lambda/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=seq/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=seq/Properties/=ExpressionType/@EntryIndexedValue">System.Collections.Generic.IEnumerable&lt;&gt;</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/CustomPatternPlaceholder/=seq/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/FormatAfterReplace/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/ReplacePattern/@EntryValue">$seq$.FirstOrNull($lambda$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/SearchPattern/@EntryValue">$seq$.FirstOrDefault($lambda$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/ShortenReferences/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=60486E0362BE964794A7F7F028C2D752/SuppressionKey/@EntryValue">AvoidFirstOrDefault</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/Properties/=ExpressionType/@EntryIndexedValue">System.Collections.Generic.IEnumerable&lt;&gt;</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/CustomPatternPlaceholder/=seq/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/FormatAfterReplace/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/ReplacePattern/@EntryValue">$seq$.SingleOrNull()</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/SearchPattern/@EntryValue">$seq$.SingleOrDefault()</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/ShortenReferences/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=74B368C11725D74D9EE8DC9F4AF739FF/SuppressionKey/@EntryValue">AvoidSingleOrDefault</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/CustomPatternPlaceholder/=seq/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/CustomPatternPlaceholder/=seq/Properties/=ExpressionType/@EntryIndexedValue">System.Collections.Generic.IEnumerable&lt;&gt;</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/CustomPatternPlaceholder/=seq/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/FormatAfterReplace/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/ReplacePattern/@EntryValue">$seq$.FirstOrNull()</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/SearchPattern/@EntryValue">$seq$.FirstOrDefault()</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/ShortenReferences/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8CBF033EB1378D4D8D122DCCA9B1B526/SuppressionKey/@EntryValue">AvoidFirstOrDefault</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/CustomPatternPlaceholder/=maybe/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=8E2F29BBAE04D242BE81D4C231635983/CustomPatternPlaceholder/=maybe/Properties/=ExactType/@EntryIndexedValue">False</s:String>
@@ -855,24 +912,60 @@ Progress.WebApp.Base.GenericLijstAction.CreateGenericLijstAction
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=904A7B51DF569840A39B5AB2033EC285/MatchCatchClauseWithoutExceptionFilter/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=904A7B51DF569840A39B5AB2033EC285/SearchPattern/@EntryValue"></s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=904A7B51DF569840A39B5AB2033EC285/Severity/@EntryValue">ERROR</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/@KeyIndexDefined">False</s:Boolean>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/@KeyIndexDefined">True</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=lambda/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=lambda/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=lambda/Properties/=ExpressionType/@EntryIndexedValue">Delegate</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=lambda/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=seq/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=seq/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=seq/Properties/=ExpressionType/@EntryIndexedValue">System.Collections.Generic.IEnumerable&lt;&gt;</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/CustomPatternPlaceholder/=seq/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/FormatAfterReplace/@EntryValue">False</s:Boolean>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/ReplacePattern/@EntryValue">$seq$.SingleOrNull($lambda$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/SearchPattern/@EntryValue">$seq$.SingleOrDefault($lambda$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/ShortenReferences/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=AB4C142B2620DD409EA98C7DE75514DD/SuppressionKey/@EntryValue">AvoidSingleOrDefault</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/@KeyIndexDefined">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=separator/Properties/=ExactType/@EntryIndexedValue"></s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=separator/Properties/=ExactType/@EntryIndexRemoved">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=separator/Properties/=ExpressionType/@EntryIndexedValue"></s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=separator/Properties/=ExpressionType/@EntryIndexRemoved">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=separator/Type/@EntryValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=strings/Properties/=ExactType/@EntryIndexedValue"></s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=strings/Properties/=ExactType/@EntryIndexRemoved">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=strings/Properties/=ExpressionType/@EntryIndexedValue"></s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=strings/Properties/=ExpressionType/@EntryIndexRemoved">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/CustomPatternPlaceholder/=strings/Type/@EntryValue"></s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/IsReplacePattern/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/LanguageName/@EntryValue"></s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/MatchCatchClauseWithoutExceptionFilter/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/ReplacePattern/@EntryValue"></s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/SearchPattern/@EntryValue">string.Join($separator$,$strings$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=B3EFFFF83DB0FB4FBCA1CACF197A61E1/Severity/@EntryValue">WARNING</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/Comment/@EntryValue">Use x.JoinStrings(y) extension method instead of string.Join(y, x)</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/CustomPatternPlaceholder/=separator/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/CustomPatternPlaceholder/=separator/Properties/=ExactType/@EntryIndexedValue">True</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/CustomPatternPlaceholder/=separator/Properties/=ExpressionType/@EntryIndexedValue">System.String</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/CustomPatternPlaceholder/=separator/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/CustomPatternPlaceholder/=strings/@KeyIndexDefined">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/CustomPatternPlaceholder/=strings/Properties/=ExactType/@EntryIndexedValue">False</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/CustomPatternPlaceholder/=strings/Properties/=ExpressionType/@EntryIndexedValue">System.Collections.IEnumerable</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/CustomPatternPlaceholder/=strings/Type/@EntryValue">ExpressionPlaceholder</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/IsReplacePattern/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/LanguageName/@EntryValue">CSHARP</s:String>
+	<s:Boolean x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/MatchCatchClauseWithoutExceptionFilter/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/ReplaceComment/@EntryValue">Use x.JoinStrings(y) extension method instead of string.Join(y, x)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/ReplacePattern/@EntryValue">$strings$.JoinStrings($separator$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/SearchPattern/@EntryValue">string.Join($separator$, $strings$)</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/Severity/@EntryValue">WARNING</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/StructuralSearch/Pattern/=F0D5584B8CF0D74887946697D660A4E0/SuppressionKey/@EntryValue">UseJoinStringsExtension</s:String>
+	<s:Boolean x:Key="/Default/ReSpeller/ReSpellerEnabled/@EntryValue">False</s:Boolean>
 	
 	
 	

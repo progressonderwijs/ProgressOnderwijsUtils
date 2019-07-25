@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+#nullable disable
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.SchemaReflection;
 using System;

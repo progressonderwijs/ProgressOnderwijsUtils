@@ -1,4 +1,5 @@
-﻿using System;
+#nullable disable
+using System;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
