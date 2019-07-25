@@ -19,25 +19,25 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsTextContent()
             => Implementation is string;
 
-        public bool IsTextContent(out string? textContent)
+        public bool IsTextContent(out string textContent)
             => (textContent = Implementation as string) != null;
 
         public bool IsElement()
             => Implementation is IHtmlElement;
 
-        public bool IsElement(out IHtmlElement? element)
+        public bool IsElement(out IHtmlElement element)
             => (element = Implementation as IHtmlElement) != null;
 
         public bool IsElementAllowingContent()
             => Implementation is IHtmlElementAllowingContent;
 
-        public bool IsElementAllowingContent(out IHtmlElementAllowingContent? element)
+        public bool IsElementAllowingContent(out IHtmlElementAllowingContent element)
             => (element = Implementation as IHtmlElementAllowingContent) != null;
 
         public bool IsMultipleNodes()
             => Implementation is HtmlFragment[];
 
-        public bool IsMultipleNodes(out HtmlFragment[]? nodes)
+        public bool IsMultipleNodes(out HtmlFragment[] nodes)
             => (nodes = Implementation as HtmlFragment[]) != null;
 
         /// <summary>
