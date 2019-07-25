@@ -1,4 +1,5 @@
-﻿using System;
+#nullable disable
+using System;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;

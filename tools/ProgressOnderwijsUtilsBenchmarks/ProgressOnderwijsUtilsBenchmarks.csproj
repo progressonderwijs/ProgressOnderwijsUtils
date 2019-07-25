@@ -7,6 +7,8 @@
     <DebugSymbols>True</DebugSymbols>
     <IsPackable>false</IsPackable>
     <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <NullableContextOptions>enable</NullableContextOptions>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />

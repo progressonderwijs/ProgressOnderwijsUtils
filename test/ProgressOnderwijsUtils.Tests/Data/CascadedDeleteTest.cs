@@ -1,4 +1,5 @@
-﻿using System.Data;
+#nullable disable
+using System.Data;
 using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;

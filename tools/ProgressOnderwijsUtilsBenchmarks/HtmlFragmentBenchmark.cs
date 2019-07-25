@@ -1,4 +1,5 @@
-﻿using System.IO;
+#nullable disable
+using System.IO;
 using System.Text;
 using AngleSharp;
 using AngleSharp.Html.Dom;

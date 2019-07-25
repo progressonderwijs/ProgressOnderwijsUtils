@@ -1,4 +1,5 @@
-﻿using System.Text;
+#nullable disable
+using System.Text;
 using System.Xml.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
