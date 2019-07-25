@@ -47,7 +47,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        internal ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments<TOriginCommand>(Exception innerException, TOriginCommand command, string extraMessage = null)
+        internal ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments<TOriginCommand>(Exception innerException, TOriginCommand command, string? extraMessage = null)
             where TOriginCommand : IWithTimeout<TOriginCommand>
             => SqlCommandDebugStringifier.ExceptionWithTextAndArguments(command.GetType().ToCSharpFriendlyTypeName() + " failed" + (extraMessage == null ? "." : ": " + extraMessage), Command, innerException);
     }
@@ -169,7 +169,7 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     struct FastShortStringBuilder
     {
-        public char[] CurrentCharacterBuffer;
+        public char[]? CurrentCharacterBuffer;
         public int CurrentLength;
 
         public static FastShortStringBuilder Create()

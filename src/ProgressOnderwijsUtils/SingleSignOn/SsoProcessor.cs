@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         }
 
         [CanBeNull]
-        static XElement GetAssertion([NotNull] XElement response)
+        static XElement? GetAssertion([NotNull] XElement response)
         {
             var statusCodes = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").ToArray();
             if (statusCodes.Length > 1) {
