@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿#nullable enable
+using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.SchemaReflection;
 using System;
@@ -19,8 +20,8 @@ namespace ProgressOnderwijsUtils
             [NotNull] SqlConnection conn,
             [NotNull] DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
-            [CanBeNull] Action<string> logger,
-            [CanBeNull] Func<string, bool> stopCascading,
+            Action<string>? logger,
+            Func<string, bool>? stopCascading,
             [NotNull] string pkColumn,
             [NotNull] params TId[] pksToDelete
         )
@@ -39,8 +40,8 @@ namespace ProgressOnderwijsUtils
             [NotNull] SqlConnection conn,
             [NotNull] DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
-            [CanBeNull] Action<string> logger,
-            [CanBeNull] Func<string, bool> stopCascading,
+            Action<string>? logger,
+            Func<string, bool>? stopCascading,
             [NotNull] params TId[] pksToDelete
         )
             where TId : IReadImplicitly
@@ -74,8 +75,8 @@ namespace ProgressOnderwijsUtils
             [NotNull] SqlConnection conn,
             DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
-            [CanBeNull] Action<string> logger,
-            [CanBeNull] Func<string, bool> stopCascading,
+            Action<string>? logger,
+            Func<string, bool>? stopCascading,
             [NotNull] DataTable pksToDelete
         )
         {
@@ -112,8 +113,8 @@ namespace ProgressOnderwijsUtils
             [NotNull] SqlConnection conn,
             [NotNull] DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
-            [CanBeNull] Action<string> logger,
-            [CanBeNull] Func<string, bool> stopCascading,
+            Action<string>? logger,
+            Func<string, bool>? stopCascading,
             [NotNull] string[] pkColumns,
             ParameterizedSql pksTVParameter
         )
@@ -124,7 +125,7 @@ namespace ProgressOnderwijsUtils
             bool StopCascading(ParameterizedSql tableName)
                 => stopCascading?.Invoke(tableName.CommandText()) ?? false;
 
-            DataTable ExecuteDeletion(ParameterizedSql deletionCommand)
+            DataTable? ExecuteDeletion(ParameterizedSql deletionCommand)
             {
                 if (outputAllDeletedRows) {
                     return deletionCommand.OfDataTable().Execute(conn);
@@ -313,17 +314,19 @@ namespace ProgressOnderwijsUtils
             public string Table;
             public TimeSpan DeletionDuration;
             public int DeletedAtMostRowCount;
-            public DataTable DeletedRows;
+            public DataTable? DeletedRows;
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
         sealed class FkCol : IWrittenImplicitly
         {
             public int Fk_id { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Pk_table { get; set; }
             public string Fk_table { get; set; }
             public string Pk_column { get; set; }
             public string Fk_column { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
             public ParameterizedSql FkTableSql
                 => ParameterizedSql.CreateDynamic(Fk_table);
@@ -338,8 +341,10 @@ namespace ProgressOnderwijsUtils
         [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]
         sealed class PkCol : IWrittenImplicitly
         {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Pk_table { get; set; }
             public string Pk_column { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         struct ForeignKey

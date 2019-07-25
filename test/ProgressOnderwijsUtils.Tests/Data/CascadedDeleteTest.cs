@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿#nullable enable
+using System.Data;
 using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;
@@ -102,7 +103,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
             PAssert.That(() => finalTLeafKeys.SetEqual(new[] { 3, 4 }));
 
             var rowsFromT1 = deletionReport.Where(t => t.Table == "dbo.T1").ToArray();
-            PAssert.That(() => rowsFromT1.Single().DeletedRows.Rows.Cast<DataRow>().Select(dr => (int)dr["C"]).SetEqual(new[] { 4, 5 }));
+            PAssert.That(() => rowsFromT1.Single().DeletedRows!.Rows.Cast<DataRow>().Select(dr => (int)dr["C"]).SetEqual(new[] { 4, 5 }));
         }
 
         [Fact]
