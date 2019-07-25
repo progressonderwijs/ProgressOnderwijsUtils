@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -13,7 +14,7 @@ namespace ProgressOnderwijsUtils
     public static class CodeGenHelper
     {
         [NotNull]
-        public static string GetColumnProperty([NotNull] ColumnDefinition col, [CanBeNull] Func<ColumnDefinition, string> colNameOverride = null)
+        public static string GetColumnProperty([NotNull] ColumnDefinition col, Func<ColumnDefinition, string>? colNameOverride = null)
         {
             Func<ColumnDefinition, string> friendlyTypeNameDefault = x => x.DataType.ToCSharpFriendlyTypeName();
             var friendlyTypeName = colNameOverride ?? friendlyTypeNameDefault;
@@ -31,7 +32,7 @@ namespace ProgressOnderwijsUtils
         ///     This method makes a "best effort" auto-generated poco class that can replace the current datatable.
         /// </summary>
         [NotNull]
-        public static string DataTableToPocoClassDef([NotNull] this DataTable dt, string classNameOverride = null, [CanBeNull] Func<ColumnDefinition, string> colNameOverride = null)
+        public static string DataTableToPocoClassDef([NotNull] this DataTable dt, string? classNameOverride = null, Func<ColumnDefinition, string>? colNameOverride = null)
         {
             classNameOverride = classNameOverride ?? (string.IsNullOrEmpty(dt.TableName) ? "XYZ" : dt.TableName);
 
