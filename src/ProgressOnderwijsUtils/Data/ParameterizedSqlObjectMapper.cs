@@ -311,7 +311,7 @@ namespace ProgressOnderwijsUtils
                     public override int GetHashCode()
                         => (int)(uint)((cachedHash >> 32) + cachedHash);
 
-                    public override bool Equals(object obj)
+                    public override bool Equals(object? obj)
                         => obj is ColumnOrdering columnOrdering && Equals(columnOrdering);
                 }
 

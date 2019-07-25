@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils
                 SortDirection == other.SortDirection;
 
         [Pure]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is ColumnSort columnSort && Equals(columnSort);
 
         [Pure]

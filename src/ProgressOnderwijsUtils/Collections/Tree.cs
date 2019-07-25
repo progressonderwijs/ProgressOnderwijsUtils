@@ -190,7 +190,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => DefaultComparer.Equals(this, obj as Tree<T>);
 
         [Pure]

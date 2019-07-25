@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is ParameterizedSql parameterizedSql && parameterizedSql == this;
 
         [Pure]
