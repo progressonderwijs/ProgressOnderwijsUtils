@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
                 ? fieldName.Substring(BackingFieldPrefix.Length, fieldName.Length - BackingFieldPrefix.Length - BackingFieldSuffix.Length)
                 : null;
 
-        static bool IsCompilerGenerated([CanBeNull] MemberInfo member)
+        static bool IsCompilerGenerated(MemberInfo? member)
             => member != null && member.IsDefined(typeof(CompilerGeneratedAttribute), true);
 
         static bool IsAutoProp(PropertyInfo autoProperty)
