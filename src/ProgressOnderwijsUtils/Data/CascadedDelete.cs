@@ -124,7 +124,7 @@ namespace ProgressOnderwijsUtils
             bool StopCascading(ParameterizedSql tableName)
                 => stopCascading?.Invoke(tableName.CommandText()) ?? false;
 
-            DataTable? ExecuteDeletion(ParameterizedSql deletionCommand)
+            DataTable ExecuteDeletion(ParameterizedSql deletionCommand)
             {
                 if (outputAllDeletedRows) {
                     return deletionCommand.OfDataTable().Execute(conn);
@@ -313,7 +313,7 @@ namespace ProgressOnderwijsUtils
             public string Table;
             public TimeSpan DeletionDuration;
             public int DeletedAtMostRowCount;
-            public DataTable? DeletedRows;
+            public DataTable DeletedRows;
         }
 
         [UsedImplicitly(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.Members)]

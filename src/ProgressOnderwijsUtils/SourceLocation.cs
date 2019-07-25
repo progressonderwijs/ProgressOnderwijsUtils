@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static SourceLocation Here([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
+        public static SourceLocation Here([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = null, [CallerMemberName] string membername = null)
             => new SourceLocation(membername, filepath, linenumber);
     }
 }

@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         /// <param name="value">The value of this node.</param>
         /// <param name="children">The children of this node, (null is allowed and means none).</param>
-        public Tree(T value, [CanBeNull] Tree<T>[]? children)
+        public Tree(T value, [CanBeNull] Tree<T>[] children)
         {
             nodeValue = value;
             kidArray = children ?? Array.Empty<Tree<T>>();
@@ -142,11 +142,11 @@ namespace ProgressOnderwijsUtils.Collections
 
             struct NodePair
             {
-                public Tree<T>? A, B;
+                public Tree<T> A, B;
             }
 
             [Pure]
-            public bool Equals(Tree<T>? a, Tree<T>? b)
+            public bool Equals(Tree<T> a, Tree<T> b)
             {
                 var todo = new Stack<NodePair>(16);
                 todo.Push(new NodePair { A = a, B = b });

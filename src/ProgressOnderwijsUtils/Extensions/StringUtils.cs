@@ -108,7 +108,7 @@ namespace ProgressOnderwijsUtils
 
         [CanBeNull]
         [Pure]
-        public static string? SepaTekensetEnModificaties(string s)
+        public static string SepaTekensetEnModificaties(string s)
         {
             if (s == null) {
                 return null;

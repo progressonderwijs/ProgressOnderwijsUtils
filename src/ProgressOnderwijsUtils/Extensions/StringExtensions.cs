@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
 
         [CanBeNull]
         [Pure]
-        public static string? NullIfWhiteSpace([CanBeNull] this string str)
+        public static string NullIfWhiteSpace([CanBeNull] this string str)
         {
             if (string.IsNullOrWhiteSpace(str)) {
                 return null;
@@ -56,7 +56,7 @@ namespace ProgressOnderwijsUtils
 
         [CanBeNull]
         [Pure]
-        public static string? TrimToLength([CanBeNull] this string? s, int maxlength)
+        public static string TrimToLength([CanBeNull] this string s, int maxlength)
         {
             if (s == null || s.Length <= maxlength) {
                 return s;

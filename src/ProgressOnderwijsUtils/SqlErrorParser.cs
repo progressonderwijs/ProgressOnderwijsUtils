@@ -34,9 +34,9 @@ namespace ProgressOnderwijsUtils
         public string StatementType { get; set; }
         public string ConstraintType { get; set; }
         public string ConstraintName { get; set; }
-        public string? DatabaseName { get; set; }
-        public string? TableName { get; set; }
-        public string? ColumnName { get; set; }
+        public string DatabaseName { get; set; }
+        public string TableName { get; set; }
+        public string ColumnName { get; set; }
     }
 
     public static class SqlErrorParser
@@ -68,7 +68,7 @@ namespace ProgressOnderwijsUtils
         );
 
         [CanBeNull]
-        static ISqlErrorParseResult? TryParseKeyConstraintViolation([NotNull] SqlError error)
+        static ISqlErrorParseResult TryParseKeyConstraintViolation([NotNull] SqlError error)
         {
             var match = keyConstraintViolationRegex.Match(error.Message);
             if (match.Success) {
@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [CanBeNull]
-        static ISqlErrorParseResult? TryParseDuplicateKeyUniqueIndex([NotNull] SqlError error)
+        static ISqlErrorParseResult TryParseDuplicateKeyUniqueIndex([NotNull] SqlError error)
         {
             var match = duplicateKeyUniqueIndexRegex.Match(error.Message);
             if (match.Success) {
@@ -97,7 +97,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [CanBeNull]
-        static ISqlErrorParseResult? TryParseCannotInsertNull([NotNull] SqlError error)
+        static ISqlErrorParseResult TryParseCannotInsertNull([NotNull] SqlError error)
         {
             var match = cannotInsertNullRegex.Match(error.Message);
             if (match.Success) {
@@ -111,7 +111,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [CanBeNull]
-        static ISqlErrorParseResult? TryParseGenericConstraintViolation([NotNull] SqlError error)
+        static ISqlErrorParseResult TryParseGenericConstraintViolation([NotNull] SqlError error)
         {
             var match = genericConstraintViolationRegex.Match(error.Message);
             if (match.Success) {
@@ -128,14 +128,14 @@ namespace ProgressOnderwijsUtils
         }
 
         [CanBeNull]
-        public static ISqlErrorParseResult? Parse([NotNull] this SqlError error)
+        public static ISqlErrorParseResult Parse([NotNull] this SqlError error)
             => TryParseKeyConstraintViolation(error)
                 ?? TryParseDuplicateKeyUniqueIndex(error)
                 ?? TryParseCannotInsertNull(error)
                 ?? TryParseGenericConstraintViolation(error);
 
         [CanBeNull]
-        public static SqlError? FirstContainedSqlErrorOrNull([CanBeNull] this Exception e)
+        public static SqlError FirstContainedSqlErrorOrNull([CanBeNull] this Exception e)
         {
             if (e is SqlException sqlException) {
                 return sqlException.Errors[0];

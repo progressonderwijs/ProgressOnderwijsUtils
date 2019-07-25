@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
             => BackingFieldPrefix + propertyName + BackingFieldSuffix;
 
         [CanBeNull]
-        static string? AutoPropNameFromBackingField([NotNull] string fieldName)
+        static string AutoPropNameFromBackingField([NotNull] string fieldName)
             => fieldName.StartsWith(BackingFieldPrefix, StringComparison.Ordinal) && fieldName.EndsWith(BackingFieldSuffix, StringComparison.Ordinal)
                 ? fieldName.Substring(BackingFieldPrefix.Length, fieldName.Length - BackingFieldPrefix.Length - BackingFieldSuffix.Length)
                 : null;
@@ -29,7 +29,7 @@ namespace ProgressOnderwijsUtils
             => IsCompilerGenerated(autoProperty.GetGetMethod(true));
 
         [CanBeNull]
-        public static FieldInfo? BackingFieldOfPropertyOrNull([NotNull] PropertyInfo propertyInfo)
+        public static FieldInfo BackingFieldOfPropertyOrNull([NotNull] PropertyInfo propertyInfo)
             => IsAutoProp(propertyInfo)
                 && propertyInfo.DeclaringType.GetField(BackingFieldFromAutoPropName(propertyInfo.Name), privateInstance) is FieldInfo backingField
                 && IsCompilerGenerated(backingField)
@@ -37,7 +37,7 @@ namespace ProgressOnderwijsUtils
                     : null;
 
         [UsefulToKeep("for symmetry with BackingFieldOfPropertyOrNull")]
-        public static PropertyInfo? AutoPropertyOfFieldOrNull(FieldInfo fieldInfo)
+        public static PropertyInfo AutoPropertyOfFieldOrNull(FieldInfo fieldInfo)
             => IsCompilerGenerated(fieldInfo)
                 && AutoPropNameFromBackingField(fieldInfo.Name) is string autoPropertyName
                 && fieldInfo.DeclaringType.GetProperty(autoPropertyName, anyInstance) is PropertyInfo autoProperty

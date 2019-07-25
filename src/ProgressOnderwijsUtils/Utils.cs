@@ -203,7 +203,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static Exception? Catch(Action cleanup)
+        static Exception Catch(Action cleanup)
         {
             try {
                 cleanup();
