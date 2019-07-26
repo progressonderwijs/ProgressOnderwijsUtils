@@ -1,5 +1,4 @@
-#nullable disable
-namespace ProgressOnderwijsUtils
+﻿namespace ProgressOnderwijsUtils
 {
     public enum BulkCopyFieldMappingMode
     {

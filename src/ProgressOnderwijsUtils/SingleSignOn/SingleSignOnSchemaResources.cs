@@ -1,5 +1,4 @@
-#nullable disable
-namespace ProgressOnderwijsUtils.SingleSignOn
+﻿namespace ProgressOnderwijsUtils.SingleSignOn
 {
     sealed class SingleSignOnSchemaResources : ResourceStore<SingleSignOnSchemaResources> { }
 }
