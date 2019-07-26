@@ -148,8 +148,8 @@ namespace ProgressOnderwijsUtils
                 .SelectMany(map => map.InterfaceMethods.Zip(map.TargetMethods, (interfaceMethod, targetMethod) => (interfaceMethod, targetMethod)))
                 .ToDictionary(methodPair => methodPair.interfaceMethod, methodPair => methodPair.targetMethod);
 
-        static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod("GetTimeSpan", binding);
-        static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod("GetDateTimeOffset", binding);
+        static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding);
+        static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding);
         const int AsciiUpperToLowerDiff = 'a' - 'A';
 
         static ulong CaseInsensitiveHash([NotNull] string s)
@@ -200,7 +200,7 @@ namespace ProgressOnderwijsUtils
                 typeof(TReader).GetInterfaceMap(typeof(IDataReader)));
 
             // ReSharper disable AssignNullToNotNullAttribute
-            static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod("IsDBNull", binding)];
+            static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding)];
             // ReSharper restore AssignNullToNotNullAttribute
 
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
