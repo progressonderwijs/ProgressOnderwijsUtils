@@ -90,10 +90,10 @@ namespace ProgressOnderwijsUtils.Collections
         {
             switch (okOrError) {
                 case Maybe_Ok<TOk> okValue:
-                    (okValueIfOk, errorValueIfError) = (okValue.Value, default(TError)!);
+                    (okValueIfOk, errorValueIfError) = (okValue.Value, default(TError)! /*errorValueIfError is annotated MaybeNull*/);
                     return true;
                 case Maybe_Error<TError> errValue:
-                    (okValueIfOk, errorValueIfError) = (default(TOk)!, errValue.Error);
+                    (okValueIfOk, errorValueIfError) = (default(TOk)! /*okValueIfOk is annotated MaybeNull*/, errValue.Error);
                     return false;
                 default:
                     throw new Exception($"Maybe is neither Ok nor Error.");
