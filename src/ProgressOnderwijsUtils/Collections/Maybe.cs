@@ -1,5 +1,5 @@
-#nullable disable
-using System;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
@@ -61,7 +61,16 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [MustUseReturnValue]
         public TOut Extract<TOut>(Func<TOk, TOut> ifOk, Func<TError, TOut> ifError)
-            => okOrError is Maybe_Ok<TOk> okWrapper ? ifOk(okWrapper.Value) : ifError(okOrError is Maybe_Error<TError> errorWrapper ? errorWrapper.Error : default(TError));
+        {
+            switch (okOrError) {
+                case Maybe_Ok<TOk> okValue:
+                    return ifOk(okValue.Value);
+                case Maybe_Error<TError> errValue:
+                    return ifError(errValue.Error);
+                default:
+                    throw new Exception($"Maybe is neither Ok nor Error.");
+            }
+        }
 
         /// <summary>
         /// Converts an untyped error message into a specific type of failed Maybe.  This operator is a  workaround to make it easy to create an error message without redundant type info.
@@ -77,18 +86,17 @@ namespace ProgressOnderwijsUtils.Collections
         public static implicit operator Maybe<TOk, TError>(Maybe_Ok<TOk> err)
             => new Maybe<TOk, TError>(err);
 
-        public bool TryGet(out TOk okValueIfOk, out TError errorValueIfError)
+        public bool TryGet([MaybeNullWhen(false)] out TOk okValueIfOk, [MaybeNullWhen(true)] out TError errorValueIfError)
         {
             switch (okOrError) {
                 case Maybe_Ok<TOk> okValue:
-                    (okValueIfOk, errorValueIfError) = (okValue.Value, default(TError));
+                    (okValueIfOk, errorValueIfError) = (okValue.Value, default(TError)! /*errorValueIfError is annotated MaybeNull*/);
                     return true;
                 case Maybe_Error<TError> errValue:
-                    (okValueIfOk, errorValueIfError) = (default(TOk), errValue.Error);
+                    (okValueIfOk, errorValueIfError) = (default(TOk)! /*okValueIfOk is annotated MaybeNull*/, errValue.Error);
                     return false;
                 default:
-                    (okValueIfOk, errorValueIfError) = (default(TOk), default(TError));
-                    return false;
+                    throw new Exception($"Maybe is neither Ok nor Error.");
             }
         }
 
@@ -101,7 +109,6 @@ namespace ProgressOnderwijsUtils.Collections
         /// <summary>
         /// Creates a succesful Maybe that stores the provided value.
         /// </summary>
-        [NotNull]
         [Pure]
         public static Maybe_Ok<T> Ok<T>(T val)
             => new Maybe_Ok<T>(val);
@@ -109,7 +116,6 @@ namespace ProgressOnderwijsUtils.Collections
         /// <summary>
         /// Creates a succesful Maybe value without a value.
         /// </summary>
-        [NotNull]
         [Pure]
         public static Maybe_Ok<Unit> Ok()
             => new Maybe_Ok<Unit>(Unit.Value);
@@ -117,7 +123,6 @@ namespace ProgressOnderwijsUtils.Collections
         /// <summary>
         /// Create a failed maybe with an error state describing a failed operation.
         /// </summary>
-        [NotNull]
         [Pure]
         public static Maybe_Error<TError> Error<TError>(TError error)
             => new Maybe_Error<TError>(error);
@@ -125,7 +130,6 @@ namespace ProgressOnderwijsUtils.Collections
         /// <summary>
         /// Create a failed maybe without any additional information about the error.
         /// </summary>
-        [NotNull]
         [Pure]
         public static Maybe_Error<Unit> Error()
             => new Maybe_Error<Unit>(Unit.Value);
@@ -141,7 +145,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [Pure]
         public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError val)
-            where TError : class
+            where TError : class?
             => val == null ? Ok(Unit.Value).AsMaybeWithoutError<TError>() : Error(val);
 
         /// <summary>
@@ -157,7 +161,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [Pure]
         public static Maybe<TOk, Unit> OkWhenNotNull<TOk>([CanBeNull] TOk val)
-            where TOk : class
+            where TOk : class?
             => val != null ? Ok(val).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
 
         /// <summary>
