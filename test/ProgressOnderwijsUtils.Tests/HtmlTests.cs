@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void PerfIterativeAppendingDoesNotCreateLotsOfArrays()
         {
             var html = "1".AsFragment().Append("2").Append("3").Append("4");
-            var kids = (HtmlFragment[])html.Implementation;
+            var kids = (HtmlFragment[])html.Implementation!;
             PAssert.That(() => kids.First().ToStringWithoutDoctype() == "1");
             PAssert.That(() => kids.Last().ToStringWithoutDoctype() == "4");
         }

@@ -1,7 +1,7 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
@@ -15,36 +15,36 @@ namespace ProgressOnderwijsUtils.Html
         /// <summary>
         /// Either a string, an IHtmlElement, a non-empty HtmlFragment[], or null (the empty fragment).
         /// </summary>
-        public readonly object Implementation;
+        public readonly object? Implementation;
 
         public bool IsTextContent()
             => Implementation is string;
 
-        public bool IsTextContent(out string textContent)
+        public bool IsTextContent([NotNullWhen(true)] out string? textContent)
             => (textContent = Implementation as string) != null;
 
         public bool IsElement()
             => Implementation is IHtmlElement;
 
-        public bool IsElement(out IHtmlElement element)
+        public bool IsElement([NotNullWhen(true)] out IHtmlElement? element)
             => (element = Implementation as IHtmlElement) != null;
 
         public bool IsElementAllowingContent()
             => Implementation is IHtmlElementAllowingContent;
 
-        public bool IsElementAllowingContent(out IHtmlElementAllowingContent element)
+        public bool IsElementAllowingContent([NotNullWhen(true)] out IHtmlElementAllowingContent? element)
             => (element = Implementation as IHtmlElementAllowingContent) != null;
 
         public bool IsMultipleNodes()
             => Implementation is HtmlFragment[];
 
-        public bool IsMultipleNodes(out HtmlFragment[] nodes)
+        public bool IsMultipleNodes([NotNullWhen(true)] out HtmlFragment[]? nodes)
             => (nodes = Implementation as HtmlFragment[]) != null;
 
         /// <summary>
         /// Sets at most one of the out parameters to a non-null value.
         /// </summary>
-        public void Deconstruct(out string textContent, out IHtmlElement element, out HtmlFragment[] nodes)
+        public void Deconstruct(out string? textContent, out IHtmlElement? element, out HtmlFragment[]? nodes)
         {
             textContent = Implementation as string;
             element = Implementation as IHtmlElement;
@@ -54,15 +54,15 @@ namespace ProgressOnderwijsUtils.Html
         public bool IsEmpty
             => Implementation == null;
 
-        HtmlFragment(object content)
+        HtmlFragment(object? content)
             => Implementation = content;
 
         [Pure]
-        public static HtmlFragment TextContent(string textContent)
+        public static HtmlFragment TextContent(string? textContent)
             => new HtmlFragment(textContent != "" ? textContent : null);
 
         [Pure]
-        public static HtmlFragment Element(IHtmlElement element)
+        public static HtmlFragment Element(IHtmlElement? element)
             => new HtmlFragment(element);
 
         [Pure]
@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils.Html
             => new HtmlFragment(element.Canonicalize());
 
         [Pure]
-        public static HtmlFragment Element(string tagName, HtmlAttribute[] attributes, HtmlFragment[] childNodes)
+        public static HtmlFragment Element(string tagName, HtmlAttribute[]? attributes, HtmlFragment[]? childNodes)
             => Element(new CustomHtmlElement(tagName, attributes, childNodes));
 
         [Pure]
@@ -102,7 +102,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public static HtmlFragment Fragment([CanBeNull] params HtmlFragment[] htmlEls)
+        public static HtmlFragment Fragment(params HtmlFragment[]? htmlEls)
         {
             if (htmlEls == null || htmlEls.Length == 0) {
                 return Empty;
@@ -179,7 +179,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public static HtmlFragment Fragment<T>([NotNull] IEnumerable<T> htmlEls)
+        public static HtmlFragment Fragment<T>(IEnumerable<T> htmlEls)
             where T : IConvertibleToFragment
         {
             var retval = new ArrayBuilder<HtmlFragment>();
@@ -205,16 +205,16 @@ namespace ProgressOnderwijsUtils.Html
         public static implicit operator HtmlFragment(CustomHtmlElement element)
             => Element(element);
 
-        public static implicit operator HtmlFragment(string textContent)
+        public static implicit operator HtmlFragment(string? textContent)
             => TextContent(textContent);
 
-        public static implicit operator HtmlFragment(HtmlFragment[] fragments)
+        public static implicit operator HtmlFragment(HtmlFragment[]? fragments)
             => Fragment(fragments);
 
         public HtmlFragment Append(HtmlFragment tail)
             => Fragment(this, tail);
 
-        public HtmlFragment Append(params HtmlFragment[] longTail)
+        public HtmlFragment Append(params HtmlFragment[]? longTail)
             => Fragment(this, Fragment(longTail));
 
         public static HtmlFragment operator +(HtmlFragment left, HtmlFragment right)
@@ -243,10 +243,10 @@ namespace ProgressOnderwijsUtils.Html
         /// Use Sanitze() to clean up parsed html.
         /// </summary>
         /// <returns>The html fragment.</returns>
-        public static HtmlFragment ParseFragment([CanBeNull] string str)
+        public static HtmlFragment ParseFragment(string? str)
             => ParseFragment(str, new HtmlParserOptions());
 
-        public static HtmlFragment ParseFragment([CanBeNull] string str, HtmlParserOptions options)
+        public static HtmlFragment ParseFragment(string? str, HtmlParserOptions options)
         {
             if (string.IsNullOrEmpty(str)) {
                 return Empty;
@@ -258,7 +258,7 @@ namespace ProgressOnderwijsUtils.Html
                 .AsFragment();
         }
 
-        public static HtmlFragment CreateFromAngleSharpNode(INode node)
+        public static HtmlFragment CreateFromAngleSharpNode(INode? node)
         {
             if (node is IText text) {
                 return TextContent(text.NodeValue);

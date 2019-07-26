@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils.Html
             return fastStringBuilder.FinishBuilding();
         }
 
-        static void AppendTextContent(ref FastShortStringBuilder fastStringBuilder, object fragmentContent)
+        static void AppendTextContent(ref FastShortStringBuilder fastStringBuilder, object? fragmentContent)
         {
             if (fragmentContent is string str) {
                 fastStringBuilder.AppendText(str);

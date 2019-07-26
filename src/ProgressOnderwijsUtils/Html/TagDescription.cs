@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -11,7 +10,7 @@ namespace ProgressOnderwijsUtils.Html
     {
         public string TagName { get; private set; }
         public bool IsSelfClosing { get; private set; }
-        public string FieldName { get; private set; }
+        public string? FieldName { get; private set; }
 
         public bool IsPredefined
             => FieldName != null;
