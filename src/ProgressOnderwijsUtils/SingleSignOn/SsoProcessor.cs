@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -37,8 +36,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return new Uri(request.Destination + "?" + signedQueryString);
         }
 
-        [CanBeNull]
-        static XElement GetAssertion([NotNull] XElement response)
+        static XElement? GetAssertion([NotNull] XElement response)
         {
             var statusCodes = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").ToArray();
             if (statusCodes.Length > 1) {
