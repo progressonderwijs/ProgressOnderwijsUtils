@@ -41,7 +41,7 @@ namespace ProgressOnderwijsUtils
         public bool Equals(T other)
             => other != null && FieldwiseEquality<T>.Instance((T)this, other);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is T typed && Equals(typed);
 
         public override int GetHashCode()

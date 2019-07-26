@@ -126,20 +126,20 @@ namespace ProgressOnderwijsUtils
 
         static readonly Dictionary<Type, MethodInfo> getterMethodsByType =
             new Dictionary<Type, MethodInfo> {
-                { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetBytes), BindingFlags.Public | BindingFlags.Static) },
-                { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetChars), BindingFlags.Public | BindingFlags.Static) },
-                { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding) },
-                { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding) },
-                { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding) },
-                { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding) },
-                { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding) },
-                { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding) },
-                { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding) },
-                { typeof(Guid), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetGuid), binding) },
-                { typeof(short), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt16), binding) },
-                { typeof(int), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt32), binding) },
-                { typeof(long), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt64), binding) },
-                { typeof(string), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetString), binding) },
+                { typeof(byte[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetBytes), BindingFlags.Public | BindingFlags.Static)! },
+                { typeof(char[]), typeof(DbLoadingHelperImpl).GetMethod(nameof(DbLoadingHelperImpl.GetChars), BindingFlags.Public | BindingFlags.Static)! },
+                { typeof(bool), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetBoolean), binding)! },
+                { typeof(byte), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetByte), binding)! },
+                { typeof(char), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetChar), binding)! },
+                { typeof(DateTime), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDateTime), binding)! },
+                { typeof(decimal), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDecimal), binding)! },
+                { typeof(double), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetDouble), binding)! },
+                { typeof(float), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetFloat), binding)! },
+                { typeof(Guid), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetGuid), binding)! },
+                { typeof(short), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt16), binding)! },
+                { typeof(int), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt32), binding)! },
+                { typeof(long), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetInt64), binding)! },
+                { typeof(string), typeof(IDataRecord).GetMethod(nameof(IDataRecord.GetString), binding)! },
             };
 
         [NotNull]
@@ -148,8 +148,8 @@ namespace ProgressOnderwijsUtils
                 .SelectMany(map => map.InterfaceMethods.Zip(map.TargetMethods, (interfaceMethod, targetMethod) => (interfaceMethod, targetMethod)))
                 .ToDictionary(methodPair => methodPair.interfaceMethod, methodPair => methodPair.targetMethod);
 
-        static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding);
-        static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding);
+        static readonly MethodInfo getTimeSpan_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetTimeSpan), binding)!;
+        static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding)!;
         const int AsciiUpperToLowerDiff = 'a' - 'A';
 
         static ulong CaseInsensitiveHash([NotNull] string s)
@@ -200,7 +200,7 @@ namespace ProgressOnderwijsUtils
                 typeof(TReader).GetInterfaceMap(typeof(IDataReader)));
 
             // ReSharper disable AssignNullToNotNullAttribute
-            static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding)];
+            static readonly MethodInfo IsDBNullMethod = InterfaceMap[typeof(IDataRecord).GetMethod(nameof(IDataRecord.IsDBNull), binding)!];
             // ReSharper restore AssignNullToNotNullAttribute
 
             static readonly bool isSqlDataReader = typeof(TReader) == typeof(SqlDataReader);
@@ -311,7 +311,7 @@ namespace ProgressOnderwijsUtils
                     public override int GetHashCode()
                         => (int)(uint)((cachedHash >> 32) + cachedHash);
 
-                    public override bool Equals(object obj)
+                    public override bool Equals(object? obj)
                         => obj is ColumnOrdering columnOrdering && Equals(columnOrdering);
                 }
 

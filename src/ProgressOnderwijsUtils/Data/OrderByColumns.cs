@@ -177,7 +177,7 @@ namespace ProgressOnderwijsUtils
             => !a.Equals(b);
 
         [Pure]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is OrderByColumns orderByColumns && Equals(orderByColumns);
 
         [Pure]

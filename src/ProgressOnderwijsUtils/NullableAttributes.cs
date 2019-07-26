@@ -7,6 +7,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+#if !NETCOREAPP3_0
 // ReSharper disable once CheckNamespace
 namespace System.Diagnostics.CodeAnalysis
 {
@@ -91,3 +92,4 @@ namespace System.Diagnostics.CodeAnalysis
         public bool ParameterValue { get; }
     }
 }
+#endif
