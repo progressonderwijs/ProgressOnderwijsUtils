@@ -76,7 +76,11 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             }
 
             var assertion = GetAssertion(xml);
-            var authnStatement = assertion?.Element(SamlNamespaces.SAML_NS + "AuthnStatement");
+            if (assertion == null) {
+                return Maybe.Error("Missing Assertion element");
+            }
+
+            var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement");
             if (authnStatement == null) {
                 return Maybe.Error("Missing AuthnStatement element");
             }
