@@ -100,7 +100,9 @@ namespace ProgressOnderwijsUtils.Tests
         {
             public int Id { get; set; }
             public bool Computed { internal get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         [Fact]
@@ -177,13 +179,17 @@ namespace ProgressOnderwijsUtils.Tests
         {
             public int Id { get; set; }
             public int AnIdentity { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         sealed class ExcludingIdentityColumn : ValueBase<ExcludingIdentityColumn>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         [Fact]
