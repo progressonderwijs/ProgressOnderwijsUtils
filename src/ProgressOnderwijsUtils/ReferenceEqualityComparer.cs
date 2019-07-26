@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
             => ReferenceEquals(one, other);
 
         public int GetHashCode(T obj)
-            => RuntimeHelpers.GetHashCode(obj!);
+            => RuntimeHelpers.GetHashCode(obj! /*not really non-nullable; parameter is incorrectly labelled as not null*/);
 
         bool IEqualityComparer.Equals(object? x, object? y)
             => ReferenceEquals(x, y);
