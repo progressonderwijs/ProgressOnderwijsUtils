@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils.Collections
         public override int GetHashCode()
             => PathSegments.Last().ThisSubTree.GetHashCode() + EnumerableExtensions.GetSequenceHashCode(PathSegments.SelectEager(segment => segment.Index));
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is RootedTree<T> rootedTree && Equals(rootedTree);
 
         // internal details:

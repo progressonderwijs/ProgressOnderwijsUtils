@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils
                     var interfacemap = typeof(TPoco).GetInterfaceMap(typeof(TParent));
                     var getterIdx = Array.IndexOf(interfacemap.InterfaceMethods, getter);
                     if (getterIdx == -1) {
-                        throw new InvalidOperationException("The poco " + typeof(TPoco) + " does not implement method " + getter.Name);
+                        throw new InvalidOperationException("The poco " + typeof(TPoco) + " does not implement method " + (getter?.Name ?? "<<NULL>>"));
                     }
                     var mpGetter = interfacemap.TargetMethods[getterIdx];
                     return PocoProperties<TPoco>.Instance.Single(pocoProperty => pocoProperty.PropertyInfo.GetGetMethod() == mpGetter);
@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtils
 
         static void AssertMemberMightMatchAProperty<TObject, TProperty>(Expression<Func<TObject, TProperty>> property, MemberInfo memberInfo, MemberExpression membExpr)
         {
-            if (!memberInfo.DeclaringType.IsAssignableFrom(typeof(TObject))) {
+            if (!memberInfo.DeclaringType!.IsAssignableFrom(typeof(TObject))) {
                 throw new ArgumentException(
                     "To configure a poco-property, you must pass a lambda such as o=>o.MyPropertyName\n" +
                     "Actual input: " + ExpressionToCode.ToCode(property) + "\n" +
@@ -118,6 +118,6 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         static IPocoProperties<IPocoProperty> GetCache(Type t)
-            => (IPocoProperties<IPocoProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null);
+            => (IPocoProperties<IPocoProperty>)genGetCache.MakeGenericMethod(t).Invoke(null, null)!;
     }
 }
