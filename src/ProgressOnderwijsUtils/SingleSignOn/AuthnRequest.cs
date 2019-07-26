@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -17,7 +16,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public string Destination { get; }
         public ServiceProviderConfig Issuer { get; }
         public bool ForceAuthn { get; set; }
-        public string AuthnContextClassRef { get; set; }
+        public string? AuthnContextClassRef { get; set; }
 
         public AuthnRequest(string id, string destination, ServiceProviderConfig issuer)
         {
