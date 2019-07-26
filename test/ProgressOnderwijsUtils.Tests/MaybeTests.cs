@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
@@ -15,7 +14,8 @@ namespace ProgressOnderwijsUtils.Tests
         {
             PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<Unit>().Contains("42"));
             PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<Unit>().Contains("hello world!") == false);
-            PAssert.That(() => Maybe.Ok("42").AsMaybeWithoutError<Unit>().Contains(default(string)) == false);
+            // ReSharper disable once RedundantCast
+            PAssert.That(() => Maybe.Ok((string?)"42").AsMaybeWithoutError<Unit>().Contains(default(string)) == false);
             PAssert.That(() => Maybe.Ok(default(string)).AsMaybeWithoutError<Unit>().Contains(default(string)));
         }
 
@@ -407,6 +407,13 @@ namespace ProgressOnderwijsUtils.Tests
                     from b in notOkExample
                     select v
                 ).IsOk == false);
+        }
+
+        [Fact]
+        public void Default_Maybe_throws()
+        {
+            Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).TryGet(out _, out _));
+            Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).Extract(ok => 0, err => 0));
         }
     }
 }
