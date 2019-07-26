@@ -1,4 +1,9 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+﻿// Copied over from: https://raw.githubusercontent.com/dotnet/coreclr/master/src/System.Private.CoreLib/shared/System/Diagnostics/CodeAnalysis/NullableAttributes.cs
+// Needs to be part of our repo since these types are part of netcoreapp3.0 and we don't target that yet.
+// Must be removed when switching to netcoreapp3.0 or when these types get added to netstandard.
+// All internal, so unlikely to cause conflicts for dependants.
+
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
