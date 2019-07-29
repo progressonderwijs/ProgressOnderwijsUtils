@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -31,26 +30,24 @@ namespace ProgressOnderwijsUtils
                     return empty;
                 }
                 var literalSqlByEnumValue = new Dictionary<long, string>();
-                foreach (Enum v in enumValues) {
-                    var valueAsLong = ((IConvertible)v).ToInt64(null);
+                foreach (var v in enumValues) {
+                    var valueAsLong = ((IConvertible)v!).ToInt64(null);
                     literalSqlByEnumValue.Add(valueAsLong, valueAsLong.ToStringInvariant() + "/*" + ObjectToCode.PlainObjectToCode(v) + "*/");
                 }
                 return literalSqlByEnumValue;
             };
 
-        [CanBeNull]
-        static string GetEnumStringRepresentationOrNull([CanBeNull] Enum val)
+        static string? GetEnumStringRepresentationOrNull(Enum? val)
             => val == null
                 ? null
                 : enumStringRepresentations
                     .GetOrAdd(val.GetType(), enumStringRepresentationValueFactory)
                     .GetOrDefault(((IConvertible)val).ToInt64(null));
 
-        [CanBeNull]
-        static string GetBooleanStringRepresentationOrNull(bool? val)
+        static string? GetBooleanStringRepresentationOrNull(bool? val)
             => val == null ? null : val.Value ? "cast(1 as bit)" : "cast(0 as bit)";
 
-        public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object o)
+        public static void AppendParamTo<TCommandFactory>(ref TCommandFactory factory, object? o)
             where TCommandFactory : struct, ICommandFactory
         {
             if (o is IEnumerable enumerable && !(enumerable is string) && !(enumerable is byte[])) {
@@ -88,10 +85,9 @@ namespace ProgressOnderwijsUtils
                 ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<TOut>(projection(set)[0])
                 : new QueryTableValuedParameterComponent<TIn, TOut>(tableTypeName, set, projection);
 
-        static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory>();
+        static readonly ConcurrentDictionary<Type, ITableValuedParameterFactory?> tableValuedParameterFactoryCache = new ConcurrentDictionary<Type, ITableValuedParameterFactory?>();
 
-        [CanBeNull]
-        static ITableValuedParameterFactory CreateTableValuedParameterFactory([NotNull] Type enumerableType)
+        static ITableValuedParameterFactory? CreateTableValuedParameterFactory([NotNull] Type enumerableType)
         {
             var elementType = TryGetNonAmbiguousEnumerableElementType(enumerableType);
             if (elementType == null) {
@@ -103,7 +99,7 @@ namespace ProgressOnderwijsUtils
                 return null;
             }
             var factoryType = typeof(TableValuedParameterFactory<>).MakeGenericType(elementType);
-            return (ITableValuedParameterFactory)Activator.CreateInstance(factoryType, sqlTableTypeName);
+            return (ITableValuedParameterFactory?)Activator.CreateInstance(factoryType, sqlTableTypeName);
         }
 
         internal struct CustomTableType
@@ -171,10 +167,9 @@ namespace ProgressOnderwijsUtils
                 => ToTableValuedParameter(sqlTableTypeName, (IEnumerable<T>)enumerable, WrapPlainValueInSinglePropertyPoco);
         }
 
-        [CanBeNull]
-        static Type TryGetNonAmbiguousEnumerableElementType([NotNull] Type enumerableType)
+        static Type? TryGetNonAmbiguousEnumerableElementType([NotNull] Type enumerableType)
         {
-            Type elementType = null;
+            var elementType = default(Type);
             foreach (var interfaceType in enumerableType.GetInterfaces()) {
                 if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(IEnumerable<>)) {
                     if (elementType != null) {
@@ -186,7 +181,7 @@ namespace ProgressOnderwijsUtils
             return elementType;
         }
 
-        public static void AppendParamOrFragment<TCommandFactory>(ref TCommandFactory factory, object argument)
+        public static void AppendParamOrFragment<TCommandFactory>(ref TCommandFactory factory, object? argument)
             where TCommandFactory : struct, ICommandFactory
         {
             var converter = argument == null ? null : PocoPropertyConverter.GetOrNull(argument.GetType());
@@ -210,10 +205,10 @@ namespace ProgressOnderwijsUtils
             [Key]
             public T QueryTableValue { get; set; }
 
-            public override string ToString()
+            public override string? ToString()
                 => QueryTableValue == null ? "NULL" : QueryTableValue.ToString();
 
-            public object ProjectionForDebuggingOrNull()
+            public object? ProjectionForDebuggingOrNull()
                 => QueryTableValue;
         }
 

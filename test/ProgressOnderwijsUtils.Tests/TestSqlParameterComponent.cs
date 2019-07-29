@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void ValidatesArgumentsOK()
         {
             // ReSharper disable once AssignNullToNotNullAttribute
-            Assert.Throws<ArgumentNullException>(() => ParameterizedSql.CreateDynamic(null));
+            Assert.Throws<ArgumentNullException>(() => ParameterizedSql.CreateDynamic(null!));
 
             PAssert.That(() => ParameterizedSql.CreateDynamic("bla" + 0).GetHashCode() == ParameterizedSql.CreateDynamic("bla0").GetHashCode());
             PAssert.That(() => ParameterizedSql.CreateDynamic("bla" + 0).GetHashCode() != ParameterizedSql.CreateDynamic("bla").GetHashCode());
