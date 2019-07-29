@@ -19,11 +19,11 @@ namespace ProgressOnderwijsUtils
             => values.FirstOrDefault(test);
 
         public static TVal FirstOrNull<TVal>(this IEnumerable<TVal> values)
-            where TVal : class
+            where TVal : class?
             => values.FirstOrDefault();
 
         public static TVal FirstOrNull<TVal>(this IEnumerable<TVal> values, Func<TVal, bool> test)
-            where TVal : class
+            where TVal : class?
             => values.FirstOrDefault(test);
 
         public static TVal? FirstOrNullable<TVal>(this IEnumerable<TVal> values)
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils
 
         [CanBeNull]
         public static TVal SingleOrNull<TVal>(this IEnumerable<TVal> values)
-            where TVal : class
+            where TVal : class?
             => values.SingleOrDefault();
 
         [UsefulToKeep("library function")]
@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils
             => values.SingleOrDefault(test);
 
         public static TVal SingleOrNull<TVal>(this IEnumerable<TVal> values, Func<TVal, bool> test)
-            where TVal : class
+            where TVal : class?
             => values.SingleOrDefault(test);
 
         public static TVal? AsNullable<TVal>(this TVal value)
@@ -75,7 +75,7 @@ namespace ProgressOnderwijsUtils
             => values.Select(o => (TVal?)o).NullIfEmpty();
 
         public static IEnumerable<TVal> NullIfEmpty<TVal>(this IEnumerable<TVal> values)
-            where TVal : class
+            where TVal : class?
             => values.DefaultIfEmpty();
 
         public static TVal? FirstOrNull<TVal>(this IQueryable<TVal?> values)
@@ -89,12 +89,12 @@ namespace ProgressOnderwijsUtils
 
         [UsefulToKeep("library function")]
         public static TVal FirstOrNull<TVal>(this IQueryable<TVal> values)
-            where TVal : class
+            where TVal : class?
             => values.FirstOrDefault();
 
         [UsefulToKeep("library function")]
         public static TVal FirstOrNull<TVal>(this IQueryable<TVal> values, Expression<Func<TVal, bool>> test)
-            where TVal : class
+            where TVal : class?
             => values.FirstOrDefault(test);
 
         public static TVal? FirstOrNullable<TVal>(this IQueryable<TVal> values)
@@ -121,7 +121,7 @@ namespace ProgressOnderwijsUtils
 
         [UsefulToKeep("library function")]
         public static TVal SingleOrNull<TVal>(this IQueryable<TVal> values)
-            where TVal : class
+            where TVal : class?
             => values.SingleOrDefault();
 
         [UsefulToKeep("library function")]
@@ -131,7 +131,7 @@ namespace ProgressOnderwijsUtils
 
         [UsefulToKeep("library function")]
         public static TVal SingleOrNull<TVal>(this IQueryable<TVal> values, Expression<Func<TVal, bool>> test)
-            where TVal : class
+            where TVal : class?
             => values.SingleOrDefault(test);
 
         public static IQueryable<TVal?> NullIfEmpty<TVal>(this IQueryable<TVal?> values)
@@ -145,7 +145,7 @@ namespace ProgressOnderwijsUtils
 
         [UsefulToKeep("library function")]
         public static IQueryable<TVal> NullIfEmpty<TVal>(this IQueryable<TVal> values)
-            where TVal : class
+            where TVal : class?
             => values.DefaultIfEmpty();
     }
 }
