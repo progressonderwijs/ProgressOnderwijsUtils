@@ -14,8 +14,8 @@ namespace ProgressOnderwijsUtils
         public Type DbType { get; }
         public Delegate CompiledConverterToDb { get; }
         public Delegate CompiledConverterFromDb { get; }
-        public readonly Func<object, object> ConvertToDb;
-        public readonly Func<object, object> ConvertFromDb;
+        public readonly Func<object?, object?> ConvertToDb;
+        public readonly Func<object?, object?> ConvertFromDb;
 
         public PocoPropertyConverter(Type converterDefinition)
         {

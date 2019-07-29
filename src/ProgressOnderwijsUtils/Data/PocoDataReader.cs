@@ -1,7 +1,7 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -12,12 +12,12 @@ namespace ProgressOnderwijsUtils
 {
     public interface IOptionalObjectListForDebugging
     {
-        IReadOnlyList<object> ContentsForDebuggingOrNull();
+        IReadOnlyList<object>? ContentsForDebuggingOrNull();
     }
 
     public interface IOptionalObjectProjectionForDebugging
     {
-        object ProjectionForDebuggingOrNull();
+        object? ProjectionForDebuggingOrNull();
     }
 
     public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListForDebugging
@@ -25,18 +25,19 @@ namespace ProgressOnderwijsUtils
     {
         readonly CancellationToken _cancellationToken;
         readonly IEnumerator<T> pocos;
-        readonly IReadOnlyList<T> objectsOrNull_ForDebugging;
-        T current;
+        readonly IReadOnlyList<T>? objectsOrNull_ForDebugging;
+        [AllowNull][MaybeNull] T current;
         int rowsProcessed;
 
         public int RowsProcessed
             => rowsProcessed;
 
-        public PocoDataReader([NotNull] IEnumerable<T> objects, CancellationToken cancellationToken)
+        public PocoDataReader(IEnumerable<T> objects, CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
             pocos = objects.GetEnumerator();
             objectsOrNull_ForDebugging = objects as IReadOnlyList<T>;
+            current = default;
         }
 
         public override void Close()
@@ -63,7 +64,6 @@ namespace ProgressOnderwijsUtils
         public override int FieldCount
             => columnInfos.Length;
 
-        [NotNull]
         public override Type GetFieldType(int ordinal)
             => columnInfos[ordinal].ColumnType;
 
@@ -76,7 +76,6 @@ namespace ProgressOnderwijsUtils
         public override int GetInt32(int ordinal)
             => ((Func<T, int>)columnInfos[ordinal].TypedNonNullableGetter)(current);
 
-        [NotNull]
         public override object GetValue(int ordinal)
             => columnInfos[ordinal].GetUntypedColumnValue(current) ?? DBNull.Value;
 
@@ -99,18 +98,17 @@ namespace ProgressOnderwijsUtils
             public readonly string Name;
 
             //ColumnType is non nullable with enum types replaced by their underlying type
-            [NotNull]
             public readonly Type ColumnType;
 
             public readonly Func<T, object> GetUntypedColumnValue;
 
             //WhenNullable_IsColumnDBNull is itself null if column non-nullable
-            public readonly Func<T, bool> WhenNullable_IsColumnDBNull;
+            public readonly Func<T, bool>? WhenNullable_IsColumnDBNull;
 
             //TypedNonNullableGetter is of type Func<T, _> such that typeof(_) == ColumnType - therefore cannot return nulls!
             public readonly Delegate TypedNonNullableGetter;
 
-            public ColumnInfo([NotNull] IReadonlyPocoProperty<T> pocoProperty)
+            public ColumnInfo(IReadonlyPocoProperty<T> pocoProperty)
             {
                 var propertyType = pocoProperty.DataType;
                 var pocoParameter = Expression.Parameter(typeof(T));
@@ -187,7 +185,6 @@ namespace ProgressOnderwijsUtils
             columnInfos = columnInfosBuilder.ToArray();
         }
 
-        [NotNull]
         static DataTable CreateEmptySchemaTable()
         {
             var dt = new DataTable();
@@ -214,8 +211,7 @@ namespace ProgressOnderwijsUtils
             return dt;
         }
 
-        [CanBeNull]
-        IReadOnlyList<object> IOptionalObjectListForDebugging.ContentsForDebuggingOrNull()
+        IReadOnlyList<object>? IOptionalObjectListForDebugging.ContentsForDebuggingOrNull()
             => objectsOrNull_ForDebugging?.SelectIndexable(o => (o as IOptionalObjectProjectionForDebugging)?.ProjectionForDebuggingOrNull() ?? o);
     }
 }

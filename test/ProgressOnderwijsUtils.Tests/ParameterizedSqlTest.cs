@@ -156,7 +156,7 @@ namespace ProgressOnderwijsUtils.Tests
             // ReSharper disable once NotAccessedVariable
             ParameterizedSql ignore;
             // ReSharper disable once AssignNullToNotNullAttribute
-            Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.CreateDynamic(null));
+            Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.CreateDynamic(null!));
         }
 
         [Fact]

@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -13,9 +12,9 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public struct ParameterizedSql
     {
-        internal readonly ISqlComponent impl;
+        internal readonly ISqlComponent? impl;
 
-        internal ParameterizedSql(ISqlComponent impl)
+        internal ParameterizedSql(ISqlComponent? impl)
             => this.impl = impl;
 
         internal void AppendTo<TCommandFactory>(ref TCommandFactory factory)
@@ -90,7 +89,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is ParameterizedSql parameterizedSql && parameterizedSql == this;
 
         [Pure]
@@ -127,7 +126,7 @@ namespace ProgressOnderwijsUtils
             return factory.FinishBuilding_CommandTextOnly();
         }
 
-        public static ParameterizedSql Param(object paramVal)
+        public static ParameterizedSql Param(object? paramVal)
             => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]
@@ -179,9 +178,9 @@ namespace ProgressOnderwijsUtils
 
     sealed class SingleParameterSqlFragment : ISqlComponent
     {
-        readonly object paramVal;
+        readonly object? paramVal;
 
-        public SingleParameterSqlFragment(object paramVal)
+        public SingleParameterSqlFragment(object? paramVal)
         {
             this.paramVal = paramVal;
         }
@@ -206,7 +205,7 @@ namespace ProgressOnderwijsUtils
 
     static class ParameterizedSqlFactory
     {
-        public static ParameterizedSql BuildableToQuery(this ISqlComponent q)
+        public static ParameterizedSql BuildableToQuery(this ISqlComponent? q)
             => new ParameterizedSql(q);
 
         public static ParameterizedSql InterpolationToQuery([NotNull] FormattableString interpolatedQuery)
@@ -238,9 +237,9 @@ namespace ProgressOnderwijsUtils
 
     sealed class SeveralSqlFragments : ISqlComponent
     {
-        readonly ISqlComponent[] kids;
+        readonly ISqlComponent[]? kids;
 
-        public SeveralSqlFragments(ISqlComponent[] kids)
+        public SeveralSqlFragments(ISqlComponent[]? kids)
         {
             this.kids = kids;
         }

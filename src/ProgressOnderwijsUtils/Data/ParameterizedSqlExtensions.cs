@@ -48,9 +48,9 @@ namespace ProgressOnderwijsUtils
                 if (isBuilderEmpty) {
                     isBuilderEmpty = false;
                 } else if (!separator.IsEmpty) {
-                    builder.Add(separator.impl);
+                    builder.Add(separator.impl!);
                 }
-                builder.Add(expr.impl);
+                builder.Add(expr.impl!);
             }
             return new SeveralSqlFragments(builder.ToArray()).BuildableToQuery();
         }
