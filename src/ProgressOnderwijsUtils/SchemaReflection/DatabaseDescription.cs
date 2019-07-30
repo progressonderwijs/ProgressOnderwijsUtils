@@ -1,5 +1,4 @@
-#nullable disable
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -57,8 +56,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public Table GetTableByName(string qualifiedName)
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
 
-        [CanBeNull]
-        public Table TryGetTableByName(string qualifiedName)
+        public Table? TryGetTableByName(string qualifiedName)
             => tableByQualifiedName.Value.TryGetValue(qualifiedName, out var id) ? id : null;
 
         [CanBeNull]
@@ -67,12 +65,14 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public sealed class ForeignKey
         {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public FkReferentialAction DeleteReferentialAction;
             public FkReferentialAction UpdateReferentialAction;
             public Table ReferencedParentTable { get; set; }
             public Table ReferencingChildTable { get; set; }
             public (TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn)[] Columns { get; set; }
             public string ForeignKeyConstraintName { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
             public static ForeignKey Create(DatabaseDescription db, DbForeignKey fk)
             {

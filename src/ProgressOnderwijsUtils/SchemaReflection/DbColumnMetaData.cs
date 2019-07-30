@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -67,7 +66,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             UserTypeId = fromDb.User_Type_Id;
         }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public DbColumnMetaData() { }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {
