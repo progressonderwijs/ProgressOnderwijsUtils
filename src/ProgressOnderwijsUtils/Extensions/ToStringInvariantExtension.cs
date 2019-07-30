@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Globalization;
 using JetBrains.Annotations;
 
@@ -31,16 +30,14 @@ namespace ProgressOnderwijsUtils
             where T : struct, IFormattable
             => val == null ? "" : val.Value.ToString(format, CultureInfo.InvariantCulture);
 
-        [CanBeNull]
         [Pure]
-        public static string ToStringInvariantOrNull<T>(this T? val)
+        public static string? ToStringInvariantOrNull<T>(this T? val)
             where T : struct, IConvertible
             => val == null ? null : val.Value.ToString(CultureInfo.InvariantCulture);
 
-        [CanBeNull]
         [Pure]
         [UsefulToKeep("Library function, other overloads used")]
-        public static string ToStringInvariantOrNull<T>(this T? val, string format)
+        public static string? ToStringInvariantOrNull<T>(this T? val, string format)
             where T : struct, IFormattable
             => val == null ? null : val.Value.ToString(format, CultureInfo.InvariantCulture);
     }

@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
 
@@ -15,7 +14,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="defaultValue">The value to get if the index is out of range.</param>
         /// <returns>The value at the index, or the default if the array does encompass that index.</returns>
         [Pure]
-        public static TValue GetOrDefault<TValue>([CanBeNull] this TValue[] array, int index, TValue defaultValue)
+        public static TValue GetOrDefault<TValue>(this TValue[]? array, int index, TValue defaultValue)
             => array != null && index < array.Length && index >= 0 ? array[index] : defaultValue;
 
         /// <summary>
@@ -23,7 +22,7 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [NotNull]
         [Pure]
-        public static T[] EmptyIfNull<T>([CanBeNull] this T[] array)
+        public static T[] EmptyIfNull<T>(this T[]? array)
             => array ?? Array.Empty<T>();
 
         /// <summary>
@@ -86,7 +85,7 @@ namespace ProgressOnderwijsUtils
         /// Concatenates two arrays.  Null arrays are interpreted as the empty array. The returned array may be the same as one of the parameters.
         /// </summary>
         [NotNull]
-        public static T[] ConcatArray<T>([CanBeNull] this T[] beginning, [CanBeNull] T[] end)
+        public static T[] ConcatArray<T>(this T[]? beginning, T[]? end)
         {
             if (end == null || end.Length == 0) {
                 return beginning ?? Array.Empty<T>();

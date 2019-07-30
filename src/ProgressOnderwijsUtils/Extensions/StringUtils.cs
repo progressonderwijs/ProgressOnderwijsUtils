@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -107,9 +106,8 @@ namespace ProgressOnderwijsUtils
         public static string SepaTekenset([NotNull] string s)
             => SepaStripperRegexes.sepaStripper.Replace(s, "");
 
-        [CanBeNull]
         [Pure]
-        public static string SepaTekensetEnModificaties(string s)
+        public static string? SepaTekensetEnModificaties(string s)
         {
             if (s == null) {
                 return null;

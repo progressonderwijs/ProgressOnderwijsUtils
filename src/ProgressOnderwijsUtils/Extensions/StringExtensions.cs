@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -15,12 +14,11 @@ namespace ProgressOnderwijsUtils
         /// <param name="s">string to check</param>
         /// <returns>true if string is empty or is null, false otherwise</returns>
         [Pure]
-        public static bool IsNullOrWhiteSpace([CanBeNull] this string s)
+        public static bool IsNullOrWhiteSpace(this string? s)
             => string.IsNullOrWhiteSpace(s);
 
-        [CanBeNull]
         [Pure]
-        public static string NullIfWhiteSpace([CanBeNull] this string str)
+        public static string? NullIfWhiteSpace(this string? str)
         {
             if (string.IsNullOrWhiteSpace(str)) {
                 return null;
@@ -55,9 +53,8 @@ namespace ProgressOnderwijsUtils
         public static bool Contains([NotNull] this string str, [NotNull] string value, StringComparison compare)
             => str.IndexOf(value, compare) >= 0;
 
-        [CanBeNull]
         [Pure]
-        public static string TrimToLength([CanBeNull] this string s, int maxlength)
+        public static string? TrimToLength(this string? s, int maxlength)
         {
             if (s == null || s.Length <= maxlength) {
                 return s;
