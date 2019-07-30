@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -51,12 +50,20 @@ namespace ProgressOnderwijsUtils.Collections
             => new Tree<T>(value, null);
 
         [Pure]
+        public static Tree<T?> Nullable<T>(T? value)
+            where T : class
+            => new Tree<T?>(value, null);
+
+        [Pure]
         public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup)
             => CachedTreeBuilder<T>.Resolve(root, kidLookup);
 
+#nullable disable
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
+            //TODO where T : notnull
             => BuildRecursively(root, kidLookup.GetOrDefaultR);
+#nullable enable
 
         [NotNull]
         [Pure]
@@ -114,7 +121,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         /// <param name="value">The value of this node.</param>
         /// <param name="children">The children of this node, (null is allowed and means none).</param>
-        public Tree(T value, [CanBeNull] IEnumerable<Tree<T>> children)
+        public Tree(T value, IEnumerable<Tree<T>>? children)
             : this(value, children == null ? null : children.ToArray()) { }
 
         /// <summary>
@@ -123,7 +130,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         /// <param name="value">The value of this node.</param>
         /// <param name="children">The children of this node, (null is allowed and means none).</param>
-        public Tree(T value, [CanBeNull] Tree<T>[] children)
+        public Tree(T value, Tree<T>[]? children)
         {
             nodeValue = value;
             kidArray = children ?? Array.Empty<Tree<T>>();
@@ -147,8 +154,12 @@ namespace ProgressOnderwijsUtils.Collections
             }
 
             [Pure]
-            public bool Equals(Tree<T> a, Tree<T> b)
+            public bool Equals(Tree<T>? a, Tree<T>? b)
             {
+                if (a == null || b == null) {
+                    return ReferenceEquals(a, b);
+                }
+
                 var todo = new Stack<NodePair>(16);
                 todo.Push(new NodePair { A = a, B = b });
                 while (todo.Count > 0) {
@@ -175,11 +186,15 @@ namespace ProgressOnderwijsUtils.Collections
             // ReSharper restore RedundantCast
 
             [Pure]
-            public int GetHashCode([CanBeNull] Tree<T> obj)
+            public int GetHashCode(Tree<T>? obj)
             {
+                // ReSharper disable ConditionIsAlwaysTrueOrFalse
+                // ReSharper disable HeuristicUnreachableCode
                 if (obj == null) {
                     return typeHash;
                 }
+                // ReSharper restore HeuristicUnreachableCode
+                // ReSharper restore ConditionIsAlwaysTrueOrFalse
                 ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
                 ulong offset = 1; //keep offset odd to ensure no bits are lost in scaling.
                 foreach (var node in obj.PreorderTraversal()) {
@@ -191,11 +206,11 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => DefaultComparer.Equals(this, obj as Tree<T>);
 
         [Pure]
-        public bool Equals(Tree<T> other)
+        public bool Equals(Tree<T>? other)
             => DefaultComparer.Equals(this, other);
 
         [Pure]
@@ -213,7 +228,7 @@ namespace ProgressOnderwijsUtils.Collections
             if (indent.Length > 80) {
                 return "<<TOO DEEP>>";
             }
-            return indent + nodeValue.ToString().Replace("\n", "\n" + indent) + " "
+            return indent + (nodeValue?.ToString() ?? "<NULL>").Replace("\n", "\n" + indent) + " "
                 + (Children.Count == 0
                     ? "."
                     : ":\n" + Children.Select(t => t.ToString(indent + "    ")).JoinStrings("\n")
