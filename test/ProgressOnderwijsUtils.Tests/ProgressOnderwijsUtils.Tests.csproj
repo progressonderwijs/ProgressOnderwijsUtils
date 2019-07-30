@@ -7,7 +7,6 @@
     <IsPackable>false</IsPackable>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
-    <NullableContextOptions>enable</NullableContextOptions>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.Transactions" />
