@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,9 +16,12 @@ namespace ProgressOnderwijsUtils
         public static DistinctArray<T> ToDistinctArray<T>([NotNull] this ISet<T> items)
             => ToDistinctArrayFromDistinct_Unchecked(items.ToArray());
 
+#nullable disable
         [Pure]
         public static DistinctArray<T> ToDistinctArray<T, TVal>([NotNull] this Dictionary<T, TVal>.KeyCollection items)
+            //TODO where T : notnull
             => ToDistinctArrayFromDistinct_Unchecked(items.ToArray());
+#nullable enable
 
         [Pure]
         public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)
@@ -111,7 +113,7 @@ namespace ProgressOnderwijsUtils
             public T Current
                 => items[idx];
 
-            object IEnumerator.Current
+            object? IEnumerator.Current
                 => Current;
 
             public void Dispose() { }
