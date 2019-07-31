@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -12,7 +11,7 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Tests whether an exception is non-null and matches a predicate, or any of its inner exceptions do.  For AggregateExceptions, tests wether *all* children match.
         /// </summary>
-        public static bool AnyNestingLevelMatches([CanBeNull] this Exception exception, [NotNull] Func<Exception, bool> predicate)
+        public static bool AnyNestingLevelMatches(this Exception? exception, [NotNull] Func<Exception, bool> predicate)
         {
             if (exception == null) {
                 return false;
@@ -25,10 +24,10 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static bool IsSqlTimeoutException([CanBeNull] this Exception e)
+        public static bool IsSqlTimeoutException(this Exception? e)
             => e.AnyNestingLevelMatches(sqlTimeoutPredicate);
 
-        public static bool IsRetriableConnectionFailure([CanBeNull] this Exception e)
+        public static bool IsRetriableConnectionFailure(this Exception? e)
             => e.AnyNestingLevelMatches(retriableConnFailurePredicate);
 
         static readonly Func<Exception, bool> retriableConnFailurePredicate = ex =>

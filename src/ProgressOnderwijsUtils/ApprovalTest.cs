@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -23,7 +22,7 @@ namespace ProgressOnderwijsUtils
             return approvalPath;
         }
 
-        public static ApprovalTest CreateHere([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = null, [CallerMemberName] string membername = null)
+        public static ApprovalTest CreateHere([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
             => Create(new SourceLocation(membername, filepath, linenumber));
 
         public static ApprovalTest Create(SourceLocation sourceLocation)

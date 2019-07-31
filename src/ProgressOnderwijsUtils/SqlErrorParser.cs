@@ -34,9 +34,9 @@ namespace ProgressOnderwijsUtils
         public string StatementType { get; set; }
         public string ConstraintType { get; set; }
         public string ConstraintName { get; set; }
-        public string DatabaseName { get; set; }
-        public string TableName { get; set; }
-        public string ColumnName { get; set; }
+        public string? DatabaseName { get; set; }
+        public string? TableName { get; set; }
+        public string? ColumnName { get; set; }
     }
 
     public static class SqlErrorParser

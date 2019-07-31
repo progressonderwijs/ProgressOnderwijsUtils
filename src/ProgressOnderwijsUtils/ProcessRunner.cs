@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -117,10 +116,7 @@ namespace ProgressOnderwijsUtils
                 false);
             WriteStdIn(proc);
 
-            return new AsyncProcessResult {
-                ExitCode = exitCodeCompletion.Task,
-                Output = replayableMergedOutput,
-            };
+            return new AsyncProcessResult(exitCodeCompletion.Task, replayableMergedOutput);
         }
 
         public int RunProcessWithoutRedirection()
@@ -156,8 +152,14 @@ namespace ProgressOnderwijsUtils
 
     public sealed class AsyncProcessResult
     {
-        public Task<int> ExitCode;
-        public IObservable<(ProcessOutputKind Kind, string Line, TimeSpan OutputMoment)> Output;
+        public readonly Task<int> ExitCode;
+        public readonly IObservable<(ProcessOutputKind Kind, string Line, TimeSpan OutputMoment)> Output;
+
+        internal AsyncProcessResult(Task<int> exitCode, IObservable<(ProcessOutputKind Kind, string Line, TimeSpan OutputMoment)> output)
+        {
+            ExitCode = exitCode;
+            Output = output;
+        }
 
         public void WriteToConsoleWithPrefix(string prefix)
         {

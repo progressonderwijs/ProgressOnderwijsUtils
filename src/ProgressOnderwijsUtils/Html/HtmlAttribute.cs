@@ -1,4 +1,3 @@
-#nullable disable
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -44,7 +43,7 @@ namespace ProgressOnderwijsUtils.Html
         {
             var array = attributes;
             if (attributes != null) {
-                if (count < array.Length && Interlocked.CompareExchange(ref array[count].Name, name, null) == null) {
+                if (count < array.Length && Interlocked.CompareExchange(ref array[count].Name, name, null! /*null is placeholder*/) == null) {
                     array[count].Value = val;
                     return new HtmlAttributes(array, count + 1);
                 } else {

@@ -1,5 +1,4 @@
-﻿#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using ExpressionToCodeLib;
@@ -51,10 +50,10 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void CustomizableComparerWorks()
         {
-            var tree1 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
-            var tree2 = Tree.Node("a", Tree.Node("x"), Tree.Node("B"), Tree.Node(default(string)), Tree.Node(""));
-            var tree3 = Tree.Node("a", Tree.Node("x"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
-            var tree4 = Tree.Node("a", Tree.Node("y"), Tree.Node("b"), Tree.Node(default(string)), Tree.Node(""));
+            var tree1 = Tree.Node("a", Tree.Nullable("x"), Tree.Nullable("b"), Tree.Node(default(string)), Tree.Nullable(""));
+            var tree2 = Tree.Node("a", Tree.Nullable("x"), Tree.Nullable("B"), Tree.Node(default(string)), Tree.Nullable(""));
+            var tree3 = Tree.Node("a", Tree.Nullable("x"), Tree.Nullable("b"), Tree.Node(default(string)), Tree.Nullable(""));
+            var tree4 = Tree.Node("a", Tree.Nullable("y"), Tree.Nullable("b"), Tree.Node(default(string)), Tree.Nullable(""));
 
             PAssert.That(() => !tree1.Equals(tree2));
             PAssert.That(() => tree1.Equals(tree3));
@@ -80,7 +79,7 @@ namespace ProgressOnderwijsUtils.Tests
             var equalityComparer = EqualityComparer<Tree<int>>.Default;
             PAssert.That(() => equalityComparer.GetHashCode(tree2) == equalityComparer.GetHashCode(tree1));
             PAssert.That(() => equalityComparer.GetHashCode(tree2) != equalityComparer.GetHashCode(leaf2));
-            PAssert.That(() => equalityComparer.GetHashCode(tree1) != equalityComparer.GetHashCode(null));
+            PAssert.That(() => equalityComparer.GetHashCode(tree1) != equalityComparer.GetHashCode(null!));
         }
 
         [Fact]

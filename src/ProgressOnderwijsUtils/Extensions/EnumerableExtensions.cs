@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -99,11 +98,11 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         [Pure]
-        public static IEnumerable<T> EmptyIfNull<T>([CanBeNull] this IEnumerable<T> list)
+        public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T>? list)
             => list ?? Enumerable.Empty<T>();
 
         [Pure]
-        public static int GetSequenceHashCode<T>([NotNull] IEnumerable<T> list, [CanBeNull] IEqualityComparer<T> elementComparer = null)
+        public static int GetSequenceHashCode<T>([NotNull] IEnumerable<T> list, IEqualityComparer<T>? elementComparer = null)
         {
             var elemEquality = elementComparer ?? EqualityComparer<T>.Default;
             ulong hash = 3;
@@ -133,6 +132,7 @@ namespace ProgressOnderwijsUtils
         [NotNull]
         [Pure]
         public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>([NotNull] this IEnumerable<T> list, [NotNull] Func<T, TKey> keySelector, Func<T, TVal> valSelector)
+            where TKey : notnull
             => list.ToSortedList(keySelector, valSelector, Comparer<TKey>.Default);
 
         [NotNull]
@@ -142,6 +142,7 @@ namespace ProgressOnderwijsUtils
             [NotNull] Func<T, TKey> keySelector,
             Func<T, TVal> valSelector,
             IComparer<TKey> keyComparer)
+            where TKey : notnull
         {
             var retval = new SortedList<TKey, TVal>(keyComparer);
             foreach (var item in list.OrderBy(keySelector, keyComparer)) {
@@ -157,6 +158,7 @@ namespace ProgressOnderwijsUtils
             Func<TElem, TKey> keyLookup,
             Func<TKey, IEnumerable<TElem>, TValue> groupMap
         )
+            where TKey : notnull
         {
             var groups = new Dictionary<TKey, List<TElem>>();
             foreach (var elem in list) {
@@ -191,9 +193,8 @@ namespace ProgressOnderwijsUtils
             return csvBuilder.ToString();
         }
 
-        [NotNull]
         [Pure]
-        static string ToCsvValue<T>([CanBeNull] this T item, [NotNull] string delimiter, bool useQuotesForStrings)
+        static string? ToCsvValue<T>([CanBeNull] this T item, [NotNull] string delimiter, bool useQuotesForStrings)
         {
             var csvValueWithoutQuotes = item?.ToString() ?? "";
 
@@ -210,7 +211,7 @@ namespace ProgressOnderwijsUtils
             }
 
             if (item is string) {
-                return "\"" + item.ToString().Replace("\"", "\\\"") + "\"";
+                return "\"" + item.ToString()?.Replace("\"", "\\\"") + "\"";
             } else {
                 return item.ToString();
             }
