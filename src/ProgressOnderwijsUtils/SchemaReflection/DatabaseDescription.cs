@@ -59,8 +59,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public Table? TryGetTableByName(string qualifiedName)
             => tableByQualifiedName.Value.TryGetValue(qualifiedName, out var id) ? id : null;
 
-        [CanBeNull]
-        public Table TryGetTableById(DbObjectId id)
+        public Table? TryGetTableById(DbObjectId id)
             => tableById.GetOrDefaultR(id);
 
         public sealed class ForeignKey
@@ -76,8 +75,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             public static ForeignKey Create(DatabaseDescription db, DbForeignKey fk)
             {
-                var parentTable = db.TryGetTableById(fk.ReferencedParentTable);
-                var childTable = db.TryGetTableById(fk.ReferencingChildTable);
+                // Let's trust callers not to make up object ids
+                var parentTable = db.TryGetTableById(fk.ReferencedParentTable)!;
+                var childTable = db.TryGetTableById(fk.ReferencingChildTable)!;
                 return new ForeignKey {
                     ReferencedParentTable = parentTable,
                     ReferencingChildTable = childTable,
@@ -172,7 +172,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 => Columns.Where(c => c.Is_Primary_Key);
 
             public IEnumerable<Table> AllDependantTables
-                => db.foreignKeyLookup.AllDependantTables(ObjectId).Select(id => db.TryGetTableById(id));
+                => db.foreignKeyLookup.AllDependantTables(ObjectId).Select(id => db.TryGetTableById(id)!);
 
             public IEnumerable<ForeignKey> KeysToReferencedParents
                 => db.foreignKeyLookup.KeysByReferencingChildTable[ObjectId].Select(fk => ForeignKey.Create(db, fk));

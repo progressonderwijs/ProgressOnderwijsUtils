@@ -163,7 +163,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         [Pure]
-        public static string ToFlatDebugString<T>(IEnumerable<T> self)
+        public static string ToFlatDebugString<T>(IEnumerable<T>? self)
             => "[" +
                 self
                     .EmptyIfNull()

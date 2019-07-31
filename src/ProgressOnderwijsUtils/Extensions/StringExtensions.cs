@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
@@ -32,17 +33,17 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// HTML-alike whitespace collapsing of this string; however, this method also trims.
         /// </summary>
-        [NotNull]
+        [JetBrains.Annotations.NotNull]
         [Pure]
-        public static string NormalizeWhitespace([NotNull] this string str)
+        public static string NormalizeWhitespace([JetBrains.Annotations.NotNull] this string str)
             => str.CollapseWhitespace().Trim();
 
         /// <summary>
         /// HTML-alike whitespace collapsing of this string. This method does not trim.
         /// </summary>
-        [NotNull]
+        [JetBrains.Annotations.NotNull]
         [Pure]
-        public static string CollapseWhitespace([NotNull] this string str)
+        public static string CollapseWhitespace([JetBrains.Annotations.NotNull] this string str)
             => COLLAPSE_WHITESPACE.Replace(str, " ");
 
         [Pure]
@@ -50,7 +51,7 @@ namespace ProgressOnderwijsUtils
             => StringComparer.OrdinalIgnoreCase.Equals(a, b);
 
         [Pure]
-        public static bool Contains([NotNull] this string str, [NotNull] string value, StringComparison compare)
+        public static bool Contains([JetBrains.Annotations.NotNull] this string str, [JetBrains.Annotations.NotNull] string value, StringComparison compare)
             => str.IndexOf(value, compare) >= 0;
 
         [Pure]
@@ -64,7 +65,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static string Replace(this string s, [NotNull] IEnumerable<KeyValuePair<string, string>> replacements)
+        public static string Replace(this string s, [JetBrains.Annotations.NotNull] IEnumerable<KeyValuePair<string, string>> replacements)
             => replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
 
         /// <summary>
@@ -74,10 +75,11 @@ namespace ProgressOnderwijsUtils
         /// 'S-GRAVENHAGE -> 's-Gravenhage
         /// </summary>
         [Pure]
-        public static string ToCamelCase(this string s)
+        [return: NotNullIfNotNull("s")]
+        public static string ToCamelCase(this string? s)
         {
             if (s.IsNullOrWhiteSpace()) {
-                return s;
+                return s!;
             }
 
             // reguliere conversie
