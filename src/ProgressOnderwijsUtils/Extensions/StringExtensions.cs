@@ -15,10 +15,11 @@ namespace ProgressOnderwijsUtils
         /// <param name="s">string to check</param>
         /// <returns>true if string is empty or is null, false otherwise</returns>
         [Pure]
-        public static bool IsNullOrWhiteSpace(this string? s)
+        public static bool IsNullOrWhiteSpace([NotNullWhen(true)] this string? s)
             => string.IsNullOrWhiteSpace(s);
 
         [Pure]
+        [return: NotNullIfNotNull("str")]
         public static string? NullIfWhiteSpace(this string? str)
         {
             if (string.IsNullOrWhiteSpace(str)) {
@@ -45,7 +46,7 @@ namespace ProgressOnderwijsUtils
             => COLLAPSE_WHITESPACE.Replace(str, " ");
 
         [Pure]
-        public static bool EqualsOrdinalCaseInsensitive(this string a, string b)
+        public static bool EqualsOrdinalCaseInsensitive(this string? a, string? b)
             => StringComparer.OrdinalIgnoreCase.Equals(a, b);
 
         [Pure]
@@ -53,6 +54,7 @@ namespace ProgressOnderwijsUtils
             => str.IndexOf(value, compare) >= 0;
 
         [Pure]
+        [return: NotNullIfNotNull("s")]
         public static string? TrimToLength(this string? s, int maxlength)
         {
             if (s == null || s.Length <= maxlength) {
@@ -74,10 +76,10 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         [Pure]
         [return: NotNullIfNotNull("s")]
-        public static string ToCamelCase(this string? s)
+        public static string? ToCamelCase(this string? s)
         {
             if (s.IsNullOrWhiteSpace()) {
-                return s!;
+                return s;
             }
 
             // reguliere conversie
