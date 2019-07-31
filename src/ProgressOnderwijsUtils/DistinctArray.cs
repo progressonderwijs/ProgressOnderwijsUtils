@@ -16,12 +16,10 @@ namespace ProgressOnderwijsUtils
         public static DistinctArray<T> ToDistinctArray<T>([NotNull] this ISet<T> items)
             => ToDistinctArrayFromDistinct_Unchecked(items.ToArray());
 
-#nullable disable
         [Pure]
         public static DistinctArray<T> ToDistinctArray<T, TVal>([NotNull] this Dictionary<T, TVal>.KeyCollection items)
-            //TODO where T : notnull
+            where T : notnull
             => ToDistinctArrayFromDistinct_Unchecked(items.ToArray());
-#nullable enable
 
         [Pure]
         public static DistinctArray<T> ToDistinctArray<T>([NotNull] this IEnumerable<T> items, IEqualityComparer<T> comparer)

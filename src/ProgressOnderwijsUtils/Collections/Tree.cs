@@ -58,12 +58,10 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> BuildRecursively<T>(T root, Func<T, IEnumerable<T>> kidLookup)
             => CachedTreeBuilder<T>.Resolve(root, kidLookup);
 
-#nullable disable
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
-            //TODO where T : notnull
+            where T : notnull
             => BuildRecursively(root, kidLookup.GetOrDefaultR);
-#nullable enable
 
         [NotNull]
         [Pure]
