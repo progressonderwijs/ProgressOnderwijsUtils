@@ -33,17 +33,15 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// HTML-alike whitespace collapsing of this string; however, this method also trims.
         /// </summary>
-        [JetBrains.Annotations.NotNull]
         [Pure]
-        public static string NormalizeWhitespace([JetBrains.Annotations.NotNull] this string str)
+        public static string NormalizeWhitespace(this string str)
             => str.CollapseWhitespace().Trim();
 
         /// <summary>
         /// HTML-alike whitespace collapsing of this string. This method does not trim.
         /// </summary>
-        [JetBrains.Annotations.NotNull]
         [Pure]
-        public static string CollapseWhitespace([JetBrains.Annotations.NotNull] this string str)
+        public static string CollapseWhitespace(this string str)
             => COLLAPSE_WHITESPACE.Replace(str, " ");
 
         [Pure]
@@ -51,7 +49,7 @@ namespace ProgressOnderwijsUtils
             => StringComparer.OrdinalIgnoreCase.Equals(a, b);
 
         [Pure]
-        public static bool Contains([JetBrains.Annotations.NotNull] this string str, [JetBrains.Annotations.NotNull] string value, StringComparison compare)
+        public static bool Contains(this string str, string value, StringComparison compare)
             => str.IndexOf(value, compare) >= 0;
 
         [Pure]
@@ -65,7 +63,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static string Replace(this string s, [JetBrains.Annotations.NotNull] IEnumerable<KeyValuePair<string, string>> replacements)
+        public static string Replace(this string s, IEnumerable<KeyValuePair<string, string>> replacements)
             => replacements.Aggregate(s, (current, replacement) => current.Replace(replacement.Key, replacement.Value));
 
         /// <summary>
