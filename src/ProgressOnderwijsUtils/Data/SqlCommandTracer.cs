@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
@@ -32,8 +31,7 @@ namespace ProgressOnderwijsUtils
 
     public static class SqlCommandTracer
     {
-        [CanBeNull]
-        public static ISqlCommandTracer Tracer([NotNull] this SqlConnection conn)
+        public static ISqlCommandTracer? Tracer([NotNull] this SqlConnection conn)
             => (conn.Site as IAttachedToTracer)?.Tracer;
 
         [NotNull]
@@ -129,12 +127,10 @@ namespace ProgressOnderwijsUtils
                 => true;
         }
 
-        [CanBeNull]
-        public static IDisposable StartCommandTimer(this ISqlCommandTracer tracer, string commandText)
+        public static IDisposable? StartCommandTimer(this ISqlCommandTracer tracer, string commandText)
             => !tracer.IsTracing ? null : new SqlCommandTimer(tracer, commandText);
 
-        [CanBeNull]
-        public static IDisposable StartCommandTimer(this ISqlCommandTracer tracer, SqlCommand sqlCommand)
+        public static IDisposable? StartCommandTimer(this ISqlCommandTracer tracer, SqlCommand sqlCommand)
             => !tracer.IsTracing ? null : new SqlCommandTimer(tracer, SqlCommandDebugStringifier.DebugFriendlyCommandText(sqlCommand, tracer.ArgumentInclusion));
 
         sealed class SqlCommandTimer : IDisposable
