@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -15,9 +16,8 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         /// <param name="input">the string to change</param>
         /// <returns>the changed string</returns>
-        [NotNull]
         [Pure]
-        public static string VerwijderDiakrieten([NotNull] string input)
+        public static string VerwijderDiakrieten(string input)
             => new string(
                 input
                     .Normalize(NormalizationForm.FormD)
@@ -49,10 +49,9 @@ namespace ProgressOnderwijsUtils
                 sepaStripper = new Regex(@"[^a-zA-z0-9 /-?:().,'+]+", CommonOptions);
         }
 
-        [NotNull]
         [Pure]
         [CodeThatsOnlyUsedForTests]
-        public static string PrettyPrintCamelCased([NotNull] string rawString)
+        public static string PrettyPrintCamelCased(string rawString)
         {
             var withSpace =
                 PrettyPrintValues.capLetter.Replace(
@@ -63,7 +62,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        static bool IsUpperAscii([NotNull] string str)
+        static bool IsUpperAscii(string str)
         {
             foreach (var c in str) {
                 if (c < 'A' || c > 'Z') {
@@ -73,9 +72,8 @@ namespace ProgressOnderwijsUtils
             return true;
         }
 
-        [NotNull]
         [Pure]
-        static string DecapitalizeAscii([NotNull] string str)
+        static string DecapitalizeAscii(string str)
         {
             if (str[0] >= 'A' && str[0] <= 'Z') {
                 return (char)(str[0] + ('a' - 'A')) + str.Substring(1);
@@ -84,9 +82,8 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [NotNull]
         [Pure]
-        public static string PrettyCapitalizedPrintCamelCased([NotNull] string rawString)
+        public static string PrettyCapitalizedPrintCamelCased(string rawString)
         {
             var withSpace =
                 PrettyPrintValues.capLetter.Replace(
@@ -96,18 +93,17 @@ namespace ProgressOnderwijsUtils
             return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
         }
 
-        [NotNull]
         [Pure]
-        public static string VervangRingelS([NotNull] string str, bool upper)
+        public static string VervangRingelS(string str, bool upper)
             => str.Replace("ß", upper ? "SS" : "ss");
 
-        [NotNull]
         [Pure]
-        public static string SepaTekenset([NotNull] string s)
+        public static string SepaTekenset(string s)
             => SepaStripperRegexes.sepaStripper.Replace(s, "");
 
         [Pure]
-        public static string? SepaTekensetEnModificaties(string s)
+        [return: NotNullIfNotNull("s")]
+        public static string? SepaTekensetEnModificaties(string? s)
         {
             if (s == null) {
                 return null;
@@ -119,17 +115,16 @@ namespace ProgressOnderwijsUtils
             return s;
         }
 
-        [NotNull]
         [Pure]
-        public static string Capitalize([NotNull] string name)
+        public static string Capitalize(string name)
             => name.Substring(0, 1).ToUpperInvariant() + name.Substring(1);
 
         [Pure]
-        public static int LevenshteinDistance([NotNull] string s, [NotNull] string t)
+        public static int LevenshteinDistance(string s, string t)
             => LevenshteinDistance(s, t, 1);
 
         [Pure]
-        public static int LevenshteinDistance([NotNull] string s, [NotNull] string t, int substitutionCost)
+        public static int LevenshteinDistance(string s, string t, int substitutionCost)
         {
             //modified from:http://www.merriampark.com/ldcsharp.htm by Eamon Nerbonne
             var n = s.Length; //length of s
@@ -158,10 +153,9 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         [CodeThatsOnlyUsedForTests]
-        public static double LevenshteinDistanceScaled([NotNull] string s, [NotNull] string t)
+        public static double LevenshteinDistanceScaled(string s, string t)
             => LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length));
 
-        [NotNull]
         [Pure]
         public static string ToFlatDebugString<T>(IEnumerable<T>? self)
             => "[" +
@@ -214,9 +208,8 @@ namespace ProgressOnderwijsUtils
         static bool isVowel(char c)
             => c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 
-        [NotNull]
         [Pure]
-        public static string Depluralize([NotNull] string pluralstring)
+        public static string Depluralize(string pluralstring)
         {
             if (pluralstring.EndsWith("s", StringComparison.Ordinal)) {
                 return pluralstring.Remove(pluralstring.Length - 1);
@@ -234,7 +227,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static int? TryParseInt32(this string input)
+        public static int? TryParseInt32(this string? input)
         {
             if (int.TryParse(input, out var output)) {
                 return output;
@@ -243,7 +236,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static long? TryParseInt64(this string input)
+        public static long? TryParseInt64(this string? input)
         {
             if (long.TryParse(input, out var output)) {
                 return output;
