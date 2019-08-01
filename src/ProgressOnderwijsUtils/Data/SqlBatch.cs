@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -174,7 +173,7 @@ namespace ProgressOnderwijsUtils
         {
             using (var cmd = this.ReusableCommand(conn)) {
                 var lastColumnRead = -1;
-                SqlDataReader reader = null;
+                SqlDataReader? reader = null;
                 try {
                     reader = cmd.Command.ExecuteReader(CommandBehavior.SequentialAccess);
                     var unpacker = ParameterizedSqlObjectMapper.DataReaderSpecialization<SqlDataReader>.ByPocoImpl<T>.DataReaderToSingleRowUnpacker(reader, FieldMapping);
@@ -215,7 +214,7 @@ namespace ProgressOnderwijsUtils
         public IEnumerable<T> Execute(SqlConnection conn)
         {
             var cmd = this.ReusableCommand(conn);
-            SqlDataReader reader = null;
+            SqlDataReader? reader = null;
             var lastColumnRead = -1;
             ParameterizedSqlExecutionException CreateHelpfulException(Exception ex, EnumeratedObjectsSqlCommand<T> o)
                 => cmd.CreateExceptionWithTextAndArguments(ex, o, ParameterizedSqlObjectMapper.UnpackingErrorMessage<T>(reader, lastColumnRead));
