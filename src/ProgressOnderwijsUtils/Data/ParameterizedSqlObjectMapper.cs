@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils
             => q.OfPocos<T>().Execute(sqlConn);
 
         [NotNull]
-        internal static string UnpackingErrorMessage<T>([CanBeNull] SqlDataReader reader, int lastColumnRead)
+        internal static string UnpackingErrorMessage<T>(SqlDataReader? reader, int lastColumnRead)
             where T : IWrittenImplicitly, new()
         {
             if (reader?.IsClosed != false || lastColumnRead < 0) {
