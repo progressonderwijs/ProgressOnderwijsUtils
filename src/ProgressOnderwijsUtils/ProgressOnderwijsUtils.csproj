@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>49.1.0</Version>
-    <PackageReleaseNotes>Add string overload SqlErrorParser.Parse</PackageReleaseNotes>
+    <Version>50.0.0</Version>
+    <PackageReleaseNotes>Use Microsoft.Data.SqlClient</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
@@ -21,7 +21,7 @@
     <PackageReference Include="morelinq" version="3.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.5.0" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="1.0.19249.1" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
