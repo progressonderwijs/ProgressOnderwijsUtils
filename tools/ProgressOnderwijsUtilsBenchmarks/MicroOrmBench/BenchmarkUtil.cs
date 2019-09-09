@@ -2,7 +2,7 @@
 //#define SINGLETHREADED
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;

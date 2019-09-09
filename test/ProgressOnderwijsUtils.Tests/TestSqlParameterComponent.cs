@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
