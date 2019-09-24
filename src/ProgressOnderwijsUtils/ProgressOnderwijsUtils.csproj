@@ -26,6 +26,5 @@
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.6.0" />
     <PackageReference Include="ValueUtils" version="1.4.0" />
     <PackageReference Include="ZlibWithDictionary" version="2.4.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.2.0" />
   </ItemGroup>
 </Project>
