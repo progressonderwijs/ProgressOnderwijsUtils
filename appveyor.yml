@@ -6,8 +6,6 @@ image: Visual Studio 2019
 environment:
   CONNECTION_STRING: Server=(local)\SQL2017;Database=master;User ID=sa;Password=Password12!
 services: mssql2017
-install:
-- ps: .\install.ps1
 build_script:
 - cmd: dotnet build -c Release
 - cmd: dotnet pack -c Release --include-symbols --include-source
