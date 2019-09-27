@@ -76,6 +76,15 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void TemplateElementIsParsedIncludingContent()
+        {
+            var exampleFragmentIncludingTemplate = "<div>D<button>C<template>B<button>A</button></template></button></div>";
+            var fragment = HtmlFragment.ParseFragment(exampleFragmentIncludingTemplate);
+            var reserialized = fragment.ToStringWithoutDoctype();
+            PAssert.That(() => exampleFragmentIncludingTemplate == reserialized);
+        }
+
+        [Fact]
         public void AllInterestingPlusOperatorOrderingsCompileAndReturnHtmlFragment()
         {
             var a = _b + _p;
