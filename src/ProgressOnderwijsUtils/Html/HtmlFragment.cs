@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using AngleSharp.Dom;
+using AngleSharp.Html.Dom;
 using AngleSharp.Html.Parser;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
@@ -268,7 +269,7 @@ namespace ProgressOnderwijsUtils.Html
                 return Element(
                     element.TagName.ToLowerInvariant(),
                     element.Attributes.Select(attr => new HtmlAttribute(attr.Name, attr.Value)).ToArray(),
-                    element.ChildNodes.Select(CreateFromAngleSharpNode).ToArray()
+                    (node is IHtmlTemplateElement templateElement ? templateElement.Content.ChildNodes : element.ChildNodes).Select(CreateFromAngleSharpNode).ToArray()
                 );
             }
             if (node is IDocumentFragment) {
