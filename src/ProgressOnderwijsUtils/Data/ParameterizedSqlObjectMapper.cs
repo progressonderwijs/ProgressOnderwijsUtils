@@ -56,13 +56,11 @@ namespace ProgressOnderwijsUtils
         /// <param name="sqlConn">The database connection</param>
         /// <returns>An array of strongly-typed objects; never null</returns>
         [MustUseReturnValue]
-        [NotNull]
         public static T[] ReadPocos<[MeansImplicitUse(ImplicitUseKindFlags.Assign, ImplicitUseTargetFlags.WithMembers)]
             T>(this ParameterizedSql q, [NotNull] SqlConnection sqlConn)
             where T : IWrittenImplicitly, new()
             => q.OfPocos<T>().Execute(sqlConn);
 
-        [NotNull]
         internal static string UnpackingErrorMessage<T>(SqlDataReader? reader, int lastColumnRead)
             where T : IWrittenImplicitly, new()
         {
@@ -76,7 +74,7 @@ namespace ProgressOnderwijsUtils
             var pocoProperty = mps.GetByName(sqlColName);
 
             var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
-            var nonNullableFieldType = reader.GetFieldType(lastColumnRead);
+            var nonNullableFieldType = reader.GetFieldType(lastColumnRead) ?? throw new Exception("Missing field type for field "+lastColumnRead+" named "+sqlColName );
 
             bool? isValueNull = null;
             try {
@@ -84,7 +82,7 @@ namespace ProgressOnderwijsUtils
             } catch {
                 // ignore crash in error handling.
             }
-            var fieldType = isValueNull ?? true ? nonNullableFieldType?.MakeNullableType() ?? nonNullableFieldType : nonNullableFieldType;
+            var fieldType = isValueNull ?? true ? nonNullableFieldType.MakeNullableType() ?? nonNullableFieldType : nonNullableFieldType;
 
             var expectedCsTypeName = fieldType.ToCSharpFriendlyTypeName();
             var actualCsTypeName = pocoProperty.DataType.ToCSharpFriendlyTypeName();
