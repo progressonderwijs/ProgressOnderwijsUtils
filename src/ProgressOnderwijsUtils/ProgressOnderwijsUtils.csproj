@@ -1,14 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>50.0.1</Version>
+    <Version>50.1.0</Version>
     <PackageReleaseNotes>Added Uri extensions for safely combining paths.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
-    <AssemblyVersion>50.1.0.0</AssemblyVersion>
-    <FileVersion>50.1.0.0</FileVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AngleSharp" Version="0.13.0" />
