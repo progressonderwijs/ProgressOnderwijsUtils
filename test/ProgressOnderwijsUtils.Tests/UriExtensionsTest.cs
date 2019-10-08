@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void RefersToDirectory_takes_leading_slash_into_account()
+        public void RefersToDirectory_takes_trailing_slash_into_account()
         {
             PAssert.That(() => !new Uri("c:/file").RefersToDirectory());
             PAssert.That(() => new Uri("c:/dir/").RefersToDirectory());
