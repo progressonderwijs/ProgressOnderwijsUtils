@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void EnsureRefersToDirectory_adds_needed_traling_slash()
         {
-            PAssert.That(() => new Uri(@"c:\file").EnsureRefersToDirectory().RefersToDirectory());
+            PAssert.That(() => new Uri(@"c:\dirWithForgottenTrailingSlash").EnsureRefersToDirectory().RefersToDirectory());
             PAssert.That(() => new Uri(@"c:\dir\").EnsureRefersToDirectory().RefersToDirectory());
         }
 
@@ -36,6 +36,8 @@ namespace ProgressOnderwijsUtils.Tests
         {
             PAssert.That(() => new Uri(@"c:\file").ReplaceRootWith(new Uri(@"d:\")).LocalPath == @"d:\file");
             PAssert.That(() => new Uri(@"c:\dir\").ReplaceRootWith(new Uri(@"d:\")).LocalPath == @"d:\dir\");
+            PAssert.That(() => new Uri(@"\\root\file").ReplaceRootWith(new Uri(@"c:\")).LocalPath == @"c:\file");
+            PAssert.That(() => new Uri(@"\\root\dir\").ReplaceRootWith(new Uri(@"c:\")).LocalPath == @"c:\");
         }
 
         [Fact]
