@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>50.0.1</Version>
-    <PackageReleaseNotes>Represent parsed html &lt;template&gt; element contents in the resulting HtmlFragment</PackageReleaseNotes>
+    <Version>50.1.0</Version>
+    <PackageReleaseNotes>Added Uri extensions for safely combining paths.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
