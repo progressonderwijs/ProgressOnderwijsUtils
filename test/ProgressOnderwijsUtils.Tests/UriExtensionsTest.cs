@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtils.Tests
     public sealed class UriExtensionsTest
     {
         [Fact]
-        public void Combine_works_savely()
+        public void Combine_works_safely()
         {
             PAssert.That(() => new Uri("c:/dir").Combine("file").AbsolutePath == "c:/file");
             PAssert.That(() => new Uri("c:/dir/").Combine("file").AbsolutePath == "c:/dir/file");
