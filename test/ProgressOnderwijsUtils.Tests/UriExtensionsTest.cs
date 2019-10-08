@@ -11,31 +11,31 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void Combine_works_safely()
         {
-            PAssert.That(() => new Uri("c:/dir").Combine("file").AbsolutePath == "c:/file");
-            PAssert.That(() => new Uri("c:/dir/").Combine("file").AbsolutePath == "c:/dir/file");
-            PAssert.That(() => new Uri("c:/dir").Combine("/file").AbsolutePath == "c:/file");
-            PAssert.That(() => new Uri("c:/dir/").Combine("/file").AbsolutePath == "c:/file");
+            PAssert.That(() => new Uri(@"c:\file").Combine(@"file").LocalPath == @"c:\file");
+            PAssert.That(() => new Uri(@"c:\dir\").Combine(@"file").LocalPath == @"c:\dir\file");
+            PAssert.That(() => new Uri(@"c:\file").Combine(@"\file").LocalPath == @"c:\file");
+            PAssert.That(() => new Uri(@"c:\dir\").Combine(@"dir\").LocalPath == @"c:\dir\dir\");
         }
 
         [Fact]
         public void RefersToDirectory_takes_trailing_slash_into_account()
         {
-            PAssert.That(() => !new Uri("c:/file").RefersToDirectory());
-            PAssert.That(() => new Uri("c:/dir/").RefersToDirectory());
+            PAssert.That(() => !new Uri(@"c:\file").RefersToDirectory());
+            PAssert.That(() => new Uri(@"c:\dir\").RefersToDirectory());
         }
 
         [Fact]
         public void EnsureRefersToDirectory_adds_needed_traling_slash()
         {
-            PAssert.That(() => new Uri("c:/file").EnsureRefersToDirectory().RefersToDirectory());
-            PAssert.That(() => new Uri("c:/dir/").EnsureRefersToDirectory().RefersToDirectory());
+            PAssert.That(() => new Uri(@"c:\file").EnsureRefersToDirectory().RefersToDirectory());
+            PAssert.That(() => new Uri(@"c:\dir\").EnsureRefersToDirectory().RefersToDirectory());
         }
 
         [Fact]
         public void ReplaceRootWith()
         {
-            PAssert.That(() => new Uri("c:/file").ReplaceRootWith(new Uri("d:/")).AbsolutePath == "d:/file");
-            PAssert.That(() => new Uri("c:/dir/").ReplaceRootWith(new Uri("d:/")).AbsolutePath == "d:/dir/");
+            PAssert.That(() => new Uri(@"c:\file").ReplaceRootWith(new Uri(@"d:\")).LocalPath == @"d:\file");
+            PAssert.That(() => new Uri(@"c:\dir\").ReplaceRootWith(new Uri(@"d:\")).LocalPath == @"d:\dir\");
         }
 
         [Fact]
