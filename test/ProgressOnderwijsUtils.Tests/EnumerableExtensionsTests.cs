@@ -61,6 +61,23 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void WhereNotNull_RemovesNullsWithoutCompilerWarningForReferenceTypes()
+        {
+            IEnumerable<string?> sampleNullableData = new[] { "test", null, "this" };
+            var nonNullItems = sampleNullableData.WhereNotNull(); //inferred as IEnumerable<string>
+            var lengths = nonNullItems.Select(item => item.Length); //no nullability warning here; no crash here
+            PAssert.That(() => lengths.Max() == 4);
+        }
+
+        [Fact]
+        public void WhereNotNull_RemovesNullsWithoutCompilerWarningForValueTypes()
+        {
+            IEnumerable<int?> sampleNullableData = new[] { 37, default(int?), 42 };
+            var nonNullItems = sampleNullableData.WhereNotNull(); //inferred as IEnumerable<int>
+            PAssert.That(() => nonNullItems.SequenceEqual(new[] { 37, 42 }));
+        }
+
+        [Fact]
         public void EmptyIfNullOk()
         {
 #pragma warning disable 1720
