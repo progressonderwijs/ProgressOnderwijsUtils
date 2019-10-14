@@ -129,6 +129,26 @@ namespace ProgressOnderwijsUtils
             return false;
         }
 
+        public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> list)
+            where T : class
+        {
+            foreach (var item in list) {
+                if (item != null) {
+                    yield return item;
+                }
+            }
+        }
+
+        public static IEnumerable<T> WhereNotNull<T>(this IEnumerable<T?> list)
+            where T : struct
+        {
+            foreach (var item in list) {
+                if (item.HasValue) {
+                    yield return item.Value;
+                }
+            }
+        }
+
         [NotNull]
         [Pure]
         public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>([NotNull] this IEnumerable<T> list, [NotNull] Func<T, TKey> keySelector, Func<T, TVal> valSelector)
