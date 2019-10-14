@@ -8,7 +8,6 @@ namespace ProgressOnderwijsUtils.Tests
 {
     public sealed class EnumerableExtensionsTests
     {
-#pragma warning disable 1720
         [Fact]
         public void IndexOfCheck()
         {
@@ -80,14 +79,12 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void EmptyIfNullOk()
         {
-#pragma warning disable 1720
             PAssert.That(() => new[] { 0, 1, 2, }.EmptyIfNull().SequenceEqual(new[] { 0, 1, 2, }));
             PAssert.That(() => default(int[]).EmptyIfNull().SequenceEqual(new int[] { }));
             PAssert.That(() => default(int[]) == null);
             PAssert.That(() => default(int[]) != default(int[]).EmptyIfNull());
             var arr = new[] { 0, 1, 2, };
             PAssert.That(() => arr.EmptyIfNull() == arr);
-#pragma warning restore 1720
         }
     }
 }
