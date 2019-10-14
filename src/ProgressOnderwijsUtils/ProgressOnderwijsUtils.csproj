@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>50.1.0</Version>
-    <PackageReleaseNotes>Added Uri extensions for safely combining paths.</PackageReleaseNotes>
+    <Version>50.2.0</Version>
+    <PackageReleaseNotes>Added C# 8.0 aware .WhereNotNull() IEnumerable extension method</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
