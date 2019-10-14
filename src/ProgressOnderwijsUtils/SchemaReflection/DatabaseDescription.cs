@@ -16,41 +16,68 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     [DbIdEnum]
     public enum DbColumnId { }
 
-    public struct DbNamedTableId : IWrittenImplicitly
+    public struct DbNamedObjectId : IWrittenImplicitly
     {
         public DbObjectId ObjectId { get; set; }
         public string QualifiedName { get; set; }
-
-        public static DbNamedTableId[] LoadAll(SqlConnection conn)
-            => SQL($@"
-                select
-                    ObjectId = t.object_id
-                    , QualifiedName = schema_name(t.schema_id) + N'.' + object_name(t.object_id)
-                from sys.tables t
-            ").ReadPocos<DbNamedTableId>(conn);
     }
 
     public sealed class DatabaseDescription
     {
+        struct DbObject : IWrittenImplicitly
+        {
+            public DbObjectId ObjectId { get; set; }
+            public string ObjectName { get; set; }
+            public string SchemaName { get; set; }
+            public string Type { get; set; }
+
+            public DbNamedObjectId ToDbNamedObjectId()
+                => new DbNamedObjectId {
+                    ObjectId = ObjectId,
+                    QualifiedName = SchemaName + "." + ObjectName,
+                };
+
+            public static DbObject[] LoadAllUserTablesAndViews(SqlConnection conn)
+                => SQL($@"
+                    select
+                        ObjectId = o.object_id
+                        , ObjectName = o.name
+                        , SchemaName = schema_name(o.schema_id)
+                        , o.type
+                    from sys.objects o
+                    where 1=0
+                        or o.type = 'U'
+                        or o.type = 'V'                
+                ").ReadPocos<DbObject>(conn);
+        }
+
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
+        readonly IReadOnlyDictionary<DbObjectId, View> viewById;
         readonly ForeignKeyLookup foreignKeyLookup;
         readonly Lazy<Dictionary<string, Table>> tableByQualifiedName;
 
-        public DatabaseDescription(DbNamedTableId[] tables, Dictionary<DbObjectId, DbColumnMetaData[]> columns, ForeignKeyLookup foreignKeys)
+        public DatabaseDescription(DbNamedObjectId[] tables, DbNamedObjectId[] views, Dictionary<DbObjectId, DbColumnMetaData[]> columns, ForeignKeyLookup foreignKeys)
         {
             foreignKeyLookup = foreignKeys;
             tableById = tables.ToDictionary(o => o.ObjectId, o => new Table(this, o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
+            viewById = views.ToDictionary(o => o.ObjectId, o => new View(o, columns.GetOrDefault(o.ObjectId) ?? Array.Empty<DbColumnMetaData>()));
             tableByQualifiedName = Utils.Lazy(() => tableById.Values.ToDictionary(o => o.QualifiedName, StringComparer.OrdinalIgnoreCase));
         }
 
         public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
         {
+            var objects = DbObject.LoadAllUserTablesAndViews(conn);
+            var tables = objects.Where(obj => obj.Type == "U").Select(obj => obj.ToDbNamedObjectId()).ToArray();
+            var views = objects.Where(obj => obj.Type == "V").Select(obj => obj.ToDbNamedObjectId()).ToArray();
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
-            return new DatabaseDescription(DbNamedTableId.LoadAll(conn), columnsByTableId, ForeignKeyLookup.LoadAll(conn));
+            return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn));
         }
 
         public IEnumerable<Table> AllTables
             => tableById.Values;
+
+        public IEnumerable<View> AllViews
+            => viewById.Values;
 
         [NotNull]
         public Table GetTableByName(string qualifiedName)
@@ -142,9 +169,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public sealed class Table
         {
             public readonly DatabaseDescription db;
-            readonly DbNamedTableId NamedTableId;
+            readonly DbNamedObjectId NamedTableId;
 
-            public Table(DatabaseDescription db, DbNamedTableId namedTableId, DbColumnMetaData[] columns)
+            public Table(DatabaseDescription db, DbNamedObjectId namedTableId, DbColumnMetaData[] columns)
             {
                 this.db = db;
                 NamedTableId = namedTableId;
@@ -207,6 +234,33 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 }
                 throw new ArgumentOutOfRangeException(nameof(columnId), "column index " + columnId + " not found");
             }
+        }
+
+        public sealed class View
+        {
+            readonly DbNamedObjectId view;
+            public readonly DbColumnMetaData[] Columns;
+
+            public View(DbNamedObjectId view, DbColumnMetaData[] columns)
+            {
+                this.view = view;
+                Columns = columns;
+            }
+
+            public DbObjectId ObjectId
+                => view.ObjectId;
+
+            public string QualifiedName
+                => view.QualifiedName;
+
+            public string SchemaName
+                => DbQualifiedNameUtils.SchemaFromQualifiedName(QualifiedName);
+
+            public string UnqualifiedName
+                => DbQualifiedNameUtils.UnqualifiedTableName(QualifiedName);
+
+            public ParameterizedSql QualifiedNameSql
+                => ParameterizedSql.CreateDynamic(QualifiedName);
         }
     }
 }
