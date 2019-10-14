@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void testIndexOf()
+        public void TestIndexOf()
         {
             var lst = new List<string> { "een", "twee", "drie" };
             //int[] ints = { 1, 2, 3, 4, 5 };
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void testFirstIndexOfDups()
+        public void TestFirstIndexOfDups()
         {
             PAssert.That(() => new[] { 0, 0, 1, 1, 2, 2 }.IndexOf(0) == 0);
             PAssert.That(() => new[] { 0, 0, 1, 1, 2, 2 }.IndexOf(1) == 2);
