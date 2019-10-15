@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>50.3.0</Version>
-    <PackageReleaseNotes>Allow adding multiple classe at once (convenience feature)</PackageReleaseNotes>
+    <Version>51.0.0</Version>
+    <PackageReleaseNotes>Added views to the database description.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
