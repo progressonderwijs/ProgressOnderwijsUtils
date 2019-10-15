@@ -35,22 +35,19 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public DbObjectId ObjectId { get; set; }
             public string ObjectName { get; set; }
             public string SchemaName { get; set; }
-            public string Type { get; set; }
 
             public DbNamedObjectId ToDbNamedObjectId()
                 => new DbNamedObjectId(ObjectId, SchemaName + "." + ObjectName);
 
-            public static DbObject[] LoadAllUserTablesAndViews(SqlConnection conn)
+            public static DbObject[] LoadAllObjectsOfType(SqlConnection conn, string type)
                 => SQL($@"
                     select
                         ObjectId = o.object_id
                         , ObjectName = o.name
                         , SchemaName = schema_name(o.schema_id)
-                        , Type = rtrim(o.type)
                     from sys.objects o
                     where 1=0
-                        or o.type = 'U'
-                        or o.type = 'V'                
+                        or o.type = {type}
                 ").ReadPocos<DbObject>(conn);
         }
 
@@ -69,9 +66,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
         {
-            var objects = DbObject.LoadAllUserTablesAndViews(conn);
-            var tables = objects.Where(obj => obj.Type == "U").Select(obj => obj.ToDbNamedObjectId()).ToArray();
-            var views = objects.Where(obj => obj.Type == "V").Select(obj => obj.ToDbNamedObjectId()).ToArray();
+            var tables = DbObject.LoadAllObjectsOfType(conn, "U").Select(obj => obj.ToDbNamedObjectId()).ToArray();
+            var views = DbObject.LoadAllObjectsOfType(conn, "V").Select(obj => obj.ToDbNamedObjectId()).ToArray();
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
             return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn));
         }
