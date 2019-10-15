@@ -38,7 +38,7 @@ namespace ProgressOnderwijsUtils.Tests
                 _head.Content(
                     _title.Content("Hello world!")
                 ),
-                _body._class(null).Content(
+                _body._class(default(string)).Content(
                     _p.Content("Hello world!")
                 )
             );
