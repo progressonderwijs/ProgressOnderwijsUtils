@@ -16,43 +16,23 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     [DbIdEnum]
     public enum DbColumnId { }
 
-    public readonly struct DbNamedObjectId
+    public struct DbNamedObjectId : IWrittenImplicitly
     {
-        public DbNamedObjectId(DbObjectId objectId, string qualifiedName)
-        {
-            ObjectId = objectId;
-            QualifiedName = qualifiedName;
-        }
+        public DbObjectId ObjectId { get; set; }
+        public string QualifiedName { get; set; }
 
-        public DbObjectId ObjectId { get; }
-        public string QualifiedName { get; }
+        public static DbNamedObjectId[] LoadAllObjectsOfType(SqlConnection conn, string type)
+            => SQL($@"
+                    select
+                        ObjectId = o.object_id
+                        , QualifiedName = schema_name(o.schema_id)+'.'+o.name
+                    from sys.objects o
+                    where o.type = {type}
+                ").ReadPocos<DbNamedObjectId>(conn);
     }
 
     public sealed class DatabaseDescription
     {
-        struct DbObject : IWrittenImplicitly
-        {
-            public DbObjectId ObjectId { get; set; }
-            public string ObjectName { get; set; }
-            public string SchemaName { get; set; }
-            public string Type { get; set; }
-
-            public DbNamedObjectId ToDbNamedObjectId()
-                => new DbNamedObjectId(ObjectId, SchemaName + "." + ObjectName);
-
-            public static DbObject[] LoadAllUserTablesAndViews(SqlConnection conn)
-                => SQL($@"
-                    select
-                        ObjectId = o.object_id
-                        , ObjectName = o.name
-                        , SchemaName = schema_name(o.schema_id)
-                        , Type = rtrim(o.type)
-                    from sys.objects o
-                    where 1=0
-                        or o.type = 'U'
-                        or o.type = 'V'                
-                ").ReadPocos<DbObject>(conn);
-        }
 
         readonly IReadOnlyDictionary<DbObjectId, Table> tableById;
         readonly IReadOnlyDictionary<DbObjectId, View> viewById;
@@ -69,9 +49,8 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
         public static DatabaseDescription LoadFromSchemaTables(SqlConnection conn)
         {
-            var objects = DbObject.LoadAllUserTablesAndViews(conn);
-            var tables = objects.Where(obj => obj.Type == "U").Select(obj => obj.ToDbNamedObjectId()).ToArray();
-            var views = objects.Where(obj => obj.Type == "V").Select(obj => obj.ToDbNamedObjectId()).ToArray();
+            var tables = DbNamedObjectId.LoadAllObjectsOfType(conn, "U");
+            var views = DbNamedObjectId.LoadAllObjectsOfType(conn, "V");
             var columnsByTableId = DbColumnMetaData.LoadAll(conn);
             return new DatabaseDescription(tables, views, columnsByTableId, ForeignKeyLookup.LoadAll(conn));
         }
