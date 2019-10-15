@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void AppendingMultipleClassesAffectsOutput()
         {
-            var example = _div._class("A", "B", null, "D").AsFragment().ToStringWithDoctype();
+            var example = _div._class("A", "B", null, "D").AsFragment().ToStringWithoutDoctype();
             PAssert.That(() => example == @"<div class=""A B D""></div>");
         }
 
@@ -70,7 +70,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void CanAppendAnEnumerableOfAttributes()
         {
-            var example = _div.Attributes(Enumerable.Range(1,5).Select(i => "data-" + i.ToString()).Select(s=> new HtmlAttribute(s,"x"))).AsFragment().ToStringWithDoctype();
+            var example = _div.Attributes(Enumerable.Range(1,5).Select(i => "data-" + i.ToString()).Select(s=> new HtmlAttribute(s,"x"))).AsFragment().ToStringWithoutDoctype();
             PAssert.That(() => example == @"<div data-1=""x"" data-2=""x"" data-3=""x"" data-4=""x"" data-5=""x""></div>");
         }
 
