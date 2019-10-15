@@ -16,10 +16,16 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     [DbIdEnum]
     public enum DbColumnId { }
 
-    public struct DbNamedObjectId : IWrittenImplicitly
+    public readonly struct DbNamedObjectId
     {
-        public DbObjectId ObjectId { get; set; }
-        public string QualifiedName { get; set; }
+        public DbNamedObjectId(DbObjectId objectId, string qualifiedName)
+        {
+            ObjectId = objectId;
+            QualifiedName = qualifiedName;
+        }
+
+        public DbObjectId ObjectId { get; }
+        public string QualifiedName { get; }
     }
 
     public sealed class DatabaseDescription
@@ -32,10 +38,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             public string Type { get; set; }
 
             public DbNamedObjectId ToDbNamedObjectId()
-                => new DbNamedObjectId {
-                    ObjectId = ObjectId,
-                    QualifiedName = SchemaName + "." + ObjectName,
-                };
+                => new DbNamedObjectId(ObjectId, SchemaName + "." + ObjectName);
 
             public static DbObject[] LoadAllUserTablesAndViews(SqlConnection conn)
                 => SQL($@"
