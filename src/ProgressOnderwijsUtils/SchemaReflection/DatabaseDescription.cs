@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                         ObjectId = o.object_id
                         , ObjectName = o.name
                         , SchemaName = schema_name(o.schema_id)
-                        , o.type
+                        , Type = rtrim(o.type)
                     from sys.objects o
                     where 1=0
                         or o.type = 'U'
