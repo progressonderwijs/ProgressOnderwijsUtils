@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>51.0.1</Version>
-    <PackageReleaseNotes>Optimize code + runtime while loading the db-description.</PackageReleaseNotes>
+    <Version>51.0.2</Version>
+    <PackageReleaseNotes>Fix nullability annotation StringExtensions.IsNullOrWhiteSpace</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
