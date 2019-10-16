@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="s">string to check</param>
         /// <returns>true if string is empty or is null, false otherwise</returns>
         [Pure]
-        public static bool IsNullOrWhiteSpace([NotNullWhen(true)] this string? s)
+        public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? s)
             => string.IsNullOrWhiteSpace(s);
 
         [Pure]
