@@ -31,7 +31,7 @@ namespace ProgressOnderwijsUtils.Tests
             }
             var delay = delayChooser.RetryDelayAt(moment);
             //so now we've had 30 errors a day for a few days
-            PAssert.That(() => Utils.FuzzyEquals(delay.TotalMinutes, 0.96605));
+            PAssert.That(() => Utils.FuzzyEquals(delay.TotalMinutes, 0.966050491666667));
         }
 
         [Fact]
