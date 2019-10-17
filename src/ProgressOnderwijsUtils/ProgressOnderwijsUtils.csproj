@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>51.0.2</Version>
-    <PackageReleaseNotes>Fix nullability annotation StringExtensions.IsNullOrWhiteSpace</PackageReleaseNotes>
+    <Version>51.1.0</Version>
+    <PackageReleaseNotes>Add some helpers to deal with nullable reference types</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
