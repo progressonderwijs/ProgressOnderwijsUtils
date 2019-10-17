@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using ExpressionToCodeLib;
 using Xunit;
 
@@ -9,7 +10,8 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void AssertNotNull_throws_when_argument_is_null()
         {
-            Assert.ThrowsAny<Exception>(() => default(object).AssertNotNull());
+            var exception = Assert.ThrowsAny<Exception>(() => default(StringBuilder).AssertNotNull());
+            PAssert.That(() => exception.Message.Contains(nameof(StringBuilder)));
         }
 
         [Fact]

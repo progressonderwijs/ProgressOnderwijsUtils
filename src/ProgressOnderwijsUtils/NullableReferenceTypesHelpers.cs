@@ -8,7 +8,7 @@ namespace ProgressOnderwijsUtils
         [MustUseReturnValue]
         public static T AssertNotNull<T>(this T? t)
             where T : class
-            => t ?? throw new Exception("Reference is null!");
+            => t ?? throw new Exception(typeof(T) + " is null!");
 
         [MustUseReturnValue]
         public static T? PretendNullable<T>(this T t)
