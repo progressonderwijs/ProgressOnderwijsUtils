@@ -39,7 +39,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ColumnCountOk()
-            => PAssert.That(() => colSort.ColumnCount == 3);
+            => PAssert.That(() => colSort.Columns.Length == 3);
 
         [Fact]
         public void ToStringOk()

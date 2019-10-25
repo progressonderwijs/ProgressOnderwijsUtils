@@ -76,10 +76,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public int ColumnCount
-            => sortColumns == null ? 0 : sortColumns.Length;
-
-        [Pure]
         public OrderByColumns ToggleSortDirection(string kolomnaam)
         {
             var oldSortCol = GetSortColumn(kolomnaam);
