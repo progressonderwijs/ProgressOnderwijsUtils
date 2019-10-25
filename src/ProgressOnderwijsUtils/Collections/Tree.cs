@@ -78,8 +78,9 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         /// <summary>
-        /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
-        /// mapper is called in a preorder traversal (i.e. a node before its children, and the descendents of the first child before the second).
+        /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
+        /// The filter function is called for children before parents, and is passed the *output* subtree that may or may not be retained;
+        /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
         /// </summary>
         [Pure]
         public static Tree<T>? Where<T>(this Tree<T> tree, Func<Tree<T>, bool> retainSubTree)
