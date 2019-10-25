@@ -1,6 +1,7 @@
 ﻿#nullable disable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
@@ -13,22 +14,6 @@ namespace ProgressOnderwijsUtils.Collections
             public TreeNodeBuilder firstChildOfParent;
             public TreeNodeBuilder[] tempKids;
             public Tree<T> finishedNode;
-
-            public void GenerateOutput()
-            {
-                if (finishedNode != null) {
-                    return;
-                }
-                var finishedKidsNodes = new Tree<T>[tempKids.Length];
-                for (var i = 0; i < finishedKidsNodes.Length; i++) {
-                    finishedKidsNodes[i] = tempKids[i].finishedNode;
-                    if (finishedKidsNodes[i] == null) {
-                        throw new InvalidOperationException("Internal error detected!");
-                    }
-                }
-                finishedNode = Tree.Node(value, finishedKidsNodes);
-                tempKids = null;
-            }
         }
 
         [Pure]
@@ -67,9 +52,22 @@ namespace ProgressOnderwijsUtils.Collections
                 }
                 nodeBuilderThatWantsKids.finishedNode = Tree.Node(nodeBuilderThatWantsKids.value);
                 var toGenerate = nodeBuilderThatWantsKids.firstChildOfParent;
+                nodeBuilderThatWantsKids.firstChildOfParent = null;
                 while (toGenerate != null) {
-                    toGenerate.GenerateOutput();
-                    toGenerate = toGenerate.firstChildOfParent;
+                    Debug.Assert(toGenerate.finishedNode == null, "has already been generated");
+                    Debug.Assert(toGenerate.tempKids.Length > 0, "leaf nodes should not need this method");
+                    var finishedKidsNodes = new Tree<T>[toGenerate.tempKids.Length];
+                    for (var i = 0; i < finishedKidsNodes.Length; i++) {
+                        finishedKidsNodes[i] = toGenerate.tempKids[i].finishedNode;
+                        Debug.Assert(finishedKidsNodes[i] != null, "this should have been been done already");
+                    }
+                    var nextToGenerate = toGenerate.firstChildOfParent;
+
+                    toGenerate.finishedNode = Tree.Node(toGenerate.value, finishedKidsNodes);
+                    toGenerate.tempKids = null;
+                    toGenerate.firstChildOfParent = null;
+                    toGenerate.value = default;
+                    toGenerate = nextToGenerate;
                 }
             }
 
