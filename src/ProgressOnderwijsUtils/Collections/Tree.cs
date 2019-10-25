@@ -98,7 +98,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// <param name="value">The value of this node.</param>
         /// <param name="children">The children of this node, (null is allowed and means none).</param>
         public Tree(T value, IEnumerable<Tree<T>>? children)
-            : this(value, children == null ? null : children.ToArray()) { }
+            : this(value, children?.ToArray()) { }
 
         /// <summary>
         /// Creates a Tree with specified child nodes.  The child node array is used directly. Do not mutate the array after passing it into the tree; doing so
