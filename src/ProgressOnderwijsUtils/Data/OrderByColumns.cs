@@ -32,60 +32,45 @@ namespace ProgressOnderwijsUtils
             => default(OrderByColumns);
 
         public OrderByColumns(IEnumerable<ColumnSort> order)
+            => sortColumns = DeduplicateByName(order);
+
+        static ColumnSort[] DeduplicateByName(IEnumerable<ColumnSort> order)
         {
-            var columns = new ColumnSort[4];
-            var idx = 0;
-            var ordinalIgnoreCase = StringComparer.OrdinalIgnoreCase;
-            foreach (var columnSort in order) {
-                if (!HasDuplicateIn(columnSort, columns, idx, ordinalIgnoreCase)) {
-                    if (columns.Length == idx) {
-                        Array.Resize(ref columns, idx * 2);
-                    }
-                    columns[idx++] = columnSort;
+            var retval = new List<ColumnSort>();
+            var names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var col in order) {
+                if (names.Add(col.ColumnName)) {
+                    retval.Add(col);
                 }
             }
-            Array.Resize(ref columns, idx);
-            sortColumns = columns;
+            return retval.ToArray();
         }
 
         OrderByColumns(ColumnSort[] order)
-        {
-            sortColumns = order;
-        }
+            => sortColumns = order;
 
         [Pure]
-        public ColumnSort? GetSortColumn(string column)
+        public SortDirection? GetColumnSortDirection(string column)
         {
             foreach (var sc in DirectAcessColumns) {
                 if (streq(sc.ColumnName, column)) {
-                    return sc;
+                    return sc.SortDirection;
                 }
             }
             return null;
         }
 
         [Pure]
-        public SortDirection? GetColumnSortDirection(string column)
-            => GetSortColumn(column)?.SortDirection;
-
-        [Pure]
         public OrderByColumns ToggleSortDirection(string kolomnaam)
-        {
-            var oldSortCol = GetSortColumn(kolomnaam);
-            return oldSortCol != null
-                ? FirstSortBy(oldSortCol.Value.WithReverseDirection())
-                : new OrderByColumns(DirectAcessColumns.Prepend(new ColumnSort(kolomnaam, SortDirection.Desc)).ToArray());
-        }
+            => FirstSortBy(new ColumnSort(kolomnaam, GetColumnSortDirection(kolomnaam) ?? SortDirection.Asc).WithReverseDirection());
 
         [Pure]
         public OrderByColumns FirstSortBy(ColumnSort firstby)
-            => new OrderByColumns(new[] { firstby }.Concat(DirectAcessColumns.Where(sc => sc.ColumnName != firstby.ColumnName)).ToArray());
+            => new OrderByColumns(DeduplicateByName(new[] { firstby }.ConcatArray(DirectAcessColumns)));
 
         [Pure]
         public OrderByColumns ThenSortBy(ColumnSort thenby)
-            => DirectAcessColumns.Any(sc => streq(sc.ColumnName, thenby.ColumnName))
-                ? this
-                : new OrderByColumns(DirectAcessColumns.Append(thenby).ToArray());
+            => new OrderByColumns(DeduplicateByName(DirectAcessColumns.Append(thenby)));
 
         [Pure]
         public OrderByColumns ThenAsc(string column)
@@ -105,37 +90,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public OrderByColumns ThenSortBy(OrderByColumns thenby)
-        {
-            var thenByColumns = thenby.DirectAcessColumns;
-            var combinedOrder = DirectAcessColumns;
-            var oldLength = combinedOrder.Length;
-            Array.Resize(ref combinedOrder, oldLength + thenByColumns.Length);
-            var idx = oldLength;
-            var comparer = StringComparer.OrdinalIgnoreCase;
-            foreach (var columnSort in thenByColumns) {
-                if (!HasDuplicateIn(columnSort, combinedOrder, oldLength, comparer)) {
-                    combinedOrder[idx++] = columnSort;
-                }
-            }
-            Array.Resize(ref combinedOrder, idx);
-
-            return new OrderByColumns(combinedOrder);
-        }
-
-        /// <summary>
-        /// returns whether columnSort's name occurs in existing.Take(existingCount).
-        /// </summary>
-        static bool HasDuplicateIn(ColumnSort columnSort, ColumnSort[] existing, int existingCount, StringComparer comparer)
-        {
-            var dup = false;
-            for (var j = 0; j < existingCount; j++) {
-                if (comparer.Equals(existing[j].ColumnName, columnSort.ColumnName)) {
-                    dup = true;
-                    break;
-                }
-            }
-            return dup;
-        }
+            => new OrderByColumns(DeduplicateByName(DirectAcessColumns.ConcatArray(thenby.DirectAcessColumns)));
 
         [Pure]
         public bool Equals(OrderByColumns other)
