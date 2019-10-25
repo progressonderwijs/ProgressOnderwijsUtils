@@ -77,12 +77,9 @@ namespace ProgressOnderwijsUtils
                 : new OrderByColumns(DirectAcessColumns.Prepend(new ColumnSort(kolomnaam, SortDirection.Desc)).ToArray());
         }
 
-        static IEnumerable<ColumnSort> PrependFiltered(ColumnSort head, IEnumerable<ColumnSort> tail)
-            => new[] { head }.Concat(tail.Where(sc => sc.ColumnName != head.ColumnName));
-
         [Pure]
         public OrderByColumns FirstSortBy(ColumnSort firstby)
-            => new OrderByColumns(PrependFiltered(firstby, DirectAcessColumns).ToArray());
+            => new OrderByColumns(new[] { firstby }.Concat(DirectAcessColumns.Where(sc => sc.ColumnName != firstby.ColumnName)).ToArray());
 
         [Pure]
         public OrderByColumns ThenSortBy(ColumnSort thenby)
