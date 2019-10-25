@@ -27,11 +27,7 @@ namespace ProgressOnderwijsUtils
         public IEnumerable<ColumnSort> Columns
         {
             get {
-                if (sortColumns != null) {
-                    foreach (var sc in sortColumns) {
-                        yield return sc;
-                    }
-                }
+                return DirectAcessColumns;
             }
         }
 
@@ -82,7 +78,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        [CodeThatsOnlyUsedForTests]
         public int? GetColumnSortRank(string col)
         {
             var index = DirectAcessColumns.IndexOf(sc => sc.ColumnName.Equals(col, StringComparison.OrdinalIgnoreCase));
