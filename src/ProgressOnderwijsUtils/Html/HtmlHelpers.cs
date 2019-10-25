@@ -34,13 +34,13 @@ namespace ProgressOnderwijsUtils.Html
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, params HtmlFragment[]? contents)
             where THtmlTag : struct, IHtmlElementAllowingContent<THtmlTag>
-            => htmlTagExpr.WithContents(HtmlFragment.Fragment(htmlTagExpr.Contents(), HtmlFragment.Fragment(contents)));
+            => htmlTagExpr.ReplaceContentWith(HtmlFragment.Fragment(htmlTagExpr.GetContent(), HtmlFragment.Fragment(contents)));
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, HtmlFragment contents)
             where THtmlTag : struct, IHtmlElementAllowingContent<THtmlTag>
-            => htmlTagExpr.WithContents(HtmlFragment.Fragment(htmlTagExpr.Contents(), contents));
+            => htmlTagExpr.ReplaceContentWith(HtmlFragment.Fragment(htmlTagExpr.GetContent(), contents));
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -62,7 +62,7 @@ namespace ProgressOnderwijsUtils.Html
         [Pure]
         public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, string attrName, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
-            => attrValue == null ? htmlTagExpr : htmlTagExpr.WithAttributes(htmlTagExpr.Attributes.Add(attrName, attrValue));
+            => attrValue == null ? htmlTagExpr : htmlTagExpr.ReplaceAttributesWith(htmlTagExpr.Attributes.Add(attrName, attrValue));
 
         [Pure]
         public static HtmlFragment AsFragment<T>([NotNull] this IEnumerable<T> htmlContents)
@@ -121,13 +121,13 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public static HtmlFragment Contents(this IHtmlElement? element)
-            => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.Contents() : HtmlFragment.Empty;
+            => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.GetContent() : HtmlFragment.Empty;
 
         public static HtmlFragment[] ChildNodes(this IHtmlElement? element)
             => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.ChildNodes() : HtmlFragment.EmptyNodes;
 
         public static HtmlFragment[] ChildNodes([NotNull] this IHtmlElementAllowingContent elemWithContent)
-            => elemWithContent.Contents().NodesOfFragment() ?? HtmlFragment.EmptyNodes;
+            => elemWithContent.GetContent().NodesOfFragment() ?? HtmlFragment.EmptyNodes;
 
         public static HtmlAttributes ToHtmlAttributes([NotNull] this IEnumerable<HtmlAttribute> attributes)
             => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
