@@ -13,12 +13,7 @@ namespace ProgressOnderwijsUtils.Html
             => (IHtmlElementAllowingContent)element.ApplyAlteration(new ContentAlteration(children));
 
         public static IHtmlElement ReplaceAttributesAndContents([NotNull] IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
-        {
-            if (!children.IsEmpty && !(element is IHtmlElementAllowingContent)) {
-                throw new InvalidOperationException("Cannot insert content into empty tag");
-            }
-            return element.ApplyAlteration(new HtmlElementContentAndAttributeAlteration(attributes, children));
-        }
+            => element.ApplyAlteration(new HtmlElementContentAndAttributeAlteration(attributes, children));
 
         struct HtmlElementContentAndAttributeAlteration : IHtmlElementAlteration
         {
@@ -49,7 +44,7 @@ namespace ProgressOnderwijsUtils.Html
 
             public TSelf AlterEmptyElement<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElement<TSelf>
-                => typed;
+                => newContent.IsEmpty ? typed : throw new InvalidOperationException("Cannot insert content into empty tag");
 
             public TSelf AlterElementAllowingContent<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElementAllowingContent<TSelf>
