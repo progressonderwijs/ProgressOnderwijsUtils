@@ -20,21 +20,6 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children)
             => new Tree<T>(value, children);
 
-        [NotNull]
-        [Pure]
-        public static Tree<T> Node<T>(T value, Tree<T> a)
-            => new Tree<T>(value, new[] { a, });
-
-        [NotNull]
-        [Pure]
-        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b)
-            => new Tree<T>(value, new[] { a, b });
-
-        [NotNull]
-        [Pure]
-        public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c)
-            => new Tree<T>(value, new[] { a, b, c });
-
         // ReSharper disable MethodOverloadWithOptionalParameter
         [NotNull]
         [Pure]
