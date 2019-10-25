@@ -34,13 +34,14 @@ namespace ProgressOnderwijsUtils.Collections
         public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>> kidLookup)
         {
             var needsGenerateOutput = new Stack<TreeNodeBuilder>(); //in order of creation; so junctions always before their kids.
+            var needsKids = new Stack<TreeNodeBuilder>();
 
             var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
+
             needsGenerateOutput.Push(rootBuilder);
+            needsKids.Push(rootBuilder);
 
             var tempKidBuilders = new List<TreeNodeBuilder>();
-            var needsKids = new Stack<TreeNodeBuilder>();
-            needsKids.Push(rootBuilder);
 
             while (needsKids.Count > 0) {
                 var nodeBuilderThatWantsKids = needsKids.Pop();
@@ -55,11 +56,13 @@ namespace ProgressOnderwijsUtils.Collections
                         needsKids.Push(builderForKid);
                         tempKidBuilders.Add(builderForKid);
                     }
-                    nodeBuilderThatWantsKids.tempKids = tempKidBuilders.ToArray();
-                    tempKidBuilders.Clear();
-                } else {
-                    nodeBuilderThatWantsKids.finishedNode = Tree.Node(nodeBuilderThatWantsKids.value);
+                    if (tempKidBuilders.Count > 0) {
+                        nodeBuilderThatWantsKids.tempKids = tempKidBuilders.ToArray();
+                        tempKidBuilders.Clear();
+                        continue;
+                    }
                 }
+                nodeBuilderThatWantsKids.finishedNode = Tree.Node(nodeBuilderThatWantsKids.value);
             }
 
             while (needsGenerateOutput.Count > 0) {
