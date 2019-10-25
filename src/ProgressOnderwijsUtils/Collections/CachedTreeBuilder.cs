@@ -1,4 +1,4 @@
-#nullable disable
+﻿#nullable disable
 using System;
 using System.Collections.Generic;
 using JetBrains.Annotations;
@@ -58,7 +58,7 @@ namespace ProgressOnderwijsUtils.Collections
                     nodeBuilderThatWantsKids.tempKids = tempKidBuilders.ToArray();
                     tempKidBuilders.Clear();
                 } else {
-                    nodeBuilderThatWantsKids.tempKids = Array.Empty<TreeNodeBuilder>();
+                    nodeBuilderThatWantsKids.finishedNode = Tree.Node(nodeBuilderThatWantsKids.value);
                 }
             }
 
