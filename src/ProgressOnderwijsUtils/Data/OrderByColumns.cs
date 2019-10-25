@@ -161,16 +161,14 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public OrderByColumns AssumeThenBy(OrderByColumns BaseSortOrder)
         {
-            if (!BaseSortOrder.DirectAcessColumns.Any()) {
-                return this;
+            var myCols = DirectAcessColumns;
+            var assumedCols = BaseSortOrder.DirectAcessColumns;
+            for (var matchLen = Math.Min(assumedCols.Length, myCols.Length); 0 < matchLen; matchLen--) {
+                if (myCols.AsSpan(myCols.Length - matchLen, matchLen).SequenceEqual(assumedCols.AsSpan(0, matchLen))) {
+                    return new OrderByColumns(myCols.AsSpan(0, myCols.Length - matchLen).ToArray());
+                }
             }
-            var possibleMatchingTail = DirectAcessColumns.SkipWhile(colsort => !colsort.Equals(BaseSortOrder.DirectAcessColumns.First()));
-            var baseTailOfSameLength = BaseSortOrder.DirectAcessColumns.Take(possibleMatchingTail.Count());
-            if (possibleMatchingTail.SequenceEqual(baseTailOfSameLength)) { //equal!
-                return new OrderByColumns(DirectAcessColumns.TakeWhile(colsort => !colsort.Equals(BaseSortOrder.DirectAcessColumns.First())));
-            } else {
-                return this;
-            }
+            return this;
         }
     }
 }
