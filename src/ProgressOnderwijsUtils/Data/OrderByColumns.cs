@@ -25,9 +25,6 @@ namespace ProgressOnderwijsUtils
         public ColumnSort[] Columns
             => sortColumns.EmptyIfNull();
 
-        ColumnSort[] DirectAcessColumns
-            => sortColumns.EmptyIfNull();
-
         public static OrderByColumns Empty
             => default(OrderByColumns);
 
@@ -52,7 +49,7 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public SortDirection? GetColumnSortDirection(string column)
         {
-            foreach (var sc in DirectAcessColumns) {
+            foreach (var sc in Columns) {
                 if (streq(sc.ColumnName, column)) {
                     return sc.SortDirection;
                 }
@@ -66,11 +63,11 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public OrderByColumns FirstSortBy(ColumnSort firstby)
-            => new OrderByColumns(DeduplicateByName(new[] { firstby }.ConcatArray(DirectAcessColumns)));
+            => new OrderByColumns(DeduplicateByName(new[] { firstby }.ConcatArray(Columns)));
 
         [Pure]
         public OrderByColumns ThenSortBy(ColumnSort thenby)
-            => new OrderByColumns(DeduplicateByName(DirectAcessColumns.Append(thenby)));
+            => new OrderByColumns(Columns.Append(thenby));
 
         [Pure]
         public OrderByColumns ThenAsc(string column)
@@ -90,11 +87,11 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public OrderByColumns ThenSortBy(OrderByColumns thenby)
-            => new OrderByColumns(DeduplicateByName(DirectAcessColumns.ConcatArray(thenby.DirectAcessColumns)));
+            => new OrderByColumns(DeduplicateByName(Columns.ConcatArray(thenby.Columns)));
 
         [Pure]
         public bool Equals(OrderByColumns other)
-            => DirectAcessColumns.SequenceEqual(other.DirectAcessColumns);
+            => Columns.SequenceEqual(other.Columns);
 
         public static bool operator ==(OrderByColumns a, OrderByColumns b)
             => a.Equals(b);
@@ -108,16 +105,16 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public override int GetHashCode()
-            => 12345 + (int)DirectAcessColumns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Sum();
+            => 12345 + (int)Columns.Select((sc, i) => (2 * i + 1) * (long)sc.GetHashCode()).Sum();
 
         public override string ToString()
-            => "{" + DirectAcessColumns.Select(col => col.ToString()).JoinStrings(", ") + "}";
+            => "{" + Columns.Select(col => col.ToString()).JoinStrings(", ") + "}";
 
         [Pure]
         public OrderByColumns AssumeThenBy(OrderByColumns BaseSortOrder)
         {
-            var myCols = DirectAcessColumns;
-            var assumedCols = BaseSortOrder.DirectAcessColumns;
+            var myCols = Columns;
+            var assumedCols = BaseSortOrder.Columns;
             for (var matchLen = Math.Min(assumedCols.Length, myCols.Length); 0 < matchLen; matchLen--) {
                 if (myCols.AsSpan(myCols.Length - matchLen, matchLen).SequenceEqual(assumedCols.AsSpan(0, matchLen))) {
                     return new OrderByColumns(myCols.AsSpan(0, myCols.Length - matchLen).ToArray());
