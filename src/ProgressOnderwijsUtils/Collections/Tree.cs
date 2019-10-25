@@ -32,7 +32,6 @@ namespace ProgressOnderwijsUtils.Collections
 
         [NotNull]
         [Pure]
-        [CodeThatsOnlyUsedForTests]
         public static Tree<T> Node<T>(T value, Tree<T> a, Tree<T> b, Tree<T> c)
             => new Tree<T>(value, new[] { a, b, c });
 
@@ -65,7 +64,6 @@ namespace ProgressOnderwijsUtils.Collections
 
         [NotNull]
         [Pure]
-        [CodeThatsOnlyUsedForTests]
         public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
             => new Tree<T>.Comparer(valueComparer);
 
