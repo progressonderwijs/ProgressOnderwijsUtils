@@ -146,7 +146,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => root_a_b.NodeValue == "b" && root_b.NodeValue == "b", "Test should select 'b' branches correctly");
         }
 
-        [Fact(Skip = "This causes OOM post-xUnit conversion; still needs to be investigated")]
+        [Fact]
         public void BuildDetectsCycles()
         {
             // ReSharper disable once NotAccessedVariable
