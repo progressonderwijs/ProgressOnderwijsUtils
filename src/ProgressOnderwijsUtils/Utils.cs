@@ -49,7 +49,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
         /// </summary>
-        [CodeThatsOnlyUsedForTests]
         public static bool FuzzyEquals(double x, double y)
         {
             const double relativeEpsilon = 1.0 / (1ul << 32);
