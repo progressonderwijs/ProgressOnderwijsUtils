@@ -16,19 +16,17 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public struct OrderByColumns : IEquatable<OrderByColumns>
     {
-        static readonly ColumnSort[] EmptyOrder = { };
-
         static bool streq(string a, string b)
             => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
 
-        readonly ColumnSort[] sortColumns;
+        readonly ColumnSort[]? sortColumns;
 
         [Pure]
         public ColumnSort[] Columns
-            => sortColumns ?? EmptyOrder;
+            => sortColumns.EmptyIfNull();
 
         ColumnSort[] DirectAcessColumns
-            => sortColumns ?? EmptyOrder;
+            => sortColumns.EmptyIfNull();
 
         public static OrderByColumns Empty
             => default(OrderByColumns);
