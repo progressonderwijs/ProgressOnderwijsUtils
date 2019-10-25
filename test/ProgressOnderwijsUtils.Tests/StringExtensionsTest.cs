@@ -189,7 +189,7 @@ namespace ProgressOnderwijsUtils.Tests
             for (var row = 0; row < translations.GetLength(0); row++) {
                 var initial = translations[row, 0];
                 var idealCap = translations[row, 2];
-                PAssert.That(() => StringUtils.PrettyCapitalizedPrintCamelCased(initial) == idealCap);
+                PAssert.That(() => StringUtils.PrettyPrintCamelCased(initial) == idealCap);
             }
         }
 

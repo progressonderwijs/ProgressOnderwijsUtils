@@ -71,7 +71,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static string PrettyCapitalizedPrintCamelCased(string rawString)
+        public static string PrettyPrintCamelCased(string rawString)
         {
             var withSpace =
                 PrettyPrintValues.capLetter.Replace(
