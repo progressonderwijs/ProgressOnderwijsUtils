@@ -152,45 +152,6 @@ namespace ProgressOnderwijsUtils
                     .JoinStrings(", ")
                 + "]";
 
-        /// <summary>
-        /// Vervang in een [naam]string beginletters door hoofdletters,
-        /// rekening houdend met tussenvoegsels en interpunctie
-        /// </summary>
-        /// <remarks>
-        /// tussenvoegsels zouden ook uit database kunnen worden gehaald:
-        /// [SELECT voorvoegsels FROM student group by voorvoegsels]
-        /// </remarks>
-        [Pure]
-        [CodeThatsOnlyUsedForTests]
-        public static string Name2UpperCasedName(string inp)
-        {
-            //string wat opschonen
-            inp = Regex.Replace(inp, @"\s+", " ");
-            inp = Regex.Replace(inp, @"\-+", "-");
-            inp = Regex.Replace(inp, @"('s)([a-zA-Z]+)", "$1 $2"); //'sgravenhage bv
-            inp = Regex.Replace(inp, @"^\-+|\-+$", "").Trim();
-            const string expression = @"d'|o'
-                                        | 's | 's-|'s| op 't | op ten | op de
-                                        | van het | van der | van de | van den | van ter
-                                        | auf dem | auf der | von der | von den
-                                        | in het | in 't | in de
-                                        | uit de | uit den | uit het 
-                                        | voor de | voor 't 
-                                        | aan het | aan 't | aan de | aan den | bij de | de la 
-                                        | del | van | von | het | de 
-                                        | der | den | des | di | dos | do | du | el | le | la
-                                        | lo | los | op | te | ten | ter | uit 
-                                        | vd | v.d. | v\/d
-                                        | au | aux | a | à | à la | a la 
-                                        | \- |\s|\s+|\-+";
-            var newstr = Regex.Split(inp, Regex.Replace(expression, @"\s+", " "));
-            return newstr.Aggregate(
-                inp,
-                (current, t) =>
-                    Regex.Replace(current, t, t.Length > 0 ? Capitalize(t.ToLowerInvariant()) : t)
-            );
-        }
-
         [Pure]
         static bool isVowel(char c)
             => c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';

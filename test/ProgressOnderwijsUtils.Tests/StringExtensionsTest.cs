@@ -101,31 +101,7 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => StringUtils.LevenshteinDistance("simple", "Simpler") == 2);
             PAssert.That(() => StringUtils.LevenshteinDistance("hmmm", "yummy") == 3);
             PAssert.That(() => StringUtils.LevenshteinDistance("World-wide", "wordy") == 7);
-            //"W"=>"w",drop "l", replace "-wide"
         }
-
-        [Fact]
-        public void testNaam2Upper()
-        {
-            PAssert.That(() => StringUtils.Name2UpperCasedName("joepje jofel") == "Joepje Jofel");
-            PAssert.That(() => StringUtils.Name2UpperCasedName("carolien Kaasteen") == "Carolien Kaasteen");
-            PAssert.That(
-                () => StringUtils.Name2UpperCasedName("maarten middelmaat--meloen") == "Maarten Middelmaat-Meloen");
-            PAssert.That(() => StringUtils.Name2UpperCasedName("carolien    Kaasteen") == "Carolien Kaasteen");
-            PAssert.That(() => StringUtils.Name2UpperCasedName("'s-gravenhage") == "'s-Gravenhage");
-            PAssert.That(() => StringUtils.Name2UpperCasedName("'s gravenhage") == "'s Gravenhage");
-            PAssert.That(() => StringUtils.Name2UpperCasedName("'sgravenhage") == "'s Gravenhage");
-            PAssert.That(() => StringUtils.Name2UpperCasedName("sieb op de kast") == "Sieb op de Kast");
-        }
-
-        [Fact]
-        public void testLangeNaam2Upper()
-            => PAssert.That(
-                () =>
-                    StringUtils.Name2UpperCasedName(
-                        "miep boezeroen-jansen van der sloot op 't gootje v.d. geest de la terrine du soupe au beurre à demi v/d zo-is-het-wel-genoeg ja")
-                    ==
-                    "Miep Boezeroen-Jansen van der Sloot op 't Gootje v.d. Geest de la Terrine du Soupe au Beurre à Demi v/d Zo-Is-Het-Wel-Genoeg Ja");
 
         [Fact]
         public void testDepluralize()
