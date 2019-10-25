@@ -38,6 +38,7 @@ namespace ProgressOnderwijsUtils.Collections
             var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
             needsGenerateOutput.Push(rootBuilder);
 
+            var tempKidBuilders = new List<TreeNodeBuilder>();
             var needsKids = new Stack<TreeNodeBuilder>();
             needsKids.Push(rootBuilder);
 
@@ -45,7 +46,6 @@ namespace ProgressOnderwijsUtils.Collections
                 var nodeBuilderThatWantsKids = needsKids.Pop();
                 var kids = kidLookup(nodeBuilderThatWantsKids.value);
                 if (kids != null) { //allow null to represent absence of kids
-                    var tempKidBuilders = new List<TreeNodeBuilder>();
                     foreach (var kid in kids) {
                         var builderForKid = new TreeNodeBuilder { value = kid, };
                         if (needsGenerateOutput.Count >= 10_000_000) {
@@ -56,6 +56,7 @@ namespace ProgressOnderwijsUtils.Collections
                         tempKidBuilders.Add(builderForKid);
                     }
                     nodeBuilderThatWantsKids.tempKids = tempKidBuilders.ToArray();
+                    tempKidBuilders.Clear();
                 } else {
                     nodeBuilderThatWantsKids.tempKids = Array.Empty<TreeNodeBuilder>();
                 }
