@@ -321,19 +321,6 @@ namespace ProgressOnderwijsUtils
             return new string(str, 0, idx);
         }
 
-        [CodeThatsOnlyUsedForTests]
-        public static DateTime? DateMax(DateTime? d1, DateTime? d2)
-        {
-            if (d1 == null) {
-                return d2;
-            }
-
-            if (d2 == null) {
-                return d1;
-            }
-
-            return d2 > d1 ? d2 : d1;
-        }
 
         [CodeThatsOnlyUsedForTests]
         public static decimal RoundUp(decimal input, int places)
