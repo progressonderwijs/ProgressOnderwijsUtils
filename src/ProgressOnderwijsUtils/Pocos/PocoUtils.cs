@@ -24,7 +24,6 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         [Pure]
-        [CodeThatsOnlyUsedForTests]
         public static IPocoProperty<TPoco> GetByExpression<TPoco, T>([NotNull] Expression<Func<TPoco, T>> propertyExpression)
             where TPoco : IPoco
             => PocoProperties<TPoco>.Instance.GetByExpression(propertyExpression);
