@@ -140,7 +140,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        [CodeThatsOnlyUsedForTests]
         public static double LevenshteinDistanceScaled(string s, string t)
             => LevenshteinDistance(s, t) / (double)Math.Max(1, Math.Max(s.Length, t.Length));
 
