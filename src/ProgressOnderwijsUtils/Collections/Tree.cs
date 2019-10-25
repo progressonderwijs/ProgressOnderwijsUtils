@@ -76,6 +76,41 @@ namespace ProgressOnderwijsUtils.Collections
             }
             return output.Pop();
         }
+
+        /// <summary>
+        /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
+        /// The filter function is called for children before parents, and is passed the *output* subtree that may or may not be retained;
+        /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
+        /// </summary>
+        [Pure]
+        public static Tree<T>? Where<T>(this Tree<T> tree, Func<Tree<T>, bool> retainSubTree)
+        {
+            var reconstruct = new Stack<Tree<T>>(16);
+            var todo = new Stack<Tree<T>>(16);
+            todo.Push(tree);
+            while (todo.Count > 0) {
+                var next = todo.Pop();
+                reconstruct.Push(next);
+                var children = next.Children;
+                for (var i = children.Count - 1; i >= 0; i--) {
+                    todo.Push(children[i]);
+                }
+            }
+            var tmp = new List<Tree<T>>();
+            while (reconstruct.Count > 0) {
+                var next = reconstruct.Pop();
+                var kidCount = next.Children.Count;
+                for (var i = 0; i < kidCount; i++) {
+                    var maybeKid = todo.Pop();
+                    if (retainSubTree(maybeKid)) {
+                        tmp.Add(maybeKid);
+                    }
+                }
+                todo.Push(Node(next.NodeValue, tmp.ToArray()));
+                tmp.Clear();
+            }
+            return todo.Pop() is var finalTree && retainSubTree(finalTree) ? finalTree : null;
+        }
     }
 
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
@@ -98,7 +133,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// <param name="value">The value of this node.</param>
         /// <param name="children">The children of this node, (null is allowed and means none).</param>
         public Tree(T value, IEnumerable<Tree<T>>? children)
-            : this(value, children == null ? null : children.ToArray()) { }
+            : this(value, children?.ToArray()) { }
 
         /// <summary>
         /// Creates a Tree with specified child nodes.  The child node array is used directly. Do not mutate the array after passing it into the tree; doing so
