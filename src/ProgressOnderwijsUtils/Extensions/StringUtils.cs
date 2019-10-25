@@ -50,18 +50,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        [CodeThatsOnlyUsedForTests]
-        public static string PrettyPrintCamelCased(string rawString)
-        {
-            var withSpace =
-                PrettyPrintValues.capLetter.Replace(
-                    rawString,
-                    m => (m.Index == 0 ? "" : " ") + (IsUpperAscii(m.Value) ? m.Value : DecapitalizeAscii(m.Value))
-                );
-            return PrettyPrintValues.whiteSpaceSequence.Replace(withSpace, " ");
-        }
-
-        [Pure]
         static bool IsUpperAscii(string str)
         {
             foreach (var c in str) {
