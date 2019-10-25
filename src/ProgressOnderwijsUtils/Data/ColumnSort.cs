@@ -30,15 +30,11 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public ColumnSort WithReverseDirection()
-            => new ColumnSort(ColumnName, FlipDirection(SortDirection));
+            => new ColumnSort(ColumnName, SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc);
 
         [Pure]
         public ColumnSort WithDifferentName(string newColumn)
             => new ColumnSort(newColumn, SortDirection);
-
-        [Pure]
-        static SortDirection FlipDirection(SortDirection dir)
-            => dir == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc;
 
         [Pure]
         public bool Equals(ColumnSort other)
