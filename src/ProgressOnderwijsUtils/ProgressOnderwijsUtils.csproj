@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>51.1.0</Version>
-    <PackageReleaseNotes>Add some helpers to deal with nullable reference types</PackageReleaseNotes>
+    <Version>52.0.0</Version>
+    <PackageReleaseNotes>Added Tree.Where helper; Html: method renames particularly Contents() => GetContent()</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
