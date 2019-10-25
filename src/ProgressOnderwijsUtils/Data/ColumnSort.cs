@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
     }
 
     [Serializable]
-    public struct ColumnSort : IEquatable<ColumnSort>
+    public readonly struct ColumnSort : IEquatable<ColumnSort>
     {
         readonly string column;
         readonly SortDirection direction;
