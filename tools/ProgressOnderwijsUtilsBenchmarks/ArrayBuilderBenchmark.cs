@@ -107,8 +107,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         [Benchmark]
         public void List()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new List<T>();
                     for (var i = 0; i < size; i++) {
@@ -117,12 +116,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_WithArraySegments()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = ArrayBuilder_WithArraySegments<T>.Create();
                     for (var i = 0; i < size; i++) {
@@ -131,12 +128,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_Inline63ValuesAndSegments()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline63ValuesAndSegments<T>();
                     for (var i = 0; i < size; i++) {
@@ -145,12 +140,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_Inline16ValuesAndSegments()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline16ValuesAndSegments<T>();
                     for (var i = 0; i < size; i++) {
@@ -159,12 +152,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder<T>();
                     for (var i = 0; i < size; i++) {
@@ -173,12 +164,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_Inline32ValuesAndSegments()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
                 foreach (var size in Sizes) {
                     var builder = new ArrayBuilder_Inline32ValuesAndSegments<T>();
                     for (var i = 0; i < size; i++) {
@@ -187,7 +176,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
     }
 
     public struct ArrayBuilder_WithArraySegments<T>
