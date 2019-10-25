@@ -14,20 +14,13 @@ namespace ProgressOnderwijsUtils.Tests
         static readonly ColumnSort monsterD = new ColumnSort("monster", SortDirection.Desc);
         static readonly ColumnSort acolA = new ColumnSort("acol", SortDirection.Asc);
         static readonly ColumnSort acolD = new ColumnSort("acol", SortDirection.Desc);
-        static readonly ColumnSort[] someOrder = new[] { ziggyA, abcA, acolD };
+        static readonly ColumnSort[] someOrder = { ziggyA, abcA, acolD };
         static readonly OrderByColumns colSort = new OrderByColumns(someOrder);
 
         [Fact]
         public void BasicOrderingOk()
             //check that order works as exepcted:
             => PAssert.That(() => colSort.Columns.SequenceEqual(someOrder));
-
-        [Fact]
-        public void SortRankOk()
-        {
-            PAssert.That(() => colSort.GetColumnSortRank("monster") == null);
-            PAssert.That(() => colSort.GetColumnSortRank("abc") == 2); //"rank" is 1-based
-        }
 
         [Fact]
         public void SortDirectionOk()
@@ -39,7 +32,7 @@ namespace ProgressOnderwijsUtils.Tests
 
         [Fact]
         public void ColumnCountOk()
-            => PAssert.That(() => colSort.ColumnCount == 3);
+            => PAssert.That(() => colSort.Columns.Length == 3);
 
         [Fact]
         public void ToStringOk()

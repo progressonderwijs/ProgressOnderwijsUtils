@@ -10,41 +10,31 @@ namespace ProgressOnderwijsUtils
     }
 
     [Serializable]
-    public struct ColumnSort : IEquatable<ColumnSort>
+    public readonly struct ColumnSort : IEquatable<ColumnSort>
     {
-        readonly string column;
-        readonly SortDirection direction;
-
-        public string ColumnName
-            => column;
-
-        public SortDirection SortDirection
-            => direction;
+        public string ColumnName { get; }
+        public SortDirection SortDirection { get; }
 
         [NotNull]
         public string SqlSortString()
-            => column + " " + direction;
+            => ColumnName + " " + SortDirection;
 
         public override string ToString()
-            => "[" + column + " " + direction + "]";
+            => "[" + ColumnName + " " + SortDirection + "]";
 
         public ColumnSort(string column, SortDirection direction)
         {
-            this.column = column;
-            this.direction = direction;
+            ColumnName = column;
+            SortDirection = direction;
         }
 
         [Pure]
         public ColumnSort WithReverseDirection()
-            => new ColumnSort(column, FlipDirection(direction));
+            => new ColumnSort(ColumnName, SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc);
 
         [Pure]
         public ColumnSort WithDifferentName(string newColumn)
-            => new ColumnSort(newColumn, direction);
-
-        [Pure]
-        static SortDirection FlipDirection(SortDirection dir)
-            => dir == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc;
+            => new ColumnSort(newColumn, SortDirection);
 
         [Pure]
         public bool Equals(ColumnSort other)
@@ -57,17 +47,6 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public override int GetHashCode()
-            => StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int)direction;
-
-        [Pure]
-        public static bool operator ==(ColumnSort a, ColumnSort b)
-            => a.Equals(b);
-        //ReferenceEquals(a, b) || null != (object)a &&
-
-        [Pure]
-        public static bool operator !=(ColumnSort a, ColumnSort b)
-            => !a.Equals(b);
-
-        //!ReferenceEquals(a, b) && (null == (object)a ||
+            => StringComparer.OrdinalIgnoreCase.GetHashCode(ColumnName) + 51 * (int)SortDirection;
     }
 }

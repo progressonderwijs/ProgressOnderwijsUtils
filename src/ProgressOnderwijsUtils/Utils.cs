@@ -49,7 +49,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
         /// </summary>
-        [CodeThatsOnlyUsedForTests]
         public static bool FuzzyEquals(double x, double y)
         {
             const double relativeEpsilon = 1.0 / (1ul << 32);
@@ -320,27 +319,6 @@ namespace ProgressOnderwijsUtils
                 str[j] = tmp;
             }
             return new string(str, 0, idx);
-        }
-
-        [CodeThatsOnlyUsedForTests]
-        public static DateTime? DateMax(DateTime? d1, DateTime? d2)
-        {
-            if (d1 == null) {
-                return d2;
-            }
-
-            if (d2 == null) {
-                return d1;
-            }
-
-            return d2 > d1 ? d2 : d1;
-        }
-
-        [CodeThatsOnlyUsedForTests]
-        public static decimal RoundUp(decimal input, int places)
-        {
-            var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));
-            return Math.Ceiling(input * multiplier) / multiplier;
         }
 
         /// <summary>

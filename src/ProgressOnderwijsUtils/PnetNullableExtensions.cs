@@ -69,7 +69,6 @@ namespace ProgressOnderwijsUtils
             where TVal : struct
             => values.DefaultIfEmpty();
 
-        [CodeThatsOnlyUsedForTests]
         public static IEnumerable<TVal?> NullableIfEmpty<TVal>(this IEnumerable<TVal> values)
             where TVal : struct
             => values.Select(o => (TVal?)o).NullIfEmpty();
