@@ -50,10 +50,10 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void CustomizableComparerWorks()
         {
-            var tree1 = Tree.Node("a", Tree.Nullable("x"), Tree.Nullable("b"), Tree.Node(default(string)), Tree.Nullable(""));
-            var tree2 = Tree.Node("a", Tree.Nullable("x"), Tree.Nullable("B"), Tree.Node(default(string)), Tree.Nullable(""));
-            var tree3 = Tree.Node("a", Tree.Nullable("x"), Tree.Nullable("b"), Tree.Node(default(string)), Tree.Nullable(""));
-            var tree4 = Tree.Node("a", Tree.Nullable("y"), Tree.Nullable("b"), Tree.Node(default(string)), Tree.Nullable(""));
+            var tree1 = Tree.Node("a".PretendNullable(), Tree.Node("x".PretendNullable()), Tree.Node("b".PretendNullable()), Tree.Node(default(string)), Tree.Node("".PretendNullable()));
+            var tree2 = Tree.Node("a".PretendNullable(), Tree.Node("x".PretendNullable()), Tree.Node("B".PretendNullable()), Tree.Node(default(string)), Tree.Node("".PretendNullable()));
+            var tree3 = Tree.Node("a".PretendNullable(), Tree.Node("x".PretendNullable()), Tree.Node("b".PretendNullable()), Tree.Node(default(string)), Tree.Node("".PretendNullable()));
+            var tree4 = Tree.Node("a".PretendNullable(), Tree.Node("y".PretendNullable()), Tree.Node("b".PretendNullable()), Tree.Node(default(string)), Tree.Node("".PretendNullable()));
 
             PAssert.That(() => !tree1.Equals(tree2));
             PAssert.That(() => tree1.Equals(tree3));
