@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils
         public SortDirection? GetColumnSortDirection(string column)
         {
             foreach (var sc in Columns) {
-                if (streq(sc.ColumnName, column)) {
+                if (string.Equals(sc.ColumnName, column, StringComparison.OrdinalIgnoreCase)) {
                     return sc.SortDirection;
                 }
             }
