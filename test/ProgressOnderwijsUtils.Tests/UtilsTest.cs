@@ -151,17 +151,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void RoundUp()
-        {
-            PAssert.That(() => Utils.RoundUp(1.12m, 2) == 1.12m);
-            PAssert.That(() => Utils.RoundUp(1.0m, 2) == 1.0m);
-            PAssert.That(() => Utils.RoundUp(1.121m, 2) == 1.13m);
-            PAssert.That(() => Utils.RoundUp(1.129m, 2) == 1.13m);
-            PAssert.That(() => Utils.RoundUp(1000001.122m, 2) == 1000001.13m);
-            PAssert.That(() => Utils.RoundUp(1000001.129m, 2) == 1000001.13m);
-        }
-
-        [Fact]
         public void SimpleTransitiveClosureWorks()
         {
             var nodes = new[] { 2, 3, };

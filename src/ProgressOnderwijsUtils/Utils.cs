@@ -321,14 +321,6 @@ namespace ProgressOnderwijsUtils
             return new string(str, 0, idx);
         }
 
-
-        [CodeThatsOnlyUsedForTests]
-        public static decimal RoundUp(decimal input, int places)
-        {
-            var multiplier = Convert.ToDecimal(Math.Pow(10, Convert.ToDouble(places)));
-            return Math.Ceiling(input * multiplier) / multiplier;
-        }
-
         /// <summary>
         /// returns 0 if input is zero; otherwise returns the only int for which the postcondition holds
         /// Postcondition: (1ul &lt;&lt; result) &lt;= x &lt; (1ul &lt;&lt; result+1)
