@@ -16,9 +16,6 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public struct OrderByColumns : IEquatable<OrderByColumns>
     {
-        static bool streq(string a, string b)
-            => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
-
         readonly ColumnSort[]? sortColumns;
 
         [Pure]
