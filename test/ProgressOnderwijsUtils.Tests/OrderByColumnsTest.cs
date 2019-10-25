@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils.Tests
         static readonly ColumnSort monsterD = new ColumnSort("monster", SortDirection.Desc);
         static readonly ColumnSort acolA = new ColumnSort("acol", SortDirection.Asc);
         static readonly ColumnSort acolD = new ColumnSort("acol", SortDirection.Desc);
-        static readonly ColumnSort[] someOrder = new[] { ziggyA, abcA, acolD };
+        static readonly ColumnSort[] someOrder = { ziggyA, abcA, acolD };
         static readonly OrderByColumns colSort = new OrderByColumns(someOrder);
 
         [Fact]
