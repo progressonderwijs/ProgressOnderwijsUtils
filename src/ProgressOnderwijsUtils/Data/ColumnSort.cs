@@ -48,16 +48,5 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public override int GetHashCode()
             => StringComparer.OrdinalIgnoreCase.GetHashCode(ColumnName) + 51 * (int)SortDirection;
-
-        [Pure]
-        public static bool operator ==(ColumnSort a, ColumnSort b)
-            => a.Equals(b);
-        //ReferenceEquals(a, b) || null != (object)a &&
-
-        [Pure]
-        public static bool operator !=(ColumnSort a, ColumnSort b)
-            => !a.Equals(b);
-
-        //!ReferenceEquals(a, b) && (null == (object)a ||
     }
 }

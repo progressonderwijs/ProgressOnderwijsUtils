@@ -164,10 +164,10 @@ namespace ProgressOnderwijsUtils
             if (!BaseSortOrder.DirectAcessColumns.Any()) {
                 return this;
             }
-            var possibleMatchingTail = DirectAcessColumns.SkipWhile(colsort => colsort != BaseSortOrder.DirectAcessColumns.First());
+            var possibleMatchingTail = DirectAcessColumns.SkipWhile(colsort => !colsort.Equals(BaseSortOrder.DirectAcessColumns.First()));
             var baseTailOfSameLength = BaseSortOrder.DirectAcessColumns.Take(possibleMatchingTail.Count());
             if (possibleMatchingTail.SequenceEqual(baseTailOfSameLength)) { //equal!
-                return new OrderByColumns(DirectAcessColumns.TakeWhile(colsort => colsort != BaseSortOrder.DirectAcessColumns.First()));
+                return new OrderByColumns(DirectAcessColumns.TakeWhile(colsort => !colsort.Equals(BaseSortOrder.DirectAcessColumns.First())));
             } else {
                 return this;
             }

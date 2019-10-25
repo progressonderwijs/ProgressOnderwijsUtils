@@ -21,16 +21,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void OperatorsOk()
-        {
-            PAssert.That(() => new ColumnSort("test", SortDirection.Asc) == new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test"));
-            PAssert.That(() => !(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("ziggy", SortDirection.Asc).WithDifferentName("test")));
-
-            PAssert.That(() => new ColumnSort("test", SortDirection.Asc) == new ColumnSort("Test", SortDirection.Asc));
-            PAssert.That(() => !(new ColumnSort("test", SortDirection.Asc) != new ColumnSort("Test", SortDirection.Asc)));
-        }
-
-        [Fact]
         public void CheckSqlSortString()
         {
             Assert.Equal("ziggy Asc", new ColumnSort("ziggy", SortDirection.Asc).SqlSortString());
