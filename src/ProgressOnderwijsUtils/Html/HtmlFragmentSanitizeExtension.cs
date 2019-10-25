@@ -170,11 +170,8 @@ namespace ProgressOnderwijsUtils.Html
                     return safeChildren.AsFragment();
                 }
                 if (safety == TagSafety.SafeToKeep) {
-                    return HtmlElementAlterations.ReplaceAttributesAndContents(
-                        elem,
-                        HtmlAttributes.FromArray(elem.Attributes.Where(filter.AllowAttribute).ToArray()),
-                        safeChildren
-                    ).AsFragment();
+                    return elem.ReplaceAttributesAndContents(HtmlAttributes.FromArray(elem.Attributes.Where(filter.AllowAttribute).ToArray()),
+                        safeChildren).AsFragment();
                 }
             }
 

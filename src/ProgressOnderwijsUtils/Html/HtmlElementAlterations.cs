@@ -6,34 +6,15 @@ namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlElementAlterations
     {
-        public static IHtmlElement ReplaceAttributesWith([NotNull] IHtmlElement element, HtmlAttributes attributes)
+        public static IHtmlElement ReplaceAttributesWith([NotNull] this IHtmlElement element, HtmlAttributes attributes)
             => element.ApplyAlteration(new AttributeAlteration(attributes));
 
         public static IHtmlElementAllowingContent ReplaceContentWith([NotNull] this IHtmlElementAllowingContent element, HtmlFragment children)
             => (IHtmlElementAllowingContent)element.ApplyAlteration(new ContentAlteration(children));
 
-        public static IHtmlElement ReplaceAttributesAndContents([NotNull] IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
-            => element.ApplyAlteration(new HtmlElementContentAndAttributeAlteration(attributes, children));
 
-        struct HtmlElementContentAndAttributeAlteration : IHtmlElementAlteration
-        {
-            readonly HtmlAttributes newAttributes;
-            readonly HtmlFragment newContents;
-
-            public HtmlElementContentAndAttributeAlteration(HtmlAttributes newAttributes, HtmlFragment newContents)
-            {
-                this.newContents = newContents;
-                this.newAttributes = newAttributes;
-            }
-
-            public TSelf AlterEmptyElement<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlElement<TSelf>
-                => typed.ReplaceAttributesWith(newAttributes);
-
-            public TSelf AlterElementAllowingContent<TSelf>(TSelf typed)
-                where TSelf : struct, IHtmlElementAllowingContent<TSelf>
-                => typed.ReplaceAttributesWith(newAttributes).ReplaceContentWith(newContents);
-        }
+        public static IHtmlElement ReplaceAttributesAndContents([NotNull] this IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
+            => element.ApplyAlteration(new ContentAlteration(children)).ReplaceAttributesWith(attributes);
 
         struct ContentAlteration : IHtmlElementAlteration
         {
