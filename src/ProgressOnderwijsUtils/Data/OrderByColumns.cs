@@ -25,11 +25,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public IEnumerable<ColumnSort> Columns
-        {
-            get {
-                return DirectAcessColumns;
-            }
-        }
+            => sortColumns ?? EmptyOrder;
 
         ColumnSort[] DirectAcessColumns
             => sortColumns ?? EmptyOrder;
