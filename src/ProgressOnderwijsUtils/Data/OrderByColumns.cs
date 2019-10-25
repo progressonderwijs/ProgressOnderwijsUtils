@@ -69,13 +69,6 @@ namespace ProgressOnderwijsUtils
             => GetSortColumn(column)?.SortDirection;
 
         [Pure]
-        public int? GetColumnSortRank(string col)
-        {
-            var index = DirectAcessColumns.IndexOf(sc => sc.ColumnName.Equals(col, StringComparison.OrdinalIgnoreCase));
-            return index == -1 ? default(int?) : index + 1;
-        }
-
-        [Pure]
         public OrderByColumns ToggleSortDirection(string kolomnaam)
         {
             var oldSortCol = GetSortColumn(kolomnaam);

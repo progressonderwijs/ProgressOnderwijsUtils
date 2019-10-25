@@ -23,13 +23,6 @@ namespace ProgressOnderwijsUtils.Tests
             => PAssert.That(() => colSort.Columns.SequenceEqual(someOrder));
 
         [Fact]
-        public void SortRankOk()
-        {
-            PAssert.That(() => colSort.GetColumnSortRank("monster") == null);
-            PAssert.That(() => colSort.GetColumnSortRank("abc") == 2); //"rank" is 1-based
-        }
-
-        [Fact]
         public void SortDirectionOk()
         {
             PAssert.That(() => colSort.GetColumnSortDirection("abc") == SortDirection.Asc);
