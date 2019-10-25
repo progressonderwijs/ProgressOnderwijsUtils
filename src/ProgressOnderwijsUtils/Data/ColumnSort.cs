@@ -12,35 +12,30 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public readonly struct ColumnSort : IEquatable<ColumnSort>
     {
-        readonly string column;
-        readonly SortDirection direction;
+        public string ColumnName { get; }
 
-        public string ColumnName
-            => column;
-
-        public SortDirection SortDirection
-            => direction;
+        public SortDirection SortDirection { get; }
 
         [NotNull]
         public string SqlSortString()
-            => column + " " + direction;
+            => ColumnName + " " + SortDirection;
 
         public override string ToString()
-            => "[" + column + " " + direction + "]";
+            => "[" + ColumnName + " " + SortDirection + "]";
 
         public ColumnSort(string column, SortDirection direction)
         {
-            this.column = column;
-            this.direction = direction;
+            this.ColumnName = column;
+            this.SortDirection = direction;
         }
 
         [Pure]
         public ColumnSort WithReverseDirection()
-            => new ColumnSort(column, FlipDirection(direction));
+            => new ColumnSort(ColumnName, FlipDirection(SortDirection));
 
         [Pure]
         public ColumnSort WithDifferentName(string newColumn)
-            => new ColumnSort(newColumn, direction);
+            => new ColumnSort(newColumn, SortDirection);
 
         [Pure]
         static SortDirection FlipDirection(SortDirection dir)
@@ -57,7 +52,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public override int GetHashCode()
-            => StringComparer.OrdinalIgnoreCase.GetHashCode(column) + 51 * (int)direction;
+            => StringComparer.OrdinalIgnoreCase.GetHashCode(ColumnName) + 51 * (int)SortDirection;
 
         [Pure]
         public static bool operator ==(ColumnSort a, ColumnSort b)
