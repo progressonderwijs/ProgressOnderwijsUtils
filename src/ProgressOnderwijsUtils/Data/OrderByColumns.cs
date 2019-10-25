@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils
 
         readonly ColumnSort[] sortColumns;
 
-        [System.Diagnostics.Contracts.Pure]
+        [Pure]
         public IEnumerable<ColumnSort> Columns
         {
             get {
@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
             return index == -1 ? default(int?) : index + 1;
         }
 
-        [System.Diagnostics.Contracts.Pure]
+        [Pure]
         public int ColumnCount
             => sortColumns == null ? 0 : sortColumns.Length;
 
