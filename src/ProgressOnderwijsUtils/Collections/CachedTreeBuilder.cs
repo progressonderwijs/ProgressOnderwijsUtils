@@ -48,7 +48,7 @@ namespace ProgressOnderwijsUtils.Collections
                     var tempKidBuilders = new List<TreeNodeBuilder>();
                     foreach (var kid in kids) {
                         var builderForKid = new TreeNodeBuilder { value = kid, };
-                        if (needsGenerateOutput.Count >= 100 * 1000 * 1000) {
+                        if (needsGenerateOutput.Count >= 10_000_000) {
                             throw new InvalidOperationException("Tree too large (possibly a cycle?)");
                         }
                         needsGenerateOutput.Push(builderForKid);
