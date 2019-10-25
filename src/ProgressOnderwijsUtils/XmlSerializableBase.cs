@@ -78,7 +78,6 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        [CodeThatsOnlyUsedForTests]
         public static string Serialize([NotNull] T val)
         {
             using (var writer = new StringWriter()) {
