@@ -10,6 +10,7 @@ namespace ProgressOnderwijsUtils.Collections
         sealed class TreeNodeBuilder
         {
             public T value;
+            public TreeNodeBuilder firstChildOfParent;
             public TreeNodeBuilder[] tempKids;
             public Tree<T> finishedNode;
 
@@ -33,12 +34,12 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>> kidLookup)
         {
-            var needsGenerateOutput = new Stack<TreeNodeBuilder>(); //in order of creation; so junctions always before their kids.
             var needsKids = new Stack<TreeNodeBuilder>();
 
+            var generatedNodes = 0;
             var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
+            generatedNodes++;
 
-            needsGenerateOutput.Push(rootBuilder);
             needsKids.Push(rootBuilder);
 
             var tempKidBuilders = new List<TreeNodeBuilder>();
@@ -49,27 +50,30 @@ namespace ProgressOnderwijsUtils.Collections
                 if (kids != null) { //allow null to represent absence of kids
                     foreach (var kid in kids) {
                         var builderForKid = new TreeNodeBuilder { value = kid, };
-                        if (needsGenerateOutput.Count >= 10_000_000) {
+                        generatedNodes++;
+
+                        if (generatedNodes >= 10_000_000) {
                             throw new InvalidOperationException("Tree too large (possibly a cycle?)");
                         }
-                        needsGenerateOutput.Push(builderForKid);
                         needsKids.Push(builderForKid);
                         tempKidBuilders.Add(builderForKid);
                     }
                     if (tempKidBuilders.Count > 0) {
                         nodeBuilderThatWantsKids.tempKids = tempKidBuilders.ToArray();
+                        nodeBuilderThatWantsKids.tempKids[0].firstChildOfParent = nodeBuilderThatWantsKids;
                         tempKidBuilders.Clear();
                         continue;
                     }
                 }
                 nodeBuilderThatWantsKids.finishedNode = Tree.Node(nodeBuilderThatWantsKids.value);
+                var toGenerate = nodeBuilderThatWantsKids.firstChildOfParent;
+                while (toGenerate != null) {
+                    toGenerate.GenerateOutput();
+                    toGenerate = toGenerate.firstChildOfParent;
+                }
             }
 
-            while (needsGenerateOutput.Count > 0) {
-                needsGenerateOutput.Pop().GenerateOutput();
-            }
-
-            return rootBuilder.finishedNode;
+            return rootBuilder.finishedNode ?? throw new InvalidOperationException("Internal error detected!");
         }
     }
 }
