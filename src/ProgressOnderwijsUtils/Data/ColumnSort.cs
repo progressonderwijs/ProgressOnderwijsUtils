@@ -13,7 +13,6 @@ namespace ProgressOnderwijsUtils
     public readonly struct ColumnSort : IEquatable<ColumnSort>
     {
         public string ColumnName { get; }
-
         public SortDirection SortDirection { get; }
 
         [NotNull]
@@ -25,8 +24,8 @@ namespace ProgressOnderwijsUtils
 
         public ColumnSort(string column, SortDirection direction)
         {
-            this.ColumnName = column;
-            this.SortDirection = direction;
+            ColumnName = column;
+            SortDirection = direction;
         }
 
         [Pure]
