@@ -230,7 +230,7 @@ namespace ProgressOnderwijsUtils.Html
 
         public HtmlFragment[] ChildNodes()
             => Implementation is IHtmlElementAllowingContent elem
-                ? elem.Contents().NodesOfFragment()
+                ? elem.GetContent().NodesOfFragment()
                 : Implementation as HtmlFragment[] ?? EmptyNodes;
 
         public static HtmlFragment[] EmptyNodes

@@ -6,24 +6,18 @@ namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlElementAlterations
     {
-        public static IHtmlElement ReplaceAttributes([NotNull] IHtmlElement element, HtmlAttributes attributes)
-            => element.ApplyChange(new AttributeAlteration(attributes));
+        public static IHtmlElement ReplaceAttributesWith([NotNull] IHtmlElement element, HtmlAttributes attributes)
+            => element.ApplyAlteration(new AttributeAlteration(attributes));
 
-        public static IHtmlElement ReplaceAttributes([NotNull] IHtmlElement element, [NotNull] IEnumerable<HtmlAttribute> attributes)
-            => element.ApplyChange(new AttributeAlteration(attributes.ToHtmlAttributes()));
-
-        public static IHtmlElementAllowingContent ReplaceContents([NotNull] this IHtmlElementAllowingContent element, HtmlFragment children)
-            => (IHtmlElementAllowingContent)element.ApplyChange(new ContentAlteration(children));
-
-        public static IHtmlElement ReplaceAttributesAndContents([NotNull] IHtmlElement element, [NotNull] IEnumerable<HtmlAttribute> attributes, HtmlFragment children)
-            => ReplaceAttributesAndContents(element, attributes.ToHtmlAttributes(), children);
+        public static IHtmlElementAllowingContent ReplaceContentWith([NotNull] this IHtmlElementAllowingContent element, HtmlFragment children)
+            => (IHtmlElementAllowingContent)element.ApplyAlteration(new ContentAlteration(children));
 
         public static IHtmlElement ReplaceAttributesAndContents([NotNull] IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
         {
             if (!children.IsEmpty && !(element is IHtmlElementAllowingContent)) {
                 throw new InvalidOperationException("Cannot insert content into empty tag");
             }
-            return element.ApplyChange(new HtmlElementContentAndAttributeAlteration(attributes, children));
+            return element.ApplyAlteration(new HtmlElementContentAndAttributeAlteration(attributes, children));
         }
 
         struct HtmlElementContentAndAttributeAlteration : IHtmlElementAlteration
@@ -37,13 +31,13 @@ namespace ProgressOnderwijsUtils.Html
                 this.newAttributes = newAttributes;
             }
 
-            public TSelf ChangeEmpty<TSelf>(TSelf typed)
+            public TSelf AlterEmptyElement<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElement<TSelf>
-                => typed.WithAttributes(newAttributes);
+                => typed.ReplaceAttributesWith(newAttributes);
 
-            public TSelf ChangeWithContent<TSelf>(TSelf typed)
+            public TSelf AlterElementAllowingContent<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElementAllowingContent<TSelf>
-                => typed.WithAttributes(newAttributes).WithContents(newContents);
+                => typed.ReplaceAttributesWith(newAttributes).ReplaceContentWith(newContents);
         }
 
         struct ContentAlteration : IHtmlElementAlteration
@@ -53,13 +47,13 @@ namespace ProgressOnderwijsUtils.Html
             public ContentAlteration(HtmlFragment newContent)
                 => this.newContent = newContent;
 
-            public TSelf ChangeEmpty<TSelf>(TSelf typed)
+            public TSelf AlterEmptyElement<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElement<TSelf>
                 => typed;
 
-            public TSelf ChangeWithContent<TSelf>(TSelf typed)
+            public TSelf AlterElementAllowingContent<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElementAllowingContent<TSelf>
-                => typed.WithContents(newContent);
+                => typed.ReplaceContentWith(newContent);
         }
 
         struct AttributeAlteration : IHtmlElementAlteration
@@ -71,13 +65,13 @@ namespace ProgressOnderwijsUtils.Html
                 this.newAttributes = newAttributes;
             }
 
-            public TSelf ChangeEmpty<TSelf>(TSelf typed)
+            public TSelf AlterEmptyElement<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElement<TSelf>
-                => typed.WithAttributes(newAttributes);
+                => typed.ReplaceAttributesWith(newAttributes);
 
-            public TSelf ChangeWithContent<TSelf>(TSelf typed)
+            public TSelf AlterElementAllowingContent<TSelf>(TSelf typed)
                 where TSelf : struct, IHtmlElementAllowingContent<TSelf>
-                => typed.WithAttributes(newAttributes);
+                => typed.ReplaceAttributesWith(newAttributes);
         }
     }
 }

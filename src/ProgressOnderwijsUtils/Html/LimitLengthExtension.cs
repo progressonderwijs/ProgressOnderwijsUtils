@@ -36,11 +36,11 @@ namespace ProgressOnderwijsUtils.Html
                 }
                 return (HtmlFragment.TextContent(textContent.Substring(0, limitedLength)), length);
             } else if (input.Implementation is IHtmlElementAllowingContent tag) {
-                var emptyTagLength = tag.ReplaceContents(HtmlFragment.Empty).ToStringWithoutDoctype().Length;
+                var emptyTagLength = tag.ReplaceContentWith(HtmlFragment.Empty).ToStringWithoutDoctype().Length;
                 if (emptyTagLength <= length) {
                     length -= emptyTagLength;
-                    var (limitedContent, remainingLenth) = LimitLengthWithStats(tag.Contents(), length);
-                    return (tag.ReplaceContents(limitedContent).AsFragment(), remainingLenth);
+                    var (limitedContent, remainingLenth) = LimitLengthWithStats(tag.GetContent(), length);
+                    return (tag.ReplaceContentWith(limitedContent).AsFragment(), remainingLenth);
                 }
             } else if (input.Implementation is IHtmlElement emptyTag) {
                 var emptyTagLength = emptyTag.ToStringWithoutDoctype().Length;
