@@ -76,6 +76,40 @@ namespace ProgressOnderwijsUtils.Collections
             }
             return output.Pop();
         }
+
+        /// <summary>
+        /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
+        /// mapper is called in a preorder traversal (i.e. a node before its children, and the descendents of the first child before the second).
+        /// </summary>
+        [Pure]
+        public static Tree<T>? Where<T>(this Tree<T> tree, Func<Tree<T>, bool> retainSubTree)
+        {
+            var reconstruct = new Stack<Tree<T>>(16);
+            var todo = new Stack<Tree<T>>(16);
+            todo.Push(tree);
+            while (todo.Count > 0) {
+                var next = todo.Pop();
+                reconstruct.Push(next);
+                var children = next.Children;
+                for (var i = children.Count - 1; i >= 0; i--) {
+                    todo.Push(children[i]);
+                }
+            }
+            var tmp = new List<Tree<T>>();
+            while (reconstruct.Count > 0) {
+                var next = reconstruct.Pop();
+                var kidCount = next.Children.Count;
+                for (var i = 0; i < kidCount; i++) {
+                    var maybeKid = todo.Pop();
+                    if (retainSubTree(maybeKid)) {
+                        tmp.Add(maybeKid);
+                    }
+                }
+                todo.Push(Node(next.NodeValue, tmp.ToArray()));
+                tmp.Clear();
+            }
+            return todo.Pop() is var finalTree && retainSubTree(finalTree) ? finalTree : null;
+        }
     }
 
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
