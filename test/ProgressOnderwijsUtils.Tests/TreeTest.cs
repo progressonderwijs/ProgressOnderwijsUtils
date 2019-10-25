@@ -238,12 +238,13 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void CanWorkWithDeepTreesWithoutStackoverflow()
         {
-            var input = Tree.BuildRecursively(0u, i => i < 100000 ? new[] { i + 1 } : new uint[0]);
-            var output = Tree.BuildRecursively(0L, i => i < 100000 ? new[] { i + 1 } : new long[0]);
+            const int targetHeight = 1000_000;
+            var input = Tree.BuildRecursively(1u, i => i < targetHeight ? new[] { i + 1 } : new uint[0]);
+            var output = Tree.BuildRecursively(1L, i => i < targetHeight ? new[] { i + 1 } : new long[0]);
             var mappedInput = input.Select(i => (long)i);
             var areEqual = mappedInput.Equals(output);
             PAssert.That(() => areEqual, "Deep trees should be selectable and comparable too");
-            PAssert.That(() => input.Height() == 100001);
+            PAssert.That(() => input.Height() == targetHeight);
         }
 
         [Fact]
