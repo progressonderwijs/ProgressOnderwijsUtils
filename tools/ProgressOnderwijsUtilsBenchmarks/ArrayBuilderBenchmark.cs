@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using JetBrains.Annotations;
 using MoreLinq;
+using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
 // ReSharper disable NotAccessedField.Global
 // ReSharper disable UnassignedField.Global
@@ -100,8 +101,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Params(3)]
         public int Threads;
 
-        public int[] Sizes;
-        public T[] Values;
+        public int[]? Sizes;
+        public T[]? Values;
 
         [GlobalSetup]
         public void Setup()
@@ -114,7 +115,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void List()
             => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new List<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -126,7 +127,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder_WithArraySegments()
             => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = ArrayBuilder_WithArraySegments<T>.Create();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -138,7 +139,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder_Inline63ValuesAndSegments()
             => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new ArrayBuilder_Inline63ValuesAndSegments<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -150,7 +151,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder_Inline16ValuesAndSegments()
             => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new ArrayBuilder_Inline16ValuesAndSegments<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -162,7 +163,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder()
             => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new ArrayBuilder<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -174,7 +175,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Benchmark]
         public void ArrayBuilder_Inline32ValuesAndSegments()
             => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new ArrayBuilder_Inline32ValuesAndSegments<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
