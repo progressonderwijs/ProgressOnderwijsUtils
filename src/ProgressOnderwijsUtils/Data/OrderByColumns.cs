@@ -24,7 +24,7 @@ namespace ProgressOnderwijsUtils
         readonly ColumnSort[] sortColumns;
 
         [Pure]
-        public IEnumerable<ColumnSort> Columns
+        public ColumnSort[] Columns
             => sortColumns ?? EmptyOrder;
 
         ColumnSort[] DirectAcessColumns
