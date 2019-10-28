@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -8,7 +7,15 @@ using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using JetBrains.Annotations;
 using MoreLinq;
+using ProgressOnderwijsUtils;
 using ProgressOnderwijsUtils.Collections;
+// ReSharper disable NotAccessedField.Global
+// ReSharper disable UnassignedField.Global
+// ReSharper disable UnusedMember.Global
+
+#pragma warning disable 169
+#pragma warning disable IDE0051 // Remove unused private members
+#pragma warning disable IDE0044 // make readonly
 
 namespace ProgressOnderwijsUtilsBenchmarks
 {
@@ -94,8 +101,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
         [Params(3)]
         public int Threads;
 
-        public int[] Sizes;
-        public T[] Values;
+        public int[]? Sizes;
+        public T[]? Values;
 
         [GlobalSetup]
         public void Setup()
@@ -107,9 +114,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         [Benchmark]
         public void List()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new List<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -117,13 +123,11 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_WithArraySegments()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = ArrayBuilder_WithArraySegments<T>.Create();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -131,13 +135,11 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_Inline63ValuesAndSegments()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new ArrayBuilder_Inline63ValuesAndSegments<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -145,13 +147,11 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_Inline16ValuesAndSegments()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new ArrayBuilder_Inline16ValuesAndSegments<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -159,13 +159,11 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new ArrayBuilder<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -173,13 +171,11 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
 
         [Benchmark]
         public void ArrayBuilder_Inline32ValuesAndSegments()
-        {
-            Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
-                foreach (var size in Sizes) {
+            => Task.WaitAll(Enumerable.Range(0, Threads).Select(__ => Task.Factory.StartNew(() => {
+                foreach (var size in Sizes.AssertNotNull()) {
                     var builder = new ArrayBuilder_Inline32ValuesAndSegments<T>();
                     for (var i = 0; i < size; i++) {
                         builder.Add(default(TFactory).Init(i));
@@ -187,7 +183,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
                     GC.KeepAlive(builder.ToArray());
                 }
             }, TaskCreationOptions.LongRunning)).ToArray());
-        }
     }
 
     public struct ArrayBuilder_WithArraySegments<T>
@@ -244,13 +239,11 @@ namespace ProgressOnderwijsUtilsBenchmarks
         const int InitSize = (1 << InitSize2Pow) - 1;
         int idx, sI;
         T[] current;
-#pragma warning disable 169
         //InitSize total:
         T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20, v21, v22, v23, v24, v25, v26, v27, v28, v29, v30, v31, v32, v33, v34, v35, v36, v37, v38, v39, v40, v41, v42, v43, v44, v45, v46, v47, v48, v49, v50, v51, v52, v53, v54, v55, v56, v57, v58, v59, v60, v61, v62;
 
         //31 - InitSize2Pow total:
         T[] a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24;
-#pragma warning restore 169
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(T item)
         {
@@ -308,13 +301,11 @@ namespace ProgressOnderwijsUtilsBenchmarks
         const int InitSize = 1 << InitSize2Pow;
         int idx, sI;
         T[] current;
-#pragma warning disable 169
         //InitSize total:
         T v00, v01, v02, v03, v04, v05, v06, v07, v08, v09, v10, v11, v12, v13, v14, v15;
 
         //31 - InitSize2Pow total:
         T[] a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11, a12, a13, a14, a15, a16, a17, a18, a19, a20, a21, a22, a23, a24, a25, a26;
-#pragma warning restore 169
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(T item)
         {

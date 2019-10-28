@@ -153,7 +153,7 @@ namespace ProgressOnderwijsUtils
                 + "]";
 
         [Pure]
-        static bool isVowel(char c)
+        static bool IsVowel(char c)
             => c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u' || c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 
         [Pure]
@@ -163,7 +163,7 @@ namespace ProgressOnderwijsUtils
                 return pluralstring.Remove(pluralstring.Length - 1);
             }
             if (pluralstring.EndsWith("en", StringComparison.Ordinal)) {
-                if (pluralstring.Length >= 4 && isVowel(pluralstring[pluralstring.Length - 4]) && (pluralstring.Length < 5 || !isVowel(pluralstring[pluralstring.Length - 5]))) {
+                if (pluralstring.Length >= 4 && IsVowel(pluralstring[pluralstring.Length - 4]) && (pluralstring.Length < 5 || !IsVowel(pluralstring[pluralstring.Length - 5]))) {
                     return pluralstring.Remove(pluralstring.Length - 3) + pluralstring.Substring(pluralstring.Length - 4, 2).ToLowerInvariant();
                 } else if (pluralstring.Length >= 4 && pluralstring[pluralstring.Length - 4] == pluralstring[pluralstring.Length - 3]) {
                     return pluralstring.Remove(pluralstring.Length - 3);
