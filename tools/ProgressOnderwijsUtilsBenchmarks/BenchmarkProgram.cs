@@ -1,4 +1,4 @@
-#nullable disable
+﻿#nullable disable
 using BenchmarkDotNet.Running;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
@@ -10,7 +10,8 @@ namespace ProgressOnderwijsUtilsBenchmarks
         static void Main()
         {
             //BenchmarkRunner.Run<HtmlFragmentBenchmark>();
-            MicroOrmBenchmarkProgram.RunBenchmarks();
+            //MicroOrmBenchmarkProgram.RunBenchmarks();
+            RunTreeBenchmarks();
             //RunArrayBuilderBenchmarks();
         }
 
@@ -25,5 +26,9 @@ namespace ProgressOnderwijsUtilsBenchmarks
                 typeof(SmallStructArrayBuilderBenchmark),
             }).RunAllJoined();
         }
+
+        [UsedImplicitly]
+        static void RunTreeBenchmarks()
+            => BenchmarkRunner.Run<TreeBenchmark>();
     }
 }
