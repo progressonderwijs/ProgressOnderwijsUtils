@@ -1,6 +1,7 @@
-#nullable disable
+﻿#nullable disable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
@@ -10,62 +11,59 @@ namespace ProgressOnderwijsUtils.Collections
         sealed class TreeNodeBuilder
         {
             public T value;
-            public TreeNodeBuilder[] tempKids;
-            public Tree<T> finishedNode;
-
-            public void GenerateOutput()
-            {
-                if (finishedNode != null) {
-                    return;
-                }
-                var finishedKidsNodes = new Tree<T>[tempKids.Length];
-                for (var i = 0; i < finishedKidsNodes.Length; i++) {
-                    finishedKidsNodes[i] = tempKids[i].finishedNode;
-                    if (finishedKidsNodes[i] == null) {
-                        throw new InvalidOperationException("Internal error detected!");
-                    }
-                }
-                finishedNode = Tree.Node(value, finishedKidsNodes);
-                tempKids = null;
-            }
+            public TreeNodeBuilder parent;
+            public int idxInParent;
+            public Tree<T>[] kids;
         }
 
         [Pure]
         public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>> kidLookup)
         {
-            var needsGenerateOutput = new Stack<TreeNodeBuilder>(); //in order of creation; so junctions always before their kids.
-
-            var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
-            needsGenerateOutput.Push(rootBuilder);
-
             var needsKids = new Stack<TreeNodeBuilder>();
+
+            var generatedNodes = 0;
+            var rootBuilder = new TreeNodeBuilder { value = rootNodeValue, };
+            generatedNodes++;
+
             needsKids.Push(rootBuilder);
 
-            while (needsKids.Count > 0) {
+            while (true) {
                 var nodeBuilderThatWantsKids = needsKids.Pop();
                 var kids = kidLookup(nodeBuilderThatWantsKids.value);
                 if (kids != null) { //allow null to represent absence of kids
-                    var tempKidBuilders = new List<TreeNodeBuilder>();
+                    var kidIdx = 0;
                     foreach (var kid in kids) {
-                        var builderForKid = new TreeNodeBuilder { value = kid, };
-                        if (needsGenerateOutput.Count >= 100 * 1000 * 1000) {
+                        var builderForKid = new TreeNodeBuilder { value = kid, idxInParent = kidIdx++, parent = nodeBuilderThatWantsKids };
+                        generatedNodes++;
+
+                        if (generatedNodes >= 10_000_000) {
                             throw new InvalidOperationException("Tree too large (possibly a cycle?)");
                         }
-                        needsGenerateOutput.Push(builderForKid);
                         needsKids.Push(builderForKid);
-                        tempKidBuilders.Add(builderForKid);
                     }
-                    nodeBuilderThatWantsKids.tempKids = tempKidBuilders.ToArray();
-                } else {
-                    nodeBuilderThatWantsKids.tempKids = Array.Empty<TreeNodeBuilder>();
+                    if (kidIdx > 0) {
+                        nodeBuilderThatWantsKids.kids = new Tree<T>[kidIdx];
+                        continue;
+                    }
+                }
+
+                var toGenerate = nodeBuilderThatWantsKids;
+                while (true) {
+                    var finishedNode = Tree.Node(toGenerate.value, toGenerate.kids);
+                    if (toGenerate.idxInParent == 0) {
+                        if (toGenerate.parent == null) {
+                            return finishedNode;
+                        }
+                        Debug.Assert(toGenerate.parent.kids[toGenerate.idxInParent] == null, "has already been generated");
+                        toGenerate.parent.kids[toGenerate.idxInParent] = finishedNode;
+                        toGenerate = toGenerate.parent;
+                    } else {
+                        Debug.Assert(toGenerate.parent.kids[toGenerate.idxInParent] == null, "has already been generated");
+                        toGenerate.parent.kids[toGenerate.idxInParent] = finishedNode;
+                        break;
+                    }
                 }
             }
-
-            while (needsGenerateOutput.Count > 0) {
-                needsGenerateOutput.Pop().GenerateOutput();
-            }
-
-            return rootBuilder.finishedNode;
         }
     }
 }
