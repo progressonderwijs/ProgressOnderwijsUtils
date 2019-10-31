@@ -217,6 +217,27 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void TryWithCleanup_CleanUpHappensAfterComputationFinally()
+        {
+            var finallyReached = false;
+            var wasComputationFinallyReachedBeforeCleanup = false;
+            try {
+                Utils.TryWithCleanup((Func<int>)(() => {
+                        try {
+                            throw new Exception("1337");
+                        } finally {
+                            finallyReached = true;
+                        }
+                    }),
+                    () => wasComputationFinallyReachedBeforeCleanup = finallyReached);
+            } catch {
+                //the pointof this test is to test crash situations!
+            }
+
+            PAssert.That(() => finallyReached && wasComputationFinallyReachedBeforeCleanup);
+        }
+
+        [Fact]
         public void TryWithCleanup_CleansUpOnceWhenComputationAndCleanupFail()
         {
             var cleanupCalled = 0;
