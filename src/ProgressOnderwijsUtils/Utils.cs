@@ -173,10 +173,13 @@ namespace ProgressOnderwijsUtils
                 completedOk = true;
                 cleanup();
                 return retval;
-            } catch (Exception computationEx) when (!completedOk && Catch(cleanup) is Exception cleanupEx) {
-                //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
-                //That means a catch-rethrow should only occur when we know both fail.
-                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+            } catch (Exception computationEx) when (!completedOk) {
+                if (Catch(cleanup) is Exception cleanupEx) { //if because when f*cks up the execution order
+                    //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
+                    //That means a catch-rethrow should only occur when we know both fail.
+                    throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+                }
+                throw new AggregateException("Computation crashed", computationEx);
             }
         }
 
