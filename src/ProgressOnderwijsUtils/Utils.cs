@@ -174,9 +174,9 @@ namespace ProgressOnderwijsUtils
                 cleanup();
                 return retval;
             } catch (Exception computationEx) when (!completedOk) {
-                if (Catch(cleanup) is Exception cleanupEx) { //if because when f*cks up the execution order
-                    //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
-                    //That means a catch-rethrow should only occur when we know both fail.
+                //Catch(cleanup) is checked with a if and not in the when clause because
+                //a function in the when clause causes the exection order to change
+                if (Catch(cleanup) is Exception cleanupEx) {
                     throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
                 }
                 throw new AggregateException("Computation crashed", computationEx);
