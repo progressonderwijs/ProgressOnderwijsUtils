@@ -174,7 +174,7 @@ namespace ProgressOnderwijsUtils
                 cleanup();
                 return retval;
             } catch (Exception computationEx) when (!completedOk) {
-                //Catch(cleanup) is checked with a if and not in the when clause because
+                //Catch(cleanup) is checked with an if and not in the when clause because
                 //a function in the when clause causes the exection order to change
                 if (Catch(cleanup) is Exception cleanupEx) {
                     throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
