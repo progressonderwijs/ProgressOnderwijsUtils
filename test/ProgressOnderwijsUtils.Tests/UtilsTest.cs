@@ -211,9 +211,30 @@ namespace ProgressOnderwijsUtils.Tests
 
             var ex = Assert.ThrowsAny<Exception>(() => value = Utils.TryWithCleanup(buggyComputation, cleanup));
 
-            PAssert.That(() => ex.Message == "1337" && ex.TargetSite == buggyComputation.Method);
+            PAssert.That(() => ex.Message == "1337");
             PAssert.That(() => value == 0);
             PAssert.That(() => cleanupCalled == 1);
+        }
+
+        [Fact]
+        public void TryWithCleanup_CleanUpHappensAfterComputationFinally()
+        {
+            var finallyReached = false;
+            var wasComputationFinallyReachedBeforeCleanup = false;
+            try {
+                Utils.TryWithCleanup((Func<int>)(() => {
+                        try {
+                            throw new Exception("1337");
+                        } finally {
+                            finallyReached = true;
+                        }
+                    }),
+                    () => wasComputationFinallyReachedBeforeCleanup = finallyReached);
+            } catch {
+                //the pointof this test is to test crash situations!
+            }
+
+            PAssert.That(() => finallyReached && wasComputationFinallyReachedBeforeCleanup);
         }
 
         [Fact]

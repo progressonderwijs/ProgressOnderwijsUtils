@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
+using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
@@ -172,10 +173,13 @@ namespace ProgressOnderwijsUtils
                 completedOk = true;
                 cleanup();
                 return retval;
-            } catch (Exception computationEx) when (!completedOk && Catch(cleanup) is Exception cleanupEx) {
-                //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
-                //That means a catch-rethrow should only occur when we know both fail.
-                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+            } catch (Exception computationEx) when (!completedOk) {
+                //Catch(cleanup) is checked with an if and not in the when clause because
+                //a function in the when clause causes the exection order to change
+                if (Catch(cleanup) is Exception cleanupEx) {
+                    throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+                }
+                throw;
             }
         }
 
@@ -184,18 +188,7 @@ namespace ProgressOnderwijsUtils
         /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
         /// </summary>
         public static void TryWithCleanup(Action computation, Action cleanup)
-        {
-            var completedOk = false;
-            try {
-                computation();
-                completedOk = true;
-                cleanup();
-            } catch (Exception computationEx) when (!completedOk && Catch(cleanup) is Exception cleanupEx) {
-                //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
-                //That means a catch-rethrow should only occur when we know both fail.
-                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
-            }
-        }
+            => TryWithCleanup(computation.ToUnitReturningFunc(), cleanup);
 
         static Exception? Catch(Action cleanup)
         {
