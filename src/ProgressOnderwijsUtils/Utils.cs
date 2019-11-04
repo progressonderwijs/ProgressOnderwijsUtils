@@ -179,7 +179,7 @@ namespace ProgressOnderwijsUtils
                 if (Catch(cleanup) is Exception cleanupEx) {
                     throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
                 }
-                throw new AggregateException("Computation crashed", computationEx);
+                throw;
             }
         }
 

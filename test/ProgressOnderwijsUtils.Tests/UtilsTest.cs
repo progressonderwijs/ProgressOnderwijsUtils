@@ -211,7 +211,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             var ex = Assert.ThrowsAny<Exception>(() => value = Utils.TryWithCleanup(buggyComputation, cleanup));
 
-            PAssert.That(() => ex.Message == "Computation crashed (1337)");
+            PAssert.That(() => ex.Message == "1337");
             PAssert.That(() => value == 0);
             PAssert.That(() => cleanupCalled == 1);
         }
