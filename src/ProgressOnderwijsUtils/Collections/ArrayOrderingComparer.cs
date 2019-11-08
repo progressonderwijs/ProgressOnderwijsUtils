@@ -2,7 +2,7 @@
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    public sealed class ArrayOrderingComparer<T> : IComparer<T[]>
+    public sealed class ArrayOrderingComparer<T> : IComparer<T[]?>
     {
         public static readonly ArrayOrderingComparer<T> Default = new ArrayOrderingComparer<T>(Comparer<T>.Default);
         readonly IComparer<T> underlying;

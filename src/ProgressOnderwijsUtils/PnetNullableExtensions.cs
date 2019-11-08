@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -18,10 +18,12 @@ namespace ProgressOnderwijsUtils
             where TVal : struct
             => values.FirstOrDefault(test);
 
+        [return: MaybeNull]
         public static TVal FirstOrNull<TVal>(this IEnumerable<TVal> values)
             where TVal : class?
             => values.FirstOrDefault();
 
+        [return: MaybeNull]
         public static TVal FirstOrNull<TVal>(this IEnumerable<TVal> values, Func<TVal, bool> test)
             where TVal : class?
             => values.FirstOrDefault(test);
@@ -47,7 +49,7 @@ namespace ProgressOnderwijsUtils
             where TVal : struct
             => values.SingleOrDefault();
 
-        [CanBeNull]
+        [return: MaybeNull]
         public static TVal SingleOrNull<TVal>(this IEnumerable<TVal> values)
             where TVal : class?
             => values.SingleOrDefault();
@@ -57,6 +59,7 @@ namespace ProgressOnderwijsUtils
             where TVal : struct
             => values.SingleOrDefault(test);
 
+        [return: MaybeNull]
         public static TVal SingleOrNull<TVal>(this IEnumerable<TVal> values, Func<TVal, bool> test)
             where TVal : class?
             => values.SingleOrDefault(test);
@@ -86,11 +89,13 @@ namespace ProgressOnderwijsUtils
             where TVal : struct
             => values.FirstOrDefault(test);
 
+        [return: MaybeNull]
         [UsefulToKeep("library function")]
         public static TVal FirstOrNull<TVal>(this IQueryable<TVal> values)
             where TVal : class?
             => values.FirstOrDefault();
 
+        [return: MaybeNull]
         [UsefulToKeep("library function")]
         public static TVal FirstOrNull<TVal>(this IQueryable<TVal> values, Expression<Func<TVal, bool>> test)
             where TVal : class?
@@ -118,6 +123,7 @@ namespace ProgressOnderwijsUtils
             where TVal : struct
             => values.SingleOrDefault();
 
+        [return: MaybeNull]
         [UsefulToKeep("library function")]
         public static TVal SingleOrNull<TVal>(this IQueryable<TVal> values)
             where TVal : class?
@@ -128,6 +134,7 @@ namespace ProgressOnderwijsUtils
             where TVal : struct
             => values.SingleOrDefault(test);
 
+        [return: MaybeNull]
         [UsefulToKeep("library function")]
         public static TVal SingleOrNull<TVal>(this IQueryable<TVal> values, Expression<Func<TVal, bool>> test)
             where TVal : class?
