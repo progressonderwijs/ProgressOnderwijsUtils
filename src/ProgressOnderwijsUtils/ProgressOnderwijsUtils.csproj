@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>52.1.1</Version>
-    <PackageReleaseNotes>Fix execution order with crash and cleanup</PackageReleaseNotes>
+    <Version>52.2.1</Version>
+    <PackageReleaseNotes>Added ToGroupedDictionary() overload with key comparer.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>

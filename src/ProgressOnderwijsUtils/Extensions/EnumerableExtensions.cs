@@ -179,8 +179,19 @@ namespace ProgressOnderwijsUtils
             Func<TKey, IEnumerable<TElem>, TValue> groupMap
         )
             where TKey : notnull
+            => list.ToGroupedDictionary(keyLookup, groupMap, EqualityComparer<TKey>.Default);
+
+        [NotNull]
+        [Pure]
+        public static Dictionary<TKey, TValue> ToGroupedDictionary<TElem, TKey, TValue>(
+            [NotNull] this IEnumerable<TElem> list,
+            Func<TElem, TKey> keyLookup,
+            Func<TKey, IEnumerable<TElem>, TValue> groupMap,
+            IEqualityComparer<TKey> comparer
+        )
+            where TKey : notnull
         {
-            var groups = new Dictionary<TKey, List<TElem>>();
+            var groups = new Dictionary<TKey, List<TElem>>(comparer);
             foreach (var elem in list) {
                 var key = keyLookup(elem);
                 if (!groups.TryGetValue(key, out var group)) {
@@ -188,7 +199,7 @@ namespace ProgressOnderwijsUtils
                 }
                 group.Add(elem);
             }
-            var retval = new Dictionary<TKey, TValue>(groups.Count);
+            var retval = new Dictionary<TKey, TValue>(groups.Count, comparer);
             foreach (var group in groups) {
                 retval.Add(group.Key, groupMap(group.Key, group.Value));
             }
