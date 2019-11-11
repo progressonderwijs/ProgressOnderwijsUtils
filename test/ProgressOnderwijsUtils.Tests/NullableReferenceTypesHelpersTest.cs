@@ -8,10 +8,17 @@ namespace ProgressOnderwijsUtils.Tests
     public sealed class NullableReferenceTypesHelpersTest
     {
         [Fact]
-        public void AssertNotNull_throws_when_argument_is_null()
+        public void AssertNotNull_class_throws_when_argument_is_null()
         {
             var exception = Assert.ThrowsAny<Exception>(() => default(StringBuilder).AssertNotNull());
             PAssert.That(() => exception.Message.Contains(nameof(StringBuilder)));
+        }
+
+        [Fact]
+        public void AssertNotNull_struct_throws_when_argument_is_null()
+        {
+            var exception = Assert.ThrowsAny<Exception>(() => default(DayOfWeek?).AssertNotNull());
+            PAssert.That(() => exception.Message.Contains(nameof(DayOfWeek)));
         }
 
         [Fact]

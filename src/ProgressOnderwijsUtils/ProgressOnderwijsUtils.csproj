@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>52.2.2</Version>
-    <PackageReleaseNotes>Fix some nullability annotations</PackageReleaseNotes>
+    <Version>52.3.0</Version>
+    <PackageReleaseNotes>AssertNotNull for nullable value types</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
