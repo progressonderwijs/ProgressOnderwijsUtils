@@ -173,5 +173,29 @@ namespace ProgressOnderwijsUtils.Tests
             Assert.DoesNotContain("column", ex.Message);
             Assert.Contains("Subquery returned more than 1 value", ex.InnerException.Message);
         }
+
+        [Fact]
+        public void PocoSupportsCustomObject_ReadPlain()
+        {
+            PAssert.That(() => new CustomBla("aap").AsString == "aap");
+            var target = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
+
+            var fromDb = SQL($"select Bla2 from #MyTable order by Id").ReadPlain<CustomBla>(Connection);
+
+            PAssert.That(() => fromDb.Select(db => db.AsString).SequenceEqual(SampleObjects.Select(obj => obj.Bla2)));
+        }
+
+        [Fact]
+        public void PocoSupportsCustomObject_ReadScalar()
+        {
+            PAssert.That(() => new CustomBla("aap").AsString == "aap");
+            var target = CreateTempTable();
+            SampleObjects.BulkCopyToSqlServer(Connection, target);
+
+            var fromDb = SQL($"select top(1) Bla2 from #MyTable order by Id").ReadScalar<CustomBla>(Connection);
+
+            PAssert.That(() => fromDb.AsString == SampleObjects.First().Bla2);
+        }
     }
 }

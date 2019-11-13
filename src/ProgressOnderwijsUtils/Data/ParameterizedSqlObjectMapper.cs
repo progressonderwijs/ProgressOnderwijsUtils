@@ -433,6 +433,9 @@ namespace ProgressOnderwijsUtils
                 static Type type
                     => typeof(T);
 
+                static Type UnderlyingType
+                    => (PocoPropertyConverter.GetOrNull(type) is PocoPropertyConverter converter ? converter.DbType : type).GetNonNullableUnderlyingType();
+
                 static PlainImpl()
                 {
                     VerifyTypeValidity();
@@ -443,7 +446,7 @@ namespace ProgressOnderwijsUtils
 
                 static void VerifyTypeValidity()
                 {
-                    if (!IsSupportedBasicType(type)) {
+                    if (!IsSupportedType(type)) {
                         throw new ArgumentException(
                             FriendlyName + " cannot be auto loaded as plain data since it isn't a basic type ("
                             + getterMethodsByType.Keys.Select(ObjectToCode.ToCSharpFriendlyTypeName).JoinStrings(", ") + ")!");
@@ -457,7 +460,7 @@ namespace ProgressOnderwijsUtils
                     }
                     if (!Enumerable.Range(0, reader.FieldCount)
                         .Select(reader.GetFieldType)
-                        .SequenceEqual(new[] { typeof(T).GetNonNullableUnderlyingType() })) {
+                        .SequenceEqual(new[] { UnderlyingType })) {
                         throw new InvalidOperationException(
                             "Cannot unpack DbDataReader into type " + FriendlyName + ":\n"
                             + Enumerable.Range(0, reader.FieldCount)
