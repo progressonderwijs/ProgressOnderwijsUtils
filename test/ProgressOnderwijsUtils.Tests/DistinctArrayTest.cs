@@ -90,6 +90,41 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void EqualityIsByReferenceNotValue()
+        {
+            PAssert.That(() => Enumerable.Range(1, 4).ToDistinctArray() != Enumerable.Range(1, 4).ToDistinctArray());
+            var existingArr = new[] { "a", "b", "c" };
+            var existingDistinctArr = existingArr.ToDistinctArrayFromDistinct_Unchecked();
+            var aliasedDistinctArr = existingArr.ToDistinctArrayFromDistinct_Unchecked();
+            var nonAliasedCopy = existingArr.ToDistinctArray();
+
+            PAssert.That(() => existingDistinctArr == aliasedDistinctArr);
+            PAssert.That(() => !(existingDistinctArr != aliasedDistinctArr));
+            PAssert.That(() => existingDistinctArr.Equals(aliasedDistinctArr));
+            PAssert.That(() => existingDistinctArr.GetHashCode() == aliasedDistinctArr.GetHashCode());
+
+            PAssert.That(() => existingDistinctArr != nonAliasedCopy);
+            PAssert.That(() => !(existingDistinctArr == nonAliasedCopy));
+            PAssert.That(() => !existingDistinctArr.Equals(nonAliasedCopy));
+            PAssert.That(() => existingDistinctArr.GetHashCode() != nonAliasedCopy.GetHashCode());
+
+            var defaultValue = default(DistinctArray<string>);
+            var explicitlyEmpty = new string[0].ToDistinctArray();
+            PAssert.That(() => defaultValue == explicitlyEmpty);
+        }
+
+        [Fact]
+        public void EmptyCreatedInDifferentWaysAreEqual()
+        {
+            var defaultValue = default(DistinctArray<string>);
+            var explicitlyEmpty = new string[0].ToDistinctArray();
+            PAssert.That(() => defaultValue == explicitlyEmpty);
+            PAssert.That(() => defaultValue.Equals(explicitlyEmpty));
+            PAssert.That(() => defaultValue.GetHashCode() == explicitlyEmpty.GetHashCode());
+            PAssert.That(() => defaultValue.UnderlyingArrayThatShouldNeverBeMutated() == explicitlyEmpty.UnderlyingArrayThatShouldNeverBeMutated());
+        }
+
+        [Fact]
         public void OverloadForSetsWorks()
         {
             var hashSet = new[] { 1, 2, 4, 5 }.ToSet();

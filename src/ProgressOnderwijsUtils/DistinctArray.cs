@@ -73,6 +73,19 @@ namespace ProgressOnderwijsUtils
         public T this[int index]
             => UnderlyingArrayThatShouldNeverBeMutated()[index];
 
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+            => obj is DistinctArray<T> other && this == other;
+
+        public override int GetHashCode()
+            => UnderlyingArrayThatShouldNeverBeMutated().GetHashCode();
+
+        public static bool operator ==(DistinctArray<T> a, DistinctArray<T> b)
+            => a.UnderlyingArrayThatShouldNeverBeMutated() == b.UnderlyingArrayThatShouldNeverBeMutated();
+
+        public static bool operator !=(DistinctArray<T> a, DistinctArray<T> b)
+            => !(a == b);
+
         public Enumerator GetEnumerator()
             => new Enumerator(UnderlyingArrayThatShouldNeverBeMutated());
 
