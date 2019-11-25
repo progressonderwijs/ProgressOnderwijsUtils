@@ -263,7 +263,6 @@ namespace ProgressOnderwijsUtils
         /// </summary>
         public static string ToFixedPointString(double number, CultureInfo culture, int precision)
         {
-            //TODO:add tests
             var fI = culture.NumberFormat;
             var str = new char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
             var idx = 0;
