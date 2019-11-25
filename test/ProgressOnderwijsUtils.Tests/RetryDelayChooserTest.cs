@@ -7,7 +7,7 @@ namespace ProgressOnderwijsUtils.Tests
     public sealed class RetryDelayChooserTest
     {
         [Fact]
-        public void NoErrorRateMeansFastRetry()
+        public void AlmostNoErrorsMeansRetryInMilliseconds()
         {
             var delay = new RetryDelayChooser(TimeSpan.FromMinutes(5)).ErrorsPerDayToRetryDelay(1.0);
             PAssert.That(() => delay >= TimeSpan.Zero && delay < TimeSpan.FromMilliseconds(16.0));
@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void OneErrorIsBla()
+        public void ImmediatelyAfterJustOneErrorTheDelayIsStillRelativelySmall()
         {
             var constantFailureDelayTarget = TimeSpan.FromMinutes(1);
             var delayChooser = new RetryDelayChooser(constantFailureDelayTarget);
