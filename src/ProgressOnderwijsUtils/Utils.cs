@@ -48,11 +48,11 @@ namespace ProgressOnderwijsUtils
     public static class Utils
     {
         /// <summary>
-        /// Compares two floating point number for approximate equality (up to a 1 part per 2^32 deviation)
+        /// Compares two floating point number for approximate equality (up to a 1 part per 2^13 deviation, i.e. 4 significant digits)
         /// </summary>
         public static bool FuzzyEquals(double x, double y)
         {
-            const double relativeEpsilon = 1.0 / (1ul << 32);
+            const double relativeEpsilon = 1.0 / (1ul << 13);
 
             var delta = Math.Abs(x - y);
             var magnitude = Math.Abs(x) + Math.Abs(y);
