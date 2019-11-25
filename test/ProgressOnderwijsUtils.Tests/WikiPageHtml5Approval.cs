@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Xunit;
+﻿using Xunit;
 using ProgressOnderwijsUtils.Html;
 
 namespace ProgressOnderwijsUtils.Tests

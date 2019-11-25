@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;

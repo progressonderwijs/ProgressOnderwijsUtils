@@ -115,7 +115,7 @@ namespace ProgressOnderwijsUtils
             public bool MoveNext()
             {
                 if (idx + 1 < items.Length) {
-                    idx = idx + 1;
+                    idx += 1;
                     return true;
                 }
                 return false;

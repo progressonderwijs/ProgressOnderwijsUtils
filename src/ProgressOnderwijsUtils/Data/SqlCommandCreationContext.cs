@@ -1,8 +1,4 @@
-﻿using System;
-using Microsoft.Data.SqlClient;
-using JetBrains.Annotations;
-
-namespace ProgressOnderwijsUtils
+﻿namespace ProgressOnderwijsUtils
 {
     public interface IAttachedToTracer
     {
