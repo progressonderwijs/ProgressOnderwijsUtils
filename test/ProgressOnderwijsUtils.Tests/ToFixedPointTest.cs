@@ -32,7 +32,8 @@ namespace ProgressOnderwijsUtils.Tests
             }
         }
 
-        string SimpleToFixedPointString(double x, CultureInfo culture, int precision)
+        static string SimpleToFixedPointString(double x, CultureInfo culture, int precision)
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
             => (Math.Round(x, precision, MidpointRounding.AwayFromZero) is var rounded && rounded != 0 ? rounded : 0).ToString("f" + precision, culture);
 
         [Fact]
