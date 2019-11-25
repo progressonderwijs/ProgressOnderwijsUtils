@@ -96,8 +96,8 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => tree1.GetHashCode() == tree3.GetHashCode());
             PAssert.That(() => tree2.GetHashCode() != tree3.GetHashCode());
 
-            PAssert.That(() => comparer.GetHashCode(tree1) == comparer.GetHashCode(tree2));
-            PAssert.That(() => comparer.GetHashCode(tree1) != comparer.GetHashCode(tree4));
+            PAssert.That(() => comparer.GetHashCode(tree1!) == comparer.GetHashCode(tree2!));
+            PAssert.That(() => comparer.GetHashCode(tree1!) != comparer.GetHashCode(tree4!));
         }
 
         [Fact]
