@@ -111,6 +111,7 @@ namespace ProgressOnderwijsUtils.Tests
                 currentMoment += TimeSpan.FromSeconds(nextDelay.TotalSeconds / parallelFailingProcesses);
             } while (!Utils.FuzzyEquals(nextDelay.TotalSeconds, lastDelay.TotalSeconds));
 
+            //then do a few more rounds for better accuracy.
             for (var i = 0; i < errorCountUntilConvergence; i++) {
                 nextDelay = retryDelayChooser.RegisterErrorAndGetDelay(currentMoment);
                 currentMoment += TimeSpan.FromSeconds(nextDelay.TotalSeconds / parallelFailingProcesses);
