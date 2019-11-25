@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Reflection;
-using FastExpressionCompiler;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
@@ -45,16 +44,16 @@ namespace ProgressOnderwijsUtils
                 => throw new NotImplementedException();
         }
 
-        static readonly ConcurrentDictionary<Type, PocoPropertyConverter> propertyConverterCache = new ConcurrentDictionary<Type, PocoPropertyConverter>();
+        static readonly ConcurrentDictionary<Type, PocoPropertyConverter?> propertyConverterCache = new ConcurrentDictionary<Type, PocoPropertyConverter?>();
 
-        static readonly Func<Type, PocoPropertyConverter> cachedFactoryDelegate = type =>
+        static readonly Func<Type, PocoPropertyConverter?> cachedFactoryDelegate = type =>
             type.GetNonNullableUnderlyingType()
                 .GetInterfaces()
                 .Where(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(IPocoConvertibleProperty<,,>))
                 .Select(i => new PocoPropertyConverter(i))
                 .SingleOrNull();
 
-        public static PocoPropertyConverter GetOrNull(Type propertyType)
+        public static PocoPropertyConverter? GetOrNull(Type propertyType)
             => propertyConverterCache.GetOrAdd(propertyType, cachedFactoryDelegate);
     }
 }

@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using static ProgressOnderwijsUtils.SafeSql;
 
 // ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils

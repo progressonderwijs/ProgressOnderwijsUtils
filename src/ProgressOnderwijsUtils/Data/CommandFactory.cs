@@ -9,7 +9,6 @@ using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils

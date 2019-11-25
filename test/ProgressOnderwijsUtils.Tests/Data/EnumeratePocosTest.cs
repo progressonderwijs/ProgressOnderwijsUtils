@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;

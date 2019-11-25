@@ -44,7 +44,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         [NotNull]
         [Pure]
-        public static IEqualityComparer<Tree<T>> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
+        public static IEqualityComparer<Tree<T>?> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
             => new Tree<T>.Comparer(valueComparer);
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         public static readonly Comparer DefaultComparer = new Comparer(EqualityComparer<T>.Default);
 
-        public sealed class Comparer : IEqualityComparer<Tree<T>>
+        public sealed class Comparer : IEqualityComparer<Tree<T>?>
         {
             static readonly int typeHash = typeof(Tree<T>).GetHashCode();
             readonly IEqualityComparer<T> ValueComparer;

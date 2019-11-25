@@ -8,7 +8,6 @@ using System.Data.SQLite;
 using System.Data.SqlTypes;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
-using ProgressOnderwijsUtils;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
