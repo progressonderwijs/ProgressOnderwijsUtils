@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -38,7 +39,7 @@ namespace ProgressOnderwijsUtils
     }
 
     [Serializable]
-    public struct DistinctArray<T> : IReadOnlyList<T>
+    public struct DistinctArray<T> : IReadOnlyList<T>, IEquatable<DistinctArray<T>>
     {
         public static DistinctArray<T> Empty
             => new DistinctArray<T>(Array.Empty<T>());
@@ -63,7 +64,6 @@ namespace ProgressOnderwijsUtils
         DistinctArray(T[] items)
             => this.items = items;
 
-        [NotNull]
         public T[] UnderlyingArrayThatShouldNeverBeMutated()
             => items ?? Array.Empty<T>();
 
@@ -73,15 +73,18 @@ namespace ProgressOnderwijsUtils
         public T this[int index]
             => UnderlyingArrayThatShouldNeverBeMutated()[index];
 
+        public bool Equals(DistinctArray<T> other)
+            => UnderlyingArrayThatShouldNeverBeMutated() == other.UnderlyingArrayThatShouldNeverBeMutated();
+
         /// <inheritdoc />
         public override bool Equals(object? obj)
-            => obj is DistinctArray<T> other && this == other;
+            => obj is DistinctArray<T> other && Equals(other);
 
         public override int GetHashCode()
             => UnderlyingArrayThatShouldNeverBeMutated().GetHashCode();
 
         public static bool operator ==(DistinctArray<T> a, DistinctArray<T> b)
-            => a.UnderlyingArrayThatShouldNeverBeMutated() == b.UnderlyingArrayThatShouldNeverBeMutated();
+            => a.Equals(b);
 
         public static bool operator !=(DistinctArray<T> a, DistinctArray<T> b)
             => !(a == b);
