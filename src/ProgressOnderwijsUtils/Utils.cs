@@ -270,7 +270,7 @@ namespace ProgressOnderwijsUtils
                 number = -number;
             }
 
-            ulong mult = 1;
+            var mult = 1ul;
             for (var i = 0; i < precision; i++) {
                 mult *= 10;
             }
