@@ -11,40 +11,6 @@ using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils
 {
-    public static class ErrorUtils
-    {
-        // ReSharper disable once FunctionRecursiveOnAllPaths
-        // ReSharper disable once UnusedParameter.Global
-        public static string TestErrorStackOverflow(int rounds)
-            //This is intended for testing error-handling in case of dramatic errors.
-            => TestErrorStackOverflow(rounds + 1);
-
-        public static void TestErrorOutOfMemory()
-        {
-            // ReSharper disable once CollectionNeverQueried.Local
-            var memorySlurper = new List<byte[]>();
-            for (long i = 0; i < long.MaxValue; i++) { //no way any machine has near 2^70 bytes of RAM - a zettabyte! no way, ever. ;-)
-                memorySlurper.Add(
-                    Encoding.UTF8.GetBytes(
-                        @"This is a simply string which is repeatedly put in memory to test the Out Of Memory condition.  It's encoded to make sure the program really touches the data and that therefore the OS really needs to allocate the memory, and can't just 'pretend'."));
-            }
-        }
-
-        public static void TestErrorNormalException()
-            => throw new ApplicationException("This is a test exception intended to test fault-tolerance.  User's shouldn't see it, of course!");
-    }
-
-    public static class DisposableExtensions
-    {
-        public static T Using<TDisposable, T>(this TDisposable disposable, Func<TDisposable, T> func)
-            where TDisposable : IDisposable
-        {
-            using (disposable) {
-                return func(disposable);
-            }
-        }
-    }
-
     public static class Utils
     {
         /// <summary>
@@ -62,15 +28,6 @@ namespace ProgressOnderwijsUtils
 
         public static Lazy<T> Lazy<T>(Func<T> factory)
             => new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
-
-        public static bool ElfProef(int getal)
-        {
-            var res = 0;
-            for (var i = 1; getal != 0; getal /= 10, ++i) {
-                res += i * (getal % 10);
-            }
-            return res != 0 && res % 11 == 0;
-        }
 
         /// <summary>
         /// Uses the sieve of erasthenos
