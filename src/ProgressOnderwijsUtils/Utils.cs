@@ -265,7 +265,6 @@ namespace ProgressOnderwijsUtils
         {
             var fI = culture.NumberFormat;
             Span<char> str = stackalloc char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
-            var idx = 0;
             var isNeg = number < 0;
             if (isNeg) {
                 number = -number;
@@ -289,6 +288,7 @@ namespace ProgressOnderwijsUtils
 
             isNeg = isNeg && x > 0;
 
+            var idx = 0;
             if (precision > 0) {
                 do {
                     var tmp = x;
