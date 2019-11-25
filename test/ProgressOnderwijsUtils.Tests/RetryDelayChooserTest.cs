@@ -27,11 +27,11 @@ namespace ProgressOnderwijsUtils.Tests
             var moment = new DateTime(1999, 1, 1).ToUniversalTime(); //arbitrary
             for (var i = 0; i < 1000; i++) {
                 delayChooser.RegisterErrorAt(moment);
-                moment = moment.AddMinutes(30);
+                moment = moment.AddHours(1);
             }
             var delay = delayChooser.RetryDelayAt(moment);
-            //so now we've had 30 errors a day for a few days
-            PAssert.That(() => Utils.FuzzyEquals(delay.TotalMinutes, 0.96605));
+            //so now we've had 24 errors a day for a few days
+            PAssert.That(() => Utils.FuzzyEquals(delay.TotalMinutes, 0.2171));
         }
 
         [Fact]
