@@ -63,15 +63,6 @@ namespace ProgressOnderwijsUtils
         public static Lazy<T> Lazy<T>(Func<T> factory)
             => new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
 
-        public static bool ElfProef(int getal)
-        {
-            var res = 0;
-            for (var i = 1; getal != 0; getal /= 10, ++i) {
-                res += i * (getal % 10);
-            }
-            return res != 0 && res % 11 == 0;
-        }
-
         /// <summary>
         /// Uses the sieve of erasthenos
         /// </summary>
