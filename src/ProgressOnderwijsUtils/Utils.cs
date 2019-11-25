@@ -266,20 +266,18 @@ namespace ProgressOnderwijsUtils
             var fI = culture.NumberFormat;
             Span<char> str = stackalloc char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
             var isNeg = number < 0;
-            if (isNeg) {
-                number = -number;
-            }
+            var absNumber = isNeg ? -number : number;
 
             var mult = 1ul;
             for (var i = 0; i < precision; i++) {
                 mult *= 10;
             }
-            var rounded = number * mult + 0.5;
+            var rounded = absNumber * mult + 0.5;
             if (!(rounded <= ulong.MaxValue - 1024)) {
-                if (double.IsNaN(number)) {
+                if (double.IsNaN(absNumber)) {
                     return fI.NaNSymbol;
                 }
-                if (double.IsInfinity(number)) {
+                if (double.IsInfinity(absNumber)) {
                     return isNeg ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
                 }
                 return number.ToString("f" + precision, culture);
