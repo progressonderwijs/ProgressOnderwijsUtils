@@ -264,7 +264,7 @@ namespace ProgressOnderwijsUtils
         public static string ToFixedPointString(double number, CultureInfo culture, int precision)
         {
             var fI = culture.NumberFormat;
-            var str = new char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
+            Span<char> str = stackalloc char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
             var idx = 0;
             var isNeg = number < 0;
             if (isNeg) {
@@ -310,7 +310,7 @@ namespace ProgressOnderwijsUtils
                 str[i] = str[j];
                 str[j] = tmp;
             }
-            return new string(str, 0, idx);
+            return new string(str.Slice(0, idx));
         }
 
         /// <summary>
