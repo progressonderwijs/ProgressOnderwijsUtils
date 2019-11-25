@@ -221,31 +221,27 @@ namespace ProgressOnderwijsUtils
         public static string ToFixedPointString(double number, CultureInfo culture, int precision)
         {
             var fI = culture.NumberFormat;
-            var str = new char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
-            var idx = 0;
-            var isNeg = number < 0;
-            if (isNeg) {
-                number = -number;
-            }
+            Span<char> str = stackalloc char[32]; //64-bit:20 digits, leaves 12 for ridiculous separators.
 
-            ulong mult = 1;
+            var mult = 1ul;
             for (var i = 0; i < precision; i++) {
                 mult *= 10;
             }
-            var rounded = number * mult + 0.5;
+            var rounded = Math.Abs(number) * mult + 0.5;
             if (!(rounded <= ulong.MaxValue - 1024)) {
                 if (double.IsNaN(number)) {
                     return fI.NaNSymbol;
                 }
                 if (double.IsInfinity(number)) {
-                    return isNeg ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
+                    return number < 0 ? fI.NegativeInfinitySymbol : fI.PositiveInfinitySymbol;
                 }
                 return number.ToString("f" + precision, culture);
             }
             var x = (ulong)rounded;
 
-            isNeg = isNeg && x > 0;
+            var isNeg = x > 0 && number < 0;
 
+            var idx = 0;
             if (precision > 0) {
                 do {
                     var tmp = x;
@@ -267,7 +263,7 @@ namespace ProgressOnderwijsUtils
                 str[i] = str[j];
                 str[j] = tmp;
             }
-            return new string(str, 0, idx);
+            return new string(str.Slice(0, idx));
         }
 
         /// <summary>
@@ -353,6 +349,6 @@ namespace ProgressOnderwijsUtils
             => equals(x, y);
 
         public int GetHashCode([DisallowNull] T obj)
-            => hashCode == null ? obj!/*Not sure why necessary, DisallowNull should prevent nulls.*/.GetHashCode() : hashCode(obj);
+            => hashCode == null ? obj! /*Not sure why necessary, DisallowNull should prevent nulls.*/.GetHashCode() : hashCode(obj);
     }
 }
