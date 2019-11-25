@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>52.3.1</Version>
-    <PackageReleaseNotes>Also support ReadPlain&lt;T&gt; for IPocoConvertibleProperty's.</PackageReleaseNotes>
+    <Version>52.4.1</Version>
+    <PackageReleaseNotes>Allow reference-based equality for DistinctArray.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
