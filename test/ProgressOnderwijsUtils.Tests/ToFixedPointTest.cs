@@ -22,8 +22,8 @@ namespace ProgressOnderwijsUtils.Tests
                             for (var precision = 0; precision < 4; precision++) {
                                 var x = n * scale;
 
-                                if (Utils.ToFixedPointString(x, culture, precision) != x.ToString("f" + precision, culture)) {
-                                    PAssert.That(() => Utils.ToFixedPointString(n * scale, culture, precision) == x.ToString("f" + precision, culture));
+                                if (Utils.ToFixedPointString(x, culture, precision) != SimpleToFixedPointString(x, culture, precision)) {
+                                    PAssert.That(() => Utils.ToFixedPointString(x, culture, precision) == SimpleToFixedPointString(x, culture, precision));
                                 }
                             }
                         }
@@ -31,6 +31,9 @@ namespace ProgressOnderwijsUtils.Tests
                 }
             }
         }
+
+        string SimpleToFixedPointString(double x, CultureInfo culture, int precision)
+            => (Math.Round(x, precision, MidpointRounding.AwayFromZero) is var rounded && rounded != 0 ? rounded : 0).ToString("f" + precision, culture);
 
         [Fact]
         public void FixedPointOmitsMinusForZero()
