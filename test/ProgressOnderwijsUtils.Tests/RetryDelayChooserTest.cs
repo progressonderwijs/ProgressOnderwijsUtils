@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Tests
         public void AlmostNoErrorsMeansRetryInMilliseconds()
         {
             var delay = new RetryDelayChooser(TimeSpan.FromMinutes(5)).ErrorsPerDayToRetryDelay(1.0);
-            PAssert.That(() => Utils.FuzzyEquals(delay.TotalMilliseconds, 3));
+            PAssert.That(() => Utils.FuzzyEquals(delay.TotalMilliseconds, 3.492));
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils.Tests
             var startMoment = new DateTime(2040, 4, 4).ToUniversalTime(); //arbitrary
             delayChooser.RegisterErrorAt(startMoment);
             var actualRetryDelayAfterOneError = delayChooser.RetryDelayAt(startMoment);
-            PAssert.That(() => Utils.FuzzyEquals(actualRetryDelayAfterOneError.TotalSeconds /constantFailureDelayTarget.TotalSeconds,  0.0011667));
+            PAssert.That(() => Utils.FuzzyEquals(actualRetryDelayAfterOneError.TotalSeconds /constantFailureDelayTarget.TotalSeconds, 0.00116));
         }
 
         [Fact]
