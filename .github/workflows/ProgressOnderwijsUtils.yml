@@ -1,0 +1,30 @@
+name: ProgressOnderwijsUtils
+
+on: [push]
+
+env:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  CONNECTION_STRING: Data Source=(LocalDb)\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.1.100'
+    - uses: actions/checkout@v1
+    - name: Build
+      run: dotnet build -c Release
+    - name: Pack
+      run: dotnet pack -c Release --include-symbols --include-source
+    - name: Test
+      working-directory: test/ProgressOnderwijsUtils.Tests
+      run: dotnet test -c Release
+    - uses: actions/upload-artifact@v1
+      with:
+        name: ProgressOnderwijsUtils
+        path: src/**/*.nupkg
