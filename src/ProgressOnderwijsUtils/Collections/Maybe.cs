@@ -61,16 +61,11 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [MustUseReturnValue]
         public TOut Extract<TOut>(Func<TOk, TOut> ifOk, Func<TError, TOut> ifError)
-        {
-            switch (okOrError) {
-                case Maybe_Ok<TOk> okValue:
-                    return ifOk(okValue.Value);
-                case Maybe_Error<TError> errValue:
-                    return ifError(errValue.Error);
-                default:
-                    throw new Exception($"Maybe is neither Ok nor Error.");
-            }
-        }
+            => okOrError switch {
+                Maybe_Ok<TOk> okValue => ifOk(okValue.Value),
+                Maybe_Error<TError> errValue => ifError(errValue.Error),
+                _ => throw new Exception($"Maybe is neither Ok nor Error.")
+            };
 
         /// <summary>
         /// Converts an untyped error message into a specific type of failed Maybe.  This operator is a  workaround to make it easy to create an error message without redundant type info.

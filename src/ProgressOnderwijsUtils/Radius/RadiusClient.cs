@@ -164,14 +164,11 @@ namespace ProgressOnderwijsUtils.Radius
 
             // Checking Radius Code (first Byte)
             int responseCode = response[0];
-            switch (responseCode) {
-                case 2:
-                    return RadiusAuthResults.Success;
-                case 3:
-                    return RadiusAuthResults.AuthenticationFailed;
-                default:
-                    return RadiusAuthResults.ServiceErrorPacketMalformed;
-            }
+            return responseCode switch {
+                2 => RadiusAuthResults.Success,
+                3 => RadiusAuthResults.AuthenticationFailed,
+                _ => RadiusAuthResults.ServiceErrorPacketMalformed
+            };
         }
 
         [NotNull]
