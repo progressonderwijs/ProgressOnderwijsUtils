@@ -92,6 +92,7 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void EqualityIsByReferenceNotValue()
         {
+            // ReSharper disable once EqualExpressionComparison
             PAssert.That(() => Enumerable.Range(1, 4).ToDistinctArray() != Enumerable.Range(1, 4).ToDistinctArray());
             var existingArr = new[] { "a", "b", "c" };
             var existingDistinctArr = existingArr.ToDistinctArrayFromDistinct_Unchecked();
