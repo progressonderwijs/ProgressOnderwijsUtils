@@ -6,7 +6,9 @@
     <Description>ProgressOnderwijs utility methods+classes for asp.net core.</Description>
     <PackageReleaseNotes>Removed Application Insights-related classes</PackageReleaseNotes>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <TargetFrameworks>netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <LangVersion>8.0</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
