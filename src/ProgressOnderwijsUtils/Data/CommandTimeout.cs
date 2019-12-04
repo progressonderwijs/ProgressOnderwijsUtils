@@ -92,20 +92,13 @@ namespace ProgressOnderwijsUtils
         /// Converts this possibly scaled or default timeout into an absolute (SqlCommand.CommandTimeout compatible) timeout value (in seconds).
         /// </summary>
         public int ComputeAbsoluteTimeout(CommandTimeoutDefaults defaults)
-        {
-            switch (Kind) {
-                case TimeoutKind.DeferToConnectionDefaultCommandTimeout:
-                    return defaults.AbsoluteDefaultCommandTimeout;
-                case TimeoutKind.NoTimeout:
-                    return 0;
-                case TimeoutKind.AbsoluteTimeout:
-                    return backingTimeout;
-                case TimeoutKind.ScaledTimeout:
-                    return Math.Max(1, (int)(0.5 + backingTimeout * defaults.TimeoutScalingFactor));
-                default:
-                    throw new InvalidOperationException();
-            }
-        }
+            => Kind switch {
+                TimeoutKind.DeferToConnectionDefaultCommandTimeout => defaults.AbsoluteDefaultCommandTimeout,
+                TimeoutKind.NoTimeout => 0,
+                TimeoutKind.AbsoluteTimeout => backingTimeout,
+                TimeoutKind.ScaledTimeout => Math.Max(1, (int)(0.5 + backingTimeout * defaults.TimeoutScalingFactor)),
+                _ => throw new InvalidOperationException()
+            };
 
         /// <summary>
         /// Converts this possibly scaled or default timeout into token cancelled after the timeout (starting now).

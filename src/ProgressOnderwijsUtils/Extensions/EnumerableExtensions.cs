@@ -241,8 +241,8 @@ namespace ProgressOnderwijsUtils
                 return "\"\"";
             }
 
-            if (item is string) {
-                return "\"" + item.ToString()?.Replace("\"", "\\\"") + "\"";
+            if (item is string str) {
+                return "\"" + str.Replace("\"", "\\\"") + "\"";
             } else {
                 return item.ToString();
             }
