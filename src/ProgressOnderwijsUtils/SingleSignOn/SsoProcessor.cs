@@ -147,10 +147,9 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             var schemaResources = new SingleSignOnSchemaResources();
             foreach (var resName in schemaResources.GetResourceNames()) {
                 if (resName.EndsWith(".xsd", StringComparison.Ordinal) || resName.EndsWith(".xsd.intellisensehack", StringComparison.Ordinal)) {
-                    using (var stream = schemaResources.GetResource(resName))
-                    using (var reader = XmlReader.Create(stream, settings)) {
-                        schemaSet.Add(XmlSchema.Read(reader, null));
-                    }
+                    using var stream = schemaResources.GetResource(resName);
+                    using var reader = XmlReader.Create(stream, settings);
+                    schemaSet.Add(XmlSchema.Read(reader, null));
                 }
             }
         }
