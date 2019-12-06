@@ -97,8 +97,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 });
         }
 
-        [CanBeNull]
-        static string GetInResponseTo([NotNull] XElement assertion)
+        static string? GetInResponseTo([NotNull] XElement assertion)
         {
             // ReSharper disable PossibleNullReferenceException
             var rawInResponseTo = (string)assertion
@@ -110,8 +109,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return XmlConvert.DecodeName(rawInResponseTo);
         }
 
-        [NotNull]
-        static string GetAttribute([NotNull] XElement assertion, string key)
+        static string GetAttribute(XElement assertion, string key)
         {
             var result = GetNullableAttribute(assertion, key);
             if (result == null) {
@@ -121,8 +119,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return result;
         }
 
-        [CanBeNull]
-        static string GetNullableAttribute([NotNull] XElement assertion, string key)
+        static string? GetNullableAttribute(XElement assertion, string key)
             => (
                 from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
@@ -131,8 +128,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 select attribute.Value
             ).SingleOrNull();
 
-        [NotNull]
-        static string[] GetAttributes([NotNull] XElement assertion, string key)
+        static string[] GetAttributes(XElement assertion, string key)
             => (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
                 where attribute.Parent.Attribute("Name").Value == key
