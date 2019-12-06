@@ -6,10 +6,10 @@ namespace ProgressOnderwijsUtils.SingleSignOn
     public struct SsoAttributes
     {
         public string uid;
-        public string domain;
+        public string? domain;
         public string[] email;
         public string[] roles;
-        public string InResponseTo;
+        public string? InResponseTo;
         public DateTime IssueInstant;
         public string AuthnContextClassRef;
 

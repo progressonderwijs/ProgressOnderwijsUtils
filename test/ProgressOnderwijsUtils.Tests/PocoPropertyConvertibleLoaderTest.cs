@@ -146,7 +146,7 @@ namespace ProgressOnderwijsUtils.Tests
             SampleObjects.BulkCopyToSqlServer(Connection, target);
 
             var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadPocos<BlaOk_with_nullable_struct_property>(Connection);
-            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id.Value, Bla = x.Bla.HasValue ? x.Bla.Value.Value : default(string), Bla2 = x.Bla2.Value })));
+            PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id.Value, Bla = x.Bla.HasValue ? x.Bla.Value.Value : default, Bla2 = x.Bla2.Value })));
         }
 
         [Fact]
@@ -171,7 +171,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id = (select Id from #MyTable), Bla, Bla2 from #MyTable order by Id").ReadPocos<BlaOk_with_struct_property>(Connection));
             Assert.DoesNotContain("column", ex.Message);
-            Assert.Contains("Subquery returned more than 1 value", ex.InnerException.Message);
+            Assert.Contains("Subquery returned more than 1 value", ex.InnerException.AssertNotNull().Message);
         }
 
         [Fact]

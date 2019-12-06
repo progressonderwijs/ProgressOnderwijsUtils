@@ -24,9 +24,9 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         {
             //Don't escape colon: Uri.ToString doesn't either; and this is just a defense-in-depth we don't need
             //ref: https://github.com/aspnet/HttpAbstractions/commit/1e9d57f80ca883881804292448fff4de8b112733
-            string Escape(string str)
+            static string Escape(string str)
                 => Uri.EscapeDataString(str).Replace("%3A", ":");
-            string EncodeQueryParameter(string key, string value)
+            static string EncodeQueryParameter(string key, string value)
                 => Escape(key) + "=" + Escape(value);
 
             var samlRequestQueryString = EncodeQueryParameter("SAMLRequest", request.EncodeAsQueryArgument()) + "&" + EncodeQueryParameter("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
@@ -97,8 +97,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 });
         }
 
-        [CanBeNull]
-        static string GetInResponseTo([NotNull] XElement assertion)
+        static string? GetInResponseTo([NotNull] XElement assertion)
         {
             // ReSharper disable PossibleNullReferenceException
             var rawInResponseTo = (string)assertion
@@ -110,8 +109,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return XmlConvert.DecodeName(rawInResponseTo);
         }
 
-        [NotNull]
-        static string GetAttribute([NotNull] XElement assertion, string key)
+        static string GetAttribute(XElement assertion, string key)
         {
             var result = GetNullableAttribute(assertion, key);
             if (result == null) {
@@ -121,8 +119,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return result;
         }
 
-        [CanBeNull]
-        static string GetNullableAttribute([NotNull] XElement assertion, string key)
+        static string? GetNullableAttribute(XElement assertion, string key)
             => (
                 from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
@@ -131,8 +128,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 select attribute.Value
             ).SingleOrNull();
 
-        [NotNull]
-        static string[] GetAttributes([NotNull] XElement assertion, string key)
+        static string[] GetAttributes(XElement assertion, string key)
             => (from attribute in assertion.Descendants(SamlNamespaces.SAML_NS + "AttributeValue")
                 // ReSharper disable PossibleNullReferenceException
                 where attribute.Parent.Attribute("Name").Value == key
@@ -151,10 +147,9 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             var schemaResources = new SingleSignOnSchemaResources();
             foreach (var resName in schemaResources.GetResourceNames()) {
                 if (resName.EndsWith(".xsd", StringComparison.Ordinal) || resName.EndsWith(".xsd.intellisensehack", StringComparison.Ordinal)) {
-                    using (var stream = schemaResources.GetResource(resName))
-                    using (var reader = XmlReader.Create(stream, settings)) {
-                        schemaSet.Add(XmlSchema.Read(reader, null));
-                    }
+                    using var stream = schemaResources.GetResource(resName);
+                    using var reader = XmlReader.Create(stream, settings);
+                    schemaSet.Add(XmlSchema.Read(reader, null));
                 }
             }
         }
