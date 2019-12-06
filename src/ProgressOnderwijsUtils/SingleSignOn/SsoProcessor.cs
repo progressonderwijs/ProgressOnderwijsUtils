@@ -24,9 +24,9 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         {
             //Don't escape colon: Uri.ToString doesn't either; and this is just a defense-in-depth we don't need
             //ref: https://github.com/aspnet/HttpAbstractions/commit/1e9d57f80ca883881804292448fff4de8b112733
-            string Escape(string str)
+            static string Escape(string str)
                 => Uri.EscapeDataString(str).Replace("%3A", ":");
-            string EncodeQueryParameter(string key, string value)
+            static string EncodeQueryParameter(string key, string value)
                 => Escape(key) + "=" + Escape(value);
 
             var samlRequestQueryString = EncodeQueryParameter("SAMLRequest", request.EncodeAsQueryArgument()) + "&" + EncodeQueryParameter("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
