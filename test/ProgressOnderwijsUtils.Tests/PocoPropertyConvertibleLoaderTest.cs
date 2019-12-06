@@ -171,7 +171,7 @@ namespace ProgressOnderwijsUtils.Tests
 
             var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id = (select Id from #MyTable), Bla, Bla2 from #MyTable order by Id").ReadPocos<BlaOk_with_struct_property>(Connection));
             Assert.DoesNotContain("column", ex.Message);
-            Assert.Contains("Subquery returned more than 1 value", ex.InnerException.Message);
+            Assert.Contains("Subquery returned more than 1 value", ex.InnerException.AssertNotNull().Message);
         }
 
         [Fact]
