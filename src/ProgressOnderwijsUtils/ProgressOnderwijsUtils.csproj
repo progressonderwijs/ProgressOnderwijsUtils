@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>54.0.1</Version>
-    <PackageReleaseNotes>Fiddle with source link, because that seems broken.</PackageReleaseNotes>
+    <Version>54.0.2</Version>
+    <PackageReleaseNotes>Return error when UID is missing.</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
