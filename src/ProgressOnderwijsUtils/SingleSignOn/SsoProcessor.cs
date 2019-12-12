@@ -85,9 +85,14 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 return Maybe.Error("Missing AuthnStatement element");
             }
 
+            var uid = GetNullableAttribute(assertion, UID);
+            if (uid == null) {
+                return Maybe.Error("Missing attribute " + UID);
+            }
+
             return Maybe.Ok(
                 new SsoAttributes {
-                    uid = GetAttribute(assertion, UID),
+                    uid = uid,
                     domain = GetNullableAttribute(assertion, DOMAIN),
                     email = GetAttributes(assertion, MAIL),
                     roles = GetAttributes(assertion, ROLE),
@@ -107,16 +112,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 .Attribute("InResponseTo");
             // ReSharper restore PossibleNullReferenceException
             return XmlConvert.DecodeName(rawInResponseTo);
-        }
-
-        static string GetAttribute(XElement assertion, string key)
-        {
-            var result = GetNullableAttribute(assertion, key);
-            if (result == null) {
-                throw new InvalidOperationException($"No value for attribute {key}");
-            }
-
-            return result;
         }
 
         static string? GetNullableAttribute(XElement assertion, string key)
