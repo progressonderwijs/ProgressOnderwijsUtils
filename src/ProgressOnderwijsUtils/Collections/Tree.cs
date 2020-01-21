@@ -245,17 +245,5 @@ namespace ProgressOnderwijsUtils.Collections
                     : ":\n" + Children.Select(t => t.ToString(indent + "    ")).JoinStrings("\n")
                 );
         }
-
-        [Pure]
-        public int Height()
-        {
-            var height = 1;
-            var nextSet = Children.ToArray();
-            while (nextSet.Length > 0) {
-                height++;
-                nextSet = nextSet.SelectMany(o => o.Children).ToArray();
-            }
-            return height;
-        }
     }
 }
