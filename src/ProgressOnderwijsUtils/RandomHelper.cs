@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
-            => Insecure(GetNaiveHashCode(filepath) + GetNaiveHashCode(membername) + linenumber);
+            => Insecure(GetNaiveHashCode(filepath) ^ GetNaiveHashCode(membername) ^ linenumber);
 
         static int GetNaiveHashCode(string str)
             => str.Select((character, index) => character << index).Aggregate((x, y) => x ^ y);
