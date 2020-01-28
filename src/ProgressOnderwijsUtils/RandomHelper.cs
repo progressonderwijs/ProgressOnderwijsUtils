@@ -17,7 +17,10 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
-            => Insecure((linenumber + filepath + membername).GetHashCode());
+            => Insecure(StrToInt(filepath) + StrToInt(membername) + linenumber);
+
+        static int StrToInt(string str)
+            => str.Select((character, index) => character << index).Sum();
 
         readonly Action<byte[]> fillWithRandomBytes;
 
