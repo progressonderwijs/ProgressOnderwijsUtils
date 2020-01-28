@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
             => Insecure(GetNaiveHashCode(filepath) ^ GetNaiveHashCode(membername) ^ linenumber);
 
         static int GetNaiveHashCode(string str)
-            => str.Select((character, index) => character << index).Aggregate((x, y) => x ^ y);
+            => (int)ParameterizedSqlObjectMapper.CaseInsensitiveHash(str);
 
         readonly Action<byte[]> fillWithRandomBytes;
 
