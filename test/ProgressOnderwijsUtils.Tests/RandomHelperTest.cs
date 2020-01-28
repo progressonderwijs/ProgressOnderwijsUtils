@@ -54,5 +54,13 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => Regex.IsMatch(RandomHelper.Secure.GetStringOfLatinLower(7), "[a-z]{7}"));
             PAssert.That(() => Regex.IsMatch(RandomHelper.Secure.GetStringOfLatinUpperOrLower(10), "[a-zA-Z]{10}"));
         }
+
+        [Fact]
+        public void ImplicitlyInsecure()
+        {
+            var randomHelper1 = RandomHelper.ImplicitlyInsecure();
+            var randomHelper2 = RandomHelper.ImplicitlyInsecure();
+            PAssert.That(() => randomHelper1.GetInt32() != randomHelper2.GetInt32());
+        }
     }
 }
