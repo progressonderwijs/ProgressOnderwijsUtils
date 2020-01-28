@@ -56,13 +56,18 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void ImplicitlyInsecure()
+        public void ImplicitlyInsecure_Gedrag_hangt_af_van_regelnummer()
         {
             var randomHelper1 = RandomHelper.ImplicitlyInsecure();
             var randomHelper2 = RandomHelper.ImplicitlyInsecure();
-            var (randomHelper3, randomHelper4) = (RandomHelper.ImplicitlyInsecure(), RandomHelper.ImplicitlyInsecure());
             PAssert.That(() => randomHelper1.GetInt32() != randomHelper2.GetInt32());
-            PAssert.That(() => randomHelper3.GetInt32() == randomHelper4.GetInt32());
+        }
+
+        [Fact]
+        public void ImplicitlyInsecure_Gedrag_is_deterministisch()
+        {
+            var (randomHelper1, randomHelper2) = (RandomHelper.ImplicitlyInsecure(), RandomHelper.ImplicitlyInsecure());
+            PAssert.That(() => randomHelper1.GetInt32() == randomHelper2.GetInt32());
         }
     }
 }
