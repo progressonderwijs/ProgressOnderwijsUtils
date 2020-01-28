@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils
             => new RandomHelper(new Random(seed).NextBytes);
 
         [NotNull]
-        public static RandomHelper JmplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
+        public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
             => Insecure((linenumber + filepath + membername).GetHashCode());
 
         readonly Action<byte[]> fillWithRandomBytes;
