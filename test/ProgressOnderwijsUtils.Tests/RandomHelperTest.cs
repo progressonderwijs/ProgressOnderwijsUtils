@@ -60,7 +60,9 @@ namespace ProgressOnderwijsUtils.Tests
         {
             var randomHelper1 = RandomHelper.ImplicitlyInsecure();
             var randomHelper2 = RandomHelper.ImplicitlyInsecure();
+            var (randomHelper3, randomHelper4) = (RandomHelper.ImplicitlyInsecure(), RandomHelper.ImplicitlyInsecure());
             PAssert.That(() => randomHelper1.GetInt32() != randomHelper2.GetInt32());
+            PAssert.That(() => randomHelper3.GetInt32() == randomHelper4.GetInt32());
         }
     }
 }
