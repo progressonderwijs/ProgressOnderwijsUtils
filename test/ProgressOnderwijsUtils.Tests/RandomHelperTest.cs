@@ -66,8 +66,8 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ImplicitlyInsecure_Gedrag_is_deterministisch()
         {
-            var (randomHelper1, randomHelper2) = (RandomHelper.ImplicitlyInsecure(), RandomHelper.ImplicitlyInsecure());
-            PAssert.That(() => randomHelper1.GetInt32() == randomHelper2.GetInt32());
+            var randomHelper = RandomHelper.ImplicitlyInsecure();
+            PAssert.That(() => randomHelper.GetInt32() == 1801197674);
         }
     }
 }
