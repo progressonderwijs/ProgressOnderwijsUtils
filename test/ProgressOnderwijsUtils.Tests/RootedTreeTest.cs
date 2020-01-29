@@ -47,5 +47,26 @@ namespace ProgressOnderwijsUtils.Tests
                     )
                 ).RootHere()));
         }
+
+        [Fact]
+        public void RootedTree_Sibling_Implementation_Works_Correctly()
+        {
+            var tree =
+                Tree.Node(1,
+                    Tree.Node(2),
+                    Tree.Node(3,
+                        Tree.Node(4),
+                        Tree.Node(5)
+                    ),
+                    Tree.Node(6)
+                ).RootHere();
+
+            PAssert.That(() => !tree.PreviousSibling().HasValue);
+            PAssert.That(() => !tree.NextSibling().HasValue);
+            PAssert.That(() => !tree.Children[0].PreviousSibling().HasValue);
+            PAssert.That(() => tree.Children[0].NextSibling().HasValue);
+            PAssert.That(() => tree.Children[0].NextSibling().AssertNotNull().NextSibling().HasValue);
+            PAssert.That(() => !tree.Children[0].NextSibling().AssertNotNull().NextSibling().AssertNotNull().NextSibling().HasValue);
+        }
     }
 }
