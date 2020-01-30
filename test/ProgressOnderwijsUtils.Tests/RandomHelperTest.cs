@@ -67,7 +67,8 @@ namespace ProgressOnderwijsUtils.Tests
         public void ImplicitlyInsecure_Gedrag_is_deterministisch()
         {
             var randomHelper = RandomHelper.ImplicitlyInsecure();
-            PAssert.That(() => randomHelper.GetInt32() == 1801197674);
+            var pseudoRandomInteger = randomHelper.GetInt32();
+            PAssert.That(() => pseudoRandomInteger == -20762718);
         }
     }
 }
