@@ -56,14 +56,6 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void ImplicitlyInsecure_Gedrag_hangt_af_van_regelnummer()
-        {
-            var randomHelper1 = RandomHelper.ImplicitlyInsecure();
-            var randomHelper2 = RandomHelper.ImplicitlyInsecure();
-            PAssert.That(() => randomHelper1.GetInt32() != randomHelper2.GetInt32());
-        }
-
-        [Fact]
         public void ImplicitlyInsecure_Gedrag_is_deterministisch()
         {
             var randomHelper = RandomHelper.ImplicitlyInsecure();
