@@ -63,10 +63,12 @@ namespace ProgressOnderwijsUtils.Tests
 
             PAssert.That(() => !tree.PreviousSibling().HasValue);
             PAssert.That(() => !tree.NextSibling().HasValue);
+            PAssert.That(() => !tree.Parent.PreviousSibling().HasValue);
+            PAssert.That(() => !tree.Parent.NextSibling().HasValue);
             PAssert.That(() => !tree.Children[0].PreviousSibling().HasValue);
             PAssert.That(() => tree.Children[0].NextSibling().HasValue);
-            PAssert.That(() => tree.Children[0].NextSibling().AssertNotNull().NextSibling().HasValue);
-            PAssert.That(() => !tree.Children[0].NextSibling().AssertNotNull().NextSibling().AssertNotNull().NextSibling().HasValue);
+            PAssert.That(() => tree.Children[0].NextSibling().NextSibling().HasValue);
+            PAssert.That(() => !tree.Children[0].NextSibling().NextSibling().NextSibling().HasValue);
         }
     }
 }
