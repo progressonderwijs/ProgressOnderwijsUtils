@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
 
         [NotNull]
         public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
-            => Insecure(GetNaiveHashCode(filepath) ^ GetNaiveHashCode(membername) ^ linenumber);
+            => Insecure(GetNaiveHashCode(System.IO.Path.GetFileName(filepath)) + 1337 * GetNaiveHashCode(membername));
 
         static int GetNaiveHashCode(string str)
             => (int)ParameterizedSqlObjectMapper.CaseInsensitiveHash(str);
