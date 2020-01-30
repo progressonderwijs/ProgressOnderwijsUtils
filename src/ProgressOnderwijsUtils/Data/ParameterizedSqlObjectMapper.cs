@@ -150,7 +150,7 @@ namespace ProgressOnderwijsUtils
         static readonly MethodInfo getDateTimeOffset_SqlDataReader = typeof(SqlDataReader).GetMethod(nameof(SqlDataReader.GetDateTimeOffset), binding)!;
         const int AsciiUpperToLowerDiff = 'a' - 'A';
 
-        static ulong CaseInsensitiveHash([NotNull] string s)
+        public static ulong CaseInsensitiveHash([NotNull] string s)
         {
             //Much faster than StringComparer.OrdinalIgnoreCase.GetHashCode(...)
             //Based on java's String.hashCode(): http://docs.oracle.com/javase/6/docs/api/java/lang/String.html#hashCode%28%29
