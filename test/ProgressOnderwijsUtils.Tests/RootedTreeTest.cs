@@ -67,7 +67,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => !tree.Parent.NextSibling().HasValue);
             PAssert.That(() => !tree.Children[0].PreviousSibling().HasValue);
             PAssert.That(() => tree.Children[0].NextSibling().HasValue);
+            PAssert.That(() => tree.Children[0].NextSibling().NodeValue == 3);
             PAssert.That(() => tree.Children[0].NextSibling().NextSibling().HasValue);
+            PAssert.That(() => tree.Children[0].NextSibling().NextSibling().NodeValue == 6);
             PAssert.That(() => !tree.Children[0].NextSibling().NextSibling().NextSibling().HasValue);
         }
     }
