@@ -127,7 +127,7 @@ namespace ProgressOnderwijsUtils.Html
             => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.ChildNodes() : HtmlFragment.EmptyNodes;
 
         public static HtmlFragment[] ChildNodes([NotNull] this IHtmlElementAllowingContent elemWithContent)
-            => elemWithContent.GetContent().NodesOfFragment() ?? HtmlFragment.EmptyNodes;
+            => elemWithContent.GetContent().NodesOfFragment();
 
         public static HtmlAttributes ToHtmlAttributes([NotNull] this IEnumerable<HtmlAttribute> attributes)
             => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
