@@ -13,9 +13,9 @@ namespace ProgressOnderwijsUtils.Collections
         sealed class Impl
         {
             public readonly T Head;
-            public readonly Impl Tail;
+            public readonly Impl? Tail;
 
-            public Impl(T head, Impl tail)
+            public Impl(T head, Impl? tail)
             {
                 Head = head;
                 Tail = tail;
@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils.Collections
         public SList(T head, SList<T> tail)
             : this(new Impl(head, tail.list)) { }
 
-        readonly Impl list;
+        readonly Impl? list;
 
         public static SList<T> Empty
             => default;
