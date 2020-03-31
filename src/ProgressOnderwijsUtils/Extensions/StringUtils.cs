@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        static bool IsUpperAscii(string str)
+        public static bool IsUpperAscii(string str)
         {
             foreach (var c in str) {
                 if (c < 'A' || c > 'Z') {
