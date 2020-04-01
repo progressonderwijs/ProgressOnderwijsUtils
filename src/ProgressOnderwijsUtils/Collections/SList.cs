@@ -72,7 +72,8 @@ namespace ProgressOnderwijsUtils.Collections
         {
             var hash = (ulong)(typeHash + 1);
             for (var current = list; current != null; current = current.Tail) {
-                hash = hash * 137ul + (ulong)elemEquality.GetHashCode(current.Head);
+                // ReSharper disable once CompareNonConstrainedGenericWithNull
+                hash = hash * 137ul + (current.Head == null ? 0 : (ulong)elemEquality.GetHashCode(current.Head));
             }
             return (int)hash ^ (int)(hash >> 32);
         }
