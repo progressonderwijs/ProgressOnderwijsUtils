@@ -59,7 +59,7 @@ namespace ProgressOnderwijsUtils
         public static DistinctArray<T> FromPossiblyNotDistinct([NotNull] IEnumerable<T> items, IEqualityComparer<T> comparer)
             => new DistinctArray<T>(new HashSet<T>(items, comparer).ToArray());
 
-        readonly T[] items;
+        readonly T[]? items;
 
         DistinctArray(T[] items)
             => this.items = items;

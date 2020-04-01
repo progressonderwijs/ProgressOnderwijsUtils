@@ -50,7 +50,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        static bool IsUpperAscii(string str)
+        public static bool IsUpperAscii(string str)
         {
             foreach (var c in str) {
                 if (c < 'A' || c > 'Z') {
@@ -82,8 +82,8 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static string VervangRingelS(string str, bool upper)
-            => str.Replace("ß", upper ? "SS" : "ss");
+        public static string VervangRingelS(string str)
+            => str.Replace("ß", "ss");
 
         [Pure]
         public static string SepaTekenset(string s)
@@ -98,7 +98,7 @@ namespace ProgressOnderwijsUtils
             }
 
             s = VerwijderDiakrieten(s);
-            s = VervangRingelS(s, false);
+            s = VervangRingelS(s);
             s = SepaTekenset(s);
             return s;
         }

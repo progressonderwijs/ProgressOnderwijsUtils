@@ -13,24 +13,22 @@ namespace ProgressOnderwijsUtils.Collections
         sealed class Impl
         {
             public readonly T Head;
-            public readonly Impl Tail;
+            public readonly Impl? Tail;
 
-            public Impl(T head, Impl tail)
+            public Impl(T head, Impl? tail)
             {
                 Head = head;
                 Tail = tail;
             }
         }
 
-        SList(Impl list)
-        {
-            this.list = list;
-        }
+        SList(Impl? list)
+            => this.list = list;
 
         public SList(T head, SList<T> tail)
             : this(new Impl(head, tail.list)) { }
 
-        readonly Impl list;
+        readonly Impl? list;
 
         public static SList<T> Empty
             => default;
@@ -39,10 +37,10 @@ namespace ProgressOnderwijsUtils.Collections
             => list == null;
 
         public T Head
-            => list.Head;
+            => list.AssertNotNull().Head;
 
         public SList<T> Tail
-            => new SList<T>(list.Tail);
+            => new SList<T>(list.AssertNotNull().Tail);
 
         static readonly int typeHash = typeof(T).GetHashCode();
         static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
@@ -74,7 +72,8 @@ namespace ProgressOnderwijsUtils.Collections
         {
             var hash = (ulong)(typeHash + 1);
             for (var current = list; current != null; current = current.Tail) {
-                hash = hash * 137ul + (ulong)elemEquality.GetHashCode(current.Head);
+                // ReSharper disable once CompareNonConstrainedGenericWithNull
+                hash = hash * 137ul + (current.Head == null ? 0 : (ulong)elemEquality.GetHashCode(current.Head));
             }
             return (int)hash ^ (int)(hash >> 32);
         }
@@ -120,16 +119,6 @@ namespace ProgressOnderwijsUtils.Collections
             var retval = self;
             for (var cur = heads.Reverse(); !cur.IsEmpty; cur = cur.Tail) {
                 retval = retval.Prepend(cur.Head);
-            }
-            return retval;
-        }
-
-        [Pure]
-        public static SList<T> PrependReversed<T>(this SList<T> self, [NotNull] IEnumerable<T> items)
-        {
-            var retval = self;
-            foreach (var item in items) {
-                retval = retval.Prepend(item);
             }
             return retval;
         }

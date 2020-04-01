@@ -15,11 +15,11 @@ namespace ProgressOnderwijsUtils
 {
     public struct ProcessStartSettings
     {
-        public string ExecutableName;
-        public string Arguments;
-        public string Stdlnput;
-        public string WorkingDirectory;
-        public Dictionary<string, string> Environment;
+        public string? ExecutableName;
+        public string? Arguments;
+        public string? Stdlnput;
+        public string? WorkingDirectory;
+        public Dictionary<string, string>? Environment;
 
         public void PrintProcessArgs(int? exitCode)
         {
