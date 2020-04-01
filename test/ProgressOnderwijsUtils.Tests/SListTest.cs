@@ -39,6 +39,13 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
+        public void SkipTest()
+        {
+            var list = SList.Create(new[] { 1, 3, 4, 1 });
+            PAssert.That(() => list.Skip(2).SequenceEqual(new[] { 4, 1 }));
+        }
+
+        [Fact]
         public void EqualsTest()
         {
             var a = SList.Create(new[] { 1, 2, 3 });
