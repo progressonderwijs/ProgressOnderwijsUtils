@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        SList(Impl list)
+        SList(Impl? list)
             => this.list = list;
 
         public SList(T head, SList<T> tail)
