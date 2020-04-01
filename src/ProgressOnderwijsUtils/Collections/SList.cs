@@ -125,16 +125,6 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> PrependReversed<T>(this SList<T> self, [NotNull] IEnumerable<T> items)
-        {
-            var retval = self;
-            foreach (var item in items) {
-                retval = retval.Prepend(item);
-            }
-            return retval;
-        }
-
-        [Pure]
         public static SList<T> Reverse<T>(this SList<T> self)
         {
             var retval = default(SList<T>);
