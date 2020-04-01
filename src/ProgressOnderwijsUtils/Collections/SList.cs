@@ -37,10 +37,10 @@ namespace ProgressOnderwijsUtils.Collections
             => list == null;
 
         public T Head
-            => list.Head;
+            => list.AssertNotNull().Head;
 
         public SList<T> Tail
-            => new SList<T>(list.Tail);
+            => new SList<T>(list.AssertNotNull().Tail);
 
         static readonly int typeHash = typeof(T).GetHashCode();
         static readonly IEqualityComparer<T> elemEquality = EqualityComparer<T>.Default;
