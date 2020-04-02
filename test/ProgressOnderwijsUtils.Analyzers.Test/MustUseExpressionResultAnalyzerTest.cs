@@ -2,7 +2,7 @@
 using ExpressionToCodeLib;
 using Xunit;
 
-namespace ProgressOnderwijsUtils.Analyzers.Test
+namespace ProgressOnderwijsUtils.Analyzers.Tests
 {
     public sealed class MustUseExpressionResultAnalyzerTest
     {

@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using ProgressOnderwijsUtils.Collections;
 
-namespace ProgressOnderwijsUtils.Analyzers.Test
+namespace ProgressOnderwijsUtils.Analyzers.Tests
 {
     public static class DiagnosticHelper
     {
