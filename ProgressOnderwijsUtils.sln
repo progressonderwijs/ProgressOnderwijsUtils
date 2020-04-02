@@ -34,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.AspN
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Analyzers", "src\ProgressOnderwijsUtils.Analyzers\ProgressOnderwijsUtils.Analyzers.csproj", "{16178D44-BCC5-4C4C-B96C-69524EC194AD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Analyzers.Tests", "test\ProgressOnderwijsUtils.Analyzers.Test\ProgressOnderwijsUtils.Analyzers.Tests.csproj", "{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Analyzers.Tests", "test\ProgressOnderwijsUtils.Analyzers.Tests\ProgressOnderwijsUtils.Analyzers.Tests.csproj", "{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
