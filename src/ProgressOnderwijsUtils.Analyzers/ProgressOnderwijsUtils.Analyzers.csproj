@@ -1,4 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>Collection of Roslyn analyzers developed by ProgressOnderwijs</Description>
+    <PackageTags>ProgressOnderwijs</PackageTags>
+    <PackageReleaseNotes>Initial package with a single analyzer.
+This analyzer checks only for ProgressOnderwijs.Collections.Maybe&lt;TOut, TError&gt; expressions.</PackageReleaseNotes>
+  </PropertyGroup>
   <Import Project="..\NugetPackagesCommon.props" />
 
   <ItemGroup>
