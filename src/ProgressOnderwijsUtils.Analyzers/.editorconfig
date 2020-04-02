@@ -1,4 +1,0 @@
-# we develop only for C#
-[*.cs]
-dotnet_diagnostic.RS1004.severity = silent
-

@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 
 namespace ProgressOnderwijsUtils.Analyzers
 {
-    [DiagnosticAnalyzer(LanguageNames.CSharp)]
+    [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
     public sealed class MustUseExpressionResultAnalyzer : DiagnosticAnalyzer
     {
         public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
