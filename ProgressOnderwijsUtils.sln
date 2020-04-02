@@ -10,11 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CAF8D43B-2F61-421B-BD61-43848D1192BE}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		.travis.yml = .travis.yml
 		appveyor.yml = appveyor.yml
 		src\Common.props = src\Common.props
 		How-to-push-to-nuget.txt = How-to-push-to-nuget.txt
-		install.ps1 = install.ps1
 		src\NugetPackagesCommon.props = src\NugetPackagesCommon.props
 		Performance1.psess = Performance1.psess
 	EndProjectSection
