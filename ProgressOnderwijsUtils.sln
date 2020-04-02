@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils", "src\ProgressOnderwijsUtils\ProgressOnderwijsUtils.csproj", "{6C13FAA1-9347-4256-BCFD-F111E6121480}"
+	ProjectSection(ProjectDependencies) = postProject
+		{16178D44-BCC5-4C4C-B96C-69524EC194AD} = {16178D44-BCC5-4C4C-B96C-69524EC194AD}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Tests", "test\ProgressOnderwijsUtils.Tests\ProgressOnderwijsUtils.Tests.csproj", "{4C25AC3F-293B-46BE-A853-CD5AF64E542E}"
 EndProject
@@ -29,6 +32,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{98B31731
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.AspNetCore", "src\ProgressOnderwijsUtils.AspNetCore\ProgressOnderwijsUtils.AspNetCore.csproj", "{EADC8263-2782-4682-8F5B-6EAA191DD800}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProgressOnderwijsUtils.Analyzers", "src\ProgressOnderwijsUtils.Analyzers\ProgressOnderwijsUtils.Analyzers.csproj", "{16178D44-BCC5-4C4C-B96C-69524EC194AD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProgressOnderwijsUtils.Analyzers.Test", "test\ProgressOnderwijsUtils.Analyzers.Test\ProgressOnderwijsUtils.Analyzers.Test.csproj", "{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +58,14 @@ Global
 		{EADC8263-2782-4682-8F5B-6EAA191DD800}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EADC8263-2782-4682-8F5B-6EAA191DD800}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EADC8263-2782-4682-8F5B-6EAA191DD800}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16178D44-BCC5-4C4C-B96C-69524EC194AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16178D44-BCC5-4C4C-B96C-69524EC194AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16178D44-BCC5-4C4C-B96C-69524EC194AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16178D44-BCC5-4C4C-B96C-69524EC194AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +75,8 @@ Global
 		{4C25AC3F-293B-46BE-A853-CD5AF64E542E} = {720DEC45-B36A-4966-819C-128CCA14C255}
 		{E7B8ECF6-16BD-4FFA-A390-E1C1B9906A56} = {98B31731-39CC-43ED-A3A7-FAEBEBE98DB2}
 		{EADC8263-2782-4682-8F5B-6EAA191DD800} = {AB343C95-4D8D-4931-AA14-F854F33AFE6C}
+		{16178D44-BCC5-4C4C-B96C-69524EC194AD} = {AB343C95-4D8D-4931-AA14-F854F33AFE6C}
+		{FB922E9E-20DC-44B6-8E2B-8C4FC81172F6} = {720DEC45-B36A-4966-819C-128CCA14C255}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2E1CE476-2F5C-4FCE-B590-175594609727}

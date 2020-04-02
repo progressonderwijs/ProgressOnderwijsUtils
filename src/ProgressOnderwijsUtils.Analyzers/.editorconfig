@@ -1,0 +1,9 @@
+# To learn more about .editorconfig see https://aka.ms/editorconfigdocs
+root = true
+
+# All files
+[*]
+indent_style = space
+
+[*.cs]
+dotnet_diagnostic.RS1004.severity = silent
