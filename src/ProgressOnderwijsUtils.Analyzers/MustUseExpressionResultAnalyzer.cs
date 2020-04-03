@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils.Analyzers
             "Result must be used",
             "The result of the expression may not be ignored.",
             "Functional",
-            DiagnosticSeverity.Warning,
+            DiagnosticSeverity.Error,
             true
         );
 
