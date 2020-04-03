@@ -8,7 +8,7 @@ This analyzer checks only for ProgressOnderwijs.Collections.Maybe&lt;TOut, TErro
   <Import Project="..\NugetPackagesCommon.props" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="2.10.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.4.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.10.0" />
   </ItemGroup>
 
