@@ -328,8 +328,8 @@ namespace ProgressOnderwijsUtils
         public ComparisonComparer(Comparison<T> comparer)
             => this.comparer = comparer;
 
-        public int Compare(T x, T y)
-            => comparer(x, y);
+        public int Compare([AllowNull] T x, [AllowNull] T y)
+            => comparer(x!, y!);
     }
 
     public sealed class EqualsEqualityComparer<T> : IEqualityComparer<T>
