@@ -190,9 +190,8 @@ namespace ProgressOnderwijsUtils.Collections
             bool ShallowEquals(NodePair pair)
                 // ReSharper disable RedundantCast
                 //workaround resharper issue: object comparison is by reference, and faster than ReferenceEquals
-                => (object)pair.A == (object)pair.B ||
-                    (object)pair.A != null && (object)pair.B != null
-                    && pair.A.Children.Count == pair.B.Children.Count
+                => ReferenceEquals(pair.A, pair.B) ||
+                    pair.A.Children.Count == pair.B.Children.Count
                     && ValueComparer.Equals(pair.A.NodeValue, pair.B.NodeValue);
             // ReSharper restore RedundantCast
 
@@ -206,10 +205,10 @@ namespace ProgressOnderwijsUtils.Collections
                 }
                 // ReSharper restore HeuristicUnreachableCode
                 // ReSharper restore ConditionIsAlwaysTrueOrFalse
-                ulong hash = (uint)ValueComparer.GetHashCode(obj.NodeValue);
+                ulong hash = obj.NodeValue is null ? 0 : (uint)ValueComparer.GetHashCode(obj.NodeValue);
                 ulong offset = 1; //keep offset odd to ensure no bits are lost in scaling.
                 foreach (var node in obj.PreorderTraversal()) {
-                    hash += offset * ((uint)ValueComparer.GetHashCode(node.NodeValue) + ((ulong)node.Children.Count << 32));
+                    hash += offset * ((uint)(node.NodeValue is null ? 0 : ValueComparer.GetHashCode(node.NodeValue!)) + ((ulong)node.Children.Count << 32));
                     offset += 2;
                 }
                 return (int)((uint)(hash >> 32) + (uint)hash);

@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
     [Serializable]
     public readonly struct ColumnSort : IEquatable<ColumnSort>
     {
-        public string ColumnName { get; }
+        public string? ColumnName { get; } //intrinsically nullable due to binary serialization
         public SortDirection SortDirection { get; }
 
         [NotNull]
@@ -30,7 +30,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public ColumnSort WithReverseDirection()
-            => new ColumnSort(ColumnName, SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc);
+            => new ColumnSort(ColumnName.AssertNotNull(), SortDirection == SortDirection.Asc ? SortDirection.Desc : SortDirection.Asc);
 
         [Pure]
         public ColumnSort WithDifferentName(string newColumn)
@@ -47,6 +47,6 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public override int GetHashCode()
-            => StringComparer.OrdinalIgnoreCase.GetHashCode(ColumnName) + 51 * (int)SortDirection;
+            => StringComparer.OrdinalIgnoreCase.GetHashCode(ColumnName ?? "") + 51 * (int)SortDirection;
     }
 }

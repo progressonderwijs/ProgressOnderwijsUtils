@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using JetBrains.Annotations;
 
@@ -7,7 +8,7 @@ namespace ProgressOnderwijsUtils.Collections
 {
     public static class MaybeExtensions
     {
-        [CanBeNull]
+        [return: MaybeNull]
         [Pure]
         public static TError ErrorOrNull<TOk, TError>(this Maybe<TOk, TError> state)
             where TError : class?
@@ -23,7 +24,7 @@ namespace ProgressOnderwijsUtils.Collections
             where TError : struct
             => state.TryGet(out _, out var whenError) ? default(TError?) : whenError;
 
-        [CanBeNull]
+        [return: MaybeNull]
         [Pure]
         public static TOk ValueOrNull<TOk, TError>(this Maybe<TOk, TError> state)
             where TOk : class?
@@ -268,15 +269,14 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static Maybe<TOk[], TError[]> WhenAllOk<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        public static Maybe<TOk[], TError[]> WhenAllOk<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             var (okValues, errValues) = maybes.Partition();
             return errValues.Any() ? (Maybe<TOk[], TError[]>)Maybe.Error(errValues) : Maybe.Ok(okValues).AsMaybeWithoutError<TError[]>();
         }
 
-        [NotNull]
         [Pure]
-        public static IEnumerable<TOk> WhereOk<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        public static IEnumerable<TOk> WhereOk<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             foreach (var state in maybes) {
                 var isOk = state.TryGet(out var okValue, out _);
@@ -286,9 +286,8 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        [NotNull]
         [Pure]
-        public static IEnumerable<TError> WhereError<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        public static IEnumerable<TError> WhereError<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             foreach (var state in maybes) {
                 var isOk = state.TryGet(out _, out var error);
@@ -299,7 +298,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static (TOk[] okValues, TError[] errorValues) Partition<TOk, TError>([NotNull] this IEnumerable<Maybe<TOk, TError>> maybes)
+        public static (TOk[] okValues, TError[] errorValues) Partition<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             var okValues = new List<TOk>();
             var errValues = new List<TError>();

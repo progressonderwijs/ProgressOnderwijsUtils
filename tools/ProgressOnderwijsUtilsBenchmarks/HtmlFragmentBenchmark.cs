@@ -23,9 +23,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         [Benchmark]
         public void SerializeLargeDocument()
-        {
-            htmlFragment.ToStringWithDoctype();
-        }
+            => htmlFragment.ToStringWithDoctype();
 
         [Benchmark]
         public void WriteToStream()
@@ -59,58 +57,45 @@ namespace ProgressOnderwijsUtilsBenchmarks
 
         [Benchmark]
         public void CreateLargeDocument()
-        {
-            WikiPageHtml5.MakeHtml();
-        }
+            => WikiPageHtml5.MakeHtml();
 
         [Benchmark]
         public void CreateAndSerializeLargeDocument()
-        {
-            WikiPageHtml5.MakeHtml().ToStringWithDoctype();
-        }
+            => WikiPageHtml5.MakeHtml().ToStringWithDoctype();
 
         [Benchmark]
         public void SerializeLargeDocumentToCSharp()
-        {
-            htmlFragment.ToCSharp();
-        }
+            => htmlFragment.ToCSharp();
 
         [Benchmark]
         public void JustConvertToUtf8()
         {
-            using (var stream = new MemoryStream())
-            using (var writer = new StreamWriter(stream, Encoding.UTF8)) {
-                writer.Write(htmlString);
-            }
+            using var stream = new MemoryStream();
+            using var writer = new StreamWriter(stream, Encoding.UTF8);
+            writer.Write(htmlString);
         }
 
         [Benchmark]
         public void JustSerializeToUtf8LargeDocument()
         {
-            using (var stream = new MemoryStream()) {
-                htmlFragment.SaveHtmlFragmentToStream(stream, Encoding.UTF8);
-            }
+            using var stream = new MemoryStream();
+            htmlFragment.SaveHtmlFragmentToStream(stream, Encoding.UTF8);
         }
 
         [Benchmark]
         public void AngleSharpParseFromString()
-        {
-            new HtmlParser().ParseDocument(htmlString);
-        }
+            => new HtmlParser().ParseDocument(htmlString);
 
         [Benchmark]
         public void AngleSharpParseFromUtf8()
         {
-            using (var stream = new MemoryStream(htmlUtf8)) {
-                new HtmlParser().ParseDocument(stream);
-            }
+            using var stream = new MemoryStream(htmlUtf8);
+            new HtmlParser().ParseDocument(stream);
         }
 
         [Benchmark]
         public void AngleSharpToString()
-        {
-            angleSharpDocument.DocumentElement.ToHtml();
-        }
+            => angleSharpDocument.DocumentElement.ToHtml();
 
         /**/
     }
