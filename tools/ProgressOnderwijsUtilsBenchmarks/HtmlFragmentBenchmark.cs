@@ -1,4 +1,4 @@
-#nullable disable
+﻿#nullable disable
 using System.IO;
 using System.Text;
 using AngleSharp;
@@ -36,10 +36,10 @@ namespace ProgressOnderwijsUtilsBenchmarks
         {
             public Config()
             {
-                Add(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerForce"));
-                Add(Job.MediumRun.WithGcServer(true).WithGcForce(false).WithId("Server"));
-                Add(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("Workstation"));
-                Add(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("WorkstationForce"));
+                AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(true).WithId("ServerForce"));
+                AddJob(Job.MediumRun.WithGcServer(true).WithGcForce(false).WithId("Server"));
+                AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(true).WithId("Workstation"));
+                AddJob(Job.MediumRun.WithGcServer(false).WithGcForce(false).WithId("WorkstationForce"));
             }
         }
 
