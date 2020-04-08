@@ -92,7 +92,7 @@ namespace ProgressOnderwijsUtils
             return getter(current);
         }
 
-        struct ColumnInfo
+        readonly struct ColumnInfo
         {
             public readonly string Name;
 
