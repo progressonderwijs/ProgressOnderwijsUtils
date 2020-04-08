@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using JetBrains.Annotations;
 
@@ -7,7 +8,7 @@ namespace ProgressOnderwijsUtils.Collections
 {
     public static class MaybeExtensions
     {
-        [CanBeNull]
+        [return: MaybeNull]
         [Pure]
         public static TError ErrorOrNull<TOk, TError>(this Maybe<TOk, TError> state)
             where TError : class?
@@ -23,7 +24,7 @@ namespace ProgressOnderwijsUtils.Collections
             where TError : struct
             => state.TryGet(out _, out var whenError) ? default(TError?) : whenError;
 
-        [CanBeNull]
+        [return: MaybeNull]
         [Pure]
         public static TOk ValueOrNull<TOk, TError>(this Maybe<TOk, TError> state)
             where TOk : class?
