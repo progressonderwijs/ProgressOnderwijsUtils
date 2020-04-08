@@ -326,9 +326,7 @@ namespace ProgressOnderwijsUtils
         readonly Comparison<T> comparer;
 
         public ComparisonComparer(Comparison<T> comparer)
-        {
-            this.comparer = comparer;
-        }
+            => this.comparer = comparer;
 
         public int Compare(T x, T y)
             => comparer(x, y);
