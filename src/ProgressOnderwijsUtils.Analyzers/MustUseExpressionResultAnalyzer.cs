@@ -18,8 +18,6 @@ namespace ProgressOnderwijsUtils.Analyzers
             true
         );
 
-        public MustUseExpressionResultAnalyzer() { }
-
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => ImmutableArray.Create(Rule);
 
@@ -54,6 +52,10 @@ namespace ProgressOnderwijsUtils.Analyzers
 
         static void AnalyzeArrowExpressionClause(SyntaxNodeAnalysisContext context, ArrowExpressionClauseSyntax arrow)
         {
+            if (arrow.Expression.Kind() == SyntaxKind.SimpleAssignmentExpression) {
+                return;
+            }
+
             var exprType = context.SemanticModel.GetTypeInfo(arrow.Expression).Type;
             if (!ExpressionTypeCanBeIgnored(exprType)) {
                 if (arrow.Parent is MethodDeclarationSyntax method) {

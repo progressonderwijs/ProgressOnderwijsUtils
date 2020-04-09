@@ -2,8 +2,8 @@
   <PropertyGroup>
     <Description>Collection of Roslyn analyzers developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <PackageReleaseNotes>Also apply the POU1001 analyzer on expression body syntax.</PackageReleaseNotes>
-    <Version>1.1.0</Version>
+    <PackageReleaseNotes>Exclude assignment expressions from the expression body checks.</PackageReleaseNotes>
+    <Version>1.1.1</Version>
   </PropertyGroup>
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
