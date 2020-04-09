@@ -18,6 +18,8 @@ namespace ProgressOnderwijsUtils.Analyzers
             true
         );
 
+        public MustUseExpressionResultAnalyzer() { }
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => ImmutableArray.Create(Rule);
 
@@ -59,6 +61,8 @@ namespace ProgressOnderwijsUtils.Analyzers
                     if (symbol?.ReturnType.SpecialType == SpecialType.System_Void) {
                         context.ReportDiagnostic(Diagnostic.Create(Rule, arrow.GetLocation(), exprType));
                     }
+                } else if (arrow.Parent is ConstructorDeclarationSyntax) {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, arrow.GetLocation(), exprType));
                 }
             }
         }
