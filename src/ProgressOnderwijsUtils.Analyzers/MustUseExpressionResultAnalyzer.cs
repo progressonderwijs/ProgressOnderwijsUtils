@@ -18,6 +18,8 @@ namespace ProgressOnderwijsUtils.Analyzers
             true
         );
 
+        public MustUseExpressionResultAnalyzer() { }
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
             => ImmutableArray.Create(Rule);
 
@@ -26,20 +28,42 @@ namespace ProgressOnderwijsUtils.Analyzers
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
             context.EnableConcurrentExecution();
             context.RegisterSyntaxNodeAction(Analyze, SyntaxKind.ExpressionStatement);
+            context.RegisterSyntaxNodeAction(Analyze, SyntaxKind.ArrowExpressionClause);
         }
 
         static void Analyze(SyntaxNodeAnalysisContext context)
-            => AnalyzeExpressionStatement(context, context.Node as ExpressionStatementSyntax);
-
-        static void AnalyzeExpressionStatement(SyntaxNodeAnalysisContext context, ExpressionStatementSyntax? syntax)
         {
-            if (syntax == null || syntax.Expression.Kind() == SyntaxKind.SimpleAssignmentExpression) {
+            if (context.Node is ExpressionStatementSyntax expr) {
+                AnalyzeExpressionStatement(context, expr);
+            } else if (context.Node is ArrowExpressionClauseSyntax arrow) {
+                AnalyzeArrowExpressionClause(context, arrow);
+            }
+        }
+
+        static void AnalyzeExpressionStatement(SyntaxNodeAnalysisContext context, ExpressionStatementSyntax expr)
+        {
+            if (expr.Expression.Kind() == SyntaxKind.SimpleAssignmentExpression) {
                 return;
             }
 
-            var exprType = context.SemanticModel.GetTypeInfo(syntax.Expression).Type;
+            var exprType = context.SemanticModel.GetTypeInfo(expr.Expression).Type;
             if (!ExpressionTypeCanBeIgnored(exprType)) {
-                context.ReportDiagnostic(Diagnostic.Create(Rule, syntax.GetLocation(), exprType));
+                context.ReportDiagnostic(Diagnostic.Create(Rule, expr.GetLocation(), exprType));
+            }
+        }
+
+        static void AnalyzeArrowExpressionClause(SyntaxNodeAnalysisContext context, ArrowExpressionClauseSyntax arrow)
+        {
+            var exprType = context.SemanticModel.GetTypeInfo(arrow.Expression).Type;
+            if (!ExpressionTypeCanBeIgnored(exprType)) {
+                if (arrow.Parent is MethodDeclarationSyntax method) {
+                    var symbol = context.SemanticModel.GetDeclaredSymbol(method);
+                    if (symbol?.ReturnType.SpecialType == SpecialType.System_Void) {
+                        context.ReportDiagnostic(Diagnostic.Create(Rule, arrow.GetLocation(), exprType));
+                    }
+                } else if (arrow.Parent is ConstructorDeclarationSyntax) {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, arrow.GetLocation(), exprType));
+                }
             }
         }
 

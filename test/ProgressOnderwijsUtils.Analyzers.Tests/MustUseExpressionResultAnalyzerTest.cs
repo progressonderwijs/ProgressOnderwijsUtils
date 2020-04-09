@@ -112,5 +112,51 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
             var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
             PAssert.That(() => diagnostics.None());
         }
+
+        [Fact]
+        public void Invocation_expression_result_cannot_be_ignored_in_lambda_expression()
+        {
+            var source = @"
+                using ProgressOnderwijsUtils.Collections;
+
+                static class C
+                {
+                    static Maybe<Unit, string> Foo()
+                    {
+                        return Maybe.Ok();
+                    }
+
+                    public static void Test()
+                        => Foo();                    
+                }
+            ";
+
+            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+            PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
+            PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 11);
+        }
+
+        [Fact]
+        public void Invocation_expression_result_cannot_be_ignored_in_constructor_lambda_expression()
+        {
+            var source = @"
+                using ProgressOnderwijsUtils.Collections;
+
+                sealed class Test
+                {
+                    static Maybe<Unit, string> Foo()
+                    {
+                        return Maybe.Ok();
+                    }
+
+                    public Test()
+                        => Foo();                    
+                }
+            ";
+
+            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+            PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
+            PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 11);
+        }
     }
 }

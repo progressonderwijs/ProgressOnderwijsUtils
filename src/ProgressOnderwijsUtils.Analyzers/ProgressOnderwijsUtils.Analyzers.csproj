@@ -2,8 +2,8 @@
   <PropertyGroup>
     <Description>Collection of Roslyn analyzers developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <PackageReleaseNotes>Configure the POU1001 rule default as an error.</PackageReleaseNotes>
-    <Version>1.0.3</Version>
+    <PackageReleaseNotes>Also apply the POU1001 analyzer on expression body syntax.</PackageReleaseNotes>
+    <Version>1.1.0</Version>
   </PropertyGroup>
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
