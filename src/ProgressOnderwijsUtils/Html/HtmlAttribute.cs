@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.Html
             => Name + "=" + Value;
     }
 
-    public struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
+    public readonly struct HtmlAttributes : IReadOnlyList<HtmlAttribute>
     {
         readonly HtmlAttribute[] attributes;
         readonly int count;
