@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils.Tests
         {
             foreach (var col in colSort.Columns) {
                 // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                colSort.ToggleSortDirection(col.ColumnName); //we're testing if this really is pure.
+                colSort.ToggleSortDirection(col.ColumnName.AssertNotNull()); //we're testing if this really is pure.
             }
 
             PAssert.That(() => colSort.Columns.SequenceEqual(new[] { ziggyA, abcA, acolD }));
@@ -83,7 +83,7 @@ namespace ProgressOnderwijsUtils.Tests
             => PAssert.That(
                 () =>
                     colSort.Columns.Concat(colSort.Columns).Reverse()
-                        .Aggregate(colSort, (sortorder, col) => sortorder.ToggleSortDirection(col.ColumnName))
+                        .Aggregate(colSort, (sortorder, col) => sortorder.ToggleSortDirection(col.ColumnName.AssertNotNull()))
                     == colSort);
 
         [Fact]
