@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 using Microsoft.Data.SqlClient;

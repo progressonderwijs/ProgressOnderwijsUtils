@@ -1,5 +1,4 @@
-#nullable disable
-using System.Linq;
+﻿using System.Linq;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils;
 using static ProgressOnderwijsUtils.SafeSql;

@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;

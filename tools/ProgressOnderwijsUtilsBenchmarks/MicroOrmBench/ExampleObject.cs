@@ -1,5 +1,4 @@
-#nullable disable
-using System;
+﻿using System;
 using System.Runtime.CompilerServices;
 using ProgressOnderwijsUtils;
 using static ProgressOnderwijsUtils.SafeSql;
