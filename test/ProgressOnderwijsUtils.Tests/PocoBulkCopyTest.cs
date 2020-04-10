@@ -2,7 +2,6 @@
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 

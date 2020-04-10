@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using Dapper;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {

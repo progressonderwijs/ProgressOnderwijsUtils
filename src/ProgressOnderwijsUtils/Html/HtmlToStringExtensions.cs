@@ -2,7 +2,6 @@
 using System.Buffers;
 using System.IO;
 using System.Text;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {

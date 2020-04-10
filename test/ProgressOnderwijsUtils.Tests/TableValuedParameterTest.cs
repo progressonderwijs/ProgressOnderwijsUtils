@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Internal;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;

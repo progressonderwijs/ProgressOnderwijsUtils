@@ -3,7 +3,6 @@ using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {

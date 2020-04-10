@@ -2,7 +2,6 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.SchemaReflection
 {

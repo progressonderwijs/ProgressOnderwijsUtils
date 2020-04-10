@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtils.SchemaReflection;
 
 namespace ProgressOnderwijsUtils

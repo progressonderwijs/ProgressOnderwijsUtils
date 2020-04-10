@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.Data.SqlClient;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {

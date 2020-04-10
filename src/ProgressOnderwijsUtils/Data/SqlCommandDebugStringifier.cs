@@ -5,7 +5,6 @@ using Microsoft.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {

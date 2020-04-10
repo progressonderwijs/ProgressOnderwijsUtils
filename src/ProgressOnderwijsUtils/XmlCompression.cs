@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 using ZlibWithDictionary;
 
 namespace ProgressOnderwijsUtils

@@ -6,7 +6,6 @@ using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
 {

@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace ProgressOnderwijsUtils.Html
+﻿namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlToTextContent
     {

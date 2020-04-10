@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Threading;
-using ExpressionToCodeLib;
+﻿using ExpressionToCodeLib;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests

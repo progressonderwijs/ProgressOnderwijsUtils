@@ -3,7 +3,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
