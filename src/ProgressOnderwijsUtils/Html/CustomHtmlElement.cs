@@ -52,7 +52,7 @@ namespace ProgressOnderwijsUtils.Html
                 : tagDescription.EmptyValue.ReplaceAttributesAndContents(Attributes, GetContent());
         }
 
-        IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>([NotNull] THtmlTagAlteration change)
+        IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change)
             => change.AlterElementAllowingContent(this);
 
         public static HtmlFragment operator +(CustomHtmlElement head, HtmlFragment tail)

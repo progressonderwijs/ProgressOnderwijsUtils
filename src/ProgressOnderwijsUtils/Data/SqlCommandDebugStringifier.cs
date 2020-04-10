@@ -11,11 +11,9 @@ namespace ProgressOnderwijsUtils
 {
     public static class SqlCommandDebugStringifier
     {
-        [NotNull]
-        public static string DebugFriendlyCommandText([NotNull] SqlCommand sqlCommand, SqlTracerAgumentInclusion includeSensitiveInfo)
+        public static string DebugFriendlyCommandText(SqlCommand sqlCommand, SqlTracerAgumentInclusion includeSensitiveInfo)
             => CommandParamStringOrEmpty(sqlCommand, includeSensitiveInfo) + sqlCommand.CommandText;
 
-        [NotNull]
         static string CommandParamStringOrEmpty(SqlCommand sqlCommand, SqlTracerAgumentInclusion includeSensitiveInfo)
         {
             if (includeSensitiveInfo == SqlTracerAgumentInclusion.IncludingArgumentValues) {
@@ -25,12 +23,10 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [NotNull]
-        static string CommandParamString([NotNull] SqlCommand sqlCommand)
+        static string CommandParamString(SqlCommand sqlCommand)
             => sqlCommand.Parameters.Cast<SqlParameter>().Select(DeclareParameter).JoinStrings();
 
-        [NotNull]
-        static string DeclareParameter([NotNull] SqlParameter par)
+        static string DeclareParameter(SqlParameter par)
         {
             var declareVariable = "DECLARE " + par.ParameterName + " AS " + SqlParamTypeString(par);
             if (par.SqlDbType != SqlDbType.Structured) {
@@ -44,7 +40,6 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [NotNull]
         static string ValuesClauseForTableValuedParameter(IReadOnlyList<object>? tableValue)
         {
             if (tableValue == null) {
@@ -56,13 +51,11 @@ namespace ProgressOnderwijsUtils
             return valuesString + valueCountCommentIfNecessary;
         }
 
-        [NotNull]
-        static string SqlParamTypeString([NotNull] SqlParameter par)
+        static string SqlParamTypeString(SqlParameter par)
             => par.SqlDbType == SqlDbType.Structured
                 ? par.TypeName
                 : par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
-        [NotNull]
         public static string InsecureSqlDebugString(object? p, bool includeReadableEnumValue)
         {
             if (p is DBNull || p == null) {
@@ -90,8 +83,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [NotNull]
-        public static ParameterizedSqlExecutionException ExceptionWithTextAndArguments([NotNull] string message, [NotNull] SqlCommand failedCommand, Exception? innerException)
+        public static ParameterizedSqlExecutionException ExceptionWithTextAndArguments(string message, SqlCommand failedCommand, Exception? innerException)
         {
             var debugFriendlyCommandText = DebugFriendlyCommandText(failedCommand, SqlTracerAgumentInclusion.IncludingArgumentValues);
             var timeoutMessage = innerException.IsSqlTimeoutException() ? "\nCOMMAND TIMEOUT: " + failedCommand.CommandTimeout + "s" : "";

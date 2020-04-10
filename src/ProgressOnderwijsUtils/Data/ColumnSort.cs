@@ -15,7 +15,6 @@ namespace ProgressOnderwijsUtils
         public string? ColumnName { get; } //intrinsically nullable due to binary serialization
         public SortDirection SortDirection { get; }
 
-        [NotNull]
         public string SqlSortString()
             => ColumnName + " " + SortDirection;
 

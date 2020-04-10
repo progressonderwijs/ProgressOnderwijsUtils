@@ -47,12 +47,10 @@ namespace ProgressOnderwijsUtils
         public override int GetHashCode()
             => FieldwiseHasher<T>.Instance((T)this);
 
-        [NotNull]
         public T Copy()
             => (T)MemberwiseClone();
 
-        [NotNull]
-        public T CopyWith([NotNull] Action<T> action)
+        public T CopyWith(Action<T> action)
         {
             var copied = Copy();
             action(copied);
@@ -73,15 +71,13 @@ namespace ProgressOnderwijsUtils
     {
         public static readonly Func<T, string> Func = byPublicMembers();
 
-        [NotNull]
-        static MemberExpression MemberAccessExpression(Expression expr, [NotNull] MemberInfo mi)
+        static MemberExpression MemberAccessExpression(Expression expr, MemberInfo mi)
             => mi is FieldInfo info ? Expression.Field(expr, info) : Expression.Property(expr, (PropertyInfo)mi);
 
         [UsedImplicitly]
         static string ToString(object o)
             => ObjectToCode.ComplexObjectToPseudoCode(o);
 
-        [NotNull]
         static Func<T, string> byPublicMembers()
         {
             var concatMethod = ((Func<string[], string>)string.Concat).Method;
@@ -130,8 +126,7 @@ namespace ProgressOnderwijsUtils
             return Expression.Lambda<Func<T, string>>(toStringExpr, parA).Compile();
         }
 
-        [NotNull]
-        static string FriendlyMemberName([NotNull] MemberInfo fi)
+        static string FriendlyMemberName(MemberInfo fi)
         {
             bool isPublic;
             if (fi is FieldInfo fieldinfo) {

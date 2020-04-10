@@ -19,8 +19,7 @@ namespace ProgressOnderwijsUtils.Tests
             public int? SomeColumn { get; set; }
             public int? OtherColumn { get; set; }
 
-            [NotNull]
-            public static ExactMapping[] Load([NotNull] SqlConnection context)
+                public static ExactMapping[] Load(SqlConnection context)
                 => SQL($@"select t.* from {testTableName} t").ReadPocos<ExactMapping>(context);
         }
 
@@ -49,7 +48,6 @@ namespace ProgressOnderwijsUtils.Tests
         public void Exact_mapping_gives_exception_on_more_columns()
             => Assert.Throws<InvalidOperationException>(() => { CreateTargetTable().With(BulkCopyFieldMappingMode.ExactMatch).BulkInsert(Connection, new[] { new MoreColumns() }); });
 
-        [NotNull]
         BulkInsertTarget CreateTargetTable()
         {
             SQL($@"

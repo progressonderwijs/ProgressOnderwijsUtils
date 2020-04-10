@@ -53,7 +53,6 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        [NotNull]
         public T[] ToArray()
         {
             if (current == null) {

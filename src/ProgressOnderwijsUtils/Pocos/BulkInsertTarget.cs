@@ -22,32 +22,26 @@ namespace ProgressOnderwijsUtils
         BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             => (TableName, Columns, Mode, Options) = (tableName, columnDefinition, mode, options);
 
-        [NotNull]
-        public static BulkInsertTarget FromDatabaseDescription([NotNull] DatabaseDescription.Table table)
+        public static BulkInsertTarget FromDatabaseDescription(DatabaseDescription.Table table)
             => new BulkInsertTarget(table.QualifiedName, table.Columns.ArraySelect((col, colIdx) => ColumnDefinition.FromDbColumnMetaData(col.ColumnMetaData, colIdx)));
 
-        [NotNull]
-        public static BulkInsertTarget LoadFromTable([NotNull] SqlConnection conn, ParameterizedSql tableName)
+        public static BulkInsertTarget LoadFromTable(SqlConnection conn, ParameterizedSql tableName)
             => LoadFromTable(conn, tableName.CommandText());
 
-        [NotNull]
-        public static BulkInsertTarget LoadFromTable([NotNull] SqlConnection conn, [NotNull] string tableName)
+        public static BulkInsertTarget LoadFromTable(SqlConnection conn, string tableName)
             => FromCompleteSetOfColumns(tableName, DbColumnMetaData.ColumnMetaDatas(conn, tableName));
 
-        [NotNull]
-        public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, [NotNull] DbColumnMetaData[] columns)
+        public static BulkInsertTarget FromCompleteSetOfColumns(string tableName, DbColumnMetaData[] columns)
             => new BulkInsertTarget(tableName, columns.ArraySelect(ColumnDefinition.FromDbColumnMetaData));
 
-        [NotNull]
         public BulkInsertTarget With(BulkCopyFieldMappingMode mode)
             => new BulkInsertTarget(TableName, Columns, mode, Options);
 
-        [NotNull]
         public BulkInsertTarget With(SqlBulkCopyOptions options)
             => new BulkInsertTarget(TableName, Columns, Mode, options);
 
         public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] SqlConnection sqlConn, [NotNull] IEnumerable<T> pocos, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
+            T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
             where T : IReadImplicitly
         {
             using (var dbDataReader = new PocoDataReader<T>(pocos, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
@@ -55,7 +49,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public void BulkInsert([NotNull] SqlConnection sqlConn, [NotNull] DataTable dataTable, CommandTimeout timeout = default)
+        public void BulkInsert(SqlConnection sqlConn, DataTable dataTable, CommandTimeout timeout = default)
         {
             using (var dbDataReader = dataTable.CreateDataReader()) {
                 BulkInsert(sqlConn, dbDataReader, $"DataTable({dataTable.TableName})", timeout);

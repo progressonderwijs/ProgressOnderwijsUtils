@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils
         public ParameterizedSqlExecutionException(string msg, Exception? inner)
             : base(msg, inner) { }
 
-        ParameterizedSqlExecutionException([NotNull] SerializationInfo serializationinfo, StreamingContext streamingcontext)
+        ParameterizedSqlExecutionException(SerializationInfo serializationinfo, StreamingContext streamingcontext)
             : base(serializationinfo, streamingcontext) { }
     }
 }

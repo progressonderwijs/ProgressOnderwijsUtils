@@ -61,7 +61,6 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public IEnumerable<View> AllViews
             => viewById.Values;
 
-        [NotNull]
         public Table GetTableByName(string qualifiedName)
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
 

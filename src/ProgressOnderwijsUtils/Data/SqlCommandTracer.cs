@@ -15,7 +15,6 @@ namespace ProgressOnderwijsUtils
 
     public interface ISqlCommandTracer
     {
-        [NotNull]
         SqlTraceEvent[] ListAllCommands();
 
         void RegisterEvent(string commandText, TimeSpan duration);
@@ -31,19 +30,16 @@ namespace ProgressOnderwijsUtils
 
     public static class SqlCommandTracer
     {
-        public static ISqlCommandTracer? Tracer([NotNull] this SqlConnection conn)
+        public static ISqlCommandTracer? Tracer(this SqlConnection conn)
             => (conn.Site as IAttachedToTracer)?.Tracer;
 
-        [NotNull]
         public static ISqlCommandTracer CreateAlwaysOnTracer(SqlTracerAgumentInclusion agumentInclusion)
             => new AlwaysOnTracer(agumentInclusion);
 
-        [NotNull]
         public static ISqlCommandTracer CreateAlwaysOffTracer(SqlTracerAgumentInclusion agumentInclusion)
             => new AlwaysOffTracer(agumentInclusion);
 
-        [NotNull]
-        public static ISqlCommandTracer WrapTracer([NotNull] ISqlCommandTracer originalTracer)
+        public static ISqlCommandTracer WrapTracer(ISqlCommandTracer originalTracer)
             => new WrappingTracer(originalTracer);
 
         sealed class AlwaysOffTracer : ISqlCommandTracer
@@ -105,7 +101,7 @@ namespace ProgressOnderwijsUtils
             readonly ISqlCommandTracer Original;
             readonly ISqlCommandTracer Inner;
 
-            public WrappingTracer([NotNull] ISqlCommandTracer original)
+            public WrappingTracer(ISqlCommandTracer original)
             {
                 Original = original;
                 Inner = CreateAlwaysOnTracer(original.ArgumentInclusion);
@@ -139,7 +135,7 @@ namespace ProgressOnderwijsUtils
             readonly string sqlCommandText;
             readonly Stopwatch commandStopwatch;
 
-            internal SqlCommandTimer([NotNull] ISqlCommandTracer tracer, string sqlCommandText)
+            internal SqlCommandTimer(ISqlCommandTracer tracer, string sqlCommandText)
             {
                 this.tracer = tracer;
                 this.sqlCommandText = sqlCommandText;

@@ -19,8 +19,7 @@ namespace ProgressOnderwijsUtils
             Dst = dst;
         }
 
-        [NotNull]
-        public static BulkInsertFieldMapping[] Create([NotNull] ColumnDefinition[] srcColumns, [NotNull] ColumnDefinition[] dstColumns)
+        public static BulkInsertFieldMapping[] Create(ColumnDefinition[] srcColumns, ColumnDefinition[] dstColumns)
         {
             var dstColumnsByName = dstColumns.ToDictionary(o => o.Name ?? "!!UNNAMED COLUMN!!", StringComparer.OrdinalIgnoreCase);
 
@@ -38,7 +37,7 @@ namespace ProgressOnderwijsUtils
             return list.ToArray();
         }
 
-        public static void ApplyFieldMappingsToBulkCopy([NotNull] BulkInsertFieldMapping[] mapping, [NotNull] SqlBulkCopy bulkCopy)
+        public static void ApplyFieldMappingsToBulkCopy(BulkInsertFieldMapping[] mapping, SqlBulkCopy bulkCopy)
         {
             bulkCopy.ColumnMappings.Clear();
             foreach (var mapEntry in mapping) {
@@ -53,7 +52,7 @@ namespace ProgressOnderwijsUtils
         public bool AllowExtraTargetColumns;
         public bool OverwriteAutoIncrement;
 
-        public Maybe<BulkInsertFieldMapping[], string> ValidateAndFilter([NotNull] BulkInsertFieldMapping[] mapping)
+        public Maybe<BulkInsertFieldMapping[], string> ValidateAndFilter(BulkInsertFieldMapping[] mapping)
         {
             var errors = new List<string>(mapping.Length);
             var mapped = new List<BulkInsertFieldMapping>(mapping.Length);

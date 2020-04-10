@@ -27,7 +27,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             AuthnContextClassRef = null;
         }
 
-        [NotNull]
         public string EncodeAsQueryArgument()
         {
             var xml = Encoding.UTF8.GetBytes(ToXml().ToString());
@@ -39,8 +38,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             }
         }
 
-        [NotNull]
-        public string EncodeAndSignAsFormArgument([NotNull] RSA key)
+        public string EncodeAndSignAsFormArgument(RSA key)
         {
             var doc = new XmlDocument { PreserveWhitespace = false };
             doc.Load(ToXml().CreateReader());
@@ -58,7 +56,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return Convert.ToBase64String(Encoding.UTF8.GetBytes(doc.InnerXml));
         }
 
-        [NotNull]
         XElement ToXml()
             => new XElement(
                 SamlNamespaces.SAMLP_NS + "AuthnRequest",

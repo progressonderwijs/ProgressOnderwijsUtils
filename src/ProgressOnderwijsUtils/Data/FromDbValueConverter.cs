@@ -54,8 +54,7 @@ namespace ProgressOnderwijsUtils
         {
             public static readonly Func<object, T> Convert = MakeConverter(typeof(T));
 
-            [NotNull]
-            static Func<object, T> MakeConverter([NotNull] Type type)
+                static Func<object, T> MakeConverter(Type type)
             {
                 var converter = PocoPropertyConverter.GetOrNull(type);
                 if (converter != null) {
@@ -86,8 +85,7 @@ namespace ProgressOnderwijsUtils
         {
             public static readonly Func<object, T> Convert = MakeConverter(typeof(T));
 
-            [NotNull]
-            static Func<object, T> MakeConverter([NotNull] Type type)
+                static Func<object, T> MakeConverter(Type type)
             {
                 if (!type.IsValueType) {
                     return obj => obj == null ? default(T) : obj is IPocoConvertibleProperty<T> ? (T)PocoPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;

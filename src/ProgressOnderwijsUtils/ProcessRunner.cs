@@ -48,7 +48,6 @@ namespace ProgressOnderwijsUtils
             return proc;
         }
 
-        [NotNull]
         public AsyncProcessResult StartProcess(CancellationToken token = default)
         {
             var exitCodeCompletion = new TaskCompletionSource<int>();

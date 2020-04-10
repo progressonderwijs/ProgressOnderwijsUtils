@@ -13,7 +13,6 @@ namespace ProgressOnderwijsUtils
         //conceptually, a ConcurrentBag that doesn't allocation on .Add(...) is what we're looking for here, and a queue is close enough.
         static readonly ConcurrentQueue<T[]>[] bagsByIndex = InitBags();
 
-        [NotNull]
         static ConcurrentQueue<T[]>[] InitBags()
         {
             var allBags = new ConcurrentQueue<T[]>[IndexCount];
@@ -42,7 +41,7 @@ namespace ProgressOnderwijsUtils
         /// Releases an array array back into the pool.  It is an error for a caller to use the array after this call.
         /// Large arrays (currently longer than 128 elements) are never pooled; this operation is a no-op for such arrays.
         /// </summary>
-        public static void ReturnToPool([NotNull] T[] arr)
+        public static void ReturnToPool(T[] arr)
         {
             if (arr.Length > MaxArrayLength) {
                 return;

@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils
         /// <returns>an int</returns>
         /// <remarks>If you just want to test existance the native "Contains" would be sufficient</remarks>
         [Pure]
-        public static int IndexOf<T>([NotNull] this IEnumerable<T> list, T elem)
+        public static int IndexOf<T>(this IEnumerable<T> list, T elem)
         {
             if (list == null) {
                 throw new ArgumentNullException(nameof(list));
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static int IndexOf<T>([NotNull] this IEnumerable<T> list, [NotNull] Func<T, bool> matcher)
+        public static int IndexOf<T>(this IEnumerable<T> list, Func<T, bool> matcher)
         {
             if (list == null) {
                 throw new ArgumentNullException(nameof(list));
@@ -54,55 +54,51 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static bool None<TSource>([NotNull] this IEnumerable<TSource> source)
+        public static bool None<TSource>(this IEnumerable<TSource> source)
             => !source.Any();
 
         [Pure]
-        public static bool None<TSource>([NotNull] this IEnumerable<TSource> source, [NotNull] Func<TSource, bool> predicate)
+        public static bool None<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
             => !source.Any(predicate);
 
         [Pure]
-        public static bool None<TSource>([NotNull] this IQueryable<TSource> source)
+        public static bool None<TSource>(this IQueryable<TSource> source)
             => !source.Any();
 
         [Pure]
-        public static bool None<TSource>([NotNull] this IQueryable<TSource> source, [NotNull] Expression<Func<TSource, bool>> predicate)
+        public static bool None<TSource>(this IQueryable<TSource> source, Expression<Func<TSource, bool>> predicate)
             => !source.Any(predicate);
 
         [Pure]
         public static IEnumerable<TSource> WhereIf<TSource>(this IEnumerable<TSource> source, bool condition, Func<TSource, bool> predicate)
             => condition ? source.Where(predicate) : source;
 
-        [NotNull]
         [Pure]
-        public static IReadOnlyList<T> ToReadOnly<T>([NotNull] this IEnumerable<T> list)
+        public static IReadOnlyList<T> ToReadOnly<T>(this IEnumerable<T> list)
             => list.ToArray();
 
-        [NotNull]
         [Pure]
-        public static HashSet<T> ToSet<T>([NotNull] this IEnumerable<T> list)
+        public static HashSet<T> ToSet<T>(this IEnumerable<T> list)
             => new HashSet<T>(list);
 
-        [NotNull]
         [Pure]
-        public static HashSet<T> ToSet<T>([NotNull] this IEnumerable<T> list, IEqualityComparer<T> comparer)
+        public static HashSet<T> ToSet<T>(this IEnumerable<T> list, IEqualityComparer<T> comparer)
             => new HashSet<T>(list, comparer);
 
         [Pure]
-        public static bool SetEqual<T>([NotNull] this IEnumerable<T> list, [NotNull] IEnumerable<T> other)
+        public static bool SetEqual<T>(this IEnumerable<T> list, IEnumerable<T> other)
             => list.ToSet().SetEquals(other);
 
         [Pure]
-        public static bool SetEqual<T>([NotNull] this IEnumerable<T> list, [NotNull] IEnumerable<T> other, IEqualityComparer<T> comparer)
+        public static bool SetEqual<T>(this IEnumerable<T> list, IEnumerable<T> other, IEqualityComparer<T> comparer)
             => list.ToSet(comparer).SetEquals(other);
 
-        [NotNull]
         [Pure]
         public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T>? list)
             => list ?? Enumerable.Empty<T>();
 
         [Pure]
-        public static int GetSequenceHashCode<T>([NotNull] IEnumerable<T> list, IEqualityComparer<T>? elementComparer = null)
+        public static int GetSequenceHashCode<T>(IEnumerable<T> list, IEqualityComparer<T>? elementComparer = null)
         {
             var hc = new HashCode();
             foreach (var item in list) {
@@ -112,11 +108,11 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static bool ContainsDuplicates<T>([NotNull] this IEnumerable<T> list)
+        public static bool ContainsDuplicates<T>(this IEnumerable<T> list)
             => ContainsDuplicates(list, EqualityComparer<T>.Default);
 
         [Pure]
-        public static bool ContainsDuplicates<T>([NotNull] this IEnumerable<T> list, IEqualityComparer<T> comparer)
+        public static bool ContainsDuplicates<T>(this IEnumerable<T> list, IEqualityComparer<T> comparer)
         {
             var set = new HashSet<T>(comparer);
             foreach (var item in list) {
@@ -148,17 +144,15 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [NotNull]
         [Pure]
-        public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>([NotNull] this IEnumerable<T> list, [NotNull] Func<T, TKey> keySelector, Func<T, TVal> valSelector)
+        public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(this IEnumerable<T> list, Func<T, TKey> keySelector, Func<T, TVal> valSelector)
             where TKey : notnull
             => list.ToSortedList(keySelector, valSelector, Comparer<TKey>.Default);
 
-        [NotNull]
         [Pure]
         public static SortedList<TKey, TVal> ToSortedList<T, TKey, TVal>(
-            [NotNull] this IEnumerable<T> list,
-            [NotNull] Func<T, TKey> keySelector,
+            this IEnumerable<T> list,
+            Func<T, TKey> keySelector,
             Func<T, TVal> valSelector,
             IComparer<TKey> keyComparer)
             where TKey : notnull
@@ -170,20 +164,18 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
-        [NotNull]
         [Pure]
         public static Dictionary<TKey, TValue> ToGroupedDictionary<TElem, TKey, TValue>(
-            [NotNull] this IEnumerable<TElem> list,
+            this IEnumerable<TElem> list,
             Func<TElem, TKey> keyLookup,
             Func<TKey, IEnumerable<TElem>, TValue> groupMap
         )
             where TKey : notnull
             => list.ToGroupedDictionary(keyLookup, groupMap, EqualityComparer<TKey>.Default);
 
-        [NotNull]
         [Pure]
         public static Dictionary<TKey, TValue> ToGroupedDictionary<TElem, TKey, TValue>(
-            [NotNull] this IEnumerable<TElem> list,
+            this IEnumerable<TElem> list,
             Func<TElem, TKey> keyLookup,
             Func<TKey, IEnumerable<TElem>, TValue> groupMap,
             IEqualityComparer<TKey> comparer
@@ -205,9 +197,8 @@ namespace ProgressOnderwijsUtils
             return retval;
         }
 
-        [NotNull]
         [Pure]
-        public static string ToCsv<T>([NotNull] this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", bool useQuotesForStrings = false)
+        public static string ToCsv<T>(this IEnumerable<T> items, bool useHeader = true, string delimiter = "\t", bool useQuotesForStrings = false)
             where T : class
         {
             var csvBuilder = new StringBuilder();
@@ -224,7 +215,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        static string? ToCsvValue<T>([CanBeNull] this T item, [NotNull] string delimiter, bool useQuotesForStrings)
+        static string? ToCsvValue<T>([CanBeNull] this T item, string delimiter, bool useQuotesForStrings)
         {
             var csvValueWithoutQuotes = item?.ToString() ?? "";
 
@@ -247,7 +238,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public static void ForEach<T>([NotNull] this IEnumerable<T> list, CancellationToken cancel, Action<T> action)
+        public static void ForEach<T>(this IEnumerable<T> list, CancellationToken cancel, Action<T> action)
         {
             foreach (var item in list) {
                 cancel.ThrowIfCancellationRequested();

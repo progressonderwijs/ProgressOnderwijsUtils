@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils
     public interface ITypedSqlCommand<out TQueryReturnValue>
     {
         [MustUseReturnValue]
-        TQueryReturnValue Execute([NotNull] SqlConnection conn);
+        TQueryReturnValue Execute(SqlConnection conn);
     }
 
     public readonly struct NonQuerySqlCommand : INestableSql, IWithTimeout<NonQuerySqlCommand>
@@ -81,7 +81,6 @@ namespace ProgressOnderwijsUtils
             => (Sql, CommandTimeout, MissingSchemaAction) = (sql, timeout, missingSchemaAction);
 
         [MustUseReturnValue]
-        [NotNull]
         public DataTable Execute(SqlConnection conn)
         {
             using (var cmd = this.ReusableCommand(conn))

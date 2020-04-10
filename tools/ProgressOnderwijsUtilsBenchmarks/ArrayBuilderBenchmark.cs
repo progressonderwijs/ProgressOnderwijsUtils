@@ -265,7 +265,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
             }
         }
 
-        [NotNull]
         public T[] ToArray()
         {
             if (current == null) {
@@ -327,7 +326,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
             }
         }
 
-        [NotNull]
         public T[] ToArray()
         {
             if (current == null) {
@@ -388,7 +386,6 @@ namespace ProgressOnderwijsUtilsBenchmarks
             }
         }
 
-        [NotNull]
         public T[] ToArray()
         {
             if (current == null) {

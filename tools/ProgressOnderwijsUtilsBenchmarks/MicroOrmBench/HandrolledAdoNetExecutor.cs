@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class HandrolledAdoNetExecutor
     {
-        public static void RunQuery([NotNull] Benchmarker benchmarker)
+        public static void RunQuery(Benchmarker benchmarker)
         {
             benchmarker.BenchSQLite("Raw (sqlite, cached)", ExecuteSqliteQueryCached);
             benchmarker.BenchSQLite("Raw (sqlite)", ExecuteSqliteQuery);
@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             benchmarker.BenchSqlServer("Raw (SqlDbTypes)", ExecuteQuery2);
         }
 
-        static int ExecuteQuery([NotNull] SqlConnection sqlConn, int rows)
+        static int ExecuteQuery(SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = ExampleObject.RawQueryString;
@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 
         static readonly ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>> connCmdCache = new ConcurrentDictionary<SQLiteConnection, Dictionary<string, SQLiteCommand>>();
 
-        static int ExecuteSqliteQueryCached([NotNull] SQLiteConnection sqliteConn, int rows)
+        static int ExecuteSqliteQueryCached(SQLiteConnection sqliteConn, int rows)
         {
             if (!connCmdCache.TryGetValue(sqliteConn, out var cmdCache)) {
                 cmdCache = connCmdCache.GetOrAdd(sqliteConn, conn => {
@@ -190,7 +190,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             return list.Count;
         }
 
-        static int ExecuteQuery2([NotNull] SqlConnection sqlConn, int rows)
+        static int ExecuteQuery2(SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = ExampleObject.RawQueryString;
@@ -254,13 +254,13 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         static string ToNullableString(this SqlString str)
             => str.IsNull ? default(string) : str.Value;
 
-        public static void RunWideQuery([NotNull] Benchmarker benchmarker)
+        public static void RunWideQuery(Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("Raw (26-col)", ExecuteWideQuery);
             benchmarker.BenchSqlServer("Raw (26-col, SqlDbTypes)", ExecuteWideQuery2);
         }
 
-        static int ExecuteWideQuery2([NotNull] SqlConnection sqlConn, int rows)
+        static int ExecuteWideQuery2(SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = WideExampleObject.RawQueryString;
@@ -309,7 +309,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             }
         }
 
-        static int ExecuteWideQuery([NotNull] SqlConnection sqlConn, int rows)
+        static int ExecuteWideQuery(SqlConnection sqlConn, int rows)
         {
             using (var cmd = new SqlCommand()) {
                 cmd.CommandText = WideExampleObject.RawQueryString;

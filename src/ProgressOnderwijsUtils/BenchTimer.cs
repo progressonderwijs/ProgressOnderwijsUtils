@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils
             return bestTime;
         }
 
-        public static TimeSpan Time([NotNull] Action a)
+        public static TimeSpan Time(Action a)
         {
             var timer = Stopwatch.StartNew();
             a();

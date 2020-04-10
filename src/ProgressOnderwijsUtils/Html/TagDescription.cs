@@ -34,7 +34,6 @@ namespace ProgressOnderwijsUtils.Html
                     StringComparer.OrdinalIgnoreCase
                 );
 
-        [NotNull]
         static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlElement emptyValue)
             => typeof(AttributeConstructionMethods)
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -50,7 +49,7 @@ namespace ProgressOnderwijsUtils.Html
                     method => method.Name,
                     StringComparer.OrdinalIgnoreCase);
 
-        public static TagDescription LookupTag([NotNull] string tagName)
+        public static TagDescription LookupTag(string tagName)
             => ByTagName.TryGetValue(tagName, out var desc)
                 ? desc
                 : new TagDescription {

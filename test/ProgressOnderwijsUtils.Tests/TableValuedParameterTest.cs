@@ -161,7 +161,7 @@ namespace ProgressOnderwijsUtils.Tests
             }
         }
 
-        static void Assert_DataReader_GetBytes_works([NotNull] DbDataReader reader)
+        static void Assert_DataReader_GetBytes_works(DbDataReader reader)
         {
             PAssert.That(() => reader.Read());
 

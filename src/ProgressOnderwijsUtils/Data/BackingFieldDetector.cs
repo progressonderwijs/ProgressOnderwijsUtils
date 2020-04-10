@@ -12,11 +12,10 @@ namespace ProgressOnderwijsUtils
         const BindingFlags privateInstance = BindingFlags.Instance | BindingFlags.NonPublic;
         const BindingFlags anyInstance = privateInstance | BindingFlags.Public;
 
-        [NotNull]
-        static string BackingFieldFromAutoPropName([NotNull] string propertyName)
+        static string BackingFieldFromAutoPropName(string propertyName)
             => BackingFieldPrefix + propertyName + BackingFieldSuffix;
 
-        static string? AutoPropNameFromBackingField([NotNull] string fieldName)
+        static string? AutoPropNameFromBackingField(string fieldName)
             => fieldName.StartsWith(BackingFieldPrefix, StringComparison.Ordinal) && fieldName.EndsWith(BackingFieldSuffix, StringComparison.Ordinal)
                 ? fieldName.Substring(BackingFieldPrefix.Length, fieldName.Length - BackingFieldPrefix.Length - BackingFieldSuffix.Length)
                 : null;
@@ -27,7 +26,7 @@ namespace ProgressOnderwijsUtils
         static bool IsAutoProp(PropertyInfo autoProperty)
             => IsCompilerGenerated(autoProperty.GetGetMethod(true));
 
-        public static FieldInfo? BackingFieldOfPropertyOrNull([NotNull] PropertyInfo propertyInfo)
+        public static FieldInfo? BackingFieldOfPropertyOrNull(PropertyInfo propertyInfo)
             => IsAutoProp(propertyInfo)
                 && propertyInfo.DeclaringType!.GetField(BackingFieldFromAutoPropName(propertyInfo.Name), privateInstance) is FieldInfo backingField
                 && IsCompilerGenerated(backingField)

@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             RunCurrentBenchmarks(benchmarker);
         }
 
-        static void RunCurrentBenchmarks([NotNull] Benchmarker benchmarker)
+        static void RunCurrentBenchmarks(Benchmarker benchmarker)
         {
             ParameterizedSqlExecutor.ConstructWithoutExecuting(benchmarker);
             ParameterizedSqlExecutor.RunQuery(benchmarker);

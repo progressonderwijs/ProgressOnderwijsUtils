@@ -72,7 +72,6 @@ namespace ProgressOnderwijsUtils
         public static Type? MakeNullableType(this Type type)
             => type.CanBeNull() ? null : typeof(Nullable<>).MakeGenericType(type);
 
-        [ItemNotNull]
         [Pure]
         public static IEnumerable<Type> BaseTypes([CanBeNull] this Type type)
         {

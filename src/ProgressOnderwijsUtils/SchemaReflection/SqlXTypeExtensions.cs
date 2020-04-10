@@ -103,7 +103,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         /// Finds the best mapping of this clr-type to an sql XType.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">When no mapping could be found.</exception>
-        public static SqlXType NetTypeToSqlXType([NotNull] Type type)
+        public static SqlXType NetTypeToSqlXType(Type type)
         {
             var underlyingType = type.GetNonNullableUnderlyingType();
             var convertedType = convertedTypesCache.GetOrAdd(underlyingType, GetConvertedSqlXTypeOrNull);

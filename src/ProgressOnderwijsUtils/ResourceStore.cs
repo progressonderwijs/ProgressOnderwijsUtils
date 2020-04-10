@@ -26,14 +26,12 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [NotNull]
         public Stream GetResource(string filename)
             => typeof(T).GetResource(filename) ?? throw new KeyNotFoundException("Resource not found: " + filename);
 
         public bool ResourceExists(string filename)
             => typeof(T).GetResource(filename) != null;
 
-        [ItemNotNull]
         public IEnumerable<string> GetResourceNames()
         {
             var nsPrefix = typeof(T).Namespace + ".";

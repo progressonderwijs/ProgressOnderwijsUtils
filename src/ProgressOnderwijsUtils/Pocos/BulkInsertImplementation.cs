@@ -12,7 +12,7 @@ namespace ProgressOnderwijsUtils
 {
     static class BulkInsertImplementation
     {
-        public static void Execute([NotNull] SqlConnection sqlConn, string tableName, [NotNull] ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, CommandTimeout timeout, DbDataReader dbDataReader, string sourceNameForTracing)
+        public static void Execute(SqlConnection sqlConn, string tableName, ColumnDefinition[] columnDefinitions, BulkCopyFieldMappingMode bulkCopyFieldMappingMode, SqlBulkCopyOptions options, CommandTimeout timeout, DbDataReader dbDataReader, string sourceNameForTracing)
         {
             if (dbDataReader == null) {
                 throw new ArgumentNullException(nameof(dbDataReader));
@@ -43,8 +43,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        [NotNull]
-        static Exception GenericBcpColumnLengthErrorWithFieldNames([NotNull] BulkInsertFieldMapping[] mapping, int destinationColumnIndex, SqlException ex, string sourceName)
+        static Exception GenericBcpColumnLengthErrorWithFieldNames(BulkInsertFieldMapping[] mapping, int destinationColumnIndex, SqlException ex, string sourceName)
         {
             var sourceColumnName = "??unknown??";
             foreach (var m in mapping) {
@@ -93,14 +92,13 @@ namespace ProgressOnderwijsUtils
 
         static readonly Regex colidMessageRegex = new Regex(@"Received an invalid column length from the bcp client for colid ([0-9]+).", RegexOptions.Compiled);
 
-        static int? ParseDestinationColumnIndexFromMessage([NotNull] string message)
+        static int? ParseDestinationColumnIndexFromMessage(string message)
         {
             var match = colidMessageRegex.Match(message);
             return !match.Success ? default(int?) : int.Parse(match.Groups[1].Value) - 1;
         }
 
-        [NotNull]
-        static BulkInsertFieldMapping[] CreateMapping([NotNull] DbDataReader objectReader, string tableName, [NotNull] ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options, string sourceName)
+        static BulkInsertFieldMapping[] CreateMapping(DbDataReader objectReader, string tableName, ColumnDefinition[] tableColumns, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options, string sourceName)
         {
             var unfilteredMapping = BulkInsertFieldMapping.Create(ColumnDefinition.GetFromReader(objectReader), tableColumns);
 

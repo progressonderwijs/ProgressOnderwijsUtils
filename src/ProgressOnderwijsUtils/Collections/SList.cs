@@ -171,7 +171,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> Create<T>([NotNull] IEnumerable<T> enumerable)
+        public static SList<T> Create<T>(IEnumerable<T> enumerable)
         {
             if (enumerable is IList<T> list) {
                 return Create(list); //use IList interface for reverse iterability
@@ -181,7 +181,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> Create<T>([NotNull] IList<T> list)
+        public static SList<T> Create<T>(IList<T> list)
         {
             if (list is T[] array) {
                 return Create(array);
@@ -194,7 +194,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static SList<T> Create<T>([NotNull] T[] list)
+        public static SList<T> Create<T>(T[] list)
         {
             var retval = default(SList<T>);
             for (var i = list.Length - 1; i >= 0; i--) {

@@ -89,15 +89,12 @@ namespace ProgressOnderwijsUtils
 
     public static class CollectionViewExtensions
     {
-        [NotNull]
         public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, TOut> map)
             => new ArrayView_MappedByElement<T, TOut>(vals, map);
 
-        [NotNull]
         public static IReadOnlyList<TOut> SelectIndexable<T, TOut>(this IReadOnlyList<T> vals, Func<T, int, TOut> map)
             => new ArrayView_MappedWithIndex<T, TOut>(vals, map);
 
-        [NotNull]
         public static IReadOnlyCollection<TOut> SelectCountable<T, TOut>(this ICollection<T> vals, Func<T, TOut> map)
             => new CollectionView_Mapped<T, TOut>(vals, map);
     }

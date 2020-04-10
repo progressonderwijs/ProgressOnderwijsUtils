@@ -25,7 +25,6 @@ namespace ProgressOnderwijsUtils
         public TimeSpan WallClockTime()
             => wallclock.Elapsed;
 
-        [NotNull]
         public static ProcessCpuTimer StartNew()
             => new ProcessCpuTimer();
     }

@@ -29,8 +29,7 @@ namespace ProgressOnderwijsUtils
             ColumnAccessibility = columnAccessibility;
         }
 
-        [NotNull]
-        public static ColumnDefinition Create([NotNull] DataColumn col)
+        public static ColumnDefinition Create(DataColumn col)
             => new ColumnDefinition(DataColumnType(col), col.ColumnName, col.Ordinal, DataColumnAccessibility(col));
 
         static ColumnAccessibility DataColumnAccessibility(DataColumn col)
@@ -42,8 +41,7 @@ namespace ProgressOnderwijsUtils
         static Type DataColumnType(DataColumn col)
             => (col.AllowDBNull ? col.DataType.MakeNullableType() : null) ?? col.DataType;
 
-        [NotNull]
-        public static ColumnDefinition[] GetFromReader([NotNull] IDataRecord reader)
+        public static ColumnDefinition[] GetFromReader(IDataRecord reader)
         {
             var retval = new ColumnDefinition[reader.FieldCount];
             for (var index = 0; index < retval.Length; index++) {

@@ -19,7 +19,6 @@ namespace ProgressOnderwijsUtils
         readonly Func<IEnumerable<TIn>, TOut[]> projection;
         int cachedLength = -1;
 
-        [NotNull]
         public object EquatableValue
             => Tuple.Create(values, DbTypeName);
 

@@ -23,7 +23,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         [Pure]
-        public static THtmlTag Attributes<THtmlTag>(this THtmlTag htmlTagExpr, [NotNull] IEnumerable<HtmlAttribute> attributes)
+        public static THtmlTag Attributes<THtmlTag>(this THtmlTag htmlTagExpr, IEnumerable<HtmlAttribute> attributes)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
         {
             foreach (var attribute in attributes) {
@@ -67,7 +67,7 @@ namespace ProgressOnderwijsUtils.Html
             => attrValue == null ? htmlTagExpr : htmlTagExpr.ReplaceAttributesWith(htmlTagExpr.Attributes.Add(attrName, attrValue));
 
         [Pure]
-        public static HtmlFragment AsFragment<T>([NotNull] this IEnumerable<T> htmlContents)
+        public static HtmlFragment AsFragment<T>(this IEnumerable<T> htmlContents)
             where T : IConvertibleToFragment
             => HtmlFragment.Fragment(htmlContents.Select(el => el.AsFragment()).Where(frag => !frag.IsEmpty).ToArray());
 
@@ -92,11 +92,11 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment Append([CanBeNull] this string head, params HtmlFragment[]? longTail)
             => head.AsFragment().Append(longTail);
 
-        public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls)
+        public static HtmlFragment JoinHtml<TFragments>(this IEnumerable<TFragments> htmlEls)
             where TFragments : IConvertibleToFragment
             => HtmlFragment.Fragment(htmlEls.ToArray());
 
-        public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
+        public static HtmlFragment JoinHtml<TFragments>(this IEnumerable<TFragments> htmlEls, HtmlFragment joiner)
             where TFragments : IConvertibleToFragment
         {
             if (joiner.IsEmpty) {
@@ -127,16 +127,16 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment[] ChildNodes(this IHtmlElement? element)
             => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.ChildNodes() : HtmlFragment.EmptyNodes;
 
-        public static HtmlFragment[] ChildNodes([NotNull] this IHtmlElementAllowingContent elemWithContent)
+        public static HtmlFragment[] ChildNodes(this IHtmlElementAllowingContent elemWithContent)
             => elemWithContent.GetContent().NodesOfFragment();
 
-        public static HtmlAttributes ToHtmlAttributes([NotNull] this IEnumerable<HtmlAttribute> attributes)
+        public static HtmlAttributes ToHtmlAttributes(this IEnumerable<HtmlAttribute> attributes)
             => attributes as HtmlAttributes? ?? HtmlAttributes.FromArray(attributes as HtmlAttribute[] ?? attributes.ToArray());
 
-        public static bool IsNamed([NotNull] this IHtmlElement element, string tagName)
+        public static bool IsNamed(this IHtmlElement element, string tagName)
             => element.TagName.Equals(tagName, StringComparison.OrdinalIgnoreCase); //IHtmlTag
 
-        public static bool IsNamed<TTag>([NotNull] this IHtmlElement element, TTag tagName)
+        public static bool IsNamed<TTag>(this IHtmlElement element, TTag tagName)
             where TTag : struct, IHtmlElement<TTag>
             => element.TagName.Equals(tagName.TagName, StringComparison.OrdinalIgnoreCase);
 

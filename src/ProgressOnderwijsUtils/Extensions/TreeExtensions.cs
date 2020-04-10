@@ -28,12 +28,11 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public static RootedTree<T> RootHere<T>([NotNull] this Tree<T> tree)
+        public static RootedTree<T> RootHere<T>(this Tree<T> tree)
             => RootedTree<T>.RootTree(tree);
 
-        [ItemNotNull]
         [Pure]
-        public static IEnumerable<T> PreorderTraversal<T>([NotNull] this T tree)
+        public static IEnumerable<T> PreorderTraversal<T>(this T tree)
             where T : IRecursiveStructure<T>
         {
             yield return tree;

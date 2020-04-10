@@ -50,8 +50,7 @@ namespace ProgressOnderwijsUtils
             public IReadOnlyList<object> CustomAttributes { get; }
             public int Index { get; }
 
-            [NotNull]
-            public Type DataType
+                public Type DataType
                 => PropertyInfo.PropertyType;
 
             public PropertyInfo PropertyInfo { get; }
@@ -93,11 +92,10 @@ namespace ProgressOnderwijsUtils
                 return typedObj;
             }
 
-            [NotNull]
-            public Expression PropertyAccessExpression(Expression paramExpr)
+                public Expression PropertyAccessExpression(Expression paramExpr)
                 => Expression.Property(paramExpr, PropertyInfo);
 
-            public Impl([NotNull] PropertyInfo pi, int implicitOrder, [NotNull] object[] attrs)
+            public Impl(PropertyInfo pi, int implicitOrder, object[] attrs)
             {
                 PropertyInfo = pi;
                 Name = pi.Name;
@@ -162,8 +160,7 @@ namespace ProgressOnderwijsUtils
             readonly MethodInfo getterMethod;
         }
 
-        [NotNull]
-        static T MkDelegate<T>([NotNull] MethodInfo mi)
+        static T MkDelegate<T>(MethodInfo mi)
             => (T)(object)Delegate.CreateDelegate(typeof(T), mi);
 
         interface IOutCaster
@@ -180,29 +177,25 @@ namespace ProgressOnderwijsUtils
 
         sealed class OutCaster<TOut> : IOutCaster
         {
-            [NotNull]
-            public Func<TObj, object> GetterBoxed<TObj>([NotNull] MethodInfo method)
+                public Func<TObj, object> GetterBoxed<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<Func<TObj, TOut>>(method);
                 return o => f(o);
             }
 
-            [NotNull]
-            public Func<TObj, object> StructGetterBoxed<TObj>([NotNull] MethodInfo method)
+                public Func<TObj, object> StructGetterBoxed<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<StructGetterDel<TObj, TOut>>(method);
                 return o => f(ref o);
             }
 
-            [NotNull]
-            public Setter<TObj> SetterChecked<TObj>([NotNull] MethodInfo method)
+                public Setter<TObj> SetterChecked<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<Action<TObj, TOut>>(method);
                 return (ref TObj o, object v) => f(o, (TOut)v);
             }
 
-            [NotNull]
-            public Setter<TObj> StructSetterChecked<TObj>([NotNull] MethodInfo method)
+                public Setter<TObj> StructSetterChecked<TObj>(MethodInfo method)
             {
                 var f = MkDelegate<StructSetterDel<TObj, TOut>>(method);
                 return (ref TObj o, object v) => f(ref o, (TOut)v);
@@ -212,7 +205,7 @@ namespace ProgressOnderwijsUtils
         static readonly OutCaster<object> outCasterObject = new OutCaster<object>();
         static readonly ConcurrentDictionary<Type, IOutCaster> CasterFactoryCache = new ConcurrentDictionary<Type, IOutCaster>();
 
-        static IOutCaster GetCaster([NotNull] Type propType)
+        static IOutCaster GetCaster(Type propType)
             => CasterFactoryCache.GetOrAdd(propType, type => (IOutCaster)Activator.CreateInstance(typeof(OutCaster<>).MakeGenericType(type)));
     }
 
