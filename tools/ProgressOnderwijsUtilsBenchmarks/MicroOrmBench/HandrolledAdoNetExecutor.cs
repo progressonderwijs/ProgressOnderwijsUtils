@@ -251,7 +251,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         // ReSharper disable once UnusedMember.Local
         static string? ToNullableString(this SqlString str)
-            => str.IsNull ? default(string?) : str.Value;
+            => str.IsNull ? default : str.Value;
 
         public static void RunWideQuery(Benchmarker benchmarker)
         {
@@ -331,9 +331,9 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                             ShipDate = reader.IsDBNull(4) ? default(DateTime?) : reader.GetDateTime(4),
                             Status = reader.GetByte(5),
                             OnlineOrderFlag = reader.GetBoolean(6),
-                            SalesOrderNumber = reader.IsDBNull(7) ? default(string) : reader.GetString(7),
-                            PurchaseOrderNumber = reader.IsDBNull(8) ? default(string) : reader.GetString(8),
-                            AccountNumber = reader.IsDBNull(9) ? default(string) : reader.GetString(9),
+                            SalesOrderNumber = reader.IsDBNull(7) ? default : reader.GetString(7),
+                            PurchaseOrderNumber = reader.IsDBNull(8) ? default : reader.GetString(8),
+                            AccountNumber = reader.IsDBNull(9) ? default : reader.GetString(9),
                             CustomerId = reader.GetInt32(10),
                             SalesPersonId = reader.IsDBNull(11) ? default(int?) : reader.GetInt32(11),
                             TerritoryId = reader.IsDBNull(12) ? default(int?) : reader.GetInt32(12),
@@ -341,13 +341,13 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
                             ShipToAddressId = reader.GetInt32(14),
                             ShipMethodId = reader.GetInt32(15),
                             CreditCardId = reader.IsDBNull(16) ? default(int?) : reader.GetInt32(16),
-                            CreditCardApprovalCode = reader.IsDBNull(17) ? default(string) : reader.GetString(17),
+                            CreditCardApprovalCode = reader.IsDBNull(17) ? default : reader.GetString(17),
                             CurrencyRateId = reader.IsDBNull(18) ? default(int?) : reader.GetInt32(18),
                             SubTotal = reader.GetDecimal(19),
                             TaxAmt = reader.GetDecimal(20),
                             Freight = reader.GetDecimal(21),
                             TotalDue = reader.GetDecimal(22),
-                            Comment = reader.IsDBNull(23) ? default(string) : reader.GetString(23),
+                            Comment = reader.IsDBNull(23) ? default : reader.GetString(23),
                             Rowguid = reader.GetGuid(24),
                             ModifiedDate = reader.GetDateTime(25),
                         });

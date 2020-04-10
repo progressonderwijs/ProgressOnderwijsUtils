@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils
             static Func<object?, T> ForConvertible(Type type, PocoPropertyConverter converter)
             {
                 if (type.IsNullableValueType() || !type.IsValueType) {
-                    return obj => obj == null ? default(T)! : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromDb(obj)!;
+                    return obj => obj == null ? default! : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromDb(obj)!;
                 } else {
                     return obj => obj == null ? throw new InvalidCastException("Cannot convert null to " + type.ToCSharpFriendlyTypeName()) : (T)converter.ConvertFromDb(obj)!;
                 }
@@ -91,13 +91,13 @@ namespace ProgressOnderwijsUtils
             static Func<object?, T> MakeConverter(Type type)
             {
                 if (!type.IsValueType) {
-                    return obj => obj == null ? default(T)! : obj is IPocoConvertibleProperty<T> && PocoPropertyConverter.GetOrNull(obj.GetType()) is PocoPropertyConverter converter ? (T)converter.ConvertToDb(obj)! : (T)obj!;
+                    return obj => obj == null ? default! : obj is IPocoConvertibleProperty<T> && PocoPropertyConverter.GetOrNull(obj.GetType()) is PocoPropertyConverter converter ? (T)converter.ConvertToDb(obj)! : (T)obj!;
                 }
                 var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
                 if (nonnullableUnderlyingType == null) {
                     return obj => obj is IPocoConvertibleProperty && PocoPropertyConverter.GetOrNull(obj.GetType()) is PocoPropertyConverter converter ? (T)converter.ConvertToDb(obj)! : (T)obj!;
                 }
-                return obj => obj == null ? default(T)! : obj is IPocoConvertibleProperty && PocoPropertyConverter.GetOrNull(obj.GetType()) is PocoPropertyConverter converter ? (T)converter.ConvertToDb(obj)! : (T)obj!;
+                return obj => obj == null ? default! : obj is IPocoConvertibleProperty && PocoPropertyConverter.GetOrNull(obj.GetType()) is PocoPropertyConverter converter ? (T)converter.ConvertToDb(obj)! : (T)obj!;
             }
         }
 
