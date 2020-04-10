@@ -15,14 +15,14 @@ namespace ProgressOnderwijsUtils.Html
         static void AppendCSharpTo(ref FastShortStringBuilder stringBuilder, HtmlFragment fragment, int indent)
         {
             if (fragment.Implementation is string stringContent) {
-                stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(stringContent));
+                stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(stringContent).AssertNotNull());
             } else if (fragment.Implementation is IHtmlElement htmlTag) {
                 var description = TagDescription.LookupTag(htmlTag.TagName);
                 if (description.FieldName != null) {
                     stringBuilder.AppendText(description.FieldName);
                 } else {
                     stringBuilder.AppendText("new HtmlElement(");
-                    stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(htmlTag.TagName));
+                    stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(htmlTag.TagName).AssertNotNull());
                     stringBuilder.AppendText(")");
                 }
                 var wereAttributesRendered = AppendAttributesAsCSharp(ref stringBuilder, htmlTag.Attributes, description.AttributeMethodsByName, indent);
@@ -97,10 +97,10 @@ namespace ProgressOnderwijsUtils.Html
                     stringBuilder.AppendText("(");
                 } else {
                     stringBuilder.AppendText(".Attribute(");
-                    stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(attr.Name));
+                    stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(attr.Name).AssertNotNull());
                     stringBuilder.AppendText(",");
                 }
-                stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(attr.Value));
+                stringBuilder.AppendText(ObjectToCode.PlainObjectToCode(attr.Value).AssertNotNull());
                 stringBuilder.AppendText(")");
             }
             return hasRenderedAttribute;

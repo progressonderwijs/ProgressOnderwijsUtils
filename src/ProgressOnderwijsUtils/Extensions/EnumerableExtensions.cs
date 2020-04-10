@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -215,7 +216,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        static string? ToCsvValue<T>([CanBeNull] this T item, string delimiter, bool useQuotesForStrings)
+        static string? ToCsvValue<T>([AllowNull] this T item, string delimiter, bool useQuotesForStrings)
         {
             var csvValueWithoutQuotes = item?.ToString() ?? "";
 

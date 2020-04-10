@@ -248,11 +248,10 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
         static bool? ToNullableBool(this SqlBoolean num)
             => num.IsNull ? default(bool?) : num.Value;
 
-        [CanBeNull]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         // ReSharper disable once UnusedMember.Local
-        static string ToNullableString(this SqlString str)
-            => str.IsNull ? default(string) : str.Value;
+        static string? ToNullableString(this SqlString str)
+            => str.IsNull ? default(string?) : str.Value;
 
         public static void RunWideQuery(Benchmarker benchmarker)
         {

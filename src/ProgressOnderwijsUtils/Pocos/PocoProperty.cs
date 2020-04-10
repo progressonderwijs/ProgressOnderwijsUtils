@@ -78,7 +78,7 @@ namespace ProgressOnderwijsUtils
                 get {
                     if (untypedGetter == null) {
                         var localGetter = Getter;
-                        untypedGetter = localGetter == null ? default(Func<object, object>?) : o => localGetter((TOwner)o);
+                        untypedGetter = localGetter is null ? default(Func<object, object>?) : o => localGetter!((TOwner)o);
                     }
                     return untypedGetter;
                 }
@@ -113,7 +113,7 @@ namespace ProgressOnderwijsUtils
             public override string ToString()
                 => typeof(TOwner).ToCSharpFriendlyTypeName() + "." + Name;
 
-            static Setter<TOwner> MkSetter([CanBeNull] MethodInfo setterMethod, Type propertyType)
+            static Setter<TOwner> MkSetter(MethodInfo? setterMethod, Type propertyType)
             {
                 if (setterMethod == null) {
                     return null;
@@ -135,7 +135,7 @@ namespace ProgressOnderwijsUtils
                 //  ).Compile();
             }
 
-            static Func<TOwner, object> MkGetter([CanBeNull] MethodInfo getterMethod, Type propertyType)
+            static Func<TOwner, object> MkGetter(MethodInfo? getterMethod, Type propertyType)
             {
                 //TODO:optimize: this is still a hotspot :-(
                 if (getterMethod == null) {

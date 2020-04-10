@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public int GetHashCode([CanBeNull] T[] arr)
+        public int GetHashCode(T[]? arr)
         {
             ulong buffer;
             if (arr != null) {

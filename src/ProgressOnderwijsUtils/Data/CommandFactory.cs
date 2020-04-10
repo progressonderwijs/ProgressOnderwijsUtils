@@ -34,18 +34,18 @@ namespace ProgressOnderwijsUtils
     public struct ReusableCommand : IDisposable
     {
         public SqlCommand Command;
-        public IDisposable QueryTimer;
+        public IDisposable? QueryTimer;
 
         public void Dispose()
         {
             QueryTimer?.Dispose();
             if (Command != null) {
                 PooledSqlCommandAllocator.ReturnToPool(Command);
-                Command = null;
+                Command = null!;
             }
         }
 
-        internal ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments<TOriginCommand>(Exception innerException, TOriginCommand command, string extraMessage = null)
+        internal ParameterizedSqlExecutionException CreateExceptionWithTextAndArguments<TOriginCommand>(Exception innerException, TOriginCommand command, string? extraMessage = null)
             where TOriginCommand : IWithTimeout<TOriginCommand>
             => SqlCommandDebugStringifier.ExceptionWithTextAndArguments(command.GetType().ToCSharpFriendlyTypeName() + " failed" + (extraMessage == null ? "." : ": " + extraMessage), Command, innerException);
     }
@@ -115,10 +115,10 @@ namespace ProgressOnderwijsUtils
         {
             Array.Clear(paramObjs, 0, paramCount);
             sqlParamsArgsPool.Return(paramObjs);
-            paramObjs = null;
+            paramObjs = null!;
             lookup.Clear();
             nameLookupBag.Enqueue(lookup);
-            lookup = null;
+            lookup = null!;
         }
 
         const int ParameterNameCacheSize = 100;
@@ -199,14 +199,13 @@ namespace ProgressOnderwijsUtils
         public void DiscardBuilder()
         {
             Free();
-            CurrentCharacterBuffer = null;
+            CurrentCharacterBuffer = null!;
         }
 
         public string FinishBuilding()
         {
             var str = new string(CurrentCharacterBuffer, 0, CurrentLength);
-            Free();
-            CurrentCharacterBuffer = null;
+            DiscardBuilder();
             return str;
         }
     }
@@ -222,7 +221,7 @@ namespace ProgressOnderwijsUtils
         public void AppendSql(string sql, int startIndex, int length)
             => debugText.AppendText(sql, startIndex, length);
 
-        public static string DebugTextFor([CanBeNull] ISqlComponent impl)
+        public static string DebugTextFor(ISqlComponent? impl)
         {
             var factory = new DebugCommandFactory { debugText = FastShortStringBuilder.Create() };
             impl?.AppendTo(ref factory);
@@ -246,7 +245,7 @@ namespace ProgressOnderwijsUtils
         public void AppendSql(string sql, int startIndex, int length)
             => debugText.AppendText(sql, startIndex, length);
 
-        public static ParameterizedSqlEquatableKey EqualityKey([CanBeNull] ISqlComponent impl)
+        public static ParameterizedSqlEquatableKey EqualityKey(ISqlComponent? impl)
         {
             var factory = new EqualityKeyCommandFactory {
                 debugText = FastShortStringBuilder.Create(),
@@ -270,7 +269,7 @@ namespace ProgressOnderwijsUtils
         public bool Equals(ParameterizedSqlEquatableKey other)
             => SqlTextKey == other.SqlTextKey && StructuralComparisons.StructuralEqualityComparer.Equals(Params, other.Params);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is ParameterizedSqlEquatableKey parameterizedSqlEquatableKey && Equals(parameterizedSqlEquatableKey);
 
         public override int GetHashCode()

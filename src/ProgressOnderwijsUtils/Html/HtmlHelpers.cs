@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
@@ -78,18 +79,18 @@ namespace ProgressOnderwijsUtils.Html
         public static HtmlFragment AsFragment(this string? textContent)
             => string.IsNullOrEmpty(textContent) ? HtmlFragment.Empty : HtmlFragment.TextContent(textContent);
 
-        public static HtmlFragment Append<T>([CanBeNull] this T head, HtmlFragment tail)
+        public static HtmlFragment Append<T>([AllowNull] this T head, HtmlFragment tail)
             where T : IConvertibleToFragment
             => (head?.AsFragment() ?? HtmlFragment.Empty).Append(tail);
 
-        public static HtmlFragment Append<T>([CanBeNull] this T head, params HtmlFragment[]? longTail)
+        public static HtmlFragment Append<T>([AllowNull] this T head, params HtmlFragment[]? longTail)
             where T : IConvertibleToFragment
             => (head?.AsFragment() ?? HtmlFragment.Empty).Append(longTail);
 
-        public static HtmlFragment Append([CanBeNull] this string head, HtmlFragment tail)
+        public static HtmlFragment Append(this string? head, HtmlFragment tail)
             => head.AsFragment().Append(tail);
 
-        public static HtmlFragment Append([CanBeNull] this string head, params HtmlFragment[]? longTail)
+        public static HtmlFragment Append(this string? head, params HtmlFragment[]? longTail)
             => head.AsFragment().Append(longTail);
 
         public static HtmlFragment JoinHtml<TFragments>(this IEnumerable<TFragments> htmlEls)

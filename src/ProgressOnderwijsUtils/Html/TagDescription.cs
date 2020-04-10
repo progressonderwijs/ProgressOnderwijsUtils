@@ -22,7 +22,7 @@ namespace ProgressOnderwijsUtils.Html
                 .GetFields(BindingFlags.Static | BindingFlags.Public)
                 .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlElement)field.GetValue(null)! })
                 .ToDictionary(
-                    field => field.FieldValue.TagName,
+                    field => field.FieldValue.TagName.AssertNotNull(),
                     field => new TagDescription {
                         TagName = field.FieldValue.TagName,
                         EmptyValue = field.FieldValue,
