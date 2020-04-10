@@ -100,7 +100,7 @@ namespace ProgressOnderwijsUtils.Html
         }
 
         public static HtmlAttributes Empty
-            => default(HtmlAttributes);
+            => default;
 
         public static HtmlAttributes FromArray([NotNull] HtmlAttribute[] arr)
             => new HtmlAttributes(arr, arr.Length);

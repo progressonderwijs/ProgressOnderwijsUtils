@@ -102,24 +102,23 @@ namespace ProgressOnderwijsUtils.Html
             if (joiner.IsEmpty) {
                 return htmlEls.JoinHtml();
             }
-            using (var enumerator = htmlEls.GetEnumerator()) {
-                if (!enumerator.MoveNext()) {
-                    return HtmlFragment.Empty;
-                }
-                var retval = new ArrayBuilder<HtmlFragment>();
-                // ReSharper disable once PossibleNullReferenceException
-                var firstNode = enumerator.Current.AsFragment();
-                retval.Add(firstNode);
-                while (enumerator.MoveNext()) {
-                    retval.Add(joiner);
-                    // ReSharper disable once PossibleNullReferenceException
-                    var nextFragment = enumerator.Current.AsFragment();
-                    if (!nextFragment.IsEmpty) {
-                        retval.Add(nextFragment);
-                    }
-                }
-                return HtmlFragment.Fragment(retval.ToArray());
+            using var enumerator = htmlEls.GetEnumerator();
+            if (!enumerator.MoveNext()) {
+                return HtmlFragment.Empty;
             }
+            var retval = new ArrayBuilder<HtmlFragment>();
+            // ReSharper disable once PossibleNullReferenceException
+            var firstNode = enumerator.Current.AsFragment();
+            retval.Add(firstNode);
+            while (enumerator.MoveNext()) {
+                retval.Add(joiner);
+                // ReSharper disable once PossibleNullReferenceException
+                var nextFragment = enumerator.Current.AsFragment();
+                if (!nextFragment.IsEmpty) {
+                    retval.Add(nextFragment);
+                }
+            }
+            return HtmlFragment.Fragment(retval.ToArray());
         }
 
         public static HtmlFragment Contents(this IHtmlElement? element)
