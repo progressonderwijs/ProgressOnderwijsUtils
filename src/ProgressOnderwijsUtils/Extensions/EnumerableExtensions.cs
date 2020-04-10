@@ -104,12 +104,11 @@ namespace ProgressOnderwijsUtils
         [Pure]
         public static int GetSequenceHashCode<T>([NotNull] IEnumerable<T> list, IEqualityComparer<T>? elementComparer = null)
         {
-            var elemEquality = elementComparer ?? EqualityComparer<T>.Default;
-            ulong hash = 3;
+            var hc = new HashCode();
             foreach (var item in list) {
-                hash = hash * 137ul + (ulong)elemEquality.GetHashCode(item);
+                hc.Add(item, elementComparer);
             }
-            return (int)hash ^ (int)(hash >> 32);
+            return hc.ToHashCode();
         }
 
         [Pure]
