@@ -98,7 +98,7 @@ using (var client = new HttpClient()) {
 
     var globalAttributeExtensionMethods = globalAttributes
         .Select(attrName => $@"
-        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
@@ -112,7 +112,7 @@ using (var client = new HttpClient()) {
 );
     var elAttrExtensionMethods = specificAttributes
         .Select(attrName => $@"
-        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+        public static THtmlTag _{toClassName(attrName)}<THtmlTag>(this THtmlTag htmlTagExpr, string? attrValue)
             where THtmlTag : struct, IHasAttr_{toClassName(attrName)}, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute(""{attrName}"", attrValue);"
 );
