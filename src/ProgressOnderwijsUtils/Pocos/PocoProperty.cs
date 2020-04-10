@@ -71,15 +71,14 @@ namespace ProgressOnderwijsUtils
             public Setter<TOwner> Setter
                 => setter ?? (setter = MkSetter(setterMethod, PropertyInfo.PropertyType));
 
-            Func<object, object> untypedGetter;
+            Func<object, object>? untypedGetter;
 
-            [CanBeNull]
-            public Func<object, object> UntypedGetter
+            public Func<object, object>? UntypedGetter
             {
                 get {
                     if (untypedGetter == null) {
                         var localGetter = Getter;
-                        untypedGetter = localGetter == null ? default(Func<object, object>) : o => localGetter((TOwner)o);
+                        untypedGetter = localGetter == null ? default(Func<object, object>?) : o => localGetter((TOwner)o);
                     }
                     return untypedGetter;
                 }
