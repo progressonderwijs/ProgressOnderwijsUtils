@@ -186,7 +186,8 @@ using (var client = new HttpClient()) {
     {{{string.Join("",elFields)}
     }}";
 
-    $@"using JetBrains.Annotations;
+    $@"#nullable enable
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {{
