@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils.Collections
     /// 
     /// "Maybe" is immutable and hence thread safe (assuming the wrapped value is thread safe).
     /// </summary>
-    public struct Maybe<TOk, TError>
+    public readonly struct Maybe<TOk, TError>
     {
         readonly object okOrError;
 

@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
-    public struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>>
+    public readonly struct RootedTree<T> : IEquatable<RootedTree<T>>, IRecursiveStructure<RootedTree<T>>
     {
         public static RootedTree<T> RootTree([NotNull] Tree<T> rootNode)
             => new RootedTree<T>(SList.SingleElement(new TreePathSegment(0, rootNode)));
