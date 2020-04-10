@@ -846,6 +846,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlAttributes attrs;
             IFRAME IHtmlElement<IFRAME>.ReplaceAttributesWith(HtmlAttributes replacementAttributes) => new IFRAME { attrs = replacementAttributes, children = children };
             HtmlAttributes IHtmlElement.Attributes => attrs;
+
             HtmlFragment children;
             IFRAME IHtmlElementAllowingContent<IFRAME>.ReplaceContentWith(HtmlFragment replacementContents) => new IFRAME { attrs = attrs, children = replacementContents };
             HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
@@ -855,7 +856,7 @@ namespace ProgressOnderwijsUtils.Html
             public static HtmlFragment operator +(IFRAME head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, IFRAME tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
         }
-        public struct IMG : IHtmlElement<IMG>, IHasAttr_alt, IHasAttr_src, IHasAttr_srcset, IHasAttr_crossorigin, IHasAttr_usemap, IHasAttr_ismap, IHasAttr_width, IHasAttr_height, IHasAttr_decoding, IHasAttr_referrerpolicy
+        public struct IMG : IHtmlElement<IMG>, IHasAttr_alt, IHasAttr_src, IHasAttr_srcset, IHasAttr_sizes, IHasAttr_crossorigin, IHasAttr_usemap, IHasAttr_ismap, IHasAttr_width, IHasAttr_height, IHasAttr_referrerpolicy, IHasAttr_decoding, IHasAttr_loading
         {
             public string TagName => "img";
             string IHtmlElement.TagStart => "<img";
@@ -1261,7 +1262,6 @@ namespace ProgressOnderwijsUtils.Html
             HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
             IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
-
             public static implicit operator HtmlFragment(PRE tag) => tag.AsFragment();
             public static HtmlFragment operator +(PRE head, HtmlFragment tail) => HtmlFragment.Fragment(HtmlFragment.Element(head), tail);
             public static HtmlFragment operator +(string head, PRE tail) => HtmlFragment.Fragment(head, HtmlFragment.Element(tail));
@@ -1682,6 +1682,7 @@ namespace ProgressOnderwijsUtils.Html
             HtmlFragment children;
             TFOOT IHtmlElementAllowingContent<TFOOT>.ReplaceContentWith(HtmlFragment replacementContents) => new TFOOT { attrs = attrs, children = replacementContents };
             HtmlFragment IHtmlElementAllowingContent.GetContent() => children;
+
             IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change) => change.AlterElementAllowingContent(this);
             [Pure] public HtmlFragment AsFragment() => HtmlFragment.Element(this);
             public static implicit operator HtmlFragment(TFOOT tag) => tag.AsFragment();
@@ -2112,7 +2113,6 @@ namespace ProgressOnderwijsUtils.Html
         public static readonly HtmlTagKinds.RP _rp = new HtmlTagKinds.RP();
 
         ///<summary>Ruby annotation text. See: <a href="https://html.spec.whatwg.org/#the-rt-element">https://html.spec.whatwg.org/#the-rt-element</a><br /></summary>
-
         public static readonly HtmlTagKinds.RT _rt = new HtmlTagKinds.RT();
 
         ///<summary>Ruby annotation(s). See: <a href="https://html.spec.whatwg.org/#the-ruby-element">https://html.spec.whatwg.org/#the-ruby-element</a><br /></summary>
@@ -2276,9 +2276,11 @@ namespace ProgressOnderwijsUtils.Html
         public interface IHasAttr_allowfullscreen { }
         public interface IHasAttr_allowpaymentrequest { }
         public interface IHasAttr_srcset { }
+        public interface IHasAttr_sizes { }
         public interface IHasAttr_usemap { }
         public interface IHasAttr_ismap { }
         public interface IHasAttr_decoding { }
+        public interface IHasAttr_loading { }
         public interface IHasAttr_accept { }
         public interface IHasAttr_checked { }
         public interface IHasAttr_dirname { }
@@ -2297,7 +2299,6 @@ namespace ProgressOnderwijsUtils.Html
         public interface IHasAttr_for { }
         public interface IHasAttr_as { }
         public interface IHasAttr_media { }
-        public interface IHasAttr_sizes { }
         public interface IHasAttr_imagesrcset { }
         public interface IHasAttr_imagesizes { }
         public interface IHasAttr_integrity { }
@@ -2592,15 +2593,22 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _srcset<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_srcset, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("srcset", attrValue);
+        public static THtmlTag _sizes<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+            where THtmlTag : struct, IHasAttr_sizes, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("sizes", attrValue);
         public static THtmlTag _usemap<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_usemap, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("usemap", attrValue);
         public static THtmlTag _ismap<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_ismap, IHtmlElement<THtmlTag>
+
             => htmlTagExpr.Attribute("ismap", attrValue);
         public static THtmlTag _decoding<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_decoding, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("decoding", attrValue);
+        public static THtmlTag _loading<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
+            where THtmlTag : struct, IHasAttr_loading, IHtmlElement<THtmlTag>
+            => htmlTagExpr.Attribute("loading", attrValue);
         public static THtmlTag _accept<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_accept, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("accept", attrValue);
@@ -2655,9 +2663,6 @@ namespace ProgressOnderwijsUtils.Html
         public static THtmlTag _media<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_media, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("media", attrValue);
-        public static THtmlTag _sizes<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
-            where THtmlTag : struct, IHasAttr_sizes, IHtmlElement<THtmlTag>
-            => htmlTagExpr.Attribute("sizes", attrValue);
         public static THtmlTag _imagesrcset<THtmlTag>(this THtmlTag htmlTagExpr, string attrValue)
             where THtmlTag : struct, IHasAttr_imagesrcset, IHtmlElement<THtmlTag>
             => htmlTagExpr.Attribute("imagesrcset", attrValue);
