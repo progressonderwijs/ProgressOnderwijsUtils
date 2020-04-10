@@ -2,7 +2,7 @@
 
 namespace ProgressOnderwijsUtils.Html
 {
-    public struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtmlElement>
+    public readonly struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtmlElement>
     {
         readonly HtmlFragment contents;
 
