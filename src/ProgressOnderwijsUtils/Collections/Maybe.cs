@@ -180,7 +180,7 @@ namespace ProgressOnderwijsUtils.Collections
             => new MaybeTryBody<TOk>(tryBody);
     }
 
-    public struct MaybeTryBody
+    public readonly struct MaybeTryBody
     {
         readonly Action tryBody;
 
@@ -214,7 +214,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
     }
 
-    public struct MaybeTryBody<TOk>
+    public readonly struct MaybeTryBody<TOk>
     {
         readonly Func<TOk> tryBody;
 
