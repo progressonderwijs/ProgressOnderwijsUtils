@@ -19,7 +19,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         // ReSharper disable MethodOverloadWithOptionalParameter
         [Pure]
-        public static Tree<T> Node<T>(T value, params Tree<T>[] kids)
+        public static Tree<T> Node<T>(T value, params Tree<T>[]? kids)
             => new Tree<T>(value, kids);
 
         // ReSharper restore MethodOverloadWithOptionalParameter
