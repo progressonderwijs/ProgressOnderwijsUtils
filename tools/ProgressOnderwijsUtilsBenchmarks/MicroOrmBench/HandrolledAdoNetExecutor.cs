@@ -22,9 +22,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 
         static int ExecuteQuery(SqlConnection sqlConn, int rows)
         {
-            using var cmd = new SqlCommand();
-            cmd.CommandText = ExampleObject.RawQueryString;
-            cmd.Connection = sqlConn;
+            using var cmd = new SqlCommand { CommandText = ExampleObject.RawQueryString, Connection = sqlConn };
             var argP = new SqlParameter {
                 SqlDbType = SqlDbType.BigInt,
                 ParameterName = "@Arg",
@@ -188,9 +186,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 
         static int ExecuteQuery2(SqlConnection sqlConn, int rows)
         {
-            using var cmd = new SqlCommand();
-            cmd.CommandText = ExampleObject.RawQueryString;
-            cmd.Connection = sqlConn;
+            using var cmd = new SqlCommand { CommandText = ExampleObject.RawQueryString, Connection = sqlConn };
             var argP = new SqlParameter {
                 SqlDbType = SqlDbType.BigInt,
                 ParameterName = "@Arg",
@@ -255,9 +251,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 
         static int ExecuteWideQuery2(SqlConnection sqlConn, int rows)
         {
-            using var cmd = new SqlCommand();
-            cmd.CommandText = WideExampleObject.RawQueryString;
-            cmd.Connection = sqlConn;
+            using var cmd = new SqlCommand { CommandText = WideExampleObject.RawQueryString, Connection = sqlConn };
             var topP = new SqlParameter {
                 SqlDbType = SqlDbType.Int,
                 ParameterName = "@Top",
@@ -302,9 +296,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 
         static int ExecuteWideQuery(SqlConnection sqlConn, int rows)
         {
-            using var cmd = new SqlCommand();
-            cmd.CommandText = WideExampleObject.RawQueryString;
-            cmd.Connection = sqlConn;
+            using var cmd = new SqlCommand { CommandText = WideExampleObject.RawQueryString, Connection = sqlConn };
             var topP = new SqlParameter {
                 SqlDbType = SqlDbType.Int,
                 ParameterName = "@Top",

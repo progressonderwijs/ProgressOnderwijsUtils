@@ -9,7 +9,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
     {
         public int? A { get; set; }
         public int B { get; set; }
-        public string C { get; set; }
+        public string? C { get; set; }
         public bool? D { get; set; }
         public int E { get; set; }
         public long Arg { get; set; }
