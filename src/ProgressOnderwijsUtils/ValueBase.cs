@@ -75,6 +75,10 @@ namespace ProgressOnderwijsUtils
         static MemberExpression MemberAccessExpression(Expression expr, MemberInfo mi)
             => mi is FieldInfo info ? Expression.Field(expr, info) : Expression.Property(expr, (PropertyInfo)mi);
 
+        [UsedImplicitly]
+        static string ToString(object o)
+            => ObjectToCode.ComplexObjectToPseudoCode(o);
+
         static Func<T, string> byPublicMembers()
         {
             var concatMethod = ((Func<string[], string>)string.Concat).Method;
