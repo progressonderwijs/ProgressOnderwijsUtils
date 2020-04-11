@@ -76,7 +76,7 @@ namespace ProgressOnderwijsUtils
             var pocoProperty = mps.GetByName(sqlColName);
 
             var sqlTypeName = reader.GetDataTypeName(lastColumnRead);
-            var nonNullableFieldType = reader.GetFieldType(lastColumnRead) ?? throw new Exception("Missing field type for field "+lastColumnRead+" named "+sqlColName );
+            var nonNullableFieldType = reader.GetFieldType(lastColumnRead) ?? throw new Exception("Missing field type for field " + lastColumnRead + " named " + sqlColName);
 
             bool? isValueNull = null;
             try {
@@ -108,16 +108,15 @@ namespace ProgressOnderwijsUtils
         [MustUseReturnValue]
         internal static T[] ReadPlainUnpacker<T>(SqlCommand cmd)
         {
-            using (var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess)) {
-                DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
-                var unpacker = DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.ReadValue;
-                var builder = new ArrayBuilder<T>();
-                while (reader.Read()) {
-                    var nextRow = unpacker(reader);
-                    builder.Add(nextRow);
-                }
-                return builder.ToArray();
+            using var reader = cmd.ExecuteReader(CommandBehavior.SequentialAccess);
+            DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.VerifyDataReaderShape(reader);
+            var unpacker = DataReaderSpecialization<SqlDataReader>.PlainImpl<T>.ReadValue;
+            var builder = new ArrayBuilder<T>();
+            while (reader.Read()) {
+                var nextRow = unpacker(reader);
+                builder.Add(nextRow);
             }
+            return builder.ToArray();
         }
 
         const BindingFlags binding = BindingFlags.Public | BindingFlags.Instance;
@@ -315,7 +314,7 @@ namespace ProgressOnderwijsUtils
                 static readonly object constructionSync = new object();
                 static readonly ConcurrentDictionary<ColumnOrdering, TRowReader<T>> loadRow_by_ordering;
 
-                        static Type type
+                static Type type
                     => typeof(T);
 
                 static string FriendlyName
@@ -427,7 +426,7 @@ namespace ProgressOnderwijsUtils
 
                 public static readonly Func<TReader, T> ReadValue;
 
-                        static Type type
+                static Type type
                     => typeof(T);
 
                 static Type UnderlyingType
