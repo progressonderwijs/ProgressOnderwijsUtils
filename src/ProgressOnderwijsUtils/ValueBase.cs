@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -38,7 +39,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        public bool Equals(T other)
+        public bool Equals([AllowNull] T other)
             => other != null && FieldwiseEquality<T>.Instance((T)this, other);
 
         public override bool Equals(object? obj)
