@@ -18,7 +18,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>> kidLookup)
+        public static Tree<T> Resolve(T rootNodeValue, Func<T, IEnumerable<T>?> kidLookup)
         {
             var needsKids = new Stack<TreeNodeBuilder>();
 
