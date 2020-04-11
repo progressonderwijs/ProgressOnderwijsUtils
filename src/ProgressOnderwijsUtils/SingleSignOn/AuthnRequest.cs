@@ -29,12 +29,11 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         public string EncodeAsQueryArgument()
         {
             var xml = Encoding.UTF8.GetBytes(ToXml().ToString());
-            using (var stream = new MemoryStream()) {
-                using (var deflate = new DeflateStream(stream, CompressionMode.Compress)) {
-                    deflate.Write(xml, 0, xml.Length);
-                }
-                return Convert.ToBase64String(stream.ToArray());
+            using var stream = new MemoryStream();
+            using (var deflate = new DeflateStream(stream, CompressionMode.Compress)) {
+                deflate.Write(xml, 0, xml.Length);
             }
+            return Convert.ToBase64String(stream.ToArray());
         }
 
         public string EncodeAndSignAsFormArgument(RSA key)

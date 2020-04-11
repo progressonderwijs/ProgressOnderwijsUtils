@@ -44,16 +44,14 @@ namespace ProgressOnderwijsUtils
             T>(SqlConnection sqlConn, IEnumerable<T> pocos, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
             where T : IReadImplicitly
         {
-            using (var dbDataReader = new PocoDataReader<T>(pocos, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
-                BulkInsert(sqlConn, dbDataReader, pocos.GetType().ToCSharpFriendlyTypeName(), timeout);
-            }
+            using var dbDataReader = new PocoDataReader<T>(pocos, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)));
+            BulkInsert(sqlConn, dbDataReader, pocos.GetType().ToCSharpFriendlyTypeName(), timeout);
         }
 
         public void BulkInsert(SqlConnection sqlConn, DataTable dataTable, CommandTimeout timeout = default)
         {
-            using (var dbDataReader = dataTable.CreateDataReader()) {
-                BulkInsert(sqlConn, dbDataReader, $"DataTable({dataTable.TableName})", timeout);
-            }
+            using var dbDataReader = dataTable.CreateDataReader();
+            BulkInsert(sqlConn, dbDataReader, $"DataTable({dataTable.TableName})", timeout);
         }
 
         public void BulkInsert(SqlConnection sqlConn, DbDataReader dbDataReader, string sourceNameForTracing, CommandTimeout timeout = default)

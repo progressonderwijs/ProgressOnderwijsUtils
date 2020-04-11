@@ -17,18 +17,17 @@ namespace ProgressOnderwijsUtils
 
         public static string SerializeToString(object o)
         {
-            using (var writer = new StringWriter()) {
-                using (var xw = XmlWriter.Create(writer)) {
-                    ((IXmlSerializeHelper)
-                            typeof(XmlSerializerHelper<>)
-                                .MakeGenericType(o.GetType())
-                                .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
-                                .Single()
-                                .Invoke(null)
-                        ).SerializeToInst(xw, o);
-                }
-                return writer.ToString();
+            using var writer = new StringWriter();
+            using (var xw = XmlWriter.Create(writer)) {
+                ((IXmlSerializeHelper)
+                        typeof(XmlSerializerHelper<>)
+                            .MakeGenericType(o.GetType())
+                            .GetConstructors(BindingFlags.Instance | BindingFlags.NonPublic)
+                            .Single()
+                            .Invoke(null)
+                    ).SerializeToInst(xw, o);
             }
+            return writer.ToString();
         }
 
         public static XDocument SerializeToXDocument(object o)
@@ -59,9 +58,8 @@ namespace ProgressOnderwijsUtils
 
         public static T Deserialize(XDocument from)
         {
-            using (var reader = from.CreateReader()) {
-                return Deserialize(reader);
-            }
+            using var reader = from.CreateReader();
+            return Deserialize(reader);
         }
 
         public static T Deserialize(XmlReader from)
@@ -69,17 +67,15 @@ namespace ProgressOnderwijsUtils
 
         public static T Deserialize(string from)
         {
-            using (var reader = new StringReader(from)) {
-                return (T)serializer.Deserialize(reader);
-            }
+            using var reader = new StringReader(from);
+            return (T)serializer.Deserialize(reader);
         }
 
         public static string Serialize(T val)
         {
-            using (var writer = new StringWriter()) {
-                serializer.Serialize(writer, val);
-                return writer.ToString();
-            }
+            using var writer = new StringWriter();
+            serializer.Serialize(writer, val);
+            return writer.ToString();
         }
 
         internal XmlSerializerHelper() { }

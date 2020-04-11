@@ -118,22 +118,22 @@ namespace ProgressOnderwijsUtils.Tests.Data
         [Fact]
         public void CanInsertDatareader()
         {
-            using (var conn2 = new SqlConnection(ConnectionString)) {
-                conn2.Open();
-                var query = SQL($@"
+            using var conn2 = new SqlConnection(ConnectionString);
+            conn2.Open();
+            var query = SQL($@"
                     select *
                     from (
                         values (1, null, 'test', 'test2')
                         , (2, 1, null, 'test3')
                     ) x(intNonNull, intNull, stringNull, stringNonNull)
                 ").OfPocos<SampleRow2>();
-                var expectedData = new[] {
+            var expectedData = new[] {
                     new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test2" },
                     new SampleRow2 { intNonNull = 2, intNull = 1, stringNull = null, stringNonNull = "test3" },
                 };
-                AssertCollectionsEquivalent(expectedData, query.Execute(conn2)); //sanity check that we're testing consistent data
+            AssertCollectionsEquivalent(expectedData, query.Execute(conn2)); //sanity check that we're testing consistent data
 
-                SQL($@"
+            SQL($@"
                     create table #tmp (
                         intNonNull int not null
                         , intNull int null
@@ -141,15 +141,14 @@ namespace ProgressOnderwijsUtils.Tests.Data
                         , stringNonNull nvarchar(max) not null
                     )
                 ").ExecuteNonQuery(Connection);
-                var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
+            var target = BulkInsertTarget.LoadFromTable(Connection, "#tmp");
 
-                using (var cmd = query.Sql.CreateSqlCommand(conn2, default))
-                using (var reader = cmd.Command.ExecuteReader()) {
-                    target.BulkInsert(Connection, reader, "from query");
-                }
-
-                AssertCollectionsEquivalent(expectedData, SQL($"select * from #tmp").OfPocos<SampleRow2>().Execute(Connection));
+            using (var cmd = query.Sql.CreateSqlCommand(conn2, default))
+            using (var reader = cmd.Command.ExecuteReader()) {
+                target.BulkInsert(Connection, reader, "from query");
             }
+
+            AssertCollectionsEquivalent(expectedData, SQL($"select * from #tmp").OfPocos<SampleRow2>().Execute(Connection));
         }
 
         static void AssertCollectionsEquivalent<T>(T[] sampleData, T[] fromDb)

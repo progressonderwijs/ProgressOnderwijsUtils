@@ -13,14 +13,13 @@ namespace ProgressOnderwijsUtils
 
         static string MakeMD5(byte[] data)
         {
-            using (var md5computer = MD5.Create()) {
-                var md5 = md5computer.ComputeHash(data);
-                var sb = new StringBuilder();
-                for (var i = 0; i < md5.Length; i++) {
-                    sb.Append(md5[i].ToString("x2"));
-                }
-                return sb.ToString();
+            using var md5computer = MD5.Create();
+            var md5 = md5computer.ComputeHash(data);
+            var sb = new StringBuilder();
+            for (var i = 0; i < md5.Length; i++) {
+                sb.Append(md5[i].ToString("x2"));
             }
+            return sb.ToString();
         }
     }
 }
