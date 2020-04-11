@@ -34,6 +34,7 @@ namespace ProgressOnderwijsUtils
     public interface ITypedSqlCommand<out TQueryReturnValue>
     {
         [UsefulToKeep("lib method")]
+        [return: MaybeNull]
         [MustUseReturnValue]
         TQueryReturnValue Execute(SqlConnection conn);
     }
