@@ -32,7 +32,9 @@ namespace ProgressOnderwijsUtils
 
         public static Suggestion[] Create(ColumnDefinition[] srcColumns, ColumnDefinition[] dstColumns)
         {
-            var dstColumnsByName = dstColumns.ToDictionary(o => o.Name, StringComparer.OrdinalIgnoreCase);
+#pragma warning disable IDE0007 // Use implicit type
+            Dictionary<string, ColumnDefinition> dstColumnsByName = dstColumns.ToDictionary(o => o.Name, StringComparer.OrdinalIgnoreCase)!;// roslyn bug workaround?
+#pragma warning restore IDE0007 // Use implicit type
 
             var list = new List<Suggestion>(srcColumns.Length + dstColumns.Length);
             foreach (var srcColumn in srcColumns) {
