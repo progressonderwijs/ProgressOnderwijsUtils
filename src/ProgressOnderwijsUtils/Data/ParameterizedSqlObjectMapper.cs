@@ -9,6 +9,7 @@ using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
+using System.Diagnostics.CodeAnalysis;
 
 // ReSharper disable ConvertToUsingDeclaration
 namespace ProgressOnderwijsUtils
@@ -37,6 +38,7 @@ namespace ProgressOnderwijsUtils
             where T : IWrittenImplicitly, new()
             => new PocosSqlCommand<T>(sql, CommandTimeout.DeferToConnectionDefault, FieldMappingMode.RequireExactColumnMatches);
 
+        [return: MaybeNull]
         [MustUseReturnValue]
         public static T ReadScalar<T>(this ParameterizedSql sql, SqlConnection sqlConn)
             => sql.OfScalar<T>().Execute(sqlConn);
