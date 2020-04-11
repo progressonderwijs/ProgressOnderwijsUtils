@@ -346,7 +346,7 @@ namespace ProgressOnderwijsUtils
         public bool Equals(T x, T y)
             => equals(x, y);
 
-        public int GetHashCode([DisallowNull] T obj)
-            => hashCode == null ? obj! /*Not sure why necessary, DisallowNull should prevent nulls.*/.GetHashCode() : hashCode(obj);
+        public int GetHashCode(T obj)
+            => hashCode != null ? hashCode(obj) : obj != null ? obj.GetHashCode() : 0;
     }
 }
