@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Mail;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using ProgressOnderwijsUtils.Collections;
@@ -343,8 +344,9 @@ namespace ProgressOnderwijsUtils
             this.hashCode = hashCode;
         }
 
-        public bool Equals(T x, T y)
-            => equals(x, y);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Equals([AllowNull] T x, [AllowNull] T y)
+            => x == null ? y == null : y != null && equals(x, y);
 
         public int GetHashCode(T obj)
             => hashCode != null ? hashCode(obj) : obj != null ? obj.GetHashCode() : 0;
