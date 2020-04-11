@@ -9,29 +9,41 @@ namespace ProgressOnderwijsUtils
 {
     public readonly struct BulkInsertFieldMapping
     {
-        public readonly ColumnDefinition? Src;
-        public readonly ColumnDefinition? Dst;
+        public readonly ColumnDefinition Src;
+        public readonly ColumnDefinition Dst;
 
-        BulkInsertFieldMapping(ColumnDefinition? src, ColumnDefinition? dst)
+        public readonly struct Suggestion
+        {
+            public readonly ColumnDefinition? Src;
+            public readonly ColumnDefinition? Dst;
+
+            public Suggestion(ColumnDefinition? src, ColumnDefinition? dst)
+            {
+                Src = src;
+                Dst = dst;
+            }
+        }
+
+        public BulkInsertFieldMapping(ColumnDefinition src, ColumnDefinition dst)
         {
             Src = src;
             Dst = dst;
         }
 
-        public static BulkInsertFieldMapping[] Create(ColumnDefinition[] srcColumns, ColumnDefinition[] dstColumns)
+        public static Suggestion[] Create(ColumnDefinition[] srcColumns, ColumnDefinition[] dstColumns)
         {
-            var dstColumnsByName = dstColumns.ToDictionary(o => o.Name ?? "!!UNNAMED COLUMN!!", StringComparer.OrdinalIgnoreCase);
+            var dstColumnsByName = dstColumns.ToDictionary(o => o.Name, StringComparer.OrdinalIgnoreCase);
 
-            var list = new List<BulkInsertFieldMapping>(srcColumns.Length + dstColumns.Length);
+            var list = new List<Suggestion>(srcColumns.Length + dstColumns.Length);
             foreach (var srcColumn in srcColumns) {
                 if (dstColumnsByName.TryGetValue(srcColumn.Name, out var dstColumn)) {
                     dstColumnsByName.Remove(dstColumn.Name);
-                    list.Add(new BulkInsertFieldMapping(srcColumn, dstColumn));
+                    list.Add(new Suggestion(srcColumn, dstColumn));
                 } else {
-                    list.Add(new BulkInsertFieldMapping(srcColumn, null));
+                    list.Add(new Suggestion(srcColumn, null));
                 }
             }
-            list.AddRange(dstColumnsByName.Values.Select(dstColumn => new BulkInsertFieldMapping(null, dstColumn)));
+            list.AddRange(dstColumnsByName.Values.Select(dstColumn => new Suggestion(null, dstColumn)));
 
             return list.ToArray();
         }
@@ -40,7 +52,7 @@ namespace ProgressOnderwijsUtils
         {
             bulkCopy.ColumnMappings.Clear();
             foreach (var mapEntry in mapping) {
-                bulkCopy.ColumnMappings.Add(mapEntry.Src! /*dubious*/.Index, mapEntry.Dst! /*dubious*/.Index);
+                bulkCopy.ColumnMappings.Add(mapEntry.Src.Index, mapEntry.Dst.Index);
             }
         }
     }
@@ -51,7 +63,7 @@ namespace ProgressOnderwijsUtils
         public bool AllowExtraTargetColumns;
         public bool OverwriteAutoIncrement;
 
-        public Maybe<BulkInsertFieldMapping[], string> ValidateAndFilter(BulkInsertFieldMapping[] mapping)
+        public Maybe<BulkInsertFieldMapping[], string> ValidateAndFilter(BulkInsertFieldMapping.Suggestion[] mapping)
         {
             var errors = new List<string>(mapping.Length);
             var mapped = new List<BulkInsertFieldMapping>(mapping.Length);
@@ -85,7 +97,7 @@ namespace ProgressOnderwijsUtils
                     } else if (dst.ColumnAccessibility == ColumnAccessibility.Readonly) {
                         errors.Add($"Cannot fill readonly field {dst.Name}.");
                     } else if (dst.ColumnAccessibility != ColumnAccessibility.AutoIncrement || OverwriteAutoIncrement) {
-                        mapped.Add(entry);
+                        mapped.Add(new BulkInsertFieldMapping(src, dst));
                     }
                 }
             }
