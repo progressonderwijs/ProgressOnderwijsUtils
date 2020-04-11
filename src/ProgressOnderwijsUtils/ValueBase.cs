@@ -68,16 +68,17 @@ namespace ProgressOnderwijsUtils
             => ToStringByMembers<T>.Func(obj);
     }
 
+    static class StringifierMethod
+    {
+        internal static readonly MethodInfo? MethodInfo = ((Func<object, string>)ObjectToCode.ComplexObjectToPseudoCode).Method;
+    }
+
     public static class ToStringByMembers<T>
     {
         public static readonly Func<T, string> Func = byPublicMembers();
 
         static MemberExpression MemberAccessExpression(Expression expr, MemberInfo mi)
             => mi is FieldInfo info ? Expression.Field(expr, info) : Expression.Property(expr, (PropertyInfo)mi);
-
-        [UsedImplicitly]
-        static string ToString(object o)
-            => ObjectToCode.ComplexObjectToPseudoCode(o);
 
         static Func<T, string> byPublicMembers()
         {
@@ -88,7 +89,7 @@ namespace ProgressOnderwijsUtils
 
             var type = typeof(T);
             var refEqMethod = ((Func<object, object, bool>)ReferenceEquals).Method;
-            var toStringMethod = typeof(ToStringByMembers<T>).GetMethod("ToString", BindingFlags.Static | BindingFlags.NonPublic) ?? throw new InvalidOperationException("missing ToString?");
+            var toStringMethod = StringifierMethod.MethodInfo ?? throw new InvalidOperationException($"missing {nameof(StringifierMethod)}?");
 
             var parA = Expression.Parameter(type, "a");
             var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
