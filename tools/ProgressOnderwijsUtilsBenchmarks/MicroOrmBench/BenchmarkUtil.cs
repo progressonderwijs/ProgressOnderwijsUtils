@@ -1,5 +1,4 @@
-#nullable disable
-//#define SINGLETHREADED
+﻿//#define SINGLETHREADED
 using System;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
@@ -132,21 +131,20 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             for (var k = 0L; k < Tries; k++) {
                 var i = 0;
                 Func<MeanVarianceAccumulator> ExecuteBenchLoop = () => {
-                    using (var conn = connect()) {
-                        var latencies = MeanVarianceAccumulator.Empty;
-                        var swInner = new Stopwatch();
-                        while (true) {
-                            var localI = Interlocked.Increment(ref i) - 1;
-                            if (localI >= IterationsPerTry) {
-                                break;
-                            }
-                            swInner.Restart();
-                            var val = action(conn, IndexToRowCount(localI));
-                            latencies = latencies.Add(swInner.Elapsed.TotalMilliseconds);
-                            Interlocked.Add(ref ignore, val);
+                    using var conn = connect();
+                    var latencies = MeanVarianceAccumulator.Empty;
+                    var swInner = new Stopwatch();
+                    while (true) {
+                        var localI = Interlocked.Increment(ref i) - 1;
+                        if (localI >= IterationsPerTry) {
+                            break;
                         }
-                        return latencies;
+                        swInner.Restart();
+                        var val = action(conn, IndexToRowCount(localI));
+                        latencies = latencies.Add(swInner.Elapsed.TotalMilliseconds);
+                        Interlocked.Add(ref ignore, val);
                     }
+                    return latencies;
                 };
                 var sw = Stopwatch.StartNew();
 #if SINGLETHREADED

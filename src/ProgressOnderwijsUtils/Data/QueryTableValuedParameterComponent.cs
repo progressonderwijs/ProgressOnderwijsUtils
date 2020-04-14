@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -19,7 +18,6 @@ namespace ProgressOnderwijsUtils
         readonly Func<IEnumerable<TIn>, TOut[]> projection;
         int cachedLength = -1;
 
-        [NotNull]
         public object EquatableValue
             => Tuple.Create(values, DbTypeName);
 
@@ -84,7 +82,7 @@ namespace ProgressOnderwijsUtils
             var isFirst = true;
             ParameterizedSqlFactory.AppendSql(ref factory, "(select ");
             foreach (var property in PocoUtils.GetProperties<TOut>()) {
-                if (property.CanRead) {
+                if (property.Getter is var getter && getter != null) {
                     if (!isFirst) {
                         ParameterizedSqlFactory.AppendSql(ref factory, ", ");
                     } else {
@@ -93,7 +91,7 @@ namespace ProgressOnderwijsUtils
 
                     ParameterizedSqlFactory.AppendSql(ref factory, property.Name);
                     ParameterizedSqlFactory.AppendSql(ref factory, " = ");
-                    QueryScalarParameterComponent.AppendScalarParameter(ref factory, property.Getter(row));
+                    QueryScalarParameterComponent.AppendScalarParameter(ref factory, getter(row));
                 }
             }
             ParameterizedSqlFactory.AppendSql(ref factory, ")");

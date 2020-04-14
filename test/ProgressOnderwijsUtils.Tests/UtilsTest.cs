@@ -138,10 +138,9 @@ namespace ProgressOnderwijsUtils.Tests
         public void TimeoutDetectionAbortsWithInconclusiveAfterTimeout()
         {
             var slowQueryWithTimeout = SQL($"WAITFOR DELAY '00:00:02'").OfNonQuery().WithTimeout(CommandTimeout.AbsoluteSeconds(1));
-            using (var localdb = new TransactedLocalConnection()) {
-                var ex = Assert.ThrowsAny<Exception>(() => slowQueryWithTimeout.Execute(localdb.Connection));
-                PAssert.That(() => ex.IsRetriableConnectionFailure());
-            }
+            using var localdb = new TransactedLocalConnection();
+            var ex = Assert.ThrowsAny<Exception>(() => slowQueryWithTimeout.Execute(localdb.Connection));
+            PAssert.That(() => ex.IsRetriableConnectionFailure());
         }
 
         [Fact]

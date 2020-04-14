@@ -1,4 +1,4 @@
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using ProgressOnderwijsUtils.SchemaReflection;
 using System;
@@ -14,16 +14,7 @@ namespace ProgressOnderwijsUtils
 {
     public static class CascadedDelete
     {
-        [NotNull]
-        public static DeletionReport[] RecursivelyDelete<TId>(
-            [NotNull] SqlConnection conn,
-            [NotNull] DatabaseDescription.Table initialTableAsEntered,
-            bool outputAllDeletedRows,
-            Action<string>? logger,
-            Func<string, bool>? stopCascading,
-            [NotNull] string pkColumn,
-            [NotNull] params TId[] pksToDelete
-        )
+        public static DeletionReport[] RecursivelyDelete<TId>(SqlConnection conn, DatabaseDescription.Table initialTableAsEntered, bool outputAllDeletedRows, Action<string>? logger, Func<string, bool>? stopCascading, string pkColumn, params TId[] pksToDelete)
             where TId : Enum
         {
             var pkColumnSql = ParameterizedSql.CreateDynamic(pkColumn);
@@ -33,15 +24,14 @@ namespace ProgressOnderwijsUtils
             "));
         }
 
-        [NotNull]
         public static DeletionReport[] RecursivelyDelete<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
             TId>(
-            [NotNull] SqlConnection conn,
-            [NotNull] DatabaseDescription.Table initialTableAsEntered,
+            SqlConnection conn,
+            DatabaseDescription.Table initialTableAsEntered,
             bool outputAllDeletedRows,
             Action<string>? logger,
             Func<string, bool>? stopCascading,
-            [NotNull] params TId[] pksToDelete
+            params TId[] pksToDelete
         )
             where TId : IReadImplicitly
         {
@@ -69,15 +59,7 @@ namespace ProgressOnderwijsUtils
             return report;
         }
 
-        [NotNull]
-        public static DeletionReport[] RecursivelyDelete(
-            [NotNull] SqlConnection conn,
-            DatabaseDescription.Table initialTableAsEntered,
-            bool outputAllDeletedRows,
-            Action<string>? logger,
-            Func<string, bool>? stopCascading,
-            [NotNull] DataTable pksToDelete
-        )
+        public static DeletionReport[] RecursivelyDelete(SqlConnection conn, DatabaseDescription.Table initialTableAsEntered, bool outputAllDeletedRows, Action<string>? logger, Func<string, bool>? stopCascading, DataTable pksToDelete)
         {
             var pksTable = SQL($"#pksTable");
             var pkColumns = pksToDelete.Columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToArray();
@@ -106,17 +88,8 @@ namespace ProgressOnderwijsUtils
         /// 
         /// In particularly, this code cannot break cyclical dependencies, and also cannot detect them: when a dependency chain reaches 500 long, it will crash.
         /// </summary>
-        [NotNull]
         [UsefulToKeep("Library function")]
-        public static DeletionReport[] RecursivelyDelete(
-            [NotNull] SqlConnection conn,
-            [NotNull] DatabaseDescription.Table initialTableAsEntered,
-            bool outputAllDeletedRows,
-            Action<string>? logger,
-            Func<string, bool>? stopCascading,
-            [NotNull] string[] pkColumns,
-            ParameterizedSql pksTVParameter
-        )
+        public static DeletionReport[] RecursivelyDelete(SqlConnection conn, DatabaseDescription.Table initialTableAsEntered, bool outputAllDeletedRows, Action<string>? logger, Func<string, bool>? stopCascading, string[] pkColumns, ParameterizedSql pksTVParameter)
         {
             void log(string message)
                 => logger?.Invoke(message);

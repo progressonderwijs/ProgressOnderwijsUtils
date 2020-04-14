@@ -7,7 +7,6 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
 namespace ProgressOnderwijsUtils.SingleSignOn
@@ -19,7 +18,6 @@ namespace ProgressOnderwijsUtils.SingleSignOn
         const string DOMAIN = "urn:mace:terena.org:attribute-def:schacHomeOrganization";
         const string ROLE = "urn:mace:dir:attribute-def:eduPersonAffiliation";
 
-        [NotNull]
         public static Uri GetRedirectUrl(AuthnRequest request)
         {
             //Don't escape colon: Uri.ToString doesn't either; and this is just a defense-in-depth we don't need
@@ -36,7 +34,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return new Uri(request.Destination + "?" + signedQueryString);
         }
 
-        static XElement? GetAssertion([NotNull] XElement response)
+        static XElement? GetAssertion(XElement response)
         {
             var statusCodes = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").ToArray();
             if (statusCodes.Length > 1) {
@@ -53,7 +51,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return null;
         }
 
-        public static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, [NotNull] X509Certificate2 certificate)
+        public static Maybe<SsoAttributes, string> GetAttributes(string rawSamlResponse, X509Certificate2 certificate)
         {
             var rawXml = Encoding.UTF8.GetString(Convert.FromBase64String(rawSamlResponse));
             var xml = XElement.Parse(rawXml);
@@ -102,7 +100,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 });
         }
 
-        static string? GetInResponseTo([NotNull] XElement assertion)
+        static string? GetInResponseTo(XElement assertion)
         {
             // ReSharper disable PossibleNullReferenceException
             var rawInResponseTo = (string)assertion

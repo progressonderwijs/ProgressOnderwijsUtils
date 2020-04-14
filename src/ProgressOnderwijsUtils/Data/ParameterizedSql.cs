@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
         /// Converts this parameterized sql statement into an sql command.
         /// The underlying SqlCommand is pooled for performance; if the provided ReusableCommand is disposed, then the SqlCommand may be reused.
         /// </summary>
-        public ReusableCommand CreateSqlCommand([NotNull] SqlConnection conn, CommandTimeout timeout)
+        public ReusableCommand CreateSqlCommand(SqlConnection conn, CommandTimeout timeout)
         {
             var factory = CommandFactory.Create();
             impl?.AppendTo(ref factory);
@@ -77,7 +77,7 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSql operator +(ParameterizedSql a, ParameterizedSql b)
             => (a.impl == null || b.impl == null ? a.impl ?? b.impl : new TwoSqlFragments(a.impl, b.impl)).BuildableToQuery();
 
-        public static ParameterizedSql CreateDynamic([NotNull] string rawSqlString)
+        public static ParameterizedSql CreateDynamic(string rawSqlString)
         {
             if (rawSqlString == null) {
                 throw new ArgumentNullException(nameof(rawSqlString));
@@ -113,11 +113,9 @@ namespace ProgressOnderwijsUtils
         public override string ToString()
             => "*/Pseudo-sql (with parameter values inlined!):/*\r\n" + DebugText();
 
-        [NotNull]
         public string DebugText()
             => DebugCommandFactory.DebugTextFor(impl);
 
-        [NotNull]
         [Pure]
         public string CommandText()
         {
@@ -130,7 +128,7 @@ namespace ProgressOnderwijsUtils
             => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]
-        public static ParameterizedSql TableParamDynamic([NotNull] Array o)
+        public static ParameterizedSql TableParamDynamic(Array o)
             => SqlParameterComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
 
         /// <summary>
@@ -199,7 +197,7 @@ namespace ProgressOnderwijsUtils
     public static class SafeSql
     {
         [Pure]
-        public static ParameterizedSql SQL([NotNull] FormattableString interpolatedQuery)
+        public static ParameterizedSql SQL(FormattableString interpolatedQuery)
             => ParameterizedSqlFactory.InterpolationToQuery(interpolatedQuery);
     }
 
@@ -208,10 +206,10 @@ namespace ProgressOnderwijsUtils
         public static ParameterizedSql BuildableToQuery(this ISqlComponent? q)
             => new ParameterizedSql(q);
 
-        public static ParameterizedSql InterpolationToQuery([NotNull] FormattableString interpolatedQuery)
+        public static ParameterizedSql InterpolationToQuery(FormattableString interpolatedQuery)
             => interpolatedQuery.Format == "" ? ParameterizedSql.Empty : new InterpolatedSqlFragment(interpolatedQuery).BuildableToQuery();
 
-        public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, [NotNull] string sql)
+        public static void AppendSql<TCommandFactory>(ref TCommandFactory factory, string sql)
             where TCommandFactory : struct, ICommandFactory
             => factory.AppendSql(sql, 0, sql.Length);
     }
@@ -296,12 +294,12 @@ namespace ProgressOnderwijsUtils
         static readonly ConcurrentDictionary<string, ParamRefSubString[]> parsedFormatStrings
             = new ConcurrentDictionary<string, ParamRefSubString[]>(new ReferenceEqualityComparer<string>());
 
-        static ParamRefSubString[] GetFormatStringParamRefs([NotNull] string formatstring)
+        static ParamRefSubString[] GetFormatStringParamRefs(string formatstring)
             => parsedFormatStrings.GetOrAdd(formatstring, ParseFormatString_Delegate);
 
         static readonly Func<string, ParamRefSubString[]> ParseFormatString_Delegate = ParseFormatString;
 
-        static ParamRefSubString[] ParseFormatString([NotNull] string formatstring)
+        static ParamRefSubString[] ParseFormatString(string formatstring)
         {
             var arrayBuilder = new ArrayBuilder<ParamRefSubString>();
             var pos = 0;

@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Tests
                 AnEnum = ConsoleKey.BrowserBack,
                 MyString = "Hello World!",
                 Nested = new ExampleValue { AnEnum = ConsoleKey.BrowserRefresh },
-                SomeValueType = default(DateTime),
+                SomeValueType = default,
                 MyInt = 42,
             }.ToString());
     }

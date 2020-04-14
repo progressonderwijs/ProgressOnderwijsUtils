@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -9,7 +8,6 @@ namespace ProgressOnderwijsUtils
         /// Reads the specified number of bytes.
         /// </summary>
         /// <exception cref="EndOfStreamException">thrown when EOF is reached before the needed number of bytes are read</exception>
-        [NotNull]
         public static byte[] ReadUntil(this Stream stream, int numberOfBytesToRead)
         {
             var result = new byte[numberOfBytesToRead];

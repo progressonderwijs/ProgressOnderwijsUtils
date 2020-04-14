@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 using Xunit;
 
@@ -331,11 +330,9 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => threeMixedPartitioned.errorValues.SequenceEqual(new[] { 1, 2, }));
         }
 
-        [NotNull]
         static Maybe<Unit, int>[] ThreeMixedMaybes
             => new[] { Maybe.Error(1).AsMaybeWithoutValue<Unit>(), Maybe.Ok(), Maybe.Error(2) };
 
-        [NotNull]
         static Maybe<int, Unit>[] TwoOkMaybes
             => new[] { Maybe.Ok(1).AsMaybeWithoutError<Unit>(), Maybe.Ok(2) };
 

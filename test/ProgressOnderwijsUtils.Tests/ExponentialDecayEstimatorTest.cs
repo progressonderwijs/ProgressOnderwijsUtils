@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils.Tests
             var stepSize = TimeSpan.FromSeconds(halflife.TotalSeconds * stepSizeInHalfLives);
             var random = new Random(42);
             var currentEstimation = estimator.ValueAt(startingMoment);
-            for (var currentMoment = startingMoment; currentMoment < endAt; currentMoment = currentMoment + stepSize) {
+            for (var currentMoment = startingMoment; currentMoment < endAt; currentMoment += stepSize) {
                 var randomValueMeanOne = random.NextDouble() * 2;
 
                 currentEstimation = estimator.AddAmount(currentMoment, randomValueMeanOne * stepSizeInHalfLives * actualRatePerHalfLife);

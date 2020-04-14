@@ -34,7 +34,7 @@ namespace ProgressOnderwijsUtils.Collections
     /// 
     /// "Maybe" is immutable and hence thread safe (assuming the wrapped value is thread safe).
     /// </summary>
-    public struct Maybe<TOk, TError>
+    public readonly struct Maybe<TOk, TError>
     {
         readonly object okOrError;
 
@@ -139,15 +139,15 @@ namespace ProgressOnderwijsUtils.Collections
         /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
         /// </summary>
         [Pure]
-        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError val)
-            where TError : class?
-            => val == null ? Ok(Unit.Value).AsMaybeWithoutError<TError>() : Error(val);
+        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>(TError? val)
+            where TError : class
+            => val != null ? Error(val) : Ok(Unit.Value).AsMaybeWithoutError<TError>();
 
         /// <summary>
         /// Converts a possibly null error to a Maybe&lt;Unit, TError&gt;. When the input is null; return OK, otherwise - returns error.
         /// </summary>
         [Pure]
-        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>([CanBeNull] TError? val)
+        public static Maybe<Unit, TError> ErrorWhenNotNull<TError>(TError? val)
             where TError : struct
             => val == null ? Ok(Unit.Value).AsMaybeWithoutError<TError>() : Error(val.Value);
 
@@ -155,15 +155,15 @@ namespace ProgressOnderwijsUtils.Collections
         /// Converts a possibly null okValue to a Maybe&lt;TOk, Unit&gt;. When the input is null; return errors, otherwise returns ok.
         /// </summary>
         [Pure]
-        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>([CanBeNull] TOk val)
-            where TOk : class?
-            => val != null ? Ok(val).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
+        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>(TOk? val)
+            where TOk : class
+            => val is TOk notNull ? Ok(notNull).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
 
         /// <summary>
         /// Converts a possibly null okValue to a Maybe&lt;TOk, Unit&gt;. When the input is null; return errors, otherwise returns ok.
         /// </summary>
         [Pure]
-        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>([CanBeNull] TOk? val)
+        public static Maybe<TOk, Unit> OkWhenNotNull<TOk>(TOk? val)
             where TOk : struct
             => val != null ? Ok(val.Value).AsMaybeWithoutError<Unit>() : Error(Unit.Value);
 
@@ -180,7 +180,7 @@ namespace ProgressOnderwijsUtils.Collections
             => new MaybeTryBody<TOk>(tryBody);
     }
 
-    public struct MaybeTryBody
+    public readonly struct MaybeTryBody
     {
         readonly Action tryBody;
 
@@ -214,7 +214,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
     }
 
-    public struct MaybeTryBody<TOk>
+    public readonly struct MaybeTryBody<TOk>
     {
         readonly Func<TOk> tryBody;
 

@@ -1,13 +1,11 @@
-#nullable disable
-using System.Linq;
+﻿using System.Linq;
 using Dapper;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
     static class DapperExecutor
     {
-        public static void RunQuery([NotNull] Benchmarker benchmarker)
+        public static void RunQuery(Benchmarker benchmarker)
         {
             benchmarker.BenchSQLite("Dapper (sqlite)", (sqlConn, rows) =>
                 sqlConn.Query<ExampleObject>(ExampleObject.RawSqliteQueryString, new { Arg = ExampleObject.someInt64Value, Top = rows, Num2 = 2, Hehe = "hehe" }).Count()
@@ -18,7 +16,7 @@ namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
             );
         }
 
-        public static void RunWideQuery([NotNull] Benchmarker benchmarker)
+        public static void RunWideQuery(Benchmarker benchmarker)
         {
             benchmarker.BenchSqlServer("Dapper (26-col)", (sqlConn, rows) =>
                 sqlConn.Query<WideExampleObject>(WideExampleObject.RawQueryString, new { Top = rows, }).Count()

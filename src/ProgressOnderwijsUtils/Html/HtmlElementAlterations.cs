@@ -1,18 +1,17 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
     public static class HtmlElementAlterations
     {
-        public static IHtmlElement ReplaceAttributesWith([NotNull] this IHtmlElement element, HtmlAttributes attributes)
+        public static IHtmlElement ReplaceAttributesWith(this IHtmlElement element, HtmlAttributes attributes)
             => element.ApplyAlteration(new AttributeAlteration(attributes));
 
-        public static IHtmlElementAllowingContent ReplaceContentWith([NotNull] this IHtmlElementAllowingContent element, HtmlFragment children)
+        public static IHtmlElementAllowingContent ReplaceContentWith(this IHtmlElementAllowingContent element, HtmlFragment children)
             => (IHtmlElementAllowingContent)element.ApplyAlteration(new ContentAlteration(children));
 
 
-        public static IHtmlElement ReplaceAttributesAndContents([NotNull] this IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
+        public static IHtmlElement ReplaceAttributesAndContents(this IHtmlElement element, HtmlAttributes attributes, HtmlFragment children)
             => element.ApplyAlteration(new ContentAlteration(children)).ReplaceAttributesWith(attributes);
 
         struct ContentAlteration : IHtmlElementAlteration

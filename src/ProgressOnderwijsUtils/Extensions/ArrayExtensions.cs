@@ -20,7 +20,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Return an empty array if it's null
         /// </summary>
-        [NotNull]
         [Pure]
         public static T[] EmptyIfNull<T>(this T[]? array)
             => array ?? Array.Empty<T>();
@@ -28,9 +27,8 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Like Enumerable.Select, but faster due to specialization for arrays.
         /// </summary>
-        [NotNull]
         [Pure]
-        public static TR[] ArraySelect<T, TR>([NotNull] this T[] array, Func<T, TR> mappingFunction)
+        public static TR[] ArraySelect<T, TR>(this T[] array, Func<T, TR> mappingFunction)
         {
             var output = new TR[array.Length];
             for (var i = 0; i < array.Length; ++i) {
@@ -42,9 +40,8 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Like Enumerable.Select, but faster due to specialization for arrays.
         /// </summary>
-        [NotNull]
         [Pure]
-        public static TR[] ArraySelect<T, TR>([NotNull] this IReadOnlyList<T> array, Func<T, TR> mappingFunction)
+        public static TR[] ArraySelect<T, TR>(this IReadOnlyList<T> array, Func<T, TR> mappingFunction)
         {
             var output = new TR[array.Count];
             for (var i = 0; i < output.Length; ++i) {
@@ -56,9 +53,8 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Like Enumerable.Select, but faster due to specialization for arrays.
         /// </summary>
-        [NotNull]
         [Pure]
-        public static TR[] ArraySelect<T, TR>([NotNull] this T[] array, Func<T, int, TR> mappingFunction)
+        public static TR[] ArraySelect<T, TR>(this T[] array, Func<T, int, TR> mappingFunction)
         {
             var output = new TR[array.Length];
             for (var i = 0; i < array.Length; ++i) {
@@ -70,9 +66,8 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Like Enumerable.Select, but faster due to specialization for arrays.
         /// </summary>
-        [NotNull]
         [Pure]
-        public static TR[] ArraySelect<T, TR>([NotNull] this IReadOnlyList<T> array, Func<T, int, TR> mappingFunction)
+        public static TR[] ArraySelect<T, TR>(this IReadOnlyList<T> array, Func<T, int, TR> mappingFunction)
         {
             var output = new TR[array.Count];
             for (var i = 0; i < output.Length; ++i) {
@@ -84,7 +79,6 @@ namespace ProgressOnderwijsUtils
         /// <summary>
         /// Concatenates two arrays.  Null arrays are interpreted as the empty array. The returned array may be the same as one of the parameters.
         /// </summary>
-        [NotNull]
         public static T[] ConcatArray<T>(this T[]? beginning, T[]? end)
         {
             if (end == null || end.Length == 0) {

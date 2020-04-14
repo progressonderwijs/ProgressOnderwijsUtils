@@ -8,27 +8,22 @@ namespace ProgressOnderwijsUtils.Collections
     public interface IRecursiveStructure<out TTree>
         where TTree : IRecursiveStructure<TTree>
     {
-        [ItemNotNull]
-        [NotNull]
         IReadOnlyList<TTree> Children { get; }
     }
 
     public static class Tree
     {
-        [NotNull]
         [Pure]
         public static Tree<T> Node<T>(T value, IEnumerable<Tree<T>> children)
             => new Tree<T>(value, children);
 
         // ReSharper disable MethodOverloadWithOptionalParameter
-        [NotNull]
         [Pure]
-        public static Tree<T> Node<T>(T value, params Tree<T>[] kids)
+        public static Tree<T> Node<T>(T value, params Tree<T>[]? kids)
             => new Tree<T>(value, kids);
 
         // ReSharper restore MethodOverloadWithOptionalParameter
 
-        [NotNull]
         [Pure]
         public static Tree<T> Node<T>(T value)
             => new Tree<T>(value, null);
@@ -40,9 +35,8 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Tree<T> BuildRecursively<T>(T root, IReadOnlyDictionary<T, IReadOnlyList<T>> kidLookup)
             where T : notnull
-            => BuildRecursively(root, kidLookup.GetOrDefaultR);
+            => BuildRecursively(root, arg => kidLookup.GetOrDefaultR(arg).AsEnumerable());
 
-        [NotNull]
         [Pure]
         public static IEqualityComparer<Tree<T>?> EqualityComparer<T>(IEqualityComparer<T> valueComparer)
             => new Tree<T>.Comparer(valueComparer);
@@ -117,8 +111,6 @@ namespace ProgressOnderwijsUtils.Collections
     {
         readonly T nodeValue;
 
-        [ItemNotNull]
-        [NotNull]
         readonly Tree<T>[] kidArray;
 
         public T NodeValue
@@ -231,9 +223,8 @@ namespace ProgressOnderwijsUtils.Collections
         public override string ToString()
             => "TREE:\n" + ToString("");
 
-        [NotNull]
         [Pure]
-        string ToString([NotNull] string indent)
+        string ToString(string indent)
         {
             if (indent.Length > 80) {
                 return "<<TOO DEEP>>";

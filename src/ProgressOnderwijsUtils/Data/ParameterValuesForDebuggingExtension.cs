@@ -5,7 +5,6 @@ namespace ProgressOnderwijsUtils
 {
     public static class ParameterValuesForDebuggingExtension
     {
-        [NotNull]
         [Pure]
         public static object[] ParameterValuesForDebugging(this ParameterizedSql sql)
         {
@@ -18,8 +17,7 @@ namespace ProgressOnderwijsUtils
         {
             public List<object> arguments;
 
-            [NotNull]
-            public string RegisterParameterAndGetName<T>([NotNull] T o)
+                public string RegisterParameterAndGetName<T>(T o)
                 where T : IQueryParameter
             {
                 arguments.Add(o.EquatableValue);

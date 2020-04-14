@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Collections
 {
+    [UsefulToKeep("lib method")]
     public sealed class ArrayComparer<T> : IEqualityComparer<T[]>
     {
         public static readonly ArrayComparer<T> Default = new ArrayComparer<T>(EqualityComparer<T>.Default);
@@ -15,7 +16,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public bool Equals(T[] x, T[] y)
+        public bool Equals(T[]? x, T[]? y)
         {
             if (x == null && y == null) {
                 return true;
@@ -35,7 +36,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public int GetHashCode([CanBeNull] T[] arr)
+        public int GetHashCode(T[]? arr)
         {
             ulong buffer;
             if (arr != null) {

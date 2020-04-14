@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Internal;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
@@ -137,9 +136,8 @@ namespace ProgressOnderwijsUtils.Tests
         public void Test_DbDataReaderBase_GetBytes_works_the_same_as_in_SqlDataReader()
         {
             var testen = new[] { new TestDataPoco { Data = testData } };
-            using (var reader = new PocoDataReader<TestDataPoco>(testen, CancellationToken.None)) {
-                Assert_DataReader_GetBytes_works(reader);
-            }
+            using var reader = new PocoDataReader<TestDataPoco>(testen, CancellationToken.None);
+            Assert_DataReader_GetBytes_works(reader);
         }
 
         [Fact]
@@ -155,13 +153,12 @@ namespace ProgressOnderwijsUtils.Tests
                 values ({testData});
             ").ExecuteNonQuery(Connection);
 
-            using (var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Connection, CommandTimeout.DeferToConnectionDefault))
-            using (var reader = cmd.Command.ExecuteReader(CommandBehavior.Default)) {
-                Assert_DataReader_GetBytes_works(reader);
-            }
+            using var cmd = SQL($@"select data from get_bytes_test").CreateSqlCommand(Connection, CommandTimeout.DeferToConnectionDefault);
+            using var reader = cmd.Command.ExecuteReader(CommandBehavior.Default);
+            Assert_DataReader_GetBytes_works(reader);
         }
 
-        static void Assert_DataReader_GetBytes_works([NotNull] DbDataReader reader)
+        static void Assert_DataReader_GetBytes_works(DbDataReader reader)
         {
             PAssert.That(() => reader.Read());
 

@@ -2,7 +2,6 @@
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -81,7 +80,6 @@ namespace ProgressOnderwijsUtils.Tests
 #pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
-        [NotNull]
         BulkInsertTarget CreateTempTable()
         {
             var tableName = SQL($"#MyTable");

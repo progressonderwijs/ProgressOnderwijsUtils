@@ -2,7 +2,7 @@
 
 namespace ProgressOnderwijsUtils.Html
 {
-    public struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtmlElement>
+    public readonly struct CustomHtmlElement : IHtmlElementAllowingContent<CustomHtmlElement>
     {
         readonly HtmlFragment contents;
 
@@ -35,11 +35,9 @@ namespace ProgressOnderwijsUtils.Html
         public HtmlFragment AsFragment()
             => this;
 
-        [NotNull]
         string IHtmlElement.TagStart
             => "<" + TagName;
 
-        [NotNull]
         string IHtmlElement.EndTag
             => !GetContent().IsEmpty || !TagDescription.LookupTag(TagName).IsSelfClosing ? "</" + TagName + ">" : "";
 
@@ -54,8 +52,7 @@ namespace ProgressOnderwijsUtils.Html
                 : tagDescription.EmptyValue.ReplaceAttributesAndContents(Attributes, GetContent());
         }
 
-        [NotNull]
-        IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>([NotNull] THtmlTagAlteration change)
+        IHtmlElement IHtmlElement.ApplyAlteration<THtmlTagAlteration>(THtmlTagAlteration change)
             => change.AlterElementAllowingContent(this);
 
         public static HtmlFragment operator +(CustomHtmlElement head, HtmlFragment tail)

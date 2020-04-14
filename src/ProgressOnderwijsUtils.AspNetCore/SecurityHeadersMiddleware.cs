@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 
 namespace ProgressOnderwijsUtils.AspNetCore
@@ -9,13 +8,13 @@ namespace ProgressOnderwijsUtils.AspNetCore
         readonly RequestDelegate next;
         readonly SecurityHeadersMiddlewareOptions options;
 
-        public SecurityHeadersMiddleware([NotNull] RequestDelegate next, [NotNull] SecurityHeadersMiddlewareOptions options)
+        public SecurityHeadersMiddleware(RequestDelegate next, SecurityHeadersMiddlewareOptions options)
         {
             this.next = next;
             this.options = options;
         }
 
-        public Task Invoke([NotNull] HttpContext context)
+        public Task Invoke(HttpContext context)
         {
             if (options.ContentSecurityPolicy != null) {
                 context.Response.Headers["Content-Security-Policy"] = options.ContentSecurityPolicy;

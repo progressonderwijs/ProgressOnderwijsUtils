@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils.Html
 {
@@ -23,7 +22,7 @@ namespace ProgressOnderwijsUtils.Html
                 .GetFields(BindingFlags.Static | BindingFlags.Public)
                 .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlElement)field.GetValue(null)! })
                 .ToDictionary(
-                    field => field.FieldValue.TagName,
+                    field => field.FieldValue.TagName.AssertNotNull(),
                     field => new TagDescription {
                         TagName = field.FieldValue.TagName,
                         EmptyValue = field.FieldValue,
@@ -34,7 +33,6 @@ namespace ProgressOnderwijsUtils.Html
                     StringComparer.OrdinalIgnoreCase
                 );
 
-        [NotNull]
         static Dictionary<string, string> AttributeLookup(Type tagType, IHtmlElement emptyValue)
             => typeof(AttributeConstructionMethods)
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
@@ -50,7 +48,7 @@ namespace ProgressOnderwijsUtils.Html
                     method => method.Name,
                     StringComparer.OrdinalIgnoreCase);
 
-        public static TagDescription LookupTag([NotNull] string tagName)
+        public static TagDescription LookupTag(string tagName)
             => ByTagName.TryGetValue(tagName, out var desc)
                 ? desc
                 : new TagDescription {
