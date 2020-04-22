@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils
     {
         public static readonly RandomHelper Secure = new RandomHelper(new RNGCryptoServiceProvider().GetBytes);
 
-        public static RandomHelper Insecure(int seed)
+        static RandomHelper Insecure(int seed)
             => new RandomHelper(new Random(seed).NextBytes);
 
         public static RandomHelper ImplicitlyInsecure([CallerLineNumber] int linenumber = -1, [CallerFilePath] string filepath = "", [CallerMemberName] string membername = "")
