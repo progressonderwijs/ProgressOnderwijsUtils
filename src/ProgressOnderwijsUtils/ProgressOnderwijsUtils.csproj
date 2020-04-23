@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup Label="Configuration">
-    <Version>60.0.0</Version>
-    <PackageReleaseNotes>Improve nullabilty annotations</PackageReleaseNotes>
+    <Version>61.0.0</Version>
+    <PackageReleaseNotes>RandomHelper removed from public api</PackageReleaseNotes>
     <Title>ProgressOnderwijsUtils</Title>
     <Description>Collection of utilities developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
