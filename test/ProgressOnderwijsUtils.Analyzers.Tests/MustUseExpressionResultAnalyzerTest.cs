@@ -177,5 +177,28 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
             PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
             PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 11);
         }
+
+        [Fact]
+        public void Local_function_result_cannot_be_ignored()
+        {
+            var source = @"
+                using ProgressOnderwijsUtils.Collections;
+
+                sealed class Test
+                {
+                    public Test()
+                    {
+                        Foo();
+
+                        static Maybe<Unit, string> Foo()
+                            => Maybe.Ok();
+                    }
+                }
+            ";
+
+            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+            PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
+            PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 7);
+        }
     }
 }
