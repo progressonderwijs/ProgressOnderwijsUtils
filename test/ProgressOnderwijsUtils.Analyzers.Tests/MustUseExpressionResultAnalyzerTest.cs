@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ExpressionToCodeLib;
+using ProgressOnderwijsUtils.Collections;
 using Xunit;
 
 namespace ProgressOnderwijsUtils.Analyzers.Tests
@@ -90,7 +92,7 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
         }
 
         [Fact]
-        public void Invocation_expression_van_explicitly_be_ignored()
+        public void Invocation_expression_can_explicitly_be_ignored()
         {
             var source = @"
                 using ProgressOnderwijsUtils.Collections;
@@ -176,6 +178,103 @@ namespace ProgressOnderwijsUtils.Analyzers.Tests
             var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
             PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
             PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 11);
+        }
+
+        [Fact]
+        public void Local_function_result_cannot_be_ignored()
+        {
+            var source = @"
+                using ProgressOnderwijsUtils.Collections;
+
+                sealed class Test
+                {
+                    public Test()
+                    {
+                        Foo();
+
+                        static Maybe<Unit, string> Foo()
+                            => Maybe.Ok();
+                    }
+                }
+            ";
+
+            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+            PAssert.That(() => diagnostics.Single().Id == MustUseExpressionResultAnalyzer.Rule.Id);
+            PAssert.That(() => diagnostics.Single().Location.GetLineSpan().StartLinePosition.Line == 7);
+        }
+
+        [Fact]
+        public void All_kinds_of_assignments_are_allowed()
+        {
+            var source = @"
+                using System.Collections.Generic;
+                using ProgressOnderwijsUtils.Collections;
+
+                sealed class C
+                {
+                    static readonly Maybe<Unit, string> staticField = Maybe.Ok().AsMaybeWithoutError<string>();
+                    readonly Maybe<Unit, string> instanceField;
+
+                    C()
+                    {
+                        instanceField = Maybe.Ok().AsMaybeWithoutError<string>();
+                    }
+
+                    Maybe<Unit, string> Test()
+                    {
+                        var variable = Maybe.Ok().AsMaybeWithoutError<string>();
+                        variable = Maybe.Ok().AsMaybeWithoutError<string>();
+
+                        return Maybe.Ok().AsMaybeWithoutError<string>();
+                    }
+
+                    IEnumerable<Maybe<Unit, string>> Yields()
+                    {
+                        yield return Maybe.Ok().AsMaybeWithoutError<string>();
+                    }
+                }
+            ";
+
+            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+            PAssert.That(() => diagnostics.None());
+        }
+
+        [Fact]
+        public void Func_cannot_be_assigned_to_action()
+        {
+            var source = @"
+                using System;
+                using System.Collections.Generic;
+                using ProgressOnderwijsUtils.Collections;
+                
+                sealed class C
+                {
+                    static readonly Action staticField = () => Maybe.Ok().AsMaybeWithoutError<string>();
+                    readonly Action instanceField;
+
+                    C()
+                    {
+                        instanceField = () => Maybe.Ok().AsMaybeWithoutError<string>();
+                    }
+
+                    Action<int> Test()
+                    {
+                        Action<int> variable = i => Maybe.Ok().AsMaybeWithoutError<string>();
+                        variable = _ => Maybe.Ok().AsMaybeWithoutError<string>();
+
+                        return _ => Maybe.Ok().AsMaybeWithoutError<string>();
+                    }
+
+                    IEnumerable<Action> Yields()
+                    {
+                        yield return () => Maybe.Ok().AsMaybeWithoutError<string>();
+                    }
+                }
+            ";
+
+            var diagnostics = DiagnosticHelper.GetDiagnostics(new MustUseExpressionResultAnalyzer(), source);
+            PAssert.That(() => diagnostics.All(diagnostic => diagnostic.Id == MustUseExpressionResultAnalyzer.Rule.Id));
+            PAssert.That(() => diagnostics.ArraySelect(diagnostic => diagnostic.Location.GetLineSpan().StartLinePosition.Line).SetEqual(new[] { 7, 12, 17, 18, 20, 25 }));
         }
     }
 }
