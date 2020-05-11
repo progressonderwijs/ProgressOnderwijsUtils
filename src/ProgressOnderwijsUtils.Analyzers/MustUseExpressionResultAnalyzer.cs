@@ -130,7 +130,7 @@ namespace ProgressOnderwijsUtils.Analyzers
             IEnumerable<string> ContainingNamespaces()
             {
                 var ns = symbol.ContainingNamespace;
-                while (!ns.IsGlobalNamespace) {
+                while (ns?.IsGlobalNamespace == false) {
                     yield return ns.Name;
                     ns = ns.ContainingNamespace;
                 }
