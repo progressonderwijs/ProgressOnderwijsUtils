@@ -2,8 +2,8 @@
   <PropertyGroup>
     <Description>Collection of Roslyn analyzers developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <PackageReleaseNotes>Exclude assignment expressions from the expression body checks.</PackageReleaseNotes>
-    <Version>1.1.1</Version>
+    <PackageReleaseNotes>Also cause POU1001 on implicit conversions from Func&lt;,Maybe&lt;,&gt;&gt; to Action&lt;,&gt;.</PackageReleaseNotes>
+    <Version>1.2.0</Version>
   </PropertyGroup>
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>

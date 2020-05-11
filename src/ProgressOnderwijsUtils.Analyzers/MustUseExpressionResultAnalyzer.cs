@@ -1,8 +1,11 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using System.Collections.Immutable;
 
 namespace ProgressOnderwijsUtils.Analyzers
 {
@@ -25,8 +28,13 @@ namespace ProgressOnderwijsUtils.Analyzers
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.Analyze);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(Analyze, SyntaxKind.ExpressionStatement);
-            context.RegisterSyntaxNodeAction(Analyze, SyntaxKind.ArrowExpressionClause);
+            context.RegisterSyntaxNodeAction(
+                Analyze,
+                SyntaxKind.ExpressionStatement,
+                SyntaxKind.ArrowExpressionClause,
+                SyntaxKind.SimpleLambdaExpression,
+                SyntaxKind.ParenthesizedLambdaExpression
+            );
         }
 
         static void Analyze(SyntaxNodeAnalysisContext context)
@@ -35,6 +43,8 @@ namespace ProgressOnderwijsUtils.Analyzers
                 AnalyzeExpressionStatement(context, expr);
             } else if (context.Node is ArrowExpressionClauseSyntax arrow) {
                 AnalyzeArrowExpressionClause(context, arrow);
+            } else if (context.Node is LambdaExpressionSyntax lamdba) {
+                AnalyzeLambdaExpression(context, lamdba);
             }
         }
 
@@ -69,6 +79,21 @@ namespace ProgressOnderwijsUtils.Analyzers
             }
         }
 
+        static void AnalyzeLambdaExpression(SyntaxNodeAnalysisContext context, LambdaExpressionSyntax lambda)
+        {
+            var convertedType = context.SemanticModel.GetTypeInfo(lambda).ConvertedType;
+            if (!IsSymbolOfType(convertedType, "System", "Action")) {
+                return;
+            }
+
+            if (lambda.ExpressionBody != null) {
+                var lambdaExprType = context.SemanticModel.GetTypeInfo(lambda.ExpressionBody).Type;
+                if (!ExpressionTypeCanBeIgnored(lambdaExprType)) {
+                    context.ReportDiagnostic(Diagnostic.Create(Rule, lambda.GetLocation(), lambdaExprType));
+                }
+            }
+        }
+
         static bool ExpressionTypeCanBeIgnored(ITypeSymbol? exprType)
         {
             if (exprType == null) {
@@ -77,22 +102,39 @@ namespace ProgressOnderwijsUtils.Analyzers
                 return true;
             } else if (exprType.SpecialType == SpecialType.System_Void) {
                 return true;
-            } else if (IsUtilsUnit(exprType)) {
+            } else if (IsSymbolOfType(exprType, "ProgressOnderwijsUtils.Collections", "Unit")) {
                 return true;
             } else {
                 // TODO: first start wilt the maybe's, then apply to other/all types
-                return !(exprType.TypeKind == TypeKind.Struct && IsInUtilsCollectionsNamespace(exprType) && exprType.Name == "Maybe");
+                return !IsSymbolOfType(exprType, "ProgressOnderwijsUtils.Collections", "Maybe");
             }
         }
 
-        static bool IsUtilsUnit(ITypeSymbol exprType)
-            => exprType.TypeKind == TypeKind.Struct
-                && IsInUtilsCollectionsNamespace(exprType)
-                && exprType.Name == "Unit";
+        static bool IsSymbolOfType(ITypeSymbol? symbol, string ns, string name)
+        {
+            if (symbol == null) {
+                return false;
+            }
 
-        static bool IsInUtilsCollectionsNamespace(ITypeSymbol exprType)
-            => exprType.ContainingNamespace.Name == "Collections"
-                && exprType.ContainingNamespace.ContainingNamespace.Name == "ProgressOnderwijsUtils"
-                && exprType.ContainingNamespace.ContainingNamespace.ContainingNamespace.IsGlobalNamespace;
+            if (Namespace(symbol) != ns) {
+                return false;
+            }
+
+            return symbol.Name == name;
+        }
+
+        static string Namespace(ITypeSymbol symbol)
+        {
+            return ContainingNamespaces().Reverse().Aggregate((a, b) => $"{a}.{b}");
+
+            IEnumerable<string> ContainingNamespaces()
+            {
+                var ns = symbol.ContainingNamespace;
+                while (!ns.IsGlobalNamespace) {
+                    yield return ns.Name;
+                    ns = ns.ContainingNamespace;
+                }
+            }
+        }
     }
 }
