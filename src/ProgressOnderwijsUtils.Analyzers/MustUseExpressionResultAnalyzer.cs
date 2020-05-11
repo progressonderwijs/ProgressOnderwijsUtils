@@ -123,9 +123,10 @@ namespace ProgressOnderwijsUtils.Analyzers
             return symbol.Name == name;
         }
 
-        static string Namespace(ITypeSymbol symbol)
+        static string? Namespace(ITypeSymbol symbol)
         {
-            return ContainingNamespaces().Reverse().Aggregate((a, b) => $"{a}.{b}");
+            var parts = ContainingNamespaces().Reverse().ToArray();
+            return parts.Any() ? parts.Aggregate((a, b) => $"{a}.{b}") : default;
 
             IEnumerable<string> ContainingNamespaces()
             {
