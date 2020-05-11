@@ -2,8 +2,8 @@
   <PropertyGroup>
     <Description>Collection of Roslyn analyzers developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <PackageReleaseNotes>Fix possible System.NullReferenceException upon namespace determination.</PackageReleaseNotes>
-    <Version>1.2.1</Version>
+    <PackageReleaseNotes>Make robust for no namespaces at all (Aggregate does not work on empty set)</PackageReleaseNotes>
+    <Version>1.2.2</Version>
   </PropertyGroup>
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
