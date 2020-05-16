@@ -43,7 +43,7 @@ namespace ProgressOnderwijsUtils.Collections
 
         /// <summary>
         /// Builds a copy of this tree with the same structure, but with different node values, as computed by the mapper argument.
-        /// mapper is called in a preorder traversal (i.e. a node before its children, and the descendents of the first child before the second).
+        /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
         /// </summary>
         [Pure]
         public static Tree<TR> Select<T, TR>(this Tree<T> tree, Func<T, TR> mapper)
