@@ -226,7 +226,7 @@ namespace ProgressOnderwijsUtils.Tests
             //therefore, we want to ensure that the mapping function is called in some specific, reproducible order.
             //In particular, this happens currently in the idGenerator for Cijferlijsten.
 
-            var tree = Tree.Node("", Tree.Node(""), Tree.Node("", Tree.Node(""), Tree.Node("")), Tree.Node("", Tree.Node("", Tree.Node(""))));
+            var tree = Tree.Node("a", Tree.Node("a.b"), Tree.Node("a.c", Tree.Node("a.c.d"), Tree.Node("a.c.e")), Tree.Node("a.f", Tree.Node("a.f.g", Tree.Node("a.f.g.h"))));
             var count = tree.PreorderTraversal().Count();
             PAssert.That(() => count == 8);
             var counter = 1;
