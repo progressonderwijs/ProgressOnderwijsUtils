@@ -50,7 +50,6 @@ namespace ProgressOnderwijsUtils.Collections
         {
             var todo = new Stack<Tree<T>>(16);
             var reconstruct = new Stack<Tree<T>>(16);
-            var output = new Stack<Tree<TR>>(16);
             todo.Push(tree);
             while (todo.Count > 0) {
                 var next = todo.Pop();
@@ -60,6 +59,8 @@ namespace ProgressOnderwijsUtils.Collections
                     todo.Push(children[i]);
                 }
             }
+
+            var output = new Stack<Tree<TR>>(16);
             while (reconstruct.Count > 0) {
                 var next = reconstruct.Pop();
                 var mappedChildren = new Tree<TR>[next.Children.Count];
