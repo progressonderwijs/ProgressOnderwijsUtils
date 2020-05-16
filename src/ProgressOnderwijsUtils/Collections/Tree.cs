@@ -73,6 +73,48 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         /// <summary>
+        /// Recreates a copy of this tree with both structure and node-values altered, as computed by the mapper argument.
+        /// Mapper is called exactly once for each node in the tree, and receives as arguments the node of the old tree being processed, the new children previous calls to mapper proposed,
+        /// and should return the nodes that should replace this one in the tree.
+        /// mapper is called bottom-up, in reverse preorder traversal (i.e. children before the node, and the last child first before the first).
+        /// </summary>
+        [Pure]
+        public static Tree<TR>[] Rebuild<T, TR>(this Tree<T> tree, Func<Tree<T>, Tree<TR>[], Tree<TR>[]?> mapper)
+        {
+            var todo = new Stack<Tree<T>>(16);
+            var reconstruct = new Stack<Tree<T>>(16);
+            todo.Push(tree);
+            while (todo.Count > 0) {
+                var next = todo.Pop();
+                reconstruct.Push(next);
+                var children = next.Children;
+                for (var i = children.Count - 1; i >= 0; i--) {
+                    todo.Push(children[i]);
+                }
+            }
+
+            var output = new List<Tree<TR>[]>(16);
+            while (reconstruct.Count > 0) {
+                var next = reconstruct.Pop();
+                var newChildCount = 0;
+                var oldChildren = next.Children;
+                for (var childI = 1; childI <= oldChildren.Count; childI++) {
+                    newChildCount += output[^childI].Length;
+                }
+                var mappedChildren = newChildCount == 0 ? Array.Empty<Tree<TR>>() : new Tree<TR>[newChildCount];
+                var writeSlice = mappedChildren.AsSpan();
+                for (var i = 0; i < oldChildren.Count; i++) {
+                    var popped = output[output.Count - 1 - i];
+                    popped.CopyTo(writeSlice);
+                    writeSlice = writeSlice.Slice(popped.Length);
+                }
+                output.RemoveRange(output.Count - oldChildren.Count, oldChildren.Count);
+                output.Add(mapper(next, mappedChildren) ?? Array.Empty<Tree<TR>>());
+            }
+            return output[0];
+        }
+
+        /// <summary>
         /// Builds a copy of this tree with the same vales, but with some subtrees optionally removed.
         /// The filter function is called for children before parents, and is passed the *output* subtree that may or may not be retained;
         /// i.e. it will be called for the root node last, and that root node may differ from the initial root node as subtrees have already been pruned.
@@ -111,7 +153,6 @@ namespace ProgressOnderwijsUtils.Collections
     public sealed class Tree<T> : IEquatable<Tree<T>>, IRecursiveStructure<Tree<T>>
     {
         readonly T nodeValue;
-
         readonly Tree<T>[] kidArray;
 
         public T NodeValue
