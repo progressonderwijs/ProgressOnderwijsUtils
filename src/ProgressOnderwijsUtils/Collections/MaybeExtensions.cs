@@ -211,8 +211,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         public static void IfError<TOk, TError>(this Maybe<TOk, TError> state, Action<TError> ifError)
         {
-            var isOk = state.TryGet(out _, out var error);
-            if (!isOk) {
+            if (!state.TryGet(out _, out var error)) {
                 ifError(error);
             }
         }
@@ -243,10 +242,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [Pure]
         public static bool Contains<TOk, TError>(this Maybe<TOk, TError> state, Predicate<TOk> predicate)
-        {
-            var isOk = state.TryGet(out var okValue, out _);
-            return isOk && predicate(okValue);
-        }
+            => state.TryGet(out var okValue, out _) && predicate(okValue);
 
         /// <summary>
         /// Returns whether this maybe contains this error value. Returns false if the maybe is ok
@@ -263,10 +259,7 @@ namespace ProgressOnderwijsUtils.Collections
         /// </summary>
         [Pure]
         public static bool ContainsError<TOk, TError>(this Maybe<TOk, TError> state, Predicate<TError> predicate)
-        {
-            var isOk = state.TryGet(out _, out var error);
-            return !isOk && predicate(error);
-        }
+            => !state.TryGet(out _, out var error) && predicate(error);
 
         [Pure]
         public static Maybe<TOk[], TError[]> WhenAllOk<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
@@ -279,8 +272,7 @@ namespace ProgressOnderwijsUtils.Collections
         public static IEnumerable<TOk> WhereOk<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             foreach (var state in maybes) {
-                var isOk = state.TryGet(out var okValue, out _);
-                if (isOk) {
+                if (state.TryGet(out var okValue, out _)) {
                     yield return okValue;
                 }
             }
@@ -290,8 +282,7 @@ namespace ProgressOnderwijsUtils.Collections
         public static IEnumerable<TError> WhereError<TOk, TError>(this IEnumerable<Maybe<TOk, TError>> maybes)
         {
             foreach (var state in maybes) {
-                var isOk = state.TryGet(out _, out var error);
-                if (!isOk) {
+                if (!state.TryGet(out _, out var error)) {
                     yield return error;
                 }
             }
@@ -303,8 +294,7 @@ namespace ProgressOnderwijsUtils.Collections
             var okValues = new List<TOk>();
             var errValues = new List<TError>();
             foreach (var state in maybes) {
-                var isOk = state.TryGet(out var okValue, out var error);
-                if (isOk) {
+                if (state.TryGet(out var okValue, out var error)) {
                     okValues.Add(okValue);
                 } else {
                     errValues.Add(error);
@@ -384,8 +374,7 @@ namespace ProgressOnderwijsUtils.Collections
         [Pure]
         public static Maybe<TOkResult, TError> SelectMany<TOk, TError, TOkTemp, TOkResult>(this Maybe<TOk, TError> state, Func<TOk, Maybe<TOkTemp, TError>> tempSelector, Func<TOk, TOkTemp, TOkResult> resultSelector)
         {
-            var isOk = state.TryGet(out var okValue, out var error);
-            if (!isOk) {
+            if (!state.TryGet(out var okValue, out var error)) {
                 return Maybe.Error(error);
             }
             if (tempSelector(okValue).TryGet(out var tempValue, out var tempError)) {

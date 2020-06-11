@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 => Escape(key) + "=" + Escape(value);
 
             var samlRequestQueryString = EncodeQueryParameter("SAMLRequest", request.EncodeAsQueryArgument()) + "&" + EncodeQueryParameter("SigAlg", "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256");
-            var rsaPrivateKey = request.Issuer.certificate.GetRSAPrivateKey();
+            var rsaPrivateKey = request.Issuer.certificate.GetRSAPrivateKey().AssertNotNull();
             var base64Signature = Convert.ToBase64String(rsaPrivateKey.SignData(Encoding.UTF8.GetBytes(samlRequestQueryString), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1));
             var signedQueryString = samlRequestQueryString + "&" + EncodeQueryParameter("Signature", base64Signature);
             return new Uri(request.Destination + "?" + signedQueryString);
