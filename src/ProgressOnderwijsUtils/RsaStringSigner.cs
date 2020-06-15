@@ -11,6 +11,7 @@ namespace ProgressOnderwijsUtils
         public static string SignString(X509Certificate2 certificate, string input)
             => Convert.ToBase64String(
                     certificate.GetRSAPrivateKey()
+                        .AssertNotNull()
                         .SignData(Encoding.UTF8.GetBytes(input), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1)
                 )
                 + " " + input;
@@ -26,7 +27,7 @@ namespace ProgressOnderwijsUtils
             var signature = Convert.FromBase64String(splitInput[0]);
 
             return
-                certificate.GetRSAPublicKey().VerifyData(Encoding.UTF8.GetBytes(message), signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1)
+                certificate.GetRSAPublicKey().AssertNotNull().VerifyData(Encoding.UTF8.GetBytes(message), signature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1)
                     ? message
                     : null;
         }
