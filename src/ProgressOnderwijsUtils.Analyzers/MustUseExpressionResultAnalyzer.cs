@@ -82,7 +82,7 @@ namespace ProgressOnderwijsUtils.Analyzers
         static void AnalyzeLambdaExpression(SyntaxNodeAnalysisContext context, LambdaExpressionSyntax lambda)
         {
             var convertedType = context.SemanticModel.GetTypeInfo(lambda).ConvertedType;
-            if (!IsSymbolOfType(convertedType, "System", "Action")) {
+            if (!convertedType.IsSymbolOfType(TypeKind.Delegate, "Action", "System")) {
                 return;
             }
 
@@ -102,39 +102,11 @@ namespace ProgressOnderwijsUtils.Analyzers
                 return true;
             } else if (exprType.SpecialType == SpecialType.System_Void) {
                 return true;
-            } else if (IsSymbolOfType(exprType, "ProgressOnderwijsUtils.Collections", "Unit")) {
+            } else if (exprType.IsSymbolOfType(TypeKind.Struct, "Unit", "Collections", "ProgressOnderwijsUtils")) {
                 return true;
             } else {
                 // TODO: first start wilt the maybe's, then apply to other/all types
-                return !IsSymbolOfType(exprType, "ProgressOnderwijsUtils.Collections", "Maybe");
-            }
-        }
-
-        static bool IsSymbolOfType(ITypeSymbol? symbol, string ns, string name)
-        {
-            if (symbol == null) {
-                return false;
-            }
-
-            if (Namespace(symbol) != ns) {
-                return false;
-            }
-
-            return symbol.Name == name;
-        }
-
-        static string? Namespace(ITypeSymbol symbol)
-        {
-            var parts = ContainingNamespaces().Reverse().ToArray();
-            return parts.Any() ? parts.Aggregate((a, b) => $"{a}.{b}") : default;
-
-            IEnumerable<string> ContainingNamespaces()
-            {
-                var ns = symbol.ContainingNamespace;
-                while (ns?.IsGlobalNamespace == false) {
-                    yield return ns.Name;
-                    ns = ns.ContainingNamespace;
-                }
+                return !exprType.IsSymbolOfType(TypeKind.Struct, "Maybe", "Collections", "ProgressOnderwijsUtils");
             }
         }
     }
