@@ -2,8 +2,8 @@
   <PropertyGroup>
     <Description>Collection of Roslyn analyzers developed by ProgressOnderwijs</Description>
     <PackageTags>ProgressOnderwijs</PackageTags>
-    <PackageReleaseNotes>Make robust for no namespaces at all (Aggregate does not work on empty set)</PackageReleaseNotes>
-    <Version>1.2.2</Version>
+    <PackageReleaseNotes>Added the POU2001 analyzer to detect Maybe&lt;Maybe&lt;TOk, TError, TError&gt;&gt; types.</PackageReleaseNotes>
+    <Version>1.3.0</Version>
   </PropertyGroup>
   <Import Project="..\NugetPackagesCommon.props" />
   <PropertyGroup>
