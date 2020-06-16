@@ -6,32 +6,26 @@ namespace ProgressOnderwijsUtils.Analyzers
     public sealed class SymbolMatcher
     {
         readonly TypeKind kind;
-        readonly string name;
-        readonly string[] reverseNamespaces;
+        readonly string[] namePartsInReverse;
 
         public SymbolMatcher(TypeKind kind, string fullyQualifiedName)
         {
             this.kind = kind;
-            var splitName = fullyQualifiedName.Split('.');
-            // ReSharper disable once UseIndexFromEndExpression //impossible or really messing in netstandard 2
-            name = splitName[splitName.Length - 1];
-            reverseNamespaces = splitName.AsSpan(0, splitName.Length - 1).ToArray();
-            Array.Reverse(reverseNamespaces);
+            namePartsInReverse = fullyQualifiedName.Split('.');
+            Array.Reverse(namePartsInReverse);
         }
 
         public bool IsSymbolOfType(ITypeSymbol? symbol)
         {
             if (symbol?.TypeKind != kind) {
                 return false;
-            } else if (symbol.Name != name) {
-                return false;
             } else {
-                var containingNamespace = symbol.ContainingNamespace;
-                foreach (var namespacePart in reverseNamespaces) {
-                    if (namespacePart != containingNamespace?.Name) {
+                var currentSymbol = (ISymbol)symbol;
+                foreach (var namePart in namePartsInReverse) {
+                    if (namePart != currentSymbol?.Name) {
                         return false;
                     }
-                    containingNamespace = containingNamespace.ContainingNamespace;
+                    currentSymbol = currentSymbol.ContainingNamespace;
                 }
 
                 return true;
