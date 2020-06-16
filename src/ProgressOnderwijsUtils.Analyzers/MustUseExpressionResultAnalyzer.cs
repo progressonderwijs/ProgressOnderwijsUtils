@@ -82,7 +82,8 @@ namespace ProgressOnderwijsUtils.Analyzers
         static void AnalyzeLambdaExpression(SyntaxNodeAnalysisContext context, LambdaExpressionSyntax lambda)
         {
             var convertedType = context.SemanticModel.GetTypeInfo(lambda).ConvertedType;
-            if (!convertedType.IsSymbolOfType(TypeKind.Delegate, "Action", "System")) {
+
+            if (!SymbolMatcher.IsActionDelegate.IsSymbolOfType(convertedType)) {
                 return;
             }
 
@@ -102,11 +103,11 @@ namespace ProgressOnderwijsUtils.Analyzers
                 return true;
             } else if (exprType.SpecialType == SpecialType.System_Void) {
                 return true;
-            } else if (exprType.IsSymbolOfType(TypeKind.Struct, "Unit", "Collections", "ProgressOnderwijsUtils")) {
+            } else if (SymbolMatcher.IsUnit.IsSymbolOfType(exprType)) {
                 return true;
             } else {
                 // TODO: first start wilt the maybe's, then apply to other/all types
-                return !exprType.IsSymbolOfType(TypeKind.Struct, "Maybe", "Collections", "ProgressOnderwijsUtils");
+                return !SymbolMatcher.IsMaybe.IsSymbolOfType(exprType);
             }
         }
     }
