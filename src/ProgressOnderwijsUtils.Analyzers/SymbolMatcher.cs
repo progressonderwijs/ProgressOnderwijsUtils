@@ -28,7 +28,7 @@ namespace ProgressOnderwijsUtils.Analyzers
                     currentSymbol = currentSymbol.ContainingNamespace;
                 }
 
-                return true;
+                return currentSymbol is INamespaceSymbol global && global.IsGlobalNamespace;
             }
         }
 
