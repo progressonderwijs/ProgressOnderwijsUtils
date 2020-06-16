@@ -10,8 +10,8 @@ namespace ProgressOnderwijsUtils.Analyzers
     {
         public static readonly DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             "POU2001",
-            "Maybe may not contain Maybe state",
-            "The maybe-error state may not be ignored.",
+            "Maybe state is not allowed to be another Maybe",
+            "The maybe-error state must not be ignored.",
             "Functional",
             DiagnosticSeverity.Error,
             true
