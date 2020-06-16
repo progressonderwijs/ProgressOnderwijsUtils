@@ -34,8 +34,8 @@ namespace ProgressOnderwijsUtils.Analyzers
         {
             var type = context.SemanticModel.GetTypeInfo(context.Node).Type;
             if (type is INamedTypeSymbol named
-                && named.IsSymbolOfType(TypeKind.Struct, "Maybe", "Collections", "ProgressOnderwijsUtils")
-                && named.TypeArguments[0].IsSymbolOfType(TypeKind.Struct, "Maybe", "Collections", "ProgressOnderwijsUtils")) {
+                && SymbolMatcher.IsMaybe.IsSymbolOfType(named)
+                && SymbolMatcher.IsMaybe.IsSymbolOfType(named.TypeArguments[0])) {
                 context.ReportDiagnostic(Diagnostic.Create(Rule, context.Node.GetLocation(), type));
             }
         }
