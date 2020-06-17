@@ -412,5 +412,12 @@ namespace ProgressOnderwijsUtils.Tests
             Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).TryGet(out _, out _));
             Assert.ThrowsAny<Exception>(() => default(Maybe<object, object>).Extract(ok => 0, err => 0));
         }
+
+        [Fact]
+        [Obsolete]
+        public void WhenOk_with_nested_maybe_state_gives_compiler_error()
+            => Maybe.Ok().AsMaybeWithoutError<string>()
+                .WhenOk(m => Maybe.Error("err").AsMaybeWithoutValue<Unit>())
+                .AssertOk();
     }
 }
