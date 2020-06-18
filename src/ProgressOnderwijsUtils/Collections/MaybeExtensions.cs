@@ -73,7 +73,7 @@ namespace ProgressOnderwijsUtils.Collections
             }
         }
 
-        [Obsolete("When the state of a Maybe is a nested Maybe, the error of that nested state can easily be ignored.", true)]
+        [Obsolete("When the state of a Maybe is a nested Maybe, the error of that nested state can easily be ignored.")]
         public static Maybe<Maybe<TOkOut, TIgnoredError>, TError> WhenOk<TOk, TError, TOkOut, TIgnoredError>(this Maybe<TOk, TError> state, Func<TOk, Maybe<TOkOut, TIgnoredError>> map)
             => state.TryGet(out var okValue, out var error) ? Maybe.Ok(map(okValue)) : Maybe.Error(error).AsMaybeWithoutValue<Maybe<TOkOut, TIgnoredError>>();
 
