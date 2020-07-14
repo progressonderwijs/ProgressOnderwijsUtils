@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class LogBase2Test
+    public sealed class LogBase2Test
     {
         [Fact(Skip = "Extremely slow")]
         public void LogBase2RoundedDown_exhaustive_test()

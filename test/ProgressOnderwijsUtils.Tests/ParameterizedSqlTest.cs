@@ -272,5 +272,5 @@ namespace ProgressOnderwijsUtils.Tests
         }
     }
 
-    class TestNotLiteralAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute { }
+    sealed class TestNotLiteralAttribute : Attribute, IEnumShouldBeParameterizedInSqlAttribute { }
 }

@@ -4,7 +4,7 @@ using ProgressOnderwijsUtils.Html;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class WikiPageHtml5Approval
+    public sealed class WikiPageHtml5Approval
     {
         [Fact]
         public void ApproveWikiHtml5Page()

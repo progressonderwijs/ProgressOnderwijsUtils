@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils.WebSupport;
 namespace ProgressOnderwijsUtils.Tests
 {
     
-    public class CompressedUtf8StringTest
+    public sealed class CompressedUtf8StringTest
     {
         [Fact]
         public void IsReversible()

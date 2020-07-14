@@ -20,7 +20,7 @@ namespace ProgressOnderwijsUtils
         public override int GetHashCode() => Timestamp.GetHashCode() * 397 ^ Nonce.GetHashCode();
     }
 
-    public class NonceStore
+    public sealed class NonceStore
     {
         readonly TimeSpan window = TimeSpan.FromMinutes(10);
         long nextNonce;

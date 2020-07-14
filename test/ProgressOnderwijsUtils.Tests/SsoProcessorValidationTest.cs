@@ -6,7 +6,7 @@ using ProgressOnderwijsUtils.SingleSignOn;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class SsoProcessorValidationTest
+    public sealed class SsoProcessorValidationTest
     {
         static readonly XElement VALID = new XElement(
             SamlNamespaces.SAMLP_NS + "AuthnRequest",

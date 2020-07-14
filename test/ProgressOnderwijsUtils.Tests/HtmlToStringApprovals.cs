@@ -5,7 +5,7 @@ namespace ProgressOnderwijsUtils.Tests
 {
     using static Tags;
 
-    public class HtmlToStringApprovals
+    public sealed class HtmlToStringApprovals
     {
         [Fact]
         public void BasicDocWorks() => ApprovalTest.Verify(basicDoc.SerializeToString());

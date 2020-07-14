@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class OrderByColumnsTest
+    public sealed class OrderByColumnsTest
     {
         static readonly ColumnSort ziggyA = new ColumnSort("ziggy", SortDirection.Asc);
         static readonly ColumnSort ziggyD = new ColumnSort("ziggy", SortDirection.Desc);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using BenchmarkDotNet.Running;
 using JetBrains.Annotations;
@@ -10,22 +10,21 @@ namespace ProgressOnderwijsUtilsBenchmarks
     {
         static void Main()
         {
-            //BenchmarkRunner.Run<HtmlFragmentBenchmark>();
-            //MicroOrm.MicroOrmBenchmarkProgram.RunBenchmarks();
+            BenchmarkRunner.Run<HtmlFragmentBenchmark>();
+            MicroOrm.MicroOrmBenchmarkProgram.RunBenchmarks();
             RunArrayBuilderBenchmarks();
         }
 
         [UsedImplicitly]
         static void RunArrayBuilderBenchmarks()
         {
-            new BenchmarkSwitcher(
-                new[] {
-                    typeof(IntArrayBuilderBenchmark),
-                    //typeof(BigStructArrayBuilderBenchmark),
-                    //typeof(ByteArrayBuilderBenchmark),
-                    //typeof(ReferenceTypeArrayBuilderBenchmark),
-                    //typeof(SmallStructArrayBuilderBenchmark),
-                }).RunAllJoined();
+            new BenchmarkSwitcher(new[] {
+                typeof(IntArrayBuilderBenchmark),
+                typeof(BigStructArrayBuilderBenchmark),
+                typeof(ByteArrayBuilderBenchmark),
+                typeof(ReferenceTypeArrayBuilderBenchmark),
+                typeof(SmallStructArrayBuilderBenchmark),
+            }).RunAllJoined();
         }
     }
 }

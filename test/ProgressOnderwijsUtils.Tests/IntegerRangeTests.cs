@@ -4,7 +4,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class IntegerRangeTests
+    public sealed class IntegerRangeTests
     {
         [Fact]
         public void SubdividingIntoEvenlyDivisibleChunks()

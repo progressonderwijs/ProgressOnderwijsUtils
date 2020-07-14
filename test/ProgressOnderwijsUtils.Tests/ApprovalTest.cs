@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Tests
 {
     static class ApprovalTest
     {
-        class SaneNamer : IApprovalNamer
+        sealed class SaneNamer : IApprovalNamer
         {
             public string SourcePath { get; set; }
             public string Name { get; set; }

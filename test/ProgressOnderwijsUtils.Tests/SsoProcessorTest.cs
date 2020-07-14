@@ -11,7 +11,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class SsoProcessorTest
+    public sealed class SsoProcessorTest
     {
         [Fact]
         public void GetRedirectUrl_signature_verifies()

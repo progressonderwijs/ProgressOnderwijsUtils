@@ -5,7 +5,7 @@ namespace ProgressOnderwijsUtils
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false)]
     [UsefulToKeep("library attribute")]
-    public class NoCodingStyleTestAttribute : Attribute
+    public sealed class NoCodingStyleTestAttribute : Attribute
     {
         public NoCodingStyleTestAttribute([UsefulToKeep("for documentation")] string reason) { }
     }
@@ -13,7 +13,7 @@ namespace ProgressOnderwijsUtils
     [AttributeUsage(AttributeTargets.All)]
     [UsefulToKeep("library attribute")]
     [MeansImplicitUse]
-    public class UsefulToKeepAttribute : Attribute
+    public sealed class UsefulToKeepAttribute : Attribute
     {
         public UsefulToKeepAttribute([UsefulToKeep("for documentation")] string reason) { }
     }
@@ -21,5 +21,5 @@ namespace ProgressOnderwijsUtils
     [AttributeUsage(AttributeTargets.All)]
     [UsefulToKeep("library attribute")]
     [MeansImplicitUse]
-    public class UsedImplicitlyBySerializationAttribute : Attribute { }
+    public sealed class UsedImplicitlyBySerializationAttribute : Attribute { }
 }

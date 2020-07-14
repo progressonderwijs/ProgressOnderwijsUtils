@@ -1,11 +1,10 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
-using BenchmarkDotNet.Attributes.Columns;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 using JetBrains.Annotations;
@@ -37,7 +36,7 @@ namespace ProgressOnderwijsUtilsBenchmarks
         }
     }
 
-    public sealed class SmallStructArrayBuilderBenchmark : ArrayBuilderBenchmark<(int, int), SmallStructArrayBuilderBenchmark.Factory>
+    public sealed class SmallStructArrayBuilderBenchmark : ArrayBuilderBenchmark<(int,int), SmallStructArrayBuilderBenchmark.Factory>
     {
         public struct Factory : IFactory<(int, int)>
         {

@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class DictionaryMergeShould
+    public sealed class DictionaryMergeShould
     {
         [Fact]
         public void ReturnTheSameDictionaryWhenMergingWithEmpty()

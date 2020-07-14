@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class SelfSanityCheck
+    public sealed class SelfSanityCheck
     {
         [Fact]
         public void AllTestsAreRunnable()

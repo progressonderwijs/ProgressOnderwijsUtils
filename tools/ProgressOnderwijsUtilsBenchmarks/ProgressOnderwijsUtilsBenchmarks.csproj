@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.1;net471</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>full</DebugType>
     <DebugSymbols>True</DebugSymbols>
@@ -9,8 +9,8 @@
     <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AngleSharp" Version="0.9.11" />
-    <PackageReference Include="BenchmarkDotNet" Version="0.10.14" />
+    <PackageReference Include="AngleSharp" Version="0.10.1" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.11.3" />
     <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
     <PackageReference Include="Dapper" Version="1.50.5" />
     <PackageReference Include="IncrementalMeanVarianceAccumulator" Version="1.0.0" />

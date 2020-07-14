@@ -6,7 +6,7 @@ using Xunit;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public class XmlCompressionTest
+    public sealed class XmlCompressionTest
     {
         [Fact]
         public void TrivialDocIsNotChanged()

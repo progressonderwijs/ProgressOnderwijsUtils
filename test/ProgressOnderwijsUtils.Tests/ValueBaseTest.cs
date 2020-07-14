@@ -15,7 +15,7 @@ namespace ProgressOnderwijsUtils.Tests
         public ConsoleKey? AnEnum;
     }
 
-    public class ValueBaseTest
+    public sealed class ValueBaseTest
     {
         [Fact]
         public void ToString_ReturnsCleanLookingOutput()
