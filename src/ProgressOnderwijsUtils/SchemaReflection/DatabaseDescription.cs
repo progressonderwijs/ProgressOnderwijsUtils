@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -16,7 +16,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
     [DbIdEnum]
     public enum DbColumnId { }
 
-    public struct DbNamedTableId : IMetaObject
+    public struct DbNamedTableId : IWrittenImplicitly
     {
         public DbObjectId ObjectId { get; set; }
         public string QualifiedName { get; set; }
@@ -27,7 +27,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                     ObjectId = t.object_id
                     , QualifiedName = schema_name(t.schema_id) + N'.' + object_name(t.object_id)
                 from sys.tables t
-            ").ReadMetaObjects<DbNamedTableId>(conn);
+            ").ReadPocos<DbNamedTableId>(conn);
     }
 
     public sealed class DatabaseDescription
@@ -56,27 +56,28 @@ namespace ProgressOnderwijsUtils.SchemaReflection
         public Table GetTableByName(string qualifiedName)
             => TryGetTableByName(qualifiedName) ?? throw new ArgumentException($"Unknown table '{qualifiedName}'.", nameof(qualifiedName));
 
-        [CanBeNull]
-        public Table TryGetTableByName(string qualifiedName)
+        public Table? TryGetTableByName(string qualifiedName)
             => tableByQualifiedName.Value.TryGetValue(qualifiedName, out var id) ? id : null;
 
-        [CanBeNull]
-        public Table TryGetTableById(DbObjectId id)
+        public Table? TryGetTableById(DbObjectId id)
             => tableById.GetOrDefaultR(id);
 
         public sealed class ForeignKey
         {
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public FkReferentialAction DeleteReferentialAction;
             public FkReferentialAction UpdateReferentialAction;
             public Table ReferencedParentTable { get; set; }
             public Table ReferencingChildTable { get; set; }
             public (TableColumn ReferencedParentColumn, TableColumn ReferencingChildColumn)[] Columns { get; set; }
             public string ForeignKeyConstraintName { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
             public static ForeignKey Create(DatabaseDescription db, DbForeignKey fk)
             {
-                var parentTable = db.TryGetTableById(fk.ReferencedParentTable);
-                var childTable = db.TryGetTableById(fk.ReferencingChildTable);
+                // Let's trust callers not to make up object ids
+                var parentTable = db.TryGetTableById(fk.ReferencedParentTable)!;
+                var childTable = db.TryGetTableById(fk.ReferencingChildTable)!;
                 return new ForeignKey {
                     ReferencedParentTable = parentTable,
                     ReferencingChildTable = childTable,
@@ -171,7 +172,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 => Columns.Where(c => c.Is_Primary_Key);
 
             public IEnumerable<Table> AllDependantTables
-                => db.foreignKeyLookup.AllDependantTables(ObjectId).Select(id => db.TryGetTableById(id));
+                => db.foreignKeyLookup.AllDependantTables(ObjectId).Select(id => db.TryGetTableById(id)!);
 
             public IEnumerable<ForeignKey> KeysToReferencedParents
                 => db.foreignKeyLookup.KeysByReferencingChildTable[ObjectId].Select(fk => ForeignKey.Create(db, fk));

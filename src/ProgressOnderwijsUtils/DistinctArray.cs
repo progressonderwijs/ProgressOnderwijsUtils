@@ -18,6 +18,7 @@ namespace ProgressOnderwijsUtils
 
         [Pure]
         public static DistinctArray<T> ToDistinctArray<T, TVal>([NotNull] this Dictionary<T, TVal>.KeyCollection items)
+            where T : notnull
             => ToDistinctArrayFromDistinct_Unchecked(items.ToArray());
 
         [Pure]
@@ -110,7 +111,7 @@ namespace ProgressOnderwijsUtils
             public T Current
                 => items[idx];
 
-            object IEnumerator.Current
+            object? IEnumerator.Current
                 => Current;
 
             public void Dispose() { }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using static ProgressOnderwijsUtils.SafeSql;
 
@@ -53,7 +53,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
                 order by 
                     fk.object_id
                     , fkc.constraint_column_id
-            ").ReadMetaObjects<ForeignKeyColumnEntry>(conn)
+            ").ReadPocos<ForeignKeyColumnEntry>(conn)
                 .GroupBy(fkCol => fkCol.ForeignKeyObjectId)
                 .Select(fk => {
                     var fkColEntry = fk.First();
@@ -84,7 +84,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             => Utils.TransitiveClosure(new[] { table }, reachable => KeysByReferencedParentTable[reachable].Select(fk => fk.ReferencingChildTable));
     }
 
-    struct ForeignKeyColumnEntry : IMetaObject
+    struct ForeignKeyColumnEntry : IWrittenImplicitly
     {
         public DbObjectId ForeignKeyObjectId { get; set; }
         public FkReferentialAction DeleteReferentialAction { get; set; }

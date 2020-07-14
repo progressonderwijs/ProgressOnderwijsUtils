@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using ExpressionToCodeLib;
@@ -166,7 +166,6 @@ namespace ProgressOnderwijsUtils.Tests
             PAssert.That(() => violation.ColumnName == "Id");
             PAssert.That(() => violation.TableName == "dbo.T1");
             PAssert.That(() => violation.DatabaseName == "master");
-
         }
 
         [Fact]

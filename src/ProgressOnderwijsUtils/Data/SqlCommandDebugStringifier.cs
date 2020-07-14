@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
 using ExpressionToCodeLib;
@@ -45,7 +45,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        static string ValuesClauseForTableValuedParameter([CanBeNull] IReadOnlyList<object> tableValue)
+        static string ValuesClauseForTableValuedParameter(IReadOnlyList<object>? tableValue)
         {
             if (tableValue == null) {
                 return "(/* UNKNOWN? */);\n";
@@ -63,7 +63,7 @@ namespace ProgressOnderwijsUtils
                 : par.SqlDbType + (par.SqlDbType == SqlDbType.NVarChar ? "(max)" : "");
 
         [NotNull]
-        public static string InsecureSqlDebugString([CanBeNull] object p, bool includeReadableEnumValue)
+        public static string InsecureSqlDebugString(object? p, bool includeReadableEnumValue)
         {
             if (p is DBNull || p == null) {
                 return "NULL";
@@ -91,7 +91,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [NotNull]
-        public static ParameterizedSqlExecutionException ExceptionWithTextAndArguments([NotNull] string message, [NotNull] SqlCommand failedCommand, [CanBeNull] Exception innerException)
+        public static ParameterizedSqlExecutionException ExceptionWithTextAndArguments([NotNull] string message, [NotNull] SqlCommand failedCommand, Exception? innerException)
         {
             var debugFriendlyCommandText = DebugFriendlyCommandText(failedCommand, SqlTracerAgumentInclusion.IncludingArgumentValues);
             var timeoutMessage = innerException.IsSqlTimeoutException() ? "\nCOMMAND TIMEOUT: " + failedCommand.CommandTimeout + "s" : "";

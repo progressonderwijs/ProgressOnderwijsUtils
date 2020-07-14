@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils
         public virtual IComponent Component
             => throw new NotSupportedException();
 
-        public virtual IContainer Container
+        public virtual IContainer? Container
             => null;
 
         public virtual bool DesignMode

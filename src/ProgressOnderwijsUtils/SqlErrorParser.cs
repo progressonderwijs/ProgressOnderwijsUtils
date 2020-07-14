@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
@@ -34,9 +34,9 @@ namespace ProgressOnderwijsUtils
         public string StatementType { get; set; }
         public string ConstraintType { get; set; }
         public string ConstraintName { get; set; }
-        public string DatabaseName { get; set; }
-        public string TableName { get; set; }
-        public string ColumnName { get; set; }
+        public string? DatabaseName { get; set; }
+        public string? TableName { get; set; }
+        public string? ColumnName { get; set; }
     }
 
     public static class SqlErrorParser
@@ -67,10 +67,9 @@ namespace ProgressOnderwijsUtils
             RegexOptions.Compiled
         );
 
-        [CanBeNull]
-        static ISqlErrorParseResult TryParseKeyConstraintViolation([NotNull] SqlError error)
+        static ISqlErrorParseResult? TryParseKeyConstraintViolation([NotNull] string errorMessage)
         {
-            var match = keyConstraintViolationRegex.Match(error.Message);
+            var match = keyConstraintViolationRegex.Match(errorMessage);
             if (match.Success) {
                 return new KeyConstraintViolation {
                     ConstraintType = match.Groups["ConstraintType"].Value,
@@ -82,10 +81,9 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        [CanBeNull]
-        static ISqlErrorParseResult TryParseDuplicateKeyUniqueIndex([NotNull] SqlError error)
+        static ISqlErrorParseResult? TryParseDuplicateKeyUniqueIndex([NotNull] string errorMessage)
         {
-            var match = duplicateKeyUniqueIndexRegex.Match(error.Message);
+            var match = duplicateKeyUniqueIndexRegex.Match(errorMessage);
             if (match.Success) {
                 return new DuplicateKeyUniqueIndex {
                     IndexName = match.Groups["IndexName"].Value,
@@ -96,10 +94,9 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        [CanBeNull]
-        static ISqlErrorParseResult TryParseCannotInsertNull([NotNull] SqlError error)
+        static ISqlErrorParseResult? TryParseCannotInsertNull([NotNull] string errorMessage)
         {
-            var match = cannotInsertNullRegex.Match(error.Message);
+            var match = cannotInsertNullRegex.Match(errorMessage);
             if (match.Success) {
                 return new CannotInsertNull {
                     TableName = match.Groups["TableName"].Value,
@@ -110,10 +107,9 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        [CanBeNull]
-        static ISqlErrorParseResult TryParseGenericConstraintViolation([NotNull] SqlError error)
+        static ISqlErrorParseResult? TryParseGenericConstraintViolation([NotNull] string errorMessage)
         {
-            var match = genericConstraintViolationRegex.Match(error.Message);
+            var match = genericConstraintViolationRegex.Match(errorMessage);
             if (match.Success) {
                 return new GenericConstraintViolation {
                     StatementType = match.Groups["StatementType"].Value,
@@ -127,15 +123,16 @@ namespace ProgressOnderwijsUtils
             return null;
         }
 
-        [CanBeNull]
-        public static ISqlErrorParseResult Parse([NotNull] this SqlError error)
-            => TryParseKeyConstraintViolation(error)
-                ?? TryParseDuplicateKeyUniqueIndex(error)
-                ?? TryParseCannotInsertNull(error)
-                ?? TryParseGenericConstraintViolation(error);
+        public static ISqlErrorParseResult? Parse([NotNull] string errorMessage)
+            => TryParseKeyConstraintViolation(errorMessage)
+                ?? TryParseDuplicateKeyUniqueIndex(errorMessage)
+                ?? TryParseCannotInsertNull(errorMessage)
+                ?? TryParseGenericConstraintViolation(errorMessage);
 
-        [CanBeNull]
-        public static SqlError FirstContainedSqlErrorOrNull([CanBeNull] this Exception e)
+        public static ISqlErrorParseResult? Parse([NotNull] this SqlError error)
+            => Parse(error.Message);
+
+        public static SqlError? FirstContainedSqlErrorOrNull(this Exception? e)
         {
             if (e is SqlException sqlException) {
                 return sqlException.Errors[0];

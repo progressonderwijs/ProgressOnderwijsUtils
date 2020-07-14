@@ -215,5 +215,100 @@ namespace ProgressOnderwijsUtils.Tests
                     Utils.TransitiveClosure(nodes, nums => nums.Select(num => num * 2 % 6))
                         .SetEquals(new[] { 2, 4, 0, 3 }));
         }
+
+        [Fact]
+        public void TryWithCleanup_CleansUpWhenThereAreNoExceptions()
+        {
+            var cleanupCalled = 0;
+            var value = Utils.TryWithCleanup(() => 42, () => cleanupCalled++);
+            PAssert.That(() => cleanupCalled == 1);
+            PAssert.That(() => value == 42);
+        }
+
+        [Fact]
+        public void TryWithCleanup_CleansUpOnceWhenCleanupFails()
+        {
+            var cleanupCalled = 0;
+            var value = 0;
+            Action buggyCleanup = () => {
+                cleanupCalled++;
+                throw new Exception("42");
+            };
+
+            var ex = Assert.ThrowsAny<Exception>(() => value = Utils.TryWithCleanup(() => 42, buggyCleanup));
+
+            PAssert.That(() => ex.Message == "42" && ex.TargetSite == buggyCleanup.Method);
+            PAssert.That(() => value == 0);
+            PAssert.That(() => cleanupCalled == 1);
+        }
+
+        [Fact]
+        public void TryWithCleanup_CleansUpOnceWhenComputationFails()
+        {
+            var cleanupCalled = 0;
+            var value = 0;
+            Action cleanup = () => cleanupCalled++;
+            Func<int> buggyComputation = () => {
+                try {
+                    return 42;
+                } finally {
+                    throw new Exception("1337");
+                }
+            };
+
+            var ex = Assert.ThrowsAny<Exception>(() => value = Utils.TryWithCleanup(buggyComputation, cleanup));
+
+            PAssert.That(() => ex.Message == "1337" && ex.TargetSite == buggyComputation.Method);
+            PAssert.That(() => value == 0);
+            PAssert.That(() => cleanupCalled == 1);
+        }
+
+        [Fact]
+        public void TryWithCleanup_CleansUpOnceWhenComputationAndCleanupFail()
+        {
+            var cleanupCalled = 0;
+            var value = 0;
+            Action buggyCleanup = () => {
+                cleanupCalled++;
+                throw new Exception("42");
+            };
+            Func<int> buggyComputation = () => {
+                try {
+                    return 42;
+                } finally {
+                    throw new Exception("1337");
+                }
+            };
+
+            var aggEx = Assert.ThrowsAny<AggregateException>(() => value = Utils.TryWithCleanup(buggyComputation, buggyCleanup));
+
+            PAssert.That(() => aggEx.TargetSite != buggyCleanup.Method && aggEx.TargetSite != buggyComputation.Method);
+            var innerExceptions = aggEx.InnerExceptions;
+            PAssert.That(() => innerExceptions.Count == 2);
+            PAssert.That(() => innerExceptions[0].Message == "1337" && innerExceptions[0].TargetSite == buggyComputation.Method);
+            PAssert.That(() => innerExceptions[1].Message == "42" && innerExceptions[1].TargetSite == buggyCleanup.Method);
+            PAssert.That(() => value == 0);
+            PAssert.That(() => cleanupCalled == 1);
+        }
+
+        [Fact]
+        public void TryWithCleanup_ActionOverload_CleansUpOnceWhenComputationAndCleanupFail()
+        {
+            var cleanupCalled = 0;
+            Action buggyCleanup = () => {
+                cleanupCalled++;
+                throw new Exception("42");
+            };
+            Action buggyComputation = () => throw new Exception("1337");
+
+            var aggEx = Assert.ThrowsAny<AggregateException>(() => Utils.TryWithCleanup(buggyComputation, buggyCleanup));
+
+            PAssert.That(() => aggEx.TargetSite != buggyCleanup.Method && aggEx.TargetSite != buggyComputation.Method);
+            var innerExceptions = aggEx.InnerExceptions;
+            PAssert.That(() => innerExceptions.Count == 2);
+            PAssert.That(() => innerExceptions[0].Message == "1337" && innerExceptions[0].TargetSite == buggyComputation.Method);
+            PAssert.That(() => innerExceptions[1].Message == "42" && innerExceptions[1].TargetSite == buggyCleanup.Method);
+            PAssert.That(() => cleanupCalled == 1);
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Threading;
 using ValueUtils;
 
@@ -122,7 +122,7 @@ namespace ProgressOnderwijsUtils
         public bool Equals(CommandTimeout other)
             => this == other;
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is CommandTimeout other && this == other;
 
         public static bool operator ==(CommandTimeout a, CommandTimeout b)

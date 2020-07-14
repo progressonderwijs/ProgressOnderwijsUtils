@@ -70,9 +70,18 @@ namespace ProgressOnderwijsUtils.Tests
         public void PerfIterativeAppendingDoesNotCreateLotsOfArrays()
         {
             var html = "1".AsFragment().Append("2").Append("3").Append("4");
-            var kids = (HtmlFragment[])html.Implementation;
+            var kids = (HtmlFragment[])html.Implementation!;
             PAssert.That(() => kids.First().ToStringWithoutDoctype() == "1");
             PAssert.That(() => kids.Last().ToStringWithoutDoctype() == "4");
+        }
+
+        [Fact]
+        public void TemplateElementIsParsedIncludingContent()
+        {
+            var exampleFragmentIncludingTemplate = "<div>D<button>C<template>B<button>A</button></template></button></div>";
+            var fragment = HtmlFragment.ParseFragment(exampleFragmentIncludingTemplate);
+            var reserialized = fragment.ToStringWithoutDoctype();
+            PAssert.That(() => exampleFragmentIncludingTemplate == reserialized);
         }
 
         [Fact]

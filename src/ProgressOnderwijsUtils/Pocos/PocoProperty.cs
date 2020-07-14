@@ -1,4 +1,5 @@
-﻿using System;
+#nullable disable
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ using JetBrains.Annotations;
 // ReSharper disable once CheckNamespace
 namespace ProgressOnderwijsUtils
 {
-    public interface IMetaProperty
+    public interface IPocoProperty
     {
         Func<object, object> UntypedGetter { get; }
         object UnsafeSetPropertyAndReturnObject(object obj, object newValue);
@@ -26,19 +27,19 @@ namespace ProgressOnderwijsUtils
         int Index { get; }
     }
 
-    public interface IReadonlyMetaProperty<in TOwner> : IMetaProperty
+    public interface IReadonlyPocoProperty<in TOwner> : IPocoProperty
     {
         Func<TOwner, object> Getter { get; }
     }
 
-    public interface IMetaProperty<TOwner> : IReadonlyMetaProperty<TOwner>
+    public interface IPocoProperty<TOwner> : IReadonlyPocoProperty<TOwner>
     {
         Setter<TOwner> Setter { get; }
     }
 
-    public static class MetaProperty
+    public static class PocoProperty
     {
-        public sealed class Impl<TOwner> : IMetaProperty<TOwner>
+        public sealed class Impl<TOwner> : IPocoProperty<TOwner>
         {
             public bool IsKey { get; }
             public string Name { get; }

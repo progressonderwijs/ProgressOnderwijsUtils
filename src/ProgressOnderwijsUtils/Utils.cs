@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Mail;
 using System.Text;
 using System.Threading;
-using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtils
 {
@@ -35,7 +35,7 @@ namespace ProgressOnderwijsUtils
 
     public static class DisposableExtensions
     {
-        public static T Using<TDisposable, T>(this TDisposable disposable, [NotNull] Func<TDisposable, T> func)
+        public static T Using<TDisposable, T>(this TDisposable disposable, Func<TDisposable, T> func)
             where TDisposable : IDisposable
         {
             using (disposable) {
@@ -60,8 +60,7 @@ namespace ProgressOnderwijsUtils
             return x == y || delta / magnitude < relativeEpsilon;
         }
 
-        [NotNull]
-        public static Lazy<T> Lazy<T>([NotNull] Func<T> factory)
+        public static Lazy<T> Lazy<T>(Func<T> factory)
             => new Lazy<T>(factory, LazyThreadSafetyMode.ExecutionAndPublication);
 
         public static bool ElfProef(int getal)
@@ -98,12 +97,10 @@ namespace ProgressOnderwijsUtils
             other = tmp;
         }
 
-        [NotNull]
-        public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
+        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup)
             => TransitiveClosure(elems, edgeLookup, EqualityComparer<T>.Default);
 
-        [NotNull]
-        public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
+        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<T, IEnumerable<T>> edgeLookup, IEqualityComparer<T> comparer)
         {
             var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
@@ -113,12 +110,10 @@ namespace ProgressOnderwijsUtils
             return set;
         }
 
-        [NotNull]
-        public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
+        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup)
             => TransitiveClosure(elems, multiEdgeLookup, EqualityComparer<T>.Default);
 
-        [NotNull]
-        public static HashSet<T> TransitiveClosure<T>([NotNull] IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
+        public static HashSet<T> TransitiveClosure<T>(IEnumerable<T> elems, Func<IEnumerable<T>, IEnumerable<T>> multiEdgeLookup, IEqualityComparer<T> comparer)
         {
             var distinctNewlyReachable = elems.ToArray();
             var set = distinctNewlyReachable.ToSet(comparer);
@@ -167,6 +162,53 @@ namespace ProgressOnderwijsUtils
             => Math.Abs(d1 > d2 ? 12 * (d1.Year - d2.Year) + d1.Month - d2.Month : 12 * (d2.Year - d1.Year) + d2.Month - d1.Month);
 
         /// <summary>
+        /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+        /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+        /// </summary>
+        public static T TryWithCleanup<T>(Func<T> computation, Action cleanup)
+        {
+            var completedOk = false;
+            try {
+                var retval = computation();
+                completedOk = true;
+                cleanup();
+                return retval;
+            } catch (Exception computationEx) when (!completedOk && Catch(cleanup) is Exception cleanupEx) {
+                //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
+                //That means a catch-rethrow should only occur when we know both fail.
+                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+            }
+        }
+
+        /// <summary>
+        /// Executions a computation with reliable cleanup (like try...finally or using(...) {}).
+        /// When both computation and cleanup throw exceptions, wraps both exceptions in an AggregateException.
+        /// </summary>
+        public static void TryWithCleanup(Action computation, Action cleanup)
+        {
+            var completedOk = false;
+            try {
+                computation();
+                completedOk = true;
+                cleanup();
+            } catch (Exception computationEx) when (!completedOk && Catch(cleanup) is Exception cleanupEx) {
+                //for debugger-friendliness: try to avoid catching exceptions and rethrowing, even with "throw;"
+                //That means a catch-rethrow should only occur when we know both fail.
+                throw new AggregateException("Both the computation and the cleanup code crashed", computationEx, cleanupEx);
+            }
+        }
+
+        static Exception? Catch(Action cleanup)
+        {
+            try {
+                cleanup();
+            } catch (Exception e) {
+                return e;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Volgordebehoudende transformatie van getal naar string, dus:
         /// 
         /// a kleiner dan b
@@ -176,7 +218,6 @@ namespace ProgressOnderwijsUtils
         /// Deze eigenschap geldt wanneer je m verifieert in C#, JS, SQL (, etc?)
         /// (want er worden alleen letters in 1 case en cijfers gebruikt)
         /// </summary>
-        [NotNull]
         public static string ToSortableShortString(long value)
         {
             var sb = new StringBuilder();
@@ -184,7 +225,7 @@ namespace ProgressOnderwijsUtils
             return sb.ToString();
         }
 
-        public static void AppendSortableShortString([NotNull] this StringBuilder target, long value)
+        public static void AppendSortableShortString(this StringBuilder target, long value)
         {
             //This function is used on a hot-path in Programma and Resultaten export - it needs to be fast.
             if (value < 0) {
@@ -194,7 +235,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static void SssHelper([NotNull] StringBuilder target, long value, int index)
+        static void SssHelper(StringBuilder target, long value, int index)
         {
             if (value != 0) {
                 var digit = (int)(value % 36);
@@ -206,7 +247,7 @@ namespace ProgressOnderwijsUtils
             }
         }
 
-        static void SssNegHelper([NotNull] StringBuilder target, long value, int index)
+        static void SssNegHelper(StringBuilder target, long value, int index)
         {
             if (value != 0) {
                 var digit = (int)(value % 36); //in range -35..0!!
@@ -228,8 +269,7 @@ namespace ProgressOnderwijsUtils
         ///   - rounding differences may exist for doubles like 1.005 which are not precisely representable.
         ///   - numbers over (2^64 - 2^10)/(2^precision) are slow.
         /// </summary>
-        [NotNull]
-        public static string ToFixedPointString(double number, [NotNull] CultureInfo culture, int precision)
+        public static string ToFixedPointString(double number, CultureInfo culture, int precision)
         {
             //TODO:add tests
             var fI = culture.NumberFormat;
@@ -374,9 +414,9 @@ namespace ProgressOnderwijsUtils
     public sealed class EqualsEqualityComparer<T> : IEqualityComparer<T>
     {
         readonly Func<T, T, bool> equals;
-        readonly Func<T, int> hashCode;
+        readonly Func<T, int>? hashCode;
 
-        public EqualsEqualityComparer(Func<T, T, bool> equals, [CanBeNull] Func<T, int> hashCode = null)
+        public EqualsEqualityComparer(Func<T, T, bool> equals, Func<T, int>? hashCode = null)
         {
             this.equals = equals;
             this.hashCode = hashCode;
@@ -385,7 +425,7 @@ namespace ProgressOnderwijsUtils
         public bool Equals(T x, T y)
             => equals(x, y);
 
-        public int GetHashCode(T obj)
-            => hashCode == null ? obj.GetHashCode() : hashCode(obj);
+        public int GetHashCode([DisallowNull] T obj)
+            => hashCode == null ? obj!/*Not sure why necessary, DisallowNull should prevent nulls.*/.GetHashCode() : hashCode(obj);
     }
 }

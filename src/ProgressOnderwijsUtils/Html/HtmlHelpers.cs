@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, params HtmlFragment[] contents)
+        public static THtmlTag Content<THtmlTag>(this THtmlTag htmlTagExpr, params HtmlFragment[]? contents)
             where THtmlTag : struct, IHtmlElementAllowingContent<THtmlTag>
             => htmlTagExpr.WithContents(HtmlFragment.Fragment(htmlTagExpr.Contents(), HtmlFragment.Fragment(contents)));
 
@@ -33,7 +33,7 @@ namespace ProgressOnderwijsUtils.Html
 
         [Pure]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static HtmlFragment AsFragment(this IHtmlElement element)
+        public static HtmlFragment AsFragment(this IHtmlElement? element)
             => HtmlFragment.Element(element);
 
         [Pure]
@@ -49,7 +49,7 @@ namespace ProgressOnderwijsUtils.Html
             => attributeOrNull == null ? htmlTagExpr : htmlTagExpr.Attribute(attributeOrNull.Value);
 
         [Pure]
-        public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, string attrName, [CanBeNull] string attrValue)
+        public static THtmlTag Attribute<THtmlTag>(this THtmlTag htmlTagExpr, string attrName, string? attrValue)
             where THtmlTag : struct, IHtmlElement<THtmlTag>
             => attrValue == null ? htmlTagExpr : htmlTagExpr.WithAttributes(htmlTagExpr.Attributes.Add(attrName, attrValue));
 
@@ -62,21 +62,21 @@ namespace ProgressOnderwijsUtils.Html
             where TContent : struct, IConvertibleToFragment
             => htmlFragmentOrNull?.AsFragment() ?? HtmlFragment.Empty;
 
-        public static HtmlFragment AsFragment([CanBeNull] this string textContent)
+        public static HtmlFragment AsFragment(this string? textContent)
             => string.IsNullOrEmpty(textContent) ? HtmlFragment.Empty : HtmlFragment.TextContent(textContent);
 
         public static HtmlFragment Append<T>([CanBeNull] this T head, HtmlFragment tail)
             where T : IConvertibleToFragment
             => (head?.AsFragment() ?? HtmlFragment.Empty).Append(tail);
 
-        public static HtmlFragment Append<T>([CanBeNull] this T head, params HtmlFragment[] longTail)
+        public static HtmlFragment Append<T>([CanBeNull] this T head, params HtmlFragment[]? longTail)
             where T : IConvertibleToFragment
             => (head?.AsFragment() ?? HtmlFragment.Empty).Append(longTail);
 
         public static HtmlFragment Append([CanBeNull] this string head, HtmlFragment tail)
             => head.AsFragment().Append(tail);
 
-        public static HtmlFragment Append([CanBeNull] this string head, params HtmlFragment[] longTail)
+        public static HtmlFragment Append([CanBeNull] this string head, params HtmlFragment[]? longTail)
             => head.AsFragment().Append(longTail);
 
         public static HtmlFragment JoinHtml<TFragments>([NotNull] [ItemNotNull] this IEnumerable<TFragments> htmlEls)
@@ -109,10 +109,10 @@ namespace ProgressOnderwijsUtils.Html
             }
         }
 
-        public static HtmlFragment Contents(this IHtmlElement element)
+        public static HtmlFragment Contents(this IHtmlElement? element)
             => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.Contents() : HtmlFragment.Empty;
 
-        public static HtmlFragment[] ChildNodes(this IHtmlElement element)
+        public static HtmlFragment[] ChildNodes(this IHtmlElement? element)
             => element is IHtmlElementAllowingContent elemWithContent ? elemWithContent.ChildNodes() : HtmlFragment.EmptyNodes;
 
         public static HtmlFragment[] ChildNodes([NotNull] this IHtmlElementAllowingContent elemWithContent)

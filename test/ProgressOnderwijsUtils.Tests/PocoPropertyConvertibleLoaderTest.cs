@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Linq;
 using ExpressionToCodeLib;
-using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using ProgressOnderwijsUtils.SchemaReflection;
 using ProgressOnderwijsUtils.Tests.Data;
 using Xunit;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtils.Tests
 {
-    public sealed class MetaObjectPropertyLoaderTest : TransactedLocalConnection
+    public sealed class PocoPropertyConvertibleLoaderTest : TransactedLocalConnection
     {
         static readonly BlaOk[] SampleObjects = {
             new BlaOk { Bla = "bl34ga", Bla2 = "blaasdfgasfg2", Id = -1 },
@@ -20,14 +18,16 @@ namespace ProgressOnderwijsUtils.Tests
             new BlaOk { Bla2 = "", Id = 3 },
         };
 
-        public sealed class BlaOk : ValueBase<BlaOk>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk : ValueBase<BlaOk>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string Bla2 { get; set; }
-            public string Bla { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
+            public string? Bla { get; set; }
         }
 
-        public struct CustomBla : IMetaObjectPropertyConvertible<CustomBla, string, CustomBla.Source>
+        public struct CustomBla : IPocoConvertibleProperty<CustomBla, string, CustomBla.Source>
         {
             public struct Source : IConverterSource<CustomBla, string>
             {
@@ -41,38 +41,38 @@ namespace ProgressOnderwijsUtils.Tests
             public string AsString { get; }
         }
 
-        public sealed class BlaOk3 : ValueBase<BlaOk3>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk3 : ValueBase<BlaOk3>, IWrittenImplicitly, IReadImplicitly
         {
             public CustomBla Bla2 { get; set; }
         }
 
-        public sealed class BlaOk4 : ValueBase<BlaOk4>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk4 : ValueBase<BlaOk4>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
-            public string Bla { get; set; }
+            public string? Bla { get; set; }
             public CustomBla Bla2 { get; set; }
         }
 
-        public sealed class BlaOk5 : ValueBase<BlaOk5>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk5 : ValueBase<BlaOk5>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
-            public string Bla { get; set; }
+            public string? Bla { get; set; }
             public CustomBla Bla2 { get; set; }
             public CustomBla? Bla3 { get; }
         }
 
-        public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk_with_struct_property : ValueBase<BlaOk_with_struct_property>, IWrittenImplicitly, IReadImplicitly
         {
             public int Id { get; set; }
-            public string Bla { get; set; }
-            public TrivialConvertibleValue<string> Bla2 { get; set; }
+            public string? Bla { get; set; }
+            public TrivialValue<string> Bla2 { get; set; }
         }
 
-        public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IMetaObject, IPropertiesAreUsedImplicitly
+        public sealed class BlaOk_with_nullable_struct_property : ValueBase<BlaOk_with_nullable_struct_property>, IWrittenImplicitly, IReadImplicitly
         {
-            public TrivialConvertibleValue<int> Id { get; set; }
-            public TrivialConvertibleValue<string>? Bla { get; set; }
-            public TrivialConvertibleValue<string> Bla2 { get; set; }
+            public TrivialValue<int> Id { get; set; }
+            public TrivialValue<string>? Bla { get; set; }
+            public TrivialValue<string> Bla2 { get; set; }
         }
 
         BulkInsertTarget CreateTempTable()
@@ -89,87 +89,87 @@ namespace ProgressOnderwijsUtils.Tests
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_only_one_property()
+        public void PocoSupportsCustomObject_only_one_property()
         {
             PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk3>(Connection);
+            var fromDb = SQL($"select Bla2 from #MyTable order by Id").ReadPocos<BlaOk3>(Connection);
             PAssert.That(() => SampleObjects.Select(s => s.Bla2).SequenceEqual(fromDb.Select(x => x.Bla2.AsString)));
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_multiple_properties()
+        public void PocoSupportsCustomObject_multiple_properties()
         {
             PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk4>(Connection);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk4>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_readonly()
+        public void PocoSupportsCustomObject_readonly()
         {
             PAssert.That(() => new CustomBla("aap").AsString == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select * from #MyTable order by Id").ReadMetaObjects<BlaOk5>(Connection);
+            var fromDb = SQL($"select * from #MyTable order by Id").ReadPocos<BlaOk5>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.AsString })));
             PAssert.That(() => fromDb.All(x => x.Bla3 == null));
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_struct()
+        public void PocoSupportsCustomObject_struct()
         {
-            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
+            PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Connection);
+            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadPocos<BlaOk_with_struct_property>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id, Bla = x.Bla, Bla2 = x.Bla2.Value })));
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_nullable_struct()
+        public void PocoSupportsCustomObject_nullable_struct()
         {
-            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
+            PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_nullable_struct_property>(Connection);
+            var fromDb = SQL($"select Id, Bla, Bla2 from #MyTable order by Id").ReadPocos<BlaOk_with_nullable_struct_property>(Connection);
             PAssert.That(() => SampleObjects.SequenceEqual(fromDb.Select(x => new BlaOk { Id = x.Id.Value, Bla = x.Bla.HasValue ? x.Bla.Value.Value : default(string), Bla2 = x.Bla2.Value })));
         }
 
         [Fact]
-        public void MetaObjectSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception_with_helpful_message()
+        public void PocoSupportsCustomObject_nonnullable_struct_with_null_values_throws_exception_with_helpful_message()
         {
-            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
+            PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id, Bla, Bla2 = cast(null as varchar) from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Connection));
+            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id, Bla, Bla2 = cast(null as varchar) from #MyTable order by Id").ReadPocos<BlaOk_with_struct_property>(Connection));
             PAssert.That(() => ex.Message.Contains("Cannot unpack NULL value from column Bla2", StringComparison.OrdinalIgnoreCase));
         }
 
         [Fact]
         public void Query_errors_unrelated_to_column_mapping_are_not_misleading()
         {
-            PAssert.That(() => new TrivialConvertibleValue<string>("aap").Value == "aap");
+            PAssert.That(() => new TrivialValue<string>("aap").Value == "aap");
 
             var target = CreateTempTable();
             SampleObjects.BulkCopyToSqlServer(Connection, target);
 
-            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id = (select Id from #MyTable), Bla, Bla2 from #MyTable order by Id").ReadMetaObjects<BlaOk_with_struct_property>(Connection));
+            var ex = Assert.ThrowsAny<Exception>(() => SQL($"select Id = (select Id from #MyTable), Bla, Bla2 from #MyTable order by Id").ReadPocos<BlaOk_with_struct_property>(Connection));
             Assert.DoesNotContain("column", ex.Message);
             Assert.Contains("Subquery returned more than 1 value", ex.InnerException.Message);
         }

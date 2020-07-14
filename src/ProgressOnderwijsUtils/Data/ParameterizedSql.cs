@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtils.Collections;
 
@@ -12,9 +12,9 @@ namespace ProgressOnderwijsUtils
     /// </summary>
     public struct ParameterizedSql
     {
-        internal readonly ISqlComponent impl;
+        internal readonly ISqlComponent? impl;
 
-        internal ParameterizedSql(ISqlComponent impl)
+        internal ParameterizedSql(ISqlComponent? impl)
             => this.impl = impl;
 
         internal void AppendTo<TCommandFactory>(ref TCommandFactory factory)
@@ -89,7 +89,7 @@ namespace ProgressOnderwijsUtils
         }
 
         [Pure]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is ParameterizedSql parameterizedSql && parameterizedSql == this;
 
         [Pure]
@@ -126,7 +126,7 @@ namespace ProgressOnderwijsUtils
             return factory.FinishBuilding_CommandTextOnly();
         }
 
-        public static ParameterizedSql Param(object paramVal)
+        public static ParameterizedSql Param(object? paramVal)
             => new SingleParameterSqlFragment(paramVal).BuildableToQuery();
 
         [Pure]
@@ -134,16 +134,16 @@ namespace ProgressOnderwijsUtils
             => SqlParameterComponent.ToTableValuedParameterFromPlainValues(o).BuildableToQuery();
 
         /// <summary>
-        /// Adds a parameter to the query with a table-value.  Parameters must be an enumerable of meta-object type.
+        /// Adds a parameter to the query with a table-value.
         /// 
-        ///   You need to define a corresponding type in the database (see QueryComponent.ToTableParameter for details).
+        /// You need to define a corresponding user-defined-table-type in the database (see QueryComponent.ToTableParameter for details).
         /// </summary>
         /// <param name="typeName">name of the db-type e.g. IntValues</param>
-        /// <param name="objects">the list of meta-objects with shape corresponding to the DB type</param>
+        /// <param name="objects">the list of pocos with shape corresponding to the DB type</param>
         /// <returns>a composable query-component</returns>
         [Pure]
         public static ParameterizedSql TableParam<T>(string typeName, T[] objects)
-            where T : IMetaObject, new()
+            where T : IReadImplicitly, new()
             => (objects.Length == 1
                     ? (ISqlComponent)new SingletonQueryTableValuedParameterComponent<T>(objects[0])
                     : new QueryTableValuedParameterComponent<T, T>(typeName, objects, arr => (T[])arr)
@@ -178,9 +178,9 @@ namespace ProgressOnderwijsUtils
 
     sealed class SingleParameterSqlFragment : ISqlComponent
     {
-        readonly object paramVal;
+        readonly object? paramVal;
 
-        public SingleParameterSqlFragment(object paramVal)
+        public SingleParameterSqlFragment(object? paramVal)
         {
             this.paramVal = paramVal;
         }
@@ -205,7 +205,7 @@ namespace ProgressOnderwijsUtils
 
     static class ParameterizedSqlFactory
     {
-        public static ParameterizedSql BuildableToQuery(this ISqlComponent q)
+        public static ParameterizedSql BuildableToQuery(this ISqlComponent? q)
             => new ParameterizedSql(q);
 
         public static ParameterizedSql InterpolationToQuery([NotNull] FormattableString interpolatedQuery)
@@ -237,9 +237,9 @@ namespace ProgressOnderwijsUtils
 
     sealed class SeveralSqlFragments : ISqlComponent
     {
-        readonly ISqlComponent[] kids;
+        readonly ISqlComponent[]? kids;
 
-        public SeveralSqlFragments(ISqlComponent[] kids)
+        public SeveralSqlFragments(ISqlComponent[]? kids)
         {
             this.kids = kids;
         }

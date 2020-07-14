@@ -2,22 +2,21 @@
 
 namespace ProgressOnderwijsUtils.Tests.Data
 {
-
     public static class TrivialConvertibleValue
     {
-        public static TrivialConvertibleValue<T> Create<T>(T value)
-            => new TrivialConvertibleValue<T>(value);
+        public static TrivialValue<T> Create<T>(T value)
+            => new TrivialValue<T>(value);
     }
 
-    public struct TrivialConvertibleValue<T> : IMetaObjectPropertyConvertible<TrivialConvertibleValue<T>, T, TrivialConvertibleValue<T>.CustomBlaStructConverter>
+    public struct TrivialValue<T> : IPocoConvertibleProperty<TrivialValue<T>, T, TrivialValue<T>.CustomBlaStructConverter>
     {
-        public struct CustomBlaStructConverter : IConverterSource<TrivialConvertibleValue<T>, T>
+        public struct CustomBlaStructConverter : IConverterSource<TrivialValue<T>, T>
         {
-            public ValueConverter<TrivialConvertibleValue<T>, T> GetValueConverter()
-                => this.DefineConverter(v => v.Value, v => new TrivialConvertibleValue<T>(v));
+            public ValueConverter<TrivialValue<T>, T> GetValueConverter()
+                => this.DefineConverter(v => v.Value, v => new TrivialValue<T>(v));
         }
 
-        public TrivialConvertibleValue(T value)
+        public TrivialValue(T value)
             => Value = value;
 
         public T Value { get; }

@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Html
     {
         public string TagName { get; private set; }
         public bool IsSelfClosing { get; private set; }
-        public string FieldName { get; private set; }
+        public string? FieldName { get; private set; }
 
         public bool IsPredefined
             => FieldName != null;
@@ -21,7 +21,7 @@ namespace ProgressOnderwijsUtils.Html
         static readonly IReadOnlyDictionary<string, TagDescription> ByTagName =
             typeof(Tags).GetTypeInfo()
                 .GetFields(BindingFlags.Static | BindingFlags.Public)
-                .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlElement)field.GetValue(null) })
+                .Select(field => new { FieldName = field.Name, field.FieldType, FieldValue = (IHtmlElement)field.GetValue(null)! })
                 .ToDictionary(
                     field => field.FieldValue.TagName,
                     field => new TagDescription {
@@ -46,7 +46,7 @@ namespace ProgressOnderwijsUtils.Html
                             || constraint == typeof(IHtmlElement<>).MakeGenericType(typeArgument) && typeof(IHtmlElement<>).MakeGenericType(tagType).IsAssignableFrom(tagType));
                 })
                 .ToDictionary(
-                    method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })).Attributes.Last().Name,
+                    method => ((IHtmlElement)method.MakeGenericMethod(tagType).Invoke(null, new[] { emptyValue, (object)"" })!).Attributes.Last().Name,
                     method => method.Name,
                     StringComparer.OrdinalIgnoreCase);
 

@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Tests
     {
         [Fact]
         public void ToCamelCase_is_robuust_bij_null()
-            => PAssert.That(() => ((string)null).ToCamelCase() == null);
+            => PAssert.That(() => ((string?)null).ToCamelCase() == null);
 
         [Fact]
         public void ToCamelCase_werkt_ook_bij_lege_string()
@@ -198,11 +198,11 @@ namespace ProgressOnderwijsUtils.Tests
         [Fact]
         public void ToFlatDebugString()
         {
-            PAssert.That(() => StringUtils.ToFlatDebugString((int[])null) == "[]");
+            PAssert.That(() => StringUtils.ToFlatDebugString((int[]?)null) == "[]");
             PAssert.That(() => StringUtils.ToFlatDebugString(new string[0]) == "[]");
             PAssert.That(() => StringUtils.ToFlatDebugString(new[] { "single" }) == "[single]");
             PAssert.That(() => StringUtils.ToFlatDebugString(new[] { "first", "second" }) == "[first, second]");
-            PAssert.That(() => StringUtils.ToFlatDebugString(new object[] { 1, "2", null, 3 }) == "[1, 2, , 3]");
+            PAssert.That(() => StringUtils.ToFlatDebugString(new object?[] { 1, "2", null, 3 }) == "[1, 2, , 3]");
         }
     }
 }

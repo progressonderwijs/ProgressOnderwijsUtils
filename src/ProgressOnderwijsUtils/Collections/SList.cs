@@ -66,7 +66,7 @@ namespace ProgressOnderwijsUtils.Collections
         }
 
         [Pure]
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is SList<T> other && Equals(other);
 
         [Pure]

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Collections
         [CanBeNull]
         [Pure]
         public static TError ErrorOrNull<TOk, TError>(this Maybe<TOk, TError> state)
-            where TError : class
+            where TError : class?
             => state.TryGet(out _, out var whenError) ? null : whenError;
 
         [Pure]
@@ -26,7 +26,7 @@ namespace ProgressOnderwijsUtils.Collections
         [CanBeNull]
         [Pure]
         public static TOk ValueOrNull<TOk, TError>(this Maybe<TOk, TError> state)
-            where TOk : class
+            where TOk : class?
             => state.TryGet(out var whenOk, out _) ? whenOk : null;
 
         [Pure]

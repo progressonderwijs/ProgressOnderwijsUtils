@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using Xunit;
@@ -156,7 +156,7 @@ namespace ProgressOnderwijsUtils.Tests
             // ReSharper disable once NotAccessedVariable
             ParameterizedSql ignore;
             // ReSharper disable once AssignNullToNotNullAttribute
-            Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.CreateDynamic(null));
+            Assert.Throws<ArgumentNullException>(() => ignore = ParameterizedSql.CreateDynamic(null!));
         }
 
         [Fact]

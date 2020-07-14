@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
@@ -11,7 +11,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 {
     public sealed class DbColumnMetaData
     {
-        struct CompressedSysColumnsValue : IMetaObject
+        struct CompressedSysColumnsValue : IWrittenImplicitly
         {
             public string ColumnName { get; set; }
             public DbObjectId DbObjectId { get; set; }
@@ -51,7 +51,7 @@ namespace ProgressOnderwijsUtils.SchemaReflection
 
             [NotNull]
             public static DbColumnMetaData[] RunQuery([NotNull] SqlConnection conn, bool fromTempDb, ParameterizedSql filter)
-                => BaseQuery(fromTempDb).Append(filter).ReadMetaObjects<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
+                => BaseQuery(fromTempDb).Append(filter).ReadPocos<CompressedSysColumnsValue>(conn).ArraySelect(v => new DbColumnMetaData(v));
         }
 
         DbColumnMetaData(CompressedSysColumnsValue fromDb)
@@ -66,7 +66,9 @@ namespace ProgressOnderwijsUtils.SchemaReflection
             UserTypeId = fromDb.User_Type_Id;
         }
 
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
         public DbColumnMetaData() { }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
 
         public static DbColumnMetaData Create(string name, Type dataType, bool isKey, int? maxLength)
         {

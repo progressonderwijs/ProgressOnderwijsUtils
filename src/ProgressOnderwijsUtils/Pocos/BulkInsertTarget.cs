@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Threading;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
@@ -17,7 +17,7 @@ namespace ProgressOnderwijsUtils
         readonly SqlBulkCopyOptions Options;
 
         public BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition)
-            : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, SqlBulkCopyOptions.CheckConstraints) { }
+            : this(tableName, columnDefinition, BulkCopyFieldMappingMode.ExactMatch, SqlBulkCopyOptions.CheckConstraints | SqlBulkCopyOptions.FireTriggers) { }
 
         BulkInsertTarget(string tableName, ColumnDefinition[] columnDefinition, BulkCopyFieldMappingMode mode, SqlBulkCopyOptions options)
             => (TableName, Columns, Mode, Options) = (tableName, columnDefinition, mode, options);
@@ -47,11 +47,11 @@ namespace ProgressOnderwijsUtils
             => new BulkInsertTarget(TableName, Columns, Mode, options);
 
         public void BulkInsert<[MeansImplicitUse(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.WithMembers)]
-            T>([NotNull] SqlConnection sqlConn, [NotNull] IEnumerable<T> metaObjects, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
-            where T : IMetaObject, IPropertiesAreUsedImplicitly
+            T>([NotNull] SqlConnection sqlConn, [NotNull] IEnumerable<T> pocos, CommandTimeout timeout = default, CancellationToken cancellationToken = default)
+            where T : IReadImplicitly
         {
-            using (var dbDataReader = new MetaObjectDataReader<T>(metaObjects, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
-                BulkInsert(sqlConn, dbDataReader, metaObjects.GetType().ToCSharpFriendlyTypeName(), timeout);
+            using (var dbDataReader = new PocoDataReader<T>(pocos, cancellationToken.CreateLinkedTokenWith(timeout.ToCancellationToken(sqlConn)))) {
+                BulkInsert(sqlConn, dbDataReader, pocos.GetType().ToCSharpFriendlyTypeName(), timeout);
             }
         }
 

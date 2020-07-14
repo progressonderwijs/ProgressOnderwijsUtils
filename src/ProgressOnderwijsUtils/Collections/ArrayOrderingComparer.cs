@@ -10,7 +10,7 @@ namespace ProgressOnderwijsUtils.Collections
         public ArrayOrderingComparer(IComparer<T> underlying)
             => this.underlying = underlying;
 
-        public int Compare(T[] x, T[] y)
+        public int Compare(T[]? x, T[]? y)
         {
             if (x == y) {
                 return 0;

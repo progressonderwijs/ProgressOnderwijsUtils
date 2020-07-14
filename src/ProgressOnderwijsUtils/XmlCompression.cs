@@ -86,7 +86,7 @@ namespace ProgressOnderwijsUtils
         /// A null dictionary is permitted, which means "compress without dictionary".
         /// </param>
         /// <returns>The deflate-compressed document.</returns>
-        public static byte[] ToCompressedUtf8([NotNull] XDocument doc, byte[] dictionary)
+        public static byte[] ToCompressedUtf8([NotNull] XDocument doc, byte[]? dictionary)
         {
             CleanupNamespaces(doc);
             RemoveComments(doc);
@@ -99,7 +99,7 @@ namespace ProgressOnderwijsUtils
         /// Loads an XDocument that was saved with 'SaveUsingDeflateWithDictionary'.  You must provide the same dictionary used during compression.
         /// </summary>
         [NotNull]
-        public static XDocument FromCompressedUtf8(byte[] compressedBytes, byte[] dictionary)
+        public static XDocument FromCompressedUtf8(byte[] compressedBytes, byte[]? dictionary)
         {
             var bytes = DeflateCompression.ZlibDecompressWithDictionary(compressedBytes, dictionary);
             var xmlString = Encoding.UTF8.GetString(bytes);

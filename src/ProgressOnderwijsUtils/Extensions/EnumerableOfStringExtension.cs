@@ -14,7 +14,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="strings">string sequence</param>
         /// <returns>a string</returns>
         [NotNull]
-        public static string JoinStrings([NotNull] this IEnumerable<string> strings)
+        public static string JoinStrings([NotNull] this IEnumerable<string?> strings)
             => JoinStrings(strings, "");
 
         //don't use optional params to allow usage in expression trees
@@ -25,7 +25,7 @@ namespace ProgressOnderwijsUtils
         /// <param name="separator">separator string</param>
         /// <returns>a string</returns>
         [NotNull]
-        public static string JoinStrings([NotNull] this IEnumerable<string> strings, string separator)
+        public static string JoinStrings([NotNull] this IEnumerable<string?> strings, string separator)
             => Join(separator, strings);
 
         [NotNull]

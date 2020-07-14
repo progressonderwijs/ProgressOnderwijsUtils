@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
@@ -10,10 +10,10 @@ namespace ProgressOnderwijsUtils
 {
     public readonly struct BulkInsertFieldMapping
     {
-        public readonly ColumnDefinition Src;
-        public readonly ColumnDefinition Dst;
+        public readonly ColumnDefinition? Src;
+        public readonly ColumnDefinition? Dst;
 
-        BulkInsertFieldMapping(ColumnDefinition src, ColumnDefinition dst)
+        BulkInsertFieldMapping(ColumnDefinition? src, ColumnDefinition? dst)
         {
             Src = src;
             Dst = dst;
@@ -42,7 +42,7 @@ namespace ProgressOnderwijsUtils
         {
             bulkCopy.ColumnMappings.Clear();
             foreach (var mapEntry in mapping) {
-                bulkCopy.ColumnMappings.Add(mapEntry.Src.Index, mapEntry.Dst.Index);
+                bulkCopy.ColumnMappings.Add(mapEntry.Src! /*dubious*/.Index, mapEntry.Dst! /*dubious*/.Index);
             }
         }
     }

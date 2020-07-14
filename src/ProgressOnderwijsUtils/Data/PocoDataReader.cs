@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -11,46 +12,47 @@ namespace ProgressOnderwijsUtils
 {
     public interface IOptionalObjectListForDebugging
     {
-        IReadOnlyList<object> ContentsForDebuggingOrNull();
+        IReadOnlyList<object>? ContentsForDebuggingOrNull();
     }
 
     public interface IOptionalObjectProjectionForDebugging
     {
-        object ProjectionForDebuggingOrNull();
+        object? ProjectionForDebuggingOrNull();
     }
 
-    public sealed class MetaObjectDataReader<T> : DbDataReaderBase, IOptionalObjectListForDebugging
-        where T : IMetaObject
+    public sealed class PocoDataReader<T> : DbDataReaderBase, IOptionalObjectListForDebugging
+        where T : IReadImplicitly
     {
         readonly CancellationToken _cancellationToken;
-        readonly IEnumerator<T> metaObjects;
-        readonly IReadOnlyList<T> objectsOrNull_ForDebugging;
-        T current;
+        readonly IEnumerator<T> pocos;
+        readonly IReadOnlyList<T>? objectsOrNull_ForDebugging;
+        [AllowNull][MaybeNull] T current;
         int rowsProcessed;
 
         public int RowsProcessed
             => rowsProcessed;
 
-        public MetaObjectDataReader([NotNull] IEnumerable<T> objects, CancellationToken cancellationToken)
+        public PocoDataReader(IEnumerable<T> objects, CancellationToken cancellationToken)
         {
             _cancellationToken = cancellationToken;
-            metaObjects = objects.GetEnumerator();
+            pocos = objects.GetEnumerator();
             objectsOrNull_ForDebugging = objects as IReadOnlyList<T>;
+            current = default;
         }
 
         public override void Close()
         {
-            metaObjects.Dispose();
+            pocos.Dispose();
             isClosed = true;
-            current = default(T);
+            current = default;
         }
 
         protected override bool ReadImpl()
         {
             _cancellationToken.ThrowIfCancellationRequested();
-            var hasnext = metaObjects.MoveNext();
+            var hasnext = pocos.MoveNext();
             if (hasnext) {
-                current = metaObjects.Current;
+                current = pocos.Current;
                 rowsProcessed++;
             }
             return hasnext;
@@ -62,7 +64,6 @@ namespace ProgressOnderwijsUtils
         public override int FieldCount
             => columnInfos.Length;
 
-        [NotNull]
         public override Type GetFieldType(int ordinal)
             => columnInfos[ordinal].ColumnType;
 
@@ -75,7 +76,6 @@ namespace ProgressOnderwijsUtils
         public override int GetInt32(int ordinal)
             => ((Func<T, int>)columnInfos[ordinal].TypedNonNullableGetter)(current);
 
-        [NotNull]
         public override object GetValue(int ordinal)
             => columnInfos[ordinal].GetUntypedColumnValue(current) ?? DBNull.Value;
 
@@ -98,24 +98,23 @@ namespace ProgressOnderwijsUtils
             public readonly string Name;
 
             //ColumnType is non nullable with enum types replaced by their underlying type
-            [NotNull]
             public readonly Type ColumnType;
 
             public readonly Func<T, object> GetUntypedColumnValue;
 
             //WhenNullable_IsColumnDBNull is itself null if column non-nullable
-            public readonly Func<T, bool> WhenNullable_IsColumnDBNull;
+            public readonly Func<T, bool>? WhenNullable_IsColumnDBNull;
 
             //TypedNonNullableGetter is of type Func<T, _> such that typeof(_) == ColumnType - therefore cannot return nulls!
             public readonly Delegate TypedNonNullableGetter;
 
-            public ColumnInfo([NotNull] IReadonlyMetaProperty<T> mp)
+            public ColumnInfo(IReadonlyPocoProperty<T> pocoProperty)
             {
-                var propertyType = mp.DataType;
-                var metaObjectParameter = Expression.Parameter(typeof(T));
-                var propertyValue = mp.PropertyAccessExpression(metaObjectParameter);
-                Name = mp.Name;
-                var propertyConverter = MetaObjectPropertyConverter.GetOrNull(propertyType);
+                var propertyType = pocoProperty.DataType;
+                var pocoParameter = Expression.Parameter(typeof(T));
+                var propertyValue = pocoProperty.PropertyAccessExpression(pocoParameter);
+                Name = pocoProperty.Name;
+                var propertyConverter = PocoPropertyConverter.GetOrNull(propertyType);
                 var isNonNullable = propertyType.IsValueType && propertyType.IfNullableGetNonNullableType() == null;
 
                 if (propertyConverter != null) {
@@ -130,11 +129,11 @@ namespace ProgressOnderwijsUtils
                     } else {
                         var propertyIsNotNull = IsExpressionNonNull(propertyValue);
                         columnBoxedAsColumnType = Expression.Condition(propertyIsNotNull, columnBoxedAsObject, Expression.Constant(DBNull.Value, typeof(object)));
-                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), metaObjectParameter).Compile();
+                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), pocoParameter).Compile();
                     }
 
-                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.DbType), columnValueAsNonNullable, metaObjectParameter).Compile();
-                    GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, metaObjectParameter).Compile();
+                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), propertyConverter.DbType), columnValueAsNonNullable, pocoParameter).Compile();
+                    GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, pocoParameter).Compile();
                 } else {
                     ColumnType = propertyType.GetNonNullableUnderlyingType();
                     var propertyValueAsNoNullable = Expression.Convert(propertyValue, ColumnType);
@@ -147,10 +146,10 @@ namespace ProgressOnderwijsUtils
                     } else {
                         var propertyIsNotNull = IsExpressionNonNull(propertyValue);
                         columnBoxedAsColumnType = Expression.Coalesce(columnValueAsNonNullable, Expression.Constant(DBNull.Value, typeof(object)));
-                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), metaObjectParameter).Compile();
+                        WhenNullable_IsColumnDBNull = Expression.Lambda<Func<T, bool>>(Expression.Not(propertyIsNotNull), pocoParameter).Compile();
                     }
-                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), ColumnType), propertyValueAsNoNullable, metaObjectParameter).Compile();
-                    GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, metaObjectParameter).Compile();
+                    TypedNonNullableGetter = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(T), ColumnType), propertyValueAsNoNullable, pocoParameter).Compile();
+                    GetUntypedColumnValue = Expression.Lambda<Func<T, object>>(columnBoxedAsColumnType, pocoParameter).Compile();
                 }
             }
 
@@ -164,19 +163,19 @@ namespace ProgressOnderwijsUtils
         static readonly Dictionary<string, int> columnIndexByName;
         static readonly DataTable schemaTable;
 
-        static MetaObjectDataReader()
+        static PocoDataReader()
         {
-            var metaProperties = MetaObject.GetMetaProperties<T>();
-            var columnInfosBuilder = new List<ColumnInfo>(metaProperties.Count);
-            columnIndexByName = new Dictionary<string, int>(metaProperties.Count, StringComparer.OrdinalIgnoreCase);
+            var properties = PocoUtils.GetProperties<T>();
+            var columnInfosBuilder = new List<ColumnInfo>(properties.Count);
+            columnIndexByName = new Dictionary<string, int>(properties.Count, StringComparer.OrdinalIgnoreCase);
             schemaTable = CreateEmptySchemaTable();
             var i = 0;
-            foreach (var metaProperty in metaProperties) {
-                if (metaProperty.CanRead) {
-                    var columnInfo = new ColumnInfo(metaProperty);
-                    var isKey = metaProperty.IsKey;
+            foreach (var pocoProperty in properties) {
+                if (pocoProperty.CanRead) {
+                    var columnInfo = new ColumnInfo(pocoProperty);
+                    var isKey = pocoProperty.IsKey;
                     var allowDbNull = columnInfo.WhenNullable_IsColumnDBNull != null;
-                    var isUnique = isKey && !metaProperties.Any(other => other != metaProperty && other.IsKey);
+                    var isUnique = isKey && !properties.Any(other => other != pocoProperty && other.IsKey);
                     columnIndexByName.Add(columnInfo.Name, i);
                     schemaTable.Rows.Add(columnInfo.Name, i, -1, null, null, columnInfo.ColumnType, null, false, allowDbNull, true, false, isUnique, isKey, false, null, null, null, "val");
                     columnInfosBuilder.Add(columnInfo);
@@ -186,7 +185,6 @@ namespace ProgressOnderwijsUtils
             columnInfos = columnInfosBuilder.ToArray();
         }
 
-        [NotNull]
         static DataTable CreateEmptySchemaTable()
         {
             var dt = new DataTable();
@@ -213,8 +211,7 @@ namespace ProgressOnderwijsUtils
             return dt;
         }
 
-        [CanBeNull]
-        IReadOnlyList<object> IOptionalObjectListForDebugging.ContentsForDebuggingOrNull()
+        IReadOnlyList<object>? IOptionalObjectListForDebugging.ContentsForDebuggingOrNull()
             => objectsOrNull_ForDebugging?.SelectIndexable(o => (o as IOptionalObjectProjectionForDebugging)?.ProjectionForDebuggingOrNull() ?? o);
     }
 }

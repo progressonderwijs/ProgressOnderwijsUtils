@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 using ExpressionToCodeLib;
 using ProgressOnderwijsUtils.SchemaReflection;
@@ -27,15 +27,15 @@ namespace ProgressOnderwijsUtils.Tests.Data
             return BulkInsertTarget.LoadFromTable(Connection, tempTableName.CommandText());
         }
 
-        sealed class SampleRow : ValueBase<SampleRow>, IMetaObject, IPropertiesAreUsedImplicitly
+        sealed class SampleRow : ValueBase<SampleRow>, IWrittenImplicitly, IReadImplicitly
         {
             public DayOfWeek AnEnum { get; set; }
             public DateTime? ADateTime { get; set; }
-            public string SomeString { get; set; }
+            public string? SomeString { get; set; }
             public decimal? LotsOfMoney { get; set; }
             public double VagueNumber { get; set; }
-            public TrivialConvertibleValue<string> CustomBla { get; set; }
-            public TrivialConvertibleValue<string>? CustomBlaThanCanBeNull { get; set; }
+            public TrivialValue<string> CustomBla { get; set; }
+            public TrivialValue<string>? CustomBlaThanCanBeNull { get; set; }
         }
 
         static readonly SampleRow[] SampleData = {
@@ -87,7 +87,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target = CreateTable(SQL($"#test"));
             SampleData.BulkCopyToSqlServer(Connection, target);
-            var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
+            var fromDb = SQL($"select * from #test").ReadPocos<SampleRow>(Connection);
             AssertCollectionsEquivalent(SampleData, fromDb);
         }
 
@@ -101,16 +101,18 @@ namespace ProgressOnderwijsUtils.Tests.Data
             var dataTable = SQL($"select * from #test").OfDataTable().Execute(Connection);
             target2.BulkInsert(Connection, dataTable);
 
-            var fromDb = SQL($"select * from #test2").ReadMetaObjects<SampleRow>(Connection);
+            var fromDb = SQL($"select * from #test2").ReadPocos<SampleRow>(Connection);
             AssertCollectionsEquivalent(SampleData, fromDb);
         }
 
-        sealed class SampleRow2 : ValueBase<SampleRow2>, IMetaObject, IPropertiesAreUsedImplicitly
+        sealed class SampleRow2 : ValueBase<SampleRow2>, IWrittenImplicitly, IReadImplicitly
         {
             public int intNonNull { get; set; }
             public int? intNull { get; set; }
-            public string stringNull { get; set; }
+            public string? stringNull { get; set; }
+#pragma warning disable CS8618 // Non-nullable field is uninitialized.
             public string stringNonNull { get; set; }
+#pragma warning restore CS8618 // Non-nullable field is uninitialized.
         }
 
         [Fact]
@@ -124,7 +126,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                         values (1, null, 'test', 'test2')
                         , (2, 1, null, 'test3')
                     ) x(intNonNull, intNull, stringNull, stringNonNull)
-                ").OfObjects<SampleRow2>();
+                ").OfPocos<SampleRow2>();
                 var expectedData = new[] {
                     new SampleRow2 { intNonNull = 1, intNull = null, stringNull = "test", stringNonNull = "test2" },
                     new SampleRow2 { intNonNull = 2, intNull = 1, stringNull = null, stringNonNull = "test3" },
@@ -146,7 +148,7 @@ namespace ProgressOnderwijsUtils.Tests.Data
                     target.BulkInsert(Connection, reader, "from query");
                 }
 
-                AssertCollectionsEquivalent(expectedData, SQL($"select * from #tmp").OfObjects<SampleRow2>().Execute(Connection));
+                AssertCollectionsEquivalent(expectedData, SQL($"select * from #tmp").OfPocos<SampleRow2>().Execute(Connection));
             }
         }
 
@@ -165,20 +167,20 @@ namespace ProgressOnderwijsUtils.Tests.Data
         {
             var target = CreateTable(SQL($"#test"));
             SampleData.Take(0).BulkCopyToSqlServer(Connection, target);
-            var fromDb = SQL($"select * from #test").ReadMetaObjects<SampleRow>(Connection);
+            var fromDb = SQL($"select * from #test").ReadPocos<SampleRow>(Connection);
             PAssert.That(() => fromDb.None());
         }
 
         [Fact]
         public void CanCreateDbColumnMetaData()
         {
-            var metaProps = MetaInfo<SampleRow>.Instance;
-            var dbProps = metaProps.Select(property => DbColumnMetaData.Create(
+            var pocoProperties = PocoProperties<SampleRow>.Instance;
+            var dbProps = pocoProperties.Select(property => DbColumnMetaData.Create(
                 property.Name,
                 property.DataType,
                 property.IsKey,
                 null));
-            PAssert.That(() => metaProps.Count == dbProps.Count());
+            PAssert.That(() => pocoProperties.Count == dbProps.Count());
         }
     }
 }

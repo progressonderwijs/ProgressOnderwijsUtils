@@ -1,4 +1,5 @@
-﻿using System;
+#nullable disable
+using System;
 using System.Reflection;
 using ExpressionToCodeLib;
 using JetBrains.Annotations;
@@ -12,7 +13,7 @@ namespace ProgressOnderwijsUtils
         /// - it treats DBNull.Value as if it were null
         /// - it ignores explicit and implicit cast operators
         /// - it supports casting from boxed int to nullable enum.
-        /// - it supports casting fromDb when the target type is IMetaPropertyConvertible
+        /// - it supports casting fromDb when the target type is <see cref="IPocoConvertibleProperty"/>
         /// </summary>
         [Pure]
         public static T FromDb<T>(object valueFromDb)
@@ -29,7 +30,7 @@ namespace ProgressOnderwijsUtils
         /// This method works just like a normal C# cast, with the following changed:
         /// - it ignores explicit and implicit cast operators
         /// - it supports casting from boxed int to nullable enum.
-        /// - it supports casting ToDb when the passed value is IMetaPropertyConvertible.
+        /// - it supports casting ToDb when the passed value is <see cref="IPocoConvertibleProperty"/>.
         /// </summary>
         [Pure]
         public static T ToDb<T>(object valueFromCode)
@@ -57,7 +58,7 @@ namespace ProgressOnderwijsUtils
             [NotNull]
             static Func<object, T> MakeConverter([NotNull] Type type)
             {
-                var converter = MetaObjectPropertyConverter.GetOrNull(type);
+                var converter = PocoPropertyConverter.GetOrNull(type);
                 if (converter != null) {
                     return ForConvertible(type, converter);
                 }
@@ -72,7 +73,7 @@ namespace ProgressOnderwijsUtils
                 return (Func<object, T>)Delegate.CreateDelegate(typeof(Func<object, T>), extractNullableValueTypeMethod.MakeGenericMethod(nonnullableUnderlyingType));
             }
 
-            static Func<object, T> ForConvertible(Type type, MetaObjectPropertyConverter converter)
+            static Func<object, T> ForConvertible(Type type, PocoPropertyConverter converter)
             {
                 if (type.IsNullableValueType() || !type.IsValueType) {
                     return obj => obj == null ? default(T) : obj is T alreadyCast ? alreadyCast : (T)converter.ConvertFromDb(obj);
@@ -90,13 +91,13 @@ namespace ProgressOnderwijsUtils
             static Func<object, T> MakeConverter([NotNull] Type type)
             {
                 if (!type.IsValueType) {
-                    return obj => obj == null ? default(T) : obj is IMetaObjectPropertyConvertible<T> ? (T)MetaObjectPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;
+                    return obj => obj == null ? default(T) : obj is IPocoConvertibleProperty<T> ? (T)PocoPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;
                 }
                 var nonnullableUnderlyingType = type.IfNullableGetNonNullableType();
                 if (nonnullableUnderlyingType == null) {
-                    return obj => obj is IMetaObjectPropertyConvertible ? (T)MetaObjectPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;
+                    return obj => obj is IPocoConvertibleProperty ? (T)PocoPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;
                 }
-                return obj => obj == null ? default(T) : obj is IMetaObjectPropertyConvertible ? (T)MetaObjectPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;
+                return obj => obj == null ? default(T) : obj is IPocoConvertibleProperty ? (T)PocoPropertyConverter.GetOrNull(obj.GetType()).ConvertToDb(obj) : (T)obj;
             }
         }
 
@@ -119,9 +120,9 @@ namespace ProgressOnderwijsUtils
                     throw new InvalidCastException("Cannot cast (db)null to " + type.ToCSharpFriendlyTypeName());
                 }
                 return null;
-            } else if (MetaObjectPropertyConverter.GetOrNull(type) is MetaObjectPropertyConverter targetConvertible) {
+            } else if (PocoPropertyConverter.GetOrNull(type) is PocoPropertyConverter targetConvertible) {
                 return targetConvertible.ConvertFromDb(val);
-            } else if (MetaObjectPropertyConverter.GetOrNull(val.GetType()) is MetaObjectPropertyConverter sourceConvertible && sourceConvertible.DbType == type.GetNonNullableType()) {
+            } else if (PocoPropertyConverter.GetOrNull(val.GetType()) is PocoPropertyConverter sourceConvertible && sourceConvertible.DbType == type.GetNonNullableType()) {
                 return sourceConvertible.ConvertToDb(val);
             } else {
                 return genericCastMethod.MakeGenericMethod(type).Invoke(null, new[] { val });

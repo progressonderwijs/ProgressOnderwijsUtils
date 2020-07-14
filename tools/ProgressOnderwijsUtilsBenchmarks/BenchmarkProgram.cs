@@ -1,4 +1,5 @@
-﻿using BenchmarkDotNet.Running;
+#nullable disable
+using BenchmarkDotNet.Running;
 using JetBrains.Annotations;
 using ProgressOnderwijsUtilsBenchmarks.MicroOrmBench;
 

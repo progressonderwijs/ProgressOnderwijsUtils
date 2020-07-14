@@ -36,8 +36,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             return new Uri(request.Destination + "?" + signedQueryString);
         }
 
-        [CanBeNull]
-        static XElement GetAssertion([NotNull] XElement response)
+        static XElement? GetAssertion([NotNull] XElement response)
         {
             var statusCodes = response.Descendants(SamlNamespaces.SAMLP_NS + "StatusCode").ToArray();
             if (statusCodes.Length > 1) {
@@ -77,7 +76,11 @@ namespace ProgressOnderwijsUtils.SingleSignOn
             }
 
             var assertion = GetAssertion(xml);
-            var authnStatement = assertion?.Element(SamlNamespaces.SAML_NS + "AuthnStatement");
+            if (assertion == null) {
+                return Maybe.Error("Missing Assertion element");
+            }
+
+            var authnStatement = assertion.Element(SamlNamespaces.SAML_NS + "AuthnStatement");
             if (authnStatement == null) {
                 return Maybe.Error("Missing AuthnStatement element");
             }
@@ -126,7 +129,7 @@ namespace ProgressOnderwijsUtils.SingleSignOn
                 where attribute.Parent.Attribute("Name").Value == key
                 // ReSharper restore PossibleNullReferenceException
                 select attribute.Value
-                ).SingleOrNull();
+            ).SingleOrNull();
 
         [NotNull]
         static string[] GetAttributes([NotNull] XElement assertion, string key)

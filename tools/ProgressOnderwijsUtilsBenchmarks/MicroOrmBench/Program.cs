@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+#nullable disable
+using JetBrains.Annotations;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {

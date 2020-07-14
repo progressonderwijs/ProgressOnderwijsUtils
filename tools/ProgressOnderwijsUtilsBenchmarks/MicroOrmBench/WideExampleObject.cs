@@ -1,11 +1,12 @@
-﻿using System;
+#nullable disable
+using System;
 using System.Runtime.CompilerServices;
 using ProgressOnderwijsUtils;
 using static ProgressOnderwijsUtils.SafeSql;
 
 namespace ProgressOnderwijsUtilsBenchmarks.MicroOrmBench
 {
-    public sealed class WideExampleObject : IMetaObject
+    public sealed class WideExampleObject : IWrittenImplicitly
     {
         public int SalesOrderId { get; set; }
         public string AccountNumber { get; set; }
